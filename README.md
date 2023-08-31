@@ -1,1 +1,1 @@
-# lightning_sdk
+# Lightning SDK
