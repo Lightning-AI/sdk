@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lightning_loading"
+authors = [
+    {name = "Lightning-AI", email = "name@lightning.ai"},
+]
+description = "LAI utillities for data loading in the cloud"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["deep learning", "machine learning", "pytorch", "AI"]
+license = {text = "Apache-2.0"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "lightning>=2.0.0",
+]
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = {attr = "lightning_sdk.__version__"}
+
+[tool.setuptools.packages.find]
+exclude = ["tests*"]
+
+[project.urls]
+repository = "https://github.com/gridai/lightning-sdk"
