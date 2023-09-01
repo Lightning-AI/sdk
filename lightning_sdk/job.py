@@ -1,13 +1,10 @@
-from enum import Enum
-from typing import List, Optional
-
-from lightning.app.utilities.network import LightningClient
+from typing import List
 
 from lightning_sdk.status import Status
 
 
 class Work:
-    def __init__(self):
+    def __init__(self) -> None:
         ...
 
     @property
@@ -19,7 +16,7 @@ class Job:
     def __init__(
         self,
         name: str,
-    ):
+    ) -> None:
         self._name = name
 
     @property

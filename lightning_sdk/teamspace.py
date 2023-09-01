@@ -1,7 +1,5 @@
 from typing import List, Optional
 
-from lightning.app.utilities.network import LightningClient
-
 from lightning_sdk.drive import Drive, S3Connection
 from lightning_sdk.job import Job
 from lightning_sdk.studio import Studio
@@ -12,7 +10,7 @@ class Teamspace:
         self,
         name: Optional[str] = None,
         org: Optional[str] = None,
-    ):
+    ) -> None:
         self._name: Optional[str] = name
         self._org: Optional[str] = org
         self._id: Optional[str] = None  # This is the only thing that is important upon initialization
@@ -40,5 +38,5 @@ class Teamspace:
     def exists(self) -> bool:
         ...
 
-    def studio(self, name: Optional[str] = None):
+    def studio(self, name: Optional[str] = None) -> Studio:
         return Studio(name=name, teamspace=self._name, org=self._org)

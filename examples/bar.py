@@ -4,7 +4,7 @@ import lightning_sdk.utils as utils
 from lightning_sdk import Studio
 
 client = LightningClient()
-ret = utils.get_org(client, org='Lightning AI')
+ret = utils.get_org(client, org="Lightning AI")
 print(ret)
 
 ret = utils.get_teamspace(client, Teamspace="thunder", org="Lightning AI")

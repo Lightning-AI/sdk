@@ -1,48 +1,16 @@
-import os
-from typing import List, Optional, Generator
-from urllib.parse import urlparse
+from typing import Optional
 
-import requests
-import time
-
-from lightning.app.utilities.network import LightningClient
-
-from lightning_cloud.login import Auth
-
-from lightning_sdk.status import Status
-from lightning_sdk.machine import Machine
-from lightning_sdk.api.teamspace_api import TeamspaceApi
-from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.org_api import OrgApi
-
-from websockets.sync.client import connect, ClientConnection
-import base64
-
-'''
-class V1CloudSpaceInstanceState(object):
-    """
-    allowed enum values
-    """
-    UNSPECIFIED = "CLOUD_SPACE_INSTANCE_STATE_UNSPECIFIED"
-    PENDING = "CLOUD_SPACE_INSTANCE_STATE_PENDING"
-    IMAGE_BUILDING = "CLOUD_SPACE_INSTANCE_STATE_IMAGE_BUILDING"
-    RUNNING = "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
-    FAILED = "CLOUD_SPACE_INSTANCE_STATE_FAILED"
-    STOPPED = "CLOUD_SPACE_INSTANCE_STATE_STOPPED"
-    DELETED = "CLOUD_SPACE_INSTANCE_STATE_DELETED"
-    STOPPING = "CLOUD_SPACE_INSTANCE_STATE_STOPPING"
-'''
+from lightning_sdk.api.studio_api import StudioApi
+from lightning_sdk.api.teamspace_api import TeamspaceApi
+from lightning_sdk.machine import Machine
+from lightning_sdk.status import Status
 
 
 class Studio:
     def __init__(
-        self,
-        name: str,
-        teamspace: str,
-        org: str,
-        cluster: Optional[str] = None,
-        create_ok: bool = True
-    ):
+        self, name: str, teamspace: str, org: str, cluster: Optional[str] = None, create_ok: bool = True
+    ) -> None:
         self._studio_api = StudioApi()
         self._teamspace_api = TeamspaceApi()
         self._org_api = OrgApi()
@@ -79,13 +47,11 @@ class Studio:
     def delete(self) -> None:
         ...
 
-    def duplicate(self) -> 'Studio':
+    def duplicate(self) -> "Studio":
         ...
 
     def switch_machine(self, machine: Machine) -> None:
         self._studio_api.switch_studio_machine(self._studio.id, self._teamspace.id, machine)
 
     def run(self, *commands: str) -> str:
-        return "".join(
-            self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)
-        ).strip()
+        return "".join(self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)).strip()

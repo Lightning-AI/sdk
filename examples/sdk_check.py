@@ -1,4 +1,4 @@
-from lightning_sdk import Teamspace, Studio
+from lightning_sdk import Studio, Teamspace
 
 
 def example1():

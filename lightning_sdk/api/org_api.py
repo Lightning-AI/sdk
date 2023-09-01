@@ -1,16 +1,15 @@
-from lightning_cloud.openapi import V1Organization, OrganizationsServiceApi
 from lightning.app.utilities.network import LightningClient
-
 from lightning_cloud.login import Auth
+from lightning_cloud.openapi import OrganizationsServiceApi, V1Organization
 
 
 class OrgApi:
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         # TODO: add org API to client in lightning_cloud
         self._client = OrganizationsServiceApi(api_client=LightningClient().api_client)
-    
+
     def get_org(self, name: str) -> V1Organization:
         auth = Auth()
         auth.authenticate()

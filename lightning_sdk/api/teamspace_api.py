@@ -1,9 +1,9 @@
-from lightning_cloud.openapi import V1Project
 from lightning.app.utilities.network import LightningClient
+from lightning_cloud.openapi import V1Project
 
 
 class TeamspaceApi:
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self._client = LightningClient()

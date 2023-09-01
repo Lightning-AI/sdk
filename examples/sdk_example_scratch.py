@@ -1,4 +1,4 @@
-from lightning_sdk import Studio, Machine
+from lightning_sdk import Machine, Studio
 
 s = Studio("sdk-test-studio-12", "growth", "lightning-ai")
 s.start()

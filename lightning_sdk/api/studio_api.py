@@ -1,28 +1,28 @@
 import os
-from typing import Optional, Generator, Dict
-
-import tempfile
 import tarfile
-
+import tempfile
+import time
+from typing import Dict, Generator, Optional
 from urllib.parse import urlparse
 
 import requests
-import time
-
-from lightning_cloud.login import Auth
-
-from websockets.sync.client import connect, ClientConnection
-import base64
-
 from lightning.app.utilities.network import LightningClient
-
-from lightning_cloud.openapi import IdCodeconfigBody, V1UserRequestedComputeConfig, V1GetCloudSpaceInstanceStatusResponse, V1CloudSpace, Externalv1CloudSpaceInstanceStatus, ProjectIdCloudspacesBody, CloudspaceIdRunsBody
+from lightning_cloud.login import Auth
+from lightning_cloud.openapi import (
+    CloudspaceIdRunsBody,
+    IdCodeconfigBody,
+    ProjectIdCloudspacesBody,
+    V1CloudSpace,
+    V1GetCloudSpaceInstanceStatusResponse,
+    V1UserRequestedComputeConfig,
+)
+from websockets.sync.client import ClientConnection, connect
 
 from lightning_sdk.machine import Machine
 
 
 class StudioApi:
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self._client = LightningClient()
@@ -35,7 +35,8 @@ class StudioApi:
         res = self._client.cloud_space_service_list_cloud_spaces(project_id=teamspace_id)
         _studio = [el for el in res.cloudspaces if el.display_name == name or el.name == name]
         if not _studio:
-            # TODO: Let's use errors instead, reduces typing madness and less likely to accidentally get a None somewhere
+            # TODO: Let's use errors instead,
+            # reduces typing madness and less likely to accidentally get a None somewhere
             return None
         return _studio[0]
 
@@ -44,7 +45,7 @@ class StudioApi:
         name: str,
         teamspace_id: str,
         cluster: Optional[str] = None,
-    ):
+    ) -> V1CloudSpace:
         body = ProjectIdCloudspacesBody(
             cluster_id=cluster,
             name=name,
@@ -62,25 +63,23 @@ class StudioApi:
 
         with tempfile.TemporaryDirectory() as tmpdir:
             main_py_path = os.path.join(tmpdir, "main.py")
-            main_py = open(main_py_path, "w")
-            main_py.write("print('Hello, Lightning World!')\n")
-            main_py.close()
+            with open(main_py_path, "w") as f:
+                f.write("print('Hello, Lightning World!')\n")
 
             # TODO: Explore ways to do this without writing a file
             tar_path = os.path.join(tmpdir, "source.tar.gz")
             with tarfile.open(tar_path, "w:gz") as tar:
                 tar.add(main_py_path, arcname="main.py")
-            
+
             with open(tar_path, "rb") as fo:
                 requests.put(run.source_upload_url, data=fo)
         return studio
 
     def get_studio_status(self, studio_id: str, teamspace_id: str) -> V1GetCloudSpaceInstanceStatusResponse:
-        res = self._client.cloud_space_service_get_cloud_space_instance_status(
+        return self._client.cloud_space_service_get_cloud_space_instance_status(
             project_id=teamspace_id,
             id=studio_id,
         )
-        return res
 
     def start_studio(self, studio_id: str, teamspace_id: str) -> None:
         auth_header = Auth().auth_header
@@ -94,21 +93,21 @@ class StudioApi:
                 response = requests.get(code_url, headers={"Authorization": auth_header})
                 response.raise_for_status()
                 break
-            except requests.HTTPError as e:
+            except requests.HTTPError:
                 time.sleep(1)
                 continue
 
         while int(self.get_studio_status(studio_id, teamspace_id).in_use.startup_percentage) < 100:
             time.sleep(1)
-    
-    def stop_studio(self, studio_id: str, teamspace_id: str):
+
+    def stop_studio(self, studio_id: str, teamspace_id: str) -> None:
         # TODO: Wait for it to be stopped?
         self._client.cloud_space_service_stop_cloud_space_instance(
             project_id=teamspace_id,
             id=studio_id,
         )
 
-    def switch_studio_machine(self, studio_id: str, teamspace_id: str, machine: Machine):
+    def switch_studio_machine(self, studio_id: str, teamspace_id: str, machine: Machine) -> None:
         compute_name = _MACHINE_TO_COMPUTE_NAME[machine]
         # TODO: UI sends disk size here, maybe we need to also?
         body = IdCodeconfigBody(compute_config=V1UserRequestedComputeConfig(name=compute_name))
@@ -121,7 +120,7 @@ class StudioApi:
         # TODO: Maybe strictly we need to wait for the machine to be running first?
         while int(self.get_studio_status(studio_id, teamspace_id).requested.startup_percentage) < 100:
             time.sleep(1)
-        
+
         self._client.cloud_space_service_switch_cloud_space_instance(teamspace_id, studio_id)
 
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Generator[str, None, None]:
@@ -138,9 +137,7 @@ class StudioApi:
 
         websocket = connect(
             terminal_url,
-            additional_headers = {
-                "Authorization": auth_header
-            },
+            additional_headers={"Authorization": auth_header},
         )
 
         # ignore any previous output
@@ -157,8 +154,10 @@ _END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
 
 def _wrap_command(command: str) -> str:
     """Wrap a shell command to echo start and end tokens allowing us to parse the command output."""
-    # We use escaped special characters here to differentiate between the tokens presence in the command vs the echoed output
-    return f"echo \<\< {_BEGIN_OUTPUT_TOKEN} \>\>; {command}; echo \<\< {_END_OUTPUT_TOKEN} \>\>"
+    # We use escaped special characters here to differentiate between the tokens presence in the
+    # command vs the echoed output
+    return rf"echo \<\< {_BEGIN_OUTPUT_TOKEN} \>\>; {command}; echo \<\< {_END_OUTPUT_TOKEN} \>\>"
+
 
 def _read_output(websocket: ClientConnection) -> Generator[str, None, None]:
     has_output_started = False
