@@ -31,13 +31,11 @@ class StudioApi:
         self,
         name: str,
         teamspace_id: str,
-    ) -> Optional[V1CloudSpace]:
+    ) -> V1CloudSpace:
         res = self._client.cloud_space_service_list_cloud_spaces(project_id=teamspace_id)
         _studio = [el for el in res.cloudspaces if el.display_name == name or el.name == name]
         if not _studio:
-            # TODO: Let's use errors instead,
-            # reduces typing madness and less likely to accidentally get a None somewhere
-            return None
+            raise ValueError(f"Studio {name} does not exist")
         return _studio[0]
 
     def create_studio(
@@ -189,6 +187,7 @@ def _read_output(websocket: ClientConnection) -> Generator[str, None, None]:
 
 
 # TODO: This should really come from some kind of metadata service
+# TODO: Add trainium instances once feature flag is lifted
 _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
     Machine.CPU: "cpu-4",
     Machine.DATA_PREP: "data-large-8000",

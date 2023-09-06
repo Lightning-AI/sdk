@@ -17,18 +17,22 @@ class Studio:
 
         self._org = self._org_api.get_org(org)
         self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._org.id)
-        self._studio = self._studio_api.get_studio(name, self._teamspace.id)
-
-        if self._studio is None:
+        try:
+            self._studio = self._studio_api.get_studio(name, self._teamspace.id)
+        except ValueError:
             if create_ok:
                 self._studio = self._studio_api.create_studio(name, self._teamspace.id)
             else:
                 raise ValueError(f"Studio {name} does not exist.")
 
     @property
+    def name(self) -> str:
+        return self._studio.name
+
+    @property
     def status(self) -> Status:
-        # TODO: convert the status from the API layer into a user facing status
-        return self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
+        internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
+        return _internal_status_to_external_status(internal_status.phase if internal_status is not None else internal_status)
 
     @property
     def teamspace(self) -> str:
@@ -55,3 +59,17 @@ class Studio:
 
     def run(self, *commands: str) -> str:
         return "".join(self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)).strip()
+
+
+def _internal_status_to_external_status(internal_status: str):
+    return {
+        # don't get a status if no instance alive
+        None: Status.Stopped,
+        # TODO: should unspecified resolve to pending?
+        "CLOUD_SPACE_INSTANCE_STATE_UNSPECIFIED": Status.Pending,
+        "CLOUD_SPACE_INSTANCE_STATE_PENDING": Status.Pending,
+        "CLOUD_SPACE_INSTANCE_STATE_RUNNING": Status.Running,
+        "CLOUD_SPACE_INSTANCE_STATE_FAILED": Status.Failed,
+        "CLOUD_SPACE_INSTANCE_STATE_STOPPING": Status.Stopping,
+        "CLOUD_SPACE_INSTANCE_STATE_STOPPED": Status.Stopped
+        }[internal_status]

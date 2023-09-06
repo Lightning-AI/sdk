@@ -13,7 +13,6 @@ class TeamspaceApi:
         name: str,
         org_id: str,
     ) -> V1Project:
-        # _org = get_org(client, org)
         res = self._client.projects_service_list_memberships(organization_id=org_id)
         _membership = [el for el in res.memberships if el.display_name == name or el.name == name]
         if not _membership:

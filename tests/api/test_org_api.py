@@ -1,34 +1,18 @@
-from unittest import mock
-
 import pytest
-from lightning_cloud.openapi import V1ListOrganizationsResponse, V1Organization
+from lightning_cloud.openapi import V1Organization
+from lightning_sdk.api.org_api import OrgApi
 
-
-@mock.patch("lightning.app.utilities.network.LightningClient")
-def test_org_api(patch):
-    from lightning_sdk.api.org_api import OrgApi
-
+def test_org_api(internal_org_api_mocker):
     org_api = OrgApi()
-
-    # mock internal api response
-    org_api._client.api_client.call_api.return_value = V1ListOrganizationsResponse(
-        [V1Organization(display_name="abc", name="abc"), V1Organization(display_name="def", name="def")]
-    )
-
-    org = org_api.get_org("abc")
+    
+    org = org_api.get_org("org-abc")
     assert isinstance(org, V1Organization)
 
 
-@mock.patch("lightning.app.utilities.network.LightningClient")
-def test_org_api_valueerror(patch):
-    from lightning_sdk.api.org_api import OrgApi
+def test_org_api_valueerror(internal_org_api_mocker):
 
     org_api = OrgApi()
 
-    # mock internal api response
-    org_api._client.api_client.call_api.return_value = V1ListOrganizationsResponse(
-        [V1Organization(display_name="def", name="def")]
-    )
 
-    with pytest.raises(ValueError, match="Org abc does not exist"):
-        org_api.get_org("abc")
+    with pytest.raises(ValueError, match="Org xyz does not exist"):
+        org_api.get_org("xyz")

@@ -112,3 +112,7 @@ convention = "google"
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
+
+[pytest]
+mock_use_standalone_module = true
+mock_traceback_monkeypatch = false
