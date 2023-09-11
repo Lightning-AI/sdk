@@ -62,7 +62,7 @@ jobs:
     - name: Tests
       run: |
         # NOTE: do not include coverage report here, see: https://github.com/nedbat/coveragepy/issues/1003
-        coverage run --source lightning_sdk -m pytest tests --junitxml=junit/test-results-${{ runner.os }}-py${{ matrix.python-version }}.xml --timeout=20
+        coverage run --source lightning_sdk -m pytest tests --junitxml=junit/test-results-${{ runner.os }}-py${{ matrix.python-version }}.xml --timeout=20 -v
 
     - name: Statistics
       if: success()
