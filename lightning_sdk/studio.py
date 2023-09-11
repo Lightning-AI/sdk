@@ -32,7 +32,9 @@ class Studio:
     @property
     def status(self) -> Status:
         internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
-        return _internal_status_to_external_status(internal_status.phase if internal_status is not None else internal_status)
+        return _internal_status_to_external_status(
+            internal_status.phase if internal_status is not None else internal_status
+        )
 
     @property
     def teamspace(self) -> str:
@@ -42,22 +44,42 @@ class Studio:
     def org(self) -> str:
         return self._org.name
 
+    @property
+    def machine(self) -> Optional[Machine]:
+        if self.status != Status.Running:
+            return None
+        return self._studio_api.get_machine(self._studio.id, self._teamspace.id)
+
     def start(self) -> None:
+        status = self.status
+        if status != Status.Stopped:
+            raise RuntimeError(f"Cannot start a studio that is not stopped. Studio {self.name} is {status}.")
         self._studio_api.start_studio(self._studio.id, self._teamspace.id)
 
     def stop(self) -> None:
+        status = self.status
+        if status not in (Status.Running, Status.Pending):
+            raise RuntimeError(f"Cannot stop a studio that is not running. Studio {self.name} is {status}.")
         self._studio_api.stop_studio(self._studio.id, self._teamspace.id)
 
     def delete(self) -> None:
-        ...
+        self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
 
     def duplicate(self) -> "Studio":
         ...
 
     def switch_machine(self, machine: Machine) -> None:
+        status = self.status
+        if status != Status.Running:
+            raise RuntimeError(
+                f"Cannot switch machine on a studio that is not running. Studio {self.name} is {status}."
+            )
         self._studio_api.switch_studio_machine(self._studio.id, self._teamspace.id, machine)
 
     def run(self, *commands: str) -> str:
+        status = self.status
+        if status != Status.Running:
+            raise RuntimeError(f"Cannot run a command in a studio that is not running. Studio {self.name} is {status}.")
         return "".join(self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)).strip()
 
 
@@ -71,5 +93,5 @@ def _internal_status_to_external_status(internal_status: str):
         "CLOUD_SPACE_INSTANCE_STATE_RUNNING": Status.Running,
         "CLOUD_SPACE_INSTANCE_STATE_FAILED": Status.Failed,
         "CLOUD_SPACE_INSTANCE_STATE_STOPPING": Status.Stopping,
-        "CLOUD_SPACE_INSTANCE_STATE_STOPPED": Status.Stopped
-        }[internal_status]
+        "CLOUD_SPACE_INSTANCE_STATE_STOPPED": Status.Stopped,
+    }[internal_status]

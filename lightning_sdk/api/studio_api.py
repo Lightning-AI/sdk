@@ -13,6 +13,7 @@ from lightning_cloud.openapi import (
     IdCodeconfigBody,
     ProjectIdCloudspacesBody,
     V1CloudSpace,
+    V1CloudSpaceInstanceConfig,
     V1GetCloudSpaceInstanceStatusResponse,
     V1UserRequestedComputeConfig,
 )
@@ -121,6 +122,12 @@ class StudioApi:
 
         self._client.cloud_space_service_switch_cloud_space_instance(teamspace_id, studio_id)
 
+    def get_machine(self, studio_id: str, teamspace_id: str) -> Machine:
+        response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
+            project_id=teamspace_id, id=studio_id
+        )
+        return _COMPUTE_NAME_TO_MACHINE[response.compute_config.name]
+
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Generator[str, None, None]:
         auth_header = Auth().auth_header
 
@@ -144,6 +151,9 @@ class StudioApi:
         websocket.send(command)
 
         return _read_output(websocket)
+
+    def delete_studio(self, studio_id: str, teamspace_id: str):
+        self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
 
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -199,3 +209,5 @@ _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
     Machine.A10G_X_4: "g5.12xlarge",
     Machine.A100_X_8: "p4d.24xlarge",
 }
+
+_COMPUTE_NAME_TO_MACHINE: Dict[str, Machine] = {v: k for k, v in _MACHINE_TO_COMPUTE_NAME.items()}
