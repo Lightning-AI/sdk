@@ -1,0 +1,5 @@
+pytest
+pytest-sugar
+pytest-mock
+coverage
+mock

@@ -1,7 +1,20 @@
-from lightning_sdk import Studio, Machine
+from lightning_sdk import Machine, Studio
 
-s = Studio("sdk-test-studio-12", "growth", "lightning-ai")
+s = Studio("sdk-test-studio-2", "growth", "lightning-ai", create_ok=True)
+
+print("starting studio...")
 s.start()
-s.switch_machine(Machine.T4)
+print(s.machine)
+
+print("switching studio machine...")
+s.switch_machine(Machine.A10G)
+print(s.machine)
+
+print(s.status)
+
 print(s.run("nvidia-smi"))
+
+print("Stopping Studio")
 s.stop()
+
+s.delete()
