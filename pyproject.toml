@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "lightning>=2.0.0",
+    "lightning-cloud>=0.5.37",
 ]
 dynamic = ["version"]
 
