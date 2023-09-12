@@ -1,4 +1,4 @@
-from lightning.app.utilities.network import LightningClient
+from lightning_cloud.rest_client import LightningClient
 from lightning_cloud.openapi import V1Project
 
 
