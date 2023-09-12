@@ -26,6 +26,7 @@ class StudioApi:
     def __init__(self) -> None:
         super().__init__()
 
+        self._cloud_url = _cloud_url()
         self._client = LightningClient()
 
     def get_studio(
@@ -83,9 +84,7 @@ class StudioApi:
     def start_studio(self, studio_id: str, teamspace_id: str) -> None:
         auth_header = Auth().auth_header
 
-        # TODO Have a constant and a fallback if not set
-        cloud_url = os.environ.get("LIGHTNING_CLOUD_URL")
-        code_url = f"{cloud_url}/v1/projects/{teamspace_id}/cloudspaces/{studio_id}/code/"
+        code_url = f"{self._cloud_url}/v1/projects/{teamspace_id}/cloudspaces/{studio_id}/code/"
 
         while True:
             try:
@@ -131,8 +130,7 @@ class StudioApi:
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Generator[str, None, None]:
         auth_header = Auth().auth_header
 
-        cloud_url = os.environ.get("LIGHTNING_CLOUD_URL")
-        parsed_cloud_url = urlparse(cloud_url)
+        parsed_cloud_url = urlparse(self._cloud_url)
         scheme = "wss" if parsed_cloud_url.scheme == "https" else "ws"
         terminal_url = f"{scheme}://{parsed_cloud_url.netloc}/v1/projects/{teamspace_id}/cloudspaces/{studio_id}/attach"
 
@@ -195,6 +193,11 @@ def _read_output(websocket: ClientConnection) -> Generator[str, None, None]:
 
     websocket.close()
 
+def _cloud_url() -> str:
+    # set cloud url with default url if not set before
+    cloud_url = os.environ.get("LIGHTNING_CLOUD_URL", _DEFAULT_CLOUD_URL)
+    os.environ["LIGHTNING_CLOUD_URL"] = cloud_url
+    return cloud_url
 
 # TODO: This should really come from some kind of metadata service
 # TODO: Add trainium instances once feature flag is lifted
@@ -211,3 +214,5 @@ _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
 }
 
 _COMPUTE_NAME_TO_MACHINE: Dict[str, Machine] = {v: k for k, v in _MACHINE_TO_COMPUTE_NAME.items()}
+
+_DEFAULT_CLOUD_URL="https://lightning.ai:443"

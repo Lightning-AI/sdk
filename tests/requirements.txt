@@ -1,5 +1,6 @@
 pytest
 pytest-sugar
 pytest-mock
+pytest-timeout
 coverage
 mock

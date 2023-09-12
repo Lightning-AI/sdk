@@ -16,6 +16,7 @@ classifiers = [
 ]
 dependencies = [
     "lightning-cloud>=0.5.37",
+    "lightning>=2.0.0",
 ]
 dynamic = ["version"]
 
@@ -113,6 +114,30 @@ convention = "google"
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 
-[pytest]
+[tool.pytest]
 mock_use_standalone_module = true
 mock_traceback_monkeypatch = false
+
+[tool.pytest.ini_options]
+norecursedirs = [
+    ".git",
+    ".github",
+    "dist",
+    "build",
+    "docs",
+]
+addopts = [
+    "--strict-markers",
+    "--doctest-modules",
+    "--color=yes",
+    "--disable-pytest-warnings",
+    "--ignore=legacy/checkpoints",
+]
+markers = [
+    "cloud:Run the cloud tests for example",
+]
+filterwarnings = [
+    "error::FutureWarning",
+]
+xfail_strict = true
+junit_duration_report = "call"
