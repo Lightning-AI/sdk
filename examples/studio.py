@@ -1,6 +1,6 @@
 from lightning_sdk import Machine, Studio
 
-s = Studio("sdk-test-studio-230", "growth", "lightning-ai", create_ok=True)
+s = Studio("my-studio", "default-teamspace", user="einstein", create_ok=True)
 
 print("starting studio...")
 s.start()

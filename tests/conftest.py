@@ -20,11 +20,39 @@ from lightning_cloud.openapi import (
     V1Organization,
     V1Project,
     V1UserRequestedComputeConfig,
+    V1GetUserResponse
 )
 from mock import Mock
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
 _END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
+
+@pytest.fixture
+def internal_user_api_mocker(mocker):
+    def _side_effect_api_call(resource_path,
+        method,
+        path_params=None,
+        query_params=None,
+        header_params=None,
+        body=None,
+        post_params=None,
+        files=None,
+        response_type=None,
+        auth_settings=None,
+        async_req=None,
+        _return_http_data_only=None,
+        collection_formats=None,
+        _preload_content=True,
+        _request_timeout=None,
+        ):
+        if response_type == "V1GetUserResponse":
+            return V1GetUserResponse(username="user-abc")
+
+    mocker.patch("lightning_cloud.openapi.api_client.ApiClient.call_api", side_effect=_side_effect_api_call)
+
+    yield [mocker]
+
+    mocker.resetall()
 
 
 @pytest.fixture
@@ -74,7 +102,7 @@ def internal_teamspace_api_mocker(mocker):
     )
     mocker.patch(
         "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
-        return_value=V1Project(name="ts-abc", display_name="ts-abc"),
+        return_value=V1Project(name="ts-abc", display_name="ts-abc", id="ts-abc"),
         autospec=True,
     )
     yield [mocker]
@@ -172,19 +200,20 @@ def internal_studio_api_mocker_switch_machine(mocker):
 
 @pytest.fixture
 def internal_studio_api_mocker_start_studio(mocker):
-    def side_effect(url: str, **kwargs):
-        assert url.endswith("/v1/projects/ts-abc/cloudspaces/st-abc/code/")
-        return mock.MagicMock()
+
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        autospec=True,
+    )
 
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
-            in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100")
+            requested=Externalv1CloudSpaceInstanceStatus(startup_percentage="100"),
+            in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100"),
         ),
         autospec=True,
     )
-    mocker.patch("requests.get", side_effect=side_effect)
-
     yield [mocker]
 
     mocker.resetall()
@@ -367,7 +396,7 @@ def internal_studio_start_mocker(mocker):
     # use dict here so that it automatically uses global scope. Assignments to variables would introduce shadowing
     status = {"st-abc": None}
 
-    def side_effect_get(url: str, **kwargs):
+    def side_effect_start(self, project_id, id):
         status["st-abc"] = "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
         return mock.MagicMock()
 
@@ -386,7 +415,12 @@ def internal_studio_start_mocker(mocker):
         side_effect=side_effect_status,
         autospec=True,
     )
-    mocker.patch("requests.get", side_effect=side_effect_get)
+
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        side_effect=side_effect_start,
+        autospec=True,
+    )
 
     yield [mocker]
 
@@ -452,11 +486,9 @@ def internal_studio_delete_mocker(mocker, internal_org_api_mocker, internal_team
             if x.id == id:
                 to_pop.append(i)
 
-        print(f"deleting {to_pop}")
         for i in reversed(to_pop):
             existing_studios.pop(i)
 
-        print(existing_studios)
 
         return V1DeleteCloudSpaceResponse()
 
@@ -496,7 +528,7 @@ def internal_studio_switch_mocker(mocker, internal_org_api_mocker, internal_team
     requested_machines = {}
     machines = {"st-abc": V1UserRequestedComputeConfig(name="cpu-4")}
 
-    def side_effect_get(url: str, **kwargs):
+    def side_effect_start(self, project_id, id):
         status["st-abc"] = "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
         return mock.MagicMock()
 
@@ -539,7 +571,11 @@ def internal_studio_switch_mocker(mocker, internal_org_api_mocker, internal_team
         side_effect=side_effect_status,
         autospec=True,
     )
-    mocker.patch("requests.get", side_effect=side_effect_get)
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        side_effect=side_effect_start,
+        autospec=True,
+    )
 
     yield [mocker]
 
