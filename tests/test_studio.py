@@ -25,7 +25,7 @@ def test_studio_init(internal_studio_init_mocker, name, cluster, create_ok):
         return
 
     assert studio.teamspace == "ts-abc"
-    assert studio.org == "org-abc"
+    assert studio.owner == "org-abc"
     assert studio.name == name
 
 
@@ -94,6 +94,7 @@ def test_studio_switch_machine(internal_studio_switch_mocker, internal_studio_in
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
     assert studio.machine is None
+    print(studio.teamspace)
     studio.start()
 
     assert studio.machine == Machine.CPU

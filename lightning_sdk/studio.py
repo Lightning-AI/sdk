@@ -1,22 +1,43 @@
 from typing import Optional
-
 from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.teamspace_api import TeamspaceApi
+from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 
 
 class Studio:
     def __init__(
-        self, name: str, teamspace: str, org: str, cluster: Optional[str] = None, create_ok: bool = True
+        self, name: str, teamspace: str, org: Optional[str] = None, user: Optional[str] = None, cluster: Optional[str] = None, create_ok: bool = True
     ) -> None:
         self._studio_api = StudioApi()
         self._teamspace_api = TeamspaceApi()
         self._org_api = OrgApi()
+        self._user_api = UserApi()
 
-        self._org = self._org_api.get_org(org)
-        self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._org.id)
+        self._org = org
+        self._user = user
+
+        self._owner = None
+
+        if org:
+            self._org = self._org_api.get_org(org)
+            self._owner = self._org
+        else:
+            self._org = None
+
+        if user:
+            self._user = self._user_api.get_user(user)
+            self._owner = self._user
+        else:
+            self._user = None
+
+        if self._owner is None:
+            raise RuntimeError(f"Could not find studio owner {org=}, {user=}")
+
+        self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._owner.id, is_user=self._org is None)
+        
         try:
             self._studio = self._studio_api.get_studio(name, self._teamspace.id)
         except ValueError:
@@ -41,8 +62,8 @@ class Studio:
         return self._teamspace.name
 
     @property
-    def org(self) -> str:
-        return self._org.name
+    def owner(self) -> str:
+        return self._owner.name
 
     @property
     def machine(self) -> Optional[Machine]:

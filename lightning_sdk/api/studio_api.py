@@ -82,18 +82,7 @@ class StudioApi:
         )
 
     def start_studio(self, studio_id: str, teamspace_id: str) -> None:
-        auth_header = Auth().auth_header
-
-        code_url = f"{self._cloud_url}/v1/projects/{teamspace_id}/cloudspaces/{studio_id}/code/"
-
-        while True:
-            try:
-                response = requests.get(code_url, headers={"Authorization": auth_header})
-                response.raise_for_status()
-                break
-            except requests.HTTPError:
-                time.sleep(1)
-                continue
+        self._client.cloud_space_service_start_cloud_space_instance(teamspace_id, studio_id)
 
         while int(self.get_studio_status(studio_id, teamspace_id).in_use.startup_percentage) < 100:
             time.sleep(1)
