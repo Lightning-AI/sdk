@@ -6,12 +6,14 @@ from typing import Protocol, runtime_checkable
 
 
 class UserApi:
+    """Internal API Client for user requests (mainly http requests)"""
     def __init__(self) -> None:
         super().__init__()
 
         self._client = LightningClient()
 
     def get_user(self, name: str) -> V1GetUserResponse:
+        """Gets the user and asserts that it's the same one as the currently logged-in user to avoid accessing someone elses Studios"""
         auth = Auth()
         auth.authenticate()
         user_id = auth.user_id
