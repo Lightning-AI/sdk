@@ -1,7 +1,7 @@
 from lightning_sdk.machine import Machine
+from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
-from lightning_sdk.teamspace import Teamspace
 
-__all__ = ["Machine", "Studio", "Teamspace"]
+__all__ = ["Machine", "Status", "Studio"]
 
 __version__ = "0.0.1alpha"

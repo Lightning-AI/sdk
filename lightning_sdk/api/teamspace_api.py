@@ -4,9 +4,8 @@ from lightning_cloud.openapi import V1Project
 
 
 class TeamspaceApi:
+    """Internal API client for Teamspace requests (mainly http requests)"""
     def __init__(self) -> None:
-        super().__init__()
-
         self._client = LightningClient()
 
     def get_teamspace(
@@ -15,6 +14,7 @@ class TeamspaceApi:
         owner_id: str,
         is_user: bool
     ) -> V1Project:
+        """get the current teamspace from the owner"""
         kwargs = {}
 
         if is_user:
