@@ -135,7 +135,8 @@ class Studio:
     def run(self, *commands: str) -> str:
         """Runs given commands on the Studio.
 
-        commands: the commands to run on the Studio in sequence.
+        Args:
+            commands: the commands to run on the Studio in sequence.
 
         """
         status = self.status
@@ -145,7 +146,7 @@ class Studio:
 
 
 def _internal_status_to_external_status(internal_status: str):
-    """converts internal status strings from HTTP requests to external enums"""
+    """Converts internal status strings from HTTP requests to external enums"""
     return {
         # don't get a status if no instance alive
         None: Status.Stopped,

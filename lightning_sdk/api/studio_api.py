@@ -23,7 +23,7 @@ from lightning_sdk.machine import Machine
 
 
 class StudioApi:
-    """Internal API Client for studio requests (mainly http requests)"""
+    """Internal API client for Studio requests (mainly http requests)"""
     def __init__(self) -> None:
         super().__init__()
 
@@ -35,7 +35,7 @@ class StudioApi:
         name: str,
         teamspace_id: str,
     ) -> V1CloudSpace:
-        """gets the current studio corresponding to the given name in the given teamspace"""
+        """Gets the current studio corresponding to the given name in the given teamspace"""
         res = self._client.cloud_space_service_list_cloud_spaces(project_id=teamspace_id)
         _studio = [el for el in res.cloudspaces if el.display_name == name or el.name == name]
         if not _studio:
@@ -48,7 +48,7 @@ class StudioApi:
         teamspace_id: str,
         cluster: Optional[str] = None,
     ) -> V1CloudSpace:
-        """create a studio with a given name in a given teamspace on a possibly given cluster"""
+        """Create a Studio with a given name in a given Teamspace on a possibly given cluster"""
         body = ProjectIdCloudspacesBody(
             cluster_id=cluster,
             name=name,
@@ -79,21 +79,21 @@ class StudioApi:
         return studio
 
     def get_studio_status(self, studio_id: str, teamspace_id: str) -> V1GetCloudSpaceInstanceStatusResponse:
-        """gets the current (internal) studio status"""
+        """Gets the current (internal) Studio status"""
         return self._client.cloud_space_service_get_cloud_space_instance_status(
             project_id=teamspace_id,
             id=studio_id,
         )
 
     def start_studio(self, studio_id: str, teamspace_id: str) -> None:
-        """start an existing studio"""
+        """Start an existing Studio"""
         self._client.cloud_space_service_start_cloud_space_instance(teamspace_id, studio_id)
 
         while int(self.get_studio_status(studio_id, teamspace_id).in_use.startup_percentage) < 100:
             time.sleep(1)
 
     def stop_studio(self, studio_id: str, teamspace_id: str) -> None:
-        """stop an existing studio"""
+        """Stop an existing Studio"""
         # TODO: Wait for it to be stopped? This would match the time a user actually pays for an instance then
         self._client.cloud_space_service_stop_cloud_space_instance(
             project_id=teamspace_id,
@@ -101,7 +101,7 @@ class StudioApi:
         )
 
     def switch_studio_machine(self, studio_id: str, teamspace_id: str, machine: Machine) -> None:
-        """switches given studio to a new machine type"""
+        """Switches given Studio to a new machine type"""
         compute_name = _MACHINE_TO_COMPUTE_NAME[machine]
         # TODO: UI sends disk size here, maybe we need to also?
         body = IdCodeconfigBody(compute_config=V1UserRequestedComputeConfig(name=compute_name))
@@ -117,14 +117,14 @@ class StudioApi:
         self._client.cloud_space_service_switch_cloud_space_instance(teamspace_id, studio_id)
 
     def get_machine(self, studio_id: str, teamspace_id: str) -> Machine:
-        """get the current machine type the given studio is running on"""
+        """Get the current machine type the given Studio is running on"""
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
             project_id=teamspace_id, id=studio_id
         )
         return _COMPUTE_NAME_TO_MACHINE[response.compute_config.name]
 
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Generator[str, None, None]:
-        """run given commands in a given studio"""
+        """Run given commands in a given Studio"""
         auth_header = Auth().auth_header
 
         parsed_cloud_url = urlparse(self._cloud_url)
@@ -148,7 +148,7 @@ class StudioApi:
         return _read_output(websocket)
 
     def delete_studio(self, studio_id: str, teamspace_id: str):
-        """delete existing given studio"""
+        """Delete existing given Studio"""
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
 
 

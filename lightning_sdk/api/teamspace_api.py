@@ -4,7 +4,7 @@ from lightning_cloud.openapi import V1Project
 
 
 class TeamspaceApi:
-    """Internal API Client for teamspace requests (mainly http requests)"""
+    """Internal API client for Teamspace requests (mainly http requests)"""
     def __init__(self) -> None:
         self._client = LightningClient()
 
