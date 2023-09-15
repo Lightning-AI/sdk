@@ -87,7 +87,7 @@ class Studio:
         self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
 
     def duplicate(self) -> "Studio":
-        ...
+        raise NotImplementedError("Message us on Discord or Slack to request this feature!")
 
     def switch_machine(self, machine: Machine) -> None:
         status = self.status
