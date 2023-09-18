@@ -113,8 +113,9 @@ class Studio:
         self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
 
     def duplicate(self) -> "Studio":
-        """Duplicates the existing Studio"""
-        raise NotImplementedError("Message us on Discord or Slack to request this feature!")
+        """Duplicates the existing Studio to the same teamspace"""
+        kwargs = self._studio_api.duplicate_studio(self._studio.id, self._teamspace._id, self._teamspace.id)
+        return Studio(**kwargs)
 
     def switch_machine(self, machine: Machine) -> None:
         """Switches machine to the provied machine type/
@@ -143,6 +144,7 @@ class Studio:
         if status != Status.Running:
             raise RuntimeError(f"Cannot run a command in a studio that is not running. Studio {self.name} is {status}.")
         return "".join(self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)).strip()
+
 
 
 def _internal_status_to_external_status(internal_status: str):
