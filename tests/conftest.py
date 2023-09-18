@@ -90,7 +90,9 @@ def internal_teamspace_api_mocker(mocker):
     )
     mocker.patch(
         "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
-        return_value=V1Project(id="ts-abc", name="ts-abc", display_name="ts-abc", owner_id="org-abc", owner_type="organization"),
+        return_value=V1Project(
+            id="ts-abc", name="ts-abc", display_name="ts-abc", owner_id="org-abc", owner_type="organization"
+        ),
         autospec=True,
     )
     yield [mocker]
