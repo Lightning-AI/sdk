@@ -12,20 +12,17 @@ concurrency:
 
 jobs:
   check-code:
-    runs-on: [self-hosted, spot-self-hosted]
     uses: Lightning-AI/utilities/.github/workflows/check-code.yml@v0.9.0
     with:
       actions-ref: main
       extra-typing: typing
 
   check-schema:
-    runs-on: [self-hosted, spot-self-hosted]
     uses: Lightning-AI/utilities/.github/workflows/check-schema.yml@v0.9.0
     with:
       azure-dir: ''
 
   check-package:
-    runs-on: [self-hosted, spot-self-hosted]
     if: github.event.pull_request.draft == false
     uses: Lightning-AI/utilities/.github/workflows/check-package.yml@v0.9.0
     with:
