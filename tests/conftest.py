@@ -90,7 +90,7 @@ def internal_teamspace_api_mocker(mocker):
     )
     mocker.patch(
         "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
-        return_value=V1Project(name="ts-abc", display_name="ts-abc", id="ts-abc"),
+        return_value=V1Project(id="ts-abc", name="ts-abc", display_name="ts-abc", owner_id="org-abc", owner_type="organization"),
         autospec=True,
     )
     yield [mocker]
@@ -659,13 +659,6 @@ def internal_studio_run_mocker(mocker):
 
 @pytest.fixture
 def internal_studio_duplicate_mocker(mocker):
-    mocker.patch(
-        "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
-        return_value=V1Project(
-            id="ts-abc", name="ts-abc", display_name="ts-abc", owner_id="org-abc", owner_type="organization"
-        ),
-        autospec=True,
-    )
     mocker.patch(
         "lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
         return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"),
