@@ -20,7 +20,8 @@ from lightning_cloud.openapi import (
     V1Organization,
     V1Project,
     V1UserRequestedComputeConfig,
-    V1GetUserResponse
+    V1SearchUser,
+    V1SearchUsersResponse
 )
 from mock import Mock
 
@@ -29,26 +30,8 @@ _END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
 
 @pytest.fixture
 def internal_user_api_mocker(mocker):
-    def _side_effect_api_call(resource_path,
-        method,
-        path_params=None,
-        query_params=None,
-        header_params=None,
-        body=None,
-        post_params=None,
-        files=None,
-        response_type=None,
-        auth_settings=None,
-        async_req=None,
-        _return_http_data_only=None,
-        collection_formats=None,
-        _preload_content=True,
-        _request_timeout=None,
-        ):
-        if response_type == "V1GetUserResponse":
-            return V1GetUserResponse(username="user-abc")
 
-    mocker.patch("lightning_cloud.openapi.api_client.ApiClient.call_api", side_effect=_side_effect_api_call)
+    mocker.patch("lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users", return_value=V1SearchUsersResponse(users=[V1SearchUser(username="user-abc"), V1SearchUser(username="user-abc-de")]))
 
     yield [mocker]
 
@@ -302,6 +285,26 @@ def internal_studio_api_mocker_get_machine(mocker):
         autospec=True,
         side_effect=_side_effect,
     )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+@pytest.fixture
+def internal_studio_api_mocker_duplicate_user(mocker):
+    mocker.patch("lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project", return_value=V1Project(id="ts-abc", name="teamspace-abc", display_name="Teamspace ABC", owner_id="user-abc", owner_type="user"), autospec=True)
+    mocker.patch("lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users", return_value=V1SearchUsersResponse(users=[V1SearchUser(id="user-abc", username="user-abc")]), autospec=True)
+    mocker.patch("lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space", return_value=V1CloudSpace(name="st-abc-de", display_name='st-abc-de', id="st-abc-de"), autospec=True)
+
+    yield [mocker]
+
+    mocker.resetall()
+
+@pytest.fixture
+def internal_studio_api_mocker_duplicate_org(mocker):
+    mocker.patch("lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project", return_value=V1Project(id="ts-abc", name="teamspace-abc", display_name="Teamspace ABC", owner_id="org-abc", owner_type="organization"), autospec=True)
+    mocker.patch("lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization", return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"), autospec=True)
+    mocker.patch("lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space", return_value=V1CloudSpace(name="st-abc-de", display_name='st-abc-de', id="st-abc-de"), autospec=True)
 
     yield [mocker]
 

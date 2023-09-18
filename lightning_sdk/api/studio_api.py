@@ -16,6 +16,7 @@ from lightning_cloud.openapi import (
     V1CloudSpaceInstanceConfig,
     V1GetCloudSpaceInstanceStatusResponse,
     V1UserRequestedComputeConfig,
+    IdForkBody
 )
 from websockets.sync.client import ClientConnection, connect
 
@@ -146,6 +147,22 @@ class StudioApi:
         websocket.send(command)
 
         return _read_output(websocket)
+
+    def duplicate_studio(self, studio_id: str, teamspace_id: str, target_teamspace_id: str):
+        """Duplicates the given Studio from a given Teamspace into a given target Teamspace"""
+        target_teamspace = self._client.projects_service_get_project(target_teamspace_id)
+        init_kwargs = {}
+        if target_teamspace.owner_type == "user":
+            from lightning_sdk.api.user_api import UserApi
+            init_kwargs["user"] = UserApi()._get_user_by_id(target_teamspace.owner_id).username
+        elif target_teamspace.owner_type == "organization":
+            from lightning_sdk.api.org_api import OrgApi
+            init_kwargs["org"] = OrgApi()._get_org_by_id(target_teamspace.owner_id).name
+
+        new_cloudspace = self._client.cloud_space_service_fork_cloud_space(IdForkBody(target_project_id=target_teamspace_id), project_id=teamspace_id, id=studio_id)
+        init_kwargs["name"] = new_cloudspace.name
+        init_kwargs["teamspace"] = target_teamspace.name
+        return init_kwargs
 
     def delete_studio(self, studio_id: str, teamspace_id: str):
         """Delete existing given Studio"""

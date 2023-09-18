@@ -101,3 +101,15 @@ def test_get_machine(internal_studio_api_mocker_get_machine, name, expected_mach
 
     assert isinstance(machine, Machine)
     assert expected_machine == machine
+
+def test_duplicate_user(internal_studio_api_mocker_duplicate_user):
+    studio_api = StudioApi()
+    kwargs = studio_api.duplicate_studio("st-abc", "ts-abc", "ts-abc")
+
+    assert kwargs == {"name": "st-abc-de", "teamspace": "teamspace-abc", "user": "user-abc"}
+
+def test_duplicate_org(internal_studio_api_mocker_duplicate_org):
+    studio_api = StudioApi()
+    kwargs = studio_api.duplicate_studio("st-abc", "ts-abc", "ts-abc")
+
+    assert kwargs == {"name": "st-abc-de", "teamspace": "teamspace-abc", "org": "org-abc"}

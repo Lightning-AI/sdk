@@ -29,3 +29,6 @@ class TeamspaceApi:
         project_id = _membership[0].project_id
         self._client.projects_service_list_memberships()
         return self._client.projects_service_get_project(project_id)
+
+    def _get_teamspace_by_id(self, id: str) -> V1Project:
+        return self._client.projects_service_get_project(id)
