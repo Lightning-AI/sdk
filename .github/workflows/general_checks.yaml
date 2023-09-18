@@ -12,18 +12,15 @@ concurrency:
 
 jobs:
   check-code:
-    id: check_code
     uses: Lightning-AI/utilities/.github/workflows/check-code.yml@v0.9.0
     with:
       actions-ref: main
       extra-typing: typing
 
   check-schema:
-    id: check_schema
     uses: Lightning-AI/utilities/.github/workflows/check-schema.yml@v0.9.0
 
   check-package:
-    id: check_package
     if: github.event.pull_request.draft == false
     uses: Lightning-AI/utilities/.github/workflows/check-package.yml@v0.9.0
     with:
