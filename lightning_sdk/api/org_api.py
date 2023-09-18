@@ -4,7 +4,7 @@ from lightning_cloud.rest_client import LightningClient
 
 
 class OrgApi:
-    """Internal API client for org requests (mainly http requests)"""
+    """Internal API client for org requests (mainly http requests)."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -13,7 +13,7 @@ class OrgApi:
         self._client = OrganizationsServiceApi(api_client=LightningClient().api_client)
 
     def get_org(self, name: str) -> V1Organization:
-        """Gets the organization from the given name"""
+        """Gets the organization from the given name."""
         auth = Auth()
         auth.authenticate()
         user_id = auth.user_id
@@ -23,6 +23,6 @@ class OrgApi:
             raise ValueError(f"Org {name} does not exist")
         return org[0]
 
-    def _get_org_by_id(self, id: str) -> V1Organization:
-        """Gets the organization from the given ID"""
-        return self._client.organizations_service_get_organization(id)
+    def _get_org_by_id(self, org_id: str) -> V1Organization:
+        """Gets the organization from the given ID."""
+        return self._client.organizations_service_get_organization(org_id)
