@@ -152,3 +152,8 @@ def test_action_in_wrong_state(
             RuntimeError, match=f"Cannot stop a studio that is not running. Studio {name} is {expected_state}"
         ):
             studio.stop()
+
+
+def test_duplicate(internal_studio_init_mocker, internal_studio_duplicate_mocker):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+    new_studio = studio.duplicate()
