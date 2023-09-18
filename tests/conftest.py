@@ -19,19 +19,24 @@ from lightning_cloud.openapi import (
     V1Membership,
     V1Organization,
     V1Project,
-    V1UserRequestedComputeConfig,
     V1SearchUser,
-    V1SearchUsersResponse
+    V1SearchUsersResponse,
+    V1UserRequestedComputeConfig,
 )
 from mock import Mock
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
 _END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
 
+
 @pytest.fixture
 def internal_user_api_mocker(mocker):
-
-    mocker.patch("lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users", return_value=V1SearchUsersResponse(users=[V1SearchUser(username="user-abc"), V1SearchUser(username="user-abc-de")]))
+    mocker.patch(
+        "lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users",
+        return_value=V1SearchUsersResponse(
+            users=[V1SearchUser(username="user-abc"), V1SearchUser(username="user-abc-de")]
+        ),
+    )
 
     yield [mocker]
 
@@ -183,7 +188,6 @@ def internal_studio_api_mocker_switch_machine(mocker):
 
 @pytest.fixture
 def internal_studio_api_mocker_start_studio(mocker):
-
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
         autospec=True,
@@ -290,21 +294,55 @@ def internal_studio_api_mocker_get_machine(mocker):
 
     mocker.resetall()
 
+
 @pytest.fixture
 def internal_studio_api_mocker_duplicate_user(mocker):
-    mocker.patch("lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project", return_value=V1Project(id="ts-abc", name="teamspace-abc", display_name="Teamspace ABC", owner_id="user-abc", owner_type="user"), autospec=True)
-    mocker.patch("lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users", return_value=V1SearchUsersResponse(users=[V1SearchUser(id="user-abc", username="user-abc")]), autospec=True)
-    mocker.patch("lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space", return_value=V1CloudSpace(name="st-abc-de", display_name='st-abc-de', id="st-abc-de"), autospec=True)
+    mocker.patch(
+        "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+        return_value=V1Project(
+            id="ts-abc", name="teamspace-abc", display_name="Teamspace ABC", owner_id="user-abc", owner_type="user"
+        ),
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users",
+        return_value=V1SearchUsersResponse(users=[V1SearchUser(id="user-abc", username="user-abc")]),
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
+        return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
+        autospec=True,
+    )
 
     yield [mocker]
 
     mocker.resetall()
 
+
 @pytest.fixture
 def internal_studio_api_mocker_duplicate_org(mocker):
-    mocker.patch("lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project", return_value=V1Project(id="ts-abc", name="teamspace-abc", display_name="Teamspace ABC", owner_id="org-abc", owner_type="organization"), autospec=True)
-    mocker.patch("lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization", return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"), autospec=True)
-    mocker.patch("lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space", return_value=V1CloudSpace(name="st-abc-de", display_name='st-abc-de', id="st-abc-de"), autospec=True)
+    mocker.patch(
+        "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+        return_value=V1Project(
+            id="ts-abc",
+            name="teamspace-abc",
+            display_name="Teamspace ABC",
+            owner_id="org-abc",
+            owner_type="organization",
+        ),
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
+        return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"),
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
+        return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
+        autospec=True,
+    )
 
     yield [mocker]
 
@@ -492,7 +530,6 @@ def internal_studio_delete_mocker(mocker, internal_org_api_mocker, internal_team
         for i in reversed(to_pop):
             existing_studios.pop(i)
 
-
         return V1DeleteCloudSpaceResponse()
 
     mocker.patch(
@@ -619,11 +656,26 @@ def internal_studio_run_mocker(mocker):
 
     mocker.resetall()
 
+
 @pytest.fixture
 def internal_studio_duplicate_mocker(mocker):
-    mocker.patch("lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project", return_value=V1Project(id="ts-abc", name="ts-abc", display_name="ts-abc", owner_id="org-abc", owner_type="organization"), autospec=True)
-    mocker.patch("lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization", return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"), autospec=True)
-    mocker.patch("lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space", return_value=V1CloudSpace(name="st-abc-de", display_name='st-abc-de', id="st-abc-de"), autospec=True)
+    mocker.patch(
+        "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+        return_value=V1Project(
+            id="ts-abc", name="ts-abc", display_name="ts-abc", owner_id="org-abc", owner_type="organization"
+        ),
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
+        return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"),
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
+        return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
+        autospec=True,
+    )
 
     yield [mocker]
 

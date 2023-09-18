@@ -1,10 +1,11 @@
-from lightning_cloud.rest_client import LightningClient
 from lightning_cloud.login import Auth
 from lightning_cloud.openapi import OrganizationsServiceApi, V1Organization
+from lightning_cloud.rest_client import LightningClient
 
 
 class OrgApi:
     """Internal API client for org requests (mainly http requests)"""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -25,4 +26,3 @@ class OrgApi:
     def _get_org_by_id(self, id: str) -> V1Organization:
         """Gets the organization from the given ID"""
         return self._client.organizations_service_get_organization(id)
-

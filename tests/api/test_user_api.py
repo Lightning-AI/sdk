@@ -12,7 +12,7 @@ def test_user_api(internal_user_api_mocker, monkeypatch):
 
 
 def test_user_api_valueerror(internal_user_api_mocker, monkeypatch):
-    monkeypatch.setenv('LIGHTNING_USERNAME', 'other-dummy')
+    monkeypatch.setenv("LIGHTNING_USERNAME", "other-dummy")
     user_api = UserApi()
 
     with pytest.raises(ValueError, match="User xyz does not exist"):

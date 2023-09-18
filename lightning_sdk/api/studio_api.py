@@ -6,18 +6,18 @@ from typing import Dict, Generator, Optional
 from urllib.parse import urlparse
 
 import requests
-from lightning_cloud.rest_client import LightningClient
 from lightning_cloud.login import Auth
 from lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
     IdCodeconfigBody,
+    IdForkBody,
     ProjectIdCloudspacesBody,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
     V1GetCloudSpaceInstanceStatusResponse,
     V1UserRequestedComputeConfig,
-    IdForkBody
 )
+from lightning_cloud.rest_client import LightningClient
 from websockets.sync.client import ClientConnection, connect
 
 from lightning_sdk.machine import Machine
@@ -25,6 +25,7 @@ from lightning_sdk.machine import Machine
 
 class StudioApi:
     """Internal API client for Studio requests (mainly http requests)"""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -154,12 +155,16 @@ class StudioApi:
         init_kwargs = {}
         if target_teamspace.owner_type == "user":
             from lightning_sdk.api.user_api import UserApi
+
             init_kwargs["user"] = UserApi()._get_user_by_id(target_teamspace.owner_id).username
         elif target_teamspace.owner_type == "organization":
             from lightning_sdk.api.org_api import OrgApi
+
             init_kwargs["org"] = OrgApi()._get_org_by_id(target_teamspace.owner_id).name
 
-        new_cloudspace = self._client.cloud_space_service_fork_cloud_space(IdForkBody(target_project_id=target_teamspace_id), project_id=teamspace_id, id=studio_id)
+        new_cloudspace = self._client.cloud_space_service_fork_cloud_space(
+            IdForkBody(target_project_id=target_teamspace_id), project_id=teamspace_id, id=studio_id
+        )
         init_kwargs["name"] = new_cloudspace.name
         init_kwargs["teamspace"] = target_teamspace.name
         return init_kwargs
@@ -209,11 +214,13 @@ def _read_output(websocket: ClientConnection) -> Generator[str, None, None]:
 
     websocket.close()
 
+
 def _cloud_url() -> str:
     # set cloud url with default url if not set before
     cloud_url = os.environ.get("LIGHTNING_CLOUD_URL", _DEFAULT_CLOUD_URL)
     os.environ["LIGHTNING_CLOUD_URL"] = cloud_url
     return cloud_url
+
 
 # TODO: This should really come from some kind of metadata service
 # TODO: Add trainium instances once feature flag is lifted
@@ -231,4 +238,4 @@ _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
 
 _COMPUTE_NAME_TO_MACHINE: Dict[str, Machine] = {v: k for k, v in _MACHINE_TO_COMPUTE_NAME.items()}
 
-_DEFAULT_CLOUD_URL="https://lightning.ai:443"
+_DEFAULT_CLOUD_URL = "https://lightning.ai:443"

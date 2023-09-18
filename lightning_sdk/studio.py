@@ -1,4 +1,5 @@
 from typing import Optional
+
 from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.teamspace_api import TeamspaceApi
@@ -8,7 +9,7 @@ from lightning_sdk.status import Status
 
 
 class Studio:
-    """ A single Lightning AI Studio.
+    """A single Lightning AI Studio.
     Allows to fully control a studio, including retrieving the status, running commands and switching machine types.
 
     Args:
@@ -22,8 +23,15 @@ class Studio:
     Note:
         Since a teamspace can either be owned by an org or by a user directly, only one of the arguments can be provided.
     """
+
     def __init__(
-        self, name: str, teamspace: str, org: Optional[str] = None, user: Optional[str] = None, cluster: Optional[str] = None, create_ok: bool = True
+        self,
+        name: str,
+        teamspace: str,
+        org: Optional[str] = None,
+        user: Optional[str] = None,
+        cluster: Optional[str] = None,
+        create_ok: bool = True,
     ) -> None:
         self._studio_api = StudioApi()
         self._teamspace_api = TeamspaceApi()
@@ -55,7 +63,7 @@ class Studio:
             raise RuntimeError(f"Could not find studio owner {org=}, {user=}")
 
         self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._owner.id, is_user=self._org is None)
-        
+
         try:
             self._studio = self._studio_api.get_studio(name, self._teamspace.id)
         except ValueError:
@@ -144,7 +152,6 @@ class Studio:
         if status != Status.Running:
             raise RuntimeError(f"Cannot run a command in a studio that is not running. Studio {self.name} is {status}.")
         return "".join(self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)).strip()
-
 
 
 def _internal_status_to_external_status(internal_status: str):
