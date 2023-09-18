@@ -3,13 +3,13 @@ from lightning_cloud.rest_client import LightningClient
 
 
 class TeamspaceApi:
-    """Internal API client for Teamspace requests (mainly http requests)"""
+    """Internal API client for Teamspace requests (mainly http requests)."""
 
     def __init__(self) -> None:
         self._client = LightningClient()
 
     def get_teamspace(self, name: str, owner_id: str, is_user: bool) -> V1Project:
-        """get the current teamspace from the owner"""
+        """Get the current teamspace from the owner."""
         kwargs = {}
 
         if is_user:
@@ -25,5 +25,5 @@ class TeamspaceApi:
         self._client.projects_service_list_memberships()
         return self._client.projects_service_get_project(project_id)
 
-    def _get_teamspace_by_id(self, id: str) -> V1Project:
-        return self._client.projects_service_get_project(id)
+    def _get_teamspace_by_id(self, teamspace_id: str) -> V1Project:
+        return self._client.projects_service_get_project(teamspace_id)

@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Machine(Enum):
-    """Enum holding all supported machine types for studios"""
+    """Enum holding all supported machine types for studios."""
 
     CPU = "CPU"
     DATA_PREP = "DATA_PREP"

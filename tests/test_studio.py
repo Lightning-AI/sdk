@@ -13,10 +13,7 @@ from lightning_sdk.studio import Studio
 def test_studio_init(internal_studio_init_mocker, name, cluster, create_ok):
     # st-xyz does not exist and should not be created
     error_out = bool(name == "st-xyz" and not create_ok)
-    if error_out:
-        contextman = pytest.raises(ValueError, match="Studio st-xyz does not exist")
-    else:
-        contextman = nullcontext()
+    contextman = pytest.raises(ValueError, match="Studio st-xyz does not exist") if error_out else nullcontext()
 
     with contextman:
         studio = Studio(name=name, teamspace="ts-abc", org="org-abc", cluster=cluster, create_ok=create_ok)
@@ -30,7 +27,7 @@ def test_studio_init(internal_studio_init_mocker, name, cluster, create_ok):
 
 
 @pytest.mark.parametrize(
-    "name,expected_status",
+    ("name", "expected_status"),
     [
         ("st-abc", Status.Pending),
         ("st-def", Status.Pending),
@@ -112,7 +109,7 @@ def test_run_command(internal_studio_init_mocker, internal_studio_run_mocker):
 
 
 @pytest.mark.parametrize(
-    "name,expected_state,forbidden_actions",
+    ("name", "expected_state", "forbidden_actions"),
     [
         ("st-def", Status.Pending, ["start", "switch", "run"]),
         ("st-ghi", Status.Running, ["start"]),
@@ -156,4 +153,4 @@ def test_action_in_wrong_state(
 
 def test_duplicate(internal_studio_init_mocker, internal_studio_duplicate_mocker):
     studio = Studio("st-abc", "ts-abc", "org-abc")
-    new_studio = studio.duplicate()
+    studio.duplicate()

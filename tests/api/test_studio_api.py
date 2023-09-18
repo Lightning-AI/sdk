@@ -81,7 +81,7 @@ def test_delete_studio(internal_studio_api_mocker_delete):
 
 
 @pytest.mark.parametrize(
-    "name,expected_machine",
+    ("name", "expected_machine"),
     [
         ("st-abc", Machine.CPU),
         ("st-def", Machine.DATA_PREP),
