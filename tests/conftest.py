@@ -313,6 +313,19 @@ def internal_studio_api_mocker_duplicate_user(mocker):
         autospec=True,
     )
 
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        return_value=V1GetCloudSpaceInstanceStatusResponse(
+            in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100", sync_in_progress=False)
+        ),
+        autospec=True,
+    )
+
     yield [mocker]
 
     mocker.resetall()
@@ -339,6 +352,19 @@ def internal_studio_api_mocker_duplicate_org(mocker):
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
         return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
+        autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        return_value=V1GetCloudSpaceInstanceStatusResponse(
+            in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100", sync_in_progress=False)
+        ),
         autospec=True,
     )
 
@@ -669,6 +695,19 @@ def internal_studio_duplicate_mocker(mocker):
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
         return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
+        autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        return_value=V1GetCloudSpaceInstanceStatusResponse(
+            in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100", sync_in_progress=False)
+        ),
+        autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
         autospec=True,
     )
 

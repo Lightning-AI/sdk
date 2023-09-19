@@ -91,6 +91,9 @@ class StudioApi:
         """Start an existing Studio."""
         self._client.cloud_space_service_start_cloud_space_instance(teamspace_id, studio_id)
 
+        while self.get_studio_status(studio_id, teamspace_id).in_use.sync_in_progress:
+            time.sleep(1)
+
         while int(self.get_studio_status(studio_id, teamspace_id).in_use.startup_percentage) < 100:
             time.sleep(1)
 
@@ -165,8 +168,11 @@ class StudioApi:
         new_cloudspace = self._client.cloud_space_service_fork_cloud_space(
             IdForkBody(target_project_id=target_teamspace_id), project_id=teamspace_id, id=studio_id
         )
+
         init_kwargs["name"] = new_cloudspace.name
         init_kwargs["teamspace"] = target_teamspace.name
+
+        self.start_studio(new_cloudspace.id, target_teamspace_id)
         return init_kwargs
 
     def delete_studio(self, studio_id: str, teamspace_id: str) -> None:
