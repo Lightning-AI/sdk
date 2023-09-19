@@ -169,6 +169,9 @@ class StudioApi:
             IdForkBody(target_project_id=target_teamspace_id), project_id=teamspace_id, id=studio_id
         )
 
+        while new_cloudspace.state != "CLOUD_SPACE_STATE_READY":
+            time.sleep(1)
+
         init_kwargs["name"] = new_cloudspace.name
         init_kwargs["teamspace"] = target_teamspace.name
 
