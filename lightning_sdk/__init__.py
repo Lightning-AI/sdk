@@ -4,4 +4,4 @@ from lightning_sdk.studio import Studio
 
 __all__ = ["Machine", "Status", "Studio"]
 
-__version__ = "0.0.1alpha"
+__version__ = "0.0.1alpha1"
