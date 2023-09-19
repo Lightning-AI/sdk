@@ -168,7 +168,7 @@ class StudioApi:
         new_cloudspace = self._client.cloud_space_service_fork_cloud_space(
             IdForkBody(target_project_id=target_teamspace_id), project_id=teamspace_id, id=studio_id
         )
-        
+
         init_kwargs["name"] = new_cloudspace.name
         init_kwargs["teamspace"] = target_teamspace.name
 
