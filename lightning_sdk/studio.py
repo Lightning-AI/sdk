@@ -1,4 +1,5 @@
 from typing import Optional
+
 from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.teamspace_api import TeamspaceApi
@@ -8,22 +9,34 @@ from lightning_sdk.status import Status
 
 
 class Studio:
-    """ A single Lightning AI Studio.
-    Allows to fully control a studio, including retrieving the status, running commands and switching machine types.
+    """A single Lightning AI Studio.
+
+    Allows to fully control a studio, including retrieving the status, running commands
+    and switching machine types.
 
     Args:
         name: the name of the studio
         teamspace: the name of the teamspace the studio is contained by
         org: the name of the organization owning the :param`teamspace` in case it is owned by an org
         user: the name of the user owning the :param`teamspace` in case it is owned directly by a user instead of an org
-        cluster: the name of the cluster, the studio should be created on. Doesn't matter when the studio already exists.
+        cluster: the name of the cluster, the studio should be created on.
+            Doesn't matter when the studio already exists.
         create_ok: whether the studio will be created if it does not yet exist. Defaults to True
 
     Note:
-        Since a teamspace can either be owned by an org or by a user directly, only one of the arguments can be provided.
+        Since a teamspace can either be owned by an org or by a user directly,
+        only one of the arguments can be provided.
+
     """
+
     def __init__(
-        self, name: str, teamspace: str, org: Optional[str] = None, user: Optional[str] = None, cluster: Optional[str] = None, create_ok: bool = True
+        self,
+        name: str,
+        teamspace: str,
+        org: Optional[str] = None,
+        user: Optional[str] = None,
+        cluster: Optional[str] = None,
+        create_ok: bool = True,
     ) -> None:
         self._studio_api = StudioApi()
         self._teamspace_api = TeamspaceApi()
@@ -55,23 +68,27 @@ class Studio:
             raise RuntimeError(f"Could not find studio owner {org=}, {user=}")
 
         self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._owner.id, is_user=self._org is None)
-        
+
         try:
             self._studio = self._studio_api.get_studio(name, self._teamspace.id)
-        except ValueError:
+        except ValueError as e:
             if create_ok:
                 self._studio = self._studio_api.create_studio(name, self._teamspace.id, cluster=self._cluster)
             else:
-                raise ValueError(f"Studio {name} does not exist.")
+                raise ValueError(f"Studio {name} does not exist.") from e
 
     @property
     def name(self) -> str:
-        """Returns the name of the studio"""
+        """Returns the name of the studio."""
         return self._studio.name
 
     @property
     def status(self) -> Status:
-        """Returns the Status of the Studio. Can be one of { NotCreated | Pending | Running | Stopping | Stopped | Failed }"""
+        """Returns the Status of the Studio.
+
+        Can be one of { NotCreated | Pending | Running | Stopping | Stopped | Failed }
+
+        """
         internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
         return _internal_status_to_external_status(
             internal_status.phase if internal_status is not None else internal_status
@@ -79,51 +96,52 @@ class Studio:
 
     @property
     def teamspace(self) -> str:
-        """Returns the name of the Teamspace"""
+        """Returns the name of the Teamspace."""
         return self._teamspace.name
 
     @property
     def owner(self) -> str:
-        """Returns the name of the owner (either user or org)"""
+        """Returns the name of the owner (either user or org)."""
         return self._owner.name
 
     @property
     def machine(self) -> Optional[Machine]:
-        """Returns the current machine type the Studio is running on"""
+        """Returns the current machine type the Studio is running on."""
         if self.status != Status.Running:
             return None
         return self._studio_api.get_machine(self._studio.id, self._teamspace.id)
 
     def start(self) -> None:
-        """Starts a Studio on the default machine type (CPU-4)"""
+        """Starts a Studio on the default machine type (CPU-4)."""
         status = self.status
         if status != Status.Stopped:
             raise RuntimeError(f"Cannot start a studio that is not stopped. Studio {self.name} is {status}.")
         self._studio_api.start_studio(self._studio.id, self._teamspace.id)
 
     def stop(self) -> None:
-        """Stops a running Studio"""
+        """Stops a running Studio."""
         status = self.status
         if status not in (Status.Running, Status.Pending):
             raise RuntimeError(f"Cannot stop a studio that is not running. Studio {self.name} is {status}.")
         self._studio_api.stop_studio(self._studio.id, self._teamspace.id)
 
     def delete(self) -> None:
-        """Deletes the current Studio"""
+        """Deletes the current Studio."""
         self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
 
     def duplicate(self) -> "Studio":
-        """Duplicates the existing Studio"""
+        """Duplicates the existing Studio."""
         raise NotImplementedError("Message us on Discord or Slack to request this feature!")
 
     def switch_machine(self, machine: Machine) -> None:
-        """Switches machine to the provied machine type/
+        """Switches machine to the provied machine type/.
 
         Args:
             machine: the new machine type to switch to
 
         Note:
             this call is blocking until the new machine is provisioned
+
         """
         status = self.status
         if status != Status.Running:
@@ -145,8 +163,8 @@ class Studio:
         return "".join(self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)).strip()
 
 
-def _internal_status_to_external_status(internal_status: str):
-    """Converts internal status strings from HTTP requests to external enums"""
+def _internal_status_to_external_status(internal_status: str) -> Status:
+    """Converts internal status strings from HTTP requests to external enums."""
     return {
         # don't get a status if no instance alive
         None: Status.Stopped,

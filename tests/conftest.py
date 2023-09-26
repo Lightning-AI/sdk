@@ -1,6 +1,5 @@
-import sys
-import types
 from unittest import mock
+from unittest.mock import Mock
 
 import pytest
 from lightning_cloud.openapi import (
@@ -12,6 +11,7 @@ from lightning_cloud.openapi import (
     V1CloudSpaceInstanceState,
     V1DeleteCloudSpaceResponse,
     V1GetCloudSpaceInstanceStatusResponse,
+    V1GetUserResponse,
     V1LightningRun,
     V1ListCloudSpacesResponse,
     V1ListMembershipsResponse,
@@ -20,16 +20,16 @@ from lightning_cloud.openapi import (
     V1Organization,
     V1Project,
     V1UserRequestedComputeConfig,
-    V1GetUserResponse
 )
-from mock import Mock
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
 _END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
 
-@pytest.fixture
+
+@pytest.fixture()
 def internal_user_api_mocker(mocker):
-    def _side_effect_api_call(resource_path,
+    def _side_effect_api_call(
+        resource_path,
         method,
         path_params=None,
         query_params=None,
@@ -44,9 +44,10 @@ def internal_user_api_mocker(mocker):
         collection_formats=None,
         _preload_content=True,
         _request_timeout=None,
-        ):
+    ):
         if response_type == "V1GetUserResponse":
             return V1GetUserResponse(username="user-abc")
+        return None
 
     mocker.patch("lightning_cloud.openapi.api_client.ApiClient.call_api", side_effect=_side_effect_api_call)
 
@@ -55,7 +56,7 @@ def internal_user_api_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_org_api_mocker(mocker):
     def _side_effect_api_call(
         resource_path,
@@ -81,6 +82,7 @@ def internal_org_api_mocker(mocker):
                     V1Organization(display_name="org-def", name="org-def"),
                 ]
             )
+        return None
 
     mocker.patch("lightning_cloud.openapi.api_client.ApiClient.call_api", side_effect=_side_effect_api_call)
     yield [mocker]
@@ -88,7 +90,7 @@ def internal_org_api_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_teamspace_api_mocker(mocker):
     mocker.patch(
         "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_memberships",
@@ -110,7 +112,7 @@ def internal_teamspace_api_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_api_mocker_get_studio(mocker):
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
@@ -125,18 +127,17 @@ def internal_studio_api_mocker_get_studio(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_api_mocker_create_studio(mocker):
     def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
         assert isinstance(body, ProjectIdCloudspacesBody)
-        cloudspace = V1CloudSpace(
+        return V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
             cluster_id=body.cluster_id,
             project_id=project_id,
             id=body.name,
         )
-        return cloudspace
 
     def _create_lightning_run_side_effect(self, body, project_id, cloudspace_id, **kwargs):
         return V1LightningRun(
@@ -160,7 +161,7 @@ def internal_studio_api_mocker_create_studio(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_api_mocker_studio_status(mocker):
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
@@ -175,7 +176,7 @@ def internal_studio_api_mocker_studio_status(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_api_mocker_switch_machine(mocker):
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
@@ -198,9 +199,8 @@ def internal_studio_api_mocker_switch_machine(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_api_mocker_start_studio(mocker):
-
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
         autospec=True,
@@ -219,7 +219,7 @@ def internal_studio_api_mocker_start_studio(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_api_mocker_stop_studio(mocker):
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_stop_cloud_space_instance",
@@ -231,7 +231,7 @@ def internal_studio_api_mocker_stop_studio(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_api_mocker_run_command(mocker):
     def _connect_side_effect(uri, **kwargs):
         assert uri.endswith("/v1/projects/ts-abc/cloudspaces/st-abc/attach")
@@ -257,7 +257,7 @@ def internal_studio_api_mocker_run_command(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_api_mocker_delete(mocker):
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_delete_cloud_space",
@@ -270,7 +270,7 @@ def internal_studio_api_mocker_delete(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_api_mocker_get_machine(mocker):
     def _side_effect(self, project_id, id, **kwargs):
         instance = None
@@ -308,7 +308,7 @@ def internal_studio_api_mocker_get_machine(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_init_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
     existing_studios = [
         V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"),
@@ -359,7 +359,7 @@ def internal_studio_init_mocker(mocker, internal_org_api_mocker, internal_teamsp
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_status_mocker(mocker):
     def _get_status_side_effect(self, project_id: str, id: str):
         if id == "st-abc":
@@ -390,7 +390,7 @@ def internal_studio_status_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_start_mocker(mocker):
     # none since no instance available before start
     # use dict here so that it automatically uses global scope. Assignments to variables would introduce shadowing
@@ -427,7 +427,7 @@ def internal_studio_start_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_stop_mocker(mocker):
     status = {"st-abc": "CLOUD_SPACE_INSTANCE_STATE_RUNNING"}
 
@@ -453,7 +453,7 @@ def internal_studio_stop_mocker(mocker):
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_delete_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
     existing_studios = [
         V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"),
@@ -489,7 +489,6 @@ def internal_studio_delete_mocker(mocker, internal_org_api_mocker, internal_team
         for i in reversed(to_pop):
             existing_studios.pop(i)
 
-
         return V1DeleteCloudSpaceResponse()
 
     mocker.patch(
@@ -519,7 +518,7 @@ def internal_studio_delete_mocker(mocker, internal_org_api_mocker, internal_team
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_switch_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
     # none since no instance available before start
     # use dict here so that it automatically uses global scope. Assignments to variables would introduce shadowing
@@ -582,7 +581,7 @@ def internal_studio_switch_mocker(mocker, internal_org_api_mocker, internal_team
     mocker.resetall()
 
 
-@pytest.fixture
+@pytest.fixture()
 def internal_studio_run_mocker(mocker):
     mocker.patch(
         "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",

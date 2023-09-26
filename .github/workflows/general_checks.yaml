@@ -43,7 +43,7 @@ jobs:
     steps:
     - run: echo "${{ needs.check_code.result }}, ${{ needs.check_schema.result }}, ${{ needs.check_package.result }}"
     - name: failing...
-      if: needs.check_code.result == 'failure' || 
+      if: needs.check_code.result == 'failure' ||
       run: exit 1
     - name: cancelled or skipped...
       if: contains(fromJSON('["cancelled", "skipped"]'), needs.check_code.result)
