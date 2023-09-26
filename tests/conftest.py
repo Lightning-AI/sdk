@@ -1,4 +1,5 @@
 from unittest import mock
+from unittest.mock import Mock
 
 import pytest
 from lightning_cloud.openapi import (
@@ -9,6 +10,7 @@ from lightning_cloud.openapi import (
     V1CloudSpaceInstanceConfig,
     V1DeleteCloudSpaceResponse,
     V1GetCloudSpaceInstanceStatusResponse,
+    V1GetUserResponse,
     V1LightningRun,
     V1ListCloudSpacesResponse,
     V1ListMembershipsResponse,

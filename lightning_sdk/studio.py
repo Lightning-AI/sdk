@@ -24,8 +24,8 @@ class Studio:
         create_ok: whether the studio will be created if it does not yet exist. Defaults to True
 
     Note:
-        Since a teamspace can either be owned by an org or by a user directly, only one of the arguments
-        can be provided.
+        Since a teamspace can either be owned by an org or by a user directly,
+        only one of the arguments can be provided.
 
     """
 
