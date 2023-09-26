@@ -1,5 +1,3 @@
-from unittest import mock
-
 import pytest
 from lightning_cloud.openapi import V1Project
 

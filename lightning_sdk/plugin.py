@@ -15,17 +15,14 @@ class Studio:
         ...
 
     @property
-    def all_plugins(self) -> List[Plugin]:
-        """"""
+    def installed_plugins(self) -> List[Plugin]:
+        ...
+
+    @property
+    def available_plugins(self) -> List[Plugin]:
         ...
 
     def plugin(self, name: str) -> Plugin:
-        """"""
-        ...
-
-    # TODO: make machine an actual machine type
-    def run_job(self, *commands: str, machine: Optional[Optional[str]] = None) -> Job:
-        """"""
         ...
 
 

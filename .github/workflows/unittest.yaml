@@ -3,7 +3,7 @@ name: UnitTest
 on:
   push:
     branches:
-      - "master"
+      - "main"
   release:
     types:
       - created
@@ -11,12 +11,11 @@ on:
 jobs:
 
   cpu:
-    runs-on: ${{ matrix.os }}
+    runs-on: [self-hosted, spot-self-hosted]
     if: github.event.pull_request.draft == false
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest] #, macOS-12]
         python-version: ["3.8", "3.9", "3.10"]
 
     timeout-minutes: 40

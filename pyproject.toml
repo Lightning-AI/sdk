@@ -5,9 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lightning_sdk"
 authors = [
-    {name = "Lightning-AI", email = "name@lightning.ai"},
+    {name = "Lightning-AI", email = "justus@lightning.ai"},
 ]
-description = "SDK to develop using lightning studios"
+description = "SDK to develop using Lightning AI Studios"
 readme = "README.md"
 requires-python = ">=3.8"
 keywords = ["deep learning", "machine learning", "pytorch", "AI"]

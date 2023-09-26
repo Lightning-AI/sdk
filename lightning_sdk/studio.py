@@ -130,8 +130,9 @@ class Studio:
         self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
 
     def duplicate(self) -> "Studio":
-        """Duplicates the existing Studio."""
-        raise NotImplementedError("Message us on Discord or Slack to request this feature!")
+        """Duplicates the existing Studio to the same teamspace."""
+        kwargs = self._studio_api.duplicate_studio(self._studio.id, self._teamspace._id, self._teamspace.id)
+        return Studio(**kwargs)
 
     def switch_machine(self, machine: Machine) -> None:
         """Switches machine to the provied machine type/.

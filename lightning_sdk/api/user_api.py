@@ -1,5 +1,4 @@
-from lightning_cloud.login import Auth
-from lightning_cloud.openapi import V1GetUserResponse
+from lightning_cloud.openapi import UserServiceApi, V1SearchUser
 from lightning_cloud.rest_client import LightningClient
 
 
@@ -9,20 +8,19 @@ class UserApi:
     def __init__(self) -> None:
         super().__init__()
 
-        self._client = LightningClient()
+        # TODO: add user service to lightning client
+        self._client = UserServiceApi(api_client=LightningClient().api_client)
 
-    def get_user(self, name: str) -> V1GetUserResponse:
-        """Gets the user.
+    def get_user(self, name: str) -> V1SearchUser:
+        """Gets user by name."""
+        response = self._client.user_service_search_users(query=name)
 
-        Also asserts that it's the same one as the currently logged-in user to avoid accessing someone elses Studios.
+        users = [u for u in response.users if u.username == name]
+        if not len(users):
+            raise ValueError(f"User {name} does not exist.")
+        return users[0]
 
-        """
-        auth = Auth()
-        auth.authenticate()
-        user_name = auth.username
-        res = self._client.auth_service_get_user()
-
-        if not isinstance(res, V1GetUserResponse) or user_name != name:
-            raise ValueError(f"User {name} does not exist")
-
-        return res
+    def _get_user_by_id(self, user_id: str) -> V1SearchUser:
+        response = self._client.user_service_search_users(query=user_id)
+        users = [u for u in response.users if u.id == user_id]
+        return users[0]
