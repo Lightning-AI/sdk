@@ -8,14 +8,16 @@ class Studio:
         ...
 
     @property
-    def all_plugins(self) -> List[Plugin]:
+    def installed_plugins(self) -> List[Plugin]:
+        ...
+
+    @property
+    def available_plugins(self) -> List[Plugin]:
         ...
 
     def plugin(self, name: str) -> Plugin:
         ...
 
-    def run_job(self, *commands, machine=None) -> Job:
-        ...
 
 class Plugin:
     def run(self, *args, **kwargs):
