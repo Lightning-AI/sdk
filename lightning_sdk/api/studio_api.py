@@ -2,14 +2,13 @@ import os
 import tarfile
 import tempfile
 import time
-from typing import Dict, Generator, Optional
-from urllib.parse import urlparse
+from typing import Dict, Optional, Tuple
 
 import requests
-from lightning_cloud.login import Auth
 from lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
     IdCodeconfigBody,
+    IdExecuteBody,
     IdForkBody,
     ProjectIdCloudspacesBody,
     V1CloudSpace,
@@ -18,7 +17,6 @@ from lightning_cloud.openapi import (
     V1UserRequestedComputeConfig,
 )
 from lightning_cloud.rest_client import LightningClient
-from websockets.sync.client import ClientConnection, connect
 
 from lightning_sdk.machine import Machine
 
@@ -128,29 +126,12 @@ class StudioApi:
         )
         return _COMPUTE_NAME_TO_MACHINE[response.compute_config.name]
 
-    def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Generator[str, None, None]:
+    def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Tuple[str, int]:
         """Run given commands in a given Studio."""
-        auth_header = Auth().auth_header
-
-        parsed_cloud_url = urlparse(self._cloud_url)
-        scheme = "wss" if parsed_cloud_url.scheme == "https" else "ws"
-        terminal_url = f"{scheme}://{parsed_cloud_url.netloc}/v1/projects/{teamspace_id}/cloudspaces/{studio_id}/attach"
-
-        command = "; ".join(commands)
-        command = _wrap_command(command)
-        command = f"{command}\n"
-
-        websocket = connect(
-            terminal_url,
-            additional_headers={"Authorization": auth_header},
+        response = self._client.cloud_space_service_execute_command_in_cloud_space(
+            IdExecuteBody("; ".join(commands)), project_id=teamspace_id, id=studio_id
         )
-
-        # ignore any previous output
-        _ = websocket.recv()
-
-        websocket.send(command)
-
-        return _read_output(websocket)
+        return response.output, response.exit_code
 
     def duplicate_studio(self, studio_id: str, teamspace_id: str, target_teamspace_id: str) -> Dict[str, str]:
         """Duplicates the given Studio from a given Teamspace into a given target Teamspace."""
@@ -178,47 +159,6 @@ class StudioApi:
     def delete_studio(self, studio_id: str, teamspace_id: str) -> None:
         """Delete existing given Studio."""
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
-
-
-_BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
-_END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
-
-
-def _wrap_command(command: str) -> str:
-    """Wrap a shell command to echo start and end tokens allowing us to parse the command output."""
-    # We use escaped special characters here to differentiate between the tokens presence in the
-    # command vs the echoed output
-    return rf"echo \<\< {_BEGIN_OUTPUT_TOKEN} \>\>; {command}; echo \<\< {_END_OUTPUT_TOKEN} \>\>"
-
-
-def _read_output(websocket: ClientConnection) -> Generator[str, None, None]:
-    """Read output and strip start and end tokens."""
-    has_output_started = False
-    begin_token = f"<< {_BEGIN_OUTPUT_TOKEN} >>"
-    end_token = f"<< {_END_OUTPUT_TOKEN} >>"
-
-    while True:
-        websocket.ping()
-        try:
-            message = websocket.recv(timeout=10)
-        except TimeoutError:
-            continue
-
-        if begin_token in message:
-            has_output_started = True
-            begin_index = message.rfind(begin_token) + len(begin_token)
-            message = message[begin_index:].lstrip()
-
-        if end_token in message:
-            end_index = message.rfind(end_token)
-            message = message[:end_index].rstrip()
-            yield message
-            break
-
-        if has_output_started:
-            yield message
-
-    websocket.close()
 
 
 def _cloud_url() -> str:

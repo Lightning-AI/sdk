@@ -9,6 +9,7 @@ from lightning_cloud.openapi import (
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
     V1DeleteCloudSpaceResponse,
+    V1ExecuteCloudSpaceCommandResponse,
     V1GetCloudSpaceInstanceStatusResponse,
     V1GetUserResponse,
     V1LightningRun,
@@ -220,24 +221,11 @@ def internal_studio_api_mocker_stop_studio(mocker):
 
 @pytest.fixture()
 def internal_studio_api_mocker_run_command(mocker):
-    def _connect_side_effect(uri, **kwargs):
-        assert uri.endswith("/v1/projects/ts-abc/cloudspaces/st-abc/attach")
-        from websockets.sync.client import ClientConnection
-
-        connection = mock.MagicMock(autospec=ClientConnection)
-        connection.send = _send_side_effect
-        connection.recv = _recv_side_effect
-
-        return connection
-
-    def _recv_side_effect(**kwargs):
-        return f"<< {_BEGIN_OUTPUT_TOKEN} >> foo-response bar-response << {_END_OUTPUT_TOKEN} >>"
-
-    def _send_side_effect(command: str):
-        assert command == rf"echo \<\< {_BEGIN_OUTPUT_TOKEN} \>\>; foo; bar; echo \<\< {_END_OUTPUT_TOKEN} \>\>" + "\n"
-
-    # imported already, so mock there
-    mocker.patch("lightning_sdk.api.studio_api.connect", side_effect=_connect_side_effect, autospec=True)
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
+        autospec=True,
+        return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output=" foo-response bar-response "),
+    )
 
     yield [mocker]
 
@@ -664,23 +652,11 @@ def internal_studio_run_mocker(mocker):
         autospec=True,
     )
 
-    def _connect_side_effect(uri, **kwargs):
-        from websockets.sync.client import ClientConnection
-
-        connection = mock.MagicMock(autospec=ClientConnection)
-        connection.send = _send_side_effect
-        connection.recv = _recv_side_effect
-
-        return connection
-
-    def _recv_side_effect(**kwargs):
-        return f"<< {_BEGIN_OUTPUT_TOKEN} >> foo-response bar-response << {_END_OUTPUT_TOKEN} >>"
-
-    def _send_side_effect(command: str):
-        assert command == rf"echo \<\< {_BEGIN_OUTPUT_TOKEN} \>\>; foo; bar; echo \<\< {_END_OUTPUT_TOKEN} \>\>" + "\n"
-
-    # imported already, so mock there
-    mocker.patch("lightning_sdk.api.studio_api.connect", side_effect=_connect_side_effect, autospec=True)
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
+        autospec=True,
+        return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output=" foo-response bar-response "),
+    )
 
     yield [mocker]
 
