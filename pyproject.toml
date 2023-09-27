@@ -36,7 +36,7 @@ exclude = "(.eggs|.git|.hg|.mypy_cache|.venv|_build|buck-out|build|dist)"
 
 [tool.docformatter]
 recursive = true
-wrap-summaries = 120
+wrap-summaries = 119
 wrap-descriptions = 120
 blank = true
 
