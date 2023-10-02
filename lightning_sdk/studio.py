@@ -172,7 +172,10 @@ class Studio:
             commands: the commands to run on the Studio in sequence.
 
         """
-        return self.run_with_exit_code(*commands)[0]
+        output, exit_code = self.run_with_exit_code(*commands)
+        if exit_code != 0:
+            raise RuntimeError(output)
+        return output
 
 
 def _internal_status_to_external_status(internal_status: str) -> Status:

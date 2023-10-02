@@ -662,6 +662,29 @@ def internal_studio_run_mocker(mocker):
 
     mocker.resetall()
 
+@pytest.fixture()
+def internal_studio_run_error_mocker(mocker):
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        return_value=V1GetCloudSpaceInstanceStatusResponse(
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"
+            )
+        ),
+        autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
+        autospec=True,
+        return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=1, output=" No such file or directory foo "),
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
 
 @pytest.fixture()
 def internal_studio_duplicate_mocker(mocker):
