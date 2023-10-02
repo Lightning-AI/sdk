@@ -108,6 +108,22 @@ def test_run_command(internal_studio_init_mocker, internal_studio_run_mocker):
     assert result == "foo-response bar-response"
 
 
+def test_run_command(internal_studio_init_mocker, internal_studio_run_error_mocker):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+
+    with pytest.raises(RuntimeError, match="No such file or directory foo"):
+        result = studio.run("foo", "bar")
+
+
+def test_run_command_exit_code(internal_studio_init_mocker, internal_studio_run_mocker):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+
+    result_output, result_exit_code = studio.run_with_exit_code("foo", "bar")
+
+    assert result_output == "foo-response bar-response"
+    assert result_exit_code == 0
+
+
 @pytest.mark.parametrize(
     ("name", "expected_state", "forbidden_actions"),
     [

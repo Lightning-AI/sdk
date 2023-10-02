@@ -70,8 +70,10 @@ def test_stop_studio(internal_studio_api_mocker_stop_studio):
 def test_run_command(internal_studio_api_mocker_run_command):
     studio_api = StudioApi()
 
-    outputs = studio_api.run_studio_commands("st-abc", "ts-abc", "foo", "bar")
-    assert "".join(outputs) == "foo-response bar-response"
+    outputs, exit_code = studio_api.run_studio_commands("st-abc", "ts-abc", "foo", "bar")
+    # explicitly no stripping on api level
+    assert outputs == " foo-response bar-response "
+    assert exit_code == 0
 
 
 def test_delete_studio(internal_studio_api_mocker_delete):

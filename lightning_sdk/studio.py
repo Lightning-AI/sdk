@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
@@ -151,8 +151,8 @@ class Studio:
             )
         self._studio_api.switch_studio_machine(self._studio.id, self._teamspace.id, machine)
 
-    def run(self, *commands: str) -> str:
-        """Runs given commands on the Studio.
+    def run_with_exit_code(self, *commands: str) -> Tuple[str, int]:
+        """Runs given commands on the Studio while returning output and exit code.
 
         Args:
             commands: the commands to run on the Studio in sequence.
@@ -161,7 +161,21 @@ class Studio:
         status = self.status
         if status != Status.Running:
             raise RuntimeError(f"Cannot run a command in a studio that is not running. Studio {self.name} is {status}.")
-        return "".join(self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)).strip()
+        output, exit_code = self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)
+        output = output.strip()
+        return output, exit_code
+
+    def run(self, *commands: str) -> str:
+        """Runs given commands on the Studio while returning only the output.
+
+        Args:
+            commands: the commands to run on the Studio in sequence.
+
+        """
+        output, exit_code = self.run_with_exit_code(*commands)
+        if exit_code != 0:
+            raise RuntimeError(output)
+        return output
 
 
 def _internal_status_to_external_status(internal_status: str) -> Status:
