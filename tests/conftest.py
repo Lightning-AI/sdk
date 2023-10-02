@@ -662,6 +662,7 @@ def internal_studio_run_mocker(mocker):
 
     mocker.resetall()
 
+
 @pytest.fixture()
 def internal_studio_run_error_mocker(mocker):
     mocker.patch(
@@ -683,7 +684,6 @@ def internal_studio_run_error_mocker(mocker):
     yield [mocker]
 
     mocker.resetall()
-
 
 
 @pytest.fixture()
