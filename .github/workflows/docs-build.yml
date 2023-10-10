@@ -12,7 +12,7 @@ jobs:
     with:
       requirements-file: "docs/requirements.txt"
       install-tex: true
-      make-target: "['install html', 'install doctest', 'install linkcheck', 'install latexpdf']"
+      make-target: "['html', 'doctest', 'linkcheck', 'latexpdf']"
 
   # https://github.com/marketplace/actions/deploy-to-github-pages
   # build-docs-deploy:
