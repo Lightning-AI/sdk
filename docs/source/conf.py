@@ -279,10 +279,7 @@ def setup(app):
 
 # Ignoring Third-party packages
 # https://stackoverflow.com/questions/15889621/sphinx-how-to-exclude-imports-in-automodule
-third_party = [
-    "requests", 
-    "lightning_cloud"
-]
+third_party = ["requests", "lightning_cloud"]
 
 
 # define mapping from PyPI names to python imports

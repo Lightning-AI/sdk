@@ -12,7 +12,7 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 # install theme
-install: 
+install:
 	pip install -q awscli
 	mkdir -p dist/
 	aws s3 sync --no-sign-request s3://sphinx-packages/ dist/
