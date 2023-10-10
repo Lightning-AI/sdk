@@ -40,8 +40,8 @@ jobs:
   #         clean: true # Automatically remove deleted files from the deploy branch
   #         target-folder: docs # If you'd like to push the contents of the deployment folder into a specific directory
   #         single-commit: true # you'd prefer to have a single commit on the deployment branch instead of full history
-
-guardian-docs:
+  
+  guardian-docs:
     runs-on: ubuntu-latest
     needs: build
     if: always()
