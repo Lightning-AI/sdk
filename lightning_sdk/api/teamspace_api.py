@@ -1,5 +1,5 @@
-from lightning_cloud.openapi import V1Project
-from lightning_cloud.rest_client import LightningClient
+from lightning_sdk.lightning_cloud.openapi import V1Project
+from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 class TeamspaceApi:

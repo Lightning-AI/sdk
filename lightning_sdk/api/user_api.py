@@ -1,5 +1,5 @@
-from lightning_cloud.openapi import UserServiceApi, V1SearchUser
-from lightning_cloud.rest_client import LightningClient
+from lightning_sdk.lightning_cloud.openapi import UserServiceApi, V1SearchUser
+from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 class UserApi:

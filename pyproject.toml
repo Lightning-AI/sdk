@@ -15,7 +15,16 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "lightning-cloud>=0.5.39",
+    "click",
+    "fastapi",
+    "pyjwt",
+    "python-multipart",
+    "requests",
+    "rich",
+    "six",
+    "urllib3",
+    "uvicorn",
+    "websocket-client",
 ]
 dynamic = ["version"]
 
