@@ -70,7 +70,9 @@ def internal_org_api_mocker(mocker):
             )
         return None
 
-    mocker.patch("lightning_sdk.lightning_cloud.openapi.api_client.ApiClient.call_api", side_effect=_side_effect_api_call)
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api_client.ApiClient.call_api", side_effect=_side_effect_api_call
+    )
     yield [mocker]
 
     mocker.resetall()
