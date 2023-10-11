@@ -1,5 +1,5 @@
 import pytest
-from lightning_cloud.openapi import V1Organization
+from lightning_sdk.lightning_cloud.openapi import V1Organization
 
 from lightning_sdk.api.org_api import OrgApi
 

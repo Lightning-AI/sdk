@@ -1,5 +1,5 @@
 import pytest
-from lightning_cloud.openapi import V1SearchUser
+from lightning_sdk.lightning_cloud.openapi import V1SearchUser
 
 from lightning_sdk.api.user_api import UserApi
 

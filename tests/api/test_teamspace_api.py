@@ -1,5 +1,5 @@
 import pytest
-from lightning_cloud.openapi import V1Project
+from lightning_sdk.lightning_cloud.openapi import V1Project
 
 from lightning_sdk.api.teamspace_api import TeamspaceApi
 

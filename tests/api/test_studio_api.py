@@ -1,5 +1,5 @@
 import pytest
-from lightning_cloud.openapi import V1CloudSpace, V1GetCloudSpaceInstanceStatusResponse
+from lightning_sdk.lightning_cloud.openapi import V1CloudSpace, V1GetCloudSpaceInstanceStatusResponse
 
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.machine import Machine
