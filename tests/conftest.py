@@ -31,7 +31,7 @@ _END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
 @pytest.fixture()
 def internal_user_api_mocker(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users",
+        "lightning_sdk.lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users",
         return_value=V1SearchUsersResponse(
             users=[V1SearchUser(username="user-abc"), V1SearchUser(username="user-abc-de")]
         ),
@@ -70,7 +70,7 @@ def internal_org_api_mocker(mocker):
             )
         return None
 
-    mocker.patch("lightning_cloud.openapi.api_client.ApiClient.call_api", side_effect=_side_effect_api_call)
+    mocker.patch("lightning_sdk.lightning_cloud.openapi.api_client.ApiClient.call_api", side_effect=_side_effect_api_call)
     yield [mocker]
 
     mocker.resetall()
@@ -79,7 +79,7 @@ def internal_org_api_mocker(mocker):
 @pytest.fixture()
 def internal_teamspace_api_mocker(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_memberships",
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_memberships",
         return_value=V1ListMembershipsResponse(
             [
                 V1Membership(name="ts-abc", display_name="ts-abc", project_id="ts-abc001"),
@@ -89,7 +89,7 @@ def internal_teamspace_api_mocker(mocker):
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
         return_value=V1Project(
             id="ts-abc", name="ts-abc", display_name="ts-abc", owner_id="org-abc", owner_type="organization"
         ),
@@ -103,7 +103,7 @@ def internal_teamspace_api_mocker(mocker):
 @pytest.fixture()
 def internal_studio_api_mocker_get_studio(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
         return_value=V1ListCloudSpacesResponse(
             [V1CloudSpace(name="st-abc", display_name="st-abc"), V1CloudSpace(name="st-def", display_name="st-def")]
         ),
@@ -133,12 +133,12 @@ def internal_studio_api_mocker_create_studio(mocker):
         )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
         autospec=True,
         side_effect=_create_cloudspace_side_effect,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
         autospec=True,
         side_effect=_create_lightning_run_side_effect,
     )
@@ -152,7 +152,7 @@ def internal_studio_api_mocker_create_studio(mocker):
 @pytest.fixture()
 def internal_studio_api_mocker_studio_status(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             requested=Externalv1CloudSpaceInstanceStatus(startup_percentage="0")
         ),
@@ -167,18 +167,18 @@ def internal_studio_api_mocker_studio_status(mocker):
 @pytest.fixture()
 def internal_studio_api_mocker_switch_machine(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             requested=Externalv1CloudSpaceInstanceStatus(startup_percentage="100")
         ),
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_instance_config",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_instance_config",
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_switch_cloud_space_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_switch_cloud_space_instance",
         autospec=True,
     )
 
@@ -190,12 +190,12 @@ def internal_studio_api_mocker_switch_machine(mocker):
 @pytest.fixture()
 def internal_studio_api_mocker_start_studio(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
         autospec=True,
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             requested=Externalv1CloudSpaceInstanceStatus(startup_percentage="100"),
             in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100"),
@@ -210,7 +210,7 @@ def internal_studio_api_mocker_start_studio(mocker):
 @pytest.fixture()
 def internal_studio_api_mocker_stop_studio(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_stop_cloud_space_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_stop_cloud_space_instance",
         autospec=True,
     )
 
@@ -222,7 +222,7 @@ def internal_studio_api_mocker_stop_studio(mocker):
 @pytest.fixture()
 def internal_studio_api_mocker_run_command(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
         autospec=True,
         return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output=" foo-response bar-response "),
     )
@@ -235,7 +235,7 @@ def internal_studio_api_mocker_run_command(mocker):
 @pytest.fixture()
 def internal_studio_api_mocker_delete(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_delete_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_delete_cloud_space",
         autospec=True,
         return_value=V1DeleteCloudSpaceResponse(),
     )
@@ -273,7 +273,7 @@ def internal_studio_api_mocker_get_machine(mocker):
         return V1CloudSpaceInstanceConfig(V1UserRequestedComputeConfig(name=instance))
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
         autospec=True,
         side_effect=_side_effect,
     )
@@ -286,30 +286,30 @@ def internal_studio_api_mocker_get_machine(mocker):
 @pytest.fixture()
 def internal_studio_api_mocker_duplicate_user(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
         return_value=V1Project(
             id="ts-abc", name="teamspace-abc", display_name="Teamspace ABC", owner_id="user-abc", owner_type="user"
         ),
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users",
+        "lightning_sdk.lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users",
         return_value=V1SearchUsersResponse(users=[V1SearchUser(id="user-abc", username="user-abc")]),
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
         return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
         autospec=True,
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
         autospec=True,
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100", sync_in_progress=False)
         ),
@@ -324,7 +324,7 @@ def internal_studio_api_mocker_duplicate_user(mocker):
 @pytest.fixture()
 def internal_studio_api_mocker_duplicate_org(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
         return_value=V1Project(
             id="ts-abc",
             name="teamspace-abc",
@@ -335,23 +335,23 @@ def internal_studio_api_mocker_duplicate_org(mocker):
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
+        "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
         return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"),
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
         return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
         autospec=True,
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
         autospec=True,
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100", sync_in_progress=False)
         ),
@@ -393,17 +393,17 @@ def internal_studio_init_mocker(mocker, internal_org_api_mocker, internal_teamsp
         )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
         side_effect=_list_cloudspaces_side_effect,
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
         autospec=True,
         side_effect=_create_cloudspace_side_effect,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
         autospec=True,
         side_effect=_create_lightning_run_side_effect,
     )
@@ -435,7 +435,7 @@ def internal_studio_status_mocker(mocker):
         return V1GetCloudSpaceInstanceStatusResponse(in_use=Externalv1CloudSpaceInstanceStatus(phase=status))
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         autospec=True,
         side_effect=_get_status_side_effect,
     )
@@ -461,18 +461,18 @@ def internal_studio_start_mocker(mocker):
         )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
         autospec=True,
         return_value=V1CloudSpaceInstanceConfig(V1UserRequestedComputeConfig(name="cpu-4")),
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         side_effect=side_effect_status,
         autospec=True,
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
         side_effect=side_effect_start,
         autospec=True,
     )
@@ -497,12 +497,12 @@ def internal_studio_stop_mocker(mocker):
         return mock.MagicMock()
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_stop_cloud_space_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_stop_cloud_space_instance",
         autospec=True,
         side_effect=side_effect_stop,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         side_effect=side_effect_status,
         autospec=True,
     )
@@ -551,22 +551,22 @@ def internal_studio_delete_mocker(mocker, internal_org_api_mocker, internal_team
         return V1DeleteCloudSpaceResponse()
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_delete_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_delete_cloud_space",
         autospec=True,
         side_effect=_delete_side_effect,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
         side_effect=_list_cloudspaces_side_effect,
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
         autospec=True,
         side_effect=_create_cloudspace_side_effect,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
         autospec=True,
         side_effect=_create_lightning_run_side_effect,
     )
@@ -609,28 +609,28 @@ def internal_studio_switch_mocker(mocker, internal_org_api_mocker, internal_team
         return V1CloudSpaceInstanceConfig(machines[id])
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_instance_config",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_instance_config",
         autospec=True,
         side_effect=side_effect_update_instance_config,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_switch_cloud_space_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_switch_cloud_space_instance",
         autospec=True,
         side_effect=side_effect_switch_machines,
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
         autospec=True,
         side_effect=side_effect_get_cloud_space_instance_config,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         side_effect=side_effect_status,
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
         side_effect=side_effect_start,
         autospec=True,
     )
@@ -643,7 +643,7 @@ def internal_studio_switch_mocker(mocker, internal_org_api_mocker, internal_team
 @pytest.fixture()
 def internal_studio_run_mocker(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
                 phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"
@@ -653,7 +653,7 @@ def internal_studio_run_mocker(mocker):
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
         autospec=True,
         return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output=" foo-response bar-response "),
     )
@@ -666,7 +666,7 @@ def internal_studio_run_mocker(mocker):
 @pytest.fixture()
 def internal_studio_run_error_mocker(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
                 phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"
@@ -676,7 +676,7 @@ def internal_studio_run_error_mocker(mocker):
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
         autospec=True,
         return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=1, output=" No such file or directory foo "),
     )
@@ -689,18 +689,18 @@ def internal_studio_run_error_mocker(mocker):
 @pytest.fixture()
 def internal_studio_duplicate_mocker(mocker):
     mocker.patch(
-        "lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
+        "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
         return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"),
         autospec=True,
     )
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
         return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
         autospec=True,
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100", sync_in_progress=False)
         ),
@@ -708,7 +708,7 @@ def internal_studio_duplicate_mocker(mocker):
     )
 
     mocker.patch(
-        "lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
         autospec=True,
     )
 
