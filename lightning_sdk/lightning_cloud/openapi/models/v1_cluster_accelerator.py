@@ -53,6 +53,7 @@ class V1ClusterAccelerator(object):
         'instance_id': 'str',
         'quota_checked_at': 'datetime',
         'quota_code': 'str',
+        'quota_name': 'str',
         'quota_page_url': 'str',
         'quota_service_code': 'str',
         'quota_utilization': 'str',
@@ -74,6 +75,7 @@ class V1ClusterAccelerator(object):
         'instance_id': 'instanceId',
         'quota_checked_at': 'quotaCheckedAt',
         'quota_code': 'quotaCode',
+        'quota_name': 'quotaName',
         'quota_page_url': 'quotaPageUrl',
         'quota_service_code': 'quotaServiceCode',
         'quota_utilization': 'quotaUtilization',
@@ -82,7 +84,7 @@ class V1ClusterAccelerator(object):
         'slug': 'slug'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, available_in_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, id: 'str' =None, instance_id: 'str' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, available_in_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, id: 'str' =None, instance_id: 'str' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._available_in_seconds = None
@@ -96,6 +98,7 @@ class V1ClusterAccelerator(object):
         self._instance_id = None
         self._quota_checked_at = None
         self._quota_code = None
+        self._quota_name = None
         self._quota_page_url = None
         self._quota_service_code = None
         self._quota_utilization = None
@@ -127,6 +130,8 @@ class V1ClusterAccelerator(object):
             self.quota_checked_at = quota_checked_at
         if quota_code is not None:
             self.quota_code = quota_code
+        if quota_name is not None:
+            self.quota_name = quota_name
         if quota_page_url is not None:
             self.quota_page_url = quota_page_url
         if quota_service_code is not None:
@@ -391,6 +396,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._quota_code = quota_code
+
+    @property
+    def quota_name(self) -> 'str':
+        """Gets the quota_name of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The quota_name of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: str
+        """
+        return self._quota_name
+
+    @quota_name.setter
+    def quota_name(self, quota_name: 'str'):
+        """Sets the quota_name of this V1ClusterAccelerator.
+
+
+        :param quota_name: The quota_name of this V1ClusterAccelerator.  # noqa: E501
+        :type: str
+        """
+
+        self._quota_name = quota_name
 
     @property
     def quota_page_url(self) -> 'str':
