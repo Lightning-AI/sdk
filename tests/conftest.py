@@ -2,7 +2,7 @@ from unittest import mock
 from unittest.mock import Mock
 
 import pytest
-from lightning_cloud.openapi import (
+from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
     IdCodeconfigBody,
     ProjectIdCloudspacesBody,
