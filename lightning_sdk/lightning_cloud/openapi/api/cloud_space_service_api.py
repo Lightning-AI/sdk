@@ -433,7 +433,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_create_cloud_space_app_instance(self, body: 'AppsIdBody1', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def cloud_space_service_create_cloud_space_app_instance(self, body: 'AppsIdBody1', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1CreateCloudSpaceAppInstanceResponse':  # noqa: E501
         """cloud_space_service_create_cloud_space_app_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -446,7 +446,7 @@ class CloudSpaceServiceApi(object):
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
-        :return: Externalv1LightningappInstance
+        :return: V1CreateCloudSpaceAppInstanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -457,7 +457,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_create_cloud_space_app_instance_with_http_info(body, project_id, cloudspace_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_create_cloud_space_app_instance_with_http_info(self, body: 'AppsIdBody1', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def cloud_space_service_create_cloud_space_app_instance_with_http_info(self, body: 'AppsIdBody1', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1CreateCloudSpaceAppInstanceResponse':  # noqa: E501
         """cloud_space_service_create_cloud_space_app_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -470,7 +470,7 @@ class CloudSpaceServiceApi(object):
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
-        :return: Externalv1LightningappInstance
+        :return: V1CreateCloudSpaceAppInstanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -546,7 +546,7 @@ class CloudSpaceServiceApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='Externalv1LightningappInstance',  # noqa: E501
+            response_type='V1CreateCloudSpaceAppInstanceResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

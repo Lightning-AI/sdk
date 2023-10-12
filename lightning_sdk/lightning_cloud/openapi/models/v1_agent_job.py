@@ -51,6 +51,7 @@ class V1AgentJob(object):
         'output_path': 'str',
         'project_id': 'str',
         'run_id': 'str',
+        'slurm_v1_status': 'V1SlurmV1JobStatus',
         'state': 'str',
         'updated_at': 'datetime',
         'work_dir': 'str'
@@ -67,12 +68,13 @@ class V1AgentJob(object):
         'output_path': 'outputPath',
         'project_id': 'projectId',
         'run_id': 'runId',
+        'slurm_v1_status': 'slurmV1Status',
         'state': 'state',
         'updated_at': 'updatedAt',
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, output_path: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, state: 'str' =None, updated_at: 'datetime' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, output_path: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, work_dir: 'str' =None):  # noqa: E501
         """V1AgentJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -84,6 +86,7 @@ class V1AgentJob(object):
         self._output_path = None
         self._project_id = None
         self._run_id = None
+        self._slurm_v1_status = None
         self._state = None
         self._updated_at = None
         self._work_dir = None
@@ -108,6 +111,8 @@ class V1AgentJob(object):
             self.project_id = project_id
         if run_id is not None:
             self.run_id = run_id
+        if slurm_v1_status is not None:
+            self.slurm_v1_status = slurm_v1_status
         if state is not None:
             self.state = state
         if updated_at is not None:
@@ -324,6 +329,27 @@ class V1AgentJob(object):
         """
 
         self._run_id = run_id
+
+    @property
+    def slurm_v1_status(self) -> 'V1SlurmV1JobStatus':
+        """Gets the slurm_v1_status of this V1AgentJob.  # noqa: E501
+
+
+        :return: The slurm_v1_status of this V1AgentJob.  # noqa: E501
+        :rtype: V1SlurmV1JobStatus
+        """
+        return self._slurm_v1_status
+
+    @slurm_v1_status.setter
+    def slurm_v1_status(self, slurm_v1_status: 'V1SlurmV1JobStatus'):
+        """Sets the slurm_v1_status of this V1AgentJob.
+
+
+        :param slurm_v1_status: The slurm_v1_status of this V1AgentJob.  # noqa: E501
+        :type: V1SlurmV1JobStatus
+        """
+
+        self._slurm_v1_status = slurm_v1_status
 
     @property
     def state(self) -> 'str':
