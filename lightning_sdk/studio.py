@@ -177,6 +177,17 @@ class Studio:
             raise RuntimeError(output)
         return output
 
+    def upload_file(self, filepath, remote_path: Optional[str] = None):
+        import os
+        if remote_path is None:
+            remote_path = os.path.split(filepath)[1]
+
+        self._studio_api.upload_file(self._studio.id, self._teamspace.id, self._studio.cluster_id, filepath, remote_path)
+
+
+        
+        
+
 
 def _internal_status_to_external_status(internal_status: str) -> Status:
     """Converts internal status strings from HTTP requests to external enums."""
@@ -191,3 +202,4 @@ def _internal_status_to_external_status(internal_status: str) -> Status:
         "CLOUD_SPACE_INSTANCE_STATE_STOPPING": Status.Stopping,
         "CLOUD_SPACE_INSTANCE_STATE_STOPPED": Status.Stopped,
     }[internal_status]
+
