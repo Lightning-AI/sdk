@@ -54,6 +54,7 @@ class V1SLURMJob(object):
         'slurm_v1_status': 'V1SlurmV1JobStatus',
         'state': 'str',
         'updated_at': 'datetime',
+        'user_id': 'str',
         'work_dir': 'str'
     }
 
@@ -71,10 +72,11 @@ class V1SLURMJob(object):
         'slurm_v1_status': 'slurmV1Status',
         'state': 'state',
         'updated_at': 'updatedAt',
+        'user_id': 'userId',
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, output_path: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, output_path: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1SLURMJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -89,6 +91,7 @@ class V1SLURMJob(object):
         self._slurm_v1_status = None
         self._state = None
         self._updated_at = None
+        self._user_id = None
         self._work_dir = None
         self.discriminator = None
         if cloudspace_id is not None:
@@ -117,6 +120,8 @@ class V1SLURMJob(object):
             self.state = state
         if updated_at is not None:
             self.updated_at = updated_at
+        if user_id is not None:
+            self.user_id = user_id
         if work_dir is not None:
             self.work_dir = work_dir
 
@@ -392,6 +397,27 @@ class V1SLURMJob(object):
         """
 
         self._updated_at = updated_at
+
+    @property
+    def user_id(self) -> 'str':
+        """Gets the user_id of this V1SLURMJob.  # noqa: E501
+
+
+        :return: The user_id of this V1SLURMJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id: 'str'):
+        """Sets the user_id of this V1SLURMJob.
+
+
+        :param user_id: The user_id of this V1SLURMJob.  # noqa: E501
+        :type: str
+        """
+
+        self._user_id = user_id
 
     @property
     def work_dir(self) -> 'str':

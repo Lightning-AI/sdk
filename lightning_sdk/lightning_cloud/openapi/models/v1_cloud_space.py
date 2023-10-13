@@ -65,7 +65,8 @@ class V1CloudSpace(object):
         'thumbnail_url': 'str',
         'updated_at': 'datetime',
         'user_id': 'str',
-        'user_metadata': 'str'
+        'user_metadata': 'str',
+        'web_path': 'str'
     }
 
     attribute_map = {
@@ -93,10 +94,11 @@ class V1CloudSpace(object):
         'thumbnail_url': 'thumbnailUrl',
         'updated_at': 'updatedAt',
         'user_id': 'userId',
-        'user_metadata': 'userMetadata'
+        'user_metadata': 'userMetadata',
+        'web_path': 'webPath'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, name: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, skip_zsh_history_on_duplication: 'bool' =None, state: 'V1CloudSpaceState' =None, tag: 'V1CloudSpaceTag' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, name: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, skip_zsh_history_on_duplication: 'bool' =None, state: 'V1CloudSpaceState' =None, tag: 'V1CloudSpaceTag' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cluster_id = None
@@ -123,6 +125,7 @@ class V1CloudSpace(object):
         self._updated_at = None
         self._user_id = None
         self._user_metadata = None
+        self._web_path = None
         self.discriminator = None
         if can_download_source_code is not None:
             self.can_download_source_code = can_download_source_code
@@ -174,6 +177,8 @@ class V1CloudSpace(object):
             self.user_id = user_id
         if user_metadata is not None:
             self.user_metadata = user_metadata
+        if web_path is not None:
+            self.web_path = web_path
 
     @property
     def can_download_source_code(self) -> 'bool':
@@ -699,6 +704,27 @@ class V1CloudSpace(object):
         """
 
         self._user_metadata = user_metadata
+
+    @property
+    def web_path(self) -> 'str':
+        """Gets the web_path of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The web_path of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._web_path
+
+    @web_path.setter
+    def web_path(self, web_path: 'str'):
+        """Sets the web_path of this V1CloudSpace.
+
+
+        :param web_path: The web_path of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._web_path = web_path
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
