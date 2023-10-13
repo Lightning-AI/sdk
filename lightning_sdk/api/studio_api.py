@@ -2,11 +2,12 @@ import os
 import tarfile
 import tempfile
 import time
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import requests
 from lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
+    Externalv1LightningappInstance,
     IdCodeconfigBody,
     IdExecuteBody,
     IdForkBody,
@@ -14,8 +15,18 @@ from lightning_cloud.openapi import (
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
     V1GetCloudSpaceInstanceStatusResponse,
+    V1Plugin,
+    V1PluginsListResponse,
     V1UserRequestedComputeConfig,
 )
+
+try:
+    from lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
+except ImportError:
+    from lightning_cloud.openapi import AppsIdBody
+
+import json
+
 from lightning_cloud.rest_client import LightningClient
 
 from lightning_sdk.machine import Machine
@@ -159,6 +170,153 @@ class StudioApi:
     def delete_studio(self, studio_id: str, teamspace_id: str) -> None:
         """Delete existing given Studio."""
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
+
+    def install_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> str:
+        """Installs the given plugin."""
+        resp: V1Plugin = self._client.cloud_space_service_install_plugin(
+            project_id=teamspace_id, id=studio_id, plugin_id=plugin_name
+        )
+        if not (resp.state == "installation_success" and resp.error == ""):
+            raise RuntimeError(f"Failed to install plugin {plugin_name}: {resp.error}")
+
+        return resp.additional_info.strip("\n").strip()
+
+    def uninstall_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> None:
+        """Uninstalls the given plugin."""
+        resp: V1Plugin = self._client.cloud_space_service_uninstall_plugin(
+            project_id=teamspace_id, id=studio_id, plugin_id=plugin_name
+        )
+        if not (resp.state == "uninstallation_success" and resp.error == ""):
+            raise RuntimeError(f"Failed to uninstall plugin {plugin_name}: {resp.error}")
+
+    def execute_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> str:
+        """Executes the given plugin."""
+        resp: V1Plugin = self._client.cloud_space_service_execute_plugin(
+            roject_id=teamspace_id, id=studio_id, plugin_id=plugin_name
+        )
+        if not (resp.state == "execution_success" and resp.error == ""):
+            raise RuntimeError(f"Failed to execute plugin {plugin_name}: {resp.error}")
+
+        additional_info_string = resp.additional_info
+        additional_info = json.loads(additional_info_string)
+        port = int(additional_info["port"])
+
+        output_str = ""
+
+        # if port is specified greater than 0 this means the plugin is interactive.
+        # Prompt the user to head to the browser
+        if port > 0:
+            output_str = (
+                f"Plugin {plugin_name} is interactive. Have a look at https://{port}-{studio_id}.cloudspaces.litng.ai"
+            )
+
+        elif port < 0:
+            output_str = "This plugin can only be used on the browser interface of a Studio!"
+
+        # TODO: retrieve actual command output?
+        elif port == 0:
+            output_str = f"Successfully executed plugin {plugin_name}"
+
+        return output_str, port
+
+    def list_available_plugins(self, studio_id: str, teamspace_id: str) -> Dict[str, str]:
+        """Lists the available plugins."""
+        resp: V1PluginsListResponse = self._client.cloud_space_service_list_available_plugins(
+            project_id=teamspace_id, id=studio_id
+        )
+        return resp.plugins
+
+    def list_installed_plugins(self, studio_id: str, teamspace_id: str) -> Dict[str, str]:
+        """Lists all installed plugins."""
+        resp: V1PluginsListResponse = self._client.cloud_space_service_list_installed_plugins(
+            project_id=teamspace_id, id=studio_id
+        )
+        return resp.plugins
+
+    def create_job(
+        self, entrypoint: str, name: str, cloud_compute: Machine, studio_id: str, teamspace_id: str, cluster_id: str
+    ) -> Externalv1LightningappInstance:
+        """Creates a job with given commands."""
+        return self._create_app(
+            studio_id=studio_id,
+            teamspace_id=teamspace_id,
+            cluster_id=cluster_id,
+            plugin_type="job",
+            entrypoint=entrypoint,
+            name=name,
+            compute=_MACHINE_TO_COMPUTE_NAME[cloud_compute],
+        )
+
+    def create_multi_machine_job(
+        self,
+        entrypoint: str,
+        name: str,
+        num_instances: int,
+        cloud_compute: Machine,
+        strategy: str,
+        studio_id: str,
+        teamspace_id: str,
+        cluster_id: str,
+    ) -> Externalv1LightningappInstance:
+        """Creates a multi-machine job with given commands."""
+        distributed_args = {
+            "cloud_compute": _MACHINE_TO_COMPUTE_NAME[cloud_compute],
+            "num_instances": num_instances,
+            "strategy": strategy,
+        }
+        return self._create_app(
+            studio_id=studio_id,
+            teamspace_id=teamspace_id,
+            cluster_id=cluster_id,
+            plugin_type="distributed_plugin",
+            entrypoint=entrypoint,
+            name=name,
+            distributedArguments=json.dumps(distributed_args),
+        )
+
+    def create_inference_job(
+        self,
+        entrypoint: str,
+        name: str,
+        cloud_compute: Machine,
+        min_replicas: str,
+        max_replicas: str,
+        max_batch_size: str,
+        timeout_batching: str,
+        scale_in_interval: str,
+        scale_out_interval: str,
+        endpoint: str,
+        studio_id: str,
+        teamspace_id: str,
+        cluster_id: str,
+    ) -> Externalv1LightningappInstance:
+        """Creates an inference job for given endpoint."""
+        return self._create_app(
+            studio_id=studio_id,
+            teamspace_id=teamspace_id,
+            cluster_id=cluster_id,
+            plugin_type="inference_plugin",
+            compute=_MACHINE_TO_COMPUTE_NAME[cloud_compute],
+            entrypoint=entrypoint,
+            name=name,
+            min_replicas=min_replicas,
+            max_replicas=max_replicas,
+            max_batch_size=max_batch_size,
+            timeout_batching=timeout_batching,
+            scale_in_inverval=scale_in_interval,
+            scale_out_interval=scale_out_interval,
+            endpoint=endpoint,
+        )
+
+    def _create_app(
+        self, studio_id: str, teamspace_id: str, cluster_id: str, plugin_type: str, **other_arguments: Any
+    ) -> Externalv1LightningappInstance:
+        """Creates an arbitrary app."""
+        body = AppsIdBody(cluster_id=cluster_id, plugin_arguments=other_arguments)
+
+        return self._client.cloud_space_service_create_cloud_space_app_instance(
+            body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
+        )
 
 
 def _cloud_url() -> str:
