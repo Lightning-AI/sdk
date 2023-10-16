@@ -43,25 +43,30 @@ class V1NotificationPreferencesRequest(object):
     swagger_types = {
         'email_enabled': 'bool',
         'notification_type': 'V1NotificationType',
+        'threshold': 'str',
         'user_id': 'str'
     }
 
     attribute_map = {
         'email_enabled': 'emailEnabled',
         'notification_type': 'notificationType',
+        'threshold': 'threshold',
         'user_id': 'userId'
     }
 
-    def __init__(self, email_enabled: 'bool' =None, notification_type: 'V1NotificationType' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, email_enabled: 'bool' =None, notification_type: 'V1NotificationType' =None, threshold: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1NotificationPreferencesRequest - a model defined in Swagger"""  # noqa: E501
         self._email_enabled = None
         self._notification_type = None
+        self._threshold = None
         self._user_id = None
         self.discriminator = None
         if email_enabled is not None:
             self.email_enabled = email_enabled
         if notification_type is not None:
             self.notification_type = notification_type
+        if threshold is not None:
+            self.threshold = threshold
         if user_id is not None:
             self.user_id = user_id
 
@@ -106,6 +111,27 @@ class V1NotificationPreferencesRequest(object):
         """
 
         self._notification_type = notification_type
+
+    @property
+    def threshold(self) -> 'str':
+        """Gets the threshold of this V1NotificationPreferencesRequest.  # noqa: E501
+
+
+        :return: The threshold of this V1NotificationPreferencesRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._threshold
+
+    @threshold.setter
+    def threshold(self, threshold: 'str'):
+        """Sets the threshold of this V1NotificationPreferencesRequest.
+
+
+        :param threshold: The threshold of this V1NotificationPreferencesRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._threshold = threshold
 
     @property
     def user_id(self) -> 'str':
