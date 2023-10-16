@@ -1,13 +1,21 @@
+import json
+import math
 from unittest import mock
 from unittest.mock import Mock
-import json
+
 import pytest
+from datetime import datetime
+
 from lightning_sdk.lightning_cloud.openapi import (
+    AppsIdBody1,
     Externalv1CloudSpaceInstanceStatus,
+    Externalv1LightningappInstance,
     IdCodeconfigBody,
     ProjectIdCloudspacesBody,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
+    V1CreateCloudSpaceAppInstanceResponse,
+    V1CreateMultipartUploadProjectArtifactResponse,
     V1DeleteCloudSpaceResponse,
     V1ExecuteCloudSpaceCommandResponse,
     V1GetCloudSpaceInstanceStatusResponse,
@@ -17,16 +25,18 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ListMembershipsResponse,
     V1ListOrganizationsResponse,
     V1Membership,
+    V1MultiPartPresignedUrl,
     V1Organization,
+    V1Plugin,
+    V1PluginsListResponse,
     V1Project,
     V1SearchUser,
     V1SearchUsersResponse,
+    V1UploadProjectArtifactResponse,
     V1UserRequestedComputeConfig,
-    V1PluginsListResponse,
-    V1Plugin,
-    AppsIdBody1,
-    V1CreateCloudSpaceAppInstanceResponse,
-    Externalv1LightningappInstance,
+    V1GetFolderIndexResponse,
+    V1GetArtifactsPageResponse,
+    V1Artifact,
 )
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -1099,3 +1109,87 @@ def internal_inference_run_mocker(mocker):
     yield [mocker]
 
     mocker.resetall()
+
+
+@pytest.fixture
+def internal_studio_api_single_part_upload(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_upload_project_artifact",
+        autospec=True,
+        return_value=V1UploadProjectArtifactResponse(upload_url="https://my-dummy-s3-url.com"),
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_studio_api_multi_part_upload(mocker):
+    from lightning_sdk.api.studio_api import _BYTES_PER_GB, _MAX_SIZE_MULTI_PART_CHUNK
+
+    num_counts = math.ceil(6 * _BYTES_PER_GB / _MAX_SIZE_MULTI_PART_CHUNK)
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_create_multipart_upload_project_artifact",
+        autospec=True,
+        return_value=V1CreateMultipartUploadProjectArtifactResponse(
+            upload_id="my-fancy-upload",
+            urls=[
+                V1MultiPartPresignedUrl(part_number=i, url=f"https://my-dummy-s3-url.com&part={i}")
+                for i in range(num_counts)
+            ],
+        ),
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_complete_multipart_upload_project_artifact",
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_studio_api_requests_put_mocker(mocker):
+    mocker.patch("requests.put", autospec=True)
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_studio_api_requests_get_mocker(mocker):
+    mocker.patch("requests.get", autospec=True)
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_studio_api_download(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_folder_index",
+        autospec=True,
+        return_value=V1GetFolderIndexResponse(nested_file_count="5", page_size=10),
+    )
+
+    prefix = "projects/ts-abc/cloudspaces/st-abc/code/content/"
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_artifacts_page",
+        autospec=True,
+        return_value=V1GetArtifactsPageResponse(
+            [
+                V1Artifact(
+                    filename=prefix + f"file{i}",
+                    last_modified=datetime.now(),
+                    md5_checksum=f"checksum_file{i}",
+                    url=f"https://download-url-file{i}.com",
+                )
+                for i in range(5)
+            ]
+        ),
+    )

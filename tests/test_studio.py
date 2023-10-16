@@ -1,11 +1,18 @@
+import os
+import subprocess
 from contextlib import nullcontext
 
 import pytest
 
 from lightning_sdk.machine import Machine
+from lightning_sdk.plugin import (
+    InferenceServerPlugin,
+    JobsPlugin,
+    MultiMachineTrainingPlugin,
+    Plugin,
+)
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
-from lightning_sdk.plugin import Plugin, JobsPlugin, MultiMachineTrainingPlugin, InferenceServerPlugin
 
 
 @pytest.mark.parametrize("create_ok", [True, False])
@@ -259,3 +266,38 @@ def test_run_inference(
         endpoint="/fancy-predict",
         cloud_compute=cloud_compute,
     )
+
+
+def test_upload_file_single_part(
+    tmpdir, internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_api_single_part_upload
+):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
+
+    studio.upload_file(filepath, "file1")
+
+
+def test_upload_file_multi_part(
+    tmpdir, internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_api_multi_part_upload
+):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 6GB {filepath}".split(" "))
+
+    studio.upload_file(filepath, "file1")
+
+
+def test_download_file(
+    tmpdir,
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_studio_api_download,
+    internal_studio_api_requests_get_mocker,
+):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+
+    filepath = os.path.join(tmpdir, "file1")
+    studio.download_file("file1", filepath)

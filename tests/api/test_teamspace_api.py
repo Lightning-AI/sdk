@@ -1,7 +1,7 @@
 import pytest
-from lightning_sdk.lightning_cloud.openapi import V1Project
 
 from lightning_sdk.api.teamspace_api import TeamspaceApi
+from lightning_sdk.lightning_cloud.openapi import V1Project
 
 
 def test_get_teamspace(internal_teamspace_api_mocker):

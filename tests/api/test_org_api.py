@@ -1,7 +1,7 @@
 import pytest
-from lightning_sdk.lightning_cloud.openapi import V1Organization
 
 from lightning_sdk.api.org_api import OrgApi
+from lightning_sdk.lightning_cloud.openapi import V1Organization
 
 
 def test_org_api(internal_org_api_mocker):
