@@ -103,7 +103,6 @@ exclude = [
     "docs",
     "examples",
     "tests",
-    "lightning_sdk/plugin.py", # TODO: Remove
 ]
 ignore-init-module-imports = true
 unfixable = ["F401"]
