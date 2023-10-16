@@ -4,6 +4,7 @@ from lightning_sdk.lightning_cloud.openapi import V1CloudSpace, V1GetCloudSpaceI
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.machine import Machine
 import contextlib
+import os, subprocess
 
 
 def test_get_studio(internal_studio_api_mocker_get_studio):
@@ -260,3 +261,21 @@ def test_create_inference_run(internal_studio_api_create_app_mocker):
         cluster_id="cluster-abc",
     )
     assert resp.name == "fancy-inference-name"
+
+
+def test_upload_file_single_part(tmpdir, internal_studio_api_single_part_upload, internal_studio_api_requests_mocker):
+    studio_api = StudioApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
+
+    studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1")
+
+
+def test_upload_file_multi_part(tmpdir, internal_studio_api_multi_part_upload, internal_studio_api_requests_mocker):
+    studio_api = StudioApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 6GB {filepath}".split(" "))
+
+    studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1")
