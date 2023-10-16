@@ -150,3 +150,8 @@ filterwarnings = [
 ]
 xfail_strict = true
 junit_duration_report = "call"
+
+[tool.coverage.run]
+omit = [
+    "lightning_sdk/lightning_cloud/*",
+]
