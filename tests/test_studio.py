@@ -172,7 +172,7 @@ def test_duplicate(internal_studio_init_mocker, internal_studio_duplicate_mocker
 
 
 def test_install_plugin(
-    internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_plugin_install_mocker
+    internal_studio_init_plugin_mocker, internal_studio_status_mocker, internal_studio_plugin_install_mocker
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     assert not studio.installed_plugins
@@ -184,7 +184,7 @@ def test_install_plugin(
 
 
 def test_uninstall_plugin(
-    internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_plugin_uninstall_mocker
+    internal_studio_init_plugin_mocker, internal_studio_status_mocker, internal_studio_plugin_uninstall_mocker
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     # check that all plugins that are claimed to be installed by the DB get actually installed

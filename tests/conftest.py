@@ -890,6 +890,55 @@ def internal_studio_api_create_app_mocker(mocker):
 
     mocker.resetall()
 
+@pytest.fixture()
+def internal_studio_init_plugin_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
+    existing_studios = [
+        V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"),
+        V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id=None, project_id="ts-abc", id="st-abc"),
+        V1CloudSpace(name="st-def", display_name="st-def", cluster_id="c-abc", project_id="ts-abc", id="st-def"),
+        V1CloudSpace(name="st-def", display_name="st-def", cluster_id=None, project_id="ts-abc", id="st-def"),
+    ]
+
+    def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
+        assert isinstance(body, ProjectIdCloudspacesBody)
+        cloudspace = V1CloudSpace(
+            name=body.name,
+            display_name=body.display_name,
+            cluster_id=body.cluster_id,
+            project_id=project_id,
+            id=body.name,
+        )
+        existing_studios.append(cloudspace)
+        return cloudspace
+
+    def _list_cloudspaces_side_effect(*args, **kwargs):
+        return V1ListCloudSpacesResponse(existing_studios)
+
+    def _create_lightning_run_side_effect(self, body, project_id, cloudspace_id, **kwargs):
+        return V1LightningRun(
+            cluster_id=body.cluster_id, cloudspace_id=cloudspace_id, project_id=project_id, id=cloudspace_id + "_run"
+        )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+        side_effect=_list_cloudspaces_side_effect,
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
+        autospec=True,
+        side_effect=_create_cloudspace_side_effect,
+    )
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
+        autospec=True,
+        side_effect=_create_lightning_run_side_effect,
+    )
+    mocker.patch("requests.put")
+
+    yield [mocker, internal_org_api_mocker, internal_teamspace_api_mocker]
+
+    mocker.resetall()
 
 @pytest.fixture
 def internal_studio_plugin_install_mocker(mocker):
