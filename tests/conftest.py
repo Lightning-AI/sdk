@@ -890,6 +890,7 @@ def internal_studio_api_create_app_mocker(mocker):
 
     mocker.resetall()
 
+
 @pytest.fixture()
 def internal_studio_init_plugin_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
     existing_studios = [
@@ -939,6 +940,7 @@ def internal_studio_init_plugin_mocker(mocker, internal_org_api_mocker, internal
     yield [mocker, internal_org_api_mocker, internal_teamspace_api_mocker]
 
     mocker.resetall()
+
 
 @pytest.fixture
 def internal_studio_plugin_install_mocker(mocker):
