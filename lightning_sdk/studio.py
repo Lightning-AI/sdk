@@ -1,5 +1,4 @@
-import logging
-from typing import Mapping, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Mapping, Optional, Tuple
 
 from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
@@ -8,6 +7,9 @@ from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 from lightning_sdk.utils import _setup_logger
+
+if TYPE_CHECKING:
+    from lightning_sdk.plugin import Plugin
 
 _logger = _setup_logger(__name__)
 
@@ -88,7 +90,8 @@ class Studio:
         if self.status == Status.Running:
             self._setup()
 
-    def _setup(self):
+    def _setup(self) -> None:
+        """Installs all plugins that should be currently installed."""
         if self._setup_done:
             return
 
@@ -220,11 +223,11 @@ class Studio:
 
     @property
     def installed_plugins(self) -> Mapping[str, "Plugin"]:
-        """All plugins that are currently installed in this Studio"""
+        """All plugins that are currently installed in this Studio."""
         return self._plugins
 
     def install_plugin(self, plugin_name: str) -> None:
-        """Installs a given plugin to a Studio"""
+        """Installs a given plugin to a Studio."""
         try:
             additional_info = self._studio_api.install_plugin(self._studio.id, self._teamspace.id, plugin_name)
         except RuntimeError as e:
@@ -236,12 +239,12 @@ class Studio:
 
         self._add_plugin(plugin_name)
 
-    def run_plugin(self, plugin_name: str, *args, **kwargs) -> str:
-        """Runs a given plugin in a Studio"""
+    def run_plugin(self, plugin_name: str, *args: Any, **kwargs: Any) -> str:
+        """Runs a given plugin in a Studio."""
         return self._plugins[plugin_name].run(*args, **kwargs)
 
     def uninstall_plugin(self, plugin_name: str) -> None:
-        """Uninstalls the given plugin from the Studio
+        """Uninstalls the given plugin from the Studio."""
         try:
             self._studio_api.uninstall_plugin(self._studio.id, self._teamspace.id, plugin_name)
         except RuntimeError as e:
@@ -251,11 +254,11 @@ class Studio:
         self._plugins.pop(plugin_name)
 
     def _list_installed_plugins(self) -> Mapping[str, str]:
-        """Lists all plugins that should be installed"""
+        """Lists all plugins that should be installed."""
         return self._studio_api.list_installed_plugins(self._studio.id, self._teamspace.id)
 
     def _add_plugin(self, plugin_name: str) -> None:
-        """Adds the just installed plugin to the internal list of plugins"""
+        """Adds the just installed plugin to the internal list of plugins."""
         from lightning_sdk.plugin import InferenceServerPlugin, JobsPlugin, MultiMachineTrainingPlugin, Plugin
 
         if plugin_name in self._plugins:
@@ -272,13 +275,13 @@ class Studio:
         self._plugins[plugin_name] = plugin_cls(plugin_name, description, self)
 
     def _execute_plugin(self, plugin_name: str) -> Tuple[str, int]:
-        """Executes a plugin command on the Studio"""
+        """Executes a plugin command on the Studio."""
         output = self._studio_api.execute_plugin(self._studio.id, self._teamspace.id, plugin_name)
         _logger.info(output)
         return output
 
-    def __eq__(self, other: "Studio"):
-        """Checks for equality with other Studios"""
+    def __eq__(self, other: "Studio") -> bool:
+        """Checks for equality with other Studios."""
         return (
             isinstance(other, Studio)
             and self.name == other.name

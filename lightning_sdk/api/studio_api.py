@@ -20,7 +20,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1PluginsListResponse,
     V1UserRequestedComputeConfig,
 )
-from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 try:
     from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
