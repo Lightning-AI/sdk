@@ -289,7 +289,14 @@ def test_upload_file_multi_part(
 
     studio.upload_file(filepath, "file1")
 
-def test_download_file(tmpdir, internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_api_download, internal_studio_api_requests_get_mocker):
+
+def test_download_file(
+    tmpdir,
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_studio_api_download,
+    internal_studio_api_requests_get_mocker,
+):
     studio = Studio("st-abc", "ts-abc", "org-abc")
 
     filepath = os.path.join(tmpdir, "file1")

@@ -273,10 +273,11 @@ class StudioApi:
         artifacts = {}
 
         for page_num in range(num_pages):
-            resp = self._client.cloud_space_service_get_cloud_space_artifacts_page(**kwargs, include_download_url=return_url, page_number=page_num)
+            resp = self._client.cloud_space_service_get_cloud_space_artifacts_page(
+                **kwargs, include_download_url=return_url, page_number=page_num
+            )
 
             for art in resp.artifacts:
-                
                 filename = art.filename
                 stripped_filename = filename.replace(prefix, "")
                 if path is None or filename.startswith(prefix):

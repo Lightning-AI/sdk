@@ -268,7 +268,9 @@ def test_create_inference_run(internal_studio_api_create_app_mocker):
     assert resp.name == "fancy-inference-name"
 
 
-def test_upload_file_single_part(tmpdir, internal_studio_api_single_part_upload, internal_studio_api_requests_put_mocker):
+def test_upload_file_single_part(
+    tmpdir, internal_studio_api_single_part_upload, internal_studio_api_requests_put_mocker
+):
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")

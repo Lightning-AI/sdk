@@ -36,7 +36,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UserRequestedComputeConfig,
     V1GetFolderIndexResponse,
     V1GetArtifactsPageResponse,
-    V1Artifact
+    V1Artifact,
 )
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -1159,6 +1159,7 @@ def internal_studio_api_requests_put_mocker(mocker):
 
     mocker.resetall()
 
+
 @pytest.fixture
 def internal_studio_api_requests_get_mocker(mocker):
     mocker.patch("requests.get", autospec=True)
@@ -1173,13 +1174,22 @@ def internal_studio_api_download(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_folder_index",
         autospec=True,
-        return_value=V1GetFolderIndexResponse(nested_file_count="5", page_size=10)
+        return_value=V1GetFolderIndexResponse(nested_file_count="5", page_size=10),
     )
 
     prefix = "projects/ts-abc/cloudspaces/st-abc/code/content/"
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_artifacts_page",
         autospec=True,
-        return_value=V1GetArtifactsPageResponse([V1Artifact(filename=prefix+f"file{i}", last_modified=datetime.now(), md5_checksum=f"checksum_file{i}", url=f"https://download-url-file{i}.com") for i in range(5)])
+        return_value=V1GetArtifactsPageResponse(
+            [
+                V1Artifact(
+                    filename=prefix + f"file{i}",
+                    last_modified=datetime.now(),
+                    md5_checksum=f"checksum_file{i}",
+                    url=f"https://download-url-file{i}.com",
+                )
+                for i in range(5)
+            ]
+        ),
     )
-    
