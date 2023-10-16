@@ -1,3 +1,4 @@
+import os
 from typing import TYPE_CHECKING, Any, Mapping, Optional, Tuple
 
 from lightning_sdk.api.org_api import OrgApi
@@ -216,6 +217,32 @@ class Studio:
             raise RuntimeError(output)
         return output
 
+    def upload_file(self, file_path: str, remote_path: Optional[str] = None) -> None:
+        """Uploads a given file to a remote path on the Studio."""
+        if remote_path is None:
+            remote_path = os.path.split(file_path)[1]
+
+        self._studio_api.upload_file(
+            studio_id=self._studio.id,
+            teamspace_id=self._teamspace.id,
+            cluster_id=self._studio.cluster_id,
+            file_path=file_path,
+            remote_path=remote_path,
+        )
+
+    def download_file(self, remote_path: str, file_path: Optional[str] = None) -> None:
+        """Downloads a file from the Studio to a given target path."""
+        if file_path is None:
+            file_path = remote_path
+
+        self._studio_api.download_file(
+            path=remote_path,
+            target_path=file_path,
+            studio_id=self._studio.id,
+            teamspace_id=self._teamspace.id,
+            cluster_id=self._studio.cluster_id,
+        )
+
     @property
     def available_plugins(self) -> Mapping[str, str]:
         """All available plugins to install in the current Studio."""
@@ -259,7 +286,12 @@ class Studio:
 
     def _add_plugin(self, plugin_name: str) -> None:
         """Adds the just installed plugin to the internal list of plugins."""
-        from lightning_sdk.plugin import InferenceServerPlugin, JobsPlugin, MultiMachineTrainingPlugin, Plugin
+        from lightning_sdk.plugin import (
+            InferenceServerPlugin,
+            JobsPlugin,
+            MultiMachineTrainingPlugin,
+            Plugin,
+        )
 
         if plugin_name in self._plugins:
             return

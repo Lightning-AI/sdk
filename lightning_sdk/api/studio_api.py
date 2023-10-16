@@ -1,8 +1,9 @@
+import math
 import os
 import tarfile
 import tempfile
 import time
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, Union
 
 import requests
 
@@ -12,10 +13,16 @@ from lightning_sdk.lightning_cloud.openapi import (
     IdCodeconfigBody,
     IdExecuteBody,
     IdForkBody,
+    MultipartCompleteBody,
     ProjectIdCloudspacesBody,
+    ProjectIdStorageBody,
+    StorageMultipartBody,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
+    V1CompleteMultiPartUpload,
+    V1CreateMultipartUploadProjectArtifactResponse,
     V1GetCloudSpaceInstanceStatusResponse,
+    V1MultiPartPresignedUrl,
     V1Plugin,
     V1PluginsListResponse,
     V1UserRequestedComputeConfig,
@@ -28,8 +35,18 @@ except ImportError:
 
 import json
 
+from tqdm import tqdm
+from tqdm.utils import CallbackIOWrapper
+
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
+
+_BYTES_PER_KB = 1000
+_BYTES_PER_MB = 1000 * _BYTES_PER_KB
+_BYTES_PER_GB = 1000 * _BYTES_PER_MB
+
+_SIZE_LIMIT_SINGLE_PART = 5 * _BYTES_PER_GB
+_MAX_SIZE_MULTI_PART_CHUNK = 20 * _BYTES_PER_MB
 
 
 class StudioApi:
@@ -170,6 +187,140 @@ class StudioApi:
     def delete_studio(self, studio_id: str, teamspace_id: str) -> None:
         """Delete existing given Studio."""
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
+
+    def upload_file(
+        self,
+        studio_id: str,
+        teamspace_id: str,
+        cluster_id: str,
+        file_path: str,
+        remote_path: str,
+        progress_bar: bool = True,
+    ) -> None:
+        """Uploads file to given remote path on the studio."""
+        remote_path = f"/cloudspaces/{studio_id}/code/content/{remote_path}"
+        if os.path.getsize(file_path) <= _SIZE_LIMIT_SINGLE_PART:
+            self._single_part_upload(
+                teamspace_id=teamspace_id,
+                cluster_id=cluster_id,
+                file_path=file_path,
+                remote_path=remote_path,
+                progress_bar=progress_bar,
+            )
+        else:
+            self._multipart_upload(
+                teamspace_id=teamspace_id,
+                cluster_id=cluster_id,
+                file_path=file_path,
+                remote_path=remote_path,
+                progress_bar=progress_bar,
+            )
+
+    def _single_part_upload(
+        self, teamspace_id: str, cluster_id: str, file_path: str, remote_path: str, progress_bar: bool
+    ) -> None:
+        """Uploads small files to a given remote path on the studio."""
+        body = ProjectIdStorageBody(cluster_id=cluster_id, filename=remote_path)
+        url = self._client.lightningapp_instance_service_upload_project_artifact(
+            body, project_id=teamspace_id
+        ).upload_url
+        _upload_file_to_urls(url, path=file_path, progress_bar=progress_bar)
+
+    def _multipart_upload(
+        self, teamspace_id: str, cluster_id: str, file_path: str, remote_path: str, progress_bar: bool
+    ) -> None:
+        """Uploads larger files to a given remote path on the studio."""
+        remote_path = f"projects/{teamspace_id}" + remote_path
+
+        count = math.ceil(os.path.getsize(file_path) / _MAX_SIZE_MULTI_PART_CHUNK)
+
+        body = StorageMultipartBody(cluster_id=cluster_id, count=count, filename=remote_path)
+        resp: V1CreateMultipartUploadProjectArtifactResponse = (
+            self._client.lightningapp_instance_service_create_multipart_upload_project_artifact(
+                body=body, project_id=teamspace_id
+            )
+        )
+
+        completed = _upload_file_to_urls(*resp.urls, path=file_path, progress_bar=progress_bar)
+
+        completed_body = MultipartCompleteBody(
+            cluster_id=cluster_id, filename=remote_path, parts=completed, upload_id=resp.upload_id
+        )
+        self._client.lightningapp_instance_service_complete_multipart_upload_project_artifact(
+            body=completed_body, project_id=teamspace_id
+        )
+
+    def list_files(
+        self, path: Optional[str], studio_id: str, teamspace_id: str, cluster_id: str, return_url: bool
+    ) -> Dict[str, str]:
+        """Lists files for a given prefix."""
+        kwargs = {
+            "project_id": teamspace_id,
+            "id": studio_id,
+            "cluster_id": cluster_id,
+        }
+
+        prefix = f"projects/{teamspace_id}/cloudspaces/{studio_id}/code/content/"
+
+        if path:
+            kwargs["prefix"] = "/" + path
+            prefix = prefix + path.strip("/") + "/"
+
+        index_resp = self._client.cloud_space_service_get_cloud_space_folder_index(**kwargs)
+
+        num_pages = math.ceil(int(index_resp.nested_file_count) / index_resp.page_size)
+
+        artifacts = {}
+
+        for page_num in range(num_pages):
+            resp = self._client.cloud_space_service_get_cloud_space_artifacts_page(
+                **kwargs, include_download_url=return_url, page_number=page_num
+            )
+
+            for art in resp.artifacts:
+                filename = art.filename
+                stripped_filename = filename.replace(prefix, "")
+                if path is None or filename.startswith(prefix):
+                    artifacts[stripped_filename] = {
+                        "last_modified": art.last_modified,
+                        "md5_checksum": art.md5_checksum,
+                        "size_bytes": art.size_bytes,
+                    }
+
+                    if return_url:
+                        artifacts[stripped_filename]["download_url"] = art.url
+
+        return artifacts
+
+    def download_file(
+        self, path: str, target_path: str, studio_id: str, teamspace_id: str, cluster_id: str, progress_bar: bool = True
+    ) -> None:
+        """Downloads a given file from a Studio to a target location."""
+        prefix, filename = os.path.split(path)
+        files = self.list_files(prefix, studio_id, teamspace_id, cluster_id, return_url=True)
+
+        r = requests.get(files[filename]["download_url"], stream=True)
+        total_length = int(r.headers.get("content-length"))
+
+        if progress_bar:
+            pbar = tqdm(
+                desc=f"Downloading {os.path.split(path)[1]}",
+                total=total_length,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1000,
+            )
+
+            pbar_update = pbar.update
+        else:
+            pbar_update = lambda x: None
+
+        if prefix:
+            os.makedirs(prefix, exist_ok=True)
+        with open(target_path, "wb") as f:
+            for chunk in r.iter_content(chunk_size=4096 * 8):
+                f.write(chunk)
+                pbar_update(len(chunk))
 
     def install_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> str:
         """Installs the given plugin."""
@@ -319,6 +470,52 @@ class StudioApi:
         return self._client.cloud_space_service_create_cloud_space_app_instance(
             body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
         ).lightningappinstance
+
+
+def _upload_file_to_urls(*urls: Union[str, V1MultiPartPresignedUrl], path: str, progress_bar: bool = True) -> None:
+    if progress_bar:
+        file_size = os.path.getsize(path)
+        pbar = tqdm(
+            desc=f"Uploading {os.path.split(path)[1]}",
+            total=file_size,
+            unit="B",
+            unit_scale=True,
+            unit_divisor=1000,
+        )
+        update_fn = pbar.update
+
+    else:
+        update_fn = lambda *args, **kwargs: None
+
+    is_multipart = len(urls) > 1
+    completed_uploads = []
+
+    with open(path, "rb") as fd:
+        reader_wrapper = CallbackIOWrapper(update_fn, fd, "read")
+
+        for url in urls:
+            if is_multipart:
+                assert isinstance(url, V1MultiPartPresignedUrl)
+                # unfortunately we can't just pass the reader_wrapper directly since we only
+                # need to read the first N bytes, finding a way to still pass the reader_wrapper
+                # would likely be faster though
+                data = reader_wrapper.read(_MAX_SIZE_MULTI_PART_CHUNK)
+                curr_url = url.url
+            else:
+                data = reader_wrapper
+                curr_url = url
+
+            response = requests.put(curr_url, data=data)
+            response.raise_for_status()
+
+            if is_multipart:
+                etag = response.headers.get("ETag")
+                completed_uploads.append(V1CompleteMultiPartUpload(etag=etag, part_number=url.part_number))
+
+    if progress_bar:
+        pbar.close()
+
+    return completed_uploads
 
 
 def _cloud_url() -> str:
