@@ -220,11 +220,11 @@ class Studio:
 
     @property
     def installed_plugins(self) -> Mapping[str, "Plugin"]:
-        """All plugins that are currently installed in this Studio
+        """All plugins that are currently installed in this Studio"""
         return self._plugins
 
     def install_plugin(self, plugin_name: str) -> None:
-        """Installs a given plugin to a Studio
+        """Installs a given plugin to a Studio"""
         try:
             additional_info = self._studio_api.install_plugin(self._studio.id, self._teamspace.id, plugin_name)
         except RuntimeError as e:
