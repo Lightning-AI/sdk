@@ -170,33 +170,51 @@ def test_duplicate(internal_studio_init_mocker, internal_studio_duplicate_mocker
     studio = Studio("st-abc", "ts-abc", "org-abc")
     studio.duplicate()
 
-def test_install_plugin(internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_plugin_install_mocker):
+
+def test_install_plugin(
+    internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_plugin_install_mocker
+):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     assert not studio.installed_plugins
 
     studio.install_plugin("my-fancy-dummy-plugin")
-    assert studio.installed_plugins == {"my-fancy-dummy-plugin": Plugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio)}
+    assert studio.installed_plugins == {
+        "my-fancy-dummy-plugin": Plugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio)
+    }
 
-def test_uninstall_plugin(internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_plugin_uninstall_mocker):
+
+def test_uninstall_plugin(
+    internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_plugin_uninstall_mocker
+):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     # check that all plugins that are claimed to be installed by the DB get actually installed
-    assert studio.installed_plugins == {"my-fancy-dummy-plugin": Plugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio)}
+    assert studio.installed_plugins == {
+        "my-fancy-dummy-plugin": Plugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio)
+    }
 
     studio.uninstall_plugin("my-fancy-dummy-plugin")
     assert not studio.installed_plugins
 
     assert not studio._list_installed_plugins()
 
+
 def test_run_plugin(internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_plugin_run_mocker):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
-    studio._plugins = {"my-fancy-dummy-plugin": Plugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio)}
+    studio._plugins = {
+        "my-fancy-dummy-plugin": Plugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio)
+    }
 
     studio.run_plugin("my-fancy-dummy-plugin")
+
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
 def test_run_job(internal_studio_init_mocker, internal_studio_status_mocker, internal_job_run_mocker, cloud_compute):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
-    studio._plugins = {"jobs": JobsPlugin("jobs", "Launch asynchronous scripts from a Studio - Like submitting a job to a cluster", studio)}
+    studio._plugins = {
+        "jobs": JobsPlugin(
+            "jobs", "Launch asynchronous scripts from a Studio - Like submitting a job to a cluster", studio
+        )
+    }
 
     studio.run_plugin("jobs", command="python my-file.py", name="my-fancy-job-name", cloud_compute=cloud_compute)
 
@@ -204,17 +222,40 @@ def test_run_job(internal_studio_init_mocker, internal_studio_status_mocker, int
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
 def test_run_mmt(internal_studio_init_mocker, internal_studio_status_mocker, internal_mmt_run_mocker, cloud_compute):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
-    studio._plugins = {"multi-machine-training": MultiMachineTrainingPlugin("multi-machine-training", "Train a model across multiple cloud machines", studio)}
+    studio._plugins = {
+        "multi-machine-training": MultiMachineTrainingPlugin(
+            "multi-machine-training", "Train a model across multiple cloud machines", studio
+        )
+    }
 
-    studio.run_plugin("multi-machine-training", command="python my-file.py", name="my-fancy-mmt-name", num_instances=42, cloud_compute=cloud_compute)
+    studio.run_plugin(
+        "multi-machine-training",
+        command="python my-file.py",
+        name="my-fancy-mmt-name",
+        num_instances=42,
+        cloud_compute=cloud_compute,
+    )
+
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
-def test_run_inference(internal_studio_init_mocker, internal_studio_status_mocker, internal_inference_run_mocker, cloud_compute):
+def test_run_inference(
+    internal_studio_init_mocker, internal_studio_status_mocker, internal_inference_run_mocker, cloud_compute
+):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
-    studio._plugins = {"inference-server": InferenceServerPlugin("inference-server", "Deploy an ML model accessible via API", studio)}
+    studio._plugins = {
+        "inference-server": InferenceServerPlugin("inference-server", "Deploy an ML model accessible via API", studio)
+    }
 
-    studio.run_plugin("inference-server", command="python my-file.py", name="my-fancy-inference-name", min_replicas=1, max_replicas=5, max_batch_size=10, timeout_batching=0.3, scale_in_interval=11, scale_out_interval=12, endpoint="/fancy-predict", cloud_compute=cloud_compute)
-
-
-
-
+    studio.run_plugin(
+        "inference-server",
+        command="python my-file.py",
+        name="my-fancy-inference-name",
+        min_replicas=1,
+        max_replicas=5,
+        max_batch_size=10,
+        timeout_batching=0.3,
+        scale_in_interval=11,
+        scale_out_interval=12,
+        endpoint="/fancy-predict",
+        cloud_compute=cloud_compute,
+    )

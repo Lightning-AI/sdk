@@ -30,7 +30,6 @@ except ImportError:
 import json
 
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
-
 from lightning_sdk.machine import Machine
 
 
@@ -193,7 +192,7 @@ class StudioApi:
         if not (resp.state == "uninstallation_success" and resp.error == ""):
             raise RuntimeError(f"Failed to uninstall plugin {plugin_name}: {resp.error}")
 
-    def execute_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> str:
+    def execute_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> Tuple[str, int]:
         """Executes the given plugin."""
         resp: V1Plugin = self._client.cloud_space_service_execute_plugin(
             project_id=teamspace_id, id=studio_id, plugin_id=plugin_name
@@ -317,13 +316,10 @@ class StudioApi:
     ) -> Externalv1LightningappInstance:
         """Creates an arbitrary app."""
         body = AppsIdBody(cluster_id=cluster_id, plugin_arguments=other_arguments)
-        
+
         return self._client.cloud_space_service_create_cloud_space_app_instance(
             body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
         ).lightningappinstance
-       
-
-            
 
 
 def _cloud_url() -> str:

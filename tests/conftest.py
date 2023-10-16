@@ -26,7 +26,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Plugin,
     AppsIdBody1,
     V1CreateCloudSpaceAppInstanceResponse,
-    Externalv1LightningappInstance
+    Externalv1LightningappInstance,
 )
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -416,10 +416,10 @@ def internal_studio_init_mocker(mocker, internal_org_api_mocker, internal_teamsp
     )
     mocker.patch("requests.put")
 
-    mocker.patch("lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
         autospec=True,
-        return_type=V1PluginsListResponse()
-
+        return_type=V1PluginsListResponse(),
     )
 
     yield [mocker, internal_org_api_mocker, internal_teamspace_api_mocker]
@@ -735,7 +735,6 @@ def internal_studio_duplicate_mocker(mocker):
 
 @pytest.fixture
 def internal_studio_api_install_plugin_mocker(mocker):
-
     def _plugin_install_side_effect(self, project_id, id, plugin_id):
         assert plugin_id == "my-fancy-plugin"
         if id == "st-abc":
@@ -752,17 +751,16 @@ def internal_studio_api_install_plugin_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_install_plugin",
         autospec=True,
-        side_effect=_plugin_install_side_effect
-
+        side_effect=_plugin_install_side_effect,
     )
 
     yield [mocker]
 
     mocker.resetall()
 
+
 @pytest.fixture
 def internal_studio_api_uninstall_plugin_mocker(mocker):
-
     def _plugin_uninstall_side_effect(self, project_id, id, plugin_id):
         assert plugin_id == "my-fancy-plugin"
         if id == "st-abc":
@@ -777,17 +775,16 @@ def internal_studio_api_uninstall_plugin_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_uninstall_plugin",
         autospec=True,
-        side_effect=_plugin_uninstall_side_effect
-
+        side_effect=_plugin_uninstall_side_effect,
     )
 
     yield [mocker]
 
     mocker.resetall()
 
+
 @pytest.fixture
 def internal_studio_api_execute_plugin_mocker(mocker):
-
     def _plugin_execute_side_effect(self, project_id, id, plugin_id):
         assert plugin_id == "my-fancy-plugin"
         if id == "st-abc":
@@ -806,8 +803,7 @@ def internal_studio_api_execute_plugin_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_plugin",
         autospec=True,
-        side_effect=_plugin_execute_side_effect
-
+        side_effect=_plugin_execute_side_effect,
     )
 
     yield [mocker]
@@ -817,42 +813,39 @@ def internal_studio_api_execute_plugin_mocker(mocker):
 
 @pytest.fixture
 def internal_studio_api_list_available_plugins_mocker(mocker):
-
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
         autospec=True,
-        return_value=V1PluginsListResponse(plugins={
-            "plugin1": "description1",
-            "plugin2": "description2", 
-            "plugin3": "description3"
-        })
-
+        return_value=V1PluginsListResponse(
+            plugins={"plugin1": "description1", "plugin2": "description2", "plugin3": "description3"}
+        ),
     )
 
     yield [mocker]
 
     mocker.resetall()
+
 
 @pytest.fixture
 def internal_studio_api_list_installed_plugins_mocker(mocker):
-
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
         autospec=True,
-        return_value=V1PluginsListResponse(plugins={
-            "plugin1": "description1",
-            "plugin2": "description2", 
-        })
-
+        return_value=V1PluginsListResponse(
+            plugins={
+                "plugin1": "description1",
+                "plugin2": "description2",
+            }
+        ),
     )
 
     yield [mocker]
 
     mocker.resetall()
 
+
 @pytest.fixture
 def internal_studio_api_create_app_mocker(mocker):
-
     def side_effect(self, body, project_id, cloudspace_id, id):
         if id == "job":
             assert body.plugin_arguments == {
@@ -864,7 +857,9 @@ def internal_studio_api_create_app_mocker(mocker):
             assert body.plugin_arguments == {
                 "entrypoint": "my-entry-point",
                 "name": "fancy-mmt-name",
-                "distributedArguments": json.dumps({"cloud_compute": "g5.8xlarge", "num_instances": 4, "strategy": "parallel"})
+                "distributedArguments": json.dumps(
+                    {"cloud_compute": "g5.8xlarge", "num_instances": 4, "strategy": "parallel"}
+                ),
             }
 
         elif id == "inference_plugin":
@@ -878,20 +873,23 @@ def internal_studio_api_create_app_mocker(mocker):
                 "timeout_batching": "0.3",
                 "scale_in_interval": "11",
                 "scale_out_interval": "12",
-                "endpoint": "/fancy-predict"
+                "endpoint": "/fancy-predict",
             }
 
-        return V1CreateCloudSpaceAppInstanceResponse(lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"]))
+        return V1CreateCloudSpaceAppInstanceResponse(
+            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
+        )
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
         autospec=True,
-        side_effect=side_effect
+        side_effect=side_effect,
     )
 
     yield [mocker]
 
     mocker.resetall()
+
 
 @pytest.fixture
 def internal_studio_plugin_install_mocker(mocker):
@@ -908,19 +906,19 @@ def internal_studio_plugin_install_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
         autospec=True,
-        side_effect=_side_effect_list
+        side_effect=_side_effect_list,
     )
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_install_plugin",
         autospec=True,
-        side_effect=_side_effect_install
+        side_effect=_side_effect_install,
     )
-    
 
     yield [mocker]
 
     mocker.resetall()
+
 
 @pytest.fixture
 def internal_studio_plugin_uninstall_mocker(mocker):
@@ -937,86 +935,95 @@ def internal_studio_plugin_uninstall_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
         autospec=True,
-        side_effect=_side_effect_list
+        side_effect=_side_effect_list,
     )
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_install_plugin",
         autospec=True,
-        return_value=V1Plugin(state="installation_success", error="")
+        return_value=V1Plugin(state="installation_success", error=""),
     )
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_uninstall_plugin",
         autospec=True,
-        side_effect=_side_effect_uninstall
+        side_effect=_side_effect_uninstall,
     )
-    
 
     yield [mocker]
 
     mocker.resetall()
+
 
 @pytest.fixture
 def internal_studio_plugin_run_mocker(mocker):
-
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_plugin",
         autospec=True,
-        return_value=V1Plugin(state="execution_success", error="", additional_info='{"port": 0}')
+        return_value=V1Plugin(state="execution_success", error="", additional_info='{"port": 0}'),
     )
 
     yield [mocker]
 
     mocker.resetall()
+
 
 @pytest.fixture
 def internal_job_run_mocker(mocker):
     def side_effect(self, body, project_id, cloudspace_id, id):
         from lightning_sdk.api.studio_api import _MACHINE_TO_COMPUTE_NAME
+
         assert body.plugin_arguments["entrypoint"] == "python my-file.py"
         assert body.plugin_arguments["name"] == "my-fancy-job-name"
         assert body.plugin_arguments["compute"] in _MACHINE_TO_COMPUTE_NAME.values()
-       
-        return V1CreateCloudSpaceAppInstanceResponse(lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"]))
+
+        return V1CreateCloudSpaceAppInstanceResponse(
+            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
+        )
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
         autospec=True,
-        side_effect=side_effect
+        side_effect=side_effect,
     )
 
     yield [mocker]
 
     mocker.resetall()
 
+
 @pytest.fixture
 def internal_mmt_run_mocker(mocker):
     def side_effect(self, body, project_id, cloudspace_id, id):
         from lightning_sdk.api.studio_api import _MACHINE_TO_COMPUTE_NAME
+
         distributed_args = json.loads(body.plugin_arguments["distributedArguments"])
         assert body.plugin_arguments["entrypoint"] == "python my-file.py"
         assert body.plugin_arguments["name"] == "my-fancy-mmt-name"
         assert distributed_args["num_instances"] == 42
         assert distributed_args["strategy"] == "parallel"
         assert distributed_args["cloud_compute"] in _MACHINE_TO_COMPUTE_NAME.values()
-       
-        return V1CreateCloudSpaceAppInstanceResponse(lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"]))
+
+        return V1CreateCloudSpaceAppInstanceResponse(
+            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
+        )
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
         autospec=True,
-        side_effect=side_effect
+        side_effect=side_effect,
     )
 
     yield [mocker]
 
     mocker.resetall()
 
+
 @pytest.fixture
 def internal_inference_run_mocker(mocker):
     def side_effect(self, body, project_id, cloudspace_id, id):
         from lightning_sdk.api.studio_api import _MACHINE_TO_COMPUTE_NAME
+
         assert body.plugin_arguments["entrypoint"] == "python my-file.py"
         assert body.plugin_arguments["name"] == "my-fancy-inference-name"
         assert body.plugin_arguments["min_replicas"] == "1"
@@ -1027,14 +1034,15 @@ def internal_inference_run_mocker(mocker):
         assert body.plugin_arguments["scale_out_interval"] == "12"
         assert body.plugin_arguments["endpoint"] == "/fancy-predict"
         assert body.plugin_arguments["compute"] in _MACHINE_TO_COMPUTE_NAME.values()
-    
-       
-        return V1CreateCloudSpaceAppInstanceResponse(lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"]))
+
+        return V1CreateCloudSpaceAppInstanceResponse(
+            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
+        )
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
         autospec=True,
-        side_effect=side_effect
+        side_effect=side_effect,
     )
 
     yield [mocker]

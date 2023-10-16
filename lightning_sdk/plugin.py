@@ -3,7 +3,7 @@ import logging
 from abc import ABC, abstractmethod
 from lightning_sdk.studio import Studio
 import datetime
-from  lightning_sdk.machine import Machine
+from lightning_sdk.machine import Machine
 from lightning_sdk.utils import _setup_logger
 
 if TYPE_CHECKING:
@@ -48,12 +48,17 @@ class _Plugin(ABC):
 
     def __repr__(self):
         return f"Plugin(\n\tname={self.name}\n\tdescription={self.description}\n\tstudio={self.studio})"
-    
+
     def __str__(self):
         return repr(self)
 
     def __eq__(self, other):
-        return type(self) is type(other) and self.name == other.name and self.description == other.description and self._studio == other._studio
+        return (
+            type(self) is type(other)
+            and self.name == other.name
+            and self.description == other.description
+            and self._studio == other._studio
+        )
 
 
 class Plugin(_Plugin):
@@ -73,7 +78,7 @@ class Plugin(_Plugin):
 class JobsPlugin(_Plugin):
     _plugin_run_name = "Job"
     _slug_name = "jobs"
-    
+
     def run(
         self,
         command: str,
@@ -82,7 +87,7 @@ class JobsPlugin(_Plugin):
     ):
         if name is None:
             name = _run_name("job")
-        resp =  self._studio._studio_api.create_job(
+        resp = self._studio._studio_api.create_job(
             entrypoint=command,
             name=name,
             cloud_compute=cloud_compute,
@@ -111,7 +116,7 @@ class MultiMachineTrainingPlugin(_Plugin):
             name = _run_name("dist-run")
 
         # TODO: assert num_instances >=2
-        resp =  self._studio._studio_api.create_multi_machine_job(
+        resp = self._studio._studio_api.create_multi_machine_job(
             entrypoint=command,
             name=name,
             num_instances=num_instances,
@@ -129,6 +134,7 @@ class MultiMachineTrainingPlugin(_Plugin):
 class InferenceServerPlugin(_Plugin):
     _plugin_run_name = "Inference Server"
     _slug_name = ""
+
     def run(
         self,
         command: str,
@@ -164,16 +170,19 @@ class InferenceServerPlugin(_Plugin):
         _logger.info(_success_message(resp, self))
         return resp
 
+
 @runtime_checkable
 class _RunnablePlugin(Protocol):
     _plugin_run_name: str
     _slug_name: str
 
-    def run(self, command: str, name: Optional[str]=None, cloud_compute: Machine = Machine.CPU, **kwargs):
+    def run(self, command: str, name: Optional[str] = None, cloud_compute: Machine = Machine.CPU, **kwargs):
         ...
+
 
 def _run_name(plugin_type: str):
     return f"{plugin_type}-{datetime.datetime.now().strftime('%b-%d-%H_%M')}"
+
 
 def _success_message(resp: "Externalv1LightningappInstance", plugin_instance: _RunnablePlugin):
     return f"{plugin_instance._plugin_run_name} {resp.name} was successfully launched. View it at https://lightning.ai/{plugin_instance._studio.owner}/{plugin_instance._studio._teamspace.name}/studios/{plugin_instance.studio}/app?app_id={plugin_instance._slug_name}&job_name={resp.name}"
