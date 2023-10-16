@@ -1,9 +1,15 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Protocol, runtime_checkable, TYPE_CHECKING
 import logging
 from abc import ABC, abstractmethod
 from lightning_sdk.studio import Studio
 import datetime
 from  lightning_sdk.machine import Machine
+from lightning_sdk.utils import _setup_logger
+
+if TYPE_CHECKING:
+    from lightning_sdk.lightning_cloud.openapi import Externalv1LightningappInstance
+
+_logger = _setup_logger(__name__)
 
 
 class _Plugin(ABC):
@@ -28,11 +34,26 @@ class _Plugin(ABC):
     def run(self, *args, **kwargs) -> Any:
         pass
 
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def description(self) -> str:
+        return self._description
+
+    @property
+    def studio(self) -> str:
+        return self._studio.name
+
     def __repr__(self):
-        return f"Plugin(\n\tname={self._name}\n\tdescription={self._description}\n\tstudio={self._studio.name})"
+        return f"Plugin(\n\tname={self.name}\n\tdescription={self.description}\n\tstudio={self.studio})"
     
     def __str__(self):
         return repr(self)
+
+    def __eq__(self, other):
+        return type(self) is type(other) and self.name == other.name and self.description == other.description and self._studio == other._studio
 
 
 class Plugin(_Plugin):
@@ -50,16 +71,19 @@ class Plugin(_Plugin):
 
 
 class JobsPlugin(_Plugin):
+    _plugin_run_name = "Job"
+    _slug_name = "jobs"
+    
     def run(
         self,
-        entrypoint: str,
+        command: str,
         name: Optional[str] = None,
         cloud_compute: Machine = Machine.CPU,
     ):
         if name is None:
             name = _run_name("job")
-        return self._studio._studio_api.create_job(
-            entrypoint=entrypoint,
+        resp =  self._studio._studio_api.create_job(
+            entrypoint=command,
             name=name,
             cloud_compute=cloud_compute,
             studio_id=self._studio._studio.id,
@@ -67,11 +91,17 @@ class JobsPlugin(_Plugin):
             cluster_id=self._studio._studio.cluster_id,
         )
 
+        _logger.info(_success_message(resp, self))
+        return resp
+
 
 class MultiMachineTrainingPlugin(_Plugin):
+    _plugin_run_name = "Multi-Machine-Training"
+    _slug_name = "mmt"
+
     def run(
         self,
-        entrypoint: str,
+        command: str,
         name: Optional[str] = None,
         cloud_compute: Machine = Machine.CPU,
         num_instances: int = 2,
@@ -81,8 +111,8 @@ class MultiMachineTrainingPlugin(_Plugin):
             name = _run_name("dist-run")
 
         # TODO: assert num_instances >=2
-        return self._studio._studio_api.create_multi_machine_job(
-            entrypoint=entrypoint,
+        resp =  self._studio._studio_api.create_multi_machine_job(
+            entrypoint=command,
             name=name,
             num_instances=num_instances,
             cloud_compute=cloud_compute,
@@ -92,11 +122,16 @@ class MultiMachineTrainingPlugin(_Plugin):
             cluster_id=self._studio._studio.cluster_id,
         )
 
+        _logger.info(_success_message(resp, self))
+        return resp
+
 
 class InferenceServerPlugin(_Plugin):
+    _plugin_run_name = "Inference Server"
+    _slug_name = ""
     def run(
         self,
-        entrypoint: str,
+        command: str,
         name: Optional[str] = None,
         cloud_compute: Machine = Machine.CPU,
         min_replicas: int = 1,
@@ -110,8 +145,8 @@ class InferenceServerPlugin(_Plugin):
         if name is None:
             name = _run_name("inference-run")
 
-        return self._studio._studio_api.create_inference_job(
-            entrypoint=entrypoint,
+        resp = self._studio._studio_api.create_inference_job(
+            entrypoint=command,
             name=name,
             cloud_compute=cloud_compute,
             min_replicas=str(min_replicas),
@@ -126,6 +161,19 @@ class InferenceServerPlugin(_Plugin):
             cluster_id=self._studio._studio.cluster_id,
         )
 
+        _logger.info(_success_message(resp, self))
+        return resp
+
+@runtime_checkable
+class _RunnablePlugin(Protocol):
+    _plugin_run_name: str
+    _slug_name: str
+
+    def run(self, command: str, name: Optional[str]=None, cloud_compute: Machine = Machine.CPU, **kwargs):
+        ...
 
 def _run_name(plugin_type: str):
     return f"{plugin_type}-{datetime.datetime.now().strftime('%b-%d-%H_%M')}"
+
+def _success_message(resp: "Externalv1LightningappInstance", plugin_instance: _RunnablePlugin):
+    return f"{plugin_instance._plugin_run_name} {resp.name} was successfully launched. View it at https://lightning.ai/{plugin_instance._studio.owner}/{plugin_instance._studio._teamspace.name}/studios/{plugin_instance.studio}/app?app_id={plugin_instance._slug_name}&job_name={resp.name}"

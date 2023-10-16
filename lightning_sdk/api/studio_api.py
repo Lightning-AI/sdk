@@ -181,7 +181,9 @@ class StudioApi:
         if not (resp.state == "installation_success" and resp.error == ""):
             raise RuntimeError(f"Failed to install plugin {plugin_name}: {resp.error}")
 
-        return resp.additional_info.strip("\n").strip()
+        additional_info = resp.additional_info or ""
+
+        return additional_info.strip("\n").strip()
 
     def uninstall_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> None:
         """Uninstalls the given plugin."""
@@ -194,7 +196,7 @@ class StudioApi:
     def execute_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> str:
         """Executes the given plugin."""
         resp: V1Plugin = self._client.cloud_space_service_execute_plugin(
-            roject_id=teamspace_id, id=studio_id, plugin_id=plugin_name
+            project_id=teamspace_id, id=studio_id, plugin_id=plugin_name
         )
         if not (resp.state == "execution_success" and resp.error == ""):
             raise RuntimeError(f"Failed to execute plugin {plugin_name}: {resp.error}")
@@ -305,7 +307,7 @@ class StudioApi:
             max_replicas=max_replicas,
             max_batch_size=max_batch_size,
             timeout_batching=timeout_batching,
-            scale_in_inverval=scale_in_interval,
+            scale_in_interval=scale_in_interval,
             scale_out_interval=scale_out_interval,
             endpoint=endpoint,
         )
@@ -315,12 +317,12 @@ class StudioApi:
     ) -> Externalv1LightningappInstance:
         """Creates an arbitrary app."""
         body = AppsIdBody(cluster_id=cluster_id, plugin_arguments=other_arguments)
+        
+        return self._client.cloud_space_service_create_cloud_space_app_instance(
+            body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
+        ).lightningappinstance
+       
 
-        try:
-            self._client.cloud_space_service_create_cloud_space_app_instance(
-                body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
-            )
-        except ApiException as e:
             
 
 
