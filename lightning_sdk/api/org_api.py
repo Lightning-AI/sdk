@@ -1,6 +1,6 @@
-from lightning_cloud.login import Auth
-from lightning_cloud.openapi import OrganizationsServiceApi, V1Organization
-from lightning_cloud.rest_client import LightningClient
+from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud.openapi import OrganizationsServiceApi, V1Organization
+from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 class OrgApi:
