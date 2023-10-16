@@ -68,8 +68,8 @@ jobs:
     - name: Statistics
       if: success()
       run: |
-        coverage report
-        coverage xml
+        coverage --omit="*/lightning_cloud*" report
+        coverage --omit="*/lightning_cloud*" xml
 
   guardian-unittest:
     runs-on: ubuntu-latest
