@@ -61,15 +61,15 @@ jobs:
     - name: Tests
       run: |
         # NOTE: do not include coverage report here, see: https://github.com/nedbat/coveragepy/issues/1003
-        coverage run --source lightning_sdk -m pytest tests --junitxml=junit/test-results-${{ runner.os }}-py${{ matrix.python-version }}.xml
+        coverage run --source lightning_sdk --omit="*/lightning_cloud*" -m pytest tests --junitxml=junit/test-results-${{ runner.os }}-py${{ matrix.python-version }}.xml
       env: # the following values are just dummies since the actual http calls are mocked out
         LIGHTNING_USER_ID: ${{ secrets.LIGHTNING_USER_ID }}
         LIGHTNING_API_KEY: ${{ secrets.LIGHTNING_API_KEY }}
     - name: Statistics
       if: success()
       run: |
-        coverage --omit="*/lightning_cloud*" report
-        coverage --omit="*/lightning_cloud*" xml
+        coverage report
+        coverage xml
 
   guardian-unittest:
     runs-on: ubuntu-latest
