@@ -59,7 +59,8 @@ def test_run_inference(
 def test_run_name():
     start_time = datetime.now().replace(second=0, microsecond=0)
     name = _run_name("fancy-abc")
-    time_stamp_str = name.removeprefix("fancy-abc-")
+    # removeprefix is python3.10 only, so use replace here
+    time_stamp_str = name.replace("fancy-abc-", "")
 
     time_stamp = datetime.strptime(time_stamp_str, "%b-%d-%H_%M").replace(year=datetime.now().year)
 
