@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import TYPE_CHECKING, Any, Mapping, Optional, Tuple
 
 from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
@@ -6,6 +6,12 @@ from lightning_sdk.api.teamspace_api import TeamspaceApi
 from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
+from lightning_sdk.utils import _setup_logger
+
+if TYPE_CHECKING:
+    from lightning_sdk.plugin import Plugin
+
+_logger = _setup_logger(__name__)
 
 
 class Studio:
@@ -49,6 +55,8 @@ class Studio:
 
         self._owner = None
 
+        self._setup_done = False
+
         if org is not None and user is not None:
             raise ValueError(f"Only one of org and user can be provided, but got both: {org=} and {user=}.")
 
@@ -69,6 +77,8 @@ class Studio:
 
         self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._owner.id, is_user=self._org is None)
 
+        self._plugins = {}
+
         try:
             self._studio = self._studio_api.get_studio(name, self._teamspace.id)
         except ValueError as e:
@@ -76,6 +86,21 @@ class Studio:
                 self._studio = self._studio_api.create_studio(name, self._teamspace.id, cluster=self._cluster)
             else:
                 raise ValueError(f"Studio {name} does not exist.") from e
+
+        if self.status == Status.Running:
+            self._setup()
+
+    def _setup(self) -> None:
+        """Installs all plugins that should be currently installed."""
+        if self._setup_done:
+            return
+
+        # make sure all plugins that should be installed are actually installed
+        all_installed_plugins = self._list_installed_plugins()
+        for k in all_installed_plugins:
+            self.install_plugin(k)
+
+        self._setup_done = True
 
     @property
     def name(self) -> str:
@@ -102,7 +127,15 @@ class Studio:
     @property
     def owner(self) -> str:
         """Returns the name of the owner (either user or org)."""
-        return self._owner.name
+        from lightning_sdk.lightning_cloud.openapi import V1Organization, V1SearchUser
+
+        if isinstance(self._owner, V1Organization):
+            return self._owner.name
+
+        if isinstance(self._owner, V1SearchUser):
+            return self._owner.username
+
+        raise TypeError("The owner is neither an org, nor a user.")
 
     @property
     def machine(self) -> Optional[Machine]:
@@ -114,9 +147,15 @@ class Studio:
     def start(self) -> None:
         """Starts a Studio on the default machine type (CPU-4)."""
         status = self.status
+        if status == Status.Running:
+            _logger.info(f"Studio {self.name} is already running")
+            return
+
         if status != Status.Stopped:
             raise RuntimeError(f"Cannot start a studio that is not stopped. Studio {self.name} is {status}.")
         self._studio_api.start_studio(self._studio.id, self._teamspace.id)
+
+        self._setup()
 
     def stop(self) -> None:
         """Stops a running Studio."""
@@ -176,6 +215,79 @@ class Studio:
         if exit_code != 0:
             raise RuntimeError(output)
         return output
+
+    @property
+    def available_plugins(self) -> Mapping[str, str]:
+        """All available plugins to install in the current Studio."""
+        return self._studio_api.list_available_plugins(self._studio.id, self._teamspace.id)
+
+    @property
+    def installed_plugins(self) -> Mapping[str, "Plugin"]:
+        """All plugins that are currently installed in this Studio."""
+        return self._plugins
+
+    def install_plugin(self, plugin_name: str) -> None:
+        """Installs a given plugin to a Studio."""
+        try:
+            additional_info = self._studio_api.install_plugin(self._studio.id, self._teamspace.id, plugin_name)
+        except RuntimeError as e:
+            # reraise from here to avoid having api layer in traceback
+            raise e
+
+        if additional_info and self._setup_done:
+            _logger.info(additional_info)
+
+        self._add_plugin(plugin_name)
+
+    def run_plugin(self, plugin_name: str, *args: Any, **kwargs: Any) -> str:
+        """Runs a given plugin in a Studio."""
+        return self._plugins[plugin_name].run(*args, **kwargs)
+
+    def uninstall_plugin(self, plugin_name: str) -> None:
+        """Uninstalls the given plugin from the Studio."""
+        try:
+            self._studio_api.uninstall_plugin(self._studio.id, self._teamspace.id, plugin_name)
+        except RuntimeError as e:
+            # reraise from here to avoid having api layer in traceback
+            raise e
+
+        self._plugins.pop(plugin_name)
+
+    def _list_installed_plugins(self) -> Mapping[str, str]:
+        """Lists all plugins that should be installed."""
+        return self._studio_api.list_installed_plugins(self._studio.id, self._teamspace.id)
+
+    def _add_plugin(self, plugin_name: str) -> None:
+        """Adds the just installed plugin to the internal list of plugins."""
+        from lightning_sdk.plugin import InferenceServerPlugin, JobsPlugin, MultiMachineTrainingPlugin, Plugin
+
+        if plugin_name in self._plugins:
+            return
+
+        plugin_cls = {
+            "jobs": JobsPlugin,
+            "multi-machine-training": MultiMachineTrainingPlugin,
+            "inference-server": InferenceServerPlugin,
+        }.get(plugin_name, Plugin)
+
+        description = self._list_installed_plugins()[plugin_name]
+
+        self._plugins[plugin_name] = plugin_cls(plugin_name, description, self)
+
+    def _execute_plugin(self, plugin_name: str) -> Tuple[str, int]:
+        """Executes a plugin command on the Studio."""
+        output = self._studio_api.execute_plugin(self._studio.id, self._teamspace.id, plugin_name)
+        _logger.info(output)
+        return output
+
+    def __eq__(self, other: "Studio") -> bool:
+        """Checks for equality with other Studios."""
+        return (
+            isinstance(other, Studio)
+            and self.name == other.name
+            and self.teamspace == other.teamspace
+            and self.owner == other.owner
+        )
 
 
 def _internal_status_to_external_status(internal_status: str) -> Status:

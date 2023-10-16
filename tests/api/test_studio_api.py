@@ -3,6 +3,7 @@ from lightning_sdk.lightning_cloud.openapi import V1CloudSpace, V1GetCloudSpaceI
 
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.machine import Machine
+import contextlib
 
 
 def test_get_studio(internal_studio_api_mocker_get_studio):
@@ -117,3 +118,145 @@ def test_duplicate_org(internal_studio_api_mocker_duplicate_org):
     kwargs = studio_api.duplicate_studio("st-abc", "ts-abc", "ts-abc")
 
     assert kwargs == {"name": "st-abc-de", "teamspace": "teamspace-abc", "org": "org-abc"}
+
+
+@pytest.mark.parametrize(
+    "studio_id, expect_error, error_message, expect_info",
+    [
+        ("st-abc", False, "", ""),
+        ("st-def", True, "abc", ""),
+        ("st-ghi", True, "", ""),
+        ("st-jkl", True, "jkl", ""),
+        ("st-mno", False, "", "my-info"),
+    ],
+)
+def test_install_plugin(internal_studio_api_install_plugin_mocker, studio_id, expect_error, error_message, expect_info):
+    studio_api = StudioApi()
+
+    if expect_error:
+        context = pytest.raises(RuntimeError, match=f"Failed to install plugin my-fancy-plugin: {error_message}")
+    else:
+        context = contextlib.nullcontext()
+
+    with context:
+        add_info = studio_api.install_plugin(studio_id, "teamspace-abc", "my-fancy-plugin")
+
+    if not expect_error:
+        assert add_info == expect_info
+
+
+@pytest.mark.parametrize(
+    "studio_id, expect_error, error_message",
+    [
+        ("st-abc", False, ""),
+        ("st-def", True, "abc"),
+        ("st-ghi", True, ""),
+        ("st-jkl", True, "jkl"),
+    ],
+)
+def test_uninstall_plugin(internal_studio_api_uninstall_plugin_mocker, studio_id, expect_error, error_message):
+    studio_api = StudioApi()
+
+    if expect_error:
+        context = pytest.raises(RuntimeError, match=f"Failed to uninstall plugin my-fancy-plugin: {error_message}")
+    else:
+        context = contextlib.nullcontext()
+
+    with context:
+        studio_api.uninstall_plugin(studio_id, "teamspace-abc", "my-fancy-plugin")
+
+
+@pytest.mark.parametrize(
+    "studio_id, expect_error, error_message, expected_port",
+    [
+        ("st-abc", False, "", 0),
+        ("st-def", False, "", 1),
+        ("st-ghi", False, "", -1),
+        ("st-jkl", True, "jkl", None),
+        ("st-mno", True, "", None),
+        ("st-pqr", True, "pqr", None),
+    ],
+)
+def test_execute_plugin(
+    internal_studio_api_execute_plugin_mocker, studio_id, expect_error, error_message, expected_port
+):
+    studio_api = StudioApi()
+
+    if expect_error:
+        context = pytest.raises(RuntimeError, match=f"Failed to execute plugin my-fancy-plugin: {error_message}")
+    else:
+        context = contextlib.nullcontext()
+
+    with context:
+        output = studio_api.execute_plugin(studio_id, "teamspace-abc", "my-fancy-plugin")
+
+    if not expect_error:
+        output_str, port = output
+
+        assert port == expected_port
+
+        if port > 0:
+            assert (
+                output_str
+                == f"Plugin my-fancy-plugin is interactive. Have a look at https://{expected_port}-{studio_id}.cloudspaces.litng.ai"
+            )
+        elif port == 0:
+            assert output_str == "Successfully executed plugin my-fancy-plugin"
+        elif port < 0:
+            assert output_str == "This plugin can only be used on the browser interface of a Studio!"
+
+
+def test_list_available_plugins(internal_studio_api_list_available_plugins_mocker):
+    studio_api = StudioApi()
+
+    plugins = studio_api.list_available_plugins("st-abc", "teamspace-abc")
+
+    assert plugins == {"plugin1": "description1", "plugin2": "description2", "plugin3": "description3"}
+
+
+def test_list_installed_plugins(internal_studio_api_list_installed_plugins_mocker):
+    studio_api = StudioApi()
+
+    plugins = studio_api.list_installed_plugins("st-abc", "teamspace-abc")
+
+    assert plugins == {
+        "plugin1": "description1",
+        "plugin2": "description2",
+    }
+
+
+def test_create_job(internal_studio_api_create_app_mocker):
+    studio_api = StudioApi()
+
+    resp = studio_api.create_job("my-entry-point", "fancy-job-name", Machine.A10G, "st-abc", "ts-abc", "cluster-abc")
+    assert resp.name == "fancy-job-name"
+
+
+def test_create_mmt(internal_studio_api_create_app_mocker):
+    studio_api = StudioApi()
+
+    resp = studio_api.create_multi_machine_job(
+        "my-entry-point", "fancy-mmt-name", 4, Machine.A10G, "parallel", "st-abc", "ts-abc", "cluster-abc"
+    )
+    assert resp.name == "fancy-mmt-name"
+
+
+def test_create_inference_run(internal_studio_api_create_app_mocker):
+    studio_api = StudioApi()
+
+    resp = studio_api.create_inference_job(
+        "my-entry-point",
+        "fancy-inference-name",
+        Machine.A10G,
+        min_replicas="1",
+        max_replicas="5",
+        max_batch_size="10",
+        timeout_batching="0.3",
+        scale_in_interval="11",
+        scale_out_interval="12",
+        endpoint="/fancy-predict",
+        studio_id="st-abc",
+        teamspace_id="ts-abc",
+        cluster_id="cluster-abc",
+    )
+    assert resp.name == "fancy-inference-name"
