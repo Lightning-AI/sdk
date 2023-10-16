@@ -1,11 +1,19 @@
-from typing import Optional, Tuple
-
+from typing import Optional, Tuple, Mapping
+import logging
 from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.teamspace_api import TeamspaceApi
 from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
+
+_logger = logging.getLogger(__name__)
+_handler = logging.StreamHandler()
+_handler.setLevel(logging.INFO)
+_logger.setLevel(logging.INFO)
+_formatter = logging.Formatter('%(levelname)s - %(message)s')
+_handler.setFormatter(_formatter)
+_logger.addHandler(_handler)
 
 
 class Studio:
@@ -69,6 +77,8 @@ class Studio:
 
         self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._owner.id, is_user=self._org is None)
 
+        self._plugins = {}
+
         try:
             self._studio = self._studio_api.get_studio(name, self._teamspace.id)
         except ValueError as e:
@@ -114,6 +124,10 @@ class Studio:
     def start(self) -> None:
         """Starts a Studio on the default machine type (CPU-4)."""
         status = self.status
+        if status == Status.Running:
+            _logger.info(f"Studio {self.name} is already running")
+            return
+
         if status != Status.Stopped:
             raise RuntimeError(f"Cannot start a studio that is not stopped. Studio {self.name} is {status}.")
         self._studio_api.start_studio(self._studio.id, self._teamspace.id)
@@ -176,6 +190,56 @@ class Studio:
         if exit_code != 0:
             raise RuntimeError(output)
         return output
+
+    @property
+    def available_plugins(self) -> Mapping[str, str]:
+        return self._studio_api.list_available_plugins(self._studio.id, self._teamspace.id)
+
+    @property
+    def installed_plugins(self) -> Mapping[str, str]:
+        return self._studio_api.list_installed_plugins(self._studio.id, self._teamspace.id)
+
+    def install_plugin(self, plugin_name: str):
+        try:
+            additional_info = self._studio_api.install_plugin(self._studio.id, self._teamspace.id, plugin_name)
+        except RuntimeError as e:
+            # reraise from here to avoid having api layer in traceback
+            raise e
+
+        if additional_info:
+            _logger.info(additional_info)
+
+        self._add_plugin(plugin_name)
+
+    def run_plugin(self, plugin_name: str, *args, **kwargs):
+        return self._plugins[plugin_name].run(*args, **kwargs)
+
+    def uninstall_plugin(self, plugin_name: str):
+        try:
+            self._studio_api.uninstall_plugin(self._studio.id, self._teamspace.id, plugin_name)
+        except RuntimeError as e:
+            # reraise from here to avoid having api layer in traceback
+            raise e
+
+        self._plugins.pop(plugin_name)
+        
+    def _add_plugin(self, plugin_name: str):
+        from lightning_sdk.plugin import JobsPlugin, MultiMachineTrainingPlugin, InferenceServerPlugin, Plugin
+
+        if plugin_name in self._plugins:
+            return
+
+        plugin_cls = {"jobs": JobsPlugin, "multi-machine-training": MultiMachineTrainingPlugin, "inference-server": InferenceServerPlugin}.get(plugin_name, Plugin)
+
+        description = self.installed_plugins[plugin_name]
+
+        self._plugins[plugin_name] = plugin_cls(plugin_name, description, self)
+
+    def _execute_plugin(self, plugin_name: str):
+        output = self._studio_api.execute_plugin(self._studio.id, self._teamspace.id, plugin_name)
+        _logger.info(output)
+
+
 
 
 def _internal_status_to_external_status(internal_status: str) -> Status:

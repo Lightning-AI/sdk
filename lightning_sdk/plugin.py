@@ -3,15 +3,18 @@ import logging
 from abc import ABC, abstractmethod
 from lightning_sdk.studio import Studio
 import datetime
+from  lightning_sdk.machine import Machine
 
 
 class _Plugin(ABC):
     def __init__(
         self,
         name: str,
+        description: str,
         studio: Studio,
     ):
         self._name = name
+        self._description = description
         self._studio = studio
         self._has_been_executed = False
 
@@ -26,7 +29,10 @@ class _Plugin(ABC):
         pass
 
     def __repr__(self):
-        return f"Plugin(\n\tname={self._name}\n\tstudio={self._studio.name})"
+        return f"Plugin(\n\tname={self._name}\n\tdescription={self._description}\n\tstudio={self._studio.name})"
+    
+    def __str__(self):
+        return repr(self)
 
 
 class Plugin(_Plugin):
@@ -87,7 +93,7 @@ class MultiMachineTrainingPlugin(_Plugin):
         )
 
 
-class InferenceServer(_Plugin):
+class InferenceServerPlugin(_Plugin):
     def run(
         self,
         entrypoint: str,
@@ -123,51 +129,3 @@ class InferenceServer(_Plugin):
 
 def _run_name(plugin_type: str):
     return f"{plugin_type}-{datetime.datetime.now().strftime('%b-%d-%H_%M')}"
-
-
-class Plugin:
-    def run(self, *args: Any, **kwargs: Any) -> Any:
-        """"""
-        ...
-
-    @property
-    def id(self) -> str:
-        """"""
-        ...
-
-    def studio(self) -> Studio:
-        """"""
-        ...
-
-
-class JobPlugin(Plugin):
-    # TODO: make machine an actual machine type
-    def run(self, *commands: str, machine: Optional[str] = None) -> Job:
-        """"""
-        ...
-
-
-class Job:
-    """"""
-
-    def __init__(
-        self,
-        name: str,
-    ) -> None:
-        self._name = name
-
-    @property
-    def status(self) -> Status:
-        """"""
-        ...
-
-    @property
-    def works(self) -> List[Work]:
-        """"""
-        ...
-
-    @property
-    def stop(self):
-        """"""
-        # stop all works and orchestrator
-        ...

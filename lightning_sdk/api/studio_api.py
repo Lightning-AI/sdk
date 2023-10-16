@@ -5,7 +5,7 @@ import time
 from typing import Any, Dict, Optional, Tuple
 
 import requests
-from lightning_cloud.openapi import (
+from lightning_sdk.lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
     Externalv1LightningappInstance,
     IdCodeconfigBody,
@@ -19,15 +19,16 @@ from lightning_cloud.openapi import (
     V1PluginsListResponse,
     V1UserRequestedComputeConfig,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 try:
-    from lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
+    from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
 except ImportError:
-    from lightning_cloud.openapi import AppsIdBody
+    from lightning_sdk.lightning_cloud.openapi import AppsIdBody
 
 import json
 
-from lightning_cloud.rest_client import LightningClient
+from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 from lightning_sdk.machine import Machine
 
@@ -314,9 +315,12 @@ class StudioApi:
         """Creates an arbitrary app."""
         body = AppsIdBody(cluster_id=cluster_id, plugin_arguments=other_arguments)
 
-        return self._client.cloud_space_service_create_cloud_space_app_instance(
-            body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
-        )
+        try:
+            self._client.cloud_space_service_create_cloud_space_app_instance(
+                body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
+            )
+        except ApiException as e:
+            
 
 
 def _cloud_url() -> str:
