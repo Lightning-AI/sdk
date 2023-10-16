@@ -25,6 +25,7 @@ dependencies = [
     "urllib3",
     "uvicorn",
     "websocket-client",
+    "tqdm",
 ]
 dynamic = ["version"]
 
