@@ -268,7 +268,7 @@ def test_create_inference_run(internal_studio_api_create_app_mocker):
     assert resp.name == "fancy-inference-name"
 
 
-def test_upload_file_single_part(tmpdir, internal_studio_api_single_part_upload, internal_studio_api_requests_mocker):
+def test_upload_file_single_part(tmpdir, internal_studio_api_single_part_upload, internal_studio_api_requests_put_mocker):
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")
@@ -277,10 +277,17 @@ def test_upload_file_single_part(tmpdir, internal_studio_api_single_part_upload,
     studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1")
 
 
-def test_upload_file_multi_part(tmpdir, internal_studio_api_multi_part_upload, internal_studio_api_requests_mocker):
+def test_upload_file_multi_part(tmpdir, internal_studio_api_multi_part_upload, internal_studio_api_requests_put_mocker):
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")
     subprocess.run(f"truncate -s 6GB {filepath}".split(" "))
 
     studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1")
+
+
+def test_download_file(tmpdir, internal_studio_api_download, internal_studio_api_requests_get_mocker):
+    studio_api = StudioApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")

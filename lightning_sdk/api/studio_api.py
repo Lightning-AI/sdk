@@ -258,7 +258,6 @@ class StudioApi:
             "project_id": teamspace_id,
             "id": studio_id,
             "cluster_id": cluster_id,
-            "include_download_url": return_url,
         }
 
         prefix = f"projects/{teamspace_id}/cloudspaces/{studio_id}/code/content/"
@@ -267,22 +266,28 @@ class StudioApi:
             kwargs["prefix"] = "/" + path
             prefix = prefix + path.strip("/") + "/"
 
-        resp = self._client.cloud_space_service_get_cloud_space_artifacts_page(**kwargs)
+        index_resp = self._client.cloud_space_service_get_cloud_space_folder_index(**kwargs)
+
+        num_pages = math.ceil(int(index_resp.nested_file_count) / index_resp.page_size)
 
         artifacts = {}
 
-        for art in resp.artifacts:
-            filename = art.filename
-            stripped_filename = filename.replace(prefix, "")
-            if path is None or filename.startswith(prefix):
-                artifacts[stripped_filename] = {
-                    "last_modified": art.last_modified,
-                    "md5_checksum": art.md5_checksum,
-                    "size_bytes": art.size_bytes,
-                }
+        for page_num in range(num_pages):
+            resp = self._client.cloud_space_service_get_cloud_space_artifacts_page(**kwargs, include_download_url=return_url, page_number=page_num)
 
-                if return_url:
-                    artifacts[stripped_filename]["download_url"] = art.url
+            for art in resp.artifacts:
+                
+                filename = art.filename
+                stripped_filename = filename.replace(prefix, "")
+                if path is None or filename.startswith(prefix):
+                    artifacts[stripped_filename] = {
+                        "last_modified": art.last_modified,
+                        "md5_checksum": art.md5_checksum,
+                        "size_bytes": art.size_bytes,
+                    }
+
+                    if return_url:
+                        artifacts[stripped_filename]["download_url"] = art.url
 
         return artifacts
 

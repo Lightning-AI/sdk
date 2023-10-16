@@ -288,3 +288,9 @@ def test_upload_file_multi_part(
     subprocess.run(f"truncate -s 6GB {filepath}".split(" "))
 
     studio.upload_file(filepath, "file1")
+
+def test_download_file(tmpdir, internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_api_download, internal_studio_api_requests_get_mocker):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+
+    filepath = os.path.join(tmpdir, "file1")
+    studio.download_file("file1", filepath)
