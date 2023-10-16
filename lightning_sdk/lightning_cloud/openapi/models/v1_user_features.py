@@ -64,6 +64,7 @@ class V1UserFeatures(object):
         'mmt_app': 'bool',
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
+        'plugin_browser': 'bool',
         'pricing_updates': 'bool',
         'product_generator': 'bool',
         'project_selector': 'bool',
@@ -73,6 +74,7 @@ class V1UserFeatures(object):
         'show_quotas': 'bool',
         'slurm': 'bool',
         'studio_about_tab': 'bool',
+        'studio_publication': 'bool',
         'sweeps_app': 'bool',
         'tensorboard_plugin': 'bool',
         'tired_proxy_dataconnection': 'bool',
@@ -104,6 +106,7 @@ class V1UserFeatures(object):
         'mmt_app': 'mmtApp',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
+        'plugin_browser': 'pluginBrowser',
         'pricing_updates': 'pricingUpdates',
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
@@ -113,6 +116,7 @@ class V1UserFeatures(object):
         'show_quotas': 'showQuotas',
         'slurm': 'slurm',
         'studio_about_tab': 'studioAboutTab',
+        'studio_publication': 'studioPublication',
         'sweeps_app': 'sweepsApp',
         'tensorboard_plugin': 'tensorboardPlugin',
         'tired_proxy_dataconnection': 'tiredProxyDataconnection',
@@ -120,7 +124,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, data_prep_app: 'bool' =None, distributed_plugin: 'bool' =None, enable_crypto_crackdown: 'bool' =None, filesystem_optimisation: 'bool' =None, inference_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_filesystem: 'bool' =None, landing_studios: 'bool' =None, milvus_plugin: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, studio_about_tab: 'bool' =None, sweeps_app: 'bool' =None, tensorboard_plugin: 'bool' =None, tired_proxy_dataconnection: 'bool' =None, weviate_plugin: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, data_prep_app: 'bool' =None, distributed_plugin: 'bool' =None, enable_crypto_crackdown: 'bool' =None, filesystem_optimisation: 'bool' =None, inference_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_filesystem: 'bool' =None, landing_studios: 'bool' =None, milvus_plugin: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, plugin_browser: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, studio_about_tab: 'bool' =None, studio_publication: 'bool' =None, sweeps_app: 'bool' =None, tensorboard_plugin: 'bool' =None, tired_proxy_dataconnection: 'bool' =None, weviate_plugin: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._aws_trainium = None
         self._b2c_experience = None
@@ -145,6 +149,7 @@ class V1UserFeatures(object):
         self._mmt_app = None
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
+        self._plugin_browser = None
         self._pricing_updates = None
         self._product_generator = None
         self._project_selector = None
@@ -154,6 +159,7 @@ class V1UserFeatures(object):
         self._show_quotas = None
         self._slurm = None
         self._studio_about_tab = None
+        self._studio_publication = None
         self._sweeps_app = None
         self._tensorboard_plugin = None
         self._tired_proxy_dataconnection = None
@@ -206,6 +212,8 @@ class V1UserFeatures(object):
             self.mmt_strategy_selector = mmt_strategy_selector
         if mountpoint_s3 is not None:
             self.mountpoint_s3 = mountpoint_s3
+        if plugin_browser is not None:
+            self.plugin_browser = plugin_browser
         if pricing_updates is not None:
             self.pricing_updates = pricing_updates
         if product_generator is not None:
@@ -224,6 +232,8 @@ class V1UserFeatures(object):
             self.slurm = slurm
         if studio_about_tab is not None:
             self.studio_about_tab = studio_about_tab
+        if studio_publication is not None:
+            self.studio_publication = studio_publication
         if sweeps_app is not None:
             self.sweeps_app = sweeps_app
         if tensorboard_plugin is not None:
@@ -719,6 +729,27 @@ class V1UserFeatures(object):
         self._mountpoint_s3 = mountpoint_s3
 
     @property
+    def plugin_browser(self) -> 'bool':
+        """Gets the plugin_browser of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_browser of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_browser
+
+    @plugin_browser.setter
+    def plugin_browser(self, plugin_browser: 'bool'):
+        """Sets the plugin_browser of this V1UserFeatures.
+
+
+        :param plugin_browser: The plugin_browser of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_browser = plugin_browser
+
+    @property
     def pricing_updates(self) -> 'bool':
         """Gets the pricing_updates of this V1UserFeatures.  # noqa: E501
 
@@ -906,6 +937,27 @@ class V1UserFeatures(object):
         """
 
         self._studio_about_tab = studio_about_tab
+
+    @property
+    def studio_publication(self) -> 'bool':
+        """Gets the studio_publication of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The studio_publication of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._studio_publication
+
+    @studio_publication.setter
+    def studio_publication(self, studio_publication: 'bool'):
+        """Sets the studio_publication of this V1UserFeatures.
+
+
+        :param studio_publication: The studio_publication of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._studio_publication = studio_publication
 
     @property
     def sweeps_app(self) -> 'bool':
