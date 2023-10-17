@@ -507,14 +507,17 @@ def _upload_file_to_urls(*urls: Union[str, V1MultiPartPresignedUrl], path: str, 
 
         for url in urls:
             if isinstance(url, V1MultiPartPresignedUrl):
+                curr_url = url.url
+            else:
+                curr_url = url
+
+            if len(urls) > 1:
                 # unfortunately we can't just pass the reader_wrapper directly since we only
                 # need to read the first N bytes, finding a way to still pass the reader_wrapper
                 # would likely be faster though
                 data = reader_wrapper.read(_MAX_SIZE_MULTI_PART_CHUNK)
-                curr_url = url.url
             else:
                 data = reader_wrapper
-                curr_url = url
 
             response = requests.put(curr_url, data=data)
             response.raise_for_status()
