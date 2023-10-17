@@ -69,7 +69,7 @@ def test_start_studio(internal_studio_api_mocker_start_studio):
     studio_api.start_studio("st-abc", "ts-abc")
 
 
-def test_stop_studio(internal_studio_api_mocker_stop_studio):
+def test_stop_studio(internal_studio_api_mocker_stop_studio, internal_studio_api_requests_get_mocker):
     studio_api = StudioApi()
     studio_api.stop_studio("st-abc", "ts-abc")
 
