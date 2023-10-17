@@ -131,6 +131,18 @@ class StudioApi:
             id=studio_id,
         )
 
+        # block until studio is really stopped
+        while self._get_studio_instance_status(studio_id=studio_id, teamspace_id=teamspace_id) not in (None, "CLOUD_SPACE_INSTANCE_STATE_STOPPED"):
+            time.sleep(1)
+
+    def _get_studio_instance_status(self, studio_id: str, teamspace_id: str) -> Optional[str]:
+        """Returns status of the in-use instance of the Studio"""
+        internal_status = self.get_studio_status(studio_id=studio_id, teamspace_id=teamspace_id).in_use
+        if internal_status is None:
+            return None
+        
+        return internal_status.phase
+
     def switch_studio_machine(self, studio_id: str, teamspace_id: str, machine: Machine) -> None:
         """Switches given Studio to a new machine type."""
         compute_name = _MACHINE_TO_COMPUTE_NAME[machine]
@@ -488,15 +500,13 @@ def _upload_file_to_urls(*urls: Union[str, V1MultiPartPresignedUrl], path: str, 
     else:
         update_fn = lambda *args, **kwargs: None
 
-    is_multipart = len(urls) > 1
     completed_uploads = []
 
     with open(path, "rb") as fd:
         reader_wrapper = CallbackIOWrapper(update_fn, fd, "read")
 
         for url in urls:
-            if is_multipart:
-                assert isinstance(url, V1MultiPartPresignedUrl)
+            if isinstance(url, V1MultiPartPresignedUrl):
                 # unfortunately we can't just pass the reader_wrapper directly since we only
                 # need to read the first N bytes, finding a way to still pass the reader_wrapper
                 # would likely be faster though
@@ -509,7 +519,7 @@ def _upload_file_to_urls(*urls: Union[str, V1MultiPartPresignedUrl], path: str, 
             response = requests.put(curr_url, data=data)
             response.raise_for_status()
 
-            if is_multipart:
+            if isinstance(url, V1MultiPartPresignedUrl):
                 etag = response.headers.get("ETag")
                 completed_uploads.append(V1CompleteMultiPartUpload(etag=etag, part_number=url.part_number))
 
