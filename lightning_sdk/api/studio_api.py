@@ -315,8 +315,9 @@ class StudioApi:
         else:
             pbar_update = lambda x: None
 
-        if prefix:
-            os.makedirs(prefix, exist_ok=True)
+        target_dir = os.path.split(path)[0]
+        if target_dir:
+            os.makedirs(target_dir, exist_ok=True)
         with open(target_path, "wb") as f:
             for chunk in r.iter_content(chunk_size=4096 * 8):
                 f.write(chunk)
