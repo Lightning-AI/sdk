@@ -48,7 +48,6 @@ class V1SLURMJob(object):
         'id': 'str',
         'message': 'str',
         'name': 'str',
-        'output_path': 'str',
         'project_id': 'str',
         'run_id': 'str',
         'slurm_v1_status': 'V1SlurmV1JobStatus',
@@ -66,7 +65,6 @@ class V1SLURMJob(object):
         'id': 'id',
         'message': 'message',
         'name': 'name',
-        'output_path': 'outputPath',
         'project_id': 'projectId',
         'run_id': 'runId',
         'slurm_v1_status': 'slurmV1Status',
@@ -76,7 +74,7 @@ class V1SLURMJob(object):
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, output_path: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1SLURMJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -85,7 +83,6 @@ class V1SLURMJob(object):
         self._id = None
         self._message = None
         self._name = None
-        self._output_path = None
         self._project_id = None
         self._run_id = None
         self._slurm_v1_status = None
@@ -108,8 +105,6 @@ class V1SLURMJob(object):
             self.message = message
         if name is not None:
             self.name = name
-        if output_path is not None:
-            self.output_path = output_path
         if project_id is not None:
             self.project_id = project_id
         if run_id is not None:
@@ -271,27 +266,6 @@ class V1SLURMJob(object):
         """
 
         self._name = name
-
-    @property
-    def output_path(self) -> 'str':
-        """Gets the output_path of this V1SLURMJob.  # noqa: E501
-
-
-        :return: The output_path of this V1SLURMJob.  # noqa: E501
-        :rtype: str
-        """
-        return self._output_path
-
-    @output_path.setter
-    def output_path(self, output_path: 'str'):
-        """Sets the output_path of this V1SLURMJob.
-
-
-        :param output_path: The output_path of this V1SLURMJob.  # noqa: E501
-        :type: str
-        """
-
-        self._output_path = output_path
 
     @property
     def project_id(self) -> 'str':
