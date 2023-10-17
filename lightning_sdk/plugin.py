@@ -36,11 +36,11 @@ class _Plugin(ABC):
 
     def install(self) -> None:
         """Installs the plugin on the Studio given at init-time."""
-        self._studio._install_plugin(self._name)
+        self._studio.install_plugin(self._name)
 
     def uninstall(self) -> None:
         """Uninstalls the plugin from the Studio given at init-time."""
-        self._studio._uninstall_plugin(self._name)
+        self._studio.uninstall_plugin(self._name)
 
     @abstractmethod
     def run(self, *args: Any, **kwargs: Any) -> Any:
