@@ -3,7 +3,7 @@ import os
 import tarfile
 import tempfile
 import time
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple
 
 import requests
 
@@ -13,18 +13,17 @@ from lightning_sdk.lightning_cloud.openapi import (
     IdCodeconfigBody,
     IdExecuteBody,
     IdForkBody,
-    MultipartCompleteBody,
     ProjectIdCloudspacesBody,
-    ProjectIdStorageBody,
+    StorageCompleteBody,
     StorageMultipartBody,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
-    V1CompleteMultiPartUpload,
-    V1CreateMultipartUploadProjectArtifactResponse,
+    V1CompleteUpload,
     V1GetCloudSpaceInstanceStatusResponse,
-    V1MultiPartPresignedUrl,
     V1Plugin,
     V1PluginsListResponse,
+    V1PresignedUrl,
+    V1UploadProjectArtifactResponse,
     V1UserRequestedComputeConfig,
 )
 
@@ -85,7 +84,7 @@ class StudioApi:
         studio = self._client.cloud_space_service_create_cloud_space(body, teamspace_id)
 
         run_body = CloudspaceIdRunsBody(
-            cluster_id=cluster,
+            cluster_id=studio.cluster_id,
             local_source=True,
         )
         run = self._client.cloud_space_service_create_lightning_run(
@@ -214,54 +213,24 @@ class StudioApi:
     ) -> None:
         """Uploads file to given remote path on the studio."""
         remote_path = f"/cloudspaces/{studio_id}/code/content/{remote_path}"
-        if os.path.getsize(file_path) <= _SIZE_LIMIT_SINGLE_PART:
-            self._single_part_upload(
-                teamspace_id=teamspace_id,
-                cluster_id=cluster_id,
-                file_path=file_path,
-                remote_path=remote_path,
-                progress_bar=progress_bar,
-            )
-        else:
-            self._multipart_upload(
-                teamspace_id=teamspace_id,
-                cluster_id=cluster_id,
-                file_path=file_path,
-                remote_path=remote_path,
-                progress_bar=progress_bar,
-            )
 
-    def _single_part_upload(
-        self, teamspace_id: str, cluster_id: str, file_path: str, remote_path: str, progress_bar: bool
-    ) -> None:
-        """Uploads small files to a given remote path on the studio."""
-        body = ProjectIdStorageBody(cluster_id=cluster_id, filename=remote_path)
-        url = self._client.lightningapp_instance_service_upload_project_artifact(
-            body, project_id=teamspace_id
-        ).upload_url
-        _upload_file_to_urls(url, path=file_path, progress_bar=progress_bar)
-
-    def _multipart_upload(
-        self, teamspace_id: str, cluster_id: str, file_path: str, remote_path: str, progress_bar: bool
-    ) -> None:
-        """Uploads larger files to a given remote path on the studio."""
-        remote_path = f"projects/{teamspace_id}" + remote_path
-
-        count = math.ceil(os.path.getsize(file_path) / _MAX_SIZE_MULTI_PART_CHUNK)
+        count = (
+            1
+            if os.path.getsize(file_path) <= _SIZE_LIMIT_SINGLE_PART
+            else math.ceil(os.path.getsize(file_path) / _MAX_SIZE_MULTI_PART_CHUNK)
+        )
 
         body = StorageMultipartBody(cluster_id=cluster_id, count=count, filename=remote_path)
-        resp: V1CreateMultipartUploadProjectArtifactResponse = (
-            self._client.lightningapp_instance_service_create_multipart_upload_project_artifact(
-                body=body, project_id=teamspace_id
-            )
+        resp: V1UploadProjectArtifactResponse = self._client.lightningapp_instance_service_upload_project_artifact(
+            body=body, project_id=teamspace_id
         )
 
         completed = _upload_file_to_urls(*resp.urls, path=file_path, progress_bar=progress_bar)
 
-        completed_body = MultipartCompleteBody(
+        completed_body = StorageCompleteBody(
             cluster_id=cluster_id, filename=remote_path, parts=completed, upload_id=resp.upload_id
         )
-        self._client.lightningapp_instance_service_complete_multipart_upload_project_artifact(
+        self._client.lightningapp_instance_service_complete_upload_project_artifact(
             body=completed_body, project_id=teamspace_id
         )
 
@@ -488,7 +457,7 @@ class StudioApi:
         ).lightningappinstance
 
 
-def _upload_file_to_urls(*urls: Union[str, V1MultiPartPresignedUrl], path: str, progress_bar: bool = True) -> None:
+def _upload_file_to_urls(*urls: V1PresignedUrl, path: str, progress_bar: bool = True) -> None:
     if progress_bar:
         file_size = os.path.getsize(path)
         pbar = tqdm(
@@ -509,19 +478,16 @@ def _upload_file_to_urls(*urls: Union[str, V1MultiPartPresignedUrl], path: str, 
         reader_wrapper = CallbackIOWrapper(update_fn, fd, "read")
 
         for url in urls:
-            curr_url = url.url if isinstance(url, V1MultiPartPresignedUrl) else url
-
             # unfortunately we can't just pass the reader_wrapper directly since we only
             # need to read the first N bytes, finding a way to still pass the reader_wrapper
             # would likely be faster though
             data = reader_wrapper.read(_MAX_SIZE_MULTI_PART_CHUNK) if len(urls) > 1 else reader_wrapper
 
-            response = requests.put(curr_url, data=data)
+            response = requests.put(url.url, data=data)
             response.raise_for_status()
 
-            if isinstance(url, V1MultiPartPresignedUrl):
-                etag = response.headers.get("ETag")
-                completed_uploads.append(V1CompleteMultiPartUpload(etag=etag, part_number=url.part_number))
+            etag = response.headers.get("ETag")
+            completed_uploads.append(V1CompleteUpload(etag=etag, part_number=url.part_number))
 
     if progress_bar:
         pbar.close()
