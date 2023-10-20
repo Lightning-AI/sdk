@@ -47,6 +47,7 @@ class V1UpdateUserRequest(object):
         'country': 'str',
         'email': 'str',
         'first_name': 'str',
+        'general_audience_mode': 'bool',
         'last_name': 'str',
         'opted_in_marketing_emails': 'bool',
         'organization': 'str',
@@ -69,6 +70,7 @@ class V1UpdateUserRequest(object):
         'country': 'country',
         'email': 'email',
         'first_name': 'firstName',
+        'general_audience_mode': 'generalAudienceMode',
         'last_name': 'lastName',
         'opted_in_marketing_emails': 'optedInMarketingEmails',
         'organization': 'organization',
@@ -84,7 +86,7 @@ class V1UpdateUserRequest(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, first_name: 'str' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1UpdateUserRequest - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._complete_sign_up = None
@@ -92,6 +94,7 @@ class V1UpdateUserRequest(object):
         self._country = None
         self._email = None
         self._first_name = None
+        self._general_audience_mode = None
         self._last_name = None
         self._opted_in_marketing_emails = None
         self._organization = None
@@ -118,6 +121,8 @@ class V1UpdateUserRequest(object):
             self.email = email
         if first_name is not None:
             self.first_name = first_name
+        if general_audience_mode is not None:
+            self.general_audience_mode = general_audience_mode
         if last_name is not None:
             self.last_name = last_name
         if opted_in_marketing_emails is not None:
@@ -270,6 +275,27 @@ class V1UpdateUserRequest(object):
         """
 
         self._first_name = first_name
+
+    @property
+    def general_audience_mode(self) -> 'bool':
+        """Gets the general_audience_mode of this V1UpdateUserRequest.  # noqa: E501
+
+
+        :return: The general_audience_mode of this V1UpdateUserRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._general_audience_mode
+
+    @general_audience_mode.setter
+    def general_audience_mode(self, general_audience_mode: 'bool'):
+        """Sets the general_audience_mode of this V1UpdateUserRequest.
+
+
+        :param general_audience_mode: The general_audience_mode of this V1UpdateUserRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._general_audience_mode = general_audience_mode
 
     @property
     def last_name(self) -> 'str':

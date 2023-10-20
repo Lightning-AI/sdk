@@ -43,6 +43,337 @@ class AgentServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
+    def agent_service_agent_complete_part(self, body: 'object', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentCompletePartResponse':  # noqa: E501
+        """agent_service_agent_complete_part  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.agent_service_agent_complete_part(body, id, upload_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param object body: (required)
+        :param str id: (required)
+        :param str upload_id: (required)
+        :return: V1AgentCompletePartResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.agent_service_agent_complete_part_with_http_info(body, id, upload_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.agent_service_agent_complete_part_with_http_info(body, id, upload_id, **kwargs)  # noqa: E501
+            return data
+
+    def agent_service_agent_complete_part_with_http_info(self, body: 'object', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentCompletePartResponse':  # noqa: E501
+        """agent_service_agent_complete_part  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.agent_service_agent_complete_part_with_http_info(body, id, upload_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param object body: (required)
+        :param str id: (required)
+        :param str upload_id: (required)
+        :return: V1AgentCompletePartResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'id', 'upload_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method agent_service_agent_complete_part" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `agent_service_agent_complete_part`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `agent_service_agent_complete_part`")  # noqa: E501
+        # verify the required parameter 'upload_id' is set
+        if ('upload_id' not in params or
+                params['upload_id'] is None):
+            raise ValueError("Missing the required parameter `upload_id` when calling `agent_service_agent_complete_part`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+        if 'upload_id' in params:
+            path_params['uploadId'] = params['upload_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/agent/jobs/{id}/multipart-uploads/{uploadId}', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1AgentCompletePartResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def agent_service_agent_upload_part(self, body: 'MultipartuploadsUploadIdBody', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentUploadPartResponse':  # noqa: E501
+        """agent_service_agent_upload_part  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.agent_service_agent_upload_part(body, id, upload_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param MultipartuploadsUploadIdBody body: (required)
+        :param str id: (required)
+        :param str upload_id: (required)
+        :return: V1AgentUploadPartResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.agent_service_agent_upload_part_with_http_info(body, id, upload_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.agent_service_agent_upload_part_with_http_info(body, id, upload_id, **kwargs)  # noqa: E501
+            return data
+
+    def agent_service_agent_upload_part_with_http_info(self, body: 'MultipartuploadsUploadIdBody', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentUploadPartResponse':  # noqa: E501
+        """agent_service_agent_upload_part  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.agent_service_agent_upload_part_with_http_info(body, id, upload_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param MultipartuploadsUploadIdBody body: (required)
+        :param str id: (required)
+        :param str upload_id: (required)
+        :return: V1AgentUploadPartResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'id', 'upload_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method agent_service_agent_upload_part" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `agent_service_agent_upload_part`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `agent_service_agent_upload_part`")  # noqa: E501
+        # verify the required parameter 'upload_id' is set
+        if ('upload_id' not in params or
+                params['upload_id'] is None):
+            raise ValueError("Missing the required parameter `upload_id` when calling `agent_service_agent_upload_part`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+        if 'upload_id' in params:
+            path_params['uploadId'] = params['upload_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/agent/jobs/{id}/multipart-uploads/{uploadId}', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1AgentUploadPartResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def agent_service_create_agent_multipart_upload(self, body: 'IdMultipartuploadsBody', id: 'str', **kwargs) -> 'V1CreateAgentMultipartUploadResponse':  # noqa: E501
+        """agent_service_create_agent_multipart_upload  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.agent_service_create_agent_multipart_upload(body, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IdMultipartuploadsBody body: (required)
+        :param str id: (required)
+        :return: V1CreateAgentMultipartUploadResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.agent_service_create_agent_multipart_upload_with_http_info(body, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.agent_service_create_agent_multipart_upload_with_http_info(body, id, **kwargs)  # noqa: E501
+            return data
+
+    def agent_service_create_agent_multipart_upload_with_http_info(self, body: 'IdMultipartuploadsBody', id: 'str', **kwargs) -> 'V1CreateAgentMultipartUploadResponse':  # noqa: E501
+        """agent_service_create_agent_multipart_upload  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.agent_service_create_agent_multipart_upload_with_http_info(body, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IdMultipartuploadsBody body: (required)
+        :param str id: (required)
+        :return: V1CreateAgentMultipartUploadResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method agent_service_create_agent_multipart_upload" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `agent_service_create_agent_multipart_upload`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `agent_service_create_agent_multipart_upload`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/agent/jobs/{id}/multipart-uploads', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CreateAgentMultipartUploadResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def agent_service_get_agent_job(self, id: 'str', **kwargs) -> 'V1AgentJob':  # noqa: E501
         """GetAgentJob is used to get a specific agent job for a Lightning AI agent.  # noqa: E501
 
@@ -226,6 +557,111 @@ class AgentServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1GetAgentJobLogsMetadataResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def agent_service_list_agent_job_artifacts(self, id: 'str', **kwargs) -> 'V1ListAgentJobArtifactsResponse':  # noqa: E501
+        """Job artifact upload APIs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.agent_service_list_agent_job_artifacts(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :param str prefix:
+        :param str page_token:
+        :param str page_size:
+        :return: V1ListAgentJobArtifactsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.agent_service_list_agent_job_artifacts_with_http_info(id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.agent_service_list_agent_job_artifacts_with_http_info(id, **kwargs)  # noqa: E501
+            return data
+
+    def agent_service_list_agent_job_artifacts_with_http_info(self, id: 'str', **kwargs) -> 'V1ListAgentJobArtifactsResponse':  # noqa: E501
+        """Job artifact upload APIs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.agent_service_list_agent_job_artifacts_with_http_info(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :param str prefix:
+        :param str page_token:
+        :param str page_size:
+        :return: V1ListAgentJobArtifactsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['id', 'prefix', 'page_token', 'page_size']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method agent_service_list_agent_job_artifacts" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `agent_service_list_agent_job_artifacts`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'prefix' in params:
+            query_params.append(('prefix', params['prefix']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
+        if 'page_size' in params:
+            query_params.append(('pageSize', params['page_size']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/agent/jobs/{id}/artifacts', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListAgentJobArtifactsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -619,6 +1055,111 @@ class AgentServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1UpdateAgentStatusResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def agent_service_upload_agent_job_artifact(self, body: 'IdUploadsBody', id: 'str', **kwargs) -> 'V1UploadAgentJobArtifactResponse':  # noqa: E501
+        """agent_service_upload_agent_job_artifact  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.agent_service_upload_agent_job_artifact(body, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IdUploadsBody body: (required)
+        :param str id: (required)
+        :return: V1UploadAgentJobArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.agent_service_upload_agent_job_artifact_with_http_info(body, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.agent_service_upload_agent_job_artifact_with_http_info(body, id, **kwargs)  # noqa: E501
+            return data
+
+    def agent_service_upload_agent_job_artifact_with_http_info(self, body: 'IdUploadsBody', id: 'str', **kwargs) -> 'V1UploadAgentJobArtifactResponse':  # noqa: E501
+        """agent_service_upload_agent_job_artifact  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.agent_service_upload_agent_job_artifact_with_http_info(body, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IdUploadsBody body: (required)
+        :param str id: (required)
+        :return: V1UploadAgentJobArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method agent_service_upload_agent_job_artifact" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `agent_service_upload_agent_job_artifact`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `agent_service_upload_agent_job_artifact`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/agent/jobs/{id}/uploads', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1UploadAgentJobArtifactResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

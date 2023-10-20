@@ -47,6 +47,7 @@ class V1GetUserResponse(object):
         'email': 'str',
         'features': 'V1UserFeatures',
         'first_name': 'str',
+        'general_audience_mode': 'bool',
         'id': 'str',
         'is_internal': 'bool',
         'last_name': 'str',
@@ -75,6 +76,7 @@ class V1GetUserResponse(object):
         'email': 'email',
         'features': 'features',
         'first_name': 'firstName',
+        'general_audience_mode': 'generalAudienceMode',
         'id': 'id',
         'is_internal': 'isInternal',
         'last_name': 'lastName',
@@ -96,7 +98,7 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, id: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, status: 'Externalv1UserStatus' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, status: 'Externalv1UserStatus' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._api_key = None
@@ -104,6 +106,7 @@ class V1GetUserResponse(object):
         self._email = None
         self._features = None
         self._first_name = None
+        self._general_audience_mode = None
         self._id = None
         self._is_internal = None
         self._last_name = None
@@ -136,6 +139,8 @@ class V1GetUserResponse(object):
             self.features = features
         if first_name is not None:
             self.first_name = first_name
+        if general_audience_mode is not None:
+            self.general_audience_mode = general_audience_mode
         if id is not None:
             self.id = id
         if is_internal is not None:
@@ -300,6 +305,27 @@ class V1GetUserResponse(object):
         """
 
         self._first_name = first_name
+
+    @property
+    def general_audience_mode(self) -> 'bool':
+        """Gets the general_audience_mode of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The general_audience_mode of this V1GetUserResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._general_audience_mode
+
+    @general_audience_mode.setter
+    def general_audience_mode(self, general_audience_mode: 'bool'):
+        """Sets the general_audience_mode of this V1GetUserResponse.
+
+
+        :param general_audience_mode: The general_audience_mode of this V1GetUserResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._general_audience_mode = general_audience_mode
 
     @property
     def id(self) -> 'str':
