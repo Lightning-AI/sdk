@@ -175,7 +175,7 @@ class Studio:
         return Studio(**kwargs)
 
     def switch_machine(self, machine: Machine) -> None:
-        """Switches machine to the provied machine type/.
+        """Switches machine to the provided machine type/.
 
         Args:
             machine: the new machine type to switch to

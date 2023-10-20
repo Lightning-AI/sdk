@@ -102,8 +102,8 @@ class StudioApi:
             with tarfile.open(tar_path, "w:gz") as tar:
                 tar.add(main_py_path, arcname="main.py")
 
-            with open(tar_path, "rb") as fo:
-                requests.put(run.source_upload_url, data=fo)
+            with open(tar_path, "rb") as fopen:
+                requests.put(run.source_upload_url, data=fopen)
         return studio
 
     def get_studio_status(self, studio_id: str, teamspace_id: str) -> V1GetCloudSpaceInstanceStatusResponse:
