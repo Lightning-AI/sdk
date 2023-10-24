@@ -71,6 +71,7 @@ class V1UserFeatures(object):
         'mmt_app': 'bool',
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
+        'platform_docs': 'bool',
         'plugin_browser': 'bool',
         'pricing_tiers': 'bool',
         'pricing_updates': 'bool',
@@ -87,6 +88,7 @@ class V1UserFeatures(object):
         'studio_publication': 'bool',
         'sweeps_app': 'bool',
         'tensorboard_plugin': 'bool',
+        'tier_override': 'str',
         'tired_proxy_dataconnection': 'bool',
         'weviate_plugin': 'bool',
         'writable_data_connections': 'bool'
@@ -123,6 +125,7 @@ class V1UserFeatures(object):
         'mmt_app': 'mmtApp',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
+        'platform_docs': 'platformDocs',
         'plugin_browser': 'pluginBrowser',
         'pricing_tiers': 'pricingTiers',
         'pricing_updates': 'pricingUpdates',
@@ -139,12 +142,13 @@ class V1UserFeatures(object):
         'studio_publication': 'studioPublication',
         'sweeps_app': 'sweepsApp',
         'tensorboard_plugin': 'tensorboardPlugin',
+        'tier_override': 'tierOverride',
         'tired_proxy_dataconnection': 'tiredProxyDataconnection',
         'weviate_plugin': 'weviatePlugin',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, data_prep_app: 'bool' =None, distributed_plugin: 'bool' =None, enable_crypto_crackdown: 'bool' =None, fiftyone_plugin: 'bool' =None, filesystem_optimisation: 'bool' =None, gradio_plugin: 'bool' =None, inference_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_filesystem: 'bool' =None, label_studio_plugin: 'bool' =None, landing_studios: 'bool' =None, langflow_plugin: 'bool' =None, lightning_apps_distributed_plugin: 'bool' =None, lightning_apps_plugin: 'bool' =None, mage_ai_plugin: 'bool' =None, milvus_plugin: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, plugin_browser: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, react_plugin: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, streamlit_plugin: 'bool' =None, studio_about_tab: 'bool' =None, studio_publication: 'bool' =None, sweeps_app: 'bool' =None, tensorboard_plugin: 'bool' =None, tired_proxy_dataconnection: 'bool' =None, weviate_plugin: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, data_prep_app: 'bool' =None, distributed_plugin: 'bool' =None, enable_crypto_crackdown: 'bool' =None, fiftyone_plugin: 'bool' =None, filesystem_optimisation: 'bool' =None, gradio_plugin: 'bool' =None, inference_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_filesystem: 'bool' =None, label_studio_plugin: 'bool' =None, landing_studios: 'bool' =None, langflow_plugin: 'bool' =None, lightning_apps_distributed_plugin: 'bool' =None, lightning_apps_plugin: 'bool' =None, mage_ai_plugin: 'bool' =None, milvus_plugin: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_browser: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, react_plugin: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, streamlit_plugin: 'bool' =None, studio_about_tab: 'bool' =None, studio_publication: 'bool' =None, sweeps_app: 'bool' =None, tensorboard_plugin: 'bool' =None, tier_override: 'str' =None, tired_proxy_dataconnection: 'bool' =None, weviate_plugin: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._aws_trainium = None
         self._b2c_experience = None
@@ -176,6 +180,7 @@ class V1UserFeatures(object):
         self._mmt_app = None
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
+        self._platform_docs = None
         self._plugin_browser = None
         self._pricing_tiers = None
         self._pricing_updates = None
@@ -192,6 +197,7 @@ class V1UserFeatures(object):
         self._studio_publication = None
         self._sweeps_app = None
         self._tensorboard_plugin = None
+        self._tier_override = None
         self._tired_proxy_dataconnection = None
         self._weviate_plugin = None
         self._writable_data_connections = None
@@ -256,6 +262,8 @@ class V1UserFeatures(object):
             self.mmt_strategy_selector = mmt_strategy_selector
         if mountpoint_s3 is not None:
             self.mountpoint_s3 = mountpoint_s3
+        if platform_docs is not None:
+            self.platform_docs = platform_docs
         if plugin_browser is not None:
             self.plugin_browser = plugin_browser
         if pricing_tiers is not None:
@@ -288,6 +296,8 @@ class V1UserFeatures(object):
             self.sweeps_app = sweeps_app
         if tensorboard_plugin is not None:
             self.tensorboard_plugin = tensorboard_plugin
+        if tier_override is not None:
+            self.tier_override = tier_override
         if tired_proxy_dataconnection is not None:
             self.tired_proxy_dataconnection = tired_proxy_dataconnection
         if weviate_plugin is not None:
@@ -926,6 +936,27 @@ class V1UserFeatures(object):
         self._mountpoint_s3 = mountpoint_s3
 
     @property
+    def platform_docs(self) -> 'bool':
+        """Gets the platform_docs of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The platform_docs of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._platform_docs
+
+    @platform_docs.setter
+    def platform_docs(self, platform_docs: 'bool'):
+        """Sets the platform_docs of this V1UserFeatures.
+
+
+        :param platform_docs: The platform_docs of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._platform_docs = platform_docs
+
+    @property
     def plugin_browser(self) -> 'bool':
         """Gets the plugin_browser of this V1UserFeatures.  # noqa: E501
 
@@ -1260,6 +1291,27 @@ class V1UserFeatures(object):
         """
 
         self._tensorboard_plugin = tensorboard_plugin
+
+    @property
+    def tier_override(self) -> 'str':
+        """Gets the tier_override of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The tier_override of this V1UserFeatures.  # noqa: E501
+        :rtype: str
+        """
+        return self._tier_override
+
+    @tier_override.setter
+    def tier_override(self, tier_override: 'str'):
+        """Sets the tier_override of this V1UserFeatures.
+
+
+        :param tier_override: The tier_override of this V1UserFeatures.  # noqa: E501
+        :type: str
+        """
+
+        self._tier_override = tier_override
 
     @property
     def tired_proxy_dataconnection(self) -> 'bool':

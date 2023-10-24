@@ -49,6 +49,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'ide': 'str',
         'instance_id': 'str',
         'instance_region': 'str',
+        'jupyterlab_url': 'str',
         'phase': 'V1CloudSpaceInstanceState',
         'ssh_host': 'str',
         'ssh_port': 'int',
@@ -61,7 +62,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'status_message': 'str',
         'sync_eta_seconds': 'str',
         'sync_in_progress': 'bool',
-        'sync_percentage': 'str'
+        'sync_percentage': 'str',
+        'vscode_url': 'str'
     }
 
     attribute_map = {
@@ -73,6 +75,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'ide': 'ide',
         'instance_id': 'instanceId',
         'instance_region': 'instanceRegion',
+        'jupyterlab_url': 'jupyterlabUrl',
         'phase': 'phase',
         'ssh_host': 'sshHost',
         'ssh_port': 'sshPort',
@@ -85,10 +88,11 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'status_message': 'statusMessage',
         'sync_eta_seconds': 'syncEtaSeconds',
         'sync_in_progress': 'syncInProgress',
-        'sync_percentage': 'syncPercentage'
+        'sync_percentage': 'syncPercentage',
+        'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, app_url: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None):  # noqa: E501
+    def __init__(self, app_url: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._app_url = None
         self._cloud_space_instance_id = None
@@ -98,6 +102,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self._ide = None
         self._instance_id = None
         self._instance_region = None
+        self._jupyterlab_url = None
         self._phase = None
         self._ssh_host = None
         self._ssh_port = None
@@ -111,6 +116,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self._sync_eta_seconds = None
         self._sync_in_progress = None
         self._sync_percentage = None
+        self._vscode_url = None
         self.discriminator = None
         if app_url is not None:
             self.app_url = app_url
@@ -128,6 +134,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.instance_id = instance_id
         if instance_region is not None:
             self.instance_region = instance_region
+        if jupyterlab_url is not None:
+            self.jupyterlab_url = jupyterlab_url
         if phase is not None:
             self.phase = phase
         if ssh_host is not None:
@@ -154,6 +162,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.sync_in_progress = sync_in_progress
         if sync_percentage is not None:
             self.sync_percentage = sync_percentage
+        if vscode_url is not None:
+            self.vscode_url = vscode_url
 
     @property
     def app_url(self) -> 'str':
@@ -322,6 +332,27 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._instance_region = instance_region
+
+    @property
+    def jupyterlab_url(self) -> 'str':
+        """Gets the jupyterlab_url of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The jupyterlab_url of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._jupyterlab_url
+
+    @jupyterlab_url.setter
+    def jupyterlab_url(self, jupyterlab_url: 'str'):
+        """Sets the jupyterlab_url of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param jupyterlab_url: The jupyterlab_url of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._jupyterlab_url = jupyterlab_url
 
     @property
     def phase(self) -> 'V1CloudSpaceInstanceState':
@@ -595,6 +626,27 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._sync_percentage = sync_percentage
+
+    @property
+    def vscode_url(self) -> 'str':
+        """Gets the vscode_url of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The vscode_url of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._vscode_url
+
+    @vscode_url.setter
+    def vscode_url(self, vscode_url: 'str'):
+        """Sets the vscode_url of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param vscode_url: The vscode_url of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._vscode_url = vscode_url
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

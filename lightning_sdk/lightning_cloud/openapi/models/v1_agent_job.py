@@ -53,6 +53,9 @@ class V1AgentJob(object):
         'slurm_v1_status': 'V1SlurmV1JobStatus',
         'state': 'str',
         'updated_at': 'datetime',
+        'upload_eta_seconds': 'str',
+        'upload_in_progress': 'bool',
+        'upload_percentage': 'str',
         'work_dir': 'str'
     }
 
@@ -69,10 +72,13 @@ class V1AgentJob(object):
         'slurm_v1_status': 'slurmV1Status',
         'state': 'state',
         'updated_at': 'updatedAt',
+        'upload_eta_seconds': 'uploadEtaSeconds',
+        'upload_in_progress': 'uploadInProgress',
+        'upload_percentage': 'uploadPercentage',
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1AgentJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -86,6 +92,9 @@ class V1AgentJob(object):
         self._slurm_v1_status = None
         self._state = None
         self._updated_at = None
+        self._upload_eta_seconds = None
+        self._upload_in_progress = None
+        self._upload_percentage = None
         self._work_dir = None
         self.discriminator = None
         if cloudspace_id is not None:
@@ -112,6 +121,12 @@ class V1AgentJob(object):
             self.state = state
         if updated_at is not None:
             self.updated_at = updated_at
+        if upload_eta_seconds is not None:
+            self.upload_eta_seconds = upload_eta_seconds
+        if upload_in_progress is not None:
+            self.upload_in_progress = upload_in_progress
+        if upload_percentage is not None:
+            self.upload_percentage = upload_percentage
         if work_dir is not None:
             self.work_dir = work_dir
 
@@ -366,6 +381,69 @@ class V1AgentJob(object):
         """
 
         self._updated_at = updated_at
+
+    @property
+    def upload_eta_seconds(self) -> 'str':
+        """Gets the upload_eta_seconds of this V1AgentJob.  # noqa: E501
+
+
+        :return: The upload_eta_seconds of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._upload_eta_seconds
+
+    @upload_eta_seconds.setter
+    def upload_eta_seconds(self, upload_eta_seconds: 'str'):
+        """Sets the upload_eta_seconds of this V1AgentJob.
+
+
+        :param upload_eta_seconds: The upload_eta_seconds of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._upload_eta_seconds = upload_eta_seconds
+
+    @property
+    def upload_in_progress(self) -> 'bool':
+        """Gets the upload_in_progress of this V1AgentJob.  # noqa: E501
+
+
+        :return: The upload_in_progress of this V1AgentJob.  # noqa: E501
+        :rtype: bool
+        """
+        return self._upload_in_progress
+
+    @upload_in_progress.setter
+    def upload_in_progress(self, upload_in_progress: 'bool'):
+        """Sets the upload_in_progress of this V1AgentJob.
+
+
+        :param upload_in_progress: The upload_in_progress of this V1AgentJob.  # noqa: E501
+        :type: bool
+        """
+
+        self._upload_in_progress = upload_in_progress
+
+    @property
+    def upload_percentage(self) -> 'str':
+        """Gets the upload_percentage of this V1AgentJob.  # noqa: E501
+
+
+        :return: The upload_percentage of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._upload_percentage
+
+    @upload_percentage.setter
+    def upload_percentage(self, upload_percentage: 'str'):
+        """Sets the upload_percentage of this V1AgentJob.
+
+
+        :param upload_percentage: The upload_percentage of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._upload_percentage = upload_percentage
 
     @property
     def work_dir(self) -> 'str':
