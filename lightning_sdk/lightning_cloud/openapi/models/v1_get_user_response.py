@@ -49,6 +49,7 @@ class V1GetUserResponse(object):
         'first_name': 'str',
         'general_audience_mode': 'bool',
         'id': 'str',
+        'internal_docs_admin': 'bool',
         'is_internal': 'bool',
         'last_name': 'str',
         'opted_in_marketing_emails': 'bool',
@@ -78,6 +79,7 @@ class V1GetUserResponse(object):
         'first_name': 'firstName',
         'general_audience_mode': 'generalAudienceMode',
         'id': 'id',
+        'internal_docs_admin': 'internalDocsAdmin',
         'is_internal': 'isInternal',
         'last_name': 'lastName',
         'opted_in_marketing_emails': 'optedInMarketingEmails',
@@ -98,7 +100,7 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, status: 'Externalv1UserStatus' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, is_internal: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, status: 'Externalv1UserStatus' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._api_key = None
@@ -108,6 +110,7 @@ class V1GetUserResponse(object):
         self._first_name = None
         self._general_audience_mode = None
         self._id = None
+        self._internal_docs_admin = None
         self._is_internal = None
         self._last_name = None
         self._opted_in_marketing_emails = None
@@ -143,6 +146,8 @@ class V1GetUserResponse(object):
             self.general_audience_mode = general_audience_mode
         if id is not None:
             self.id = id
+        if internal_docs_admin is not None:
+            self.internal_docs_admin = internal_docs_admin
         if is_internal is not None:
             self.is_internal = is_internal
         if last_name is not None:
@@ -347,6 +352,27 @@ class V1GetUserResponse(object):
         """
 
         self._id = id
+
+    @property
+    def internal_docs_admin(self) -> 'bool':
+        """Gets the internal_docs_admin of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The internal_docs_admin of this V1GetUserResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._internal_docs_admin
+
+    @internal_docs_admin.setter
+    def internal_docs_admin(self, internal_docs_admin: 'bool'):
+        """Sets the internal_docs_admin of this V1GetUserResponse.
+
+
+        :param internal_docs_admin: The internal_docs_admin of this V1GetUserResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._internal_docs_admin = internal_docs_admin
 
     @property
     def is_internal(self) -> 'bool':

@@ -43,20 +43,29 @@ class JobsIdBody(object):
     swagger_types = {
         'message': 'str',
         'slurm_v1_status': 'V1SlurmV1JobStatus',
-        'state': 'str'
+        'state': 'str',
+        'upload_eta_seconds': 'str',
+        'upload_in_progress': 'bool',
+        'upload_percentage': 'str'
     }
 
     attribute_map = {
         'message': 'message',
         'slurm_v1_status': 'slurmV1Status',
-        'state': 'state'
+        'state': 'state',
+        'upload_eta_seconds': 'uploadEtaSeconds',
+        'upload_in_progress': 'uploadInProgress',
+        'upload_percentage': 'uploadPercentage'
     }
 
-    def __init__(self, message: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None):  # noqa: E501
+    def __init__(self, message: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None):  # noqa: E501
         """JobsIdBody - a model defined in Swagger"""  # noqa: E501
         self._message = None
         self._slurm_v1_status = None
         self._state = None
+        self._upload_eta_seconds = None
+        self._upload_in_progress = None
+        self._upload_percentage = None
         self.discriminator = None
         if message is not None:
             self.message = message
@@ -64,6 +73,12 @@ class JobsIdBody(object):
             self.slurm_v1_status = slurm_v1_status
         if state is not None:
             self.state = state
+        if upload_eta_seconds is not None:
+            self.upload_eta_seconds = upload_eta_seconds
+        if upload_in_progress is not None:
+            self.upload_in_progress = upload_in_progress
+        if upload_percentage is not None:
+            self.upload_percentage = upload_percentage
 
     @property
     def message(self) -> 'str':
@@ -127,6 +142,69 @@ class JobsIdBody(object):
         """
 
         self._state = state
+
+    @property
+    def upload_eta_seconds(self) -> 'str':
+        """Gets the upload_eta_seconds of this JobsIdBody.  # noqa: E501
+
+
+        :return: The upload_eta_seconds of this JobsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._upload_eta_seconds
+
+    @upload_eta_seconds.setter
+    def upload_eta_seconds(self, upload_eta_seconds: 'str'):
+        """Sets the upload_eta_seconds of this JobsIdBody.
+
+
+        :param upload_eta_seconds: The upload_eta_seconds of this JobsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._upload_eta_seconds = upload_eta_seconds
+
+    @property
+    def upload_in_progress(self) -> 'bool':
+        """Gets the upload_in_progress of this JobsIdBody.  # noqa: E501
+
+
+        :return: The upload_in_progress of this JobsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._upload_in_progress
+
+    @upload_in_progress.setter
+    def upload_in_progress(self, upload_in_progress: 'bool'):
+        """Sets the upload_in_progress of this JobsIdBody.
+
+
+        :param upload_in_progress: The upload_in_progress of this JobsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._upload_in_progress = upload_in_progress
+
+    @property
+    def upload_percentage(self) -> 'str':
+        """Gets the upload_percentage of this JobsIdBody.  # noqa: E501
+
+
+        :return: The upload_percentage of this JobsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._upload_percentage
+
+    @upload_percentage.setter
+    def upload_percentage(self, upload_percentage: 'str'):
+        """Sets the upload_percentage of this JobsIdBody.
+
+
+        :param upload_percentage: The upload_percentage of this JobsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._upload_percentage = upload_percentage
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
