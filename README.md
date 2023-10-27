@@ -17,6 +17,7 @@ If you want to use it from within a Studio, these variables are already availabl
 ```python
 from lightning_sdk import Machine, Studio
 
+# or s =  Studio("my-studio", "my-teamspace", org="my-org", create_ok=True)
 s = Studio("my-studio", "my-teamspace", user="my-username", create_ok=True)
 
 print("starting Studio...")
