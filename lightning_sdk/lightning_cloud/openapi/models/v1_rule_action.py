@@ -45,6 +45,7 @@ class V1RuleAction(object):
     DELETE = "delete"
     SSH = "ssh"
     VIEWLOGS = "viewLogs"
+    GETNOTIFIED = "getNotified"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

@@ -102,7 +102,7 @@ class _LightningSrcResolver(_Resolver):
 class _LightningTargetResolver(_Resolver):
     """The `_LightningTargetResolver` generates a cloud storage path from a directory."""
 
-    def __call__(self, name: str) -> Optional[str]:
+    def __call__(self, name: str, version: Optional[int] = None) -> Optional[str]:
         # Get the ids from env variables
         cluster_id = os.getenv("LIGHTNING_CLUSTER_ID", None)
         project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID", None)
@@ -131,13 +131,10 @@ class _LightningTargetResolver(_Resolver):
             Delimiter="/",
             Prefix=prefix + "/",
         )
-        version = objects["KeyCount"] + 1 if objects["KeyCount"] else 0
+        if version is None:
+            version = objects["KeyCount"] + 1 if objects["KeyCount"] else 0
 
-        cloud_storage_path = os.path.join(f"s3://{target_cluster[0].spec.aws_v1.bucket_name}", prefix, f"version_{version}")
-
-        print(f"Storing the files under {cloud_storage_path}")
-
-        return cloud_storage_path
+        return os.path.join(f"s3://{target_cluster[0].spec.aws_v1.bucket_name}", prefix, f"version_{version}")
 
 def _try_create_cache_dir(name: Optional[str], create: bool = False):
     # Get the ids from env variables
