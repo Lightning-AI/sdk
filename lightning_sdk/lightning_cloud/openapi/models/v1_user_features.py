@@ -52,45 +52,46 @@ class V1UserFeatures(object):
         'collab_screen_sharing': 'bool',
         'crypto_monitoring': 'bool',
         'custom_app_domain': 'bool',
-        'data_prep_app': 'bool',
-        'distributed_plugin': 'bool',
         'enable_crypto_crackdown': 'bool',
-        'fiftyone_plugin': 'bool',
         'filesystem_optimisation': 'bool',
-        'gradio_plugin': 'bool',
-        'inference_plugin': 'bool',
         'interruptible_instances': 'bool',
         'jobs_filesystem': 'bool',
-        'label_studio_plugin': 'bool',
         'landing_studios': 'bool',
-        'langflow_plugin': 'bool',
-        'lightning_apps_distributed_plugin': 'bool',
-        'lightning_apps_plugin': 'bool',
-        'mage_ai_plugin': 'bool',
-        'milvus_plugin': 'bool',
         'mmt_app': 'bool',
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
         'platform_docs': 'bool',
         'plugin_browser': 'bool',
+        'plugin_data_prep': 'bool',
+        'plugin_distributed': 'bool',
+        'plugin_fiftyone': 'bool',
+        'plugin_gradio': 'bool',
+        'plugin_inference': 'bool',
+        'plugin_label_studio': 'bool',
+        'plugin_langflow': 'bool',
+        'plugin_lightning_apps': 'bool',
+        'plugin_lightning_apps_distributed': 'bool',
+        'plugin_mage_ai': 'bool',
+        'plugin_milvus': 'bool',
+        'plugin_os_menu': 'bool',
+        'plugin_react': 'bool',
+        'plugin_streamlit': 'bool',
+        'plugin_sweeps': 'bool',
+        'plugin_weviate': 'bool',
         'pricing_tiers': 'bool',
         'pricing_updates': 'bool',
         'product_generator': 'bool',
         'project_selector': 'bool',
         'publish_ai_app': 'bool',
-        'react_plugin': 'bool',
         'restartable_jobs': 'bool',
         'show_dev_admin': 'bool',
         'show_quotas': 'bool',
         'slurm': 'bool',
-        'streamlit_plugin': 'bool',
         'studio_about_tab': 'bool',
         'studio_publication': 'bool',
-        'sweeps_app': 'bool',
         'tensorboard_plugin': 'bool',
         'tier_override': 'str',
         'tired_proxy_dataconnection': 'bool',
-        'weviate_plugin': 'bool',
         'writable_data_connections': 'bool'
     }
 
@@ -106,49 +107,50 @@ class V1UserFeatures(object):
         'collab_screen_sharing': 'collabScreenSharing',
         'crypto_monitoring': 'cryptoMonitoring',
         'custom_app_domain': 'customAppDomain',
-        'data_prep_app': 'dataPrepApp',
-        'distributed_plugin': 'distributedPlugin',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
-        'fiftyone_plugin': 'fiftyonePlugin',
         'filesystem_optimisation': 'filesystemOptimisation',
-        'gradio_plugin': 'gradioPlugin',
-        'inference_plugin': 'inferencePlugin',
         'interruptible_instances': 'interruptibleInstances',
         'jobs_filesystem': 'jobsFilesystem',
-        'label_studio_plugin': 'labelStudioPlugin',
         'landing_studios': 'landingStudios',
-        'langflow_plugin': 'langflowPlugin',
-        'lightning_apps_distributed_plugin': 'lightningAppsDistributedPlugin',
-        'lightning_apps_plugin': 'lightningAppsPlugin',
-        'mage_ai_plugin': 'mageAiPlugin',
-        'milvus_plugin': 'milvusPlugin',
         'mmt_app': 'mmtApp',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
         'platform_docs': 'platformDocs',
         'plugin_browser': 'pluginBrowser',
+        'plugin_data_prep': 'pluginDataPrep',
+        'plugin_distributed': 'pluginDistributed',
+        'plugin_fiftyone': 'pluginFiftyone',
+        'plugin_gradio': 'pluginGradio',
+        'plugin_inference': 'pluginInference',
+        'plugin_label_studio': 'pluginLabelStudio',
+        'plugin_langflow': 'pluginLangflow',
+        'plugin_lightning_apps': 'pluginLightningApps',
+        'plugin_lightning_apps_distributed': 'pluginLightningAppsDistributed',
+        'plugin_mage_ai': 'pluginMageAi',
+        'plugin_milvus': 'pluginMilvus',
+        'plugin_os_menu': 'pluginOsMenu',
+        'plugin_react': 'pluginReact',
+        'plugin_streamlit': 'pluginStreamlit',
+        'plugin_sweeps': 'pluginSweeps',
+        'plugin_weviate': 'pluginWeviate',
         'pricing_tiers': 'pricingTiers',
         'pricing_updates': 'pricingUpdates',
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
         'publish_ai_app': 'publishAiApp',
-        'react_plugin': 'reactPlugin',
         'restartable_jobs': 'restartableJobs',
         'show_dev_admin': 'showDevAdmin',
         'show_quotas': 'showQuotas',
         'slurm': 'slurm',
-        'streamlit_plugin': 'streamlitPlugin',
         'studio_about_tab': 'studioAboutTab',
         'studio_publication': 'studioPublication',
-        'sweeps_app': 'sweepsApp',
         'tensorboard_plugin': 'tensorboardPlugin',
         'tier_override': 'tierOverride',
         'tired_proxy_dataconnection': 'tiredProxyDataconnection',
-        'weviate_plugin': 'weviatePlugin',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, data_prep_app: 'bool' =None, distributed_plugin: 'bool' =None, enable_crypto_crackdown: 'bool' =None, fiftyone_plugin: 'bool' =None, filesystem_optimisation: 'bool' =None, gradio_plugin: 'bool' =None, inference_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_filesystem: 'bool' =None, label_studio_plugin: 'bool' =None, landing_studios: 'bool' =None, langflow_plugin: 'bool' =None, lightning_apps_distributed_plugin: 'bool' =None, lightning_apps_plugin: 'bool' =None, mage_ai_plugin: 'bool' =None, milvus_plugin: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_browser: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, react_plugin: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, streamlit_plugin: 'bool' =None, studio_about_tab: 'bool' =None, studio_publication: 'bool' =None, sweeps_app: 'bool' =None, tensorboard_plugin: 'bool' =None, tier_override: 'str' =None, tired_proxy_dataconnection: 'bool' =None, weviate_plugin: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_filesystem: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_browser: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_gradio: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_os_menu: 'bool' =None, plugin_react: 'bool' =None, plugin_streamlit: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, studio_about_tab: 'bool' =None, studio_publication: 'bool' =None, tensorboard_plugin: 'bool' =None, tier_override: 'str' =None, tired_proxy_dataconnection: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._aws_trainium = None
         self._b2c_experience = None
@@ -161,45 +163,46 @@ class V1UserFeatures(object):
         self._collab_screen_sharing = None
         self._crypto_monitoring = None
         self._custom_app_domain = None
-        self._data_prep_app = None
-        self._distributed_plugin = None
         self._enable_crypto_crackdown = None
-        self._fiftyone_plugin = None
         self._filesystem_optimisation = None
-        self._gradio_plugin = None
-        self._inference_plugin = None
         self._interruptible_instances = None
         self._jobs_filesystem = None
-        self._label_studio_plugin = None
         self._landing_studios = None
-        self._langflow_plugin = None
-        self._lightning_apps_distributed_plugin = None
-        self._lightning_apps_plugin = None
-        self._mage_ai_plugin = None
-        self._milvus_plugin = None
         self._mmt_app = None
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
         self._platform_docs = None
         self._plugin_browser = None
+        self._plugin_data_prep = None
+        self._plugin_distributed = None
+        self._plugin_fiftyone = None
+        self._plugin_gradio = None
+        self._plugin_inference = None
+        self._plugin_label_studio = None
+        self._plugin_langflow = None
+        self._plugin_lightning_apps = None
+        self._plugin_lightning_apps_distributed = None
+        self._plugin_mage_ai = None
+        self._plugin_milvus = None
+        self._plugin_os_menu = None
+        self._plugin_react = None
+        self._plugin_streamlit = None
+        self._plugin_sweeps = None
+        self._plugin_weviate = None
         self._pricing_tiers = None
         self._pricing_updates = None
         self._product_generator = None
         self._project_selector = None
         self._publish_ai_app = None
-        self._react_plugin = None
         self._restartable_jobs = None
         self._show_dev_admin = None
         self._show_quotas = None
         self._slurm = None
-        self._streamlit_plugin = None
         self._studio_about_tab = None
         self._studio_publication = None
-        self._sweeps_app = None
         self._tensorboard_plugin = None
         self._tier_override = None
         self._tired_proxy_dataconnection = None
-        self._weviate_plugin = None
         self._writable_data_connections = None
         self.discriminator = None
         if aws_trainium is not None:
@@ -224,38 +227,16 @@ class V1UserFeatures(object):
             self.crypto_monitoring = crypto_monitoring
         if custom_app_domain is not None:
             self.custom_app_domain = custom_app_domain
-        if data_prep_app is not None:
-            self.data_prep_app = data_prep_app
-        if distributed_plugin is not None:
-            self.distributed_plugin = distributed_plugin
         if enable_crypto_crackdown is not None:
             self.enable_crypto_crackdown = enable_crypto_crackdown
-        if fiftyone_plugin is not None:
-            self.fiftyone_plugin = fiftyone_plugin
         if filesystem_optimisation is not None:
             self.filesystem_optimisation = filesystem_optimisation
-        if gradio_plugin is not None:
-            self.gradio_plugin = gradio_plugin
-        if inference_plugin is not None:
-            self.inference_plugin = inference_plugin
         if interruptible_instances is not None:
             self.interruptible_instances = interruptible_instances
         if jobs_filesystem is not None:
             self.jobs_filesystem = jobs_filesystem
-        if label_studio_plugin is not None:
-            self.label_studio_plugin = label_studio_plugin
         if landing_studios is not None:
             self.landing_studios = landing_studios
-        if langflow_plugin is not None:
-            self.langflow_plugin = langflow_plugin
-        if lightning_apps_distributed_plugin is not None:
-            self.lightning_apps_distributed_plugin = lightning_apps_distributed_plugin
-        if lightning_apps_plugin is not None:
-            self.lightning_apps_plugin = lightning_apps_plugin
-        if mage_ai_plugin is not None:
-            self.mage_ai_plugin = mage_ai_plugin
-        if milvus_plugin is not None:
-            self.milvus_plugin = milvus_plugin
         if mmt_app is not None:
             self.mmt_app = mmt_app
         if mmt_strategy_selector is not None:
@@ -266,6 +247,38 @@ class V1UserFeatures(object):
             self.platform_docs = platform_docs
         if plugin_browser is not None:
             self.plugin_browser = plugin_browser
+        if plugin_data_prep is not None:
+            self.plugin_data_prep = plugin_data_prep
+        if plugin_distributed is not None:
+            self.plugin_distributed = plugin_distributed
+        if plugin_fiftyone is not None:
+            self.plugin_fiftyone = plugin_fiftyone
+        if plugin_gradio is not None:
+            self.plugin_gradio = plugin_gradio
+        if plugin_inference is not None:
+            self.plugin_inference = plugin_inference
+        if plugin_label_studio is not None:
+            self.plugin_label_studio = plugin_label_studio
+        if plugin_langflow is not None:
+            self.plugin_langflow = plugin_langflow
+        if plugin_lightning_apps is not None:
+            self.plugin_lightning_apps = plugin_lightning_apps
+        if plugin_lightning_apps_distributed is not None:
+            self.plugin_lightning_apps_distributed = plugin_lightning_apps_distributed
+        if plugin_mage_ai is not None:
+            self.plugin_mage_ai = plugin_mage_ai
+        if plugin_milvus is not None:
+            self.plugin_milvus = plugin_milvus
+        if plugin_os_menu is not None:
+            self.plugin_os_menu = plugin_os_menu
+        if plugin_react is not None:
+            self.plugin_react = plugin_react
+        if plugin_streamlit is not None:
+            self.plugin_streamlit = plugin_streamlit
+        if plugin_sweeps is not None:
+            self.plugin_sweeps = plugin_sweeps
+        if plugin_weviate is not None:
+            self.plugin_weviate = plugin_weviate
         if pricing_tiers is not None:
             self.pricing_tiers = pricing_tiers
         if pricing_updates is not None:
@@ -276,8 +289,6 @@ class V1UserFeatures(object):
             self.project_selector = project_selector
         if publish_ai_app is not None:
             self.publish_ai_app = publish_ai_app
-        if react_plugin is not None:
-            self.react_plugin = react_plugin
         if restartable_jobs is not None:
             self.restartable_jobs = restartable_jobs
         if show_dev_admin is not None:
@@ -286,22 +297,16 @@ class V1UserFeatures(object):
             self.show_quotas = show_quotas
         if slurm is not None:
             self.slurm = slurm
-        if streamlit_plugin is not None:
-            self.streamlit_plugin = streamlit_plugin
         if studio_about_tab is not None:
             self.studio_about_tab = studio_about_tab
         if studio_publication is not None:
             self.studio_publication = studio_publication
-        if sweeps_app is not None:
-            self.sweeps_app = sweeps_app
         if tensorboard_plugin is not None:
             self.tensorboard_plugin = tensorboard_plugin
         if tier_override is not None:
             self.tier_override = tier_override
         if tired_proxy_dataconnection is not None:
             self.tired_proxy_dataconnection = tired_proxy_dataconnection
-        if weviate_plugin is not None:
-            self.weviate_plugin = weviate_plugin
         if writable_data_connections is not None:
             self.writable_data_connections = writable_data_connections
 
@@ -537,48 +542,6 @@ class V1UserFeatures(object):
         self._custom_app_domain = custom_app_domain
 
     @property
-    def data_prep_app(self) -> 'bool':
-        """Gets the data_prep_app of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The data_prep_app of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._data_prep_app
-
-    @data_prep_app.setter
-    def data_prep_app(self, data_prep_app: 'bool'):
-        """Sets the data_prep_app of this V1UserFeatures.
-
-
-        :param data_prep_app: The data_prep_app of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._data_prep_app = data_prep_app
-
-    @property
-    def distributed_plugin(self) -> 'bool':
-        """Gets the distributed_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The distributed_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._distributed_plugin
-
-    @distributed_plugin.setter
-    def distributed_plugin(self, distributed_plugin: 'bool'):
-        """Sets the distributed_plugin of this V1UserFeatures.
-
-
-        :param distributed_plugin: The distributed_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._distributed_plugin = distributed_plugin
-
-    @property
     def enable_crypto_crackdown(self) -> 'bool':
         """Gets the enable_crypto_crackdown of this V1UserFeatures.  # noqa: E501
 
@@ -600,27 +563,6 @@ class V1UserFeatures(object):
         self._enable_crypto_crackdown = enable_crypto_crackdown
 
     @property
-    def fiftyone_plugin(self) -> 'bool':
-        """Gets the fiftyone_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The fiftyone_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._fiftyone_plugin
-
-    @fiftyone_plugin.setter
-    def fiftyone_plugin(self, fiftyone_plugin: 'bool'):
-        """Sets the fiftyone_plugin of this V1UserFeatures.
-
-
-        :param fiftyone_plugin: The fiftyone_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._fiftyone_plugin = fiftyone_plugin
-
-    @property
     def filesystem_optimisation(self) -> 'bool':
         """Gets the filesystem_optimisation of this V1UserFeatures.  # noqa: E501
 
@@ -640,48 +582,6 @@ class V1UserFeatures(object):
         """
 
         self._filesystem_optimisation = filesystem_optimisation
-
-    @property
-    def gradio_plugin(self) -> 'bool':
-        """Gets the gradio_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The gradio_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._gradio_plugin
-
-    @gradio_plugin.setter
-    def gradio_plugin(self, gradio_plugin: 'bool'):
-        """Sets the gradio_plugin of this V1UserFeatures.
-
-
-        :param gradio_plugin: The gradio_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._gradio_plugin = gradio_plugin
-
-    @property
-    def inference_plugin(self) -> 'bool':
-        """Gets the inference_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The inference_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._inference_plugin
-
-    @inference_plugin.setter
-    def inference_plugin(self, inference_plugin: 'bool'):
-        """Sets the inference_plugin of this V1UserFeatures.
-
-
-        :param inference_plugin: The inference_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._inference_plugin = inference_plugin
 
     @property
     def interruptible_instances(self) -> 'bool':
@@ -726,27 +626,6 @@ class V1UserFeatures(object):
         self._jobs_filesystem = jobs_filesystem
 
     @property
-    def label_studio_plugin(self) -> 'bool':
-        """Gets the label_studio_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The label_studio_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._label_studio_plugin
-
-    @label_studio_plugin.setter
-    def label_studio_plugin(self, label_studio_plugin: 'bool'):
-        """Sets the label_studio_plugin of this V1UserFeatures.
-
-
-        :param label_studio_plugin: The label_studio_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._label_studio_plugin = label_studio_plugin
-
-    @property
     def landing_studios(self) -> 'bool':
         """Gets the landing_studios of this V1UserFeatures.  # noqa: E501
 
@@ -766,111 +645,6 @@ class V1UserFeatures(object):
         """
 
         self._landing_studios = landing_studios
-
-    @property
-    def langflow_plugin(self) -> 'bool':
-        """Gets the langflow_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The langflow_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._langflow_plugin
-
-    @langflow_plugin.setter
-    def langflow_plugin(self, langflow_plugin: 'bool'):
-        """Sets the langflow_plugin of this V1UserFeatures.
-
-
-        :param langflow_plugin: The langflow_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._langflow_plugin = langflow_plugin
-
-    @property
-    def lightning_apps_distributed_plugin(self) -> 'bool':
-        """Gets the lightning_apps_distributed_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The lightning_apps_distributed_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._lightning_apps_distributed_plugin
-
-    @lightning_apps_distributed_plugin.setter
-    def lightning_apps_distributed_plugin(self, lightning_apps_distributed_plugin: 'bool'):
-        """Sets the lightning_apps_distributed_plugin of this V1UserFeatures.
-
-
-        :param lightning_apps_distributed_plugin: The lightning_apps_distributed_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._lightning_apps_distributed_plugin = lightning_apps_distributed_plugin
-
-    @property
-    def lightning_apps_plugin(self) -> 'bool':
-        """Gets the lightning_apps_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The lightning_apps_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._lightning_apps_plugin
-
-    @lightning_apps_plugin.setter
-    def lightning_apps_plugin(self, lightning_apps_plugin: 'bool'):
-        """Sets the lightning_apps_plugin of this V1UserFeatures.
-
-
-        :param lightning_apps_plugin: The lightning_apps_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._lightning_apps_plugin = lightning_apps_plugin
-
-    @property
-    def mage_ai_plugin(self) -> 'bool':
-        """Gets the mage_ai_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The mage_ai_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._mage_ai_plugin
-
-    @mage_ai_plugin.setter
-    def mage_ai_plugin(self, mage_ai_plugin: 'bool'):
-        """Sets the mage_ai_plugin of this V1UserFeatures.
-
-
-        :param mage_ai_plugin: The mage_ai_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._mage_ai_plugin = mage_ai_plugin
-
-    @property
-    def milvus_plugin(self) -> 'bool':
-        """Gets the milvus_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The milvus_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._milvus_plugin
-
-    @milvus_plugin.setter
-    def milvus_plugin(self, milvus_plugin: 'bool'):
-        """Sets the milvus_plugin of this V1UserFeatures.
-
-
-        :param milvus_plugin: The milvus_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._milvus_plugin = milvus_plugin
 
     @property
     def mmt_app(self) -> 'bool':
@@ -978,6 +752,342 @@ class V1UserFeatures(object):
         self._plugin_browser = plugin_browser
 
     @property
+    def plugin_data_prep(self) -> 'bool':
+        """Gets the plugin_data_prep of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_data_prep of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_data_prep
+
+    @plugin_data_prep.setter
+    def plugin_data_prep(self, plugin_data_prep: 'bool'):
+        """Sets the plugin_data_prep of this V1UserFeatures.
+
+
+        :param plugin_data_prep: The plugin_data_prep of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_data_prep = plugin_data_prep
+
+    @property
+    def plugin_distributed(self) -> 'bool':
+        """Gets the plugin_distributed of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_distributed of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_distributed
+
+    @plugin_distributed.setter
+    def plugin_distributed(self, plugin_distributed: 'bool'):
+        """Sets the plugin_distributed of this V1UserFeatures.
+
+
+        :param plugin_distributed: The plugin_distributed of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_distributed = plugin_distributed
+
+    @property
+    def plugin_fiftyone(self) -> 'bool':
+        """Gets the plugin_fiftyone of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_fiftyone of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_fiftyone
+
+    @plugin_fiftyone.setter
+    def plugin_fiftyone(self, plugin_fiftyone: 'bool'):
+        """Sets the plugin_fiftyone of this V1UserFeatures.
+
+
+        :param plugin_fiftyone: The plugin_fiftyone of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_fiftyone = plugin_fiftyone
+
+    @property
+    def plugin_gradio(self) -> 'bool':
+        """Gets the plugin_gradio of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_gradio of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_gradio
+
+    @plugin_gradio.setter
+    def plugin_gradio(self, plugin_gradio: 'bool'):
+        """Sets the plugin_gradio of this V1UserFeatures.
+
+
+        :param plugin_gradio: The plugin_gradio of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_gradio = plugin_gradio
+
+    @property
+    def plugin_inference(self) -> 'bool':
+        """Gets the plugin_inference of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_inference of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_inference
+
+    @plugin_inference.setter
+    def plugin_inference(self, plugin_inference: 'bool'):
+        """Sets the plugin_inference of this V1UserFeatures.
+
+
+        :param plugin_inference: The plugin_inference of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_inference = plugin_inference
+
+    @property
+    def plugin_label_studio(self) -> 'bool':
+        """Gets the plugin_label_studio of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_label_studio of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_label_studio
+
+    @plugin_label_studio.setter
+    def plugin_label_studio(self, plugin_label_studio: 'bool'):
+        """Sets the plugin_label_studio of this V1UserFeatures.
+
+
+        :param plugin_label_studio: The plugin_label_studio of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_label_studio = plugin_label_studio
+
+    @property
+    def plugin_langflow(self) -> 'bool':
+        """Gets the plugin_langflow of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_langflow of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_langflow
+
+    @plugin_langflow.setter
+    def plugin_langflow(self, plugin_langflow: 'bool'):
+        """Sets the plugin_langflow of this V1UserFeatures.
+
+
+        :param plugin_langflow: The plugin_langflow of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_langflow = plugin_langflow
+
+    @property
+    def plugin_lightning_apps(self) -> 'bool':
+        """Gets the plugin_lightning_apps of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_lightning_apps of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_lightning_apps
+
+    @plugin_lightning_apps.setter
+    def plugin_lightning_apps(self, plugin_lightning_apps: 'bool'):
+        """Sets the plugin_lightning_apps of this V1UserFeatures.
+
+
+        :param plugin_lightning_apps: The plugin_lightning_apps of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_lightning_apps = plugin_lightning_apps
+
+    @property
+    def plugin_lightning_apps_distributed(self) -> 'bool':
+        """Gets the plugin_lightning_apps_distributed of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_lightning_apps_distributed of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_lightning_apps_distributed
+
+    @plugin_lightning_apps_distributed.setter
+    def plugin_lightning_apps_distributed(self, plugin_lightning_apps_distributed: 'bool'):
+        """Sets the plugin_lightning_apps_distributed of this V1UserFeatures.
+
+
+        :param plugin_lightning_apps_distributed: The plugin_lightning_apps_distributed of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_lightning_apps_distributed = plugin_lightning_apps_distributed
+
+    @property
+    def plugin_mage_ai(self) -> 'bool':
+        """Gets the plugin_mage_ai of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_mage_ai of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_mage_ai
+
+    @plugin_mage_ai.setter
+    def plugin_mage_ai(self, plugin_mage_ai: 'bool'):
+        """Sets the plugin_mage_ai of this V1UserFeatures.
+
+
+        :param plugin_mage_ai: The plugin_mage_ai of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_mage_ai = plugin_mage_ai
+
+    @property
+    def plugin_milvus(self) -> 'bool':
+        """Gets the plugin_milvus of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_milvus of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_milvus
+
+    @plugin_milvus.setter
+    def plugin_milvus(self, plugin_milvus: 'bool'):
+        """Sets the plugin_milvus of this V1UserFeatures.
+
+
+        :param plugin_milvus: The plugin_milvus of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_milvus = plugin_milvus
+
+    @property
+    def plugin_os_menu(self) -> 'bool':
+        """Gets the plugin_os_menu of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_os_menu of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_os_menu
+
+    @plugin_os_menu.setter
+    def plugin_os_menu(self, plugin_os_menu: 'bool'):
+        """Sets the plugin_os_menu of this V1UserFeatures.
+
+
+        :param plugin_os_menu: The plugin_os_menu of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_os_menu = plugin_os_menu
+
+    @property
+    def plugin_react(self) -> 'bool':
+        """Gets the plugin_react of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_react of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_react
+
+    @plugin_react.setter
+    def plugin_react(self, plugin_react: 'bool'):
+        """Sets the plugin_react of this V1UserFeatures.
+
+
+        :param plugin_react: The plugin_react of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_react = plugin_react
+
+    @property
+    def plugin_streamlit(self) -> 'bool':
+        """Gets the plugin_streamlit of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_streamlit of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_streamlit
+
+    @plugin_streamlit.setter
+    def plugin_streamlit(self, plugin_streamlit: 'bool'):
+        """Sets the plugin_streamlit of this V1UserFeatures.
+
+
+        :param plugin_streamlit: The plugin_streamlit of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_streamlit = plugin_streamlit
+
+    @property
+    def plugin_sweeps(self) -> 'bool':
+        """Gets the plugin_sweeps of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_sweeps of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_sweeps
+
+    @plugin_sweeps.setter
+    def plugin_sweeps(self, plugin_sweeps: 'bool'):
+        """Sets the plugin_sweeps of this V1UserFeatures.
+
+
+        :param plugin_sweeps: The plugin_sweeps of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_sweeps = plugin_sweeps
+
+    @property
+    def plugin_weviate(self) -> 'bool':
+        """Gets the plugin_weviate of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_weviate of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_weviate
+
+    @plugin_weviate.setter
+    def plugin_weviate(self, plugin_weviate: 'bool'):
+        """Sets the plugin_weviate of this V1UserFeatures.
+
+
+        :param plugin_weviate: The plugin_weviate of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_weviate = plugin_weviate
+
+    @property
     def pricing_tiers(self) -> 'bool':
         """Gets the pricing_tiers of this V1UserFeatures.  # noqa: E501
 
@@ -1083,27 +1193,6 @@ class V1UserFeatures(object):
         self._publish_ai_app = publish_ai_app
 
     @property
-    def react_plugin(self) -> 'bool':
-        """Gets the react_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The react_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._react_plugin
-
-    @react_plugin.setter
-    def react_plugin(self, react_plugin: 'bool'):
-        """Sets the react_plugin of this V1UserFeatures.
-
-
-        :param react_plugin: The react_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._react_plugin = react_plugin
-
-    @property
     def restartable_jobs(self) -> 'bool':
         """Gets the restartable_jobs of this V1UserFeatures.  # noqa: E501
 
@@ -1188,27 +1277,6 @@ class V1UserFeatures(object):
         self._slurm = slurm
 
     @property
-    def streamlit_plugin(self) -> 'bool':
-        """Gets the streamlit_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The streamlit_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._streamlit_plugin
-
-    @streamlit_plugin.setter
-    def streamlit_plugin(self, streamlit_plugin: 'bool'):
-        """Sets the streamlit_plugin of this V1UserFeatures.
-
-
-        :param streamlit_plugin: The streamlit_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._streamlit_plugin = streamlit_plugin
-
-    @property
     def studio_about_tab(self) -> 'bool':
         """Gets the studio_about_tab of this V1UserFeatures.  # noqa: E501
 
@@ -1249,27 +1317,6 @@ class V1UserFeatures(object):
         """
 
         self._studio_publication = studio_publication
-
-    @property
-    def sweeps_app(self) -> 'bool':
-        """Gets the sweeps_app of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The sweeps_app of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._sweeps_app
-
-    @sweeps_app.setter
-    def sweeps_app(self, sweeps_app: 'bool'):
-        """Sets the sweeps_app of this V1UserFeatures.
-
-
-        :param sweeps_app: The sweeps_app of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._sweeps_app = sweeps_app
 
     @property
     def tensorboard_plugin(self) -> 'bool':
@@ -1333,27 +1380,6 @@ class V1UserFeatures(object):
         """
 
         self._tired_proxy_dataconnection = tired_proxy_dataconnection
-
-    @property
-    def weviate_plugin(self) -> 'bool':
-        """Gets the weviate_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The weviate_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._weviate_plugin
-
-    @weviate_plugin.setter
-    def weviate_plugin(self, weviate_plugin: 'bool'):
-        """Sets the weviate_plugin of this V1UserFeatures.
-
-
-        :param weviate_plugin: The weviate_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._weviate_plugin = weviate_plugin
 
     @property
     def writable_data_connections(self) -> 'bool':
