@@ -38,8 +38,8 @@ class Studio:
 
     def __init__(
         self,
-        name: str,
-        teamspace: str,
+        name: Optional[str] = None,
+        teamspace: Optional[str] = None,
         org: Optional[str] = None,
         user: Optional[str] = None,
         cluster: Optional[str] = None,
@@ -58,6 +58,12 @@ class Studio:
 
         self._setup_done = False
 
+        if org is None and user is None:
+            org = os.environ.get("LIGHTNING_ORG", "") or None
+            # if org detected -> use org else use user
+            if not org:
+                user = os.environ.get("LIGHTNING_USERNAME", "") or None
+            
         if org is not None and user is not None:
             raise ValueError(f"Only one of org and user can be provided, but got both: {org=} and {user=}.")
 
@@ -76,17 +82,28 @@ class Studio:
         if self._owner is None:
             raise RuntimeError(f"Could not find studio owner {org=}, {user=}")
 
+        if teamspace is None:
+            teamspace = os.environ.get("LIGHTNING_TEAMSPACE", "") or None
+
+
+
         self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._owner.id, is_user=self._org is None)
 
         self._plugins = {}
 
-        try:
-            self._studio = self._studio_api.get_studio(name, self._teamspace.id)
-        except ValueError as e:
-            if create_ok:
-                self._studio = self._studio_api.create_studio(name, self._teamspace.id, cluster=self._cluster)
-            else:
-                raise ValueError(f"Studio {name} does not exist.") from e
+        if name is None:
+            studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
+            if studio_id is None:
+                raise ValueError(f"Cannot autodetect Studio. Either use the SDK from within a Studio or pass a name!")
+            self._studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
+        else:
+            try:
+                self._studio = self._studio_api.get_studio(name, self._teamspace.id)
+            except ValueError as e:
+                if create_ok:
+                    self._studio = self._studio_api.create_studio(name, self._teamspace.id, cluster=self._cluster)
+                else:
+                    raise ValueError(f"Studio {name} does not exist.") from e
 
         if self.status == Status.Running:
             self._setup()

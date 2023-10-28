@@ -69,6 +69,10 @@ class StudioApi:
             raise ValueError(f"Studio {name} does not exist")
         return _studio[0]
 
+    def get_studio_by_id(self, studio_id: str, teamspace_id: str,) -> V1CloudSpace:
+        return self._client.cloud_space_service_get_cloud_space(project_id=teamspace_id, id=studio_id)
+
+
     def create_studio(
         self,
         name: str,
