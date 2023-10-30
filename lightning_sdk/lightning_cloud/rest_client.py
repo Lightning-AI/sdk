@@ -102,6 +102,7 @@ def _retry_wrapper(self,
             try:
                 return func(self, *args, **kwargs)
             except (ApiException, urllib3.exceptions.HTTPError) as ex:
+                print(ex)
                 # retry if the backend fails with all errors except 4xx but not 408 - (Request Timeout)
                 if (isinstance(ex, urllib3.exceptions.HTTPError)
                         or ex.status in (408, 409)

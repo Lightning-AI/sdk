@@ -420,6 +420,31 @@ class StudioApi:
             distributedArguments=json.dumps(distributed_args),
         )
 
+    def create_data_prep_machine_job(
+        self,
+        entrypoint: str,
+        name: str,
+        num_instances: int,
+        cloud_compute: Machine,
+        studio_id: str,
+        teamspace_id: str,
+        cluster_id: str,
+    ) -> Externalv1LightningappInstance:
+        """Creates a multi-machine job with given commands."""
+        dataPrep_args = {
+            "cloud_compute": _MACHINE_TO_COMPUTE_NAME[cloud_compute],
+            "num_instances": num_instances,
+        }
+        return self._create_app(
+            studio_id=studio_id,
+            teamspace_id=teamspace_id,
+            cluster_id=cluster_id,
+            plugin_type="data_prep",
+            entrypoint=entrypoint,
+            name=name,
+            dataPrepArguments=json.dumps(dataPrep_args),
+        )
+
     def create_inference_job(
         self,
         entrypoint: str,
