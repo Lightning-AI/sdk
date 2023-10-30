@@ -431,7 +431,7 @@ class StudioApi:
         cluster_id: str,
     ) -> Externalv1LightningappInstance:
         """Creates a multi-machine job with given commands."""
-        dataPrep_args = {
+        data_prep_args = {
             "cloud_compute": _MACHINE_TO_COMPUTE_NAME[cloud_compute],
             "num_instances": num_instances,
         }
@@ -442,7 +442,7 @@ class StudioApi:
             plugin_type="data_prep",
             entrypoint=entrypoint,
             name=name,
-            dataPrepArguments=json.dumps(dataPrep_args),
+            dataPrepArguments=json.dumps(data_prep_args),
         )
 
     def create_inference_job(
