@@ -74,7 +74,7 @@ class StudioApi:
         studio_id: str,
         teamspace_id: str,
     ) -> V1CloudSpace:
-        """Gets the current studio corresponding to the passed id"""
+        """Gets the current studio corresponding to the passed id."""
         return self._client.cloud_space_service_get_cloud_space(project_id=teamspace_id, id=studio_id)
 
     def create_studio(
