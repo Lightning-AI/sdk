@@ -63,7 +63,7 @@ class Studio:
             # if org detected -> use org else use user
             if not org:
                 user = os.environ.get("LIGHTNING_USERNAME", "") or None
-            
+
         if org is not None and user is not None:
             raise ValueError(f"Only one of org and user can be provided, but got both: {org=} and {user=}.")
 
@@ -85,8 +85,6 @@ class Studio:
         if teamspace is None:
             teamspace = os.environ.get("LIGHTNING_TEAMSPACE", "") or None
 
-
-
         self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._owner.id, is_user=self._org is None)
 
         self._plugins = {}
@@ -94,7 +92,7 @@ class Studio:
         if name is None:
             studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
             if studio_id is None:
-                raise ValueError(f"Cannot autodetect Studio. Either use the SDK from within a Studio or pass a name!")
+                raise ValueError("Cannot autodetect Studio. Either use the SDK from within a Studio or pass a name!")
             self._studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
         else:
             try:
