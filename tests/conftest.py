@@ -1200,3 +1200,29 @@ def internal_studio_api_download(mocker):
             ]
         ),
     )
+
+
+@pytest.fixture
+def internal_data_prep_run_mocker(mocker):
+    def side_effect(self, body, project_id, cloudspace_id, id):
+        from lightning_sdk.api.studio_api import _MACHINE_TO_COMPUTE_NAME
+
+        distributed_args = json.loads(body.plugin_arguments["dataPrepArguments"])
+        assert body.plugin_arguments["entrypoint"] == "python my-file.py"
+        assert body.plugin_arguments["name"] == "my-fancy-data-prep-name"
+        assert distributed_args["num_instances"] == 42
+        assert distributed_args["cloud_compute"] in _MACHINE_TO_COMPUTE_NAME.values()
+
+        return V1CreateCloudSpaceAppInstanceResponse(
+            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
+        )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
+        autospec=True,
+        side_effect=side_effect,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()

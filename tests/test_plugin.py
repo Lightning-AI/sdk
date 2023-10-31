@@ -8,10 +8,10 @@ from lightning_sdk.plugin import (
     InferenceServerPlugin,
     JobsPlugin,
     MultiMachineTrainingPlugin,
+    MultiMachineDataPrepPlugin,
     Plugin,
     _run_name,
 )
-from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 
 
@@ -73,3 +73,17 @@ def test_run_name():
 
     # assert this has the same time as current time and runs fast!
     assert start_time == time_stamp == datetime.now().replace(second=0, microsecond=0)
+
+
+@pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
+def test_run_data_prep(
+    internal_studio_init_mocker, internal_studio_status_mocker, internal_data_prep_run_mocker, cloud_compute
+):
+    studio = Studio("st-ghi", "ts-abc", "org-abc")
+    plugin = MultiMachineDataPrepPlugin(
+        "multi-machine-training", "Train a model across multiple cloud machines", studio
+    )
+
+    plugin.run(
+        command="python my-file.py", name="my-fancy-data-prep-name", num_instances=42, cloud_compute=cloud_compute
+    )

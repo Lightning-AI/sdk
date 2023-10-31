@@ -9,6 +9,7 @@ from lightning_sdk.plugin import (
     InferenceServerPlugin,
     JobsPlugin,
     MultiMachineTrainingPlugin,
+    MultiMachineDataPrepPlugin,
     Plugin,
 )
 from lightning_sdk.status import Status
@@ -239,6 +240,26 @@ def test_run_mmt(internal_studio_init_mocker, internal_studio_status_mocker, int
         "multi-machine-training",
         command="python my-file.py",
         name="my-fancy-mmt-name",
+        num_instances=42,
+        cloud_compute=cloud_compute,
+    )
+
+
+@pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
+def test_run_data_prep(
+    internal_studio_init_mocker, internal_studio_status_mocker, internal_data_prep_run_mocker, cloud_compute
+):
+    studio = Studio("st-ghi", "ts-abc", "org-abc")
+    studio._plugins = {
+        "data-prep": MultiMachineDataPrepPlugin(
+            "data-prep", "Transform large quantity of data using multiple cloud machines", studio
+        )
+    }
+
+    studio.run_plugin(
+        "data-prep",
+        command="python my-file.py",
+        name="my-fancy-data-prep-name",
         num_instances=42,
         cloud_compute=cloud_compute,
     )

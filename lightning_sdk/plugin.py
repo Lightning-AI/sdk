@@ -158,6 +158,37 @@ class MultiMachineTrainingPlugin(_Plugin):
         return resp
 
 
+class MultiMachineDataPrepPlugin(_Plugin):
+    """Plugin handling multi machine data processing jobs."""
+
+    _plugin_run_name = "Multi-Machine-Data-Procesing"
+    _slug_name = "data-prep"
+
+    def run(
+        self,
+        command: str,
+        name: Optional[str] = None,
+        cloud_compute: Machine = Machine.CPU,
+        num_instances: int = 2,
+    ) -> "Externalv1LightningappInstance":
+        """Launches an asynchronous multi-machine-processing-job."""
+        if name is None:
+            name = _run_name("data-prep")
+
+        resp = self._studio._studio_api.create_data_prep_machine_job(
+            entrypoint=command,
+            name=name,
+            num_instances=num_instances,
+            cloud_compute=cloud_compute,
+            studio_id=self._studio._studio.id,
+            teamspace_id=self._studio._teamspace.id,
+            cluster_id=self._studio._studio.cluster_id,
+        )
+
+        _logger.info(_success_message(resp, self))
+        return resp
+
+
 class InferenceServerPlugin(_Plugin):
     """Plugin handling the asynchronous inference server."""
 
