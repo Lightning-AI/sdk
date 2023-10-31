@@ -1201,6 +1201,7 @@ def internal_studio_api_download(mocker):
         ),
     )
 
+
 @pytest.fixture
 def internal_data_prep_run_mocker(mocker):
     def side_effect(self, body, project_id, cloudspace_id, id):

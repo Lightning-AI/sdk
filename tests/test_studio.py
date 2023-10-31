@@ -246,7 +246,9 @@ def test_run_mmt(internal_studio_init_mocker, internal_studio_status_mocker, int
 
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
-def test_run_data_prep(internal_studio_init_mocker, internal_studio_status_mocker, internal_data_prep_run_mocker, cloud_compute):
+def test_run_data_prep(
+    internal_studio_init_mocker, internal_studio_status_mocker, internal_data_prep_run_mocker, cloud_compute
+):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     studio._plugins = {
         "data-prep": MultiMachineDataPrepPlugin(
