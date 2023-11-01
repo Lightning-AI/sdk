@@ -56,6 +56,7 @@ class V1CloudSpace(object):
         'is_code_private': 'bool',
         'is_published': 'bool',
         'name': 'str',
+        'number_of_files': 'str',
         'project_id': 'str',
         'published_at': 'datetime',
         'skip_zsh_history_on_duplication': 'bool',
@@ -63,6 +64,7 @@ class V1CloudSpace(object):
         'tag': 'V1CloudSpaceTag',
         'thumbnail_file_type': 'str',
         'thumbnail_url': 'str',
+        'total_size_bytes': 'str',
         'updated_at': 'datetime',
         'user_id': 'str',
         'user_metadata': 'str',
@@ -85,6 +87,7 @@ class V1CloudSpace(object):
         'is_code_private': 'isCodePrivate',
         'is_published': 'isPublished',
         'name': 'name',
+        'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
         'published_at': 'publishedAt',
         'skip_zsh_history_on_duplication': 'skipZshHistoryOnDuplication',
@@ -92,13 +95,14 @@ class V1CloudSpace(object):
         'tag': 'tag',
         'thumbnail_file_type': 'thumbnailFileType',
         'thumbnail_url': 'thumbnailUrl',
+        'total_size_bytes': 'totalSizeBytes',
         'updated_at': 'updatedAt',
         'user_id': 'userId',
         'user_metadata': 'userMetadata',
         'web_path': 'webPath'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, name: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, skip_zsh_history_on_duplication: 'bool' =None, state: 'V1CloudSpaceState' =None, tag: 'V1CloudSpaceTag' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, skip_zsh_history_on_duplication: 'bool' =None, state: 'V1CloudSpaceState' =None, tag: 'V1CloudSpaceTag' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cluster_id = None
@@ -115,6 +119,7 @@ class V1CloudSpace(object):
         self._is_code_private = None
         self._is_published = None
         self._name = None
+        self._number_of_files = None
         self._project_id = None
         self._published_at = None
         self._skip_zsh_history_on_duplication = None
@@ -122,6 +127,7 @@ class V1CloudSpace(object):
         self._tag = None
         self._thumbnail_file_type = None
         self._thumbnail_url = None
+        self._total_size_bytes = None
         self._updated_at = None
         self._user_id = None
         self._user_metadata = None
@@ -157,6 +163,8 @@ class V1CloudSpace(object):
             self.is_published = is_published
         if name is not None:
             self.name = name
+        if number_of_files is not None:
+            self.number_of_files = number_of_files
         if project_id is not None:
             self.project_id = project_id
         if published_at is not None:
@@ -171,6 +179,8 @@ class V1CloudSpace(object):
             self.thumbnail_file_type = thumbnail_file_type
         if thumbnail_url is not None:
             self.thumbnail_url = thumbnail_url
+        if total_size_bytes is not None:
+            self.total_size_bytes = total_size_bytes
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -496,6 +506,27 @@ class V1CloudSpace(object):
         self._name = name
 
     @property
+    def number_of_files(self) -> 'str':
+        """Gets the number_of_files of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The number_of_files of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._number_of_files
+
+    @number_of_files.setter
+    def number_of_files(self, number_of_files: 'str'):
+        """Sets the number_of_files of this V1CloudSpace.
+
+
+        :param number_of_files: The number_of_files of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._number_of_files = number_of_files
+
+    @property
     def project_id(self) -> 'str':
         """Gets the project_id of this V1CloudSpace.  # noqa: E501
 
@@ -641,6 +672,27 @@ class V1CloudSpace(object):
         """
 
         self._thumbnail_url = thumbnail_url
+
+    @property
+    def total_size_bytes(self) -> 'str':
+        """Gets the total_size_bytes of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The total_size_bytes of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_size_bytes
+
+    @total_size_bytes.setter
+    def total_size_bytes(self, total_size_bytes: 'str'):
+        """Sets the total_size_bytes of this V1CloudSpace.
+
+
+        :param total_size_bytes: The total_size_bytes of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._total_size_bytes = total_size_bytes
 
     @property
     def updated_at(self) -> 'datetime':
