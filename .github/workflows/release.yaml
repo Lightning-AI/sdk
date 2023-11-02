@@ -73,15 +73,14 @@ jobs:
         repository_url: https://test.pypi.org/legacy/
         verbose: true
 
-    # don't release to official pypi yet -- do so once public
-    # - name: Delay releasing
-    #   uses: juliangruber/sleep-action@v1
-    #   with:
-    #     time: 5m
+    - name: Delay releasing
+      uses: juliangruber/sleep-action@v1
+      with:
+        time: 5m
 
-    # - name: Publish distribution 📦 to PyPI
-    #   uses: pypa/gh-action-pypi-publish@v1.8.10
-    #   with:
-    #     user: __token__
-    #     password: ${{ secrets.pypi_password }}
-    #     verbose: true
+    - name: Publish distribution 📦 to PyPI
+      uses: pypa/gh-action-pypi-publish@v1.8.10
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_PASSWORD }}
+        verbose: true
