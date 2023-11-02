@@ -40,6 +40,7 @@ class V1CloudSpaceState(object):
     UNSPECIFIED = "CLOUD_SPACE_STATE_UNSPECIFIED"
     INITIAL_SYNC_IN_PROGRESS = "CLOUD_SPACE_STATE_INITIAL_SYNC_IN_PROGRESS"
     READY = "CLOUD_SPACE_STATE_READY"
+    DELETED = "CLOUD_SPACE_STATE_DELETED"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

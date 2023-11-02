@@ -3,15 +3,25 @@ from typing import Optional, Union, Literal
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from abc import ABC, abstractmethod
 from pathlib import Path
-import botocore
+import sys
+from time import sleep
 
 # To avoid adding lightning_utilities as a dependency for now.
 try:
     import boto3
+    import botocore
     _BOTO3_AVAILABLE = True
 except Exception:
     _BOTO3_AVAILABLE = False
 
+
+try:
+    from lightning_sdk import Studio, Machine
+    _LIGHTNING_SDK_AVAILABLE = True
+except:
+    class Machine:
+        pass
+    _LIGHTNING_SDK_AVAILABLE = False
 
 class _Resolver(ABC):
     @abstractmethod
@@ -23,7 +33,7 @@ class _LightningSrcResolver(_Resolver):
     """The `_LightningSrcResolver` enables to retrieve a cloud storage path from a directory."""
 
     def __call__(self, root: str) -> Optional[str]:
-        if root.startswith("s3://"):
+        if str(root).startswith("s3://"):
             return root
 
         root_absolute = str(Path(root).absolute())
@@ -171,7 +181,7 @@ class _LightningTargetResolver(_Resolver):
         if not target_cluster:
             raise ValueError(f"We didn't find a matching cluster associated with the id {cluster_id}.")
 
-        prefix = os.path.join(f"projects/{project_id}/optimized_datasets/", name)
+        prefix = os.path.join(f"projects/{project_id}/datasets/", name)
 
         s3 = boto3.client("s3")
 
@@ -221,15 +231,27 @@ def _find_remote_dir(name: Optional[str], version: Optional[Union[int, Literal["
     if not target_cluster:
         raise ValueError(f"We didn't find a matching cluster associated with the id {cluster_id}.")
 
-    prefix = os.path.join(f"projects/{project_id}/optimized_datasets/", name)
+    prefix = os.path.join(f"projects/{project_id}/datasets/", name)
 
     s3 = boto3.client("s3")
 
     objects = s3.list_objects_v2(
         Bucket=target_cluster[0].spec.aws_v1.bucket_name,
         Delimiter="/",
-        Prefix=prefix + "/",
+        Prefix=prefix.strip("/") + "/",
     )
+
+    contains_chunks = any(obj['Key'].endswith(".bin") for obj in objects['Contents'])
+
+    if contains_chunks:
+        cloud_storage_path = os.path.join(f"s3://{target_cluster[0].spec.aws_v1.bucket_name}", prefix)
+
+        try:
+            s3.head_object(Bucket=target_cluster[0].spec.aws_v1.bucket_name, Key=os.path.join(prefix, "index.json"))
+            return cloud_storage_path, True
+        except botocore.exceptions.ClientError:
+            return cloud_storage_path, False
+
     latest_version = objects["KeyCount"] if objects["KeyCount"] else 0
 
     if version == "latest":
@@ -244,3 +266,53 @@ def _find_remote_dir(name: Optional[str], version: Optional[Union[int, Literal["
         return cloud_storage_path, True
     except botocore.exceptions.ClientError:
         return cloud_storage_path, False
+
+def get_lightning_sdk.lightning_cloud_url() -> str:
+    # detect local development
+    if os.getenv("VSCODE_PROXY_URI", "").startswith("http://localhost:9800"):
+        return "http://localhost:9800"
+    # DO NOT CHANGE!
+    return os.getenv("LIGHTNING_CLOUD_URL", "https://lightning.ai")
+
+def _execute(
+    name: str,
+    num_nodes: int,
+    machine: Optional[Machine] = None,
+    command: Optional[str] = None,
+):
+    """Remotely execute the current operator."""
+
+    if not _LIGHTNING_SDK_AVAILABLE:
+        raise ModuleNotFoundError("The `lightning_sdk` is required.")
+
+    studio = Studio()
+    job = studio._studio_api.create_data_prep_machine_job(
+        command or f"cd {os.getcwd()} && python {sys.argv[0]}",
+        name=name,
+        num_instances=num_nodes,
+        studio_id=studio._studio.id,
+        teamspace_id=studio._teamspace.id,
+        cluster_id=studio._studio.cluster_id,
+        cloud_compute=machine or studio._studio_api.get_machine(studio._studio.id, studio._teamspace.id),
+    )
+
+    has_printed = False
+
+    while True:
+        curr_job = studio._studio_api._client.lightningapp_instance_service_get_lightningapp_instance(
+            project_id=studio._teamspace.id, id=job.id
+        )
+        if not has_printed:
+            cloud_url = get_lightning_sdk.lightning_cloud_url()
+            job_url = f"{cloud_url}/{studio._user.username}/{studio._teamspace.name}"
+            job_url += f"/studios/{studio.name}/app?app_id=data-prep&job_name={curr_job.name}"
+            print(f"Find your job at {job_url}")
+            has_printed = True
+
+        if curr_job.status.phase == "LIGHTNINGAPP_INSTANCE_STATE_FAILED":
+            raise RuntimeError(f"job {curr_job.name} failed!")
+
+        if curr_job.status.phase == "LIGHTNINGAPP_INSTANCE_STATE_STOPPED":
+            break
+
+        sleep(1)

@@ -41,10 +41,13 @@ class V1LitPage(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'children': 'list[V1LitPage]',
         'content': 'str',
         'created_at': 'datetime',
         'creator_id': 'str',
         'id': 'str',
+        'order': 'int',
+        'parent_id': 'str',
         'resource_id': 'str',
         'resource_type': 'str',
         'type': 'V1LitPageType',
@@ -52,27 +55,35 @@ class V1LitPage(object):
     }
 
     attribute_map = {
+        'children': 'children',
         'content': 'content',
         'created_at': 'createdAt',
         'creator_id': 'creatorId',
         'id': 'id',
+        'order': 'order',
+        'parent_id': 'parentId',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'type': 'type',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, content: 'str' =None, created_at: 'datetime' =None, creator_id: 'str' =None, id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, children: 'list[V1LitPage]' =None, content: 'str' =None, created_at: 'datetime' =None, creator_id: 'str' =None, id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1LitPage - a model defined in Swagger"""  # noqa: E501
+        self._children = None
         self._content = None
         self._created_at = None
         self._creator_id = None
         self._id = None
+        self._order = None
+        self._parent_id = None
         self._resource_id = None
         self._resource_type = None
         self._type = None
         self._updated_at = None
         self.discriminator = None
+        if children is not None:
+            self.children = children
         if content is not None:
             self.content = content
         if created_at is not None:
@@ -81,6 +92,10 @@ class V1LitPage(object):
             self.creator_id = creator_id
         if id is not None:
             self.id = id
+        if order is not None:
+            self.order = order
+        if parent_id is not None:
+            self.parent_id = parent_id
         if resource_id is not None:
             self.resource_id = resource_id
         if resource_type is not None:
@@ -89,6 +104,27 @@ class V1LitPage(object):
             self.type = type
         if updated_at is not None:
             self.updated_at = updated_at
+
+    @property
+    def children(self) -> 'list[V1LitPage]':
+        """Gets the children of this V1LitPage.  # noqa: E501
+
+
+        :return: The children of this V1LitPage.  # noqa: E501
+        :rtype: list[V1LitPage]
+        """
+        return self._children
+
+    @children.setter
+    def children(self, children: 'list[V1LitPage]'):
+        """Sets the children of this V1LitPage.
+
+
+        :param children: The children of this V1LitPage.  # noqa: E501
+        :type: list[V1LitPage]
+        """
+
+        self._children = children
 
     @property
     def content(self) -> 'str':
@@ -173,6 +209,48 @@ class V1LitPage(object):
         """
 
         self._id = id
+
+    @property
+    def order(self) -> 'int':
+        """Gets the order of this V1LitPage.  # noqa: E501
+
+
+        :return: The order of this V1LitPage.  # noqa: E501
+        :rtype: int
+        """
+        return self._order
+
+    @order.setter
+    def order(self, order: 'int'):
+        """Sets the order of this V1LitPage.
+
+
+        :param order: The order of this V1LitPage.  # noqa: E501
+        :type: int
+        """
+
+        self._order = order
+
+    @property
+    def parent_id(self) -> 'str':
+        """Gets the parent_id of this V1LitPage.  # noqa: E501
+
+
+        :return: The parent_id of this V1LitPage.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_id
+
+    @parent_id.setter
+    def parent_id(self, parent_id: 'str'):
+        """Sets the parent_id of this V1LitPage.
+
+
+        :param parent_id: The parent_id of this V1LitPage.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_id = parent_id
 
     @property
     def resource_id(self) -> 'str':

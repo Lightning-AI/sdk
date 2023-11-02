@@ -42,6 +42,8 @@ class V1CreateLitPageRequest(object):
     """
     swagger_types = {
         'content': 'str',
+        'order': 'int',
+        'parent_id': 'str',
         'resource_id': 'str',
         'resource_type': 'str',
         'type': 'V1LitPageType'
@@ -49,20 +51,28 @@ class V1CreateLitPageRequest(object):
 
     attribute_map = {
         'content': 'content',
+        'order': 'order',
+        'parent_id': 'parentId',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'type': 'type'
     }
 
-    def __init__(self, content: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None):  # noqa: E501
+    def __init__(self, content: 'str' =None, order: 'int' =None, parent_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None):  # noqa: E501
         """V1CreateLitPageRequest - a model defined in Swagger"""  # noqa: E501
         self._content = None
+        self._order = None
+        self._parent_id = None
         self._resource_id = None
         self._resource_type = None
         self._type = None
         self.discriminator = None
         if content is not None:
             self.content = content
+        if order is not None:
+            self.order = order
+        if parent_id is not None:
+            self.parent_id = parent_id
         if resource_id is not None:
             self.resource_id = resource_id
         if resource_type is not None:
@@ -90,6 +100,48 @@ class V1CreateLitPageRequest(object):
         """
 
         self._content = content
+
+    @property
+    def order(self) -> 'int':
+        """Gets the order of this V1CreateLitPageRequest.  # noqa: E501
+
+
+        :return: The order of this V1CreateLitPageRequest.  # noqa: E501
+        :rtype: int
+        """
+        return self._order
+
+    @order.setter
+    def order(self, order: 'int'):
+        """Sets the order of this V1CreateLitPageRequest.
+
+
+        :param order: The order of this V1CreateLitPageRequest.  # noqa: E501
+        :type: int
+        """
+
+        self._order = order
+
+    @property
+    def parent_id(self) -> 'str':
+        """Gets the parent_id of this V1CreateLitPageRequest.  # noqa: E501
+
+
+        :return: The parent_id of this V1CreateLitPageRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_id
+
+    @parent_id.setter
+    def parent_id(self, parent_id: 'str'):
+        """Sets the parent_id of this V1CreateLitPageRequest.
+
+
+        :param parent_id: The parent_id of this V1CreateLitPageRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_id = parent_id
 
     @property
     def resource_id(self) -> 'str':
