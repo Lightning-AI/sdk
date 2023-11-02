@@ -4,7 +4,7 @@ Software Development Kit (SDK) for Lightning AI
 
 ## Installation
 
-The package can be installed using `pip install --index-url https://test.pypi.org/simple/ lightning-sdk`
+The package can be installed using `pip install lightning-sdk`
 
 ## Usage
 
