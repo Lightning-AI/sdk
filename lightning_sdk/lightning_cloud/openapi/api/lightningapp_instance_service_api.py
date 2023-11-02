@@ -968,7 +968,7 @@ class LightningappInstanceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lightningapp_instance_service_get_lightningapp_instance_logs(self, project_id: 'str', id: 'str', **kwargs) -> 'V1GetLightningappInstanceLogsResponse':  # noqa: E501
+    def lightningapp_instance_service_get_lightningapp_instance_logs(self, project_id: 'str', id: 'str', **kwargs) -> 'V1LogsResponse':  # noqa: E501
         """lightningapp_instance_service_get_lightningapp_instance_logs  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -981,7 +981,7 @@ class LightningappInstanceServiceApi(object):
         :param str id: (required)
         :param str since:
         :param str until:
-        :return: V1GetLightningappInstanceLogsResponse
+        :return: V1LogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -992,7 +992,7 @@ class LightningappInstanceServiceApi(object):
             (data) = self.lightningapp_instance_service_get_lightningapp_instance_logs_with_http_info(project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def lightningapp_instance_service_get_lightningapp_instance_logs_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1GetLightningappInstanceLogsResponse':  # noqa: E501
+    def lightningapp_instance_service_get_lightningapp_instance_logs_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1LogsResponse':  # noqa: E501
         """lightningapp_instance_service_get_lightningapp_instance_logs  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1005,7 +1005,7 @@ class LightningappInstanceServiceApi(object):
         :param str id: (required)
         :param str since:
         :param str until:
-        :return: V1GetLightningappInstanceLogsResponse
+        :return: V1LogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -1069,7 +1069,7 @@ class LightningappInstanceServiceApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1GetLightningappInstanceLogsResponse',  # noqa: E501
+            response_type='V1LogsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
