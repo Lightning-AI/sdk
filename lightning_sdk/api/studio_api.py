@@ -5,6 +5,7 @@ import tempfile
 import time
 from typing import Any, Dict, Optional, Tuple
 
+import backoff
 import requests
 
 from lightning_sdk.lightning_cloud.openapi import (
@@ -490,6 +491,7 @@ class StudioApi:
         ).lightningappinstance
 
 
+@backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
 def _upload_file_to_urls(*urls: V1PresignedUrl, path: str, progress_bar: bool = True) -> None:
     if progress_bar:
         file_size = os.path.getsize(path)
