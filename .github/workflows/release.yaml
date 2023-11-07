@@ -11,7 +11,7 @@ on:  # Trigger the workflow on push or pull request, but only for the master bra
 jobs:
   # based on https://github.com/pypa/gh-action-pypi-publish
   build-package:
-    runs-on: [self-hosted, spot-self-hosted]
+    runs-on: "ubuntu22.04"
     timeout-minutes: 10
     steps:
     - uses: actions/checkout@v3
@@ -37,7 +37,7 @@ jobs:
   upload-package:
     needs: build-package
     if: startsWith(github.event.ref, 'refs/tags') || github.event_name == 'release'
-    runs-on: [self-hosted, spot-self-hosted]
+    runs-on: "ubuntu22.04"
     timeout-minutes: 5
     steps:
     - uses: actions/download-artifact@v3
@@ -55,7 +55,7 @@ jobs:
   publish-package:
     needs: build-package
     if: startsWith(github.event.ref, 'refs/tags') || github.event_name == 'release'
-    runs-on: [self-hosted, spot-self-hosted]
+    runs-on: "ubuntu22.04"
     timeout-minutes: 10
     steps:
     - uses: actions/download-artifact@v3
