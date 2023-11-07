@@ -288,7 +288,7 @@ def test_upload_file_multi_part(tmpdir, internal_studio_api_multi_part_upload, i
     studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1")
 
 
-def test_download_file(tmpdir, internal_studio_api_download, internal_studio_api_requests_get_mocker):
+def test_download_file(tmpdir, internal_studio_api_login, internal_studio_api_requests_get_mocker):
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")

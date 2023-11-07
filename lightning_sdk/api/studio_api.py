@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional, Tuple
 import backoff
 import requests
 
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
     Externalv1LightningappInstance,
@@ -21,6 +22,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpaceInstanceConfig,
     V1CompleteUpload,
     V1GetCloudSpaceInstanceStatusResponse,
+    V1LoginRequest,
     V1Plugin,
     V1PluginsListResponse,
     V1PresignedUrl,
@@ -243,56 +245,26 @@ class StudioApi:
             body=completed_body, project_id=teamspace_id
         )
 
-    def list_files(
-        self, path: Optional[str], studio_id: str, teamspace_id: str, cluster_id: str, return_url: bool
-    ) -> Dict[str, str]:
-        """Lists files for a given prefix."""
-        kwargs = {
-            "project_id": teamspace_id,
-            "id": studio_id,
-            "cluster_id": cluster_id,
-        }
-
-        prefix = f"projects/{teamspace_id}/cloudspaces/{studio_id}/code/content/"
-
-        if path:
-            kwargs["prefix"] = "/" + path
-            prefix = prefix + path.strip("/") + "/"
-
-        index_resp = self._client.cloud_space_service_get_cloud_space_folder_index(**kwargs)
-
-        num_pages = math.ceil(int(index_resp.nested_file_count) / index_resp.page_size)
-
-        artifacts = {}
-
-        for page_num in range(num_pages):
-            resp = self._client.cloud_space_service_get_cloud_space_artifacts_page(
-                **kwargs, include_download_url=return_url, page_number=page_num
-            )
-
-            for art in resp.artifacts:
-                filename = art.filename
-                stripped_filename = filename.replace(prefix, "")
-                if path is None or filename.startswith(prefix):
-                    artifacts[stripped_filename] = {
-                        "last_modified": art.last_modified,
-                        "md5_checksum": art.md5_checksum,
-                        "size_bytes": art.size_bytes,
-                    }
-
-                    if return_url:
-                        artifacts[stripped_filename]["download_url"] = art.url
-
-        return artifacts
-
     def download_file(
         self, path: str, target_path: str, studio_id: str, teamspace_id: str, cluster_id: str, progress_bar: bool = True
     ) -> None:
         """Downloads a given file from a Studio to a target location."""
-        prefix, filename = os.path.split(path)
-        files = self.list_files(prefix, studio_id, teamspace_id, cluster_id, return_url=True)
+        # TODO: Update this endpoint to permit basic auth
+        auth = Auth()
+        auth.authenticate()
+        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
 
-        r = requests.get(files[filename]["download_url"], stream=True)
+        query_params = {
+            "clusterId": cluster_id,
+            "key": f"/cloudspaces/{studio_id}/code/content/{path}",
+            "token": token,
+        }
+
+        r = requests.get(
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
+            params=query_params,
+            stream=True,
+        )
         total_length = int(r.headers.get("content-length"))
 
         if progress_bar:

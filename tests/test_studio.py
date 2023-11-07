@@ -315,7 +315,7 @@ def test_download_file(
     tmpdir,
     internal_studio_init_mocker,
     internal_studio_status_mocker,
-    internal_studio_api_download,
+    internal_studio_api_login,
     internal_studio_api_requests_get_mocker,
 ):
     studio = Studio("st-abc", "ts-abc", "org-abc")
