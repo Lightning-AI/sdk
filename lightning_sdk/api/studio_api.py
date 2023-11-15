@@ -29,6 +29,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UploadProjectArtifactResponse,
     V1UserRequestedComputeConfig,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 try:
     from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
@@ -58,7 +59,7 @@ class StudioApi:
         super().__init__()
 
         self._cloud_url = _cloud_url()
-        self._client = LightningClient()
+        self._client = LightningClient(max_tries=3)
 
     def get_studio(
         self,
@@ -181,10 +182,20 @@ class StudioApi:
 
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Tuple[str, int]:
         """Run given commands in a given Studio."""
-        response = self._client.cloud_space_service_execute_command_in_cloud_space(
-            IdExecuteBody("; ".join(commands)), project_id=teamspace_id, id=studio_id
-        )
-        return response.output, response.exit_code
+        # Use a client without retries since the run command can time out
+        client = LightningClient(retry=False)
+
+        try:
+            response = client.cloud_space_service_execute_command_in_cloud_space(
+                IdExecuteBody("; ".join(commands)), project_id=teamspace_id, id=studio_id
+            )
+            return response.output, response.exit_code
+        except ApiException as e:
+            if str(e.status) == "524":
+                raise RuntimeError(
+                    "Command execution timed out. This method should only be used for short-running commands."
+                ) from None
+            raise e
 
     def duplicate_studio(self, studio_id: str, teamspace_id: str, target_teamspace_id: str) -> Dict[str, str]:
         """Duplicates the given Studio from a given Teamspace into a given target Teamspace."""

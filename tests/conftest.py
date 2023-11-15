@@ -6,6 +6,7 @@ from unittest.mock import Mock
 import pytest
 from datetime import datetime
 
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.openapi import (
     AppsIdBody1,
     Externalv1CloudSpaceInstanceStatus,
@@ -704,6 +705,29 @@ def internal_studio_run_error_mocker(mocker):
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
         autospec=True,
         return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=1, output=" No such file or directory foo "),
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture()
+def internal_studio_run_timeout_error_mocker(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        return_value=V1GetCloudSpaceInstanceStatusResponse(
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"
+            )
+        ),
+        autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
+        autospec=True,
+        side_effect=ApiException(status=524),
     )
 
     yield [mocker]
