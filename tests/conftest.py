@@ -14,6 +14,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     IdCodeconfigBody,
     ProjectIdCloudspacesBody,
     V1CloudSpace,
+    V1CloudSpaceState,
     V1CloudSpaceInstanceConfig,
     V1CreateCloudSpaceAppInstanceResponse,
     V1DeleteCloudSpaceResponse,
@@ -319,6 +320,13 @@ def internal_studio_api_mocker_duplicate_user(mocker):
         return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
         autospec=True,
     )
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+        return_value=V1CloudSpace(
+            name="st-abc-de", display_name="st-abc-de", id="st-abc-de", state=V1CloudSpaceState.READY
+        ),
+        autospec=True,
+    )
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
@@ -359,6 +367,13 @@ def internal_studio_api_mocker_duplicate_org(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
         return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+        return_value=V1CloudSpace(
+            name="st-abc-de", display_name="st-abc-de", id="st-abc-de", state=V1CloudSpaceState.READY
+        ),
         autospec=True,
     )
 
@@ -745,6 +760,13 @@ def internal_studio_duplicate_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
         return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+        return_value=V1CloudSpace(
+            name="st-abc-de", display_name="st-abc-de", id="st-abc-de", state=V1CloudSpaceState.READY
+        ),
         autospec=True,
     )
 

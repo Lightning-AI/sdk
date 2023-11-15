@@ -20,6 +20,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     StorageMultipartBody,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
+    V1CloudSpaceState,
     V1CompleteUpload,
     V1GetCloudSpaceInstanceStatusResponse,
     V1LoginRequest,
@@ -213,6 +214,9 @@ class StudioApi:
         new_cloudspace = self._client.cloud_space_service_fork_cloud_space(
             IdForkBody(target_project_id=target_teamspace_id), project_id=teamspace_id, id=studio_id
         )
+
+        while self.get_studio_by_id(new_cloudspace.id, target_teamspace_id).state != V1CloudSpaceState.READY:
+            time.sleep(1)
 
         init_kwargs["name"] = new_cloudspace.name
         init_kwargs["teamspace"] = target_teamspace.name
