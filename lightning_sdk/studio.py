@@ -258,6 +258,19 @@ class Studio:
             cluster_id=self._studio.cluster_id,
         )
 
+    def download_folder(self, remote_path: str, target_path: Optional[str] = None) -> None:
+        """Downloads a folder from the Studio to a given target path."""
+        if target_path is None:
+            target_path = remote_path
+
+        self._studio_api.download_folder(
+            path=remote_path,
+            target_path=target_path,
+            studio_id=self._studio.id,
+            teamspace_id=self._teamspace.id,
+            cluster_id=self._studio.cluster_id,
+        )
+
     @property
     def available_plugins(self) -> Mapping[str, str]:
         """All available plugins to install in the current Studio."""

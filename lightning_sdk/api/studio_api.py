@@ -3,6 +3,7 @@ import os
 import tarfile
 import tempfile
 import time
+import zipfile
 from typing import Any, Dict, Optional, Tuple
 
 import backoff
@@ -295,13 +296,57 @@ class StudioApi:
         else:
             pbar_update = lambda x: None
 
-        target_dir = os.path.split(path)[0]
+        target_dir = os.path.split(target_path)[0]
         if target_dir:
             os.makedirs(target_dir, exist_ok=True)
         with open(target_path, "wb") as f:
             for chunk in r.iter_content(chunk_size=4096 * 8):
                 f.write(chunk)
                 pbar_update(len(chunk))
+
+    def download_folder(
+        self, path: str, target_path: str, studio_id: str, teamspace_id: str, cluster_id: str, progress_bar: bool = True
+    ) -> None:
+        """Downloads a given folder from a Studio to a target location."""
+        # TODO: Update this endpoint to permit basic auth
+        auth = Auth()
+        auth.authenticate()
+        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+
+        query_params = {
+            "clusterId": cluster_id,
+            "prefix": f"/cloudspaces/{studio_id}/code/content/{path}",
+            "token": token,
+        }
+
+        r = requests.get(
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
+            params=query_params,
+            stream=True,
+        )
+
+        if progress_bar:
+            pbar = tqdm(
+                desc=f"Downloading {os.path.split(path)[1]}",
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1000,
+            )
+
+            pbar_update = pbar.update
+        else:
+            pbar_update = lambda x: None
+
+        if target_path:
+            os.makedirs(target_path, exist_ok=True)
+
+        with tempfile.TemporaryFile() as f:
+            for chunk in r.iter_content(chunk_size=4096 * 8):
+                f.write(chunk)
+                pbar_update(len(chunk))
+
+            with zipfile.ZipFile(f) as z:
+                z.extractall(target_path)
 
     def install_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> str:
         """Installs the given plugin."""

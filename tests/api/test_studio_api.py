@@ -3,6 +3,7 @@ import os
 import subprocess
 
 import pytest
+from unittest import mock
 
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.lightning_cloud.openapi import (
@@ -293,3 +294,11 @@ def test_download_file(tmpdir, internal_studio_api_login, internal_studio_api_re
 
     filepath = os.path.join(tmpdir, "file1")
     studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
+
+
+@mock.patch("lightning_sdk.api.studio_api.zipfile")
+def test_download_folder(_, tmpdir, internal_studio_api_login, internal_studio_api_requests_get_mocker):
+    studio_api = StudioApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    studio_api.download_folder("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
