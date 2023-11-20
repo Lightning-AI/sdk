@@ -5,7 +5,7 @@ import subprocess
 import pytest
 from unittest import mock
 
-from lightning_sdk.api.studio_api import StudioApi
+from lightning_sdk.api.studio_api import StudioApi, _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
     V1GetCloudSpaceInstanceStatusResponse,
@@ -284,8 +284,9 @@ def test_upload_file_multi_part(tmpdir, internal_studio_api_multi_part_upload, i
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")
-    subprocess.run(f"truncate -s 6GB {filepath}".split(" "))
+    subprocess.run(f"truncate -s 40MB {filepath}".split(" "))
 
+    os.environ["LIGHTNING_MULTIPART_THRESHOLD"] = str(20 * _BYTES_PER_MB)
     studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1")
 
 

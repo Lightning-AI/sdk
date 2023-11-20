@@ -1195,17 +1195,13 @@ def internal_studio_api_single_part_upload(mocker):
 
 @pytest.fixture
 def internal_studio_api_multi_part_upload(mocker):
-    from lightning_sdk.api.studio_api import _BYTES_PER_GB, _MAX_SIZE_MULTI_PART_CHUNK
-
-    num_counts = math.ceil(6 * _BYTES_PER_GB / _MAX_SIZE_MULTI_PART_CHUNK)
+    num_parts = 2
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_upload_project_artifact",
         autospec=True,
         return_value=V1UploadProjectArtifactResponse(
             upload_id="my-fancy-upload",
-            urls=[
-                V1PresignedUrl(part_number=i, url=f"https://my-dummy-s3-url.com&part={i}") for i in range(num_counts)
-            ],
+            urls=[V1PresignedUrl(part_number=i, url=f"https://my-dummy-s3-url.com&part={i}") for i in range(num_parts)],
         ),
     )
 

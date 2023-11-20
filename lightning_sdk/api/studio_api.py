@@ -240,9 +240,11 @@ class StudioApi:
         """Uploads file to given remote path on the studio."""
         remote_path = f"/cloudspaces/{studio_id}/code/content/{remote_path}"
 
+        multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _SIZE_LIMIT_SINGLE_PART))
+
         count = (
             1
-            if os.path.getsize(file_path) <= _SIZE_LIMIT_SINGLE_PART
+            if os.path.getsize(file_path) <= multipart_threshold
             else math.ceil(os.path.getsize(file_path) / _MAX_SIZE_MULTI_PART_CHUNK)
         )
 

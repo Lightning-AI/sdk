@@ -14,6 +14,7 @@ from lightning_sdk.plugin import (
 )
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
+from lightning_sdk.api.studio_api import _BYTES_PER_MB
 
 
 @pytest.mark.parametrize("create_ok", [True, False])
@@ -313,8 +314,9 @@ def test_upload_file_multi_part(
     studio = Studio("st-abc", "ts-abc", "org-abc")
 
     filepath = os.path.join(tmpdir, "file1")
-    subprocess.run(f"truncate -s 6GB {filepath}".split(" "))
+    subprocess.run(f"truncate -s 40MB {filepath}".split(" "))
 
+    os.environ["LIGHTNING_MULTIPART_THRESHOLD"] = str(20 * _BYTES_PER_MB)
     studio.upload_file(filepath, "file1")
 
 
