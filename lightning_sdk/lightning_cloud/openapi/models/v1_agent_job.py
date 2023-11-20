@@ -44,6 +44,8 @@ class V1AgentJob(object):
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'command': 'str',
+        'conda_checksum': 'str',
+        'conda_env_path': 'str',
         'created_at': 'datetime',
         'id': 'str',
         'message': 'str',
@@ -63,6 +65,8 @@ class V1AgentJob(object):
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'command': 'command',
+        'conda_checksum': 'condaChecksum',
+        'conda_env_path': 'condaEnvPath',
         'created_at': 'createdAt',
         'id': 'id',
         'message': 'message',
@@ -78,11 +82,13 @@ class V1AgentJob(object):
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, conda_checksum: 'str' =None, conda_env_path: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1AgentJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
+        self._conda_checksum = None
+        self._conda_env_path = None
         self._created_at = None
         self._id = None
         self._message = None
@@ -103,6 +109,10 @@ class V1AgentJob(object):
             self.cluster_id = cluster_id
         if command is not None:
             self.command = command
+        if conda_checksum is not None:
+            self.conda_checksum = conda_checksum
+        if conda_env_path is not None:
+            self.conda_env_path = conda_env_path
         if created_at is not None:
             self.created_at = created_at
         if id is not None:
@@ -192,6 +202,48 @@ class V1AgentJob(object):
         """
 
         self._command = command
+
+    @property
+    def conda_checksum(self) -> 'str':
+        """Gets the conda_checksum of this V1AgentJob.  # noqa: E501
+
+
+        :return: The conda_checksum of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._conda_checksum
+
+    @conda_checksum.setter
+    def conda_checksum(self, conda_checksum: 'str'):
+        """Sets the conda_checksum of this V1AgentJob.
+
+
+        :param conda_checksum: The conda_checksum of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._conda_checksum = conda_checksum
+
+    @property
+    def conda_env_path(self) -> 'str':
+        """Gets the conda_env_path of this V1AgentJob.  # noqa: E501
+
+
+        :return: The conda_env_path of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._conda_env_path
+
+    @conda_env_path.setter
+    def conda_env_path(self, conda_env_path: 'str'):
+        """Sets the conda_env_path of this V1AgentJob.
+
+
+        :param conda_env_path: The conda_env_path of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._conda_env_path = conda_env_path
 
     @property
     def created_at(self) -> 'datetime':

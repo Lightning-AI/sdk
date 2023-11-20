@@ -44,22 +44,25 @@ class V1CloudSpaceInstanceConfig(object):
         'compute_config': 'V1UserRequestedComputeConfig',
         'data_connection_mounts': 'list[V1DataConnectionMount]',
         'disable_auto_shutdown': 'bool',
-        'ide': 'str'
+        'ide': 'str',
+        'publish_with_compute_name': 'str'
     }
 
     attribute_map = {
         'compute_config': 'computeConfig',
         'data_connection_mounts': 'dataConnectionMounts',
         'disable_auto_shutdown': 'disableAutoShutdown',
-        'ide': 'ide'
+        'ide': 'ide',
+        'publish_with_compute_name': 'publishWithComputeName'
     }
 
-    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, ide: 'str' =None):  # noqa: E501
+    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, ide: 'str' =None, publish_with_compute_name: 'str' =None):  # noqa: E501
         """V1CloudSpaceInstanceConfig - a model defined in Swagger"""  # noqa: E501
         self._compute_config = None
         self._data_connection_mounts = None
         self._disable_auto_shutdown = None
         self._ide = None
+        self._publish_with_compute_name = None
         self.discriminator = None
         if compute_config is not None:
             self.compute_config = compute_config
@@ -69,6 +72,8 @@ class V1CloudSpaceInstanceConfig(object):
             self.disable_auto_shutdown = disable_auto_shutdown
         if ide is not None:
             self.ide = ide
+        if publish_with_compute_name is not None:
+            self.publish_with_compute_name = publish_with_compute_name
 
     @property
     def compute_config(self) -> 'V1UserRequestedComputeConfig':
@@ -153,6 +158,27 @@ class V1CloudSpaceInstanceConfig(object):
         """
 
         self._ide = ide
+
+    @property
+    def publish_with_compute_name(self) -> 'str':
+        """Gets the publish_with_compute_name of this V1CloudSpaceInstanceConfig.  # noqa: E501
+
+
+        :return: The publish_with_compute_name of this V1CloudSpaceInstanceConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._publish_with_compute_name
+
+    @publish_with_compute_name.setter
+    def publish_with_compute_name(self, publish_with_compute_name: 'str'):
+        """Sets the publish_with_compute_name of this V1CloudSpaceInstanceConfig.
+
+
+        :param publish_with_compute_name: The publish_with_compute_name of this V1CloudSpaceInstanceConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._publish_with_compute_name = publish_with_compute_name
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

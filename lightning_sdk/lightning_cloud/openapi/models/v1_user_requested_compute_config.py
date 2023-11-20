@@ -50,6 +50,7 @@ class V1UserRequestedComputeConfig(object):
         'is_byom': 'bool',
         'name': 'str',
         'preemptible': 'bool',
+        'same_compute_on_resume': 'bool',
         'shm_size': 'int'
     }
 
@@ -63,10 +64,11 @@ class V1UserRequestedComputeConfig(object):
         'is_byom': 'isByom',
         'name': 'name',
         'preemptible': 'preemptible',
+        'same_compute_on_resume': 'sameComputeOnResume',
         'shm_size': 'shmSize'
     }
 
-    def __init__(self, affinity_identifier: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, is_byom: 'bool' =None, name: 'str' =None, preemptible: 'bool' =None, shm_size: 'int' =None):  # noqa: E501
+    def __init__(self, affinity_identifier: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, is_byom: 'bool' =None, name: 'str' =None, preemptible: 'bool' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None):  # noqa: E501
         """V1UserRequestedComputeConfig - a model defined in Swagger"""  # noqa: E501
         self._affinity_identifier = None
         self._count = None
@@ -77,6 +79,7 @@ class V1UserRequestedComputeConfig(object):
         self._is_byom = None
         self._name = None
         self._preemptible = None
+        self._same_compute_on_resume = None
         self._shm_size = None
         self.discriminator = None
         if affinity_identifier is not None:
@@ -97,6 +100,8 @@ class V1UserRequestedComputeConfig(object):
             self.name = name
         if preemptible is not None:
             self.preemptible = preemptible
+        if same_compute_on_resume is not None:
+            self.same_compute_on_resume = same_compute_on_resume
         if shm_size is not None:
             self.shm_size = shm_size
 
@@ -294,6 +299,27 @@ class V1UserRequestedComputeConfig(object):
         """
 
         self._preemptible = preemptible
+
+    @property
+    def same_compute_on_resume(self) -> 'bool':
+        """Gets the same_compute_on_resume of this V1UserRequestedComputeConfig.  # noqa: E501
+
+
+        :return: The same_compute_on_resume of this V1UserRequestedComputeConfig.  # noqa: E501
+        :rtype: bool
+        """
+        return self._same_compute_on_resume
+
+    @same_compute_on_resume.setter
+    def same_compute_on_resume(self, same_compute_on_resume: 'bool'):
+        """Sets the same_compute_on_resume of this V1UserRequestedComputeConfig.
+
+
+        :param same_compute_on_resume: The same_compute_on_resume of this V1UserRequestedComputeConfig.  # noqa: E501
+        :type: bool
+        """
+
+        self._same_compute_on_resume = same_compute_on_resume
 
     @property
     def shm_size(self) -> 'int':

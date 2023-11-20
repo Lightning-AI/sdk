@@ -3319,6 +3319,8 @@ class CloudSpaceServiceApi(object):
         :param str limit:
         :param str name:
         :param str user_id:
+        :param str order_column:
+        :param str order_direction:
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3345,12 +3347,14 @@ class CloudSpaceServiceApi(object):
         :param str limit:
         :param str name:
         :param str user_id:
+        :param str order_column:
+        :param str order_direction:
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'order_column', 'order_direction']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3387,6 +3391,10 @@ class CloudSpaceServiceApi(object):
             query_params.append(('name', params['name']))  # noqa: E501
         if 'user_id' in params:
             query_params.append(('userId', params['user_id']))  # noqa: E501
+        if 'order_column' in params:
+            query_params.append(('order.column', params['order_column']))  # noqa: E501
+        if 'order_direction' in params:
+            query_params.append(('order.direction', params['order_direction']))  # noqa: E501
 
         header_params = {}
 
@@ -3634,6 +3642,7 @@ class CloudSpaceServiceApi(object):
         :param str limit:
         :param str sort_by:
         :param str org_id:
+        :param str tag:
         :return: V1ListPublishedCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3660,12 +3669,13 @@ class CloudSpaceServiceApi(object):
         :param str limit:
         :param str sort_by:
         :param str org_id:
+        :param str tag:
         :return: V1ListPublishedCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['username', 'search_query', 'page_token', 'limit', 'sort_by', 'org_id']  # noqa: E501
+        all_params = ['username', 'search_query', 'page_token', 'limit', 'sort_by', 'org_id', 'tag']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3698,6 +3708,8 @@ class CloudSpaceServiceApi(object):
             query_params.append(('sortBy', params['sort_by']))  # noqa: E501
         if 'org_id' in params:
             query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'tag' in params:
+            query_params.append(('tag', params['tag']))  # noqa: E501
 
         header_params = {}
 

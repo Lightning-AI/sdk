@@ -41,6 +41,7 @@ class V1Organization(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allow_guest': 'bool',
         'created_at': 'datetime',
         'description': 'str',
         'display_name': 'str',
@@ -54,6 +55,7 @@ class V1Organization(object):
     }
 
     attribute_map = {
+        'allow_guest': 'allowGuest',
         'created_at': 'createdAt',
         'description': 'description',
         'display_name': 'displayName',
@@ -66,8 +68,9 @@ class V1Organization(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
+        self._allow_guest = None
         self._created_at = None
         self._description = None
         self._display_name = None
@@ -79,6 +82,8 @@ class V1Organization(object):
         self._twitter_username = None
         self._updated_at = None
         self.discriminator = None
+        if allow_guest is not None:
+            self.allow_guest = allow_guest
         if created_at is not None:
             self.created_at = created_at
         if description is not None:
@@ -99,6 +104,27 @@ class V1Organization(object):
             self.twitter_username = twitter_username
         if updated_at is not None:
             self.updated_at = updated_at
+
+    @property
+    def allow_guest(self) -> 'bool':
+        """Gets the allow_guest of this V1Organization.  # noqa: E501
+
+
+        :return: The allow_guest of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_guest
+
+    @allow_guest.setter
+    def allow_guest(self, allow_guest: 'bool'):
+        """Sets the allow_guest of this V1Organization.
+
+
+        :param allow_guest: The allow_guest of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_guest = allow_guest
 
     @property
     def created_at(self) -> 'datetime':

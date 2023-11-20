@@ -55,13 +55,14 @@ class V1CloudSpace(object):
         'is_cloudspace_private': 'bool',
         'is_code_private': 'bool',
         'is_published': 'bool',
+        'message': 'str',
         'name': 'str',
         'number_of_files': 'str',
         'project_id': 'str',
         'published_at': 'datetime',
         'skip_zsh_history_on_duplication': 'bool',
         'state': 'V1CloudSpaceState',
-        'tag': 'V1CloudSpaceTag',
+        'tags': 'list[V1CloudSpaceTag]',
         'thumbnail_file_type': 'str',
         'thumbnail_url': 'str',
         'total_size_bytes': 'str',
@@ -86,13 +87,14 @@ class V1CloudSpace(object):
         'is_cloudspace_private': 'isCloudspacePrivate',
         'is_code_private': 'isCodePrivate',
         'is_published': 'isPublished',
+        'message': 'message',
         'name': 'name',
         'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
         'published_at': 'publishedAt',
         'skip_zsh_history_on_duplication': 'skipZshHistoryOnDuplication',
         'state': 'state',
-        'tag': 'tag',
+        'tags': 'tags',
         'thumbnail_file_type': 'thumbnailFileType',
         'thumbnail_url': 'thumbnailUrl',
         'total_size_bytes': 'totalSizeBytes',
@@ -102,7 +104,7 @@ class V1CloudSpace(object):
         'web_path': 'webPath'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, skip_zsh_history_on_duplication: 'bool' =None, state: 'V1CloudSpaceState' =None, tag: 'V1CloudSpaceTag' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, skip_zsh_history_on_duplication: 'bool' =None, state: 'V1CloudSpaceState' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cluster_id = None
@@ -118,13 +120,14 @@ class V1CloudSpace(object):
         self._is_cloudspace_private = None
         self._is_code_private = None
         self._is_published = None
+        self._message = None
         self._name = None
         self._number_of_files = None
         self._project_id = None
         self._published_at = None
         self._skip_zsh_history_on_duplication = None
         self._state = None
-        self._tag = None
+        self._tags = None
         self._thumbnail_file_type = None
         self._thumbnail_url = None
         self._total_size_bytes = None
@@ -161,6 +164,8 @@ class V1CloudSpace(object):
             self.is_code_private = is_code_private
         if is_published is not None:
             self.is_published = is_published
+        if message is not None:
+            self.message = message
         if name is not None:
             self.name = name
         if number_of_files is not None:
@@ -173,8 +178,8 @@ class V1CloudSpace(object):
             self.skip_zsh_history_on_duplication = skip_zsh_history_on_duplication
         if state is not None:
             self.state = state
-        if tag is not None:
-            self.tag = tag
+        if tags is not None:
+            self.tags = tags
         if thumbnail_file_type is not None:
             self.thumbnail_file_type = thumbnail_file_type
         if thumbnail_url is not None:
@@ -485,6 +490,27 @@ class V1CloudSpace(object):
         self._is_published = is_published
 
     @property
+    def message(self) -> 'str':
+        """Gets the message of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The message of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._message
+
+    @message.setter
+    def message(self, message: 'str'):
+        """Sets the message of this V1CloudSpace.
+
+
+        :param message: The message of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._message = message
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this V1CloudSpace.  # noqa: E501
 
@@ -611,25 +637,25 @@ class V1CloudSpace(object):
         self._state = state
 
     @property
-    def tag(self) -> 'V1CloudSpaceTag':
-        """Gets the tag of this V1CloudSpace.  # noqa: E501
+    def tags(self) -> 'list[V1CloudSpaceTag]':
+        """Gets the tags of this V1CloudSpace.  # noqa: E501
 
 
-        :return: The tag of this V1CloudSpace.  # noqa: E501
-        :rtype: V1CloudSpaceTag
+        :return: The tags of this V1CloudSpace.  # noqa: E501
+        :rtype: list[V1CloudSpaceTag]
         """
-        return self._tag
+        return self._tags
 
-    @tag.setter
-    def tag(self, tag: 'V1CloudSpaceTag'):
-        """Sets the tag of this V1CloudSpace.
+    @tags.setter
+    def tags(self, tags: 'list[V1CloudSpaceTag]'):
+        """Sets the tags of this V1CloudSpace.
 
 
-        :param tag: The tag of this V1CloudSpace.  # noqa: E501
-        :type: V1CloudSpaceTag
+        :param tags: The tags of this V1CloudSpace.  # noqa: E501
+        :type: list[V1CloudSpaceTag]
         """
 
-        self._tag = tag
+        self._tags = tags
 
     @property
     def thumbnail_file_type(self) -> 'str':

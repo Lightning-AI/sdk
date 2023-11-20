@@ -50,6 +50,7 @@ class V1UserFeatures(object):
         'cluster_running_notification': 'bool',
         'code_tab': 'bool',
         'collab_screen_sharing': 'bool',
+        'collab_v2': 'bool',
         'crypto_monitoring': 'bool',
         'custom_app_domain': 'bool',
         'enable_crypto_crackdown': 'bool',
@@ -106,6 +107,7 @@ class V1UserFeatures(object):
         'cluster_running_notification': 'clusterRunningNotification',
         'code_tab': 'codeTab',
         'collab_screen_sharing': 'collabScreenSharing',
+        'collab_v2': 'collabV2',
         'crypto_monitoring': 'cryptoMonitoring',
         'custom_app_domain': 'customAppDomain',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
@@ -152,7 +154,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_filesystem: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_browser: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_gradio: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_os_menu: 'bool' =None, plugin_react: 'bool' =None, plugin_streamlit: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, studio_about_tab: 'bool' =None, studio_publication: 'bool' =None, tensorboard_plugin: 'bool' =None, tier_override: 'str' =None, tired_proxy_dataconnection: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_filesystem: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_browser: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_gradio: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_os_menu: 'bool' =None, plugin_react: 'bool' =None, plugin_streamlit: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, studio_about_tab: 'bool' =None, studio_publication: 'bool' =None, tensorboard_plugin: 'bool' =None, tier_override: 'str' =None, tired_proxy_dataconnection: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._aws_trainium = None
         self._b2c_experience = None
@@ -163,6 +165,7 @@ class V1UserFeatures(object):
         self._cluster_running_notification = None
         self._code_tab = None
         self._collab_screen_sharing = None
+        self._collab_v2 = None
         self._crypto_monitoring = None
         self._custom_app_domain = None
         self._enable_crypto_crackdown = None
@@ -226,6 +229,8 @@ class V1UserFeatures(object):
             self.code_tab = code_tab
         if collab_screen_sharing is not None:
             self.collab_screen_sharing = collab_screen_sharing
+        if collab_v2 is not None:
+            self.collab_v2 = collab_v2
         if crypto_monitoring is not None:
             self.crypto_monitoring = crypto_monitoring
         if custom_app_domain is not None:
@@ -503,6 +508,27 @@ class V1UserFeatures(object):
         """
 
         self._collab_screen_sharing = collab_screen_sharing
+
+    @property
+    def collab_v2(self) -> 'bool':
+        """Gets the collab_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The collab_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._collab_v2
+
+    @collab_v2.setter
+    def collab_v2(self, collab_v2: 'bool'):
+        """Sets the collab_v2 of this V1UserFeatures.
+
+
+        :param collab_v2: The collab_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._collab_v2 = collab_v2
 
     @property
     def crypto_monitoring(self) -> 'bool':

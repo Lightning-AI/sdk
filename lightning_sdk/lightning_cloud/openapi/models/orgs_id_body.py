@@ -41,6 +41,7 @@ class OrgsIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allow_guest': 'bool',
         'description': 'str',
         'display_name': 'str',
         'domain': 'str',
@@ -50,6 +51,7 @@ class OrgsIdBody(object):
     }
 
     attribute_map = {
+        'allow_guest': 'allowGuest',
         'description': 'description',
         'display_name': 'displayName',
         'domain': 'domain',
@@ -58,8 +60,9 @@ class OrgsIdBody(object):
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, location: 'str' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, location: 'str' =None, twitter_username: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
+        self._allow_guest = None
         self._description = None
         self._display_name = None
         self._domain = None
@@ -67,6 +70,8 @@ class OrgsIdBody(object):
         self._location = None
         self._twitter_username = None
         self.discriminator = None
+        if allow_guest is not None:
+            self.allow_guest = allow_guest
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -79,6 +84,27 @@ class OrgsIdBody(object):
             self.location = location
         if twitter_username is not None:
             self.twitter_username = twitter_username
+
+    @property
+    def allow_guest(self) -> 'bool':
+        """Gets the allow_guest of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The allow_guest of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_guest
+
+    @allow_guest.setter
+    def allow_guest(self, allow_guest: 'bool'):
+        """Sets the allow_guest of this OrgsIdBody.
+
+
+        :param allow_guest: The allow_guest of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_guest = allow_guest
 
     @property
     def description(self) -> 'str':

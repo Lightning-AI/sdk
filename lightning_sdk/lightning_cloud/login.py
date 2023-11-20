@@ -18,8 +18,6 @@ from starlette.responses import RedirectResponse
 
 from lightning_sdk.lightning_cloud import env
 
-from lightning_sdk.lightning_cloud.utils.network import find_free_network_port
-
 logger = logging.getLogger(__name__)
 
 
@@ -148,6 +146,8 @@ class AuthServer:
         return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
     def login_with_browser(self, auth: Auth) -> None:
+        from lightning_sdk.lightning_cloud.utils.network import find_free_network_port
+
         app = FastAPI()
         port = find_free_network_port()
         url = self.get_auth_url(port)

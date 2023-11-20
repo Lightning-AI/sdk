@@ -46,6 +46,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'compute_config': 'V1UserRequestedComputeConfig',
         'creation_timestamp': 'datetime',
         'data_connection_mounts': 'list[V1DataConnectionMount]',
+        'free': 'bool',
         'ide': 'str',
         'instance_id': 'str',
         'instance_region': 'str',
@@ -72,6 +73,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'compute_config': 'computeConfig',
         'creation_timestamp': 'creationTimestamp',
         'data_connection_mounts': 'dataConnectionMounts',
+        'free': 'free',
         'ide': 'ide',
         'instance_id': 'instanceId',
         'instance_region': 'instanceRegion',
@@ -92,13 +94,14 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, app_url: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, app_url: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._app_url = None
         self._cloud_space_instance_id = None
         self._compute_config = None
         self._creation_timestamp = None
         self._data_connection_mounts = None
+        self._free = None
         self._ide = None
         self._instance_id = None
         self._instance_region = None
@@ -128,6 +131,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.creation_timestamp = creation_timestamp
         if data_connection_mounts is not None:
             self.data_connection_mounts = data_connection_mounts
+        if free is not None:
+            self.free = free
         if ide is not None:
             self.ide = ide
         if instance_id is not None:
@@ -269,6 +274,27 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._data_connection_mounts = data_connection_mounts
+
+    @property
+    def free(self) -> 'bool':
+        """Gets the free of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The free of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._free
+
+    @free.setter
+    def free(self, free: 'bool'):
+        """Sets the free of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param free: The free of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._free = free
 
     @property
     def ide(self) -> 'str':

@@ -46,12 +46,13 @@ _END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
 
 @pytest.fixture()
 def internal_user_api_mocker(mocker):
-    mocker.patch(
+    m = mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users",
         return_value=V1SearchUsersResponse(
             users=[V1SearchUser(username="user-abc"), V1SearchUser(username="user-abc-de")]
         ),
     )
+    m.__name__ = "user_service_search_users"
 
     yield [mocker]
 

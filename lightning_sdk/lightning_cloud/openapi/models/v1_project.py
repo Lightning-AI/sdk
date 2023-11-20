@@ -41,6 +41,7 @@ class V1Project(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'abac_enabled': 'bool',
         'created_at': 'datetime',
         'description': 'str',
         'display_name': 'str',
@@ -55,6 +56,7 @@ class V1Project(object):
     }
 
     attribute_map = {
+        'abac_enabled': 'abacEnabled',
         'created_at': 'createdAt',
         'description': 'description',
         'display_name': 'displayName',
@@ -68,8 +70,9 @@ class V1Project(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Project - a model defined in Swagger"""  # noqa: E501
+        self._abac_enabled = None
         self._created_at = None
         self._description = None
         self._display_name = None
@@ -82,6 +85,8 @@ class V1Project(object):
         self._quotas = None
         self._updated_at = None
         self.discriminator = None
+        if abac_enabled is not None:
+            self.abac_enabled = abac_enabled
         if created_at is not None:
             self.created_at = created_at
         if description is not None:
@@ -104,6 +109,27 @@ class V1Project(object):
             self.quotas = quotas
         if updated_at is not None:
             self.updated_at = updated_at
+
+    @property
+    def abac_enabled(self) -> 'bool':
+        """Gets the abac_enabled of this V1Project.  # noqa: E501
+
+
+        :return: The abac_enabled of this V1Project.  # noqa: E501
+        :rtype: bool
+        """
+        return self._abac_enabled
+
+    @abac_enabled.setter
+    def abac_enabled(self, abac_enabled: 'bool'):
+        """Sets the abac_enabled of this V1Project.
+
+
+        :param abac_enabled: The abac_enabled of this V1Project.  # noqa: E501
+        :type: bool
+        """
+
+        self._abac_enabled = abac_enabled
 
     @property
     def created_at(self) -> 'datetime':

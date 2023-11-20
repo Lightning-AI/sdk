@@ -45,6 +45,7 @@ class SlurmJobsBody(object):
         'cluster_id': 'str',
         'command': 'str',
         'name': 'str',
+        'sync_env': 'bool',
         'work_dir': 'str'
     }
 
@@ -53,15 +54,17 @@ class SlurmJobsBody(object):
         'cluster_id': 'clusterId',
         'command': 'command',
         'name': 'name',
+        'sync_env': 'syncEnv',
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, name: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, name: 'str' =None, sync_env: 'bool' =None, work_dir: 'str' =None):  # noqa: E501
         """SlurmJobsBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
         self._name = None
+        self._sync_env = None
         self._work_dir = None
         self.discriminator = None
         if cloudspace_id is not None:
@@ -72,6 +75,8 @@ class SlurmJobsBody(object):
             self.command = command
         if name is not None:
             self.name = name
+        if sync_env is not None:
+            self.sync_env = sync_env
         if work_dir is not None:
             self.work_dir = work_dir
 
@@ -160,6 +165,27 @@ class SlurmJobsBody(object):
         """
 
         self._name = name
+
+    @property
+    def sync_env(self) -> 'bool':
+        """Gets the sync_env of this SlurmJobsBody.  # noqa: E501
+
+
+        :return: The sync_env of this SlurmJobsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._sync_env
+
+    @sync_env.setter
+    def sync_env(self, sync_env: 'bool'):
+        """Sets the sync_env of this SlurmJobsBody.
+
+
+        :param sync_env: The sync_env of this SlurmJobsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._sync_env = sync_env
 
     @property
     def work_dir(self) -> 'str':

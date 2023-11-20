@@ -53,7 +53,7 @@ class V1PublishedCloudSpaceResponse(object):
         'project_owner_name': 'str',
         'published_at': 'datetime',
         'studio_creator_username': 'str',
-        'tag': 'V1CloudSpaceTag',
+        'tags': 'list[V1CloudSpaceTag]',
         'thumbnail_url': 'str'
     }
 
@@ -70,11 +70,11 @@ class V1PublishedCloudSpaceResponse(object):
         'project_owner_name': 'projectOwnerName',
         'published_at': 'publishedAt',
         'studio_creator_username': 'studioCreatorUsername',
-        'tag': 'tag',
+        'tags': 'tags',
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_name: 'str' =None, published_at: 'datetime' =None, studio_creator_username: 'str' =None, tag: 'V1CloudSpaceTag' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_name: 'str' =None, published_at: 'datetime' =None, studio_creator_username: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """V1PublishedCloudSpaceResponse - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._creation_timestamp = None
@@ -88,7 +88,7 @@ class V1PublishedCloudSpaceResponse(object):
         self._project_owner_name = None
         self._published_at = None
         self._studio_creator_username = None
-        self._tag = None
+        self._tags = None
         self._thumbnail_url = None
         self.discriminator = None
         if cluster_id is not None:
@@ -115,8 +115,8 @@ class V1PublishedCloudSpaceResponse(object):
             self.published_at = published_at
         if studio_creator_username is not None:
             self.studio_creator_username = studio_creator_username
-        if tag is not None:
-            self.tag = tag
+        if tags is not None:
+            self.tags = tags
         if thumbnail_url is not None:
             self.thumbnail_url = thumbnail_url
 
@@ -373,25 +373,25 @@ class V1PublishedCloudSpaceResponse(object):
         self._studio_creator_username = studio_creator_username
 
     @property
-    def tag(self) -> 'V1CloudSpaceTag':
-        """Gets the tag of this V1PublishedCloudSpaceResponse.  # noqa: E501
+    def tags(self) -> 'list[V1CloudSpaceTag]':
+        """Gets the tags of this V1PublishedCloudSpaceResponse.  # noqa: E501
 
 
-        :return: The tag of this V1PublishedCloudSpaceResponse.  # noqa: E501
-        :rtype: V1CloudSpaceTag
+        :return: The tags of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :rtype: list[V1CloudSpaceTag]
         """
-        return self._tag
+        return self._tags
 
-    @tag.setter
-    def tag(self, tag: 'V1CloudSpaceTag'):
-        """Sets the tag of this V1PublishedCloudSpaceResponse.
+    @tags.setter
+    def tags(self, tags: 'list[V1CloudSpaceTag]'):
+        """Sets the tags of this V1PublishedCloudSpaceResponse.
 
 
-        :param tag: The tag of this V1PublishedCloudSpaceResponse.  # noqa: E501
-        :type: V1CloudSpaceTag
+        :param tags: The tags of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :type: list[V1CloudSpaceTag]
         """
 
-        self._tag = tag
+        self._tags = tags
 
     @property
     def thumbnail_url(self) -> 'str':

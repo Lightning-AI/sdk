@@ -48,8 +48,9 @@ class CloudspacesIdBody(object):
         'is_cloudspace_private': 'bool',
         'is_code_private': 'bool',
         'is_published': 'bool',
+        'publish_with_compute_name': 'str',
         'skip_zsh_history_on_duplication': 'bool',
-        'tag': 'V1CloudSpaceTag',
+        'tags': 'list[V1CloudSpaceTag]',
         'thumbnail': 'str',
         'thumbnail_file_type': 'str',
         'user_metadata': 'str'
@@ -63,14 +64,15 @@ class CloudspacesIdBody(object):
         'is_cloudspace_private': 'isCloudspacePrivate',
         'is_code_private': 'isCodePrivate',
         'is_published': 'isPublished',
+        'publish_with_compute_name': 'publishWithComputeName',
         'skip_zsh_history_on_duplication': 'skipZshHistoryOnDuplication',
-        'tag': 'tag',
+        'tags': 'tags',
         'thumbnail': 'thumbnail',
         'thumbnail_file_type': 'thumbnailFileType',
         'user_metadata': 'userMetadata'
     }
 
-    def __init__(self, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, skip_zsh_history_on_duplication: 'bool' =None, tag: 'V1CloudSpaceTag' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
+    def __init__(self, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, publish_with_compute_name: 'str' =None, skip_zsh_history_on_duplication: 'bool' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
         """CloudspacesIdBody - a model defined in Swagger"""  # noqa: E501
         self._data_connection_mounts = None
         self._description = None
@@ -79,8 +81,9 @@ class CloudspacesIdBody(object):
         self._is_cloudspace_private = None
         self._is_code_private = None
         self._is_published = None
+        self._publish_with_compute_name = None
         self._skip_zsh_history_on_duplication = None
-        self._tag = None
+        self._tags = None
         self._thumbnail = None
         self._thumbnail_file_type = None
         self._user_metadata = None
@@ -99,10 +102,12 @@ class CloudspacesIdBody(object):
             self.is_code_private = is_code_private
         if is_published is not None:
             self.is_published = is_published
+        if publish_with_compute_name is not None:
+            self.publish_with_compute_name = publish_with_compute_name
         if skip_zsh_history_on_duplication is not None:
             self.skip_zsh_history_on_duplication = skip_zsh_history_on_duplication
-        if tag is not None:
-            self.tag = tag
+        if tags is not None:
+            self.tags = tags
         if thumbnail is not None:
             self.thumbnail = thumbnail
         if thumbnail_file_type is not None:
@@ -258,6 +263,27 @@ class CloudspacesIdBody(object):
         self._is_published = is_published
 
     @property
+    def publish_with_compute_name(self) -> 'str':
+        """Gets the publish_with_compute_name of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The publish_with_compute_name of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._publish_with_compute_name
+
+    @publish_with_compute_name.setter
+    def publish_with_compute_name(self, publish_with_compute_name: 'str'):
+        """Sets the publish_with_compute_name of this CloudspacesIdBody.
+
+
+        :param publish_with_compute_name: The publish_with_compute_name of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._publish_with_compute_name = publish_with_compute_name
+
+    @property
     def skip_zsh_history_on_duplication(self) -> 'bool':
         """Gets the skip_zsh_history_on_duplication of this CloudspacesIdBody.  # noqa: E501
 
@@ -279,25 +305,25 @@ class CloudspacesIdBody(object):
         self._skip_zsh_history_on_duplication = skip_zsh_history_on_duplication
 
     @property
-    def tag(self) -> 'V1CloudSpaceTag':
-        """Gets the tag of this CloudspacesIdBody.  # noqa: E501
+    def tags(self) -> 'list[V1CloudSpaceTag]':
+        """Gets the tags of this CloudspacesIdBody.  # noqa: E501
 
 
-        :return: The tag of this CloudspacesIdBody.  # noqa: E501
-        :rtype: V1CloudSpaceTag
+        :return: The tags of this CloudspacesIdBody.  # noqa: E501
+        :rtype: list[V1CloudSpaceTag]
         """
-        return self._tag
+        return self._tags
 
-    @tag.setter
-    def tag(self, tag: 'V1CloudSpaceTag'):
-        """Sets the tag of this CloudspacesIdBody.
+    @tags.setter
+    def tags(self, tags: 'list[V1CloudSpaceTag]'):
+        """Sets the tags of this CloudspacesIdBody.
 
 
-        :param tag: The tag of this CloudspacesIdBody.  # noqa: E501
-        :type: V1CloudSpaceTag
+        :param tags: The tags of this CloudspacesIdBody.  # noqa: E501
+        :type: list[V1CloudSpaceTag]
         """
 
-        self._tag = tag
+        self._tags = tags
 
     @property
     def thumbnail(self) -> 'str':

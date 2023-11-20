@@ -45,6 +45,7 @@ class V1LightningappInstanceState(object):
     DELETED = "LIGHTNINGAPP_INSTANCE_STATE_DELETED"
     FAILED = "LIGHTNINGAPP_INSTANCE_STATE_FAILED"
     NOT_STARTED = "LIGHTNINGAPP_INSTANCE_STATE_NOT_STARTED"
+    COMPLETED = "LIGHTNINGAPP_INSTANCE_STATE_COMPLETED"
     """
     Attributes:
       swagger_types (dict): The key is attribute name
