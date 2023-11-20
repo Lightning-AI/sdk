@@ -69,11 +69,10 @@ class StudioApi:
         teamspace_id: str,
     ) -> V1CloudSpace:
         """Gets the current studio corresponding to the given name in the given teamspace."""
-        res = self._client.cloud_space_service_list_cloud_spaces(project_id=teamspace_id)
-        _studio = [el for el in res.cloudspaces if el.display_name == name or el.name == name]
-        if not _studio:
+        res = self._client.cloud_space_service_list_cloud_spaces(project_id=teamspace_id, name=name)
+        if not res.cloudspaces:
             raise ValueError(f"Studio {name} does not exist")
-        return _studio[0]
+        return res.cloudspaces[0]
 
     def get_studio_by_id(
         self,

@@ -121,11 +121,15 @@ def internal_teamspace_api_mocker(mocker):
 
 @pytest.fixture()
 def internal_studio_api_mocker_get_studio(mocker):
+    def list_cloudspaces(self, project_id, name):
+        if name in ["st-abc", "st-def"]:
+            print(name)
+            return V1ListCloudSpacesResponse([V1CloudSpace(name=name, display_name=name)])
+        return V1ListCloudSpacesResponse([])
+
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
-        return_value=V1ListCloudSpacesResponse(
-            [V1CloudSpace(name="st-abc", display_name="st-abc"), V1CloudSpace(name="st-def", display_name="st-def")]
-        ),
+        side_effect=list_cloudspaces,
         autospec=True,
     )
 
@@ -398,12 +402,16 @@ def internal_studio_api_mocker_duplicate_org(mocker):
 
 @pytest.fixture()
 def internal_studio_init_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
-    existing_studios = [
-        V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"),
-        V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id=None, project_id="ts-abc", id="st-abc"),
-        V1CloudSpace(name="st-def", display_name="st-def", cluster_id="c-abc", project_id="ts-abc", id="st-def"),
-        V1CloudSpace(name="st-def", display_name="st-def", cluster_id=None, project_id="ts-abc", id="st-def"),
-    ]
+    existing_studios = {
+        "st-abc": V1CloudSpace(
+            name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"
+        ),
+        # V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id=None, project_id="ts-abc", id="st-abc"),
+        # V1CloudSpace(name="st-def", display_name="st-def", cluster_id="c-abc", project_id="ts-abc", id="st-def"),
+        "st-def": V1CloudSpace(
+            name="st-def", display_name="st-def", cluster_id="c-abc", project_id="ts-abc", id="st-def"
+        ),
+    }
 
     def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
         assert isinstance(body, ProjectIdCloudspacesBody)
@@ -414,11 +422,13 @@ def internal_studio_init_mocker(mocker, internal_org_api_mocker, internal_teamsp
             project_id=project_id,
             id=body.name,
         )
-        existing_studios.append(cloudspace)
+        existing_studios[cloudspace.name] = cloudspace
         return cloudspace
 
-    def _list_cloudspaces_side_effect(*args, **kwargs):
-        return V1ListCloudSpacesResponse(existing_studios)
+    def _list_cloudspaces_side_effect(self, project_id, name):
+        if name in existing_studios:
+            return V1ListCloudSpacesResponse([existing_studios[name]])
+        return V1ListCloudSpacesResponse([])
 
     def _create_lightning_run_side_effect(self, body, project_id, cloudspace_id, **kwargs):
         return V1LightningRun(
@@ -949,12 +959,14 @@ def internal_studio_api_create_app_mocker(mocker):
 
 @pytest.fixture()
 def internal_studio_init_plugin_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
-    existing_studios = [
-        V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"),
-        V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id=None, project_id="ts-abc", id="st-abc"),
-        V1CloudSpace(name="st-def", display_name="st-def", cluster_id="c-abc", project_id="ts-abc", id="st-def"),
-        V1CloudSpace(name="st-def", display_name="st-def", cluster_id=None, project_id="ts-abc", id="st-def"),
-    ]
+    existing_studios = {
+        "st-abc": V1CloudSpace(
+            name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"
+        ),
+        "st-def": V1CloudSpace(
+            name="st-def", display_name="st-def", cluster_id="c-abc", project_id="ts-abc", id="st-def"
+        ),
+    }
 
     def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
         assert isinstance(body, ProjectIdCloudspacesBody)
@@ -965,11 +977,13 @@ def internal_studio_init_plugin_mocker(mocker, internal_org_api_mocker, internal
             project_id=project_id,
             id=body.name,
         )
-        existing_studios.append(cloudspace)
+        existing_studios[cloudspace.name] = cloudspace
         return cloudspace
 
-    def _list_cloudspaces_side_effect(*args, **kwargs):
-        return V1ListCloudSpacesResponse(existing_studios)
+    def _list_cloudspaces_side_effect(self, project_id, name):
+        if name in existing_studios:
+            return V1ListCloudSpacesResponse([existing_studios[name]])
+        return V1ListCloudSpacesResponse([])
 
     def _create_lightning_run_side_effect(self, body, project_id, cloudspace_id, **kwargs):
         return V1LightningRun(
