@@ -530,7 +530,7 @@ class StudioApi:
         ).lightningappinstance
 
         if _LIGHTNING_DEBUG:
-            print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {resp.spec.cloud_space_id=} {cluster_id=}")
+            print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {cluster_id=}")
 
         return resp
 
