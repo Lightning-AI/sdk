@@ -28,8 +28,7 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.source_code.logs_socket_api import LightningLogsSocketAPI
-
-_LIGHTNING_DEBUG = bool(int(os.getenv("LIGHTNING_DEBUG", "0")))
+from lightning_sdk.constants import _LIGHTNING_DEBUG
 
 
 logger = logging.getLogger(__name__)
