@@ -9,7 +9,7 @@ class UserApi:
         super().__init__()
 
         # TODO: add user service to lightning client
-        self._client = UserServiceApi(api_client=LightningClient().api_client)
+        self._client = UserServiceApi(api_client=LightningClient(max_tries=3).api_client)
 
     def get_user(self, name: str) -> V1SearchUser:
         """Gets user by name."""
