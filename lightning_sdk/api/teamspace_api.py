@@ -6,7 +6,7 @@ class TeamspaceApi:
     """Internal API client for Teamspace requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        self._client = LightningClient()
+        self._client = LightningClient(max_tries=3)
 
     def get_teamspace(self, name: str, owner_id: str, is_user: bool) -> V1Project:
         """Get the current teamspace from the owner."""

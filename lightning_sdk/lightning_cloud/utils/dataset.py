@@ -38,7 +38,7 @@ def _create_dataset(
     if project_id is None:
         return
 
-    client = LightningClient()
+    client = LightningClient(max_tries=3)
 
     client.dataset_service_create_dataset(
         body=ProjectIdDatasetsBody(

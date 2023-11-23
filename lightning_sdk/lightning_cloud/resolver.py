@@ -71,7 +71,7 @@ def _resolve_dir(dir_path: Optional[Union[str, Dir]]) -> Dir:
 
 
 def _resolve_studio(dir_path: str, target_name: str, target_id: str) -> str:
-    client = LightningClient()
+    client = LightningClient(max_tries=3)
 
     # Get the ids from env variables
     cluster_id = os.getenv("LIGHTNING_CLUSTER_ID", None)
@@ -114,7 +114,7 @@ def _resolve_studio(dir_path: str, target_name: str, target_id: str) -> str:
     )
 
 def _resolve_s3_connections(dir_path: str) -> str:
-    client = LightningClient()
+    client = LightningClient(max_tries=3)
 
     # Get the ids from env variables
     project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID", None)
@@ -136,7 +136,7 @@ def _resolve_s3_connections(dir_path: str) -> str:
     )
 
 def _resolve_datasets(dir_path: str) -> str:
-    client = LightningClient()
+    client = LightningClient(max_tries=3)
 
     # Get the ids from env variables
     cluster_id = os.getenv("LIGHTNING_CLUSTER_ID", None)
