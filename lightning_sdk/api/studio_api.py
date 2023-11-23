@@ -9,6 +9,7 @@ from typing import Any, Dict, Optional, Tuple
 import backoff
 import requests
 
+from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
@@ -134,6 +135,11 @@ class StudioApi:
 
         while int(self.get_studio_status(studio_id, teamspace_id).in_use.startup_percentage) < 100:
             time.sleep(1)
+
+        if _LIGHTNING_DEBUG:
+            code_status = self.get_studio_status(studio_id, teamspace_id)
+            instance_id = code_status.in_use.cloud_space_instance_id
+            print(f"Studio started | {teamspace_id=} {studio_id=} {instance_id=}")
 
     def stop_studio(self, studio_id: str, teamspace_id: str) -> None:
         """Stop an existing Studio."""
