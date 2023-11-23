@@ -139,7 +139,7 @@ class StudioApi:
         code_status = self.get_studio_status(studio_id, teamspace_id)
 
         if _LIGHTNING_DEBUG:
-            print(f"Studio Metadata | teamspace_id: {teamspace_id}, id: {studio_id}, instance_id: {code_status.in_use.cloud_space_instance_id}")
+            print(f"Studio started | teamspace_id: {teamspace_id}, id: {studio_id}, instance_id: {code_status.in_use.cloud_space_instance_id}")
 
 
     def stop_studio(self, studio_id: str, teamspace_id: str) -> None:
