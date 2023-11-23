@@ -8,6 +8,7 @@ from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 from lightning_sdk.utils import _setup_logger
+from lightning_sdk.constants import _LIGHTNING_DEBUG
 
 if TYPE_CHECKING:
     from lightning_sdk.plugin import Plugin
@@ -213,11 +214,18 @@ class Studio:
             commands: the commands to run on the Studio in sequence.
 
         """
+        if _LIGHTNING_DEBUG:
+            print(f"Running {commands=}")
+
         status = self.status
         if status != Status.Running:
             raise RuntimeError(f"Cannot run a command in a studio that is not running. Studio {self.name} is {status}.")
         output, exit_code = self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)
         output = output.strip()
+
+        if _LIGHTNING_DEBUG:
+            print(f"Output {exit_code=} {output=}")
+
         return output, exit_code
 
     def run(self, *commands: str) -> str:
