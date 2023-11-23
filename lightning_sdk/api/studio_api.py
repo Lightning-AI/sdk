@@ -525,9 +525,17 @@ class StudioApi:
         """Creates an arbitrary app."""
         body = AppsIdBody(cluster_id=cluster_id, plugin_arguments=other_arguments)
 
-        return self._client.cloud_space_service_create_cloud_space_app_instance(
+        resp = self._client.cloud_space_service_create_cloud_space_app_instance(
             body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
         ).lightningappinstance
+
+        if _LIGHTNING_DEBUG:
+            id = resp.id
+            studio_id = resp.spec.cloud_space_id
+            print(f"Create App: {id=} {teamspace_id=} {studio_id=} {cluster_id=}")
+
+        return resp
+
 
 
 @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
