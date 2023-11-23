@@ -5,10 +5,10 @@ from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.teamspace_api import TeamspaceApi
 from lightning_sdk.api.user_api import UserApi
+from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 from lightning_sdk.utils import _setup_logger
-from lightning_sdk.constants import _LIGHTNING_DEBUG
 
 if TYPE_CHECKING:
     from lightning_sdk.plugin import Plugin
