@@ -32,6 +32,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UserRequestedComputeConfig,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+from lightning_sdk.constants import _LIGHTNING_DEBUG
 
 try:
     from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
@@ -134,6 +135,12 @@ class StudioApi:
 
         while int(self.get_studio_status(studio_id, teamspace_id).in_use.startup_percentage) < 100:
             time.sleep(1)
+
+        code_status = self.get_studio_status(studio_id, teamspace_id)
+
+        if _LIGHTNING_DEBUG:
+            print(f"Find https://console.cloud.google.com/storage/browser/lightning-debug/${studio_id}-${code_status.in_use.cloud_space_instance_id}")
+
 
     def stop_studio(self, studio_id: str, teamspace_id: str) -> None:
         """Stop an existing Studio."""
