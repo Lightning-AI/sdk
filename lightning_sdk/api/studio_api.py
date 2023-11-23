@@ -530,12 +530,9 @@ class StudioApi:
         ).lightningappinstance
 
         if _LIGHTNING_DEBUG:
-            id = resp.id
-            studio_id = resp.spec.cloud_space_id
-            print(f"Create App: {id=} {teamspace_id=} {studio_id=} {cluster_id=}")
+            print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {resp.spec.cloud_space_id=} {cluster_id=}")
 
         return resp
-
 
 
 @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
