@@ -136,9 +136,8 @@ class StudioApi:
         while int(self.get_studio_status(studio_id, teamspace_id).in_use.startup_percentage) < 100:
             time.sleep(1)
 
-        code_status = self.get_studio_status(studio_id, teamspace_id)
-
         if _LIGHTNING_DEBUG:
+            code_status = self.get_studio_status(studio_id, teamspace_id)
             instance_id = code_status.in_use.cloud_space_instance_id
             print(f"Studio started | {teamspace_id=} {studio_id=} {instance_id=}")
 
