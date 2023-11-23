@@ -9,6 +9,7 @@ from typing import Any, Dict, Optional, Tuple
 import backoff
 import requests
 
+from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
@@ -32,7 +33,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UserRequestedComputeConfig,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.constants import _LIGHTNING_DEBUG
 
 try:
     from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
@@ -139,8 +139,8 @@ class StudioApi:
         code_status = self.get_studio_status(studio_id, teamspace_id)
 
         if _LIGHTNING_DEBUG:
-            print(f"Studio started | teamspace_id: {teamspace_id}, id: {studio_id}, instance_id: {code_status.in_use.cloud_space_instance_id}")
-
+            instance_id = code_status.in_use.cloud_space_instance_id
+            print(f"Studio started | {teamspace_id=} {studio_id=} {instance_id=}")
 
     def stop_studio(self, studio_id: str, teamspace_id: str) -> None:
         """Stop an existing Studio."""
