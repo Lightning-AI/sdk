@@ -42,21 +42,26 @@ class V1UsageReport(object):
     """
     swagger_types = {
         'total_cost': 'float',
+        'total_saved_cost': 'float',
         'usage': 'list[V1Usage]'
     }
 
     attribute_map = {
         'total_cost': 'totalCost',
+        'total_saved_cost': 'totalSavedCost',
         'usage': 'usage'
     }
 
-    def __init__(self, total_cost: 'float' =None, usage: 'list[V1Usage]' =None):  # noqa: E501
+    def __init__(self, total_cost: 'float' =None, total_saved_cost: 'float' =None, usage: 'list[V1Usage]' =None):  # noqa: E501
         """V1UsageReport - a model defined in Swagger"""  # noqa: E501
         self._total_cost = None
+        self._total_saved_cost = None
         self._usage = None
         self.discriminator = None
         if total_cost is not None:
             self.total_cost = total_cost
+        if total_saved_cost is not None:
+            self.total_saved_cost = total_saved_cost
         if usage is not None:
             self.usage = usage
 
@@ -80,6 +85,27 @@ class V1UsageReport(object):
         """
 
         self._total_cost = total_cost
+
+    @property
+    def total_saved_cost(self) -> 'float':
+        """Gets the total_saved_cost of this V1UsageReport.  # noqa: E501
+
+
+        :return: The total_saved_cost of this V1UsageReport.  # noqa: E501
+        :rtype: float
+        """
+        return self._total_saved_cost
+
+    @total_saved_cost.setter
+    def total_saved_cost(self, total_saved_cost: 'float'):
+        """Sets the total_saved_cost of this V1UsageReport.
+
+
+        :param total_saved_cost: The total_saved_cost of this V1UsageReport.  # noqa: E501
+        :type: float
+        """
+
+        self._total_saved_cost = total_saved_cost
 
     @property
     def usage(self) -> 'list[V1Usage]':

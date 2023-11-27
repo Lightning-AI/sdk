@@ -42,21 +42,26 @@ class IdCollaborateBody(object):
     """
     swagger_types = {
         'action': 'V1CollabAction',
+        'collab_session_id': 'str',
         'user_id': 'str'
     }
 
     attribute_map = {
         'action': 'action',
+        'collab_session_id': 'collabSessionId',
         'user_id': 'userId'
     }
 
-    def __init__(self, action: 'V1CollabAction' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, action: 'V1CollabAction' =None, collab_session_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """IdCollaborateBody - a model defined in Swagger"""  # noqa: E501
         self._action = None
+        self._collab_session_id = None
         self._user_id = None
         self.discriminator = None
         if action is not None:
             self.action = action
+        if collab_session_id is not None:
+            self.collab_session_id = collab_session_id
         if user_id is not None:
             self.user_id = user_id
 
@@ -80,6 +85,27 @@ class IdCollaborateBody(object):
         """
 
         self._action = action
+
+    @property
+    def collab_session_id(self) -> 'str':
+        """Gets the collab_session_id of this IdCollaborateBody.  # noqa: E501
+
+
+        :return: The collab_session_id of this IdCollaborateBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._collab_session_id
+
+    @collab_session_id.setter
+    def collab_session_id(self, collab_session_id: 'str'):
+        """Sets the collab_session_id of this IdCollaborateBody.
+
+
+        :param collab_session_id: The collab_session_id of this IdCollaborateBody.  # noqa: E501
+        :type: str
+        """
+
+        self._collab_session_id = collab_session_id
 
     @property
     def user_id(self) -> 'str':

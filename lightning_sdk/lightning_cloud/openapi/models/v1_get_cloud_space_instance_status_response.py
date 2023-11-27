@@ -41,29 +41,55 @@ class V1GetCloudSpaceInstanceStatusResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'collab_session': 'V1CollabSession',
         'collab_status': 'V1CloudSpaceInstanceCollabStatus',
         'in_use': 'Externalv1CloudSpaceInstanceStatus',
         'requested': 'Externalv1CloudSpaceInstanceStatus'
     }
 
     attribute_map = {
+        'collab_session': 'collabSession',
         'collab_status': 'collabStatus',
         'in_use': 'inUse',
         'requested': 'requested'
     }
 
-    def __init__(self, collab_status: 'V1CloudSpaceInstanceCollabStatus' =None, in_use: 'Externalv1CloudSpaceInstanceStatus' =None, requested: 'Externalv1CloudSpaceInstanceStatus' =None):  # noqa: E501
+    def __init__(self, collab_session: 'V1CollabSession' =None, collab_status: 'V1CloudSpaceInstanceCollabStatus' =None, in_use: 'Externalv1CloudSpaceInstanceStatus' =None, requested: 'Externalv1CloudSpaceInstanceStatus' =None):  # noqa: E501
         """V1GetCloudSpaceInstanceStatusResponse - a model defined in Swagger"""  # noqa: E501
+        self._collab_session = None
         self._collab_status = None
         self._in_use = None
         self._requested = None
         self.discriminator = None
+        if collab_session is not None:
+            self.collab_session = collab_session
         if collab_status is not None:
             self.collab_status = collab_status
         if in_use is not None:
             self.in_use = in_use
         if requested is not None:
             self.requested = requested
+
+    @property
+    def collab_session(self) -> 'V1CollabSession':
+        """Gets the collab_session of this V1GetCloudSpaceInstanceStatusResponse.  # noqa: E501
+
+
+        :return: The collab_session of this V1GetCloudSpaceInstanceStatusResponse.  # noqa: E501
+        :rtype: V1CollabSession
+        """
+        return self._collab_session
+
+    @collab_session.setter
+    def collab_session(self, collab_session: 'V1CollabSession'):
+        """Sets the collab_session of this V1GetCloudSpaceInstanceStatusResponse.
+
+
+        :param collab_session: The collab_session of this V1GetCloudSpaceInstanceStatusResponse.  # noqa: E501
+        :type: V1CollabSession
+        """
+
+        self._collab_session = collab_session
 
     @property
     def collab_status(self) -> 'V1CloudSpaceInstanceCollabStatus':

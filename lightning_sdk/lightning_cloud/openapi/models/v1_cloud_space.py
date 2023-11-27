@@ -44,6 +44,7 @@ class V1CloudSpace(object):
         'can_download_source_code': 'bool',
         'cluster_id': 'str',
         'code_config': 'V1CloudSpaceInstanceConfig',
+        'code_status': 'V1GetCloudSpaceInstanceStatusResponse',
         'created_at': 'datetime',
         'data_connection_mounts': 'list[V1DataConnectionMount]',
         'description': 'str',
@@ -76,6 +77,7 @@ class V1CloudSpace(object):
         'can_download_source_code': 'canDownloadSourceCode',
         'cluster_id': 'clusterId',
         'code_config': 'codeConfig',
+        'code_status': 'codeStatus',
         'created_at': 'createdAt',
         'data_connection_mounts': 'dataConnectionMounts',
         'description': 'description',
@@ -104,11 +106,12 @@ class V1CloudSpace(object):
         'web_path': 'webPath'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, skip_zsh_history_on_duplication: 'bool' =None, state: 'V1CloudSpaceState' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, skip_zsh_history_on_duplication: 'bool' =None, state: 'V1CloudSpaceState' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cluster_id = None
         self._code_config = None
+        self._code_status = None
         self._created_at = None
         self._data_connection_mounts = None
         self._description = None
@@ -142,6 +145,8 @@ class V1CloudSpace(object):
             self.cluster_id = cluster_id
         if code_config is not None:
             self.code_config = code_config
+        if code_status is not None:
+            self.code_status = code_status
         if created_at is not None:
             self.created_at = created_at
         if data_connection_mounts is not None:
@@ -257,6 +262,27 @@ class V1CloudSpace(object):
         """
 
         self._code_config = code_config
+
+    @property
+    def code_status(self) -> 'V1GetCloudSpaceInstanceStatusResponse':
+        """Gets the code_status of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The code_status of this V1CloudSpace.  # noqa: E501
+        :rtype: V1GetCloudSpaceInstanceStatusResponse
+        """
+        return self._code_status
+
+    @code_status.setter
+    def code_status(self, code_status: 'V1GetCloudSpaceInstanceStatusResponse'):
+        """Sets the code_status of this V1CloudSpace.
+
+
+        :param code_status: The code_status of this V1CloudSpace.  # noqa: E501
+        :type: V1GetCloudSpaceInstanceStatusResponse
+        """
+
+        self._code_status = code_status
 
     @property
     def created_at(self) -> 'datetime':

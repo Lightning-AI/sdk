@@ -49,6 +49,7 @@ class V1UsageDetails(object):
         'hourly_price': 'float',
         'instance_count': 'str',
         'instance_type': 'str',
+        'saved_cost': 'float',
         'spot': 'bool',
         'started_at': 'datetime'
     }
@@ -62,11 +63,12 @@ class V1UsageDetails(object):
         'hourly_price': 'hourlyPrice',
         'instance_count': 'instanceCount',
         'instance_type': 'instanceType',
+        'saved_cost': 'savedCost',
         'spot': 'spot',
         'started_at': 'startedAt'
     }
 
-    def __init__(self, billed_bytes: 'str' =None, billed_time_seconds: 'str' =None, cost: 'float' =None, ended_at: 'datetime' =None, free: 'bool' =None, hourly_price: 'float' =None, instance_count: 'str' =None, instance_type: 'str' =None, spot: 'bool' =None, started_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, billed_bytes: 'str' =None, billed_time_seconds: 'str' =None, cost: 'float' =None, ended_at: 'datetime' =None, free: 'bool' =None, hourly_price: 'float' =None, instance_count: 'str' =None, instance_type: 'str' =None, saved_cost: 'float' =None, spot: 'bool' =None, started_at: 'datetime' =None):  # noqa: E501
         """V1UsageDetails - a model defined in Swagger"""  # noqa: E501
         self._billed_bytes = None
         self._billed_time_seconds = None
@@ -76,6 +78,7 @@ class V1UsageDetails(object):
         self._hourly_price = None
         self._instance_count = None
         self._instance_type = None
+        self._saved_cost = None
         self._spot = None
         self._started_at = None
         self.discriminator = None
@@ -95,6 +98,8 @@ class V1UsageDetails(object):
             self.instance_count = instance_count
         if instance_type is not None:
             self.instance_type = instance_type
+        if saved_cost is not None:
+            self.saved_cost = saved_cost
         if spot is not None:
             self.spot = spot
         if started_at is not None:
@@ -267,6 +272,27 @@ class V1UsageDetails(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def saved_cost(self) -> 'float':
+        """Gets the saved_cost of this V1UsageDetails.  # noqa: E501
+
+
+        :return: The saved_cost of this V1UsageDetails.  # noqa: E501
+        :rtype: float
+        """
+        return self._saved_cost
+
+    @saved_cost.setter
+    def saved_cost(self, saved_cost: 'float'):
+        """Sets the saved_cost of this V1UsageDetails.
+
+
+        :param saved_cost: The saved_cost of this V1UsageDetails.  # noqa: E501
+        :type: float
+        """
+
+        self._saved_cost = saved_cost
 
     @property
     def spot(self) -> 'bool':

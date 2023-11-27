@@ -50,6 +50,7 @@ class V1ClusterAccelerator(object):
         'display_name': 'str',
         'enabled': 'bool',
         'instance_id': 'str',
+        'is_tier_restricted': 'bool',
         'quota_checked_at': 'datetime',
         'quota_code': 'str',
         'quota_name': 'str',
@@ -71,6 +72,7 @@ class V1ClusterAccelerator(object):
         'display_name': 'displayName',
         'enabled': 'enabled',
         'instance_id': 'instanceId',
+        'is_tier_restricted': 'isTierRestricted',
         'quota_checked_at': 'quotaCheckedAt',
         'quota_code': 'quotaCode',
         'quota_name': 'quotaName',
@@ -82,7 +84,7 @@ class V1ClusterAccelerator(object):
         'slug': 'slug'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, available_in_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, instance_id: 'str' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, available_in_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._available_in_seconds = None
@@ -93,6 +95,7 @@ class V1ClusterAccelerator(object):
         self._display_name = None
         self._enabled = None
         self._instance_id = None
+        self._is_tier_restricted = None
         self._quota_checked_at = None
         self._quota_code = None
         self._quota_name = None
@@ -121,6 +124,8 @@ class V1ClusterAccelerator(object):
             self.enabled = enabled
         if instance_id is not None:
             self.instance_id = instance_id
+        if is_tier_restricted is not None:
+            self.is_tier_restricted = is_tier_restricted
         if quota_checked_at is not None:
             self.quota_checked_at = quota_checked_at
         if quota_code is not None:
@@ -328,6 +333,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._instance_id = instance_id
+
+    @property
+    def is_tier_restricted(self) -> 'bool':
+        """Gets the is_tier_restricted of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The is_tier_restricted of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_tier_restricted
+
+    @is_tier_restricted.setter
+    def is_tier_restricted(self, is_tier_restricted: 'bool'):
+        """Sets the is_tier_restricted of this V1ClusterAccelerator.
+
+
+        :param is_tier_restricted: The is_tier_restricted of this V1ClusterAccelerator.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_tier_restricted = is_tier_restricted
 
     @property
     def quota_checked_at(self) -> 'datetime':

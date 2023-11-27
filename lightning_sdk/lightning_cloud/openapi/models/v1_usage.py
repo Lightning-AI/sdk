@@ -52,6 +52,7 @@ class V1Usage(object):
         'name': 'str',
         'project_id': 'str',
         'resource_type': 'str',
+        'saved_cost': 'float',
         'session_ended_at': 'datetime',
         'session_started_at': 'datetime',
         'user_id': 'str'
@@ -69,12 +70,13 @@ class V1Usage(object):
         'name': 'name',
         'project_id': 'projectId',
         'resource_type': 'resourceType',
+        'saved_cost': 'savedCost',
         'session_ended_at': 'sessionEndedAt',
         'session_started_at': 'sessionStartedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, billed_time_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, details: 'list[V1UsageDetails]' =None, free: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, resource_type: 'str' =None, session_ended_at: 'datetime' =None, session_started_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, billed_time_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, details: 'list[V1UsageDetails]' =None, free: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, resource_type: 'str' =None, saved_cost: 'float' =None, session_ended_at: 'datetime' =None, session_started_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Usage - a model defined in Swagger"""  # noqa: E501
         self._billed_time_seconds = None
         self._cluster_id = None
@@ -87,6 +89,7 @@ class V1Usage(object):
         self._name = None
         self._project_id = None
         self._resource_type = None
+        self._saved_cost = None
         self._session_ended_at = None
         self._session_started_at = None
         self._user_id = None
@@ -113,6 +116,8 @@ class V1Usage(object):
             self.project_id = project_id
         if resource_type is not None:
             self.resource_type = resource_type
+        if saved_cost is not None:
+            self.saved_cost = saved_cost
         if session_ended_at is not None:
             self.session_ended_at = session_ended_at
         if session_started_at is not None:
@@ -350,6 +355,27 @@ class V1Usage(object):
         """
 
         self._resource_type = resource_type
+
+    @property
+    def saved_cost(self) -> 'float':
+        """Gets the saved_cost of this V1Usage.  # noqa: E501
+
+
+        :return: The saved_cost of this V1Usage.  # noqa: E501
+        :rtype: float
+        """
+        return self._saved_cost
+
+    @saved_cost.setter
+    def saved_cost(self, saved_cost: 'float'):
+        """Sets the saved_cost of this V1Usage.
+
+
+        :param saved_cost: The saved_cost of this V1Usage.  # noqa: E501
+        :type: float
+        """
+
+        self._saved_cost = saved_cost
 
     @property
     def session_ended_at(self) -> 'datetime':
