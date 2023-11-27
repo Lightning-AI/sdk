@@ -125,17 +125,17 @@ def _retry_wrapper(self,
 
                     if _LIGHTNING_DEBUG:
                         print(
-                            f"The {func.__name__} request failed to reach the server, {msg}."
+                            f"The {func.__name__} request didn't reach the server, {msg}."
                             f" Retrying after {backoff_time} seconds."
                         )
                     else:
                         logger.debug(
-                            f"The {func.__name__} request failed to reach the server, {msg}."
+                            f"The {func.__name__} request didn't reach the server, {msg}."
                             f" Retrying after {backoff_time} seconds.")
 
                     if max_tries is not None and consecutive_errors == max_tries:
                         raise Exception(
-                            f"The {func.__name__} request failed to reach the server, {msg}."
+                            f"The {func.__name__} request didn't reach the server, {msg}."
                         )
 
                     time.sleep(backoff_time)
