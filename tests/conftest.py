@@ -60,7 +60,7 @@ def internal_user_api_mocker(mocker):
 
 
 @pytest.fixture()
-def internal_org_api_mocker(mocker):
+def internal_list_org_api_mocker(mocker):
     def _side_effect_api_call(
         resource_path,
         method,
@@ -85,6 +85,44 @@ def internal_org_api_mocker(mocker):
                     V1Organization(display_name="org-def", name="org-def"),
                 ]
             )
+        return None
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api_client.ApiClient.call_api", side_effect=_side_effect_api_call
+    )
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture()
+def internal_get_org_api_mocker(mocker):
+    def _side_effect_api_call(
+        resource_path,
+        method,
+        path_params=None,
+        query_params=None,
+        header_params=None,
+        body=None,
+        post_params=None,
+        files=None,
+        response_type=None,
+        auth_settings=None,
+        async_req=None,
+        _return_http_data_only=None,
+        collection_formats=None,
+        _preload_content=True,
+        _request_timeout=None,
+    ):
+        if response_type == "V1Organization":
+            for param in query_params:
+                if param[0] != "name":
+                    continue
+                if param[1] == "org-abc":
+                    return V1Organization(display_name="org-abc", name="org-abc")
+                if param[1] == "org-def":
+                    return V1Organization(display_name="org-def", name="org-def")
+
         return None
 
     mocker.patch(
@@ -401,7 +439,7 @@ def internal_studio_api_mocker_duplicate_org(mocker):
 
 
 @pytest.fixture()
-def internal_studio_init_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
+def internal_studio_init_mocker(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     existing_studios = {
         "st-abc": V1CloudSpace(
             name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"
@@ -458,7 +496,7 @@ def internal_studio_init_mocker(mocker, internal_org_api_mocker, internal_teamsp
         return_type=V1PluginsListResponse(),
     )
 
-    yield [mocker, internal_org_api_mocker, internal_teamspace_api_mocker]
+    yield [mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker]
 
     mocker.resetall()
 
@@ -566,7 +604,7 @@ def internal_studio_stop_mocker(mocker):
 
 
 @pytest.fixture()
-def internal_studio_delete_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
+def internal_studio_delete_mocker(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     existing_studios = [
         V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"),
     ]
@@ -624,13 +662,13 @@ def internal_studio_delete_mocker(mocker, internal_org_api_mocker, internal_team
     )
     mocker.patch("requests.put")
 
-    yield [mocker, internal_org_api_mocker, internal_teamspace_api_mocker]
+    yield [mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker]
 
     mocker.resetall()
 
 
 @pytest.fixture()
-def internal_studio_switch_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
+def internal_studio_switch_mocker(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     # none since no instance available before start
     # use dict here so that it automatically uses global scope. Assignments to variables would introduce shadowing
     status = {"st-abc": None}
@@ -958,7 +996,7 @@ def internal_studio_api_create_app_mocker(mocker):
 
 
 @pytest.fixture()
-def internal_studio_init_plugin_mocker(mocker, internal_org_api_mocker, internal_teamspace_api_mocker):
+def internal_studio_init_plugin_mocker(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     existing_studios = {
         "st-abc": V1CloudSpace(
             name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"
@@ -1007,7 +1045,7 @@ def internal_studio_init_plugin_mocker(mocker, internal_org_api_mocker, internal
     )
     mocker.patch("requests.put")
 
-    yield [mocker, internal_org_api_mocker, internal_teamspace_api_mocker]
+    yield [mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker]
 
     mocker.resetall()
 
