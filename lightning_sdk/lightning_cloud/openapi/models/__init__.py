@@ -65,6 +65,7 @@ from lightning_sdk.lightning_cloud.openapi.models.id_uploads_body import IdUploa
 from lightning_sdk.lightning_cloud.openapi.models.instance_type_availability import InstanceTypeAvailability
 from lightning_sdk.lightning_cloud.openapi.models.jobs_id_body import JobsIdBody
 from lightning_sdk.lightning_cloud.openapi.models.jobs_id_body1 import JobsIdBody1
+from lightning_sdk.lightning_cloud.openapi.models.jobs_id_body2 import JobsIdBody2
 from lightning_sdk.lightning_cloud.openapi.models.litpages_id_body import LitpagesIdBody
 from lightning_sdk.lightning_cloud.openapi.models.multipart_complete_body import MultipartCompleteBody
 from lightning_sdk.lightning_cloud.openapi.models.multipartuploads_upload_id_body import MultipartuploadsUploadIdBody
@@ -393,7 +394,6 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_slurm_v1_status import V1Sl
 from lightning_sdk.lightning_cloud.openapi.models.v1_source_type import V1SourceType
 from lightning_sdk.lightning_cloud.openapi.models.v1_start_cloud_space_instance_response import V1StartCloudSpaceInstanceResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_stop_cloud_space_instance_response import V1StopCloudSpaceInstanceResponse
-from lightning_sdk.lightning_cloud.openapi.models.v1_stop_studio_job_response import V1StopStudioJobResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_storage_system_metrics import V1StorageSystemMetrics
 from lightning_sdk.lightning_cloud.openapi.models.v1_studio_job import V1StudioJob
 from lightning_sdk.lightning_cloud.openapi.models.v1_studio_job_app import V1StudioJobApp

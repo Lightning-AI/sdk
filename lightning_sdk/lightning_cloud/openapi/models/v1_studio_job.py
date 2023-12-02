@@ -46,6 +46,8 @@ class V1StudioJob(object):
         'command': 'str',
         'created_at': 'datetime',
         'id': 'str',
+        'last_started_at': 'datetime',
+        'last_stopped_at': 'datetime',
         'name': 'str',
         'port': 'str',
         'project_id': 'str',
@@ -60,6 +62,8 @@ class V1StudioJob(object):
         'command': 'command',
         'created_at': 'createdAt',
         'id': 'id',
+        'last_started_at': 'lastStartedAt',
+        'last_stopped_at': 'lastStoppedAt',
         'name': 'name',
         'port': 'port',
         'project_id': 'projectId',
@@ -68,13 +72,15 @@ class V1StudioJob(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, app: 'V1StudioJobApp' =None, cloudspace_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, port: 'str' =None, project_id: 'str' =None, terminal_session_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, app: 'V1StudioJobApp' =None, cloudspace_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, last_started_at: 'datetime' =None, last_stopped_at: 'datetime' =None, name: 'str' =None, port: 'str' =None, project_id: 'str' =None, terminal_session_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1StudioJob - a model defined in Swagger"""  # noqa: E501
         self._app = None
         self._cloudspace_id = None
         self._command = None
         self._created_at = None
         self._id = None
+        self._last_started_at = None
+        self._last_stopped_at = None
         self._name = None
         self._port = None
         self._project_id = None
@@ -92,6 +98,10 @@ class V1StudioJob(object):
             self.created_at = created_at
         if id is not None:
             self.id = id
+        if last_started_at is not None:
+            self.last_started_at = last_started_at
+        if last_stopped_at is not None:
+            self.last_stopped_at = last_stopped_at
         if name is not None:
             self.name = name
         if port is not None:
@@ -209,6 +219,48 @@ class V1StudioJob(object):
         """
 
         self._id = id
+
+    @property
+    def last_started_at(self) -> 'datetime':
+        """Gets the last_started_at of this V1StudioJob.  # noqa: E501
+
+
+        :return: The last_started_at of this V1StudioJob.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._last_started_at
+
+    @last_started_at.setter
+    def last_started_at(self, last_started_at: 'datetime'):
+        """Sets the last_started_at of this V1StudioJob.
+
+
+        :param last_started_at: The last_started_at of this V1StudioJob.  # noqa: E501
+        :type: datetime
+        """
+
+        self._last_started_at = last_started_at
+
+    @property
+    def last_stopped_at(self) -> 'datetime':
+        """Gets the last_stopped_at of this V1StudioJob.  # noqa: E501
+
+
+        :return: The last_stopped_at of this V1StudioJob.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._last_stopped_at
+
+    @last_stopped_at.setter
+    def last_stopped_at(self, last_stopped_at: 'datetime'):
+        """Sets the last_stopped_at of this V1StudioJob.
+
+
+        :param last_stopped_at: The last_stopped_at of this V1StudioJob.  # noqa: E501
+        :type: datetime
+        """
+
+        self._last_stopped_at = last_stopped_at
 
     @property
     def name(self) -> 'str':

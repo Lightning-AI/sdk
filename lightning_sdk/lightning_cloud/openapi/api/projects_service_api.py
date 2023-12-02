@@ -579,6 +579,8 @@ class ProjectsServiceApi(object):
         :param async_req bool
         :param str id: (required)
         :param bool skip_balance_check:
+        :param str balance_destination_id:
+        :param bool is_org:
         :return: V1DeleteProjectResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -601,12 +603,14 @@ class ProjectsServiceApi(object):
         :param async_req bool
         :param str id: (required)
         :param bool skip_balance_check:
+        :param str balance_destination_id:
+        :param bool is_org:
         :return: V1DeleteProjectResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['id', 'skip_balance_check']  # noqa: E501
+        all_params = ['id', 'skip_balance_check', 'balance_destination_id', 'is_org']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -635,6 +639,10 @@ class ProjectsServiceApi(object):
         query_params = []
         if 'skip_balance_check' in params:
             query_params.append(('skipBalanceCheck', params['skip_balance_check']))  # noqa: E501
+        if 'balance_destination_id' in params:
+            query_params.append(('balanceDestinationId', params['balance_destination_id']))  # noqa: E501
+        if 'is_org' in params:
+            query_params.append(('isOrg', params['is_org']))  # noqa: E501
 
         header_params = {}
 

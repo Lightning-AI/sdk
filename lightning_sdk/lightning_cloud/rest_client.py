@@ -3,7 +3,7 @@ import logging
 import time
 from functools import wraps
 from typing import Callable, Optional, Any
-import os
+
 import click
 import urllib3
 from lightning_sdk.lightning_cloud import env
@@ -28,8 +28,6 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.source_code.logs_socket_api import LightningLogsSocketAPI
-from lightning_sdk.constants import _LIGHTNING_DEBUG
-
 
 logger = logging.getLogger(__name__)
 
@@ -122,20 +120,13 @@ def _retry_wrapper(self,
                     msg = (f"error: {str(ex)}" if isinstance(
                         ex, urllib3.exceptions.HTTPError) else
                            f"response: {ex.status}")
-
-                    if _LIGHTNING_DEBUG:
-                        print(
-                            f"The {func.__name__} request didn't reach the server, {msg}."
-                            f" Retrying after {backoff_time} seconds."
-                        )
-                    else:
-                        logger.debug(
-                            f"The {func.__name__} request didn't reach the server, {msg}."
-                            f" Retrying after {backoff_time} seconds.")
+                    logger.debug(
+                        f"The {func.__name__} request failed to reach the server, {msg}."
+                        f" Retrying after {backoff_time} seconds.")
 
                     if max_tries is not None and consecutive_errors == max_tries:
                         raise Exception(
-                            f"The {func.__name__} request didn't reach the server, {msg}."
+                            f"The {func.__name__} request failed to reach the server, {msg}."
                         )
 
                     time.sleep(backoff_time)

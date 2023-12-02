@@ -49,7 +49,6 @@ class CloudspacesIdBody(object):
         'is_code_private': 'bool',
         'is_published': 'bool',
         'publish_with_compute_name': 'str',
-        'skip_zsh_history_on_duplication': 'bool',
         'tags': 'list[V1CloudSpaceTag]',
         'thumbnail': 'str',
         'thumbnail_file_type': 'str',
@@ -65,14 +64,13 @@ class CloudspacesIdBody(object):
         'is_code_private': 'isCodePrivate',
         'is_published': 'isPublished',
         'publish_with_compute_name': 'publishWithComputeName',
-        'skip_zsh_history_on_duplication': 'skipZshHistoryOnDuplication',
         'tags': 'tags',
         'thumbnail': 'thumbnail',
         'thumbnail_file_type': 'thumbnailFileType',
         'user_metadata': 'userMetadata'
     }
 
-    def __init__(self, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, publish_with_compute_name: 'str' =None, skip_zsh_history_on_duplication: 'bool' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
+    def __init__(self, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
         """CloudspacesIdBody - a model defined in Swagger"""  # noqa: E501
         self._data_connection_mounts = None
         self._description = None
@@ -82,7 +80,6 @@ class CloudspacesIdBody(object):
         self._is_code_private = None
         self._is_published = None
         self._publish_with_compute_name = None
-        self._skip_zsh_history_on_duplication = None
         self._tags = None
         self._thumbnail = None
         self._thumbnail_file_type = None
@@ -104,8 +101,6 @@ class CloudspacesIdBody(object):
             self.is_published = is_published
         if publish_with_compute_name is not None:
             self.publish_with_compute_name = publish_with_compute_name
-        if skip_zsh_history_on_duplication is not None:
-            self.skip_zsh_history_on_duplication = skip_zsh_history_on_duplication
         if tags is not None:
             self.tags = tags
         if thumbnail is not None:
@@ -282,27 +277,6 @@ class CloudspacesIdBody(object):
         """
 
         self._publish_with_compute_name = publish_with_compute_name
-
-    @property
-    def skip_zsh_history_on_duplication(self) -> 'bool':
-        """Gets the skip_zsh_history_on_duplication of this CloudspacesIdBody.  # noqa: E501
-
-
-        :return: The skip_zsh_history_on_duplication of this CloudspacesIdBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._skip_zsh_history_on_duplication
-
-    @skip_zsh_history_on_duplication.setter
-    def skip_zsh_history_on_duplication(self, skip_zsh_history_on_duplication: 'bool'):
-        """Sets the skip_zsh_history_on_duplication of this CloudspacesIdBody.
-
-
-        :param skip_zsh_history_on_duplication: The skip_zsh_history_on_duplication of this CloudspacesIdBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._skip_zsh_history_on_duplication = skip_zsh_history_on_duplication
 
     @property
     def tags(self) -> 'list[V1CloudSpaceTag]':

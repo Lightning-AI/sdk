@@ -1,12 +1,13 @@
 import os
 from typing import Optional, Union
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
-from abc import ABC, abstractmethod
 from pathlib import Path
 import sys
 from time import sleep
 from urllib import parse
 from dataclasses import dataclass
+import datetime
+import re
 
 # To avoid adding lightning_utilities as a dependency for now.
 try:
@@ -50,6 +51,8 @@ def _resolve_dir(dir_path: Optional[Union[str, Dir]]) -> Dir:
     if dir_path.startswith("s3://"):
         return Dir(path=None, url=dir_path)
 
+    dir_path = _resolve_time_template(dir_path)
+
     dir_path_absolute = str(Path(dir_path).absolute().resolve())
 
     if dir_path_absolute.startswith("/teamspace/studios/this_studio"):
@@ -71,7 +74,7 @@ def _resolve_dir(dir_path: Optional[Union[str, Dir]]) -> Dir:
 
 
 def _resolve_studio(dir_path: str, target_name: str, target_id: str) -> str:
-    client = LightningClient(max_tries=3)
+    client = LightningClient(retry=False)
 
     # Get the ids from env variables
     cluster_id = os.getenv("LIGHTNING_CLUSTER_ID", None)
@@ -83,7 +86,7 @@ def _resolve_studio(dir_path: str, target_name: str, target_id: str) -> str:
     if project_id is None:
         raise RuntimeError("The `project_id` couldn't be found from the environement variables.")
 
-    clusters = client.cluster_service_list_clusters().clusters
+    clusters = client.cluster_service_list_project_clusters(project_id).clusters
 
     target_cloud_space = [
         cloudspace
@@ -114,7 +117,7 @@ def _resolve_studio(dir_path: str, target_name: str, target_id: str) -> str:
     )
 
 def _resolve_s3_connections(dir_path: str) -> str:
-    client = LightningClient(max_tries=3)
+    client = LightningClient(retry=False)
 
     # Get the ids from env variables
     project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID", None)
@@ -136,7 +139,7 @@ def _resolve_s3_connections(dir_path: str) -> str:
     )
 
 def _resolve_datasets(dir_path: str) -> str:
-    client = LightningClient(max_tries=3)
+    client = LightningClient(retry=False)
 
     # Get the ids from env variables
     cluster_id = os.getenv("LIGHTNING_CLUSTER_ID", None)
@@ -152,7 +155,7 @@ def _resolve_datasets(dir_path: str) -> str:
     if cloud_space_id is None:
         raise RuntimeError("The `cloud_space_id` couldn't be found from the environement variables.")
 
-    clusters = client.cluster_service_list_clusters().clusters
+    clusters = client.cluster_service_list_project_clusters(project_id).clusters
 
     target_cloud_space = [
         cloudspace
@@ -259,6 +262,16 @@ def _get_lightning_sdk.lightning_cloud_url() -> str:
         return "http://localhost:9800"
     # DO NOT CHANGE!
     return os.getenv("LIGHTNING_CLOUD_URL", "https://lightning.ai")
+
+
+def _resolve_time_template(path: str) -> str:
+    match = re.search('^.*{%.*}$', path)
+    if match is None:
+        return path
+
+    pattern = path.split("{")[1].split("}")[0]
+
+    return path.replace("{" + pattern + "}", datetime.datetime.now().strftime(pattern))
 
 
 def _execute(

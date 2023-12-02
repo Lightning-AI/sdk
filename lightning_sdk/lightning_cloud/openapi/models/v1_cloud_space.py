@@ -61,7 +61,6 @@ class V1CloudSpace(object):
         'number_of_files': 'str',
         'project_id': 'str',
         'published_at': 'datetime',
-        'skip_zsh_history_on_duplication': 'bool',
         'state': 'V1CloudSpaceState',
         'tags': 'list[V1CloudSpaceTag]',
         'thumbnail_file_type': 'str',
@@ -94,7 +93,6 @@ class V1CloudSpace(object):
         'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
         'published_at': 'publishedAt',
-        'skip_zsh_history_on_duplication': 'skipZshHistoryOnDuplication',
         'state': 'state',
         'tags': 'tags',
         'thumbnail_file_type': 'thumbnailFileType',
@@ -106,7 +104,7 @@ class V1CloudSpace(object):
         'web_path': 'webPath'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, skip_zsh_history_on_duplication: 'bool' =None, state: 'V1CloudSpaceState' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cluster_id = None
@@ -128,7 +126,6 @@ class V1CloudSpace(object):
         self._number_of_files = None
         self._project_id = None
         self._published_at = None
-        self._skip_zsh_history_on_duplication = None
         self._state = None
         self._tags = None
         self._thumbnail_file_type = None
@@ -179,8 +176,6 @@ class V1CloudSpace(object):
             self.project_id = project_id
         if published_at is not None:
             self.published_at = published_at
-        if skip_zsh_history_on_duplication is not None:
-            self.skip_zsh_history_on_duplication = skip_zsh_history_on_duplication
         if state is not None:
             self.state = state
         if tags is not None:
@@ -619,27 +614,6 @@ class V1CloudSpace(object):
         """
 
         self._published_at = published_at
-
-    @property
-    def skip_zsh_history_on_duplication(self) -> 'bool':
-        """Gets the skip_zsh_history_on_duplication of this V1CloudSpace.  # noqa: E501
-
-
-        :return: The skip_zsh_history_on_duplication of this V1CloudSpace.  # noqa: E501
-        :rtype: bool
-        """
-        return self._skip_zsh_history_on_duplication
-
-    @skip_zsh_history_on_duplication.setter
-    def skip_zsh_history_on_duplication(self, skip_zsh_history_on_duplication: 'bool'):
-        """Sets the skip_zsh_history_on_duplication of this V1CloudSpace.
-
-
-        :param skip_zsh_history_on_duplication: The skip_zsh_history_on_duplication of this V1CloudSpace.  # noqa: E501
-        :type: bool
-        """
-
-        self._skip_zsh_history_on_duplication = skip_zsh_history_on_duplication
 
     @property
     def state(self) -> 'V1CloudSpaceState':

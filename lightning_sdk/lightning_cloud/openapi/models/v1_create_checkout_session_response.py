@@ -41,40 +41,40 @@ class V1CreateCheckoutSessionResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'session_id': 'str'
+        'url': 'str'
     }
 
     attribute_map = {
-        'session_id': 'sessionId'
+        'url': 'url'
     }
 
-    def __init__(self, session_id: 'str' =None):  # noqa: E501
+    def __init__(self, url: 'str' =None):  # noqa: E501
         """V1CreateCheckoutSessionResponse - a model defined in Swagger"""  # noqa: E501
-        self._session_id = None
+        self._url = None
         self.discriminator = None
-        if session_id is not None:
-            self.session_id = session_id
+        if url is not None:
+            self.url = url
 
     @property
-    def session_id(self) -> 'str':
-        """Gets the session_id of this V1CreateCheckoutSessionResponse.  # noqa: E501
+    def url(self) -> 'str':
+        """Gets the url of this V1CreateCheckoutSessionResponse.  # noqa: E501
 
 
-        :return: The session_id of this V1CreateCheckoutSessionResponse.  # noqa: E501
+        :return: The url of this V1CreateCheckoutSessionResponse.  # noqa: E501
         :rtype: str
         """
-        return self._session_id
+        return self._url
 
-    @session_id.setter
-    def session_id(self, session_id: 'str'):
-        """Sets the session_id of this V1CreateCheckoutSessionResponse.
+    @url.setter
+    def url(self, url: 'str'):
+        """Sets the url of this V1CreateCheckoutSessionResponse.
 
 
-        :param session_id: The session_id of this V1CreateCheckoutSessionResponse.  # noqa: E501
+        :param url: The url of this V1CreateCheckoutSessionResponse.  # noqa: E501
         :type: str
         """
 
-        self._session_id = session_id
+        self._url = url
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

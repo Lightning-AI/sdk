@@ -56,7 +56,6 @@ class V1UserFeatures(object):
         'enable_crypto_crackdown': 'bool',
         'filesystem_optimisation': 'bool',
         'interruptible_instances': 'bool',
-        'jobs_filesystem': 'bool',
         'jobs_init': 'bool',
         'landing_studios': 'bool',
         'mmt_app': 'bool',
@@ -90,11 +89,9 @@ class V1UserFeatures(object):
         'show_dev_admin': 'bool',
         'show_quotas': 'bool',
         'slurm': 'bool',
-        'studio_about_tab': 'bool',
         'studio_publication': 'bool',
         'tensorboard_plugin': 'bool',
         'tier_override': 'str',
-        'tired_proxy_dataconnection': 'bool',
         'writable_data_connections': 'bool'
     }
 
@@ -114,7 +111,6 @@ class V1UserFeatures(object):
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'filesystem_optimisation': 'filesystemOptimisation',
         'interruptible_instances': 'interruptibleInstances',
-        'jobs_filesystem': 'jobsFilesystem',
         'jobs_init': 'jobsInit',
         'landing_studios': 'landingStudios',
         'mmt_app': 'mmtApp',
@@ -148,15 +144,13 @@ class V1UserFeatures(object):
         'show_dev_admin': 'showDevAdmin',
         'show_quotas': 'showQuotas',
         'slurm': 'slurm',
-        'studio_about_tab': 'studioAboutTab',
         'studio_publication': 'studioPublication',
         'tensorboard_plugin': 'tensorboardPlugin',
         'tier_override': 'tierOverride',
-        'tired_proxy_dataconnection': 'tiredProxyDataconnection',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_filesystem: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_browser: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_gradio: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_os_menu: 'bool' =None, plugin_react: 'bool' =None, plugin_streamlit: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, studio_about_tab: 'bool' =None, studio_publication: 'bool' =None, tensorboard_plugin: 'bool' =None, tier_override: 'str' =None, tired_proxy_dataconnection: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_browser: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_gradio: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_os_menu: 'bool' =None, plugin_react: 'bool' =None, plugin_streamlit: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, tensorboard_plugin: 'bool' =None, tier_override: 'str' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._aws_trainium = None
         self._b2c_experience = None
@@ -173,7 +167,6 @@ class V1UserFeatures(object):
         self._enable_crypto_crackdown = None
         self._filesystem_optimisation = None
         self._interruptible_instances = None
-        self._jobs_filesystem = None
         self._jobs_init = None
         self._landing_studios = None
         self._mmt_app = None
@@ -207,11 +200,9 @@ class V1UserFeatures(object):
         self._show_dev_admin = None
         self._show_quotas = None
         self._slurm = None
-        self._studio_about_tab = None
         self._studio_publication = None
         self._tensorboard_plugin = None
         self._tier_override = None
-        self._tired_proxy_dataconnection = None
         self._writable_data_connections = None
         self.discriminator = None
         if aws_trainium is not None:
@@ -244,8 +235,6 @@ class V1UserFeatures(object):
             self.filesystem_optimisation = filesystem_optimisation
         if interruptible_instances is not None:
             self.interruptible_instances = interruptible_instances
-        if jobs_filesystem is not None:
-            self.jobs_filesystem = jobs_filesystem
         if jobs_init is not None:
             self.jobs_init = jobs_init
         if landing_studios is not None:
@@ -312,16 +301,12 @@ class V1UserFeatures(object):
             self.show_quotas = show_quotas
         if slurm is not None:
             self.slurm = slurm
-        if studio_about_tab is not None:
-            self.studio_about_tab = studio_about_tab
         if studio_publication is not None:
             self.studio_publication = studio_publication
         if tensorboard_plugin is not None:
             self.tensorboard_plugin = tensorboard_plugin
         if tier_override is not None:
             self.tier_override = tier_override
-        if tired_proxy_dataconnection is not None:
-            self.tired_proxy_dataconnection = tired_proxy_dataconnection
         if writable_data_connections is not None:
             self.writable_data_connections = writable_data_connections
 
@@ -639,27 +624,6 @@ class V1UserFeatures(object):
         """
 
         self._interruptible_instances = interruptible_instances
-
-    @property
-    def jobs_filesystem(self) -> 'bool':
-        """Gets the jobs_filesystem of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The jobs_filesystem of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._jobs_filesystem
-
-    @jobs_filesystem.setter
-    def jobs_filesystem(self, jobs_filesystem: 'bool'):
-        """Sets the jobs_filesystem of this V1UserFeatures.
-
-
-        :param jobs_filesystem: The jobs_filesystem of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._jobs_filesystem = jobs_filesystem
 
     @property
     def jobs_init(self) -> 'bool':
@@ -1355,27 +1319,6 @@ class V1UserFeatures(object):
         self._slurm = slurm
 
     @property
-    def studio_about_tab(self) -> 'bool':
-        """Gets the studio_about_tab of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The studio_about_tab of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._studio_about_tab
-
-    @studio_about_tab.setter
-    def studio_about_tab(self, studio_about_tab: 'bool'):
-        """Sets the studio_about_tab of this V1UserFeatures.
-
-
-        :param studio_about_tab: The studio_about_tab of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._studio_about_tab = studio_about_tab
-
-    @property
     def studio_publication(self) -> 'bool':
         """Gets the studio_publication of this V1UserFeatures.  # noqa: E501
 
@@ -1437,27 +1380,6 @@ class V1UserFeatures(object):
         """
 
         self._tier_override = tier_override
-
-    @property
-    def tired_proxy_dataconnection(self) -> 'bool':
-        """Gets the tired_proxy_dataconnection of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The tired_proxy_dataconnection of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._tired_proxy_dataconnection
-
-    @tired_proxy_dataconnection.setter
-    def tired_proxy_dataconnection(self, tired_proxy_dataconnection: 'bool'):
-        """Sets the tired_proxy_dataconnection of this V1UserFeatures.
-
-
-        :param tired_proxy_dataconnection: The tired_proxy_dataconnection of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._tired_proxy_dataconnection = tired_proxy_dataconnection
 
     @property
     def writable_data_connections(self) -> 'bool':
