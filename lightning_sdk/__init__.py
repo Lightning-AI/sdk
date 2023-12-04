@@ -5,4 +5,4 @@ from lightning_sdk.studio import Studio
 
 __all__ = ["JobsPlugin", "Machine", "MultiMachineTrainingPlugin", "Plugin", "Status", "Studio"]
 
-__version__ = "0.0.8alpha"
+__version__ = "0.0.9alpha"
