@@ -285,6 +285,11 @@ def internal_studio_api_mocker_run_command(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
         autospec=True,
+        return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output="Command Started Successfully"),
+    )
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space",
+        autospec=True,
         return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output=" foo-response bar-response "),
     )
 
@@ -745,6 +750,12 @@ def internal_studio_run_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
         autospec=True,
+        return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output="Successfully submitted"),
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space",
+        autospec=True,
         return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output=" foo-response bar-response "),
     )
 
@@ -768,30 +779,13 @@ def internal_studio_run_error_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
         autospec=True,
+        return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output="Submitted Successfully"),
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space",
+        autospec=True,
         return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=1, output=" No such file or directory foo "),
-    )
-
-    yield [mocker]
-
-    mocker.resetall()
-
-
-@pytest.fixture()
-def internal_studio_run_timeout_error_mocker(mocker):
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
-        return_value=V1GetCloudSpaceInstanceStatusResponse(
-            in_use=Externalv1CloudSpaceInstanceStatus(
-                phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"
-            )
-        ),
-        autospec=True,
-    )
-
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
-        autospec=True,
-        side_effect=ApiException(status=524),
     )
 
     yield [mocker]
