@@ -20,7 +20,7 @@
 from __future__ import absolute_import
 
 import re  # noqa: F401
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 # python 2 and python 3 compatibility library
 import six
@@ -968,39 +968,39 @@ class OrganizationsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def organizations_service_get_organization(self, id: 'str' = None, name: 'str' = None, **kwargs) -> 'V1Organization':  # noqa: E501
-        """GetOrganization returns the organization with the given ID or name.  # noqa: E501
+    def organizations_service_get_organization(self, id: 'str', **kwargs) -> 'V1Organization':  # noqa: E501
+        """GetOrganization returns the organization with the given ID.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.organizations_service_get_organization(id, name, async_req=True)
+        >>> thread = api.organizations_service_get_organization(id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (optional)
-        :param str name: (optional)
+        :param str id: (required)
+        :param str name:
         :return: V1Organization
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.organizations_service_get_organization_with_http_info(id, name, **kwargs)  # noqa: E501
+            return self.organizations_service_get_organization_with_http_info(id, **kwargs)  # noqa: E501
         else:
-            (data) = self.organizations_service_get_organization_with_http_info(id, name, **kwargs)  # noqa: E501
+            (data) = self.organizations_service_get_organization_with_http_info(id, **kwargs)  # noqa: E501
             return data
 
-    def organizations_service_get_organization_with_http_info(self, id: 'str' = None, name: 'str' = None, **kwargs) -> 'V1Organization':  # noqa: E501
+    def organizations_service_get_organization_with_http_info(self, id: 'str', **kwargs) -> 'V1Organization':  # noqa: E501
         """GetOrganization returns the organization with the given ID.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.organizations_service_get_organization_with_http_info(id, name, async_req=True)
+        >>> thread = api.organizations_service_get_organization_with_http_info(id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id
-        :param str name
+        :param str id: (required)
+        :param str name:
         :return: V1Organization
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1022,9 +1022,9 @@ class OrganizationsServiceApi(object):
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'id' is set
-        if (('id' not in params or params['id'] is None) and
-            ('name' not in params or params['name'] is None)):
-            raise ValueError("Either `id` or `name` is required when calling `organizations_service_get_organization`")  # noqa: E501
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `organizations_service_get_organization`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1049,12 +1049,8 @@ class OrganizationsServiceApi(object):
         # Authentication setting
         auth_settings = []  # noqa: E501
 
-        path = '/v1/orgs/'
-        if id is not None:
-            path = path + id
-
         return self.api_client.call_api(
-            path, 'GET',
+            '/v1/orgs/{id}', 'GET',
             path_params,
             query_params,
             header_params,

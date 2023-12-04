@@ -84,6 +84,7 @@ class V1UserFeatures(object):
         'product_generator': 'bool',
         'project_selector': 'bool',
         'publish_ai_app': 'bool',
+        'quests': 'bool',
         'restart_ide_on_hang': 'bool',
         'restartable_jobs': 'bool',
         'show_dev_admin': 'bool',
@@ -139,6 +140,7 @@ class V1UserFeatures(object):
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
         'publish_ai_app': 'publishAiApp',
+        'quests': 'quests',
         'restart_ide_on_hang': 'restartIdeOnHang',
         'restartable_jobs': 'restartableJobs',
         'show_dev_admin': 'showDevAdmin',
@@ -150,7 +152,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_browser: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_gradio: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_os_menu: 'bool' =None, plugin_react: 'bool' =None, plugin_streamlit: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, tensorboard_plugin: 'bool' =None, tier_override: 'str' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_browser: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_gradio: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_os_menu: 'bool' =None, plugin_react: 'bool' =None, plugin_streamlit: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, tensorboard_plugin: 'bool' =None, tier_override: 'str' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._aws_trainium = None
         self._b2c_experience = None
@@ -195,6 +197,7 @@ class V1UserFeatures(object):
         self._product_generator = None
         self._project_selector = None
         self._publish_ai_app = None
+        self._quests = None
         self._restart_ide_on_hang = None
         self._restartable_jobs = None
         self._show_dev_admin = None
@@ -291,6 +294,8 @@ class V1UserFeatures(object):
             self.project_selector = project_selector
         if publish_ai_app is not None:
             self.publish_ai_app = publish_ai_app
+        if quests is not None:
+            self.quests = quests
         if restart_ide_on_hang is not None:
             self.restart_ide_on_hang = restart_ide_on_hang
         if restartable_jobs is not None:
@@ -1212,6 +1217,27 @@ class V1UserFeatures(object):
         """
 
         self._publish_ai_app = publish_ai_app
+
+    @property
+    def quests(self) -> 'bool':
+        """Gets the quests of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The quests of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._quests
+
+    @quests.setter
+    def quests(self, quests: 'bool'):
+        """Sets the quests of this V1UserFeatures.
+
+
+        :param quests: The quests of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._quests = quests
 
     @property
     def restart_ide_on_hang(self) -> 'bool':
