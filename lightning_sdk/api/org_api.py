@@ -16,7 +16,7 @@ class OrgApi:
 
     def get_org(self, name: str) -> V1Organization:
         """Gets the organization from the given name."""
-        res = self._client.organizations_service_get_organization(name=name)
+        res = self._client.organizations_service_get_organization(id="", name=name)
         if not res:
             raise ValueError(f"Org {name} does not exist")
         return res
