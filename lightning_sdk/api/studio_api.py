@@ -420,7 +420,7 @@ class StudioApi:
         return resp.plugins
 
     def create_job(
-        self, entrypoint: str, name: str, cloud_compute: Machine, studio_id: str, teamspace_id: str, cluster_id: str
+        self, entrypoint: str, name: str, machine: Machine, studio_id: str, teamspace_id: str, cluster_id: str
     ) -> Externalv1LightningappInstance:
         """Creates a job with given commands."""
         return self._create_app(
@@ -430,7 +430,7 @@ class StudioApi:
             plugin_type="job",
             entrypoint=entrypoint,
             name=name,
-            compute=_MACHINE_TO_COMPUTE_NAME[cloud_compute],
+            compute=_MACHINE_TO_COMPUTE_NAME[machine],
         )
 
     def create_multi_machine_job(
@@ -438,7 +438,7 @@ class StudioApi:
         entrypoint: str,
         name: str,
         num_instances: int,
-        cloud_compute: Machine,
+        machine: Machine,
         strategy: str,
         studio_id: str,
         teamspace_id: str,
@@ -446,7 +446,7 @@ class StudioApi:
     ) -> Externalv1LightningappInstance:
         """Creates a multi-machine job with given commands."""
         distributed_args = {
-            "cloud_compute": _MACHINE_TO_COMPUTE_NAME[cloud_compute],
+            "cloud_compute": _MACHINE_TO_COMPUTE_NAME[machine],
             "num_instances": num_instances,
             "strategy": strategy,
         }
@@ -465,14 +465,14 @@ class StudioApi:
         entrypoint: str,
         name: str,
         num_instances: int,
-        cloud_compute: Machine,
+        machine: Machine,
         studio_id: str,
         teamspace_id: str,
         cluster_id: str,
     ) -> Externalv1LightningappInstance:
         """Creates a multi-machine job with given commands."""
         data_prep_args = {
-            "cloud_compute": _MACHINE_TO_COMPUTE_NAME[cloud_compute],
+            "cloud_compute": _MACHINE_TO_COMPUTE_NAME[machine],
             "num_instances": num_instances,
         }
         return self._create_app(
@@ -489,7 +489,7 @@ class StudioApi:
         self,
         entrypoint: str,
         name: str,
-        cloud_compute: Machine,
+        machine: Machine,
         min_replicas: str,
         max_replicas: str,
         max_batch_size: str,
@@ -507,7 +507,7 @@ class StudioApi:
             teamspace_id=teamspace_id,
             cluster_id=cluster_id,
             plugin_type="inference_plugin",
-            compute=_MACHINE_TO_COMPUTE_NAME[cloud_compute],
+            compute=_MACHINE_TO_COMPUTE_NAME[machine],
             entrypoint=entrypoint,
             name=name,
             min_replicas=min_replicas,

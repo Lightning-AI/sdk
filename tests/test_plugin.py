@@ -29,7 +29,10 @@ def test_run_job(internal_studio_init_mocker, internal_studio_status_mocker, int
         "jobs", "Launch asynchronous scripts from a Studio - Like submitting a job to a cluster", studio
     )
 
-    plugin.run(command="python my-file.py", name="my-fancy-job-name", cloud_compute=cloud_compute)
+    with pytest.deprecated_call():
+        plugin.run(command="python my-file.py", name="my-fancy-job-name", cloud_compute=cloud_compute)
+
+    plugin.run(command="python my-file.py", name="my-fancy-job-name", machine=cloud_compute)
 
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
@@ -39,7 +42,10 @@ def test_run_mmt(internal_studio_init_mocker, internal_studio_status_mocker, int
         "multi-machine-training", "Train a model across multiple cloud machines", studio
     )
 
-    plugin.run(command="python my-file.py", name="my-fancy-mmt-name", num_instances=42, cloud_compute=cloud_compute)
+    with pytest.deprecated_call():
+        plugin.run(command="python my-file.py", name="my-fancy-mmt-name", num_instances=42, cloud_compute=cloud_compute)
+
+    plugin.run(command="python my-file.py", name="my-fancy-mmt-name", num_instances=42, machine=cloud_compute)
 
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
@@ -48,6 +54,20 @@ def test_run_inference(
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     plugin = InferenceServerPlugin("inference-server", "Deploy an ML model accessible via API", studio)
+
+    with pytest.deprecated_call():
+        plugin.run(
+            command="python my-file.py",
+            name="my-fancy-inference-name",
+            min_replicas=1,
+            max_replicas=5,
+            max_batch_size=10,
+            timeout_batching=0.3,
+            scale_in_interval=11,
+            scale_out_interval=12,
+            endpoint="/fancy-predict",
+            cloud_compute=cloud_compute,
+        )
 
     plugin.run(
         command="python my-file.py",
@@ -59,7 +79,7 @@ def test_run_inference(
         scale_in_interval=11,
         scale_out_interval=12,
         endpoint="/fancy-predict",
-        cloud_compute=cloud_compute,
+        machine=cloud_compute,
     )
 
 
@@ -84,6 +104,9 @@ def test_run_data_prep(
         "multi-machine-training", "Train a model across multiple cloud machines", studio
     )
 
-    plugin.run(
-        command="python my-file.py", name="my-fancy-data-prep-name", num_instances=42, cloud_compute=cloud_compute
-    )
+    with pytest.deprecated_call():
+        plugin.run(
+            command="python my-file.py", name="my-fancy-data-prep-name", num_instances=42, cloud_compute=cloud_compute
+        )
+
+    plugin.run(command="python my-file.py", name="my-fancy-data-prep-name", num_instances=42, machine=cloud_compute)

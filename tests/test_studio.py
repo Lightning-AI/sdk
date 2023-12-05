@@ -232,7 +232,10 @@ def test_run_job(internal_studio_init_mocker, internal_studio_status_mocker, int
         )
     }
 
-    studio.run_plugin("jobs", command="python my-file.py", name="my-fancy-job-name", cloud_compute=cloud_compute)
+    with pytest.deprecated_call():
+        studio.run_plugin("jobs", command="python my-file.py", name="my-fancy-job-name", cloud_compute=cloud_compute)
+
+    studio.run_plugin("jobs", command="python my-file.py", name="my-fancy-job-name", machine=cloud_compute)
 
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
@@ -244,12 +247,21 @@ def test_run_mmt(internal_studio_init_mocker, internal_studio_status_mocker, int
         )
     }
 
+    with pytest.deprecated_call():
+        studio.run_plugin(
+            "multi-machine-training",
+            command="python my-file.py",
+            name="my-fancy-mmt-name",
+            num_instances=42,
+            cloud_compute=cloud_compute,
+        )
+
     studio.run_plugin(
         "multi-machine-training",
         command="python my-file.py",
         name="my-fancy-mmt-name",
         num_instances=42,
-        cloud_compute=cloud_compute,
+        machine=cloud_compute,
     )
 
 
@@ -264,12 +276,21 @@ def test_run_data_prep(
         )
     }
 
+    with pytest.deprecated_call():
+        studio.run_plugin(
+            "data-prep",
+            command="python my-file.py",
+            name="my-fancy-data-prep-name",
+            num_instances=42,
+            cloud_compute=cloud_compute,
+        )
+
     studio.run_plugin(
         "data-prep",
         command="python my-file.py",
         name="my-fancy-data-prep-name",
         num_instances=42,
-        cloud_compute=cloud_compute,
+        machine=cloud_compute,
     )
 
 
@@ -282,6 +303,21 @@ def test_run_inference(
         "inference-server": InferenceServerPlugin("inference-server", "Deploy an ML model accessible via API", studio)
     }
 
+    with pytest.deprecated_call():
+        studio.run_plugin(
+            "inference-server",
+            command="python my-file.py",
+            name="my-fancy-inference-name",
+            min_replicas=1,
+            max_replicas=5,
+            max_batch_size=10,
+            timeout_batching=0.3,
+            scale_in_interval=11,
+            scale_out_interval=12,
+            endpoint="/fancy-predict",
+            cloud_compute=cloud_compute,
+        )
+
     studio.run_plugin(
         "inference-server",
         command="python my-file.py",
@@ -293,7 +329,7 @@ def test_run_inference(
         scale_in_interval=11,
         scale_out_interval=12,
         endpoint="/fancy-predict",
-        cloud_compute=cloud_compute,
+        machine=cloud_compute,
     )
 
 

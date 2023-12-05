@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional, Protocol, runtime_checkable
 
 from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
-from lightning_sdk.utils import _setup_logger
+from lightning_sdk.utils import _resolve_deprecated_cloud_compute, _setup_logger
 
 if TYPE_CHECKING:
     from lightning_sdk.lightning_cloud.openapi import Externalv1LightningappInstance
@@ -106,15 +106,19 @@ class JobsPlugin(_Plugin):
         self,
         command: str,
         name: Optional[str] = None,
-        cloud_compute: Machine = Machine.CPU,
+        machine: Machine = Machine.CPU,
+        cloud_compute: Optional[Machine] = None,
     ) -> "Externalv1LightningappInstance":
         """Launches an asynchronous job."""
         if name is None:
             name = _run_name("job")
+
+        machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
+
         resp = self._studio._studio_api.create_job(
             entrypoint=command,
             name=name,
-            cloud_compute=cloud_compute,
+            machine=machine,
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
             cluster_id=self._studio._studio.cluster_id,
@@ -134,7 +138,8 @@ class MultiMachineTrainingPlugin(_Plugin):
         self,
         command: str,
         name: Optional[str] = None,
-        cloud_compute: Machine = Machine.CPU,
+        machine: Machine = Machine.CPU,
+        cloud_compute: Optional[Machine] = None,
         num_instances: int = 2,
         strategy: str = "parallel",
     ) -> "Externalv1LightningappInstance":
@@ -142,12 +147,14 @@ class MultiMachineTrainingPlugin(_Plugin):
         if name is None:
             name = _run_name("dist-run")
 
+        machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
+
         # TODO: assert num_instances >=2
         resp = self._studio._studio_api.create_multi_machine_job(
             entrypoint=command,
             name=name,
             num_instances=num_instances,
-            cloud_compute=cloud_compute,
+            machine=machine,
             strategy=strategy,
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
@@ -168,18 +175,21 @@ class MultiMachineDataPrepPlugin(_Plugin):
         self,
         command: str,
         name: Optional[str] = None,
-        cloud_compute: Machine = Machine.CPU,
+        machine: Machine = Machine.CPU,
+        cloud_compute: Optional[Machine] = None,
         num_instances: int = 2,
     ) -> "Externalv1LightningappInstance":
         """Launches an asynchronous multi-machine-processing-job."""
         if name is None:
             name = _run_name("data-prep")
 
+        machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
+
         resp = self._studio._studio_api.create_data_prep_machine_job(
             entrypoint=command,
             name=name,
             num_instances=num_instances,
-            cloud_compute=cloud_compute,
+            machine=machine,
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
             cluster_id=self._studio._studio.cluster_id,
@@ -199,7 +209,8 @@ class InferenceServerPlugin(_Plugin):
         self,
         command: str,
         name: Optional[str] = None,
-        cloud_compute: Machine = Machine.CPU,
+        machine: Machine = Machine.CPU,
+        cloud_compute: Optional[Machine] = None,
         min_replicas: int = 1,
         max_replicas: int = 10,
         scale_out_interval: int = 10,
@@ -212,10 +223,12 @@ class InferenceServerPlugin(_Plugin):
         if name is None:
             name = _run_name("inference-run")
 
+        machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
+
         resp = self._studio._studio_api.create_inference_job(
             entrypoint=command,
             name=name,
-            cloud_compute=cloud_compute,
+            machine=machine,
             min_replicas=str(min_replicas),
             max_replicas=str(max_replicas),
             max_batch_size=str(max_batch_size),
@@ -238,7 +251,12 @@ class _RunnablePlugin(Protocol):
     _slug_name: str
 
     def run(
-        self, command: str, name: Optional[str] = None, cloud_compute: Machine = Machine.CPU, **kwargs: Any
+        self,
+        command: str,
+        name: Optional[str] = None,
+        machine: Machine = Machine.CPU,
+        cloud_compute: Optional[Machine] = None,
+        **kwargs: Any,
     ) -> "Externalv1LightningappInstance":
         ...
 
