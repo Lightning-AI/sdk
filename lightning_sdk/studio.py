@@ -114,8 +114,11 @@ class Studio:
 
         # make sure all plugins that should be installed are actually installed
         all_installed_plugins = self._list_installed_plugins()
+        available_plugins = self.available_plugins
         for k in all_installed_plugins:
-            self.install_plugin(k)
+            # check if plugin is available for user to prevent issues on duplication
+            if k in available_plugins:
+                self._add_plugin(k)
 
         self._setup_done = True
 

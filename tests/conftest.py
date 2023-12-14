@@ -501,6 +501,12 @@ def internal_studio_init_mocker(mocker, internal_get_org_api_mocker, internal_te
         return_type=V1PluginsListResponse(),
     )
 
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
+        return_value=V1PluginsListResponse(),
+        autospec=True,
+    )
+
     yield [mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker]
 
     mocker.resetall()
@@ -1039,9 +1045,28 @@ def internal_studio_init_plugin_mocker(mocker, internal_get_org_api_mocker, inte
     )
     mocker.patch("requests.put")
 
+    return_value = V1PluginsListResponse(plugins={"my-fancy-dummy-plugin": "Description of my fancy dummy plugin"})
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
+        return_value=return_value,
+        autospec=True,
+    )
+
     yield [mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker]
 
     mocker.resetall()
+
+
+@pytest.fixture
+def internal_studio_installed_plugins_mocker(mocker):
+    return_value = V1PluginsListResponse(plugins={"my-fancy-dummy-plugin": "Description of my fancy dummy plugin"})
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
+        return_value=return_value,
+        autospec=True,
+    )
+
+    yield [mocker]
 
 
 @pytest.fixture

@@ -192,6 +192,17 @@ def test_install_plugin(
     }
 
 
+def test_installed_plugins_from_db(
+    internal_studio_init_plugin_mocker, internal_studio_status_mocker, internal_studio_installed_plugins_mocker
+):
+    studio = Studio("st-ghi", "ts-abc", "org-abc")
+    studio.start()
+
+    assert studio.installed_plugins == {
+        "my-fancy-dummy-plugin": Plugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio)
+    }
+
+
 def test_uninstall_plugin(
     internal_studio_init_plugin_mocker, internal_studio_status_mocker, internal_studio_plugin_uninstall_mocker
 ):
