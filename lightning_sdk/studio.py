@@ -164,16 +164,22 @@ class Studio:
             return None
         return self._studio_api.get_machine(self._studio.id, self._teamspace.id)
 
-    def start(self) -> None:
-        """Starts a Studio on the default machine type (CPU-4)."""
+    def start(self, machine: Machine = Machine.CPU) -> None:
+        """Starts a Studio on the specified machine type (default: CPU-4)."""
         status = self.status
         if status == Status.Running:
+            curr_machine = self.machine
+            if curr_machine != machine:
+                raise RuntimeError(
+                    f"Requested to start studio on {machine}, but studio is already running on {curr_machine}."
+                    " Consider switching instead!"
+                )
             _logger.info(f"Studio {self.name} is already running")
             return
 
         if status != Status.Stopped:
             raise RuntimeError(f"Cannot start a studio that is not stopped. Studio {self.name} is {status}.")
-        self._studio_api.start_studio(self._studio.id, self._teamspace.id)
+        self._studio_api.start_studio(self._studio.id, self._teamspace.id, machine)
 
         self._setup()
 

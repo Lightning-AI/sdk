@@ -28,6 +28,7 @@ s.start()
 # prints Machine.CPU-4
 print(s.machine)
 
+# or start directly on this machine with s.start(Machine.A10G)
 print("switching Studio machine...")
 s.switch_machine(Machine.A10G)
 

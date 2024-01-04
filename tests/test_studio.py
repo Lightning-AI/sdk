@@ -64,6 +64,32 @@ def test_studio_start(internal_studio_start_mocker, internal_studio_init_mocker)
     assert studio.machine is not None
 
 
+def test_studio_start_different_machine(internal_studio_start_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    assert studio.status == Status.Stopped
+    assert studio.machine is None
+
+    studio.start(Machine.T4)
+
+    assert studio.status == Status.Running
+    assert studio.machine is not None
+
+
+def test_studio_start_wrong_machine(
+    internal_studio_init_plugin_mocker,
+    internal_studio_status_mocker,
+    internal_studio_api_mocker_get_machine,
+    internal_studio_installed_plugins_mocker,
+):
+    studio = Studio("st-ghi", "ts-abc", "org-abc")
+
+    with pytest.raises(
+        RuntimeError,
+        match=f"Requested to start studio on {Machine.A10G}, but studio is already running on {Machine.T4}. Consider switching instead!",
+    ):
+        studio.start(Machine.A10G)
+
+
 def test_studio_stop(internal_studio_stop_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     assert studio.status == Status.Running
@@ -193,10 +219,13 @@ def test_install_plugin(
 
 
 def test_installed_plugins_from_db(
-    internal_studio_init_plugin_mocker, internal_studio_status_mocker, internal_studio_installed_plugins_mocker
+    internal_studio_init_plugin_mocker,
+    internal_studio_status_mocker,
+    internal_studio_installed_plugins_mocker,
+    internal_studio_api_mocker_get_machine,
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
-    studio.start()
+    studio.start(Machine.T4)
 
     assert studio.installed_plugins == {
         "my-fancy-dummy-plugin": Plugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio)

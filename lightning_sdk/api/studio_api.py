@@ -127,8 +127,11 @@ class StudioApi:
             id=studio_id,
         )
 
-    def start_studio(self, studio_id: str, teamspace_id: str) -> None:
+    def start_studio(self, studio_id: str, teamspace_id: str, machine: Machine) -> None:
         """Start an existing Studio."""
+        if machine != machine.CPU:
+            self._request_switch(studio_id=studio_id, teamspace_id=teamspace_id, machine=machine)
+
         self._client.cloud_space_service_start_cloud_space_instance(teamspace_id, studio_id)
 
         while self.get_studio_status(studio_id, teamspace_id).in_use.sync_in_progress:
@@ -165,7 +168,7 @@ class StudioApi:
 
         return internal_status.phase
 
-    def switch_studio_machine(self, studio_id: str, teamspace_id: str, machine: Machine) -> None:
+    def _request_switch(self, studio_id: str, teamspace_id: str, machine: Machine) -> None:
         """Switches given Studio to a new machine type."""
         compute_name = _MACHINE_TO_COMPUTE_NAME[machine]
         # TODO: UI sends disk size here, maybe we need to also?
@@ -175,6 +178,10 @@ class StudioApi:
             project_id=teamspace_id,
             body=body,
         )
+
+    def switch_studio_machine(self, studio_id: str, teamspace_id: str, machine: Machine) -> None:
+        """Switches given Studio to a new machine type."""
+        self._request_switch(studio_id=studio_id, teamspace_id=teamspace_id, machine=machine)
 
         while int(self.get_studio_status(studio_id, teamspace_id).requested.startup_percentage) < 100:
             time.sleep(1)
@@ -243,7 +250,7 @@ class StudioApi:
         init_kwargs["name"] = new_cloudspace.name
         init_kwargs["teamspace"] = target_teamspace.name
 
-        self.start_studio(new_cloudspace.id, target_teamspace_id)
+        self.start_studio(new_cloudspace.id, target_teamspace_id, Machine.CPU)
         return init_kwargs
 
     def delete_studio(self, studio_id: str, teamspace_id: str) -> None:

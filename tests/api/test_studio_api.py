@@ -67,7 +67,7 @@ def test_switch_studio_machine_wrong_machine(internal_studio_api_mocker_switch_m
 
 def test_start_studio(internal_studio_api_mocker_start_studio):
     studio_api = StudioApi()
-    studio_api.start_studio("st-abc", "ts-abc")
+    studio_api.start_studio("st-abc", "ts-abc", Machine.CPU)
 
 
 def test_stop_studio(internal_studio_api_mocker_stop_studio, internal_studio_api_mocker_studio_status):
