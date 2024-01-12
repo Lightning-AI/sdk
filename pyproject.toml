@@ -36,9 +36,6 @@ version = {attr = "lightning_sdk.__version__"}
 [tool.setuptools.packages.find]
 exclude = ["tests*", "examples*"]
 
-[project.urls]
-repository = "https://github.com/gridai/lightning-sdk"
-
 [tool.black]
 # https://github.com/psf/black
 line-length = 120
