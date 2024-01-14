@@ -48,6 +48,7 @@ class IdEndpointBody(object):
         'name': 'str',
         'openai': 'V1UpstreamOpenAI',
         'ports': 'list[str]',
+        'prewarm': 'V1EndpointPrewarm',
         'updated_at': 'datetime',
         'user_id': 'str'
     }
@@ -60,11 +61,12 @@ class IdEndpointBody(object):
         'name': 'name',
         'openai': 'openai',
         'ports': 'ports',
+        'prewarm': 'prewarm',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """IdEndpointBody - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
@@ -73,6 +75,7 @@ class IdEndpointBody(object):
         self._name = None
         self._openai = None
         self._ports = None
+        self._prewarm = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
@@ -90,6 +93,8 @@ class IdEndpointBody(object):
             self.openai = openai
         if ports is not None:
             self.ports = ports
+        if prewarm is not None:
+            self.prewarm = prewarm
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -241,6 +246,27 @@ class IdEndpointBody(object):
         """
 
         self._ports = ports
+
+    @property
+    def prewarm(self) -> 'V1EndpointPrewarm':
+        """Gets the prewarm of this IdEndpointBody.  # noqa: E501
+
+
+        :return: The prewarm of this IdEndpointBody.  # noqa: E501
+        :rtype: V1EndpointPrewarm
+        """
+        return self._prewarm
+
+    @prewarm.setter
+    def prewarm(self, prewarm: 'V1EndpointPrewarm'):
+        """Sets the prewarm of this IdEndpointBody.
+
+
+        :param prewarm: The prewarm of this IdEndpointBody.  # noqa: E501
+        :type: V1EndpointPrewarm
+        """
+
+        self._prewarm = prewarm
 
     @property
     def updated_at(self) -> 'datetime':

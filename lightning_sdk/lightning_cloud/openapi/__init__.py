@@ -247,6 +247,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_drive_type_status import V1
 from lightning_sdk.lightning_cloud.openapi.models.v1_eks_custer_driver_status import V1EKSCusterDriverStatus
 from lightning_sdk.lightning_cloud.openapi.models.v1_endpoint import V1Endpoint
 from lightning_sdk.lightning_cloud.openapi.models.v1_endpoint_auth import V1EndpointAuth
+from lightning_sdk.lightning_cloud.openapi.models.v1_endpoint_prewarm import V1EndpointPrewarm
 from lightning_sdk.lightning_cloud.openapi.models.v1_env_var import V1EnvVar
 from lightning_sdk.lightning_cloud.openapi.models.v1_execute_cloud_space_command_response import V1ExecuteCloudSpaceCommandResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_external_kubeconfig import V1ExternalKubeconfig

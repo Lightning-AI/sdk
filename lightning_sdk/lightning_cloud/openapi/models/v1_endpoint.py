@@ -49,6 +49,7 @@ class V1Endpoint(object):
         'name': 'str',
         'openai': 'V1UpstreamOpenAI',
         'ports': 'list[str]',
+        'prewarm': 'V1EndpointPrewarm',
         'project_id': 'str',
         'updated_at': 'datetime',
         'user_id': 'str'
@@ -63,12 +64,13 @@ class V1Endpoint(object):
         'name': 'name',
         'openai': 'openai',
         'ports': 'ports',
+        'prewarm': 'prewarm',
         'project_id': 'projectId',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, id: 'str' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, id: 'str' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Endpoint - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
@@ -78,6 +80,7 @@ class V1Endpoint(object):
         self._name = None
         self._openai = None
         self._ports = None
+        self._prewarm = None
         self._project_id = None
         self._updated_at = None
         self._user_id = None
@@ -98,6 +101,8 @@ class V1Endpoint(object):
             self.openai = openai
         if ports is not None:
             self.ports = ports
+        if prewarm is not None:
+            self.prewarm = prewarm
         if project_id is not None:
             self.project_id = project_id
         if updated_at is not None:
@@ -272,6 +277,27 @@ class V1Endpoint(object):
         """
 
         self._ports = ports
+
+    @property
+    def prewarm(self) -> 'V1EndpointPrewarm':
+        """Gets the prewarm of this V1Endpoint.  # noqa: E501
+
+
+        :return: The prewarm of this V1Endpoint.  # noqa: E501
+        :rtype: V1EndpointPrewarm
+        """
+        return self._prewarm
+
+    @prewarm.setter
+    def prewarm(self, prewarm: 'V1EndpointPrewarm'):
+        """Sets the prewarm of this V1Endpoint.
+
+
+        :param prewarm: The prewarm of this V1Endpoint.  # noqa: E501
+        :type: V1EndpointPrewarm
+        """
+
+        self._prewarm = prewarm
 
     @property
     def project_id(self) -> 'str':
