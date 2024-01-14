@@ -41,13 +41,21 @@ class CloudspacesIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'code_url': 'str',
         'data_connection_mounts': 'list[V1DataConnectionMount]',
         'description': 'str',
         'display_name': 'str',
         'env': 'list[V1EnvVar]',
+        'featured_ranking': 'str',
         'is_cloudspace_private': 'bool',
         'is_code_private': 'bool',
         'is_published': 'bool',
+        'license': 'str',
+        'operating_cost': 'str',
+        'paper_authors': 'str',
+        'paper_org': 'str',
+        'paper_org_avatar_url': 'str',
+        'paper_url': 'str',
         'publish_with_compute_name': 'str',
         'tags': 'list[V1CloudSpaceTag]',
         'thumbnail': 'str',
@@ -56,13 +64,21 @@ class CloudspacesIdBody(object):
     }
 
     attribute_map = {
+        'code_url': 'codeUrl',
         'data_connection_mounts': 'dataConnectionMounts',
         'description': 'description',
         'display_name': 'displayName',
         'env': 'env',
+        'featured_ranking': 'featuredRanking',
         'is_cloudspace_private': 'isCloudspacePrivate',
         'is_code_private': 'isCodePrivate',
         'is_published': 'isPublished',
+        'license': 'license',
+        'operating_cost': 'operatingCost',
+        'paper_authors': 'paperAuthors',
+        'paper_org': 'paperOrg',
+        'paper_org_avatar_url': 'paperOrgAvatarUrl',
+        'paper_url': 'paperUrl',
         'publish_with_compute_name': 'publishWithComputeName',
         'tags': 'tags',
         'thumbnail': 'thumbnail',
@@ -70,21 +86,31 @@ class CloudspacesIdBody(object):
         'user_metadata': 'userMetadata'
     }
 
-    def __init__(self, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
+    def __init__(self, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured_ranking: 'str' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
         """CloudspacesIdBody - a model defined in Swagger"""  # noqa: E501
+        self._code_url = None
         self._data_connection_mounts = None
         self._description = None
         self._display_name = None
         self._env = None
+        self._featured_ranking = None
         self._is_cloudspace_private = None
         self._is_code_private = None
         self._is_published = None
+        self._license = None
+        self._operating_cost = None
+        self._paper_authors = None
+        self._paper_org = None
+        self._paper_org_avatar_url = None
+        self._paper_url = None
         self._publish_with_compute_name = None
         self._tags = None
         self._thumbnail = None
         self._thumbnail_file_type = None
         self._user_metadata = None
         self.discriminator = None
+        if code_url is not None:
+            self.code_url = code_url
         if data_connection_mounts is not None:
             self.data_connection_mounts = data_connection_mounts
         if description is not None:
@@ -93,12 +119,26 @@ class CloudspacesIdBody(object):
             self.display_name = display_name
         if env is not None:
             self.env = env
+        if featured_ranking is not None:
+            self.featured_ranking = featured_ranking
         if is_cloudspace_private is not None:
             self.is_cloudspace_private = is_cloudspace_private
         if is_code_private is not None:
             self.is_code_private = is_code_private
         if is_published is not None:
             self.is_published = is_published
+        if license is not None:
+            self.license = license
+        if operating_cost is not None:
+            self.operating_cost = operating_cost
+        if paper_authors is not None:
+            self.paper_authors = paper_authors
+        if paper_org is not None:
+            self.paper_org = paper_org
+        if paper_org_avatar_url is not None:
+            self.paper_org_avatar_url = paper_org_avatar_url
+        if paper_url is not None:
+            self.paper_url = paper_url
         if publish_with_compute_name is not None:
             self.publish_with_compute_name = publish_with_compute_name
         if tags is not None:
@@ -109,6 +149,27 @@ class CloudspacesIdBody(object):
             self.thumbnail_file_type = thumbnail_file_type
         if user_metadata is not None:
             self.user_metadata = user_metadata
+
+    @property
+    def code_url(self) -> 'str':
+        """Gets the code_url of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The code_url of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._code_url
+
+    @code_url.setter
+    def code_url(self, code_url: 'str'):
+        """Sets the code_url of this CloudspacesIdBody.
+
+
+        :param code_url: The code_url of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._code_url = code_url
 
     @property
     def data_connection_mounts(self) -> 'list[V1DataConnectionMount]':
@@ -195,6 +256,27 @@ class CloudspacesIdBody(object):
         self._env = env
 
     @property
+    def featured_ranking(self) -> 'str':
+        """Gets the featured_ranking of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The featured_ranking of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._featured_ranking
+
+    @featured_ranking.setter
+    def featured_ranking(self, featured_ranking: 'str'):
+        """Sets the featured_ranking of this CloudspacesIdBody.
+
+
+        :param featured_ranking: The featured_ranking of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._featured_ranking = featured_ranking
+
+    @property
     def is_cloudspace_private(self) -> 'bool':
         """Gets the is_cloudspace_private of this CloudspacesIdBody.  # noqa: E501
 
@@ -256,6 +338,132 @@ class CloudspacesIdBody(object):
         """
 
         self._is_published = is_published
+
+    @property
+    def license(self) -> 'str':
+        """Gets the license of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The license of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._license
+
+    @license.setter
+    def license(self, license: 'str'):
+        """Sets the license of this CloudspacesIdBody.
+
+
+        :param license: The license of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._license = license
+
+    @property
+    def operating_cost(self) -> 'str':
+        """Gets the operating_cost of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The operating_cost of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._operating_cost
+
+    @operating_cost.setter
+    def operating_cost(self, operating_cost: 'str'):
+        """Sets the operating_cost of this CloudspacesIdBody.
+
+
+        :param operating_cost: The operating_cost of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._operating_cost = operating_cost
+
+    @property
+    def paper_authors(self) -> 'str':
+        """Gets the paper_authors of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The paper_authors of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._paper_authors
+
+    @paper_authors.setter
+    def paper_authors(self, paper_authors: 'str'):
+        """Sets the paper_authors of this CloudspacesIdBody.
+
+
+        :param paper_authors: The paper_authors of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._paper_authors = paper_authors
+
+    @property
+    def paper_org(self) -> 'str':
+        """Gets the paper_org of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The paper_org of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._paper_org
+
+    @paper_org.setter
+    def paper_org(self, paper_org: 'str'):
+        """Sets the paper_org of this CloudspacesIdBody.
+
+
+        :param paper_org: The paper_org of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._paper_org = paper_org
+
+    @property
+    def paper_org_avatar_url(self) -> 'str':
+        """Gets the paper_org_avatar_url of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The paper_org_avatar_url of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._paper_org_avatar_url
+
+    @paper_org_avatar_url.setter
+    def paper_org_avatar_url(self, paper_org_avatar_url: 'str'):
+        """Sets the paper_org_avatar_url of this CloudspacesIdBody.
+
+
+        :param paper_org_avatar_url: The paper_org_avatar_url of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._paper_org_avatar_url = paper_org_avatar_url
+
+    @property
+    def paper_url(self) -> 'str':
+        """Gets the paper_url of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The paper_url of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._paper_url
+
+    @paper_url.setter
+    def paper_url(self, paper_url: 'str'):
+        """Sets the paper_url of this CloudspacesIdBody.
+
+
+        :param paper_url: The paper_url of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._paper_url = paper_url
 
     @property
     def publish_with_compute_name(self) -> 'str':

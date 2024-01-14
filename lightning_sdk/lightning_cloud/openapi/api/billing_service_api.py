@@ -43,6 +43,103 @@ class BillingServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
+    def billing_service_create_billing_portal_session(self, body: 'V1CreateBillingPortalSessionRequest', **kwargs) -> 'V1CreateBillingPortalSessionResponse':  # noqa: E501
+        """billing_service_create_billing_portal_session  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_create_billing_portal_session(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1CreateBillingPortalSessionRequest body: (required)
+        :return: V1CreateBillingPortalSessionResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.billing_service_create_billing_portal_session_with_http_info(body, **kwargs)  # noqa: E501
+        else:
+            (data) = self.billing_service_create_billing_portal_session_with_http_info(body, **kwargs)  # noqa: E501
+            return data
+
+    def billing_service_create_billing_portal_session_with_http_info(self, body: 'V1CreateBillingPortalSessionRequest', **kwargs) -> 'V1CreateBillingPortalSessionResponse':  # noqa: E501
+        """billing_service_create_billing_portal_session  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_create_billing_portal_session_with_http_info(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1CreateBillingPortalSessionRequest body: (required)
+        :return: V1CreateBillingPortalSessionResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method billing_service_create_billing_portal_session" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `billing_service_create_billing_portal_session`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/billing/portal-session', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CreateBillingPortalSessionResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def billing_service_create_checkout_session(self, body: 'BillingCheckoutBody1', project_id: 'str', **kwargs) -> 'V1CreateCheckoutSessionResponse':  # noqa: E501
         """billing_service_create_checkout_session  # noqa: E501
 
@@ -253,45 +350,43 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def billing_service_create_subscription_checkout_session(self, body: 'SubscriptionCheckoutBody', org_id: 'str', **kwargs) -> 'V1CreateSubscriptionCheckoutSessionResponse':  # noqa: E501
+    def billing_service_create_subscription_checkout_session(self, body: 'V1CreateSubscriptionCheckoutSessionRequest', **kwargs) -> 'V1CreateSubscriptionCheckoutSessionResponse':  # noqa: E501
         """billing_service_create_subscription_checkout_session  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_create_subscription_checkout_session(body, org_id, async_req=True)
+        >>> thread = api.billing_service_create_subscription_checkout_session(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param SubscriptionCheckoutBody body: (required)
-        :param str org_id: (required)
+        :param V1CreateSubscriptionCheckoutSessionRequest body: (required)
         :return: V1CreateSubscriptionCheckoutSessionResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.billing_service_create_subscription_checkout_session_with_http_info(body, org_id, **kwargs)  # noqa: E501
+            return self.billing_service_create_subscription_checkout_session_with_http_info(body, **kwargs)  # noqa: E501
         else:
-            (data) = self.billing_service_create_subscription_checkout_session_with_http_info(body, org_id, **kwargs)  # noqa: E501
+            (data) = self.billing_service_create_subscription_checkout_session_with_http_info(body, **kwargs)  # noqa: E501
             return data
 
-    def billing_service_create_subscription_checkout_session_with_http_info(self, body: 'SubscriptionCheckoutBody', org_id: 'str', **kwargs) -> 'V1CreateSubscriptionCheckoutSessionResponse':  # noqa: E501
+    def billing_service_create_subscription_checkout_session_with_http_info(self, body: 'V1CreateSubscriptionCheckoutSessionRequest', **kwargs) -> 'V1CreateSubscriptionCheckoutSessionResponse':  # noqa: E501
         """billing_service_create_subscription_checkout_session  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_create_subscription_checkout_session_with_http_info(body, org_id, async_req=True)
+        >>> thread = api.billing_service_create_subscription_checkout_session_with_http_info(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param SubscriptionCheckoutBody body: (required)
-        :param str org_id: (required)
+        :param V1CreateSubscriptionCheckoutSessionRequest body: (required)
         :return: V1CreateSubscriptionCheckoutSessionResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['body', 'org_id']  # noqa: E501
+        all_params = ['body']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -310,16 +405,10 @@ class BillingServiceApi(object):
         if ('body' not in params or
                 params['body'] is None):
             raise ValueError("Missing the required parameter `body` when calling `billing_service_create_subscription_checkout_session`")  # noqa: E501
-        # verify the required parameter 'org_id' is set
-        if ('org_id' not in params or
-                params['org_id'] is None):
-            raise ValueError("Missing the required parameter `org_id` when calling `billing_service_create_subscription_checkout_session`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'org_id' in params:
-            path_params['orgId'] = params['org_id']  # noqa: E501
 
         query_params = []
 
@@ -343,7 +432,7 @@ class BillingServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/orgs/{orgId}/billing/subscription/checkout', 'POST',
+            '/v1/billing/subscription/checkout', 'POST',
             path_params,
             query_params,
             header_params,
@@ -358,37 +447,37 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def billing_service_get_billing_subscription(self, org_id: 'str', **kwargs) -> 'V1BillingSubscription':  # noqa: E501
+    def billing_service_get_billing_subscription(self, **kwargs) -> 'V1BillingSubscription':  # noqa: E501
         """Billing subscription endpoint that returns the organization's current subscription and its features  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_get_billing_subscription(org_id, async_req=True)
+        >>> thread = api.billing_service_get_billing_subscription(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id: (required)
+        :param str org_id:
         :return: V1BillingSubscription
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.billing_service_get_billing_subscription_with_http_info(org_id, **kwargs)  # noqa: E501
+            return self.billing_service_get_billing_subscription_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.billing_service_get_billing_subscription_with_http_info(org_id, **kwargs)  # noqa: E501
+            (data) = self.billing_service_get_billing_subscription_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def billing_service_get_billing_subscription_with_http_info(self, org_id: 'str', **kwargs) -> 'V1BillingSubscription':  # noqa: E501
+    def billing_service_get_billing_subscription_with_http_info(self, **kwargs) -> 'V1BillingSubscription':  # noqa: E501
         """Billing subscription endpoint that returns the organization's current subscription and its features  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_get_billing_subscription_with_http_info(org_id, async_req=True)
+        >>> thread = api.billing_service_get_billing_subscription_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id: (required)
+        :param str org_id:
         :return: V1BillingSubscription
                  If the method is called asynchronously,
                  returns the request thread.
@@ -409,18 +498,14 @@ class BillingServiceApi(object):
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'org_id' is set
-        if ('org_id' not in params or
-                params['org_id'] is None):
-            raise ValueError("Missing the required parameter `org_id` when calling `billing_service_get_billing_subscription`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'org_id' in params:
-            path_params['orgId'] = params['org_id']  # noqa: E501
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 
@@ -436,7 +521,7 @@ class BillingServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/orgs/{orgId}/billing/subscription', 'GET',
+            '/v1/billing/subscription', 'GET',
             path_params,
             query_params,
             header_params,
@@ -855,16 +940,16 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def billing_service_quote_subscription(self, org_id: 'str', **kwargs) -> 'V1QuoteSubscriptionResponse':  # noqa: E501
+    def billing_service_quote_subscription(self, **kwargs) -> 'V1QuoteSubscriptionResponse':  # noqa: E501
         """billing_service_quote_subscription  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_quote_subscription(org_id, async_req=True)
+        >>> thread = api.billing_service_quote_subscription(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id: (required)
+        :param str org_id:
         :param str product_id:
         :return: V1QuoteSubscriptionResponse
                  If the method is called asynchronously,
@@ -872,21 +957,21 @@ class BillingServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.billing_service_quote_subscription_with_http_info(org_id, **kwargs)  # noqa: E501
+            return self.billing_service_quote_subscription_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.billing_service_quote_subscription_with_http_info(org_id, **kwargs)  # noqa: E501
+            (data) = self.billing_service_quote_subscription_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def billing_service_quote_subscription_with_http_info(self, org_id: 'str', **kwargs) -> 'V1QuoteSubscriptionResponse':  # noqa: E501
+    def billing_service_quote_subscription_with_http_info(self, **kwargs) -> 'V1QuoteSubscriptionResponse':  # noqa: E501
         """billing_service_quote_subscription  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_quote_subscription_with_http_info(org_id, async_req=True)
+        >>> thread = api.billing_service_quote_subscription_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id: (required)
+        :param str org_id:
         :param str product_id:
         :return: V1QuoteSubscriptionResponse
                  If the method is called asynchronously,
@@ -908,18 +993,14 @@ class BillingServiceApi(object):
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'org_id' is set
-        if ('org_id' not in params or
-                params['org_id'] is None):
-            raise ValueError("Missing the required parameter `org_id` when calling `billing_service_quote_subscription`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'org_id' in params:
-            path_params['orgId'] = params['org_id']  # noqa: E501
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
         if 'product_id' in params:
             query_params.append(('productId', params['product_id']))  # noqa: E501
 
@@ -937,7 +1018,7 @@ class BillingServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/orgs/{orgId}/billing/subscription/quote', 'GET',
+            '/v1/billing/subscription/quote', 'GET',
             path_params,
             query_params,
             header_params,
@@ -1162,45 +1243,43 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def billing_service_update_billing_subscription(self, body: 'BillingSubscriptionBody', org_id: 'str', **kwargs) -> 'V1BillingSubscription':  # noqa: E501
+    def billing_service_update_billing_subscription(self, body: 'V1UpdateBillingSubscriptionRequest', **kwargs) -> 'V1BillingSubscription':  # noqa: E501
         """billing_service_update_billing_subscription  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_update_billing_subscription(body, org_id, async_req=True)
+        >>> thread = api.billing_service_update_billing_subscription(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param BillingSubscriptionBody body: (required)
-        :param str org_id: (required)
+        :param V1UpdateBillingSubscriptionRequest body: (required)
         :return: V1BillingSubscription
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.billing_service_update_billing_subscription_with_http_info(body, org_id, **kwargs)  # noqa: E501
+            return self.billing_service_update_billing_subscription_with_http_info(body, **kwargs)  # noqa: E501
         else:
-            (data) = self.billing_service_update_billing_subscription_with_http_info(body, org_id, **kwargs)  # noqa: E501
+            (data) = self.billing_service_update_billing_subscription_with_http_info(body, **kwargs)  # noqa: E501
             return data
 
-    def billing_service_update_billing_subscription_with_http_info(self, body: 'BillingSubscriptionBody', org_id: 'str', **kwargs) -> 'V1BillingSubscription':  # noqa: E501
+    def billing_service_update_billing_subscription_with_http_info(self, body: 'V1UpdateBillingSubscriptionRequest', **kwargs) -> 'V1BillingSubscription':  # noqa: E501
         """billing_service_update_billing_subscription  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_update_billing_subscription_with_http_info(body, org_id, async_req=True)
+        >>> thread = api.billing_service_update_billing_subscription_with_http_info(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param BillingSubscriptionBody body: (required)
-        :param str org_id: (required)
+        :param V1UpdateBillingSubscriptionRequest body: (required)
         :return: V1BillingSubscription
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['body', 'org_id']  # noqa: E501
+        all_params = ['body']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1219,16 +1298,10 @@ class BillingServiceApi(object):
         if ('body' not in params or
                 params['body'] is None):
             raise ValueError("Missing the required parameter `body` when calling `billing_service_update_billing_subscription`")  # noqa: E501
-        # verify the required parameter 'org_id' is set
-        if ('org_id' not in params or
-                params['org_id'] is None):
-            raise ValueError("Missing the required parameter `org_id` when calling `billing_service_update_billing_subscription`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'org_id' in params:
-            path_params['orgId'] = params['org_id']  # noqa: E501
 
         query_params = []
 
@@ -1252,7 +1325,7 @@ class BillingServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/orgs/{orgId}/billing/subscription', 'PUT',
+            '/v1/billing/subscription', 'PUT',
             path_params,
             query_params,
             header_params,

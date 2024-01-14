@@ -44,25 +44,22 @@ class V1GetProjectBalanceResponse(object):
         'account_id': 'str',
         'balance': 'float',
         'project_id': 'str',
-        'top_ups': 'list[V1TopUp]',
-        'transfers': 'list[V1Transfer]'
+        'transactions': 'list[V1Transaction]'
     }
 
     attribute_map = {
         'account_id': 'accountId',
         'balance': 'balance',
         'project_id': 'projectId',
-        'top_ups': 'topUps',
-        'transfers': 'transfers'
+        'transactions': 'transactions'
     }
 
-    def __init__(self, account_id: 'str' =None, balance: 'float' =None, project_id: 'str' =None, top_ups: 'list[V1TopUp]' =None, transfers: 'list[V1Transfer]' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, balance: 'float' =None, project_id: 'str' =None, transactions: 'list[V1Transaction]' =None):  # noqa: E501
         """V1GetProjectBalanceResponse - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
         self._balance = None
         self._project_id = None
-        self._top_ups = None
-        self._transfers = None
+        self._transactions = None
         self.discriminator = None
         if account_id is not None:
             self.account_id = account_id
@@ -70,10 +67,8 @@ class V1GetProjectBalanceResponse(object):
             self.balance = balance
         if project_id is not None:
             self.project_id = project_id
-        if top_ups is not None:
-            self.top_ups = top_ups
-        if transfers is not None:
-            self.transfers = transfers
+        if transactions is not None:
+            self.transactions = transactions
 
     @property
     def account_id(self) -> 'str':
@@ -139,46 +134,25 @@ class V1GetProjectBalanceResponse(object):
         self._project_id = project_id
 
     @property
-    def top_ups(self) -> 'list[V1TopUp]':
-        """Gets the top_ups of this V1GetProjectBalanceResponse.  # noqa: E501
+    def transactions(self) -> 'list[V1Transaction]':
+        """Gets the transactions of this V1GetProjectBalanceResponse.  # noqa: E501
 
 
-        :return: The top_ups of this V1GetProjectBalanceResponse.  # noqa: E501
-        :rtype: list[V1TopUp]
+        :return: The transactions of this V1GetProjectBalanceResponse.  # noqa: E501
+        :rtype: list[V1Transaction]
         """
-        return self._top_ups
+        return self._transactions
 
-    @top_ups.setter
-    def top_ups(self, top_ups: 'list[V1TopUp]'):
-        """Sets the top_ups of this V1GetProjectBalanceResponse.
-
-
-        :param top_ups: The top_ups of this V1GetProjectBalanceResponse.  # noqa: E501
-        :type: list[V1TopUp]
-        """
-
-        self._top_ups = top_ups
-
-    @property
-    def transfers(self) -> 'list[V1Transfer]':
-        """Gets the transfers of this V1GetProjectBalanceResponse.  # noqa: E501
+    @transactions.setter
+    def transactions(self, transactions: 'list[V1Transaction]'):
+        """Sets the transactions of this V1GetProjectBalanceResponse.
 
 
-        :return: The transfers of this V1GetProjectBalanceResponse.  # noqa: E501
-        :rtype: list[V1Transfer]
-        """
-        return self._transfers
-
-    @transfers.setter
-    def transfers(self, transfers: 'list[V1Transfer]'):
-        """Sets the transfers of this V1GetProjectBalanceResponse.
-
-
-        :param transfers: The transfers of this V1GetProjectBalanceResponse.  # noqa: E501
-        :type: list[V1Transfer]
+        :param transactions: The transactions of this V1GetProjectBalanceResponse.  # noqa: E501
+        :type: list[V1Transaction]
         """
 
-        self._transfers = transfers
+        self._transactions = transactions
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -336,7 +336,7 @@ def internal_studio_api_mocker_get_machine(mocker):
             instance = "p4d.24xlarge"
 
         assert instance is not None
-        return V1CloudSpaceInstanceConfig(V1UserRequestedComputeConfig(name=instance))
+        return V1CloudSpaceInstanceConfig(compute_config=V1UserRequestedComputeConfig(name=instance))
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
@@ -552,9 +552,11 @@ def internal_studio_start_mocker(mocker):
     # none since no instance available before start
     # use dict here so that it automatically uses global scope. Assignments to variables would introduce shadowing
     status = {"st-abc": None}
+    machines = {"st-abc": None}
 
-    def side_effect_start(self, project_id, id):
+    def side_effect_start(self, body, project_id, id):
         status["st-abc"] = "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
+        machines["st-abc"] = V1UserRequestedComputeConfig(name="cpu-4")
         return mock.MagicMock()
 
     def side_effect_status(*args, **kwargs):
@@ -562,10 +564,13 @@ def internal_studio_start_mocker(mocker):
             in_use=Externalv1CloudSpaceInstanceStatus(phase=status["st-abc"], startup_percentage="100")
         )
 
+    def side_effect_get_cloud_space_instance_config(self, project_id: str, id: str):
+        return V1CloudSpaceInstanceConfig(compute_config=machines[id])
+
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
         autospec=True,
-        return_value=V1CloudSpaceInstanceConfig(V1UserRequestedComputeConfig(name="cpu-4")),
+        side_effect=side_effect_get_cloud_space_instance_config,
     )
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
@@ -687,7 +692,7 @@ def internal_studio_switch_mocker(mocker, internal_get_org_api_mocker, internal_
     requested_machines = {}
     machines = {"st-abc": V1UserRequestedComputeConfig(name="cpu-4")}
 
-    def side_effect_start(self, project_id, id):
+    def side_effect_start(self, body, project_id, id):
         status["st-abc"] = "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
         return mock.MagicMock()
 
@@ -707,7 +712,7 @@ def internal_studio_switch_mocker(mocker, internal_get_org_api_mocker, internal_
         return mock.MagicMock()
 
     def side_effect_get_cloud_space_instance_config(self, project_id: str, id: str):
-        return V1CloudSpaceInstanceConfig(machines[id])
+        return V1CloudSpaceInstanceConfig(compute_config=machines[id])
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_instance_config",

@@ -43,7 +43,6 @@ class V1UserFeatures(object):
     swagger_types = {
         'aws_trainium': 'bool',
         'b2c_experience': 'bool',
-        'byoc_enabled': 'bool',
         'byom': 'bool',
         'cap_add': 'list[str]',
         'cap_drop': 'list[str]',
@@ -54,6 +53,7 @@ class V1UserFeatures(object):
         'crypto_monitoring': 'bool',
         'custom_app_domain': 'bool',
         'enable_crypto_crackdown': 'bool',
+        'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
         'interruptible_instances': 'bool',
         'jobs_init': 'bool',
@@ -62,11 +62,11 @@ class V1UserFeatures(object):
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
         'platform_docs': 'bool',
+        'plugin_biz_chat': 'bool',
         'plugin_browser': 'bool',
         'plugin_data_prep': 'bool',
         'plugin_distributed': 'bool',
         'plugin_fiftyone': 'bool',
-        'plugin_gradio': 'bool',
         'plugin_inference': 'bool',
         'plugin_label_studio': 'bool',
         'plugin_langflow': 'bool',
@@ -76,10 +76,8 @@ class V1UserFeatures(object):
         'plugin_milvus': 'bool',
         'plugin_os_menu': 'bool',
         'plugin_react': 'bool',
-        'plugin_streamlit': 'bool',
         'plugin_sweeps': 'bool',
         'plugin_weviate': 'bool',
-        'pricing_tiers': 'bool',
         'pricing_updates': 'bool',
         'product_generator': 'bool',
         'project_selector': 'bool',
@@ -87,19 +85,16 @@ class V1UserFeatures(object):
         'quests': 'bool',
         'restart_ide_on_hang': 'bool',
         'restartable_jobs': 'bool',
+        'settings_sync_v2': 'bool',
         'show_dev_admin': 'bool',
-        'show_quotas': 'bool',
         'slurm': 'bool',
         'studio_publication': 'bool',
-        'tensorboard_plugin': 'bool',
-        'tier_override': 'str',
         'writable_data_connections': 'bool'
     }
 
     attribute_map = {
         'aws_trainium': 'awsTrainium',
         'b2c_experience': 'b2cExperience',
-        'byoc_enabled': 'byocEnabled',
         'byom': 'byom',
         'cap_add': 'capAdd',
         'cap_drop': 'capDrop',
@@ -110,6 +105,7 @@ class V1UserFeatures(object):
         'crypto_monitoring': 'cryptoMonitoring',
         'custom_app_domain': 'customAppDomain',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
+        'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
         'interruptible_instances': 'interruptibleInstances',
         'jobs_init': 'jobsInit',
@@ -118,11 +114,11 @@ class V1UserFeatures(object):
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
         'platform_docs': 'platformDocs',
+        'plugin_biz_chat': 'pluginBizChat',
         'plugin_browser': 'pluginBrowser',
         'plugin_data_prep': 'pluginDataPrep',
         'plugin_distributed': 'pluginDistributed',
         'plugin_fiftyone': 'pluginFiftyone',
-        'plugin_gradio': 'pluginGradio',
         'plugin_inference': 'pluginInference',
         'plugin_label_studio': 'pluginLabelStudio',
         'plugin_langflow': 'pluginLangflow',
@@ -132,10 +128,8 @@ class V1UserFeatures(object):
         'plugin_milvus': 'pluginMilvus',
         'plugin_os_menu': 'pluginOsMenu',
         'plugin_react': 'pluginReact',
-        'plugin_streamlit': 'pluginStreamlit',
         'plugin_sweeps': 'pluginSweeps',
         'plugin_weviate': 'pluginWeviate',
-        'pricing_tiers': 'pricingTiers',
         'pricing_updates': 'pricingUpdates',
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
@@ -143,20 +137,17 @@ class V1UserFeatures(object):
         'quests': 'quests',
         'restart_ide_on_hang': 'restartIdeOnHang',
         'restartable_jobs': 'restartableJobs',
+        'settings_sync_v2': 'settingsSyncV2',
         'show_dev_admin': 'showDevAdmin',
-        'show_quotas': 'showQuotas',
         'slurm': 'slurm',
         'studio_publication': 'studioPublication',
-        'tensorboard_plugin': 'tensorboardPlugin',
-        'tier_override': 'tierOverride',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byoc_enabled: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_browser: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_gradio: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_os_menu: 'bool' =None, plugin_react: 'bool' =None, plugin_streamlit: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_tiers: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, show_quotas: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, tensorboard_plugin: 'bool' =None, tier_override: 'str' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_browser: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_os_menu: 'bool' =None, plugin_react: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, settings_sync_v2: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._aws_trainium = None
         self._b2c_experience = None
-        self._byoc_enabled = None
         self._byom = None
         self._cap_add = None
         self._cap_drop = None
@@ -167,6 +158,7 @@ class V1UserFeatures(object):
         self._crypto_monitoring = None
         self._custom_app_domain = None
         self._enable_crypto_crackdown = None
+        self._featured_studios_admin = None
         self._filesystem_optimisation = None
         self._interruptible_instances = None
         self._jobs_init = None
@@ -175,11 +167,11 @@ class V1UserFeatures(object):
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
         self._platform_docs = None
+        self._plugin_biz_chat = None
         self._plugin_browser = None
         self._plugin_data_prep = None
         self._plugin_distributed = None
         self._plugin_fiftyone = None
-        self._plugin_gradio = None
         self._plugin_inference = None
         self._plugin_label_studio = None
         self._plugin_langflow = None
@@ -189,10 +181,8 @@ class V1UserFeatures(object):
         self._plugin_milvus = None
         self._plugin_os_menu = None
         self._plugin_react = None
-        self._plugin_streamlit = None
         self._plugin_sweeps = None
         self._plugin_weviate = None
-        self._pricing_tiers = None
         self._pricing_updates = None
         self._product_generator = None
         self._project_selector = None
@@ -200,20 +190,16 @@ class V1UserFeatures(object):
         self._quests = None
         self._restart_ide_on_hang = None
         self._restartable_jobs = None
+        self._settings_sync_v2 = None
         self._show_dev_admin = None
-        self._show_quotas = None
         self._slurm = None
         self._studio_publication = None
-        self._tensorboard_plugin = None
-        self._tier_override = None
         self._writable_data_connections = None
         self.discriminator = None
         if aws_trainium is not None:
             self.aws_trainium = aws_trainium
         if b2c_experience is not None:
             self.b2c_experience = b2c_experience
-        if byoc_enabled is not None:
-            self.byoc_enabled = byoc_enabled
         if byom is not None:
             self.byom = byom
         if cap_add is not None:
@@ -234,6 +220,8 @@ class V1UserFeatures(object):
             self.custom_app_domain = custom_app_domain
         if enable_crypto_crackdown is not None:
             self.enable_crypto_crackdown = enable_crypto_crackdown
+        if featured_studios_admin is not None:
+            self.featured_studios_admin = featured_studios_admin
         if filesystem_optimisation is not None:
             self.filesystem_optimisation = filesystem_optimisation
         if interruptible_instances is not None:
@@ -250,6 +238,8 @@ class V1UserFeatures(object):
             self.mountpoint_s3 = mountpoint_s3
         if platform_docs is not None:
             self.platform_docs = platform_docs
+        if plugin_biz_chat is not None:
+            self.plugin_biz_chat = plugin_biz_chat
         if plugin_browser is not None:
             self.plugin_browser = plugin_browser
         if plugin_data_prep is not None:
@@ -258,8 +248,6 @@ class V1UserFeatures(object):
             self.plugin_distributed = plugin_distributed
         if plugin_fiftyone is not None:
             self.plugin_fiftyone = plugin_fiftyone
-        if plugin_gradio is not None:
-            self.plugin_gradio = plugin_gradio
         if plugin_inference is not None:
             self.plugin_inference = plugin_inference
         if plugin_label_studio is not None:
@@ -278,14 +266,10 @@ class V1UserFeatures(object):
             self.plugin_os_menu = plugin_os_menu
         if plugin_react is not None:
             self.plugin_react = plugin_react
-        if plugin_streamlit is not None:
-            self.plugin_streamlit = plugin_streamlit
         if plugin_sweeps is not None:
             self.plugin_sweeps = plugin_sweeps
         if plugin_weviate is not None:
             self.plugin_weviate = plugin_weviate
-        if pricing_tiers is not None:
-            self.pricing_tiers = pricing_tiers
         if pricing_updates is not None:
             self.pricing_updates = pricing_updates
         if product_generator is not None:
@@ -300,18 +284,14 @@ class V1UserFeatures(object):
             self.restart_ide_on_hang = restart_ide_on_hang
         if restartable_jobs is not None:
             self.restartable_jobs = restartable_jobs
+        if settings_sync_v2 is not None:
+            self.settings_sync_v2 = settings_sync_v2
         if show_dev_admin is not None:
             self.show_dev_admin = show_dev_admin
-        if show_quotas is not None:
-            self.show_quotas = show_quotas
         if slurm is not None:
             self.slurm = slurm
         if studio_publication is not None:
             self.studio_publication = studio_publication
-        if tensorboard_plugin is not None:
-            self.tensorboard_plugin = tensorboard_plugin
-        if tier_override is not None:
-            self.tier_override = tier_override
         if writable_data_connections is not None:
             self.writable_data_connections = writable_data_connections
 
@@ -356,27 +336,6 @@ class V1UserFeatures(object):
         """
 
         self._b2c_experience = b2c_experience
-
-    @property
-    def byoc_enabled(self) -> 'bool':
-        """Gets the byoc_enabled of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The byoc_enabled of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._byoc_enabled
-
-    @byoc_enabled.setter
-    def byoc_enabled(self, byoc_enabled: 'bool'):
-        """Sets the byoc_enabled of this V1UserFeatures.
-
-
-        :param byoc_enabled: The byoc_enabled of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._byoc_enabled = byoc_enabled
 
     @property
     def byom(self) -> 'bool':
@@ -589,6 +548,27 @@ class V1UserFeatures(object):
         self._enable_crypto_crackdown = enable_crypto_crackdown
 
     @property
+    def featured_studios_admin(self) -> 'bool':
+        """Gets the featured_studios_admin of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The featured_studios_admin of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._featured_studios_admin
+
+    @featured_studios_admin.setter
+    def featured_studios_admin(self, featured_studios_admin: 'bool'):
+        """Sets the featured_studios_admin of this V1UserFeatures.
+
+
+        :param featured_studios_admin: The featured_studios_admin of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._featured_studios_admin = featured_studios_admin
+
+    @property
     def filesystem_optimisation(self) -> 'bool':
         """Gets the filesystem_optimisation of this V1UserFeatures.  # noqa: E501
 
@@ -757,6 +737,27 @@ class V1UserFeatures(object):
         self._platform_docs = platform_docs
 
     @property
+    def plugin_biz_chat(self) -> 'bool':
+        """Gets the plugin_biz_chat of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_biz_chat of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_biz_chat
+
+    @plugin_biz_chat.setter
+    def plugin_biz_chat(self, plugin_biz_chat: 'bool'):
+        """Sets the plugin_biz_chat of this V1UserFeatures.
+
+
+        :param plugin_biz_chat: The plugin_biz_chat of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_biz_chat = plugin_biz_chat
+
+    @property
     def plugin_browser(self) -> 'bool':
         """Gets the plugin_browser of this V1UserFeatures.  # noqa: E501
 
@@ -839,27 +840,6 @@ class V1UserFeatures(object):
         """
 
         self._plugin_fiftyone = plugin_fiftyone
-
-    @property
-    def plugin_gradio(self) -> 'bool':
-        """Gets the plugin_gradio of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_gradio of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_gradio
-
-    @plugin_gradio.setter
-    def plugin_gradio(self, plugin_gradio: 'bool'):
-        """Sets the plugin_gradio of this V1UserFeatures.
-
-
-        :param plugin_gradio: The plugin_gradio of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_gradio = plugin_gradio
 
     @property
     def plugin_inference(self) -> 'bool':
@@ -1051,27 +1031,6 @@ class V1UserFeatures(object):
         self._plugin_react = plugin_react
 
     @property
-    def plugin_streamlit(self) -> 'bool':
-        """Gets the plugin_streamlit of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_streamlit of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_streamlit
-
-    @plugin_streamlit.setter
-    def plugin_streamlit(self, plugin_streamlit: 'bool'):
-        """Sets the plugin_streamlit of this V1UserFeatures.
-
-
-        :param plugin_streamlit: The plugin_streamlit of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_streamlit = plugin_streamlit
-
-    @property
     def plugin_sweeps(self) -> 'bool':
         """Gets the plugin_sweeps of this V1UserFeatures.  # noqa: E501
 
@@ -1112,27 +1071,6 @@ class V1UserFeatures(object):
         """
 
         self._plugin_weviate = plugin_weviate
-
-    @property
-    def pricing_tiers(self) -> 'bool':
-        """Gets the pricing_tiers of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The pricing_tiers of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._pricing_tiers
-
-    @pricing_tiers.setter
-    def pricing_tiers(self, pricing_tiers: 'bool'):
-        """Sets the pricing_tiers of this V1UserFeatures.
-
-
-        :param pricing_tiers: The pricing_tiers of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._pricing_tiers = pricing_tiers
 
     @property
     def pricing_updates(self) -> 'bool':
@@ -1282,6 +1220,27 @@ class V1UserFeatures(object):
         self._restartable_jobs = restartable_jobs
 
     @property
+    def settings_sync_v2(self) -> 'bool':
+        """Gets the settings_sync_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The settings_sync_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._settings_sync_v2
+
+    @settings_sync_v2.setter
+    def settings_sync_v2(self, settings_sync_v2: 'bool'):
+        """Sets the settings_sync_v2 of this V1UserFeatures.
+
+
+        :param settings_sync_v2: The settings_sync_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._settings_sync_v2 = settings_sync_v2
+
+    @property
     def show_dev_admin(self) -> 'bool':
         """Gets the show_dev_admin of this V1UserFeatures.  # noqa: E501
 
@@ -1301,27 +1260,6 @@ class V1UserFeatures(object):
         """
 
         self._show_dev_admin = show_dev_admin
-
-    @property
-    def show_quotas(self) -> 'bool':
-        """Gets the show_quotas of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The show_quotas of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._show_quotas
-
-    @show_quotas.setter
-    def show_quotas(self, show_quotas: 'bool'):
-        """Sets the show_quotas of this V1UserFeatures.
-
-
-        :param show_quotas: The show_quotas of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._show_quotas = show_quotas
 
     @property
     def slurm(self) -> 'bool':
@@ -1364,48 +1302,6 @@ class V1UserFeatures(object):
         """
 
         self._studio_publication = studio_publication
-
-    @property
-    def tensorboard_plugin(self) -> 'bool':
-        """Gets the tensorboard_plugin of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The tensorboard_plugin of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._tensorboard_plugin
-
-    @tensorboard_plugin.setter
-    def tensorboard_plugin(self, tensorboard_plugin: 'bool'):
-        """Sets the tensorboard_plugin of this V1UserFeatures.
-
-
-        :param tensorboard_plugin: The tensorboard_plugin of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._tensorboard_plugin = tensorboard_plugin
-
-    @property
-    def tier_override(self) -> 'str':
-        """Gets the tier_override of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The tier_override of this V1UserFeatures.  # noqa: E501
-        :rtype: str
-        """
-        return self._tier_override
-
-    @tier_override.setter
-    def tier_override(self, tier_override: 'str'):
-        """Sets the tier_override of this V1UserFeatures.
-
-
-        :param tier_override: The tier_override of this V1UserFeatures.  # noqa: E501
-        :type: str
-        """
-
-        self._tier_override = tier_override
 
     @property
     def writable_data_connections(self) -> 'bool':

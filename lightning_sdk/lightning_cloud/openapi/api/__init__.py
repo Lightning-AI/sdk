@@ -10,6 +10,7 @@ from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import Cl
 from lightning_sdk.lightning_cloud.openapi.api.cluster_service_api import ClusterServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.data_connection_service_api import DataConnectionServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.dataset_service_api import DatasetServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api import EndpointServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api import LightningappInstanceServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_v2_service_api import LightningappV2ServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningwork_service_api import LightningworkServiceApi
@@ -17,6 +18,7 @@ from lightning_sdk.lightning_cloud.openapi.api.lit_page_service_api import LitPa
 from lightning_sdk.lightning_cloud.openapi.api.models_store_api import ModelsStoreApi
 from lightning_sdk.lightning_cloud.openapi.api.organizations_service_api import OrganizationsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.projects_service_api import ProjectsServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.quest_service_api import QuestServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.ssh_public_key_service_api import SSHPublicKeyServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.secret_service_api import SecretServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.slurm_jobs_user_service_api import SlurmJobsUserServiceApi

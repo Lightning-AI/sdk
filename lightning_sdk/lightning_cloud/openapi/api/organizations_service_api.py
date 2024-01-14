@@ -583,6 +583,7 @@ class OrganizationsServiceApi(object):
         :param async_req bool
         :param str org_id: (required)
         :param str user_id: (required)
+        :param bool delete_project_memberships:
         :return: V1DeleteOrgMembershipResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -605,12 +606,13 @@ class OrganizationsServiceApi(object):
         :param async_req bool
         :param str org_id: (required)
         :param str user_id: (required)
+        :param bool delete_project_memberships:
         :return: V1DeleteOrgMembershipResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'user_id']  # noqa: E501
+        all_params = ['org_id', 'user_id', 'delete_project_memberships']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -643,6 +645,8 @@ class OrganizationsServiceApi(object):
             path_params['userId'] = params['user_id']  # noqa: E501
 
         query_params = []
+        if 'delete_project_memberships' in params:
+            query_params.append(('deleteProjectMemberships', params['delete_project_memberships']))  # noqa: E501
 
         header_params = {}
 

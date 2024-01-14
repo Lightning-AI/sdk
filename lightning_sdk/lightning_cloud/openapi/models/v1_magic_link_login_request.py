@@ -41,19 +41,50 @@ class V1MagicLinkLoginRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'email': 'str'
+        'collab_session_id': 'str',
+        'email': 'str',
+        'redirect_url': 'str'
     }
 
     attribute_map = {
-        'email': 'email'
+        'collab_session_id': 'collabSessionId',
+        'email': 'email',
+        'redirect_url': 'redirectUrl'
     }
 
-    def __init__(self, email: 'str' =None):  # noqa: E501
+    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, redirect_url: 'str' =None):  # noqa: E501
         """V1MagicLinkLoginRequest - a model defined in Swagger"""  # noqa: E501
+        self._collab_session_id = None
         self._email = None
+        self._redirect_url = None
         self.discriminator = None
+        if collab_session_id is not None:
+            self.collab_session_id = collab_session_id
         if email is not None:
             self.email = email
+        if redirect_url is not None:
+            self.redirect_url = redirect_url
+
+    @property
+    def collab_session_id(self) -> 'str':
+        """Gets the collab_session_id of this V1MagicLinkLoginRequest.  # noqa: E501
+
+
+        :return: The collab_session_id of this V1MagicLinkLoginRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._collab_session_id
+
+    @collab_session_id.setter
+    def collab_session_id(self, collab_session_id: 'str'):
+        """Sets the collab_session_id of this V1MagicLinkLoginRequest.
+
+
+        :param collab_session_id: The collab_session_id of this V1MagicLinkLoginRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._collab_session_id = collab_session_id
 
     @property
     def email(self) -> 'str':
@@ -75,6 +106,27 @@ class V1MagicLinkLoginRequest(object):
         """
 
         self._email = email
+
+    @property
+    def redirect_url(self) -> 'str':
+        """Gets the redirect_url of this V1MagicLinkLoginRequest.  # noqa: E501
+
+
+        :return: The redirect_url of this V1MagicLinkLoginRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._redirect_url
+
+    @redirect_url.setter
+    def redirect_url(self, redirect_url: 'str'):
+        """Sets the redirect_url of this V1MagicLinkLoginRequest.
+
+
+        :param redirect_url: The redirect_url of this V1MagicLinkLoginRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._redirect_url = redirect_url
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

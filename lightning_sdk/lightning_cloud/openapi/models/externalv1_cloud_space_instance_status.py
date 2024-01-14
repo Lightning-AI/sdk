@@ -42,6 +42,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
     """
     swagger_types = {
         'app_url': 'str',
+        'cloud_space_id': 'str',
         'cloud_space_instance_id': 'str',
         'compute_config': 'V1UserRequestedComputeConfig',
         'creation_timestamp': 'datetime',
@@ -69,6 +70,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
 
     attribute_map = {
         'app_url': 'appUrl',
+        'cloud_space_id': 'cloudSpaceId',
         'cloud_space_instance_id': 'cloudSpaceInstanceId',
         'compute_config': 'computeConfig',
         'creation_timestamp': 'creationTimestamp',
@@ -94,9 +96,10 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, app_url: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, app_url: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._app_url = None
+        self._cloud_space_id = None
         self._cloud_space_instance_id = None
         self._compute_config = None
         self._creation_timestamp = None
@@ -123,6 +126,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self.discriminator = None
         if app_url is not None:
             self.app_url = app_url
+        if cloud_space_id is not None:
+            self.cloud_space_id = cloud_space_id
         if cloud_space_instance_id is not None:
             self.cloud_space_instance_id = cloud_space_instance_id
         if compute_config is not None:
@@ -190,6 +195,27 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._app_url = app_url
+
+    @property
+    def cloud_space_id(self) -> 'str':
+        """Gets the cloud_space_id of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The cloud_space_id of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloud_space_id
+
+    @cloud_space_id.setter
+    def cloud_space_id(self, cloud_space_id: 'str'):
+        """Sets the cloud_space_id of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param cloud_space_id: The cloud_space_id of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._cloud_space_id = cloud_space_id
 
     @property
     def cloud_space_instance_id(self) -> 'str':

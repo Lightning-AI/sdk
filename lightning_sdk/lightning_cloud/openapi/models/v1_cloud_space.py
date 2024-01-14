@@ -45,23 +45,33 @@ class V1CloudSpace(object):
         'cluster_id': 'str',
         'code_config': 'V1CloudSpaceInstanceConfig',
         'code_status': 'V1GetCloudSpaceInstanceStatusResponse',
+        'code_url': 'str',
         'created_at': 'datetime',
         'data_connection_mounts': 'list[V1DataConnectionMount]',
         'description': 'str',
         'display_name': 'str',
         'engagement_counts': 'dict(str, str)',
         'env': 'list[V1EnvVar]',
+        'featured_ranking': 'str',
         'id': 'str',
         'image_status': 'V1ImageState',
         'is_cloudspace_private': 'bool',
         'is_code_private': 'bool',
         'is_published': 'bool',
+        'license': 'str',
         'message': 'str',
         'name': 'str',
         'number_of_files': 'str',
+        'operating_cost': 'str',
+        'paper_authors': 'str',
+        'paper_org': 'str',
+        'paper_org_avatar_url': 'str',
+        'paper_url': 'str',
         'project_id': 'str',
         'published_at': 'datetime',
         'state': 'V1CloudSpaceState',
+        'sync_duration': 'str',
+        'sync_percentage': 'str',
         'tags': 'list[V1CloudSpaceTag]',
         'thumbnail_file_type': 'str',
         'thumbnail_url': 'str',
@@ -77,23 +87,33 @@ class V1CloudSpace(object):
         'cluster_id': 'clusterId',
         'code_config': 'codeConfig',
         'code_status': 'codeStatus',
+        'code_url': 'codeUrl',
         'created_at': 'createdAt',
         'data_connection_mounts': 'dataConnectionMounts',
         'description': 'description',
         'display_name': 'displayName',
         'engagement_counts': 'engagementCounts',
         'env': 'env',
+        'featured_ranking': 'featuredRanking',
         'id': 'id',
         'image_status': 'imageStatus',
         'is_cloudspace_private': 'isCloudspacePrivate',
         'is_code_private': 'isCodePrivate',
         'is_published': 'isPublished',
+        'license': 'license',
         'message': 'message',
         'name': 'name',
         'number_of_files': 'numberOfFiles',
+        'operating_cost': 'operatingCost',
+        'paper_authors': 'paperAuthors',
+        'paper_org': 'paperOrg',
+        'paper_org_avatar_url': 'paperOrgAvatarUrl',
+        'paper_url': 'paperUrl',
         'project_id': 'projectId',
         'published_at': 'publishedAt',
         'state': 'state',
+        'sync_duration': 'syncDuration',
+        'sync_percentage': 'syncPercentage',
         'tags': 'tags',
         'thumbnail_file_type': 'thumbnailFileType',
         'thumbnail_url': 'thumbnailUrl',
@@ -104,29 +124,39 @@ class V1CloudSpace(object):
         'web_path': 'webPath'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, featured_ranking: 'str' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, message: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cluster_id = None
         self._code_config = None
         self._code_status = None
+        self._code_url = None
         self._created_at = None
         self._data_connection_mounts = None
         self._description = None
         self._display_name = None
         self._engagement_counts = None
         self._env = None
+        self._featured_ranking = None
         self._id = None
         self._image_status = None
         self._is_cloudspace_private = None
         self._is_code_private = None
         self._is_published = None
+        self._license = None
         self._message = None
         self._name = None
         self._number_of_files = None
+        self._operating_cost = None
+        self._paper_authors = None
+        self._paper_org = None
+        self._paper_org_avatar_url = None
+        self._paper_url = None
         self._project_id = None
         self._published_at = None
         self._state = None
+        self._sync_duration = None
+        self._sync_percentage = None
         self._tags = None
         self._thumbnail_file_type = None
         self._thumbnail_url = None
@@ -144,6 +174,8 @@ class V1CloudSpace(object):
             self.code_config = code_config
         if code_status is not None:
             self.code_status = code_status
+        if code_url is not None:
+            self.code_url = code_url
         if created_at is not None:
             self.created_at = created_at
         if data_connection_mounts is not None:
@@ -156,6 +188,8 @@ class V1CloudSpace(object):
             self.engagement_counts = engagement_counts
         if env is not None:
             self.env = env
+        if featured_ranking is not None:
+            self.featured_ranking = featured_ranking
         if id is not None:
             self.id = id
         if image_status is not None:
@@ -166,18 +200,34 @@ class V1CloudSpace(object):
             self.is_code_private = is_code_private
         if is_published is not None:
             self.is_published = is_published
+        if license is not None:
+            self.license = license
         if message is not None:
             self.message = message
         if name is not None:
             self.name = name
         if number_of_files is not None:
             self.number_of_files = number_of_files
+        if operating_cost is not None:
+            self.operating_cost = operating_cost
+        if paper_authors is not None:
+            self.paper_authors = paper_authors
+        if paper_org is not None:
+            self.paper_org = paper_org
+        if paper_org_avatar_url is not None:
+            self.paper_org_avatar_url = paper_org_avatar_url
+        if paper_url is not None:
+            self.paper_url = paper_url
         if project_id is not None:
             self.project_id = project_id
         if published_at is not None:
             self.published_at = published_at
         if state is not None:
             self.state = state
+        if sync_duration is not None:
+            self.sync_duration = sync_duration
+        if sync_percentage is not None:
+            self.sync_percentage = sync_percentage
         if tags is not None:
             self.tags = tags
         if thumbnail_file_type is not None:
@@ -278,6 +328,27 @@ class V1CloudSpace(object):
         """
 
         self._code_status = code_status
+
+    @property
+    def code_url(self) -> 'str':
+        """Gets the code_url of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The code_url of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._code_url
+
+    @code_url.setter
+    def code_url(self, code_url: 'str'):
+        """Sets the code_url of this V1CloudSpace.
+
+
+        :param code_url: The code_url of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._code_url = code_url
 
     @property
     def created_at(self) -> 'datetime':
@@ -406,6 +477,27 @@ class V1CloudSpace(object):
         self._env = env
 
     @property
+    def featured_ranking(self) -> 'str':
+        """Gets the featured_ranking of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The featured_ranking of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._featured_ranking
+
+    @featured_ranking.setter
+    def featured_ranking(self, featured_ranking: 'str'):
+        """Sets the featured_ranking of this V1CloudSpace.
+
+
+        :param featured_ranking: The featured_ranking of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._featured_ranking = featured_ranking
+
+    @property
     def id(self) -> 'str':
         """Gets the id of this V1CloudSpace.  # noqa: E501
 
@@ -511,6 +603,27 @@ class V1CloudSpace(object):
         self._is_published = is_published
 
     @property
+    def license(self) -> 'str':
+        """Gets the license of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The license of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._license
+
+    @license.setter
+    def license(self, license: 'str'):
+        """Sets the license of this V1CloudSpace.
+
+
+        :param license: The license of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._license = license
+
+    @property
     def message(self) -> 'str':
         """Gets the message of this V1CloudSpace.  # noqa: E501
 
@@ -574,6 +687,111 @@ class V1CloudSpace(object):
         self._number_of_files = number_of_files
 
     @property
+    def operating_cost(self) -> 'str':
+        """Gets the operating_cost of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The operating_cost of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._operating_cost
+
+    @operating_cost.setter
+    def operating_cost(self, operating_cost: 'str'):
+        """Sets the operating_cost of this V1CloudSpace.
+
+
+        :param operating_cost: The operating_cost of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._operating_cost = operating_cost
+
+    @property
+    def paper_authors(self) -> 'str':
+        """Gets the paper_authors of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The paper_authors of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._paper_authors
+
+    @paper_authors.setter
+    def paper_authors(self, paper_authors: 'str'):
+        """Sets the paper_authors of this V1CloudSpace.
+
+
+        :param paper_authors: The paper_authors of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._paper_authors = paper_authors
+
+    @property
+    def paper_org(self) -> 'str':
+        """Gets the paper_org of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The paper_org of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._paper_org
+
+    @paper_org.setter
+    def paper_org(self, paper_org: 'str'):
+        """Sets the paper_org of this V1CloudSpace.
+
+
+        :param paper_org: The paper_org of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._paper_org = paper_org
+
+    @property
+    def paper_org_avatar_url(self) -> 'str':
+        """Gets the paper_org_avatar_url of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The paper_org_avatar_url of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._paper_org_avatar_url
+
+    @paper_org_avatar_url.setter
+    def paper_org_avatar_url(self, paper_org_avatar_url: 'str'):
+        """Sets the paper_org_avatar_url of this V1CloudSpace.
+
+
+        :param paper_org_avatar_url: The paper_org_avatar_url of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._paper_org_avatar_url = paper_org_avatar_url
+
+    @property
+    def paper_url(self) -> 'str':
+        """Gets the paper_url of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The paper_url of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._paper_url
+
+    @paper_url.setter
+    def paper_url(self, paper_url: 'str'):
+        """Sets the paper_url of this V1CloudSpace.
+
+
+        :param paper_url: The paper_url of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._paper_url = paper_url
+
+    @property
     def project_id(self) -> 'str':
         """Gets the project_id of this V1CloudSpace.  # noqa: E501
 
@@ -635,6 +853,48 @@ class V1CloudSpace(object):
         """
 
         self._state = state
+
+    @property
+    def sync_duration(self) -> 'str':
+        """Gets the sync_duration of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The sync_duration of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._sync_duration
+
+    @sync_duration.setter
+    def sync_duration(self, sync_duration: 'str'):
+        """Sets the sync_duration of this V1CloudSpace.
+
+
+        :param sync_duration: The sync_duration of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._sync_duration = sync_duration
+
+    @property
+    def sync_percentage(self) -> 'str':
+        """Gets the sync_percentage of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The sync_percentage of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._sync_percentage
+
+    @sync_percentage.setter
+    def sync_percentage(self, sync_percentage: 'str'):
+        """Sets the sync_percentage of this V1CloudSpace.
+
+
+        :param sync_percentage: The sync_percentage of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._sync_percentage = sync_percentage
 
     @property
     def tags(self) -> 'list[V1CloudSpaceTag]':

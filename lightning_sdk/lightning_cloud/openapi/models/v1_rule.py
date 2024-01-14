@@ -42,24 +42,29 @@ class V1Rule(object):
     """
     swagger_types = {
         'actions': 'list[V1RuleAction]',
+        'condition': 'V1RuleCondition',
         'effect': 'V1RuleEffect',
         'resources': 'list[V1RuleResource]'
     }
 
     attribute_map = {
         'actions': 'actions',
+        'condition': 'condition',
         'effect': 'effect',
         'resources': 'resources'
     }
 
-    def __init__(self, actions: 'list[V1RuleAction]' =None, effect: 'V1RuleEffect' =None, resources: 'list[V1RuleResource]' =None):  # noqa: E501
+    def __init__(self, actions: 'list[V1RuleAction]' =None, condition: 'V1RuleCondition' =None, effect: 'V1RuleEffect' =None, resources: 'list[V1RuleResource]' =None):  # noqa: E501
         """V1Rule - a model defined in Swagger"""  # noqa: E501
         self._actions = None
+        self._condition = None
         self._effect = None
         self._resources = None
         self.discriminator = None
         if actions is not None:
             self.actions = actions
+        if condition is not None:
+            self.condition = condition
         if effect is not None:
             self.effect = effect
         if resources is not None:
@@ -85,6 +90,27 @@ class V1Rule(object):
         """
 
         self._actions = actions
+
+    @property
+    def condition(self) -> 'V1RuleCondition':
+        """Gets the condition of this V1Rule.  # noqa: E501
+
+
+        :return: The condition of this V1Rule.  # noqa: E501
+        :rtype: V1RuleCondition
+        """
+        return self._condition
+
+    @condition.setter
+    def condition(self, condition: 'V1RuleCondition'):
+        """Sets the condition of this V1Rule.
+
+
+        :param condition: The condition of this V1Rule.  # noqa: E501
+        :type: V1RuleCondition
+        """
+
+        self._condition = condition
 
     @property
     def effect(self) -> 'V1RuleEffect':
