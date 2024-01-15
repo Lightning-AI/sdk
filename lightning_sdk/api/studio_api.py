@@ -638,7 +638,7 @@ class _FileUploader:
         self.local_path = file_path
 
         self.remote_path = f"/cloudspaces/{studio_id}/code/content/{remote_path}"
-        self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _SIZE_LIMIT_SINGLE_PART))
+        self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
         self.filesize = os.path.getsize(file_path)
         self.progress_bar = tqdm(
             desc=f"Uploading {os.path.split(file_path)[1]}",
@@ -647,7 +647,10 @@ class _FileUploader:
             unit_scale=True,
             unit_divisor=1000,
         )
-        self.chunk_size = _MAX_SIZE_MULTI_PART_CHUNK
+        self.chunk_size = int(os.environ.get("LIGHTNING_MULTI_PART_PART_SIZE", _MAX_SIZE_MULTI_PART_CHUNK))
+        assert self.chunk_size < _SIZE_LIMIT_SINGLE_PART
+        self.max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
+        self.batch_size = int(os.environ.get("LIGHTNING_MULTI_PART_BATCH_SIZE", _MAX_BATCH_SIZE))
 
     def __call__(self) -> None:
         """Does the actual uploading.
@@ -655,9 +658,7 @@ class _FileUploader:
         Dispatches to single and multipart uploads respectively
 
         """
-        count = (
-            1 if self.filesize <= self.multipart_threshold else math.ceil(self.filesize / _MAX_SIZE_MULTI_PART_CHUNK)
-        )
+        count = 1 if self.filesize <= self.multipart_threshold else math.ceil(self.filesize / self.chunk_size)
 
         if count == 1:
             return self._singlepart_upload()
@@ -677,6 +678,16 @@ class _FileUploader:
             response = requests.put(resp.urls[0].url, data=reader_wrapper)
         response.raise_for_status()
 
+        etag = response.headers.get("ETag")
+        completed = [V1CompleteUpload(etag=etag, part_number=resp.urls[0].part_number)]
+
+        completed_body = StorageCompleteBody(
+            cluster_id=self.cluster_id, filename=self.remote_path, parts=completed, upload_id=resp.upload_id
+        )
+        self.client.lightningapp_instance_service_complete_upload_project_artifact(
+            body=completed_body, project_id=self.teamspace_id
+        )
+
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload."""
         body = ProjectIdStorageBody(cluster_id=self.cluster_id, count=count, filename=self.remote_path)
@@ -686,11 +697,11 @@ class _FileUploader:
 
         # get indices for each batch, part numbers start at 1
         batched_indices = [
-            list(range(i + 1, min(i + _MAX_BATCH_SIZE + 1, count + 1))) for i in range(0, count, _MAX_BATCH_SIZE)
+            list(range(i + 1, min(i + self.batch_size + 1, count + 1))) for i in range(0, count, self.batch_size)
         ]
 
         completed: List[V1CompleteUpload] = []
-        with ThreadPoolExecutor(_MAX_WORKERS) as p:
+        with ThreadPoolExecutor(self.max_workers) as p:
             for batch in batched_indices:
                 completed.extend(self._process_upload_batch(executor=p, batch=batch, upload_id=resp.upload_id))
 
