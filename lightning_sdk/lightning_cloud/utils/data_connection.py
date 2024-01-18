@@ -1,6 +1,9 @@
 import os
 from time import sleep, time
 from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+import urllib3
+
 
 def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeout: int = 15) -> None:
     """Utility to add a data connection."""
@@ -24,7 +27,17 @@ def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeou
             source=f"s3://{bucket_name}",
             region=region
     ))
-    client.data_connection_service_create_data_connection(body, project_id)
+    try:
+        client.data_connection_service_create_data_connection(body, project_id)
+    except (ApiException, urllib3.exceptions.HTTPError) as ex:
+        # Note: This function can be called in a distributed way. 
+        # There is a race condition where one machine might create the entry before another machine
+        # and this request would fail with duplicated key
+        # In this case, it is fine not to raise 
+        if 'duplicate key value violates unique constraint' in str(ex.body):
+            pass
+        else:
+            raise ex
 
     # Wait for the filesystem picks up the new data connection
     start = time()

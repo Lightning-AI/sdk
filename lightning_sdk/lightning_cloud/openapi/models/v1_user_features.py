@@ -48,6 +48,7 @@ class V1UserFeatures(object):
         'cap_drop': 'list[str]',
         'cluster_running_notification': 'bool',
         'code_tab': 'bool',
+        'collab_mouse_tracking': 'bool',
         'collab_screen_sharing': 'bool',
         'collab_v2': 'bool',
         'crypto_monitoring': 'bool',
@@ -63,7 +64,6 @@ class V1UserFeatures(object):
         'mountpoint_s3': 'bool',
         'platform_docs': 'bool',
         'plugin_biz_chat': 'bool',
-        'plugin_browser': 'bool',
         'plugin_data_prep': 'bool',
         'plugin_distributed': 'bool',
         'plugin_fiftyone': 'bool',
@@ -74,7 +74,6 @@ class V1UserFeatures(object):
         'plugin_lightning_apps_distributed': 'bool',
         'plugin_mage_ai': 'bool',
         'plugin_milvus': 'bool',
-        'plugin_os_menu': 'bool',
         'plugin_react': 'bool',
         'plugin_sweeps': 'bool',
         'plugin_weviate': 'bool',
@@ -100,6 +99,7 @@ class V1UserFeatures(object):
         'cap_drop': 'capDrop',
         'cluster_running_notification': 'clusterRunningNotification',
         'code_tab': 'codeTab',
+        'collab_mouse_tracking': 'collabMouseTracking',
         'collab_screen_sharing': 'collabScreenSharing',
         'collab_v2': 'collabV2',
         'crypto_monitoring': 'cryptoMonitoring',
@@ -115,7 +115,6 @@ class V1UserFeatures(object):
         'mountpoint_s3': 'mountpointS3',
         'platform_docs': 'platformDocs',
         'plugin_biz_chat': 'pluginBizChat',
-        'plugin_browser': 'pluginBrowser',
         'plugin_data_prep': 'pluginDataPrep',
         'plugin_distributed': 'pluginDistributed',
         'plugin_fiftyone': 'pluginFiftyone',
@@ -126,7 +125,6 @@ class V1UserFeatures(object):
         'plugin_lightning_apps_distributed': 'pluginLightningAppsDistributed',
         'plugin_mage_ai': 'pluginMageAi',
         'plugin_milvus': 'pluginMilvus',
-        'plugin_os_menu': 'pluginOsMenu',
         'plugin_react': 'pluginReact',
         'plugin_sweeps': 'pluginSweeps',
         'plugin_weviate': 'pluginWeviate',
@@ -144,7 +142,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_browser: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_os_menu: 'bool' =None, plugin_react: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, settings_sync_v2: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_react: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, settings_sync_v2: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._aws_trainium = None
         self._b2c_experience = None
@@ -153,6 +151,7 @@ class V1UserFeatures(object):
         self._cap_drop = None
         self._cluster_running_notification = None
         self._code_tab = None
+        self._collab_mouse_tracking = None
         self._collab_screen_sharing = None
         self._collab_v2 = None
         self._crypto_monitoring = None
@@ -168,7 +167,6 @@ class V1UserFeatures(object):
         self._mountpoint_s3 = None
         self._platform_docs = None
         self._plugin_biz_chat = None
-        self._plugin_browser = None
         self._plugin_data_prep = None
         self._plugin_distributed = None
         self._plugin_fiftyone = None
@@ -179,7 +177,6 @@ class V1UserFeatures(object):
         self._plugin_lightning_apps_distributed = None
         self._plugin_mage_ai = None
         self._plugin_milvus = None
-        self._plugin_os_menu = None
         self._plugin_react = None
         self._plugin_sweeps = None
         self._plugin_weviate = None
@@ -210,6 +207,8 @@ class V1UserFeatures(object):
             self.cluster_running_notification = cluster_running_notification
         if code_tab is not None:
             self.code_tab = code_tab
+        if collab_mouse_tracking is not None:
+            self.collab_mouse_tracking = collab_mouse_tracking
         if collab_screen_sharing is not None:
             self.collab_screen_sharing = collab_screen_sharing
         if collab_v2 is not None:
@@ -240,8 +239,6 @@ class V1UserFeatures(object):
             self.platform_docs = platform_docs
         if plugin_biz_chat is not None:
             self.plugin_biz_chat = plugin_biz_chat
-        if plugin_browser is not None:
-            self.plugin_browser = plugin_browser
         if plugin_data_prep is not None:
             self.plugin_data_prep = plugin_data_prep
         if plugin_distributed is not None:
@@ -262,8 +259,6 @@ class V1UserFeatures(object):
             self.plugin_mage_ai = plugin_mage_ai
         if plugin_milvus is not None:
             self.plugin_milvus = plugin_milvus
-        if plugin_os_menu is not None:
-            self.plugin_os_menu = plugin_os_menu
         if plugin_react is not None:
             self.plugin_react = plugin_react
         if plugin_sweeps is not None:
@@ -441,6 +436,27 @@ class V1UserFeatures(object):
         """
 
         self._code_tab = code_tab
+
+    @property
+    def collab_mouse_tracking(self) -> 'bool':
+        """Gets the collab_mouse_tracking of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The collab_mouse_tracking of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._collab_mouse_tracking
+
+    @collab_mouse_tracking.setter
+    def collab_mouse_tracking(self, collab_mouse_tracking: 'bool'):
+        """Sets the collab_mouse_tracking of this V1UserFeatures.
+
+
+        :param collab_mouse_tracking: The collab_mouse_tracking of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._collab_mouse_tracking = collab_mouse_tracking
 
     @property
     def collab_screen_sharing(self) -> 'bool':
@@ -758,27 +774,6 @@ class V1UserFeatures(object):
         self._plugin_biz_chat = plugin_biz_chat
 
     @property
-    def plugin_browser(self) -> 'bool':
-        """Gets the plugin_browser of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_browser of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_browser
-
-    @plugin_browser.setter
-    def plugin_browser(self, plugin_browser: 'bool'):
-        """Sets the plugin_browser of this V1UserFeatures.
-
-
-        :param plugin_browser: The plugin_browser of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_browser = plugin_browser
-
-    @property
     def plugin_data_prep(self) -> 'bool':
         """Gets the plugin_data_prep of this V1UserFeatures.  # noqa: E501
 
@@ -987,27 +982,6 @@ class V1UserFeatures(object):
         """
 
         self._plugin_milvus = plugin_milvus
-
-    @property
-    def plugin_os_menu(self) -> 'bool':
-        """Gets the plugin_os_menu of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_os_menu of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_os_menu
-
-    @plugin_os_menu.setter
-    def plugin_os_menu(self, plugin_os_menu: 'bool'):
-        """Sets the plugin_os_menu of this V1UserFeatures.
-
-
-        :param plugin_os_menu: The plugin_os_menu of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_os_menu = plugin_os_menu
 
     @property
     def plugin_react(self) -> 'bool':

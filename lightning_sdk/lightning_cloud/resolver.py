@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from pathlib import Path
 import sys
@@ -293,7 +293,7 @@ def _execute(
         studio_id=studio._studio.id,
         teamspace_id=studio._teamspace.id,
         cluster_id=studio._studio.cluster_id,
-        cloud_compute=machine or studio._studio_api.get_machine(studio._studio.id, studio._teamspace.id),
+        machine=machine or studio._studio_api.get_machine(studio._studio.id, studio._teamspace.id),
     )
 
     has_printed = False
@@ -304,7 +304,7 @@ def _execute(
         )
         if not has_printed:
             cloud_url = _get_lightning_sdk.lightning_cloud_url()
-            job_url = f"{cloud_url}/{studio._user.username}/{studio._teamspace.name}"
+            job_url = f"{cloud_url}/{studio.owner}/{studio._teamspace.name}"
             job_url += f"/studios/{studio.name}/app?app_id=data-prep&job_name={curr_job.name}"
             print(f"Find your job at {job_url}")
             has_printed = True
@@ -312,7 +312,7 @@ def _execute(
         if curr_job.status.phase == "LIGHTNINGAPP_INSTANCE_STATE_FAILED":
             raise RuntimeError(f"job {curr_job.name} failed!")
 
-        if curr_job.status.phase == "LIGHTNINGAPP_INSTANCE_STATE_STOPPED":
+        if curr_job.status.phase in ["LIGHTNINGAPP_INSTANCE_STATE_STOPPED", "LIGHTNINGAPP_INSTANCE_STATE_COMPLETED"]:
             break
 
         sleep(1)
