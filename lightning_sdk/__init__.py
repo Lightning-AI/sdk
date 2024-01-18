@@ -4,11 +4,11 @@ from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 
 __all__ = [
-    "JobsPlugin", 
-    "Machine", 
-    "MultiMachineTrainingPlugin", 
-    "Plugin", 
-    "Status", 
+    "JobsPlugin",
+    "Machine",
+    "MultiMachineTrainingPlugin",
+    "Plugin",
+    "Status",
     "Studio",
 ]
 

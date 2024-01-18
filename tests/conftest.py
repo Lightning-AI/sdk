@@ -319,7 +319,7 @@ def internal_studio_api_mocker_get_machine(mocker):
         if id == "st-abc":
             instance = "cpu-4"
         elif id == "st-def":
-            instance = "data-large-8000"
+            instance = "data-large-3000"
         elif id == "st-ghi":
             instance = "g4dn.2xlarge"
         elif id == "st-jkl":

@@ -600,7 +600,7 @@ def _cloud_url() -> str:
 # TODO: Add trainium instances once feature flag is lifted
 _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
     Machine.CPU: "cpu-4",
-    Machine.DATA_PREP: "data-large-8000",
+    Machine.DATA_PREP: "data-large-3000",
     Machine.T4: "g4dn.2xlarge",
     Machine.T4_X_4: "g4dn.12xlarge",
     Machine.V100: "p3.2xlarge",
