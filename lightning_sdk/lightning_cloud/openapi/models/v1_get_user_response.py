@@ -63,6 +63,7 @@ class V1GetUserResponse(object):
         'saw_create_first_project_dialog': 'bool',
         'saw_forums_login_merge_dialog': 'bool',
         'saw_free_credits_notification': 'bool',
+        'sb': 'bool',
         'status': 'Externalv1UserStatus',
         'user_metadata': 'str',
         'username': 'str',
@@ -93,6 +94,7 @@ class V1GetUserResponse(object):
         'saw_create_first_project_dialog': 'sawCreateFirstProjectDialog',
         'saw_forums_login_merge_dialog': 'sawForumsLoginMergeDialog',
         'saw_free_credits_notification': 'sawFreeCreditsNotification',
+        'sb': 'sb',
         'status': 'status',
         'user_metadata': 'userMetadata',
         'username': 'username',
@@ -100,7 +102,7 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, is_internal: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, status: 'Externalv1UserStatus' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, is_internal: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._api_key = None
@@ -124,6 +126,7 @@ class V1GetUserResponse(object):
         self._saw_create_first_project_dialog = None
         self._saw_forums_login_merge_dialog = None
         self._saw_free_credits_notification = None
+        self._sb = None
         self._status = None
         self._user_metadata = None
         self._username = None
@@ -174,6 +177,8 @@ class V1GetUserResponse(object):
             self.saw_forums_login_merge_dialog = saw_forums_login_merge_dialog
         if saw_free_credits_notification is not None:
             self.saw_free_credits_notification = saw_free_credits_notification
+        if sb is not None:
+            self.sb = sb
         if status is not None:
             self.status = status
         if user_metadata is not None:
@@ -646,6 +651,27 @@ class V1GetUserResponse(object):
         """
 
         self._saw_free_credits_notification = saw_free_credits_notification
+
+    @property
+    def sb(self) -> 'bool':
+        """Gets the sb of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The sb of this V1GetUserResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._sb
+
+    @sb.setter
+    def sb(self, sb: 'bool'):
+        """Sets the sb of this V1GetUserResponse.
+
+
+        :param sb: The sb of this V1GetUserResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._sb = sb
 
     @property
     def status(self) -> 'Externalv1UserStatus':

@@ -47,6 +47,7 @@ class V1Organization(object):
         'display_name': 'str',
         'domain': 'str',
         'email': 'str',
+        'featured_gallery': 'bool',
         'id': 'str',
         'location': 'str',
         'name': 'str',
@@ -61,6 +62,7 @@ class V1Organization(object):
         'display_name': 'displayName',
         'domain': 'domain',
         'email': 'email',
+        'featured_gallery': 'featuredGallery',
         'id': 'id',
         'location': 'location',
         'name': 'name',
@@ -68,7 +70,7 @@ class V1Organization(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
         self._created_at = None
@@ -76,6 +78,7 @@ class V1Organization(object):
         self._display_name = None
         self._domain = None
         self._email = None
+        self._featured_gallery = None
         self._id = None
         self._location = None
         self._name = None
@@ -94,6 +97,8 @@ class V1Organization(object):
             self.domain = domain
         if email is not None:
             self.email = email
+        if featured_gallery is not None:
+            self.featured_gallery = featured_gallery
         if id is not None:
             self.id = id
         if location is not None:
@@ -230,6 +235,27 @@ class V1Organization(object):
         """
 
         self._email = email
+
+    @property
+    def featured_gallery(self) -> 'bool':
+        """Gets the featured_gallery of this V1Organization.  # noqa: E501
+
+
+        :return: The featured_gallery of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._featured_gallery
+
+    @featured_gallery.setter
+    def featured_gallery(self, featured_gallery: 'bool'):
+        """Sets the featured_gallery of this V1Organization.
+
+
+        :param featured_gallery: The featured_gallery of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._featured_gallery = featured_gallery
 
     @property
     def id(self) -> 'str':

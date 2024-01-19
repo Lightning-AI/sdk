@@ -52,6 +52,7 @@ class V1CloudSpace(object):
         'display_name': 'str',
         'engagement_counts': 'dict(str, str)',
         'env': 'list[V1EnvVar]',
+        'featured': 'bool',
         'featured_ranking': 'str',
         'id': 'str',
         'image_status': 'V1ImageState',
@@ -94,6 +95,7 @@ class V1CloudSpace(object):
         'display_name': 'displayName',
         'engagement_counts': 'engagementCounts',
         'env': 'env',
+        'featured': 'featured',
         'featured_ranking': 'featuredRanking',
         'id': 'id',
         'image_status': 'imageStatus',
@@ -124,7 +126,7 @@ class V1CloudSpace(object):
         'web_path': 'webPath'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, featured_ranking: 'str' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, message: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, featured_ranking: 'str' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, message: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cluster_id = None
@@ -137,6 +139,7 @@ class V1CloudSpace(object):
         self._display_name = None
         self._engagement_counts = None
         self._env = None
+        self._featured = None
         self._featured_ranking = None
         self._id = None
         self._image_status = None
@@ -188,6 +191,8 @@ class V1CloudSpace(object):
             self.engagement_counts = engagement_counts
         if env is not None:
             self.env = env
+        if featured is not None:
+            self.featured = featured
         if featured_ranking is not None:
             self.featured_ranking = featured_ranking
         if id is not None:
@@ -475,6 +480,27 @@ class V1CloudSpace(object):
         """
 
         self._env = env
+
+    @property
+    def featured(self) -> 'bool':
+        """Gets the featured of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The featured of this V1CloudSpace.  # noqa: E501
+        :rtype: bool
+        """
+        return self._featured
+
+    @featured.setter
+    def featured(self, featured: 'bool'):
+        """Sets the featured of this V1CloudSpace.
+
+
+        :param featured: The featured of this V1CloudSpace.  # noqa: E501
+        :type: bool
+        """
+
+        self._featured = featured
 
     @property
     def featured_ranking(self) -> 'str':
