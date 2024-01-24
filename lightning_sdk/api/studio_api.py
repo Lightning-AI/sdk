@@ -637,7 +637,9 @@ class _FileUploader:
 
         self.local_path = file_path
 
-        self.remote_path = f"/cloudspaces/{studio_id}/code/content/{remote_path}"
+        self.remote_path = (
+            f"/cloudspaces/{studio_id}/code/content/{remote_path.replace('/teamspace/studios/this_studio/', '')}"
+        )
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
         self.filesize = os.path.getsize(file_path)
         self.progress_bar = tqdm(
