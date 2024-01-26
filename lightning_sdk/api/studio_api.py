@@ -740,7 +740,7 @@ class _FileUploader:
     def _handle_upload_presigned_url(self, presigned_url: V1PresignedUrl) -> V1CompleteUpload:
         """Straightforward uploads the part given a single url."""
         with open(self.local_path, "rb") as f:
-            f.seek(int(presigned_url.part_number) * self.chunk_size)
+            f.seek((int(presigned_url.part_number) - 1) * self.chunk_size)
             data = f.read(self.chunk_size)
 
         response = requests.put(presigned_url.url, data=data)
