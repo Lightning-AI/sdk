@@ -41,6 +41,7 @@ class V1CreateLitPageRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'category': 'str',
         'content': 'str',
         'order': 'int',
         'parent_id': 'str',
@@ -51,6 +52,7 @@ class V1CreateLitPageRequest(object):
     }
 
     attribute_map = {
+        'category': 'category',
         'content': 'content',
         'order': 'order',
         'parent_id': 'parentId',
@@ -60,8 +62,9 @@ class V1CreateLitPageRequest(object):
         'type': 'type'
     }
 
-    def __init__(self, content: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None):  # noqa: E501
+    def __init__(self, category: 'str' =None, content: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None):  # noqa: E501
         """V1CreateLitPageRequest - a model defined in Swagger"""  # noqa: E501
+        self._category = None
         self._content = None
         self._order = None
         self._parent_id = None
@@ -70,6 +73,8 @@ class V1CreateLitPageRequest(object):
         self._resource_type = None
         self._type = None
         self.discriminator = None
+        if category is not None:
+            self.category = category
         if content is not None:
             self.content = content
         if order is not None:
@@ -84,6 +89,27 @@ class V1CreateLitPageRequest(object):
             self.resource_type = resource_type
         if type is not None:
             self.type = type
+
+    @property
+    def category(self) -> 'str':
+        """Gets the category of this V1CreateLitPageRequest.  # noqa: E501
+
+
+        :return: The category of this V1CreateLitPageRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._category
+
+    @category.setter
+    def category(self, category: 'str'):
+        """Sets the category of this V1CreateLitPageRequest.
+
+
+        :param category: The category of this V1CreateLitPageRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._category = category
 
     @property
     def content(self) -> 'str':

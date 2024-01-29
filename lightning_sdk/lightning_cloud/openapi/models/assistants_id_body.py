@@ -41,6 +41,8 @@ class AssistantsIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cloudspace_id': 'str',
+        'cluster_id': 'str',
         'created_at': 'datetime',
         'endpoint_id': 'str',
         'name': 'str',
@@ -50,6 +52,8 @@ class AssistantsIdBody(object):
     }
 
     attribute_map = {
+        'cloudspace_id': 'cloudspaceId',
+        'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'endpoint_id': 'endpointId',
         'name': 'name',
@@ -58,8 +62,10 @@ class AssistantsIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, endpoint_id: 'str' =None, name: 'str' =None, prompt_template: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, endpoint_id: 'str' =None, name: 'str' =None, prompt_template: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """AssistantsIdBody - a model defined in Swagger"""  # noqa: E501
+        self._cloudspace_id = None
+        self._cluster_id = None
         self._created_at = None
         self._endpoint_id = None
         self._name = None
@@ -67,6 +73,10 @@ class AssistantsIdBody(object):
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
+        if cloudspace_id is not None:
+            self.cloudspace_id = cloudspace_id
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
         if endpoint_id is not None:
@@ -79,6 +89,48 @@ class AssistantsIdBody(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def cloudspace_id(self) -> 'str':
+        """Gets the cloudspace_id of this AssistantsIdBody.  # noqa: E501
+
+
+        :return: The cloudspace_id of this AssistantsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloudspace_id
+
+    @cloudspace_id.setter
+    def cloudspace_id(self, cloudspace_id: 'str'):
+        """Sets the cloudspace_id of this AssistantsIdBody.
+
+
+        :param cloudspace_id: The cloudspace_id of this AssistantsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cloudspace_id = cloudspace_id
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this AssistantsIdBody.  # noqa: E501
+
+
+        :return: The cluster_id of this AssistantsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this AssistantsIdBody.
+
+
+        :param cluster_id: The cluster_id of this AssistantsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def created_at(self) -> 'datetime':

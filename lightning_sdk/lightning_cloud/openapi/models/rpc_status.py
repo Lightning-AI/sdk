@@ -69,6 +69,7 @@ class RpcStatus(object):
     def code(self) -> 'int':
         """Gets the code of this RpcStatus.  # noqa: E501
 
+        The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].  # noqa: E501
 
         :return: The code of this RpcStatus.  # noqa: E501
         :rtype: int
@@ -79,6 +80,7 @@ class RpcStatus(object):
     def code(self, code: 'int'):
         """Sets the code of this RpcStatus.
 
+        The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].  # noqa: E501
 
         :param code: The code of this RpcStatus.  # noqa: E501
         :type: int
@@ -90,6 +92,7 @@ class RpcStatus(object):
     def details(self) -> 'list[ProtobufAny]':
         """Gets the details of this RpcStatus.  # noqa: E501
 
+        A list of messages that carry the error details.  There is a common set of message types for APIs to use.  # noqa: E501
 
         :return: The details of this RpcStatus.  # noqa: E501
         :rtype: list[ProtobufAny]
@@ -100,6 +103,7 @@ class RpcStatus(object):
     def details(self, details: 'list[ProtobufAny]'):
         """Sets the details of this RpcStatus.
 
+        A list of messages that carry the error details.  There is a common set of message types for APIs to use.  # noqa: E501
 
         :param details: The details of this RpcStatus.  # noqa: E501
         :type: list[ProtobufAny]
@@ -111,6 +115,7 @@ class RpcStatus(object):
     def message(self) -> 'str':
         """Gets the message of this RpcStatus.  # noqa: E501
 
+        A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.  # noqa: E501
 
         :return: The message of this RpcStatus.  # noqa: E501
         :rtype: str
@@ -121,6 +126,7 @@ class RpcStatus(object):
     def message(self, message: 'str'):
         """Sets the message of this RpcStatus.
 
+        A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.  # noqa: E501
 
         :param message: The message of this RpcStatus.  # noqa: E501
         :type: str

@@ -41,50 +41,102 @@ class ProjectIdAssistantsBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'endpoint_id': 'str',
+        'cloudspace_id': 'str',
+        'cluster_id': 'str',
+        'endpoint': 'V1Endpoint',
         'name': 'str',
         'prompt_template': 'str'
     }
 
     attribute_map = {
-        'endpoint_id': 'endpointId',
+        'cloudspace_id': 'cloudspaceId',
+        'cluster_id': 'clusterId',
+        'endpoint': 'endpoint',
         'name': 'name',
         'prompt_template': 'promptTemplate'
     }
 
-    def __init__(self, endpoint_id: 'str' =None, name: 'str' =None, prompt_template: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, prompt_template: 'str' =None):  # noqa: E501
         """ProjectIdAssistantsBody - a model defined in Swagger"""  # noqa: E501
-        self._endpoint_id = None
+        self._cloudspace_id = None
+        self._cluster_id = None
+        self._endpoint = None
         self._name = None
         self._prompt_template = None
         self.discriminator = None
-        if endpoint_id is not None:
-            self.endpoint_id = endpoint_id
+        if cloudspace_id is not None:
+            self.cloudspace_id = cloudspace_id
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
+        if endpoint is not None:
+            self.endpoint = endpoint
         if name is not None:
             self.name = name
         if prompt_template is not None:
             self.prompt_template = prompt_template
 
     @property
-    def endpoint_id(self) -> 'str':
-        """Gets the endpoint_id of this ProjectIdAssistantsBody.  # noqa: E501
+    def cloudspace_id(self) -> 'str':
+        """Gets the cloudspace_id of this ProjectIdAssistantsBody.  # noqa: E501
 
 
-        :return: The endpoint_id of this ProjectIdAssistantsBody.  # noqa: E501
+        :return: The cloudspace_id of this ProjectIdAssistantsBody.  # noqa: E501
         :rtype: str
         """
-        return self._endpoint_id
+        return self._cloudspace_id
 
-    @endpoint_id.setter
-    def endpoint_id(self, endpoint_id: 'str'):
-        """Sets the endpoint_id of this ProjectIdAssistantsBody.
+    @cloudspace_id.setter
+    def cloudspace_id(self, cloudspace_id: 'str'):
+        """Sets the cloudspace_id of this ProjectIdAssistantsBody.
 
 
-        :param endpoint_id: The endpoint_id of this ProjectIdAssistantsBody.  # noqa: E501
+        :param cloudspace_id: The cloudspace_id of this ProjectIdAssistantsBody.  # noqa: E501
         :type: str
         """
 
-        self._endpoint_id = endpoint_id
+        self._cloudspace_id = cloudspace_id
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this ProjectIdAssistantsBody.  # noqa: E501
+
+
+        :return: The cluster_id of this ProjectIdAssistantsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this ProjectIdAssistantsBody.
+
+
+        :param cluster_id: The cluster_id of this ProjectIdAssistantsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
+
+    @property
+    def endpoint(self) -> 'V1Endpoint':
+        """Gets the endpoint of this ProjectIdAssistantsBody.  # noqa: E501
+
+
+        :return: The endpoint of this ProjectIdAssistantsBody.  # noqa: E501
+        :rtype: V1Endpoint
+        """
+        return self._endpoint
+
+    @endpoint.setter
+    def endpoint(self, endpoint: 'V1Endpoint'):
+        """Sets the endpoint of this ProjectIdAssistantsBody.
+
+
+        :param endpoint: The endpoint of this ProjectIdAssistantsBody.  # noqa: E501
+        :type: V1Endpoint
+        """
+
+        self._endpoint = endpoint
 
     @property
     def name(self) -> 'str':

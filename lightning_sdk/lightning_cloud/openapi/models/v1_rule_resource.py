@@ -61,6 +61,8 @@ class V1RuleResource(object):
     ORGBILLINGTOPUP = "orgBillingTopUp"
     DATACONNECTION = "dataConnection"
     CLOUDSPACEPUBLICATION = "cloudSpacePublication"
+    ASSISTANT = "assistant"
+    ENDPOINT = "endpoint"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

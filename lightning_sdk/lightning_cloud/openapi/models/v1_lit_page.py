@@ -41,6 +41,7 @@ class V1LitPage(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'category': 'str',
         'children': 'list[V1LitPage]',
         'content': 'str',
         'created_at': 'datetime',
@@ -58,6 +59,7 @@ class V1LitPage(object):
     }
 
     attribute_map = {
+        'category': 'category',
         'children': 'children',
         'content': 'content',
         'created_at': 'createdAt',
@@ -74,8 +76,9 @@ class V1LitPage(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, children: 'list[V1LitPage]' =None, content: 'str' =None, created_at: 'datetime' =None, creator_id: 'str' =None, display_content_from_id: 'str' =None, id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, published: 'bool' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, category: 'str' =None, children: 'list[V1LitPage]' =None, content: 'str' =None, created_at: 'datetime' =None, creator_id: 'str' =None, display_content_from_id: 'str' =None, id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, published: 'bool' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1LitPage - a model defined in Swagger"""  # noqa: E501
+        self._category = None
         self._children = None
         self._content = None
         self._created_at = None
@@ -91,6 +94,8 @@ class V1LitPage(object):
         self._type = None
         self._updated_at = None
         self.discriminator = None
+        if category is not None:
+            self.category = category
         if children is not None:
             self.children = children
         if content is not None:
@@ -119,6 +124,27 @@ class V1LitPage(object):
             self.type = type
         if updated_at is not None:
             self.updated_at = updated_at
+
+    @property
+    def category(self) -> 'str':
+        """Gets the category of this V1LitPage.  # noqa: E501
+
+
+        :return: The category of this V1LitPage.  # noqa: E501
+        :rtype: str
+        """
+        return self._category
+
+    @category.setter
+    def category(self, category: 'str'):
+        """Sets the category of this V1LitPage.
+
+
+        :param category: The category of this V1LitPage.  # noqa: E501
+        :type: str
+        """
+
+        self._category = category
 
     @property
     def children(self) -> 'list[V1LitPage]':

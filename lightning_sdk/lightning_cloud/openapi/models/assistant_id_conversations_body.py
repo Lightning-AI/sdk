@@ -42,33 +42,43 @@ class AssistantIdConversationsBody(object):
     """
     swagger_types = {
         'conversation_id': 'str',
+        'max_tokens': 'str',
         'messages': 'list[V1Message]',
         'model': 'str',
-        'parent_message_id': 'str'
+        'parent_message_id': 'str',
+        'stream': 'bool'
     }
 
     attribute_map = {
         'conversation_id': 'conversationId',
+        'max_tokens': 'maxTokens',
         'messages': 'messages',
         'model': 'model',
-        'parent_message_id': 'parentMessageId'
+        'parent_message_id': 'parentMessageId',
+        'stream': 'stream'
     }
 
-    def __init__(self, conversation_id: 'str' =None, messages: 'list[V1Message]' =None, model: 'str' =None, parent_message_id: 'str' =None):  # noqa: E501
+    def __init__(self, conversation_id: 'str' =None, max_tokens: 'str' =None, messages: 'list[V1Message]' =None, model: 'str' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._conversation_id = None
+        self._max_tokens = None
         self._messages = None
         self._model = None
         self._parent_message_id = None
+        self._stream = None
         self.discriminator = None
         if conversation_id is not None:
             self.conversation_id = conversation_id
+        if max_tokens is not None:
+            self.max_tokens = max_tokens
         if messages is not None:
             self.messages = messages
         if model is not None:
             self.model = model
         if parent_message_id is not None:
             self.parent_message_id = parent_message_id
+        if stream is not None:
+            self.stream = stream
 
     @property
     def conversation_id(self) -> 'str':
@@ -90,6 +100,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._conversation_id = conversation_id
+
+    @property
+    def max_tokens(self) -> 'str':
+        """Gets the max_tokens of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The max_tokens of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._max_tokens
+
+    @max_tokens.setter
+    def max_tokens(self, max_tokens: 'str'):
+        """Sets the max_tokens of this AssistantIdConversationsBody.
+
+
+        :param max_tokens: The max_tokens of this AssistantIdConversationsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._max_tokens = max_tokens
 
     @property
     def messages(self) -> 'list[V1Message]':
@@ -153,6 +184,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._parent_message_id = parent_message_id
+
+    @property
+    def stream(self) -> 'bool':
+        """Gets the stream of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The stream of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._stream
+
+    @stream.setter
+    def stream(self, stream: 'bool'):
+        """Sets the stream of this AssistantIdConversationsBody.
+
+
+        :param stream: The stream of this AssistantIdConversationsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._stream = stream
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

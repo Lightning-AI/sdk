@@ -41,39 +41,70 @@ class V1ClusterCapacityReservation(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'capacity_reservation_type': 'str',
         'cloud_provider_capacity_reservation_id': 'str',
         'cluster_id': 'str',
         'id': 'str',
+        'instance_type': 'str',
         'match_pattern': 'str',
         'project_id': 'str'
     }
 
     attribute_map = {
+        'capacity_reservation_type': 'capacityReservationType',
         'cloud_provider_capacity_reservation_id': 'cloudProviderCapacityReservationId',
         'cluster_id': 'clusterId',
         'id': 'id',
+        'instance_type': 'instanceType',
         'match_pattern': 'matchPattern',
         'project_id': 'projectId'
     }
 
-    def __init__(self, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, id: 'str' =None, match_pattern: 'str' =None, project_id: 'str' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, id: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, project_id: 'str' =None):  # noqa: E501
         """V1ClusterCapacityReservation - a model defined in Swagger"""  # noqa: E501
+        self._capacity_reservation_type = None
         self._cloud_provider_capacity_reservation_id = None
         self._cluster_id = None
         self._id = None
+        self._instance_type = None
         self._match_pattern = None
         self._project_id = None
         self.discriminator = None
+        if capacity_reservation_type is not None:
+            self.capacity_reservation_type = capacity_reservation_type
         if cloud_provider_capacity_reservation_id is not None:
             self.cloud_provider_capacity_reservation_id = cloud_provider_capacity_reservation_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if id is not None:
             self.id = id
+        if instance_type is not None:
+            self.instance_type = instance_type
         if match_pattern is not None:
             self.match_pattern = match_pattern
         if project_id is not None:
             self.project_id = project_id
+
+    @property
+    def capacity_reservation_type(self) -> 'str':
+        """Gets the capacity_reservation_type of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The capacity_reservation_type of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: str
+        """
+        return self._capacity_reservation_type
+
+    @capacity_reservation_type.setter
+    def capacity_reservation_type(self, capacity_reservation_type: 'str'):
+        """Sets the capacity_reservation_type of this V1ClusterCapacityReservation.
+
+
+        :param capacity_reservation_type: The capacity_reservation_type of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: str
+        """
+
+        self._capacity_reservation_type = capacity_reservation_type
 
     @property
     def cloud_provider_capacity_reservation_id(self) -> 'str':
@@ -137,6 +168,27 @@ class V1ClusterCapacityReservation(object):
         """
 
         self._id = id
+
+    @property
+    def instance_type(self) -> 'str':
+        """Gets the instance_type of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The instance_type of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: str
+        """
+        return self._instance_type
+
+    @instance_type.setter
+    def instance_type(self, instance_type: 'str'):
+        """Sets the instance_type of this V1ClusterCapacityReservation.
+
+
+        :param instance_type: The instance_type of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: str
+        """
+
+        self._instance_type = instance_type
 
     @property
     def match_pattern(self) -> 'str':
