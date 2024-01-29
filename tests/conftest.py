@@ -44,6 +44,10 @@ _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
 _END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
 
 
+class _DummyResponse:
+    data: bytes
+
+
 @pytest.fixture()
 def internal_user_api_mocker(mocker):
     m = mocker.patch(
@@ -287,10 +291,13 @@ def internal_studio_api_mocker_run_command(mocker):
         autospec=True,
         return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output="Command Started Successfully"),
     )
+    resp = _DummyResponse
+    resp.data = b'{"result":{"output":" foo-res","exitCode":0}}\n{"result":{"output":"ponse ba","exitCode":0}}\n{"result":{"output":"r-respon","exitCode":0}}\n{"result":{"output":"se ","exitCode":0}}\n'
+
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space_stream",
         autospec=True,
-        return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output=" foo-response bar-response "),
+        return_value=resp,
     )
 
     yield [mocker]
@@ -764,10 +771,13 @@ def internal_studio_run_mocker(mocker):
         return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output="Successfully submitted"),
     )
 
+    resp = _DummyResponse
+    resp.data = b'{"result":{"output":" foo-res","exitCode":0}}\n{"result":{"output":"ponse ba","exitCode":0}}\n{"result":{"output":"r-respon","exitCode":0}}\n{"result":{"output":"se ","exitCode":0}}\n'
+
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space_stream",
         autospec=True,
-        return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output=" foo-response bar-response "),
+        return_value=resp,
     )
 
     yield [mocker]
@@ -793,10 +803,13 @@ def internal_studio_run_error_mocker(mocker):
         return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output="Submitted Successfully"),
     )
 
+    resp = _DummyResponse
+    resp.data = b'{"result":{"output":" No such file or directory foo ","exitCode":1}}\n'
+
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space",
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space_stream",
         autospec=True,
-        return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=1, output=" No such file or directory foo "),
+        return_value=resp,
     )
 
     yield [mocker]

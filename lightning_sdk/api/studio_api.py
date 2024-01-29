@@ -207,12 +207,26 @@ class StudioApi:
         self, studio_id: str, teamspace_id: str, session_id: str
     ) -> V1GetLongRunningCommandInCloudSpaceResponse:
         """Get the status of a detached command."""
-        resp = self._client.cloud_space_service_get_long_running_command_in_cloud_space(
-            project_id=teamspace_id, id=studio_id, session=session_id
+        # we need to decode this manually since this is ndjson and not usual json
+        response_data = self._client.cloud_space_service_get_long_running_command_in_cloud_space_stream(
+            project_id=teamspace_id, id=studio_id, session=session_id, _preload_content=False
         )
-        if not resp:
+
+        if not response_data:
             raise RuntimeError("Unable to get status of running command")
-        return resp
+
+        # convert from ndjson to json
+        lines = ",".join(response_data.data.decode().splitlines())
+        text = f"[{lines}]"
+        # store in dummy class since api client deserializes the data attribute
+        correct_response = _DummyResponse(text.encode())
+        # decode as list of object as we have multiple of those
+        responses = self._client.api_client.deserialize(
+            correct_response, response_type="list[StreamResultOfV1GetLongRunningCommandInCloudSpaceResponse]"
+        )
+
+        for response in responses:
+            yield response.result
 
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Tuple[str, int]:
         """Run given commands in a given Studio."""
@@ -227,11 +241,24 @@ class StudioApi:
             raise RuntimeError("Unable to submit command")
 
         while True:
-            resp = self._get_detached_command_status(
+            output = ""
+            exit_code = None
+
+            for resp in self._get_detached_command_status(
                 studio_id=studio_id, teamspace_id=teamspace_id, session_id=session_id
-            )
-            if resp.exit_code != -1:
-                return resp.output, resp.exit_code
+            ):
+                if resp.exit_code != -1:
+                    if exit_code is None:
+                        exit_code = resp.exit_code
+                    elif exit_code != resp.exit_code:
+                        raise RuntimeError("Cannot determine exit code")
+
+                    output += resp.output
+                else:
+                    break
+
+            if exit_code is not None:
+                return output, exit_code
 
             time.sleep(1)
 
@@ -763,3 +790,8 @@ class _FileUploader:
             )
 
         return self._handle_upload_presigned_url(presigned_url=urls[0])
+
+
+class _DummyResponse:
+    def __init__(self, data: bytes) -> None:
+        self.data = data
