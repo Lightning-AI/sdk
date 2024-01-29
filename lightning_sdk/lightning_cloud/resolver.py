@@ -256,7 +256,7 @@ def _assert_dir_has_index_file(output_dir: Dir) -> None:
             s3.Object(bucket_name, obj.key).delete()
 
 
-def _get_lightning_sdk.lightning_cloud_url() -> str:
+def _get_cloud_url() -> str:
     # detect local development
     if os.getenv("VSCODE_PROXY_URI", "").startswith("http://localhost:9800"):
         return "http://localhost:9800"
@@ -303,7 +303,7 @@ def _execute(
             project_id=studio._teamspace.id, id=job.id
         )
         if not has_printed:
-            cloud_url = _get_lightning_sdk.lightning_cloud_url()
+            cloud_url = _get_cloud_url()
             job_url = f"{cloud_url}/{studio.owner}/{studio._teamspace.name}"
             job_url += f"/studios/{studio.name}/app?app_id=data-prep&job_name={curr_job.name}"
             print(f"Find your job at {job_url}")
