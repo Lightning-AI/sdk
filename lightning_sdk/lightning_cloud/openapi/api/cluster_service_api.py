@@ -368,6 +368,8 @@ class ClusterServiceApi(object):
 
         :param async_req bool
         :param str id: (required)
+        :param str org_id:
+        :param str project_id:
         :param bool force:
         :param bool delete_artifacts: if set to true, artifacts in the cloud provider object storage will be deleted.
         :param bool delete_system_logs:
@@ -392,6 +394,8 @@ class ClusterServiceApi(object):
 
         :param async_req bool
         :param str id: (required)
+        :param str org_id:
+        :param str project_id:
         :param bool force:
         :param bool delete_artifacts: if set to true, artifacts in the cloud provider object storage will be deleted.
         :param bool delete_system_logs:
@@ -400,7 +404,7 @@ class ClusterServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['id', 'force', 'delete_artifacts', 'delete_system_logs']  # noqa: E501
+        all_params = ['id', 'org_id', 'project_id', 'force', 'delete_artifacts', 'delete_system_logs']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -427,6 +431,10 @@ class ClusterServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
         if 'force' in params:
             query_params.append(('force', params['force']))  # noqa: E501
         if 'delete_artifacts' in params:
@@ -685,7 +693,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_get_cluster(self, id: 'str', **kwargs) -> 'V1GetClusterResponse':  # noqa: E501
+    def cluster_service_get_cluster(self, id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
         """cluster_service_get_cluster  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -695,7 +703,9 @@ class ClusterServiceApi(object):
 
         :param async_req bool
         :param str id: (required)
-        :return: V1GetClusterResponse
+        :param str org_id:
+        :param str project_id:
+        :return: Externalv1Cluster
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -706,7 +716,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_get_cluster_with_http_info(id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_get_cluster_with_http_info(self, id: 'str', **kwargs) -> 'V1GetClusterResponse':  # noqa: E501
+    def cluster_service_get_cluster_with_http_info(self, id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
         """cluster_service_get_cluster  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -716,12 +726,14 @@ class ClusterServiceApi(object):
 
         :param async_req bool
         :param str id: (required)
-        :return: V1GetClusterResponse
+        :param str org_id:
+        :param str project_id:
+        :return: Externalv1Cluster
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['id']  # noqa: E501
+        all_params = ['id', 'org_id', 'project_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -748,6 +760,10 @@ class ClusterServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
 
         header_params = {}
 
@@ -770,7 +786,7 @@ class ClusterServiceApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1GetClusterResponse',  # noqa: E501
+            response_type='Externalv1Cluster',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -1361,10 +1377,8 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param list[str] phase_in:
-        :param list[str] phase_not_in:
-        :param list[str] cluster_type_in:
-        :param list[str] cluster_type_not_in:
+        :param str org_id:
+        :param str project_id:
         :return: V1ListClustersResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1385,16 +1399,14 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param list[str] phase_in:
-        :param list[str] phase_not_in:
-        :param list[str] cluster_type_in:
-        :param list[str] cluster_type_not_in:
+        :param str org_id:
+        :param str project_id:
         :return: V1ListClustersResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['phase_in', 'phase_not_in', 'cluster_type_in', 'cluster_type_not_in']  # noqa: E501
+        all_params = ['org_id', 'project_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1415,18 +1427,10 @@ class ClusterServiceApi(object):
         path_params = {}
 
         query_params = []
-        if 'phase_in' in params:
-            query_params.append(('phaseIn', params['phase_in']))  # noqa: E501
-            collection_formats['phaseIn'] = 'multi'  # noqa: E501
-        if 'phase_not_in' in params:
-            query_params.append(('phaseNotIn', params['phase_not_in']))  # noqa: E501
-            collection_formats['phaseNotIn'] = 'multi'  # noqa: E501
-        if 'cluster_type_in' in params:
-            query_params.append(('clusterTypeIn', params['cluster_type_in']))  # noqa: E501
-            collection_formats['clusterTypeIn'] = 'multi'  # noqa: E501
-        if 'cluster_type_not_in' in params:
-            query_params.append(('clusterTypeNotIn', params['cluster_type_not_in']))  # noqa: E501
-            collection_formats['clusterTypeNotIn'] = 'multi'  # noqa: E501
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
 
         header_params = {}
 

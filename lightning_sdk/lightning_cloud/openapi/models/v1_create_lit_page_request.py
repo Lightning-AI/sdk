@@ -44,6 +44,7 @@ class V1CreateLitPageRequest(object):
         'content': 'str',
         'order': 'int',
         'parent_id': 'str',
+        'path': 'str',
         'resource_id': 'str',
         'resource_type': 'str',
         'type': 'V1LitPageType'
@@ -53,16 +54,18 @@ class V1CreateLitPageRequest(object):
         'content': 'content',
         'order': 'order',
         'parent_id': 'parentId',
+        'path': 'path',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'type': 'type'
     }
 
-    def __init__(self, content: 'str' =None, order: 'int' =None, parent_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None):  # noqa: E501
+    def __init__(self, content: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None):  # noqa: E501
         """V1CreateLitPageRequest - a model defined in Swagger"""  # noqa: E501
         self._content = None
         self._order = None
         self._parent_id = None
+        self._path = None
         self._resource_id = None
         self._resource_type = None
         self._type = None
@@ -73,6 +76,8 @@ class V1CreateLitPageRequest(object):
             self.order = order
         if parent_id is not None:
             self.parent_id = parent_id
+        if path is not None:
+            self.path = path
         if resource_id is not None:
             self.resource_id = resource_id
         if resource_type is not None:
@@ -142,6 +147,27 @@ class V1CreateLitPageRequest(object):
         """
 
         self._parent_id = parent_id
+
+    @property
+    def path(self) -> 'str':
+        """Gets the path of this V1CreateLitPageRequest.  # noqa: E501
+
+
+        :return: The path of this V1CreateLitPageRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._path
+
+    @path.setter
+    def path(self, path: 'str'):
+        """Sets the path of this V1CreateLitPageRequest.
+
+
+        :param path: The path of this V1CreateLitPageRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._path = path
 
     @property
     def resource_id(self) -> 'str':

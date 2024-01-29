@@ -42,28 +42,43 @@ class LitpagesIdBody(object):
     """
     swagger_types = {
         'content': 'str',
+        'display_content_from_id': 'str',
         'order': 'int',
-        'parent_id': 'str'
+        'parent_id': 'str',
+        'path': 'str',
+        'published': 'bool'
     }
 
     attribute_map = {
         'content': 'content',
+        'display_content_from_id': 'displayContentFromId',
         'order': 'order',
-        'parent_id': 'parentId'
+        'parent_id': 'parentId',
+        'path': 'path',
+        'published': 'published'
     }
 
-    def __init__(self, content: 'str' =None, order: 'int' =None, parent_id: 'str' =None):  # noqa: E501
+    def __init__(self, content: 'str' =None, display_content_from_id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, published: 'bool' =None):  # noqa: E501
         """LitpagesIdBody - a model defined in Swagger"""  # noqa: E501
         self._content = None
+        self._display_content_from_id = None
         self._order = None
         self._parent_id = None
+        self._path = None
+        self._published = None
         self.discriminator = None
         if content is not None:
             self.content = content
+        if display_content_from_id is not None:
+            self.display_content_from_id = display_content_from_id
         if order is not None:
             self.order = order
         if parent_id is not None:
             self.parent_id = parent_id
+        if path is not None:
+            self.path = path
+        if published is not None:
+            self.published = published
 
     @property
     def content(self) -> 'str':
@@ -85,6 +100,27 @@ class LitpagesIdBody(object):
         """
 
         self._content = content
+
+    @property
+    def display_content_from_id(self) -> 'str':
+        """Gets the display_content_from_id of this LitpagesIdBody.  # noqa: E501
+
+
+        :return: The display_content_from_id of this LitpagesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._display_content_from_id
+
+    @display_content_from_id.setter
+    def display_content_from_id(self, display_content_from_id: 'str'):
+        """Sets the display_content_from_id of this LitpagesIdBody.
+
+
+        :param display_content_from_id: The display_content_from_id of this LitpagesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._display_content_from_id = display_content_from_id
 
     @property
     def order(self) -> 'int':
@@ -127,6 +163,48 @@ class LitpagesIdBody(object):
         """
 
         self._parent_id = parent_id
+
+    @property
+    def path(self) -> 'str':
+        """Gets the path of this LitpagesIdBody.  # noqa: E501
+
+
+        :return: The path of this LitpagesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._path
+
+    @path.setter
+    def path(self, path: 'str'):
+        """Sets the path of this LitpagesIdBody.
+
+
+        :param path: The path of this LitpagesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._path = path
+
+    @property
+    def published(self) -> 'bool':
+        """Gets the published of this LitpagesIdBody.  # noqa: E501
+
+
+        :return: The published of this LitpagesIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._published
+
+    @published.setter
+    def published(self, published: 'bool'):
+        """Sets the published of this LitpagesIdBody.
+
+
+        :param published: The published of this LitpagesIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._published = published
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -43,25 +43,35 @@ class V1Message(object):
     swagger_types = {
         'author': 'V1MessageAuthor',
         'content': 'V1MessageContent',
+        'conversation_id': 'str',
+        'created_at': 'datetime',
         'id': 'str'
     }
 
     attribute_map = {
         'author': 'author',
         'content': 'content',
+        'conversation_id': 'conversationId',
+        'created_at': 'createdAt',
         'id': 'id'
     }
 
-    def __init__(self, author: 'V1MessageAuthor' =None, content: 'V1MessageContent' =None, id: 'str' =None):  # noqa: E501
+    def __init__(self, author: 'V1MessageAuthor' =None, content: 'V1MessageContent' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._author = None
         self._content = None
+        self._conversation_id = None
+        self._created_at = None
         self._id = None
         self.discriminator = None
         if author is not None:
             self.author = author
         if content is not None:
             self.content = content
+        if conversation_id is not None:
+            self.conversation_id = conversation_id
+        if created_at is not None:
+            self.created_at = created_at
         if id is not None:
             self.id = id
 
@@ -106,6 +116,48 @@ class V1Message(object):
         """
 
         self._content = content
+
+    @property
+    def conversation_id(self) -> 'str':
+        """Gets the conversation_id of this V1Message.  # noqa: E501
+
+
+        :return: The conversation_id of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._conversation_id
+
+    @conversation_id.setter
+    def conversation_id(self, conversation_id: 'str'):
+        """Sets the conversation_id of this V1Message.
+
+
+        :param conversation_id: The conversation_id of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._conversation_id = conversation_id
+
+    @property
+    def created_at(self) -> 'datetime':
+        """Gets the created_at of this V1Message.  # noqa: E501
+
+
+        :return: The created_at of this V1Message.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._created_at
+
+    @created_at.setter
+    def created_at(self, created_at: 'datetime'):
+        """Sets the created_at of this V1Message.
+
+
+        :param created_at: The created_at of this V1Message.  # noqa: E501
+        :type: datetime
+        """
+
+        self._created_at = created_at
 
     @property
     def id(self) -> 'str':

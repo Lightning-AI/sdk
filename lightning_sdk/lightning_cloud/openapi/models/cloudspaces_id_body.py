@@ -47,7 +47,6 @@ class CloudspacesIdBody(object):
         'display_name': 'str',
         'env': 'list[V1EnvVar]',
         'featured': 'bool',
-        'featured_ranking': 'str',
         'is_cloudspace_private': 'bool',
         'is_code_private': 'bool',
         'is_published': 'bool',
@@ -71,7 +70,6 @@ class CloudspacesIdBody(object):
         'display_name': 'displayName',
         'env': 'env',
         'featured': 'featured',
-        'featured_ranking': 'featuredRanking',
         'is_cloudspace_private': 'isCloudspacePrivate',
         'is_code_private': 'isCodePrivate',
         'is_published': 'isPublished',
@@ -88,7 +86,7 @@ class CloudspacesIdBody(object):
         'user_metadata': 'userMetadata'
     }
 
-    def __init__(self, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, featured_ranking: 'str' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
+    def __init__(self, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
         """CloudspacesIdBody - a model defined in Swagger"""  # noqa: E501
         self._code_url = None
         self._data_connection_mounts = None
@@ -96,7 +94,6 @@ class CloudspacesIdBody(object):
         self._display_name = None
         self._env = None
         self._featured = None
-        self._featured_ranking = None
         self._is_cloudspace_private = None
         self._is_code_private = None
         self._is_published = None
@@ -124,8 +121,6 @@ class CloudspacesIdBody(object):
             self.env = env
         if featured is not None:
             self.featured = featured
-        if featured_ranking is not None:
-            self.featured_ranking = featured_ranking
         if is_cloudspace_private is not None:
             self.is_cloudspace_private = is_cloudspace_private
         if is_code_private is not None:
@@ -280,27 +275,6 @@ class CloudspacesIdBody(object):
         """
 
         self._featured = featured
-
-    @property
-    def featured_ranking(self) -> 'str':
-        """Gets the featured_ranking of this CloudspacesIdBody.  # noqa: E501
-
-
-        :return: The featured_ranking of this CloudspacesIdBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._featured_ranking
-
-    @featured_ranking.setter
-    def featured_ranking(self, featured_ranking: 'str'):
-        """Sets the featured_ranking of this CloudspacesIdBody.
-
-
-        :param featured_ranking: The featured_ranking of this CloudspacesIdBody.  # noqa: E501
-        :type: str
-        """
-
-        self._featured_ranking = featured_ranking
 
     @property
     def is_cloudspace_private(self) -> 'bool':

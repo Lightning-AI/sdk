@@ -45,9 +45,12 @@ class V1LitPage(object):
         'content': 'str',
         'created_at': 'datetime',
         'creator_id': 'str',
+        'display_content_from_id': 'str',
         'id': 'str',
         'order': 'int',
         'parent_id': 'str',
+        'path': 'str',
+        'published': 'bool',
         'resource_id': 'str',
         'resource_type': 'str',
         'type': 'V1LitPageType',
@@ -59,24 +62,30 @@ class V1LitPage(object):
         'content': 'content',
         'created_at': 'createdAt',
         'creator_id': 'creatorId',
+        'display_content_from_id': 'displayContentFromId',
         'id': 'id',
         'order': 'order',
         'parent_id': 'parentId',
+        'path': 'path',
+        'published': 'published',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'type': 'type',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, children: 'list[V1LitPage]' =None, content: 'str' =None, created_at: 'datetime' =None, creator_id: 'str' =None, id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, children: 'list[V1LitPage]' =None, content: 'str' =None, created_at: 'datetime' =None, creator_id: 'str' =None, display_content_from_id: 'str' =None, id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, published: 'bool' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1LitPage - a model defined in Swagger"""  # noqa: E501
         self._children = None
         self._content = None
         self._created_at = None
         self._creator_id = None
+        self._display_content_from_id = None
         self._id = None
         self._order = None
         self._parent_id = None
+        self._path = None
+        self._published = None
         self._resource_id = None
         self._resource_type = None
         self._type = None
@@ -90,12 +99,18 @@ class V1LitPage(object):
             self.created_at = created_at
         if creator_id is not None:
             self.creator_id = creator_id
+        if display_content_from_id is not None:
+            self.display_content_from_id = display_content_from_id
         if id is not None:
             self.id = id
         if order is not None:
             self.order = order
         if parent_id is not None:
             self.parent_id = parent_id
+        if path is not None:
+            self.path = path
+        if published is not None:
+            self.published = published
         if resource_id is not None:
             self.resource_id = resource_id
         if resource_type is not None:
@@ -190,6 +205,27 @@ class V1LitPage(object):
         self._creator_id = creator_id
 
     @property
+    def display_content_from_id(self) -> 'str':
+        """Gets the display_content_from_id of this V1LitPage.  # noqa: E501
+
+
+        :return: The display_content_from_id of this V1LitPage.  # noqa: E501
+        :rtype: str
+        """
+        return self._display_content_from_id
+
+    @display_content_from_id.setter
+    def display_content_from_id(self, display_content_from_id: 'str'):
+        """Sets the display_content_from_id of this V1LitPage.
+
+
+        :param display_content_from_id: The display_content_from_id of this V1LitPage.  # noqa: E501
+        :type: str
+        """
+
+        self._display_content_from_id = display_content_from_id
+
+    @property
     def id(self) -> 'str':
         """Gets the id of this V1LitPage.  # noqa: E501
 
@@ -251,6 +287,48 @@ class V1LitPage(object):
         """
 
         self._parent_id = parent_id
+
+    @property
+    def path(self) -> 'str':
+        """Gets the path of this V1LitPage.  # noqa: E501
+
+
+        :return: The path of this V1LitPage.  # noqa: E501
+        :rtype: str
+        """
+        return self._path
+
+    @path.setter
+    def path(self, path: 'str'):
+        """Sets the path of this V1LitPage.
+
+
+        :param path: The path of this V1LitPage.  # noqa: E501
+        :type: str
+        """
+
+        self._path = path
+
+    @property
+    def published(self) -> 'bool':
+        """Gets the published of this V1LitPage.  # noqa: E501
+
+
+        :return: The published of this V1LitPage.  # noqa: E501
+        :rtype: bool
+        """
+        return self._published
+
+    @published.setter
+    def published(self, published: 'bool'):
+        """Sets the published of this V1LitPage.
+
+
+        :param published: The published of this V1LitPage.  # noqa: E501
+        :type: bool
+        """
+
+        self._published = published
 
     @property
     def resource_id(self) -> 'str':

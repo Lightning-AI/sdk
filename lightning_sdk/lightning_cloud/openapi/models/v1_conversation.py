@@ -41,24 +41,101 @@ class V1Conversation(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'assistant_id': 'str',
+        'created_at': 'datetime',
         'id': 'str',
-        'title': 'str'
+        'messages': 'list[V1Message]',
+        'model': 'str',
+        'project_id': 'str',
+        'title': 'str',
+        'updated_at': 'datetime',
+        'user_id': 'str'
     }
 
     attribute_map = {
+        'assistant_id': 'assistantId',
+        'created_at': 'createdAt',
         'id': 'id',
-        'title': 'title'
+        'messages': 'messages',
+        'model': 'model',
+        'project_id': 'projectId',
+        'title': 'title',
+        'updated_at': 'updatedAt',
+        'user_id': 'userId'
     }
 
-    def __init__(self, id: 'str' =None, title: 'str' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, messages: 'list[V1Message]' =None, model: 'str' =None, project_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Conversation - a model defined in Swagger"""  # noqa: E501
+        self._assistant_id = None
+        self._created_at = None
         self._id = None
+        self._messages = None
+        self._model = None
+        self._project_id = None
         self._title = None
+        self._updated_at = None
+        self._user_id = None
         self.discriminator = None
+        if assistant_id is not None:
+            self.assistant_id = assistant_id
+        if created_at is not None:
+            self.created_at = created_at
         if id is not None:
             self.id = id
+        if messages is not None:
+            self.messages = messages
+        if model is not None:
+            self.model = model
+        if project_id is not None:
+            self.project_id = project_id
         if title is not None:
             self.title = title
+        if updated_at is not None:
+            self.updated_at = updated_at
+        if user_id is not None:
+            self.user_id = user_id
+
+    @property
+    def assistant_id(self) -> 'str':
+        """Gets the assistant_id of this V1Conversation.  # noqa: E501
+
+
+        :return: The assistant_id of this V1Conversation.  # noqa: E501
+        :rtype: str
+        """
+        return self._assistant_id
+
+    @assistant_id.setter
+    def assistant_id(self, assistant_id: 'str'):
+        """Sets the assistant_id of this V1Conversation.
+
+
+        :param assistant_id: The assistant_id of this V1Conversation.  # noqa: E501
+        :type: str
+        """
+
+        self._assistant_id = assistant_id
+
+    @property
+    def created_at(self) -> 'datetime':
+        """Gets the created_at of this V1Conversation.  # noqa: E501
+
+
+        :return: The created_at of this V1Conversation.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._created_at
+
+    @created_at.setter
+    def created_at(self, created_at: 'datetime'):
+        """Sets the created_at of this V1Conversation.
+
+
+        :param created_at: The created_at of this V1Conversation.  # noqa: E501
+        :type: datetime
+        """
+
+        self._created_at = created_at
 
     @property
     def id(self) -> 'str':
@@ -82,6 +159,69 @@ class V1Conversation(object):
         self._id = id
 
     @property
+    def messages(self) -> 'list[V1Message]':
+        """Gets the messages of this V1Conversation.  # noqa: E501
+
+
+        :return: The messages of this V1Conversation.  # noqa: E501
+        :rtype: list[V1Message]
+        """
+        return self._messages
+
+    @messages.setter
+    def messages(self, messages: 'list[V1Message]'):
+        """Sets the messages of this V1Conversation.
+
+
+        :param messages: The messages of this V1Conversation.  # noqa: E501
+        :type: list[V1Message]
+        """
+
+        self._messages = messages
+
+    @property
+    def model(self) -> 'str':
+        """Gets the model of this V1Conversation.  # noqa: E501
+
+
+        :return: The model of this V1Conversation.  # noqa: E501
+        :rtype: str
+        """
+        return self._model
+
+    @model.setter
+    def model(self, model: 'str'):
+        """Sets the model of this V1Conversation.
+
+
+        :param model: The model of this V1Conversation.  # noqa: E501
+        :type: str
+        """
+
+        self._model = model
+
+    @property
+    def project_id(self) -> 'str':
+        """Gets the project_id of this V1Conversation.  # noqa: E501
+
+
+        :return: The project_id of this V1Conversation.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, project_id: 'str'):
+        """Sets the project_id of this V1Conversation.
+
+
+        :param project_id: The project_id of this V1Conversation.  # noqa: E501
+        :type: str
+        """
+
+        self._project_id = project_id
+
+    @property
     def title(self) -> 'str':
         """Gets the title of this V1Conversation.  # noqa: E501
 
@@ -101,6 +241,48 @@ class V1Conversation(object):
         """
 
         self._title = title
+
+    @property
+    def updated_at(self) -> 'datetime':
+        """Gets the updated_at of this V1Conversation.  # noqa: E501
+
+
+        :return: The updated_at of this V1Conversation.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._updated_at
+
+    @updated_at.setter
+    def updated_at(self, updated_at: 'datetime'):
+        """Sets the updated_at of this V1Conversation.
+
+
+        :param updated_at: The updated_at of this V1Conversation.  # noqa: E501
+        :type: datetime
+        """
+
+        self._updated_at = updated_at
+
+    @property
+    def user_id(self) -> 'str':
+        """Gets the user_id of this V1Conversation.  # noqa: E501
+
+
+        :return: The user_id of this V1Conversation.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id: 'str'):
+        """Sets the user_id of this V1Conversation.
+
+
+        :param user_id: The user_id of this V1Conversation.  # noqa: E501
+        :type: str
+        """
+
+        self._user_id = user_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

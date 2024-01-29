@@ -46,7 +46,7 @@ class V1PublishedCloudSpaceResponse(object):
         'description': 'str',
         'display_name': 'str',
         'engagement_counts': 'dict(str, str)',
-        'featured_ranking': 'str',
+        'featured': 'bool',
         'id': 'str',
         'name': 'str',
         'project_id': 'str',
@@ -64,7 +64,7 @@ class V1PublishedCloudSpaceResponse(object):
         'description': 'description',
         'display_name': 'displayName',
         'engagement_counts': 'engagementCounts',
-        'featured_ranking': 'featuredRanking',
+        'featured': 'featured',
         'id': 'id',
         'name': 'name',
         'project_id': 'projectId',
@@ -76,14 +76,14 @@ class V1PublishedCloudSpaceResponse(object):
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, featured_ranking: 'str' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_name: 'str' =None, published_at: 'datetime' =None, studio_creator_username: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, featured: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_name: 'str' =None, published_at: 'datetime' =None, studio_creator_username: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """V1PublishedCloudSpaceResponse - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._creation_timestamp = None
         self._description = None
         self._display_name = None
         self._engagement_counts = None
-        self._featured_ranking = None
+        self._featured = None
         self._id = None
         self._name = None
         self._project_id = None
@@ -104,8 +104,8 @@ class V1PublishedCloudSpaceResponse(object):
             self.display_name = display_name
         if engagement_counts is not None:
             self.engagement_counts = engagement_counts
-        if featured_ranking is not None:
-            self.featured_ranking = featured_ranking
+        if featured is not None:
+            self.featured = featured
         if id is not None:
             self.id = id
         if name is not None:
@@ -231,25 +231,25 @@ class V1PublishedCloudSpaceResponse(object):
         self._engagement_counts = engagement_counts
 
     @property
-    def featured_ranking(self) -> 'str':
-        """Gets the featured_ranking of this V1PublishedCloudSpaceResponse.  # noqa: E501
+    def featured(self) -> 'bool':
+        """Gets the featured of this V1PublishedCloudSpaceResponse.  # noqa: E501
 
 
-        :return: The featured_ranking of this V1PublishedCloudSpaceResponse.  # noqa: E501
-        :rtype: str
+        :return: The featured of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :rtype: bool
         """
-        return self._featured_ranking
+        return self._featured
 
-    @featured_ranking.setter
-    def featured_ranking(self, featured_ranking: 'str'):
-        """Sets the featured_ranking of this V1PublishedCloudSpaceResponse.
+    @featured.setter
+    def featured(self, featured: 'bool'):
+        """Sets the featured of this V1PublishedCloudSpaceResponse.
 
 
-        :param featured_ranking: The featured_ranking of this V1PublishedCloudSpaceResponse.  # noqa: E501
-        :type: str
+        :param featured: The featured of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :type: bool
         """
 
-        self._featured_ranking = featured_ranking
+        self._featured = featured
 
     @property
     def id(self) -> 'str':

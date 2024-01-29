@@ -41,34 +41,65 @@ class AssistantsIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'created_at': 'datetime',
         'endpoint_id': 'str',
         'name': 'str',
         'prompt_template': 'str',
+        'updated_at': 'datetime',
         'user_id': 'str'
     }
 
     attribute_map = {
+        'created_at': 'createdAt',
         'endpoint_id': 'endpointId',
         'name': 'name',
         'prompt_template': 'promptTemplate',
+        'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, endpoint_id: 'str' =None, name: 'str' =None, prompt_template: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, endpoint_id: 'str' =None, name: 'str' =None, prompt_template: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """AssistantsIdBody - a model defined in Swagger"""  # noqa: E501
+        self._created_at = None
         self._endpoint_id = None
         self._name = None
         self._prompt_template = None
+        self._updated_at = None
         self._user_id = None
         self.discriminator = None
+        if created_at is not None:
+            self.created_at = created_at
         if endpoint_id is not None:
             self.endpoint_id = endpoint_id
         if name is not None:
             self.name = name
         if prompt_template is not None:
             self.prompt_template = prompt_template
+        if updated_at is not None:
+            self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def created_at(self) -> 'datetime':
+        """Gets the created_at of this AssistantsIdBody.  # noqa: E501
+
+
+        :return: The created_at of this AssistantsIdBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._created_at
+
+    @created_at.setter
+    def created_at(self, created_at: 'datetime'):
+        """Sets the created_at of this AssistantsIdBody.
+
+
+        :param created_at: The created_at of this AssistantsIdBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._created_at = created_at
 
     @property
     def endpoint_id(self) -> 'str':
@@ -132,6 +163,27 @@ class AssistantsIdBody(object):
         """
 
         self._prompt_template = prompt_template
+
+    @property
+    def updated_at(self) -> 'datetime':
+        """Gets the updated_at of this AssistantsIdBody.  # noqa: E501
+
+
+        :return: The updated_at of this AssistantsIdBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._updated_at
+
+    @updated_at.setter
+    def updated_at(self, updated_at: 'datetime'):
+        """Sets the updated_at of this AssistantsIdBody.
+
+
+        :param updated_at: The updated_at of this AssistantsIdBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._updated_at = updated_at
 
     @property
     def user_id(self) -> 'str':
