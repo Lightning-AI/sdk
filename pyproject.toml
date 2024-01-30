@@ -27,8 +27,12 @@ dependencies = [
     "uvicorn",
     "websocket-client",
     "tqdm",
+    "fire",
 ]
 dynamic = ["version"]
+
+[project.scripts]
+studio = "lightning_sdk.cli.entrypoint:main_cli"
 
 [tool.setuptools.dynamic]
 version = {attr = "lightning_sdk.__version__"}
@@ -89,6 +93,7 @@ ignore = [
     "S310",   # todo: Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.  # todo
     "B905",   # todo: `zip()` without an explicit `strict=` parameter
     "B028",   # no explicit stacklevel keyword argument found
+    "RET506", # Unnecessary elif after raise -> sometimes false positives
 ]
 # Exclude a variety of commonly ignored directories.
 exclude = [
