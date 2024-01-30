@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple, Union
 import os
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.lightning_cloud.openapi import (
@@ -13,7 +13,7 @@ def _create_dataset(
     empty: Optional[bool] = None,
     size: Optional[int] = None,
     num_bytes: Optional[int] = None,
-    data_format: Optional[str] = None,
+    data_format: Optional[Union[str, Tuple[str]]] = None,
     compression: Optional[str] = None,
     num_chunks: Optional[str] = None,
     num_bytes_per_chunk: Optional[List[int]] = None,
@@ -23,12 +23,6 @@ def _create_dataset(
     """
     Create a dataset with metadata information about its source and destination
     """
-    if input_dir == "":
-        raise ValueError("The input_dir should be defined.")
-
-    if storage_dir == "":
-        raise ValueError("The storage_dir should be defined.")
-
     project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID", None)
     cluster_id = os.getenv("LIGHTNING_CLUSTER_ID", None)
     user_id = os.getenv("LIGHTNING_USER_ID", None)
@@ -37,6 +31,9 @@ def _create_dataset(
 
     if project_id is None:
         return
+
+    if not storage_dir:
+        raise ValueError("The storage_dir should be defined.")
 
     client = LightningClient(retry=False)
 
@@ -51,7 +48,7 @@ def _create_dataset(
             name=name,
             size=size,
             num_bytes=num_bytes,
-            data_format=data_format,
+            data_format=str(data_format) if data_format else data_format,
             compression=compression,
             num_chunks=num_chunks,
             num_bytes_per_chunk=num_bytes_per_chunk,
