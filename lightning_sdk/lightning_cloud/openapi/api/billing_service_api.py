@@ -843,7 +843,6 @@ class BillingServiceApi(object):
         :param str resource_id:
         :param datetime _from:
         :param datetime to:
-        :param str user_id:
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
@@ -871,13 +870,12 @@ class BillingServiceApi(object):
         :param str resource_id:
         :param datetime _from:
         :param datetime to:
-        :param str user_id:
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -912,8 +910,6 @@ class BillingServiceApi(object):
             query_params.append(('from', params['_from']))  # noqa: E501
         if 'to' in params:
             query_params.append(('to', params['to']))  # noqa: E501
-        if 'user_id' in params:
-            query_params.append(('userId', params['user_id']))  # noqa: E501
 
         header_params = {}
 
