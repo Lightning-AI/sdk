@@ -12,4 +12,4 @@ __all__ = [
     "Studio",
 ]
 
-__version__ = "0.0.15alpha"
+__version__ = "0.0.16alpha"
