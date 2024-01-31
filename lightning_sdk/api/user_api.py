@@ -1,4 +1,4 @@
-from lightning_sdk.lightning_cloud.openapi import UserServiceApi, V1SearchUser
+from lightning_sdk.lightning_cloud.openapi import V1SearchUser
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
@@ -8,8 +8,7 @@ class UserApi:
     def __init__(self) -> None:
         super().__init__()
 
-        # TODO: add user service to lightning client
-        self._client = UserServiceApi(api_client=LightningClient(max_tries=3).api_client)
+        self._client = LightningClient(max_tries=3)
 
     def get_user(self, name: str) -> V1SearchUser:
         """Gets user by name."""

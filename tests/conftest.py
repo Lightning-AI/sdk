@@ -52,13 +52,23 @@ class _DummyResponse:
 
 @pytest.fixture()
 def internal_user_api_mocker(mocker):
-    m = mocker.patch(
+    def side_effect(self, **kwargs):
+        if kwargs["query"] == "xyz":
+            return V1SearchUsersResponse(users=[])
+        return V1SearchUsersResponse(
+            users=[
+                V1SearchUser(username=kwargs["query"], id=kwargs["query"]),
+                V1SearchUser(username=f"{kwargs['query']}-de", id=f"{kwargs['query']}-de"),
+            ]
+        )
+
+    mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users",
-        return_value=V1SearchUsersResponse(
-            users=[V1SearchUser(username="user-abc"), V1SearchUser(username="user-abc-de")]
-        ),
+        side_effect=side_effect,
+        autospec=True,
     )
-    m.__name__ = "user_service_search_users"
+
+    mocker.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", autospec=True)
 
     yield [mocker]
 
