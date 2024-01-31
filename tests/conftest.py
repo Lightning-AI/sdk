@@ -1341,3 +1341,21 @@ def internal_data_prep_run_mocker(mocker):
     yield [mocker]
 
     mocker.resetall()
+
+
+@pytest.fixture
+def internal_studio_api_list_mocker(mocker):
+
+    return_values = [V1ListCloudSpacesResponse(cloudspaces==[V1CloudSpace(name="cs-abc", project_id="ts-abc",  ), V1CloudSpace("cs-def", project_id="ts-abc")], next_page_token="next-page"), V1ListCloudSpacesResponse(cloudspaces=[V1CloudSpace(name="cs-ghi", project_id="ts-abc")], previous_page_token="prev-page")]
+    def side_effect(*args, **kwargs):
+        return return_values.pop(0)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+        autospec=True,
+        side_effect=side_effect,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
