@@ -38,6 +38,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LoginResponse,
     V1GetArtifactsPageResponse,
     V1Artifact,
+    V1ListProjectClusterBindingsResponse,
+    V1ProjectClusterBinding,
 )
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -123,9 +125,9 @@ def internal_get_org_api_mocker(mocker):
                 if param[0] != "name":
                     continue
                 if param[1] == "org-abc":
-                    return V1Organization(display_name="org-abc", name="org-abc")
+                    return V1Organization(display_name="org-abc", name="org-abc", id="org-abc")
                 if param[1] == "org-def":
-                    return V1Organization(display_name="org-def", name="org-def")
+                    return V1Organization(display_name="org-def", name="org-def", id="org-def")
 
         return None
 
@@ -143,8 +145,8 @@ def internal_teamspace_api_mocker(mocker):
         "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_memberships",
         return_value=V1ListMembershipsResponse(
             [
-                V1Membership(name="ts-abc", display_name="ts-abc", project_id="ts-abc001"),
-                V1Membership(name="ts-def", display_name="ts-def", project_id="ts-def001"),
+                V1Membership(name="ts-abc", display_name="ts-abc", project_id="ts-abc001", owner_id="org-abc"),
+                V1Membership(name="ts-def", display_name="ts-def", project_id="ts-def001", owner_id="org-abc"),
             ]
         ),
         autospec=True,
@@ -1343,10 +1345,49 @@ def internal_data_prep_run_mocker(mocker):
     mocker.resetall()
 
 
+@pytest.fixture()
+def internal_teamspace_api_list_mocker(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_memberships",
+        return_value=V1ListMembershipsResponse(
+            [
+                V1Membership(name="ts-abc", display_name="ts-abc", project_id="ts-abc001", owner_id="org-abc"),
+                V1Membership(name="ts-def", display_name="ts-def", project_id="ts-def001", owner_id="org-abc"),
+                V1Membership(name="ts-def", display_name="ts-def", project_id="ts-def001", owner_id="org-def"),
+            ]
+        ),
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+        return_value=V1Project(
+            id="ts-abc", name="ts-abc", display_name="ts-abc", owner_id="org-abc", owner_type="organization"
+        ),
+        autospec=True,
+    )
+    yield [mocker]
+
+    mocker.resetall()
+
+
 @pytest.fixture
 def internal_studio_api_list_mocker(mocker):
+    return_values = [
+        V1ListCloudSpacesResponse(
+            cloudspaces=[
+                V1CloudSpace(
+                    name="cs-abc",
+                    project_id="ts-abc",
+                ),
+                V1CloudSpace("cs-def", project_id="ts-abc"),
+            ],
+            next_page_token="next-page",
+        ),
+        V1ListCloudSpacesResponse(
+            cloudspaces=[V1CloudSpace(name="cs-ghi", project_id="ts-abc")], previous_page_token="prev-page"
+        ),
+    ]
 
-    return_values = [V1ListCloudSpacesResponse(cloudspaces==[V1CloudSpace(name="cs-abc", project_id="ts-abc",  ), V1CloudSpace("cs-def", project_id="ts-abc")], next_page_token="next-page"), V1ListCloudSpacesResponse(cloudspaces=[V1CloudSpace(name="cs-ghi", project_id="ts-abc")], previous_page_token="prev-page")]
     def side_effect(*args, **kwargs):
         return return_values.pop(0)
 
@@ -1359,3 +1400,17 @@ def internal_studio_api_list_mocker(mocker):
     yield [mocker]
 
     mocker.resetall()
+
+
+@pytest.fixture
+def internal_teamspace_api_cluster_list_mocker(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_project_cluster_bindings",
+        autospec=True,
+        return_value=V1ListProjectClusterBindingsResponse(
+            clusters=[
+                V1ProjectClusterBinding(cluster_id="cluster-abc", cluster_name="cluster-abc"),
+                V1ProjectClusterBinding(cluster_id="cluster-def", cluster_name="cluster-def"),
+            ]
+        ),
+    )

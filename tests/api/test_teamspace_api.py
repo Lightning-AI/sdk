@@ -1,13 +1,13 @@
 import pytest
 
 from lightning_sdk.api.teamspace_api import TeamspaceApi
-from lightning_sdk.lightning_cloud.openapi import V1Project
+from lightning_sdk.lightning_cloud.openapi import V1Project, V1ProjectClusterBinding, V1CloudSpace
 
 
 def test_get_teamspace(internal_teamspace_api_mocker):
     teamspace_api = TeamspaceApi()
 
-    project = teamspace_api.get_teamspace("ts-abc", "org-def")
+    project = teamspace_api.get_teamspace("ts-abc", "org-abc")
     assert isinstance(project, V1Project)
 
 
@@ -34,13 +34,22 @@ def test_list_teamspaces(internal_teamspace_api_list_mocker):
     assert len(projects) == 1
     assert isinstance(projects[0], V1Project)
 
+
 def test_list_studios(internal_studio_api_list_mocker):
     teamspace_api = TeamspaceApi()
 
     studios = teamspace_api.list_studios(cluster_id="cluster_abc", teamspace_id="ts-abc")
 
     assert len(studios) == 3
+    for st in studios:
+        assert isinstance(st, V1CloudSpace)
 
 
-    
+def test_list_clusters(internal_teamspace_api_cluster_list_mocker):
+    teamspace_api = TeamspaceApi()
 
+    clusters = teamspace_api.list_clusters(teamspace_id="ts-abc")
+
+    assert len(clusters) == 2
+    for cl in clusters:
+        assert isinstance(cl, V1ProjectClusterBinding)

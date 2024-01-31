@@ -86,7 +86,7 @@ class Studio:
         if teamspace is None:
             teamspace = os.environ.get("LIGHTNING_TEAMSPACE", "") or None
 
-        self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._owner.id, is_user=self._org is None)
+        self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._owner.id)
 
         self._plugins = {}
 
