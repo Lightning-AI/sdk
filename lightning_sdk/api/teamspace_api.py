@@ -15,7 +15,6 @@ class TeamspaceApi:
     def get_teamspace(self, name: str, owner_id: str) -> V1Project:
         """Get the current teamspace from the owner."""
         teamspaces = self.list_teamspaces(name=name, owner_id=owner_id)
-        print(teamspaces)
 
         if len(teamspaces) == 0:
             raise ValueError(f"Teamspace {name} does not exist")
@@ -37,7 +36,6 @@ class TeamspaceApi:
         # cannot list projects the authed user is not a member of
         # -> list projects authed users are members of + filter later on
         res = self._client.projects_service_list_memberships(filter_by_user_id=True)
-        print(res)
 
         return [
             self._get_teamspace_by_id(m.project_id)

@@ -51,7 +51,7 @@ class _DummyResponse:
 
 
 @pytest.fixture()
-def internal_user_api_mocker(mocker):
+def internal_user_api_mocker(mocker, internal_auth_mocker):
     def side_effect(self, **kwargs):
         if kwargs["query"] == "xyz":
             return V1SearchUsersResponse(users=[])
@@ -68,10 +68,15 @@ def internal_user_api_mocker(mocker):
         autospec=True,
     )
 
-    mocker.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", autospec=True)
+    yield [mocker, internal_auth_mocker]
 
+    mocker.resetall()
+
+
+@pytest.fixture()
+def internal_auth_mocker(mocker):
+    mocker.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", autospec=True, return_value="my-auth-header")
     yield [mocker]
-
     mocker.resetall()
 
 
@@ -112,39 +117,29 @@ def internal_list_org_api_mocker(mocker):
 
 
 @pytest.fixture()
-def internal_get_org_api_mocker(mocker):
-    def _side_effect_api_call(
-        resource_path,
-        method,
-        path_params=None,
-        query_params=None,
-        header_params=None,
-        body=None,
-        post_params=None,
-        files=None,
-        response_type=None,
-        auth_settings=None,
-        async_req=None,
-        _return_http_data_only=None,
-        collection_formats=None,
-        _preload_content=True,
-        _request_timeout=None,
-    ):
-        if response_type == "V1Organization":
-            for param in query_params:
-                if param[0] != "name":
-                    continue
-                if param[1] == "org-abc":
-                    return V1Organization(display_name="org-abc", name="org-abc", id="org-abc")
-                if param[1] == "org-def":
-                    return V1Organization(display_name="org-def", name="org-def", id="org-def")
+def internal_get_org_api_mocker(mocker, internal_auth_mocker):
+    def side_effect(self, **kwargs):
+        _id, _name = kwargs.get("id", ""), kwargs.get("name", "")
 
-        return None
+        if not _id:
+            _id = _name
+
+        if not _name:
+            _name = _id
+
+        assert _id and _name
+
+        if _name == "xyx" or _id == "xyz":
+            return
+
+        return V1Organization(display_name=_name, name=_name, id=_id)
 
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api_client.ApiClient.call_api", side_effect=_side_effect_api_call
+        "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
+        side_effect=side_effect,
+        autospec=True,
     )
-    yield [mocker]
+    yield [mocker, internal_auth_mocker]
 
     mocker.resetall()
 
@@ -831,11 +826,11 @@ def internal_studio_run_error_mocker(mocker):
 
 @pytest.fixture()
 def internal_studio_duplicate_mocker(mocker):
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
-        return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"),
-        autospec=True,
-    )
+    # mocker.patch(
+    #     "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
+    #     return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"),
+    #     autospec=True,
+    # )
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
         return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),

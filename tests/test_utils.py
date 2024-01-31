@@ -58,10 +58,13 @@ def test_resolve_org_name_empty_env_var(provided):
         assert result == provided
 
 
-# TODO: update with org-name check once added
-@pytest.mark.parametrize("provided", [None, "org_name", Organization(name="org_name")])
+@pytest.mark.parametrize("provided", [None, "org_name", -1])
 @mock.patch.dict(os.environ, clear=True)
-def test_resolve_org(provided):
+def test_resolve_org(internal_get_org_api_mocker, provided):
+    # can't instantiate outside without proper mocking
+    if provided == -1:
+        provided = Organization(name="org_name")
+
     result = _resolve_org(provided)
 
     if provided is None:
@@ -70,6 +73,7 @@ def test_resolve_org(provided):
         assert result == provided
     else:
         assert isinstance(result, Organization)
+        assert result.name == provided
 
 
 @pytest.mark.parametrize("provided", [None, "abc"])
@@ -152,7 +156,9 @@ def test_resolve_teamspace_name_env_var(provided):
         ("team3", "org3", None, {"name": "team3", "org": {"name": "org3"}}),
     ],
 )
-def test_resolve_teamspace_combinations(internal_user_api_mocker, teamspace_name, org_name, user_name, expected_result):
+def test_resolve_teamspace_combinations(
+    internal_user_api_mocker, internal_get_org_api_mocker, teamspace_name, org_name, user_name, expected_result
+):
     with mock.patch.dict(os.environ, {"LIGHTNING_TEAMSPACE": teamspace_name}):
         org_env_var_value = org_name if org_name is not None else ""
         user_env_var_value = user_name if user_name is not None else ""

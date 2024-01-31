@@ -1,5 +1,4 @@
 from lightning_sdk.lightning_cloud.openapi import (
-    OrganizationsServiceApi,
     V1Organization,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -12,7 +11,7 @@ class OrgApi:
         super().__init__()
 
         # TODO: add org API to client in lightning_cloud
-        self._client = OrganizationsServiceApi(api_client=LightningClient(max_tries=3).api_client)
+        self._client = LightningClient(max_tries=3)
 
     def get_org(self, name: str) -> V1Organization:
         """Gets the organization from the given name."""
@@ -23,4 +22,4 @@ class OrgApi:
 
     def _get_org_by_id(self, org_id: str) -> V1Organization:
         """Gets the organization from the given ID."""
-        return self._client.organizations_service_get_organization(org_id)
+        return self._client.organizations_service_get_organization(id=org_id)
