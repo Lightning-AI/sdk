@@ -1,13 +1,11 @@
-from typing import TYPE_CHECKING, List, Optional
+from typing import Optional
 
-from lightning_sdk.api import OrgApi, TeamspaceApi
+from lightning_sdk.api import OrgApi
+from lightning_sdk.owner import Owner
 from lightning_sdk.utils import _resolve_org_name
 
-if TYPE_CHECKING:
-    from lightning_sdk.teamspace import Teamspace
 
-
-class Organization:
+class Organization(Owner):
     """Represents an organization owner of teamspaces and studios.
 
     Args:
@@ -21,7 +19,6 @@ class Organization:
 
     def __init__(self, name: Optional[str] = None) -> None:
         super().__init__()
-        self._teamspace_api = TeamspaceApi()
         self._org_api = OrgApi()
         if name is None:
             name = _resolve_org_name(name)
@@ -42,11 +39,3 @@ class Organization:
     def id(self) -> str:
         """The organization's ID."""
         return self._org.id
-
-    @property
-    def teamspaces(self) -> List["Teamspace"]:
-        """All teamspaces by this user."""
-        from lightning_sdk.teamspace import Teamspace
-
-        _teamspaces = self._teamspace_api.list_teamspaces(owner_id=self.id, name=None)
-        return [Teamspace(name=t.name, org=self) for t in _teamspaces]

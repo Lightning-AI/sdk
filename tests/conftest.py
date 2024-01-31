@@ -826,11 +826,6 @@ def internal_studio_run_error_mocker(mocker):
 
 @pytest.fixture()
 def internal_studio_duplicate_mocker(mocker):
-    # mocker.patch(
-    #     "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
-    #     return_value=V1Organization(name="org-abc", display_name="org-abc", id="org-abc"),
-    #     autospec=True,
-    # )
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
         return_value=V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de"),

@@ -1,13 +1,11 @@
-from typing import TYPE_CHECKING, List, Optional
+from typing import Optional
 
-from lightning_sdk.api import TeamspaceApi, UserApi
+from lightning_sdk.api import UserApi
+from lightning_sdk.owner import Owner
 from lightning_sdk.utils import _resolve_user_name
 
-if TYPE_CHECKING:
-    from lightning_sdk.teamspace import Teamspace
 
-
-class User:
+class User(Owner):
     """Represents a user owner of teamspaces and studios.
 
     Args:
@@ -21,7 +19,6 @@ class User:
 
     def __init__(self, name: Optional[str] = None) -> None:
         super().__init__()
-        self._teamspace_api = TeamspaceApi()
         self._user_api = UserApi()
 
         name = _resolve_user_name(name)
@@ -39,11 +36,3 @@ class User:
     def id(self) -> str:
         """The user's ID."""
         return self._user.id
-
-    @property
-    def teamspaces(self) -> List["Teamspace"]:
-        """All teamspaces by this user."""
-        from lightning_sdk.teamspace import Teamspace
-
-        _teamspaces = self._teamspace_api.list_teamspaces(owner_id=self.id, name=None)
-        return [Teamspace(name=t.name, org=self) for t in _teamspaces]

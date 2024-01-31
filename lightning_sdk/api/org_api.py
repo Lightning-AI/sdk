@@ -10,7 +10,6 @@ class OrgApi:
     def __init__(self) -> None:
         super().__init__()
 
-        # TODO: add org API to client in lightning_cloud
         self._client = LightningClient(max_tries=3)
 
     def get_org(self, name: str) -> V1Organization:

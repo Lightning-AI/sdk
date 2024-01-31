@@ -155,7 +155,6 @@ class StudioApi:
 
     def stop_studio(self, studio_id: str, teamspace_id: str) -> None:
         """Stop an existing Studio."""
-        # TODO: Wait for it to be stopped? This would match the time a user actually pays for an instance then
         self._client.cloud_space_service_stop_cloud_space_instance(
             project_id=teamspace_id,
             id=studio_id,
