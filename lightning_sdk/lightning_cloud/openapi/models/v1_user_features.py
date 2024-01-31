@@ -63,6 +63,7 @@ class V1UserFeatures(object):
         'mmt_app': 'bool',
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
+        'org_clusters': 'bool',
         'platform_docs': 'bool',
         'plugin_biz_chat': 'bool',
         'plugin_data_prep': 'bool',
@@ -116,6 +117,7 @@ class V1UserFeatures(object):
         'mmt_app': 'mmtApp',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
+        'org_clusters': 'orgClusters',
         'platform_docs': 'platformDocs',
         'plugin_biz_chat': 'pluginBizChat',
         'plugin_data_prep': 'pluginDataPrep',
@@ -146,7 +148,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, h100_instances: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_react: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, settings_sync_v2: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, h100_instances: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_react: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, settings_sync_v2: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._aws_trainium = None
         self._b2c_experience = None
@@ -170,6 +172,7 @@ class V1UserFeatures(object):
         self._mmt_app = None
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
+        self._org_clusters = None
         self._platform_docs = None
         self._plugin_biz_chat = None
         self._plugin_data_prep = None
@@ -243,6 +246,8 @@ class V1UserFeatures(object):
             self.mmt_strategy_selector = mmt_strategy_selector
         if mountpoint_s3 is not None:
             self.mountpoint_s3 = mountpoint_s3
+        if org_clusters is not None:
+            self.org_clusters = org_clusters
         if platform_docs is not None:
             self.platform_docs = platform_docs
         if plugin_biz_chat is not None:
@@ -761,6 +766,27 @@ class V1UserFeatures(object):
         """
 
         self._mountpoint_s3 = mountpoint_s3
+
+    @property
+    def org_clusters(self) -> 'bool':
+        """Gets the org_clusters of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The org_clusters of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._org_clusters
+
+    @org_clusters.setter
+    def org_clusters(self, org_clusters: 'bool'):
+        """Sets the org_clusters of this V1UserFeatures.
+
+
+        :param org_clusters: The org_clusters of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._org_clusters = org_clusters
 
     @property
     def platform_docs(self) -> 'bool':

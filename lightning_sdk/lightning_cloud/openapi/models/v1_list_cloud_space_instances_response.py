@@ -41,29 +41,55 @@ class V1ListCloudSpaceInstancesResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'can_start_free_cloud_space': 'bool',
         'cloudspace_instances': 'list[Externalv1CloudSpaceInstanceStatus]',
         'next_page_token': 'str',
         'previous_page_token': 'str'
     }
 
     attribute_map = {
+        'can_start_free_cloud_space': 'canStartFreeCloudSpace',
         'cloudspace_instances': 'cloudspaceInstances',
         'next_page_token': 'nextPageToken',
         'previous_page_token': 'previousPageToken'
     }
 
-    def __init__(self, cloudspace_instances: 'list[Externalv1CloudSpaceInstanceStatus]' =None, next_page_token: 'str' =None, previous_page_token: 'str' =None):  # noqa: E501
+    def __init__(self, can_start_free_cloud_space: 'bool' =None, cloudspace_instances: 'list[Externalv1CloudSpaceInstanceStatus]' =None, next_page_token: 'str' =None, previous_page_token: 'str' =None):  # noqa: E501
         """V1ListCloudSpaceInstancesResponse - a model defined in Swagger"""  # noqa: E501
+        self._can_start_free_cloud_space = None
         self._cloudspace_instances = None
         self._next_page_token = None
         self._previous_page_token = None
         self.discriminator = None
+        if can_start_free_cloud_space is not None:
+            self.can_start_free_cloud_space = can_start_free_cloud_space
         if cloudspace_instances is not None:
             self.cloudspace_instances = cloudspace_instances
         if next_page_token is not None:
             self.next_page_token = next_page_token
         if previous_page_token is not None:
             self.previous_page_token = previous_page_token
+
+    @property
+    def can_start_free_cloud_space(self) -> 'bool':
+        """Gets the can_start_free_cloud_space of this V1ListCloudSpaceInstancesResponse.  # noqa: E501
+
+
+        :return: The can_start_free_cloud_space of this V1ListCloudSpaceInstancesResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._can_start_free_cloud_space
+
+    @can_start_free_cloud_space.setter
+    def can_start_free_cloud_space(self, can_start_free_cloud_space: 'bool'):
+        """Sets the can_start_free_cloud_space of this V1ListCloudSpaceInstancesResponse.
+
+
+        :param can_start_free_cloud_space: The can_start_free_cloud_space of this V1ListCloudSpaceInstancesResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._can_start_free_cloud_space = can_start_free_cloud_space
 
     @property
     def cloudspace_instances(self) -> 'list[Externalv1CloudSpaceInstanceStatus]':
