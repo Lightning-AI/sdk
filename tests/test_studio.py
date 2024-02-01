@@ -14,7 +14,7 @@ from lightning_sdk.plugin import (
 )
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
-from lightning_sdk.api.studio_api import _BYTES_PER_MB
+from lightning_sdk.api.utils import _BYTES_PER_MB
 
 
 @pytest.mark.parametrize("create_ok", [True, False])
@@ -169,7 +169,11 @@ def test_run_command_exit_code(internal_studio_init_mocker, internal_studio_run_
     ],
 )
 def test_action_in_wrong_state(
-    internal_studio_init_mocker, internal_studio_status_mocker, name, expected_state, forbidden_actions
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    name,
+    expected_state,
+    forbidden_actions,
 ):
     studio = Studio(name, "ts-abc", "org-abc")
     assert studio.status == expected_state
@@ -207,7 +211,9 @@ def test_duplicate(internal_studio_init_mocker, internal_studio_duplicate_mocker
 
 
 def test_install_plugin(
-    internal_studio_init_plugin_mocker, internal_studio_status_mocker, internal_studio_plugin_install_mocker
+    internal_studio_init_plugin_mocker,
+    internal_studio_status_mocker,
+    internal_studio_plugin_install_mocker,
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     assert not studio.installed_plugins
@@ -233,7 +239,9 @@ def test_installed_plugins_from_db(
 
 
 def test_uninstall_plugin(
-    internal_studio_init_plugin_mocker, internal_studio_status_mocker, internal_studio_plugin_uninstall_mocker
+    internal_studio_init_plugin_mocker,
+    internal_studio_status_mocker,
+    internal_studio_plugin_uninstall_mocker,
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     # check that all plugins that are claimed to be installed by the DB get actually installed
@@ -257,7 +265,12 @@ def test_run_plugin(internal_studio_init_mocker, internal_studio_status_mocker, 
 
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
-def test_run_job(internal_studio_init_mocker, internal_studio_status_mocker, internal_job_run_mocker, cloud_compute):
+def test_run_job(
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_job_run_mocker,
+    cloud_compute,
+):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     studio._plugins = {
         "jobs": JobsPlugin(
@@ -272,7 +285,12 @@ def test_run_job(internal_studio_init_mocker, internal_studio_status_mocker, int
 
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
-def test_run_mmt(internal_studio_init_mocker, internal_studio_status_mocker, internal_mmt_run_mocker, cloud_compute):
+def test_run_mmt(
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_mmt_run_mocker,
+    cloud_compute,
+):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     studio._plugins = {
         "multi-machine-training": MultiMachineTrainingPlugin(
@@ -300,7 +318,10 @@ def test_run_mmt(internal_studio_init_mocker, internal_studio_status_mocker, int
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
 def test_run_data_prep(
-    internal_studio_init_mocker, internal_studio_status_mocker, internal_data_prep_run_mocker, cloud_compute
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_data_prep_run_mocker,
+    cloud_compute,
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     studio._plugins = {
@@ -329,7 +350,10 @@ def test_run_data_prep(
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
 def test_run_inference(
-    internal_studio_init_mocker, internal_studio_status_mocker, internal_inference_run_mocker, cloud_compute
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_inference_run_mocker,
+    cloud_compute,
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     studio._plugins = {

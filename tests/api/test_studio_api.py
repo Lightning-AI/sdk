@@ -5,7 +5,8 @@ import subprocess
 import pytest
 from unittest import mock
 
-from lightning_sdk.api.studio_api import StudioApi, _BYTES_PER_MB
+from lightning_sdk.api.studio_api import StudioApi
+from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
     V1GetCloudSpaceInstanceStatusResponse,

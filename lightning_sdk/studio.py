@@ -120,6 +120,7 @@ class Studio:
             if k in available_plugins:
                 self._add_plugin(k)
 
+        self._studio_api.start_keeping_alive(teamspace_id=self._teamspace.id, studio_id=self._studio.id)
         self._setup_done = True
 
     @property

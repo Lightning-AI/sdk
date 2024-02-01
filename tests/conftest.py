@@ -50,7 +50,7 @@ class _DummyResponse:
     data: bytes
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_user_api_mocker(mocker, internal_auth_mocker):
     def side_effect(self, **kwargs):
         if kwargs["query"] == "xyz":
@@ -73,14 +73,14 @@ def internal_user_api_mocker(mocker, internal_auth_mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_auth_mocker(mocker):
     mocker.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", autospec=True, return_value="my-auth-header")
     yield [mocker]
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_list_org_api_mocker(mocker):
     def _side_effect_api_call(
         resource_path,
@@ -116,7 +116,7 @@ def internal_list_org_api_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_get_org_api_mocker(mocker, internal_auth_mocker):
     def side_effect(self, **kwargs):
         _id, _name = kwargs.get("id", ""), kwargs.get("name", "")
@@ -144,7 +144,7 @@ def internal_get_org_api_mocker(mocker, internal_auth_mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_teamspace_api_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_memberships",
@@ -168,7 +168,7 @@ def internal_teamspace_api_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_api_mocker_get_studio(mocker):
     def list_cloudspaces(self, project_id, name):
         if name in ["st-abc", "st-def"]:
@@ -187,7 +187,7 @@ def internal_studio_api_mocker_get_studio(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_api_mocker_create_studio(mocker):
     def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
         assert isinstance(body, ProjectIdCloudspacesBody)
@@ -221,7 +221,7 @@ def internal_studio_api_mocker_create_studio(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_api_mocker_studio_status(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
@@ -259,7 +259,7 @@ def internal_studio_api_mocker_switch_machine(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_api_mocker_start_studio(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
@@ -291,7 +291,7 @@ def internal_studio_api_mocker_stop_studio(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_api_mocker_run_command(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
@@ -325,7 +325,7 @@ def internal_studio_api_mocker_delete(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_api_mocker_get_machine(mocker):
     def _side_effect(self, project_id, id, **kwargs):
         instance = None
@@ -363,7 +363,7 @@ def internal_studio_api_mocker_get_machine(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_api_mocker_duplicate_user(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
@@ -408,7 +408,7 @@ def internal_studio_api_mocker_duplicate_user(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_api_mocker_duplicate_org(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
@@ -457,7 +457,7 @@ def internal_studio_api_mocker_duplicate_org(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_init_mocker(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     existing_studios = {
         "st-abc": V1CloudSpace(
@@ -526,7 +526,7 @@ def internal_studio_init_mocker(mocker, internal_get_org_api_mocker, internal_te
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_status_mocker(mocker):
     def _get_status_side_effect(self, project_id: str, id: str):
         if id == "st-abc":
@@ -561,7 +561,7 @@ def internal_studio_status_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_start_mocker(mocker):
     # none since no instance available before start
     # use dict here so that it automatically uses global scope. Assignments to variables would introduce shadowing
@@ -603,7 +603,7 @@ def internal_studio_start_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_stop_mocker(mocker):
     status = {"st-abc": "CLOUD_SPACE_INSTANCE_STATE_RUNNING"}
 
@@ -633,7 +633,7 @@ def internal_studio_stop_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_delete_mocker(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     existing_studios = [
         V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"),
@@ -697,7 +697,7 @@ def internal_studio_delete_mocker(mocker, internal_get_org_api_mocker, internal_
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_switch_mocker(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     # none since no instance available before start
     # use dict here so that it automatically uses global scope. Assignments to variables would introduce shadowing
@@ -760,7 +760,7 @@ def internal_studio_switch_mocker(mocker, internal_get_org_api_mocker, internal_
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_run_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
@@ -792,7 +792,7 @@ def internal_studio_run_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_run_error_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
@@ -1015,7 +1015,7 @@ def internal_studio_api_create_app_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_studio_init_plugin_mocker(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     existing_studios = {
         "st-abc": V1CloudSpace(
@@ -1345,7 +1345,7 @@ def internal_data_prep_run_mocker(mocker):
     mocker.resetall()
 
 
-@pytest.fixture()
+@pytest.fixture
 def internal_teamspace_api_list_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_memberships",
@@ -1414,3 +1414,24 @@ def internal_teamspace_api_cluster_list_mocker(mocker):
             ]
         ),
     )
+
+
+@pytest.fixture(autouse=True)
+def keep_alive_mocker(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_keep_alive_cloud_space_instance",
+        autospec=True,
+    )
+
+    def side_effect(self, teamspace_id, studio_id):
+        keep_alive_freq = os.environ.get("LIGHTNING_KEEPALIVE_FREQUENCY", 30)
+        key = f"{teamspace_id}-{studio_id}"
+        while not self._keep_alive_events[key].is_set():
+            time.sleep(keep_alive_freq)
+
+    mocker.patch("lightning_sdk.api.studio_api.StudioApi._send_keepalives", side_effect=side_effect, autospec=True)
+    mocker.patch("threading.Thread", autospec=True)
+
+    yield [mocker]
+
+    mocker.resetall()
