@@ -151,13 +151,19 @@ def test_resolve_teamspace_name_env_var(provided):
 @pytest.mark.parametrize(
     "teamspace_name, org_name, user_name, expected_result",
     [
-        ("team1", "org1", "user1", {"name": "team1", "org": {"name": "org1"}}),
-        ("team2", None, "user2", {"name": "team2", "user": {"name": "user2"}}),
-        ("team3", "org3", None, {"name": "team3", "org": {"name": "org3"}}),
+        ("ts-abc", "org-abc", "user1", {"name": "ts-abc", "org": {"name": "org-abc"}}),
+        ("ts-abc", None, "user-abc", {"name": "ts-abc", "user": {"name": "user-abc"}}),
+        ("ts-def", "org-abc", None, {"name": "ts-def", "org": {"name": "org-abc"}}),
     ],
 )
 def test_resolve_teamspace_combinations(
-    internal_user_api_mocker, internal_get_org_api_mocker, teamspace_name, org_name, user_name, expected_result
+    internal_user_api_mocker,
+    internal_get_org_api_mocker,
+    resolve_all_teamspaces_api_mocker,
+    teamspace_name,
+    org_name,
+    user_name,
+    expected_result,
 ):
     with mock.patch.dict(os.environ, {"LIGHTNING_TEAMSPACE": teamspace_name}):
         org_env_var_value = org_name if org_name is not None else ""
@@ -170,7 +176,11 @@ def test_resolve_teamspace_combinations(
 
             assert isinstance(result, Teamspace)
 
-            expected_org = expected_result.get("org")
-            expected_user = expected_result.get("user")
+            expected_org = expected_result.get("org", {})
+            expected_org_name = expected_org.get("name", None)
+            expected_user = expected_result.get("user", {})
+            expected_user_name = expected_user.get("name", None)
 
-            # TODO: add tests for names once teamspace is implemented
+            assert result == Teamspace(
+                teamspace_name, org=_resolve_org(expected_org_name), user=_resolve_user(expected_user_name)
+            )

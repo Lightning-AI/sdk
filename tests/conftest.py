@@ -146,21 +146,85 @@ def internal_get_org_api_mocker(mocker, internal_auth_mocker):
 
 @pytest.fixture
 def internal_teamspace_api_mocker(mocker):
+    projects = {
+        "ts-abc001": V1Membership(
+            name="ts-abc", display_name="ts-abc", project_id="ts-abc001", owner_id="org-abc", owner_type="organization"
+        ),
+        "ts-def001": V1Membership(
+            name="ts-def", display_name="ts-def", project_id="ts-def001", owner_id="org-abc", owner_type="organization"
+        ),
+        "ts-ghi001": V1Membership(
+            name="ts-ghi", display_name="ts-ghi", project_id="ts-ghi001", owner_id="user-abc", owner_type="user"
+        ),
+    }
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_memberships",
-        return_value=V1ListMembershipsResponse(
-            [
-                V1Membership(name="ts-abc", display_name="ts-abc", project_id="ts-abc001", owner_id="org-abc"),
-                V1Membership(name="ts-def", display_name="ts-def", project_id="ts-def001", owner_id="org-abc"),
-            ]
-        ),
+        return_value=V1ListMembershipsResponse(list(projects.values())),
         autospec=True,
     )
+
+    def side_effect(self, id, **kwargs):
+        mem = projects[id]
+        return V1Project(
+            id=mem.project_id,
+            name=mem.name,
+            display_name=mem.display_name,
+            owner_id=mem.owner_id,
+            owner_type=mem.owner_type,
+        )
+
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
-        return_value=V1Project(
-            id="ts-abc", name="ts-abc", display_name="ts-abc", owner_id="org-abc", owner_type="organization"
+        side_effect=side_effect,
+        autospec=True,
+    )
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture()
+def resolve_all_teamspaces_api_mocker(mocker):
+    projects = [
+        V1Membership(
+            name="ts-abc", display_name="ts-abc", project_id="ts-abc001", owner_id="org-abc", owner_type="organization"
         ),
+        V1Membership(
+            name="ts-def", display_name="ts-def", project_id="ts-def001", owner_id="org-abc", owner_type="organization"
+        ),
+        V1Membership(
+            name="ts-abc", display_name="ts-abc", project_id="ts-abc002", owner_id="user-abc", owner_type="user"
+        ),
+        V1Membership(
+            name="ts-def", display_name="ts-def", project_id="ts-def002", owner_id="user-abc", owner_type="user"
+        ),
+    ]
+
+    def side_effect_list(self, **kwargs):
+        return V1ListMembershipsResponse(projects)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_memberships",
+        side_effect=side_effect_list,
+        autospec=True,
+    )
+
+    def side_effect(self, id, **kwargs):
+        for mem in projects:
+            if mem.project_id == id:
+                return V1Project(
+                    id=mem.project_id,
+                    name=mem.name,
+                    display_name=mem.display_name,
+                    owner_id=mem.owner_id,
+                    owner_type=mem.owner_type,
+                )
+
+        raise RuntimeError(f"No project found for {id=}")
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+        side_effect=side_effect,
         autospec=True,
     )
     yield [mocker]
