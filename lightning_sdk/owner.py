@@ -27,9 +27,18 @@ class Owner(ABC):
     def teamspaces(self) -> List["Teamspace"]:
         """All teamspaces by this owner."""
         from lightning_sdk.teamspace import Teamspace
+        from lightning_sdk.user import User
+
+        is_user = isinstance(self, User)
+        if is_user:
+            user = self
+            org = None
+        else:
+            user = (None,)
+            org = self
 
         _teamspaces = self._teamspace_api.list_teamspaces(owner_id=self.id, name=None)
-        return [Teamspace(name=t.name, org=self) for t in _teamspaces]
+        return [Teamspace(name=t.name, user=user, org=org) for t in _teamspaces]
 
     def __eq__(self, o: "Owner") -> bool:
         """Checks for equality with provided object."""
