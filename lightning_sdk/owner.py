@@ -34,7 +34,7 @@ class Owner(ABC):
             user = self
             org = None
         else:
-            user = (None,)
+            user = None
             org = self
 
         _teamspaces = self._teamspace_api.list_teamspaces(owner_id=self.id, name=None)
