@@ -44,6 +44,7 @@ class LitpagesIdBody(object):
         'category': 'str',
         'content': 'str',
         'display_content_from_id': 'str',
+        'display_published_studio_id': 'str',
         'order': 'int',
         'parent_id': 'str',
         'path': 'str',
@@ -54,17 +55,19 @@ class LitpagesIdBody(object):
         'category': 'category',
         'content': 'content',
         'display_content_from_id': 'displayContentFromId',
+        'display_published_studio_id': 'displayPublishedStudioId',
         'order': 'order',
         'parent_id': 'parentId',
         'path': 'path',
         'published': 'published'
     }
 
-    def __init__(self, category: 'str' =None, content: 'str' =None, display_content_from_id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, published: 'bool' =None):  # noqa: E501
+    def __init__(self, category: 'str' =None, content: 'str' =None, display_content_from_id: 'str' =None, display_published_studio_id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, published: 'bool' =None):  # noqa: E501
         """LitpagesIdBody - a model defined in Swagger"""  # noqa: E501
         self._category = None
         self._content = None
         self._display_content_from_id = None
+        self._display_published_studio_id = None
         self._order = None
         self._parent_id = None
         self._path = None
@@ -76,6 +79,8 @@ class LitpagesIdBody(object):
             self.content = content
         if display_content_from_id is not None:
             self.display_content_from_id = display_content_from_id
+        if display_published_studio_id is not None:
+            self.display_published_studio_id = display_published_studio_id
         if order is not None:
             self.order = order
         if parent_id is not None:
@@ -147,6 +152,27 @@ class LitpagesIdBody(object):
         """
 
         self._display_content_from_id = display_content_from_id
+
+    @property
+    def display_published_studio_id(self) -> 'str':
+        """Gets the display_published_studio_id of this LitpagesIdBody.  # noqa: E501
+
+
+        :return: The display_published_studio_id of this LitpagesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._display_published_studio_id
+
+    @display_published_studio_id.setter
+    def display_published_studio_id(self, display_published_studio_id: 'str'):
+        """Sets the display_published_studio_id of this LitpagesIdBody.
+
+
+        :param display_published_studio_id: The display_published_studio_id of this LitpagesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._display_published_studio_id = display_published_studio_id
 
     @property
     def order(self) -> 'int':

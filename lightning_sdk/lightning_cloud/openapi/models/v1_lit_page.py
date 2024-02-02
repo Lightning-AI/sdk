@@ -47,6 +47,7 @@ class V1LitPage(object):
         'created_at': 'datetime',
         'creator_id': 'str',
         'display_content_from_id': 'str',
+        'display_published_studio_id': 'str',
         'id': 'str',
         'order': 'int',
         'parent_id': 'str',
@@ -65,6 +66,7 @@ class V1LitPage(object):
         'created_at': 'createdAt',
         'creator_id': 'creatorId',
         'display_content_from_id': 'displayContentFromId',
+        'display_published_studio_id': 'displayPublishedStudioId',
         'id': 'id',
         'order': 'order',
         'parent_id': 'parentId',
@@ -76,7 +78,7 @@ class V1LitPage(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, category: 'str' =None, children: 'list[V1LitPage]' =None, content: 'str' =None, created_at: 'datetime' =None, creator_id: 'str' =None, display_content_from_id: 'str' =None, id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, published: 'bool' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, category: 'str' =None, children: 'list[V1LitPage]' =None, content: 'str' =None, created_at: 'datetime' =None, creator_id: 'str' =None, display_content_from_id: 'str' =None, display_published_studio_id: 'str' =None, id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, published: 'bool' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1LitPage - a model defined in Swagger"""  # noqa: E501
         self._category = None
         self._children = None
@@ -84,6 +86,7 @@ class V1LitPage(object):
         self._created_at = None
         self._creator_id = None
         self._display_content_from_id = None
+        self._display_published_studio_id = None
         self._id = None
         self._order = None
         self._parent_id = None
@@ -106,6 +109,8 @@ class V1LitPage(object):
             self.creator_id = creator_id
         if display_content_from_id is not None:
             self.display_content_from_id = display_content_from_id
+        if display_published_studio_id is not None:
+            self.display_published_studio_id = display_published_studio_id
         if id is not None:
             self.id = id
         if order is not None:
@@ -250,6 +255,27 @@ class V1LitPage(object):
         """
 
         self._display_content_from_id = display_content_from_id
+
+    @property
+    def display_published_studio_id(self) -> 'str':
+        """Gets the display_published_studio_id of this V1LitPage.  # noqa: E501
+
+
+        :return: The display_published_studio_id of this V1LitPage.  # noqa: E501
+        :rtype: str
+        """
+        return self._display_published_studio_id
+
+    @display_published_studio_id.setter
+    def display_published_studio_id(self, display_published_studio_id: 'str'):
+        """Sets the display_published_studio_id of this V1LitPage.
+
+
+        :param display_published_studio_id: The display_published_studio_id of this V1LitPage.  # noqa: E501
+        :type: str
+        """
+
+        self._display_published_studio_id = display_published_studio_id
 
     @property
     def id(self) -> 'str':

@@ -43,25 +43,30 @@ class V1UpstreamCloudSpace(object):
     swagger_types = {
         'auto_start': 'bool',
         'cloudspace_id': 'str',
+        'commands': 'list[str]',
         'port': 'str'
     }
 
     attribute_map = {
         'auto_start': 'autoStart',
         'cloudspace_id': 'cloudspaceId',
+        'commands': 'commands',
         'port': 'port'
     }
 
-    def __init__(self, auto_start: 'bool' =None, cloudspace_id: 'str' =None, port: 'str' =None):  # noqa: E501
+    def __init__(self, auto_start: 'bool' =None, cloudspace_id: 'str' =None, commands: 'list[str]' =None, port: 'str' =None):  # noqa: E501
         """V1UpstreamCloudSpace - a model defined in Swagger"""  # noqa: E501
         self._auto_start = None
         self._cloudspace_id = None
+        self._commands = None
         self._port = None
         self.discriminator = None
         if auto_start is not None:
             self.auto_start = auto_start
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
+        if commands is not None:
+            self.commands = commands
         if port is not None:
             self.port = port
 
@@ -106,6 +111,27 @@ class V1UpstreamCloudSpace(object):
         """
 
         self._cloudspace_id = cloudspace_id
+
+    @property
+    def commands(self) -> 'list[str]':
+        """Gets the commands of this V1UpstreamCloudSpace.  # noqa: E501
+
+
+        :return: The commands of this V1UpstreamCloudSpace.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._commands
+
+    @commands.setter
+    def commands(self, commands: 'list[str]'):
+        """Sets the commands of this V1UpstreamCloudSpace.
+
+
+        :param commands: The commands of this V1UpstreamCloudSpace.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._commands = commands
 
     @property
     def port(self) -> 'str':

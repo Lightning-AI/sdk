@@ -50,7 +50,8 @@ class ProjectIdCloudspacesBody(object):
         'disk_size': 'str',
         'display_name': 'str',
         'name': 'str',
-        'preemptible': 'bool'
+        'preemptible': 'bool',
+        'seed_files': 'list[V1CloudSpaceSeedFile]'
     }
 
     attribute_map = {
@@ -63,10 +64,11 @@ class ProjectIdCloudspacesBody(object):
         'disk_size': 'diskSize',
         'display_name': 'displayName',
         'name': 'name',
-        'preemptible': 'preemptible'
+        'preemptible': 'preemptible',
+        'seed_files': 'seedFiles'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, preemptible: 'bool' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, preemptible: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None):  # noqa: E501
         """ProjectIdCloudspacesBody - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cloud_space_instance_cpu_image_override = None
@@ -78,6 +80,7 @@ class ProjectIdCloudspacesBody(object):
         self._display_name = None
         self._name = None
         self._preemptible = None
+        self._seed_files = None
         self.discriminator = None
         if can_download_source_code is not None:
             self.can_download_source_code = can_download_source_code
@@ -99,6 +102,8 @@ class ProjectIdCloudspacesBody(object):
             self.name = name
         if preemptible is not None:
             self.preemptible = preemptible
+        if seed_files is not None:
+            self.seed_files = seed_files
 
     @property
     def can_download_source_code(self) -> 'bool':
@@ -309,6 +314,27 @@ class ProjectIdCloudspacesBody(object):
         """
 
         self._preemptible = preemptible
+
+    @property
+    def seed_files(self) -> 'list[V1CloudSpaceSeedFile]':
+        """Gets the seed_files of this ProjectIdCloudspacesBody.  # noqa: E501
+
+
+        :return: The seed_files of this ProjectIdCloudspacesBody.  # noqa: E501
+        :rtype: list[V1CloudSpaceSeedFile]
+        """
+        return self._seed_files
+
+    @seed_files.setter
+    def seed_files(self, seed_files: 'list[V1CloudSpaceSeedFile]'):
+        """Sets the seed_files of this ProjectIdCloudspacesBody.
+
+
+        :param seed_files: The seed_files of this ProjectIdCloudspacesBody.  # noqa: E501
+        :type: list[V1CloudSpaceSeedFile]
+        """
+
+        self._seed_files = seed_files
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

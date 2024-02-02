@@ -47,6 +47,7 @@ class V1ProjectMembership(object):
         'description': 'str',
         'display_name': 'str',
         'free_credits_enabled': 'bool',
+        'inactive': 'bool',
         'job_count': 'str',
         'membership_count': 'str',
         'name': 'str',
@@ -66,6 +67,7 @@ class V1ProjectMembership(object):
         'description': 'description',
         'display_name': 'displayName',
         'free_credits_enabled': 'freeCreditsEnabled',
+        'inactive': 'inactive',
         'job_count': 'jobCount',
         'membership_count': 'membershipCount',
         'name': 'name',
@@ -78,7 +80,7 @@ class V1ProjectMembership(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_credits_enabled: 'bool' =None, job_count: 'str' =None, membership_count: 'str' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_credits_enabled: 'bool' =None, inactive: 'bool' =None, job_count: 'str' =None, membership_count: 'str' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1ProjectMembership - a model defined in Swagger"""  # noqa: E501
         self._balance = None
         self._created_at = None
@@ -86,6 +88,7 @@ class V1ProjectMembership(object):
         self._description = None
         self._display_name = None
         self._free_credits_enabled = None
+        self._inactive = None
         self._job_count = None
         self._membership_count = None
         self._name = None
@@ -109,6 +112,8 @@ class V1ProjectMembership(object):
             self.display_name = display_name
         if free_credits_enabled is not None:
             self.free_credits_enabled = free_credits_enabled
+        if inactive is not None:
+            self.inactive = inactive
         if job_count is not None:
             self.job_count = job_count
         if membership_count is not None:
@@ -255,6 +260,27 @@ class V1ProjectMembership(object):
         """
 
         self._free_credits_enabled = free_credits_enabled
+
+    @property
+    def inactive(self) -> 'bool':
+        """Gets the inactive of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The inactive of this V1ProjectMembership.  # noqa: E501
+        :rtype: bool
+        """
+        return self._inactive
+
+    @inactive.setter
+    def inactive(self, inactive: 'bool'):
+        """Sets the inactive of this V1ProjectMembership.
+
+
+        :param inactive: The inactive of this V1ProjectMembership.  # noqa: E501
+        :type: bool
+        """
+
+        self._inactive = inactive
 
     @property
     def job_count(self) -> 'str':

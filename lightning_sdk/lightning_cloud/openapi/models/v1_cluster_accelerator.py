@@ -42,6 +42,7 @@ class V1ClusterAccelerator(object):
     """
     swagger_types = {
         'accelerator_type': 'str',
+        'allowed_resources': 'list[str]',
         'available_in_seconds': 'str',
         'cluster_id': 'str',
         'cost': 'float',
@@ -64,6 +65,7 @@ class V1ClusterAccelerator(object):
 
     attribute_map = {
         'accelerator_type': 'acceleratorType',
+        'allowed_resources': 'allowedResources',
         'available_in_seconds': 'availableInSeconds',
         'cluster_id': 'clusterId',
         'cost': 'cost',
@@ -84,9 +86,10 @@ class V1ClusterAccelerator(object):
         'slug': 'slug'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, available_in_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
+        self._allowed_resources = None
         self._available_in_seconds = None
         self._cluster_id = None
         self._cost = None
@@ -108,6 +111,8 @@ class V1ClusterAccelerator(object):
         self.discriminator = None
         if accelerator_type is not None:
             self.accelerator_type = accelerator_type
+        if allowed_resources is not None:
+            self.allowed_resources = allowed_resources
         if available_in_seconds is not None:
             self.available_in_seconds = available_in_seconds
         if cluster_id is not None:
@@ -165,6 +170,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._accelerator_type = accelerator_type
+
+    @property
+    def allowed_resources(self) -> 'list[str]':
+        """Gets the allowed_resources of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The allowed_resources of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._allowed_resources
+
+    @allowed_resources.setter
+    def allowed_resources(self, allowed_resources: 'list[str]'):
+        """Sets the allowed_resources of this V1ClusterAccelerator.
+
+
+        :param allowed_resources: The allowed_resources of this V1ClusterAccelerator.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._allowed_resources = allowed_resources
 
     @property
     def available_in_seconds(self) -> 'str':

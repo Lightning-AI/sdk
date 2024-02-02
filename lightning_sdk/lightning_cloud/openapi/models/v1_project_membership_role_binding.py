@@ -42,6 +42,7 @@ class V1ProjectMembershipRoleBinding(object):
     """
     swagger_types = {
         'created_at': 'datetime',
+        'inactive': 'bool',
         'project_id': 'str',
         'role_id': 'str',
         'updated_at': 'datetime',
@@ -50,15 +51,17 @@ class V1ProjectMembershipRoleBinding(object):
 
     attribute_map = {
         'created_at': 'createdAt',
+        'inactive': 'inactive',
         'project_id': 'projectId',
         'role_id': 'roleId',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, project_id: 'str' =None, role_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, inactive: 'bool' =None, project_id: 'str' =None, role_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1ProjectMembershipRoleBinding - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
+        self._inactive = None
         self._project_id = None
         self._role_id = None
         self._updated_at = None
@@ -66,6 +69,8 @@ class V1ProjectMembershipRoleBinding(object):
         self.discriminator = None
         if created_at is not None:
             self.created_at = created_at
+        if inactive is not None:
+            self.inactive = inactive
         if project_id is not None:
             self.project_id = project_id
         if role_id is not None:
@@ -95,6 +100,27 @@ class V1ProjectMembershipRoleBinding(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def inactive(self) -> 'bool':
+        """Gets the inactive of this V1ProjectMembershipRoleBinding.  # noqa: E501
+
+
+        :return: The inactive of this V1ProjectMembershipRoleBinding.  # noqa: E501
+        :rtype: bool
+        """
+        return self._inactive
+
+    @inactive.setter
+    def inactive(self, inactive: 'bool'):
+        """Sets the inactive of this V1ProjectMembershipRoleBinding.
+
+
+        :param inactive: The inactive of this V1ProjectMembershipRoleBinding.  # noqa: E501
+        :type: bool
+        """
+
+        self._inactive = inactive
 
     @property
     def project_id(self) -> 'str':

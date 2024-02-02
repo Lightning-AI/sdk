@@ -43,20 +43,26 @@ class V1TransferUserBalanceRequest(object):
     swagger_types = {
         'amount': 'float',
         'project_dst_id': 'str',
-        'project_src_id': 'str'
+        'project_src_id': 'str',
+        'user_dst': 'bool',
+        'user_src': 'bool'
     }
 
     attribute_map = {
         'amount': 'amount',
         'project_dst_id': 'projectDstId',
-        'project_src_id': 'projectSrcId'
+        'project_src_id': 'projectSrcId',
+        'user_dst': 'userDst',
+        'user_src': 'userSrc'
     }
 
-    def __init__(self, amount: 'float' =None, project_dst_id: 'str' =None, project_src_id: 'str' =None):  # noqa: E501
+    def __init__(self, amount: 'float' =None, project_dst_id: 'str' =None, project_src_id: 'str' =None, user_dst: 'bool' =None, user_src: 'bool' =None):  # noqa: E501
         """V1TransferUserBalanceRequest - a model defined in Swagger"""  # noqa: E501
         self._amount = None
         self._project_dst_id = None
         self._project_src_id = None
+        self._user_dst = None
+        self._user_src = None
         self.discriminator = None
         if amount is not None:
             self.amount = amount
@@ -64,6 +70,10 @@ class V1TransferUserBalanceRequest(object):
             self.project_dst_id = project_dst_id
         if project_src_id is not None:
             self.project_src_id = project_src_id
+        if user_dst is not None:
+            self.user_dst = user_dst
+        if user_src is not None:
+            self.user_src = user_src
 
     @property
     def amount(self) -> 'float':
@@ -127,6 +137,48 @@ class V1TransferUserBalanceRequest(object):
         """
 
         self._project_src_id = project_src_id
+
+    @property
+    def user_dst(self) -> 'bool':
+        """Gets the user_dst of this V1TransferUserBalanceRequest.  # noqa: E501
+
+
+        :return: The user_dst of this V1TransferUserBalanceRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._user_dst
+
+    @user_dst.setter
+    def user_dst(self, user_dst: 'bool'):
+        """Sets the user_dst of this V1TransferUserBalanceRequest.
+
+
+        :param user_dst: The user_dst of this V1TransferUserBalanceRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._user_dst = user_dst
+
+    @property
+    def user_src(self) -> 'bool':
+        """Gets the user_src of this V1TransferUserBalanceRequest.  # noqa: E501
+
+
+        :return: The user_src of this V1TransferUserBalanceRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._user_src
+
+    @user_src.setter
+    def user_src(self, user_src: 'bool'):
+        """Sets the user_src of this V1TransferUserBalanceRequest.
+
+
+        :param user_src: The user_src of this V1TransferUserBalanceRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._user_src = user_src
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
