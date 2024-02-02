@@ -204,19 +204,19 @@ def internal_studio_api_mocker_create_studio(mocker):
             cluster_id=body.cluster_id, cloudspace_id=cloudspace_id, project_id=project_id, id=cloudspace_id + "_run"
         )
 
-    mocker.patch(
+    mock_create_cloud_space = mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
         autospec=True,
         side_effect=_create_cloudspace_side_effect,
     )
-    mocker.patch(
+    mock_create_lightning_run = mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
         autospec=True,
         side_effect=_create_lightning_run_side_effect,
     )
     mocker.patch("requests.put", autospec=True)
 
-    yield [mocker]
+    yield (mock_create_cloud_space, mock_create_lightning_run)
 
     mocker.resetall()
 

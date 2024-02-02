@@ -1,5 +1,4 @@
 import os
-import tarfile
 import tempfile
 import time
 import zipfile
@@ -21,6 +20,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     ProjectIdCloudspacesBody,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
+    V1CloudSpaceSeedFile,
     V1CloudSpaceState,
     V1GetCloudSpaceInstanceStatusResponse,
     V1GetLongRunningCommandInCloudSpaceResponse,
@@ -119,6 +119,7 @@ class StudioApi:
             cluster_id=cluster,
             name=name,
             display_name=name,
+            seed_files=[V1CloudSpaceSeedFile(path="main.py", contents="print('Hello, Lightning World!')\n")],
         )
         studio = self._client.cloud_space_service_create_cloud_space(body, teamspace_id)
 
@@ -126,22 +127,10 @@ class StudioApi:
             cluster_id=studio.cluster_id,
             local_source=True,
         )
-        run = self._client.cloud_space_service_create_lightning_run(
+        _ = self._client.cloud_space_service_create_lightning_run(
             project_id=teamspace_id, cloudspace_id=studio.id, body=run_body
         )
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            main_py_path = os.path.join(tmpdir, "main.py")
-            with open(main_py_path, "w") as f:
-                f.write("print('Hello, Lightning World!')\n")
-
-            # TODO: Explore ways to do this without writing a file
-            tar_path = os.path.join(tmpdir, "source.tar.gz")
-            with tarfile.open(tar_path, "w:gz") as tar:
-                tar.add(main_py_path, arcname="main.py")
-
-            with open(tar_path, "rb") as fopen:
-                requests.put(run.source_upload_url, data=fopen)
         return studio
 
     def get_studio_status(self, studio_id: str, teamspace_id: str) -> V1GetCloudSpaceInstanceStatusResponse:

@@ -5,10 +5,13 @@ import subprocess
 import pytest
 from unittest import mock
 
+import lightning_sdk
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
+    ProjectIdCloudspacesBody,
+    V1CloudSpaceSeedFile,
     V1GetCloudSpaceInstanceStatusResponse,
 )
 from lightning_sdk.machine import Machine
@@ -28,10 +31,23 @@ def test_get_studio_error(internal_studio_api_mocker_get_studio):
 
 @pytest.mark.parametrize("cluster", (None, "c-abc"))
 def test_create_studio(internal_studio_api_mocker_create_studio, cluster):
+    mock_create_cloud_space, _ = internal_studio_api_mocker_create_studio
+
     studio_api = StudioApi()
     studio = studio_api.create_studio("st-abc", "ts-abc", cluster=cluster)
     assert isinstance(studio, V1CloudSpace)
     assert studio.cluster_id == cluster
+
+    mock_create_cloud_space.assert_called_once_with(
+        mock.ANY,
+        ProjectIdCloudspacesBody(
+            cluster_id=cluster,
+            name="st-abc",
+            display_name="st-abc",
+            seed_files=[V1CloudSpaceSeedFile(path="main.py", contents="print('Hello, Lightning World!')\n")],
+        ),
+        mock.ANY,
+    )
 
 
 def test_get_studio_status(internal_studio_api_mocker_studio_status):
