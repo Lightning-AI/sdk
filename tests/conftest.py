@@ -546,7 +546,7 @@ def internal_studio_init_mocker(mocker, internal_get_org_api_mocker, internal_te
         existing_studios[cloudspace.name] = cloudspace
         return cloudspace
 
-    def _list_cloudspaces_side_effect(self, project_id, name):
+    def _list_cloudspaces_side_effect(self, project_id, name, **kwargs):
         if name in existing_studios:
             return V1ListCloudSpacesResponse([existing_studios[name]])
         return V1ListCloudSpacesResponse([])
@@ -1460,29 +1460,62 @@ def internal_teamspace_api_list_mocker(mocker):
 
 @pytest.fixture
 def internal_studio_api_list_mocker(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
+        autospec=True,
+        return_type=V1PluginsListResponse(),
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
+        return_value=V1PluginsListResponse(),
+        autospec=True,
+    )
+
     return_values = [
         V1ListCloudSpacesResponse(
             cloudspaces=[
-                V1CloudSpace(
-                    name="cs-abc",
-                    project_id="ts-abc",
-                ),
-                V1CloudSpace("cs-def", project_id="ts-abc"),
+                V1CloudSpace(name="cs-abc", id="cs-abc"),
+                V1CloudSpace(name="cs-def", id="cs-def"),
             ],
             next_page_token="next-page",
         ),
         V1ListCloudSpacesResponse(
-            cloudspaces=[V1CloudSpace(name="cs-ghi", project_id="ts-abc")], previous_page_token="prev-page"
+            cloudspaces=[V1CloudSpace(name="cs-ghi", id="cs-ghi")],
+            previous_page_token="prev-page",
+            next_page_token=None,
         ),
     ]
 
-    def side_effect(*args, **kwargs):
-        return return_values.pop(0)
+    def side_effect(self, **kwargs):
+        print("page_token", kwargs.get("page_token"))
+        if not kwargs.get("page_token", None):
+            ret_val = return_values[0]
+        else:
+            ret_val = return_values[1]
+
+        project_id = kwargs["project_id"]
+        cluster_id = kwargs.get("cluster_id", None)
+
+        for i, cs in enumerate(ret_val.cloudspaces):
+            cs._project_id = project_id
+            cs._cluster_id = cluster_id
+            ret_val._cloudspaces[i] = cs
+
+        return ret_val
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
         autospec=True,
         side_effect=side_effect,
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+        autospec=True,
+        return_value=V1GetCloudSpaceInstanceStatusResponse(
+            in_use=Externalv1CloudSpaceInstanceStatus(phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING")
+        ),
     )
 
     yield [mocker]

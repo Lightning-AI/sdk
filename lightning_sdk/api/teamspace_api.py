@@ -47,18 +47,20 @@ class TeamspaceApi:
             )
         ]
 
-    def list_studios(self, teamspace_id: str, cluster_id: Optional[str] = None) -> List[V1CloudSpace]:
+    def list_studios(self, teamspace_id: str, cluster_id: str = "") -> List[V1CloudSpace]:
         """List studios in teamspace."""
         kwargs = {"project_id": teamspace_id}
 
-        if cluster_id is not None:
+        if cluster_id:
             kwargs["cluster_id"] = cluster_id
 
         cloudspaces = []
 
         while True:
             resp = self._client.cloud_space_service_list_cloud_spaces(**kwargs)
+
             cloudspaces.extend(resp.cloudspaces)
+
             if not resp.next_page_token:
                 break
 

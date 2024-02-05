@@ -31,8 +31,8 @@ def test_studio_init(internal_studio_init_mocker, internal_studio_status_mocker,
     if error_out:
         return
 
-    assert studio.teamspace == "ts-abc"
-    assert studio.owner == "org-abc"
+    assert studio.teamspace.name == "ts-abc"
+    assert studio.owner.name == "org-abc"
     assert studio.name == name
 
 

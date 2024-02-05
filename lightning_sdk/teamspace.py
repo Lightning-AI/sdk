@@ -59,7 +59,6 @@ class Teamspace:
         else:
             self._owner = self._user
 
-        print(f"{name=}, {self.owner.id=}")
         self._teamspace = self._teamspace_api.get_teamspace(name=name, owner_id=self.owner.id)
 
     @property
@@ -86,10 +85,10 @@ class Teamspace:
         clusters = self._teamspace_api.list_clusters(teamspace_id=self.id)
         for cl in clusters:
             _studios = self._teamspace_api.list_studios(teamspace_id=self.id, cluster_id=cl.cluster_id)
-            studios.extend(
-                [Studio(name=s.name, teamspace=self, cluster=cl.cluster_name, create_ok=False) for s in _studios]
-            )
+            for s in _studios:
+                studios.append(Studio(name=s.name, teamspace=self, cluster=cl.cluster_name, create_ok=False))
 
+        print([s.name for s in studios])
         return studios
 
     @property

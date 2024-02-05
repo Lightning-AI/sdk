@@ -1,14 +1,15 @@
 import os
-from typing import TYPE_CHECKING, Any, Mapping, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Mapping, Optional, Tuple, Union
 
-from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
-from lightning_sdk.api.teamspace_api import TeamspaceApi
-from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.machine import Machine
+from lightning_sdk.organization import Organization
+from lightning_sdk.owner import Owner
 from lightning_sdk.status import Status
-from lightning_sdk.utils import _setup_logger
+from lightning_sdk.teamspace import Teamspace
+from lightning_sdk.user import User
+from lightning_sdk.utils import _resolve_teamspace, _setup_logger
 
 if TYPE_CHECKING:
     from lightning_sdk.plugin import Plugin
@@ -40,53 +41,17 @@ class Studio:
     def __init__(
         self,
         name: Optional[str] = None,
-        teamspace: Optional[str] = None,
-        org: Optional[str] = None,
-        user: Optional[str] = None,
+        teamspace: Optional[Union[str, Teamspace]] = None,
+        org: Optional[Union[str, Organization]] = None,
+        user: Optional[Union[str, User]] = None,
         cluster: Optional[str] = None,
         create_ok: bool = True,
     ) -> None:
         self._studio_api = StudioApi()
-        self._teamspace_api = TeamspaceApi()
-        self._org_api = OrgApi()
-        self._user_api = UserApi()
 
-        self._org = org
-        self._user = user
+        self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         self._cluster = cluster
-
-        self._owner = None
-
         self._setup_done = False
-
-        if org is None and user is None:
-            org = os.environ.get("LIGHTNING_ORG", "") or None
-            # if org detected -> use org else use user
-            if not org:
-                user = os.environ.get("LIGHTNING_USERNAME", "") or None
-
-        if org is not None and user is not None:
-            raise ValueError(f"Only one of org and user can be provided, but got both: {org=} and {user=}.")
-
-        if org:
-            self._org = self._org_api.get_org(org)
-            self._owner = self._org
-        else:
-            self._org = None
-
-        if user:
-            self._user = self._user_api.get_user(user)
-            self._owner = self._user
-        else:
-            self._user = None
-
-        if self._owner is None:
-            raise RuntimeError(f"Could not find studio owner {org=}, {user=}")
-
-        if teamspace is None:
-            teamspace = os.environ.get("LIGHTNING_TEAMSPACE", "") or None
-
-        self._teamspace = self._teamspace_api.get_teamspace(teamspace, self._owner.id)
 
         self._plugins = {}
 
@@ -141,22 +106,14 @@ class Studio:
         )
 
     @property
-    def teamspace(self) -> str:
+    def teamspace(self) -> Teamspace:
         """Returns the name of the Teamspace."""
-        return self._teamspace.name
+        return self._teamspace
 
     @property
-    def owner(self) -> str:
+    def owner(self) -> Owner:
         """Returns the name of the owner (either user or org)."""
-        from lightning_sdk.lightning_cloud.openapi import V1Organization, V1SearchUser
-
-        if isinstance(self._owner, V1Organization):
-            return self._owner.name
-
-        if isinstance(self._owner, V1SearchUser):
-            return self._owner.username
-
-        raise TypeError("The owner is neither an org, nor a user.")
+        return self.teamspace.owner
 
     @property
     def machine(self) -> Optional[Machine]:
@@ -197,7 +154,7 @@ class Studio:
 
     def duplicate(self) -> "Studio":
         """Duplicates the existing Studio to the same teamspace."""
-        kwargs = self._studio_api.duplicate_studio(self._studio.id, self._teamspace._id, self._teamspace.id)
+        kwargs = self._studio_api.duplicate_studio(self._studio.id, self._teamspace.id, self._teamspace.id)
         return Studio(**kwargs)
 
     def switch_machine(self, machine: Machine) -> None:
