@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace, V1Project, V1ProjectClusterBinding
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
@@ -49,7 +50,7 @@ class TeamspaceApi:
 
     def list_studios(self, teamspace_id: str, cluster_id: str = "") -> List[V1CloudSpace]:
         """List studios in teamspace."""
-        kwargs = {"project_id": teamspace_id}
+        kwargs = {"project_id": teamspace_id, "user_id": self._get_authed_user_id()}
 
         if cluster_id:
             kwargs["cluster_id"] = cluster_id
@@ -71,3 +72,9 @@ class TeamspaceApi:
     def list_clusters(self, teamspace_id: str) -> List[V1ProjectClusterBinding]:
         """Lists clusters in a teamspace."""
         return self._client.projects_service_list_project_cluster_bindings(project_id=teamspace_id).clusters
+
+    def _get_authed_user_id(self) -> str:
+        """Gets the currently logged in user."""
+        auth = Auth()
+        auth.authenticate()
+        return auth.user_id

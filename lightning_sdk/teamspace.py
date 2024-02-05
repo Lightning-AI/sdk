@@ -88,7 +88,6 @@ class Teamspace:
             for s in _studios:
                 studios.append(Studio(name=s.name, teamspace=self, cluster=cl.cluster_name, create_ok=False))
 
-        print([s.name for s in studios])
         return studios
 
     @property
