@@ -1,15 +1,16 @@
 import os
+from itertools import chain
 from typing import List, Optional
 
 from fire import Fire
 from simple_term_menu import TerminalMenu
 
+from lightning_sdk.api.studio_api import _cloud_url
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.organization import Organization
 from lightning_sdk.studio import Studio
 from lightning_sdk.user import User
-from lightning_sdk.utils import _get_organizations_for_authed_user, _get_authed_user
-from itertools import chain
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.utils import _get_authed_user, _get_organizations_for_authed_user
 
 
 class StudioCLI:
@@ -17,14 +18,14 @@ class StudioCLI:
 
     def upload(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
         """Upload a file or folder to a studio.
-        
+
         Args:
           path: The path to the file or directory you want to upload
-          studio: The name of the studio to upload to. Will show a menu for selection if not specified. 
+          studio: The name of the studio to upload to. Will show a menu for selection if not specified.
             If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>
-          remote_path: The path where the uploaded file should appear on your Studio. 
-            Has to be within your Studio's home directory and will be relative to that. 
-            If not specified, will use the file or directory name of the path you want to upload 
+          remote_path: The path where the uploaded file should appear on your Studio.
+            Has to be within your Studio's home directory and will be relative to that.
+            If not specified, will use the file or directory name of the path you want to upload
             and place it in your home directory.
 
         """
@@ -71,9 +72,9 @@ class StudioCLI:
 
         except KeyboardInterrupt:
             raise KeyboardInterrupt from None
-        
+
         # give user friendlier error message
-        except Exception as e:  # noqa: E722
+        except Exception as e:
             raise StudioCliError(
                 f"Could not find the given Studio {studio} to upload files to. "
                 "Please contact Lightning AI directly to resolve this issue."
@@ -90,20 +91,19 @@ class StudioCLI:
             selected_studio.upload_file(path, remote_path=remote_path)
 
     def login(self) -> None:
-        """Login to Lightning AI Studios"""
+        """Login to Lightning AI Studios."""
         auth = Auth()
         auth.clear()
 
         try:
             auth.authenticate()
         except ConnectionError:
-            raise RuntimeError(f"Unable to connect to {get_lightning_cloud_url()}. Please check your internet connection.") from None
+            raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
 
     def logout(self) -> None:
-        """Logout from Lightning AI Studios"""
+        """Logout from Lightning AI Studios."""
         auth = Auth()
         auth.clear()
-
 
     def _prepare_terminal_menu_all_studios(
         self, possible_studios: List[Studio], title: Optional[str] = None
@@ -111,7 +111,9 @@ class StudioCLI:
         if title is None:
             title = "Please select a Studio of the following studios:"
 
-        return TerminalMenu([f"{s.teamspace.name}/{s.name}" for s in possible_studios], title=title, clear_menu_on_exit=True)
+        return TerminalMenu(
+            [f"{s.teamspace.name}/{s.name}" for s in possible_studios], title=title, clear_menu_on_exit=True
+        )
 
     def _get_possible_studios(self, user: User, orgs: List[Organization]) -> List[Studio]:
         Studio._skip_init = True
@@ -171,4 +173,3 @@ class StudioCliError(RuntimeError):
 def main_cli() -> None:
     """CLI entrypoint."""
     Fire(StudioCLI())
-

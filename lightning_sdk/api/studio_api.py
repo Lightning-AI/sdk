@@ -183,7 +183,7 @@ class StudioApi:
 
         return internal_status.phase
 
-    def _get_studio_instance_status_from_object(self, studio: V1CloudSpace):
+    def _get_studio_instance_status_from_object(self, studio: V1CloudSpace) -> Optional[str]:
         return getattr(getattr(studio.code_status, "in_use", None), "phase", None)
 
     def _request_switch(self, studio_id: str, teamspace_id: str, machine: Machine) -> None:

@@ -3,7 +3,7 @@ import os
 import warnings
 from typing import TYPE_CHECKING, List, Optional, Union
 
-from lightning_sdk.api import UserApi, TeamspaceApi
+from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.machine import Machine
 
 if TYPE_CHECKING:
@@ -130,8 +130,10 @@ def _get_organizations_for_authed_user() -> List["Organization"]:
     _orgs = UserApi()._get_organizations_for_authed_user()
     return [Organization(_org.name) for _org in _orgs]
 
+
 def _get_authed_user() -> "User":
     from lightning_sdk.user import User
+
     user_id = TeamspaceApi()._get_authed_user_id()
     _user = UserApi()._get_user_by_id(user_id)
     return User(name=_user.username)
