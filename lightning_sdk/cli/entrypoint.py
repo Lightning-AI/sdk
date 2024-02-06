@@ -6,6 +6,8 @@ from simple_term_menu import TerminalMenu
 
 from lightning_sdk.studio import Studio
 from lightning_sdk.user import User
+from lightning_sdk.organization import Organization
+from lightning_sdk.utils import _get_organizations_for_authed_user
 
 
 class StudioCLI:
@@ -17,6 +19,7 @@ class StudioCLI:
             remote_path = os.path.basename(path)
 
         user = User()
+        orgs = _get_organizations_for_authed_user()
 
         terminal_menu = None
 
@@ -24,7 +27,7 @@ class StudioCLI:
 
         if studio is None:
             if not possible_studios:
-                possible_studios = self._get_possible_studios(user)
+                possible_studios = self._get_possible_studios(user, orgs)
             terminal_menu = self._prepare_terminal_menu_all_studios(possible_studios)
             terminal_menu.show()
             studio = terminal_menu.chosen_menu_entry
@@ -66,10 +69,12 @@ class StudioCLI:
 
         return TerminalMenu([f"{s.teamspace.name}/{s.name}" for s in possible_studios], title=title)
 
-    def _get_possible_studios(self, user: User) -> List[Studio]:
+    def _get_possible_studios(self, user: User, orgs: List[Organization]) -> List[Studio]:
         
         Studio._skip_init = True
-        teamspaces = user.teamspaces
+        teamspaces = list(user.teamspaces)
+        for _org in orgs:
+            teamspaces.extend(list(_org.teamspaces))
         all_studios = []
 
         for t in teamspaces:
