@@ -44,7 +44,7 @@ exclude = ["tests*", "examples*"]
 [tool.black]
 # https://github.com/psf/black
 line-length = 120
-exclude = "(.eggs|.git|.hg|.mypy_cache|.venv|_build|buck-out|build|dist)"
+exclude = "(.eggs|.git|.hg|.mypy_cache|.venv|_build|buck-out|build|dist|lightning_sdk/lightning_cloud)"
 
 [tool.docformatter]
 recursive = true

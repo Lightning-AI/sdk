@@ -1,10 +1,10 @@
 import logging
 import os
 import warnings
-from typing import TYPE_CHECKING, Optional, Union, List
+from typing import TYPE_CHECKING, List, Optional, Union
 
-from lightning_sdk.machine import Machine
 from lightning_sdk.api import UserApi
+from lightning_sdk.machine import Machine
 
 if TYPE_CHECKING:
     from lightning_sdk.organization import Organization
@@ -116,10 +116,10 @@ def _resolve_teamspace(
 
     return Teamspace(name=teamspace, user=user)
 
+
 def _get_organizations_for_authed_user() -> List["Organization"]:
-    """Returns Organizations the current Authed user is a member of """
+    """Returns Organizations the current Authed user is a member of."""
     from lightning_sdk.organization import Organization
 
     _orgs = UserApi()._get_organizations_for_authed_user()
     return [Organization(_org.name) for _org in _orgs]
-    

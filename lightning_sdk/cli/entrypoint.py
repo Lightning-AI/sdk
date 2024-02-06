@@ -1,12 +1,12 @@
 import os
-from typing import Optional, List
+from typing import List, Optional
 
 from fire import Fire
 from simple_term_menu import TerminalMenu
 
+from lightning_sdk.organization import Organization
 from lightning_sdk.studio import Studio
 from lightning_sdk.user import User
-from lightning_sdk.organization import Organization
 from lightning_sdk.utils import _get_organizations_for_authed_user
 
 
@@ -63,14 +63,12 @@ class StudioCLI:
     def _prepare_terminal_menu_all_studios(
         self, possible_studios: List[Studio], title: Optional[str] = None
     ) -> TerminalMenu:
-
         if title is None:
             title = "Please select a Studio of the following studios:"
 
         return TerminalMenu([f"{s.teamspace.name}/{s.name}" for s in possible_studios], title=title)
 
     def _get_possible_studios(self, user: User, orgs: List[Organization]) -> List[Studio]:
-        
         Studio._skip_init = True
         teamspaces = list(user.teamspaces)
         for _org in orgs:
@@ -93,25 +91,25 @@ class StudioCLI:
         ts = user.teamspaces
 
         possible_teamspaces = []
-        selected_studio = None
         for t in ts:
             if t.name == teamspace or t._teamspace.display_name == teamspace:
                 possible_teamspaces.append(t)
 
-        # try all teamspace-studioname combinations in case there are multiple teamspaces with that name 
+        # try all teamspace-studioname combinations in case there are multiple teamspaces with that name
         # (e.g. one personal and one org teamspace)
         for t in possible_teamspaces:
             try:
                 owner_kwargs = {}
                 if isinstance(t.owner, User):
-                    owner_kwargs['user'] = t.owner.name
+                    owner_kwargs["user"] = t.owner.name
                 else:
-                    owner_kwargs['org'] = t.owner.name
-                return Studio(name=studio, teamspace=t.name, **owner_kwargs)     
+                    owner_kwargs["org"] = t.owner.name
+                return Studio(name=studio, teamspace=t.name, **owner_kwargs)
             except:  # noqa: E722
                 continue
-        
+
         raise InvalidNameError
+
 
 class InvalidNameError(ValueError):
     """Exception for Invalid Teamspace/Studio Name."""

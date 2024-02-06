@@ -1,6 +1,7 @@
-from lightning_sdk.lightning_cloud.openapi import V1SearchUser, V1Organization
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from typing import List
+
+from lightning_sdk.lightning_cloud.openapi import V1Organization, V1SearchUser
+from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 class UserApi:
@@ -25,6 +26,8 @@ class UserApi:
         users = [u for u in response.users if u.id == user_id]
         return users[0]
 
-    def _get_organizations_for_authed_user(self,) -> List[V1Organization]:
-        """Returns Organizations for the current authed user"""
+    def _get_organizations_for_authed_user(
+        self,
+    ) -> List[V1Organization]:
+        """Returns Organizations for the current authed user."""
         return self._client.organizations_service_list_organizations().organizations

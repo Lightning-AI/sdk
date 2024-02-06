@@ -135,13 +135,10 @@ class StudioApi:
 
     def get_studio_status(self, studio_id: str, teamspace_id: str) -> V1GetCloudSpaceInstanceStatusResponse:
         """Gets the current (internal) Studio status."""
-        try:
-            return self._client.cloud_space_service_get_cloud_space_instance_status(
-                project_id=teamspace_id,
-                id=studio_id,
-            )
-        except:
-            raise RuntimeError(f"{studio_id=}, {teamspace_id=}")
+        return self._client.cloud_space_service_get_cloud_space_instance_status(
+            project_id=teamspace_id,
+            id=studio_id,
+        )
 
     def start_studio(self, studio_id: str, teamspace_id: str, machine: Machine) -> None:
         """Start an existing Studio."""
