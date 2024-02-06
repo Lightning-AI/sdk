@@ -9,6 +9,7 @@ from lightning_sdk.studio import Studio
 from lightning_sdk.user import User
 from lightning_sdk.utils import _get_organizations_for_authed_user, _get_authed_user
 from itertools import chain
+from lightning_sdk.lightning_cloud.login import Auth
 
 
 class StudioCLI:
@@ -87,6 +88,22 @@ class StudioCLI:
 
         else:
             selected_studio.upload_file(path, remote_path=remote_path)
+
+    def login(self) -> None:
+        """Login to Lightning AI Studios"""
+        auth = Auth()
+        auth.clear()
+
+        try:
+            auth.authenticate()
+        except ConnectionError:
+            raise RuntimeError(f"Unable to connect to {get_lightning_cloud_url()}. Please check your internet connection.") from None
+
+    def logout(self) -> None:
+        """Logout from Lightning AI Studios"""
+        auth = Auth()
+        auth.clear()
+
 
     def _prepare_terminal_menu_all_studios(
         self, possible_studios: List[Studio], title: Optional[str] = None
