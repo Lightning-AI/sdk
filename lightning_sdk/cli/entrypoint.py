@@ -142,5 +142,5 @@ class StudioCliError(RuntimeError):
 
 def main_cli() -> None:
     """CLI entrypoint."""
-    Fire(StudioCLI)
+    Fire(StudioCLI())
 
