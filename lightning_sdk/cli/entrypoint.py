@@ -15,7 +15,18 @@ class StudioCLI:
     """Command line interface (CLI) to interact with/manage Lightning AI Studios."""
 
     def upload(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
-        """Upload a file or folder to a studio."""
+        """Upload a file or folder to a studio.
+        
+        Args:
+          path: The path to the file or directory you want to upload
+          studio: The name of the studio to upload to. Will show a menu for selection if not specified. 
+            If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>
+          remote_path: The path where the uploaded file should appear on your Studio. 
+            Has to be within your Studio's home directory and will be relative to that. 
+            If not specified, will use the file or directory name of the path you want to upload 
+            and place it in your home directory.
+
+        """
         if remote_path is None:
             remote_path = os.path.basename(path)
 
