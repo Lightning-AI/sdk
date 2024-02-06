@@ -43,7 +43,7 @@ class AssistantIdConversationsBody(object):
     swagger_types = {
         'conversation_id': 'str',
         'max_tokens': 'str',
-        'messages': 'list[V1Message]',
+        'message': 'V1Message',
         'model': 'str',
         'parent_message_id': 'str',
         'stream': 'bool'
@@ -52,17 +52,17 @@ class AssistantIdConversationsBody(object):
     attribute_map = {
         'conversation_id': 'conversationId',
         'max_tokens': 'maxTokens',
-        'messages': 'messages',
+        'message': 'message',
         'model': 'model',
         'parent_message_id': 'parentMessageId',
         'stream': 'stream'
     }
 
-    def __init__(self, conversation_id: 'str' =None, max_tokens: 'str' =None, messages: 'list[V1Message]' =None, model: 'str' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
+    def __init__(self, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, model: 'str' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._conversation_id = None
         self._max_tokens = None
-        self._messages = None
+        self._message = None
         self._model = None
         self._parent_message_id = None
         self._stream = None
@@ -71,8 +71,8 @@ class AssistantIdConversationsBody(object):
             self.conversation_id = conversation_id
         if max_tokens is not None:
             self.max_tokens = max_tokens
-        if messages is not None:
-            self.messages = messages
+        if message is not None:
+            self.message = message
         if model is not None:
             self.model = model
         if parent_message_id is not None:
@@ -123,25 +123,25 @@ class AssistantIdConversationsBody(object):
         self._max_tokens = max_tokens
 
     @property
-    def messages(self) -> 'list[V1Message]':
-        """Gets the messages of this AssistantIdConversationsBody.  # noqa: E501
+    def message(self) -> 'V1Message':
+        """Gets the message of this AssistantIdConversationsBody.  # noqa: E501
 
 
-        :return: The messages of this AssistantIdConversationsBody.  # noqa: E501
-        :rtype: list[V1Message]
+        :return: The message of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: V1Message
         """
-        return self._messages
+        return self._message
 
-    @messages.setter
-    def messages(self, messages: 'list[V1Message]'):
-        """Sets the messages of this AssistantIdConversationsBody.
+    @message.setter
+    def message(self, message: 'V1Message'):
+        """Sets the message of this AssistantIdConversationsBody.
 
 
-        :param messages: The messages of this AssistantIdConversationsBody.  # noqa: E501
-        :type: list[V1Message]
+        :param message: The message of this AssistantIdConversationsBody.  # noqa: E501
+        :type: V1Message
         """
 
-        self._messages = messages
+        self._message = message
 
     @property
     def model(self) -> 'str':

@@ -43,27 +43,37 @@ class BillingCheckoutBody1(object):
     swagger_types = {
         'amount': 'float',
         'capture_method': 'str',
-        'transaction_type': 'str'
+        'org_id': 'str',
+        'transaction_type': 'str',
+        'wallet_type': 'CreateCheckoutSessionRequestWalletType'
     }
 
     attribute_map = {
         'amount': 'amount',
         'capture_method': 'captureMethod',
-        'transaction_type': 'transactionType'
+        'org_id': 'orgId',
+        'transaction_type': 'transactionType',
+        'wallet_type': 'walletType'
     }
 
-    def __init__(self, amount: 'float' =None, capture_method: 'str' =None, transaction_type: 'str' =None):  # noqa: E501
+    def __init__(self, amount: 'float' =None, capture_method: 'str' =None, org_id: 'str' =None, transaction_type: 'str' =None, wallet_type: 'CreateCheckoutSessionRequestWalletType' =None):  # noqa: E501
         """BillingCheckoutBody1 - a model defined in Swagger"""  # noqa: E501
         self._amount = None
         self._capture_method = None
+        self._org_id = None
         self._transaction_type = None
+        self._wallet_type = None
         self.discriminator = None
         if amount is not None:
             self.amount = amount
         if capture_method is not None:
             self.capture_method = capture_method
+        if org_id is not None:
+            self.org_id = org_id
         if transaction_type is not None:
             self.transaction_type = transaction_type
+        if wallet_type is not None:
+            self.wallet_type = wallet_type
 
     @property
     def amount(self) -> 'float':
@@ -108,6 +118,27 @@ class BillingCheckoutBody1(object):
         self._capture_method = capture_method
 
     @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this BillingCheckoutBody1.  # noqa: E501
+
+
+        :return: The org_id of this BillingCheckoutBody1.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this BillingCheckoutBody1.
+
+
+        :param org_id: The org_id of this BillingCheckoutBody1.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
+
+    @property
     def transaction_type(self) -> 'str':
         """Gets the transaction_type of this BillingCheckoutBody1.  # noqa: E501
 
@@ -127,6 +158,27 @@ class BillingCheckoutBody1(object):
         """
 
         self._transaction_type = transaction_type
+
+    @property
+    def wallet_type(self) -> 'CreateCheckoutSessionRequestWalletType':
+        """Gets the wallet_type of this BillingCheckoutBody1.  # noqa: E501
+
+
+        :return: The wallet_type of this BillingCheckoutBody1.  # noqa: E501
+        :rtype: CreateCheckoutSessionRequestWalletType
+        """
+        return self._wallet_type
+
+    @wallet_type.setter
+    def wallet_type(self, wallet_type: 'CreateCheckoutSessionRequestWalletType'):
+        """Sets the wallet_type of this BillingCheckoutBody1.
+
+
+        :param wallet_type: The wallet_type of this BillingCheckoutBody1.  # noqa: E501
+        :type: CreateCheckoutSessionRequestWalletType
+        """
+
+        self._wallet_type = wallet_type
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
