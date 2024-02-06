@@ -216,7 +216,7 @@ class Studio:
             raise RuntimeError(output)
         return output
 
-    def upload_file(self, file_path: str, remote_path: Optional[str] = None) -> None:
+    def upload_file(self, file_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
         """Uploads a given file to a remote path on the Studio."""
         if remote_path is None:
             remote_path = os.path.split(file_path)[1]
@@ -227,6 +227,7 @@ class Studio:
             cluster_id=self._studio.cluster_id,
             file_path=file_path,
             remote_path=remote_path,
+            progress_bar=progress_bar,
         )
 
     def download_file(self, remote_path: str, file_path: Optional[str] = None) -> None:

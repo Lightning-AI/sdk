@@ -286,25 +286,29 @@ def test_create_inference_run(internal_studio_api_create_app_mocker):
     assert resp.name == "fancy-inference-name"
 
 
+@pytest.mark.parametrize("progress_bar", [True, False])
 def test_upload_file_single_part(
-    tmpdir, internal_studio_api_single_part_upload, internal_studio_api_requests_put_mocker
+    tmpdir, internal_studio_api_single_part_upload, internal_studio_api_requests_put_mocker, progress_bar
 ):
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")
     subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
 
-    studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1")
+    studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar)
 
 
-def test_upload_file_multi_part(tmpdir, internal_studio_api_multi_part_upload, internal_studio_api_requests_put_mocker):
+@pytest.mark.parametrize("progress_bar", [True, False])
+def test_upload_file_multi_part(
+    tmpdir, internal_studio_api_multi_part_upload, internal_studio_api_requests_put_mocker, progress_bar
+):
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")
     subprocess.run(f"truncate -s 40MB {filepath}".split(" "))
 
     os.environ["LIGHTNING_MULTIPART_THRESHOLD"] = str(20 * _BYTES_PER_MB)
-    studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1")
+    studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar)
 
 
 def test_download_file(tmpdir, internal_studio_api_login, internal_studio_api_requests_get_mocker):

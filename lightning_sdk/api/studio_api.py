@@ -304,12 +304,7 @@ class StudioApi:
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
 
     def upload_file(
-        self,
-        studio_id: str,
-        teamspace_id: str,
-        cluster_id: str,
-        file_path: str,
-        remote_path: str,
+        self, studio_id: str, teamspace_id: str, cluster_id: str, file_path: str, remote_path: str, progress_bar: bool
     ) -> None:
         """Uploads file to given remote path on the studio."""
         _FileUploader(
@@ -319,6 +314,7 @@ class StudioApi:
             cluster_id=cluster_id,
             file_path=file_path,
             remote_path=remote_path,
+            progress_bar=progress_bar,
         )()
 
     def download_file(

@@ -53,6 +53,7 @@ class _FileUploader:
         cluster_id: str,
         file_path: str,
         remote_path: str,
+        progress_bar: bool,
     ) -> None:
         self.client = client
         self.teamspace_id = teamspace_id
@@ -65,13 +66,16 @@ class _FileUploader:
         )
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
         self.filesize = os.path.getsize(file_path)
-        self.progress_bar = tqdm(
-            desc=f"Uploading {os.path.split(file_path)[1]}",
-            total=self.filesize,
-            unit="B",
-            unit_scale=True,
-            unit_divisor=1000,
-        )
+        if progress_bar:
+            self.progress_bar = tqdm(
+                desc=f"Uploading {os.path.split(file_path)[1]}",
+                total=self.filesize,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1000,
+            )
+        else:
+            self.progress_bar = None
         self.chunk_size = int(os.environ.get("LIGHTNING_MULTI_PART_PART_SIZE", _MAX_SIZE_MULTI_PART_CHUNK))
         assert self.chunk_size < _SIZE_LIMIT_SINGLE_PART
         self.max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
@@ -98,7 +102,9 @@ class _FileUploader:
         )
 
         with open(self.local_path, "rb") as fd:
-            reader_wrapper = CallbackIOWrapper(self.progress_bar.update, fd, "read")
+            reader_wrapper = CallbackIOWrapper(
+                self.progress_bar.update if self.progress_bar is not None else lambda x: None, fd, "read"
+            )
 
             response = requests.put(resp.urls[0].url, data=reader_wrapper)
         response.raise_for_status()
@@ -168,7 +174,8 @@ class _FileUploader:
 
         response = requests.put(presigned_url.url, data=data)
         response.raise_for_status()
-        self.progress_bar.update(self.chunk_size)
+        if self.progress_bar is not None:
+            self.progress_bar.update(self.chunk_size)
 
         etag = response.headers.get("ETag")
         return V1CompleteUpload(etag=etag, part_number=presigned_url.part_number)
