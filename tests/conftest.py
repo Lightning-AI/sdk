@@ -1083,10 +1083,13 @@ def internal_studio_api_create_app_mocker(mocker):
 def internal_studio_init_plugin_mocker(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     existing_studios = {
         "st-abc": V1CloudSpace(
-            name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"
+            name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc", code_status=V1GetCloudSpaceInstanceStatusResponse(
+                in_use=Externalv1CloudSpaceInstanceStatus(phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100")
+            )
         ),
         "st-def": V1CloudSpace(
-            name="st-def", display_name="st-def", cluster_id="c-abc", project_id="ts-abc", id="st-def"
+            name="st-def", display_name="st-def", cluster_id="c-abc", project_id="ts-abc", id="st-def", code_status=V1GetCloudSpaceInstanceStatusResponse(
+                in_use=Externalv1CloudSpaceInstanceStatus(phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"))
         ),
     }
 
@@ -1098,6 +1101,8 @@ def internal_studio_init_plugin_mocker(mocker, internal_get_org_api_mocker, inte
             cluster_id=body.cluster_id,
             project_id=project_id,
             id=body.name,
+            code_status=V1GetCloudSpaceInstanceStatusResponse(
+                in_use=Externalv1CloudSpaceInstanceStatus(phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100")),
         )
         existing_studios[cloudspace.name] = cloudspace
         return cloudspace

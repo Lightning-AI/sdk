@@ -40,7 +40,7 @@ class Teamspace:
         if name is None:
             raise ValueError("Teamspace name wasn't provided and could not be inferred from environment")
 
-        if user is not None and org is None:
+        if user is not None:
             self._user = _resolve_user(user)
             # don't parse org if user was explicitly provided
             self._org = None

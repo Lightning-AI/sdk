@@ -8,6 +8,7 @@ from lightning_sdk.organization import Organization
 from lightning_sdk.studio import Studio
 from lightning_sdk.user import User
 from lightning_sdk.utils import _get_organizations_for_authed_user
+from itertools import chain
 
 
 class StudioCLI:
@@ -25,7 +26,9 @@ class StudioCLI:
 
         possible_studios = []
 
+        has_been_interactive = False
         if studio is None:
+            has_been_interactive = True
             if not possible_studios:
                 possible_studios = self._get_possible_studios(user, orgs)
             terminal_menu = self._prepare_terminal_menu_all_studios(possible_studios)
@@ -35,22 +38,36 @@ class StudioCLI:
         try:
             # gracefully handle wrong name
             try:
-                selected_studio = self._get_studio_from_name(user, studio)
-            except InvalidNameError:
+                selected_studio = self._get_studio_from_name(user, orgs, studio)
+            except InvalidNameError as e:
+                if has_been_interactive:
+                    raise StudioCliError(
+                        f"Could not find the given Studio {studio} to upload files to. "
+                        "Please contact Lightning AI directly to resolve this issue."
+                    ) from e
+
                 print(f"Could not find Studio {studio}")
                 if not possible_studios:
-                    possible_studios = self._get_possible_studios(user)
+                    possible_studios = self._get_possible_studios(user, orgs)
                 terminal_menu = self._prepare_terminal_menu_all_studios(possible_studios)
                 terminal_menu.show()
                 studio = terminal_menu.chosen_menu_entry
-                selected_studio = self._get_studio_from_name(user, studio)
+                has_been_interactive = True
+                selected_studio = self._get_studio_from_name(user, orgs, studio)
+            except KeyboardInterrupt:
+                raise KeyboardInterrupt from None
+
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt from None
+        
         # give user friendlier error message
-        except:  # noqa: E722
+        except Exception as e:  # noqa: E722
             raise StudioCliError(
                 f"Could not find the given Studio {studio} to upload files to. "
                 "Please contact Lightning AI directly to resolve this issue."
-            ) from None
+            ) from e
 
+        print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
         if os.path.isdir(path):
             for root, _, files in os.walk(path):
                 rel_root = os.path.relpath(root, path)
@@ -66,29 +83,32 @@ class StudioCLI:
         if title is None:
             title = "Please select a Studio of the following studios:"
 
-        return TerminalMenu([f"{s.teamspace.name}/{s.name}" for s in possible_studios], title=title)
+        return TerminalMenu([f"{s.teamspace.name}/{s.name}" for s in possible_studios], title=title, clear_menu_on_exit=True)
 
     def _get_possible_studios(self, user: User, orgs: List[Organization]) -> List[Studio]:
         Studio._skip_init = True
         teamspaces = list(user.teamspaces)
         for _org in orgs:
             teamspaces.extend(list(_org.teamspaces))
+
         all_studios = []
 
-        for t in teamspaces:
+        for t in chain(user.teamspaces, *[o.teamspaces for o in orgs]):
             all_studios.extend(t.studios)
 
         Studio._skip_init = False
 
         return all_studios
 
-    def _get_studio_from_name(self, user: User, name: str) -> Studio:
+    def _get_studio_from_name(self, user: User, orgs: List[Organization], name: str) -> Studio:
         try:
             teamspace, studio = name.split("/")
         except:  # noqa: E722
             raise InvalidNameError from None
 
         ts = user.teamspaces
+        for org in orgs:
+            ts.extend(org.teamspaces)
 
         possible_teamspaces = []
         for t in ts:
@@ -98,15 +118,16 @@ class StudioCLI:
         # try all teamspace-studioname combinations in case there are multiple teamspaces with that name
         # (e.g. one personal and one org teamspace)
         for t in possible_teamspaces:
-            try:
-                owner_kwargs = {}
-                if isinstance(t.owner, User):
-                    owner_kwargs["user"] = t.owner.name
-                else:
-                    owner_kwargs["org"] = t.owner.name
-                return Studio(name=studio, teamspace=t.name, **owner_kwargs)
-            except:  # noqa: E722
-                continue
+            for cl in t.clusters:
+                try:
+                    owner_kwargs = {}
+                    if isinstance(t.owner, User):
+                        owner_kwargs["user"] = t.owner.name
+                    else:
+                        owner_kwargs["org"] = t.owner.name
+                    return Studio(name=studio, teamspace=t.name, cluster=cl, **owner_kwargs)
+                except:  # noqa: E722
+                    continue
 
         raise InvalidNameError
 
@@ -122,3 +143,4 @@ class StudioCliError(RuntimeError):
 def main_cli() -> None:
     """CLI entrypoint."""
     Fire(StudioCLI)
+

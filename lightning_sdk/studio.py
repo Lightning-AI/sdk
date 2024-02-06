@@ -72,7 +72,8 @@ class Studio:
                 else:
                     raise ValueError(f"Studio {name} does not exist.") from e
 
-        if not self._skip_init and self.status == Status.Running:
+        print(_internal_status_to_external_status(self._studio_api._get_studio_instance_status_from_object(self._studio)))
+        if not self._skip_init and _internal_status_to_external_status(self._studio_api._get_studio_instance_status_from_object(self._studio)) == Status.Running:
             self._setup()
 
     def _setup(self) -> None:

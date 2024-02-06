@@ -183,6 +183,9 @@ class StudioApi:
 
         return internal_status.phase
 
+    def _get_studio_instance_status_from_object(self, studio: V1CloudSpace):
+        return getattr(getattr(studio.code_status, "in_use", None), "phase", None)
+
     def _request_switch(self, studio_id: str, teamspace_id: str, machine: Machine) -> None:
         """Switches given Studio to a new machine type."""
         compute_name = _MACHINE_TO_COMPUTE_NAME[machine]

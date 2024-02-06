@@ -105,6 +105,12 @@ def _resolve_teamspace(
     if teamspace is None:
         return None
 
+    print(user, org)
+    # if user was specified explicitly, use that, else resolve
+    if user is not None:
+        user = _resolve_user(user=user)
+        return Teamspace(name=teamspace, user=user)
+
     org = _resolve_org(org)
 
     if org is not None:
