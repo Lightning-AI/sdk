@@ -7,7 +7,7 @@ from simple_term_menu import TerminalMenu
 from lightning_sdk.organization import Organization
 from lightning_sdk.studio import Studio
 from lightning_sdk.user import User
-from lightning_sdk.utils import _get_organizations_for_authed_user
+from lightning_sdk.utils import _get_organizations_for_authed_user, _get_authed_user
 from itertools import chain
 
 
@@ -19,7 +19,7 @@ class StudioCLI:
         if remote_path is None:
             remote_path = os.path.basename(path)
 
-        user = User()
+        user = _get_authed_user()
         orgs = _get_organizations_for_authed_user()
 
         terminal_menu = None
