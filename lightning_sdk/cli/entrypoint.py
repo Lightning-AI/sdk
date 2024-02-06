@@ -1,6 +1,7 @@
+import json
 import os
 from itertools import chain
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from fire import Fire
 from simple_term_menu import TerminalMenu
@@ -15,6 +16,8 @@ from lightning_sdk.utils import _get_authed_user, _get_organizations_for_authed_
 
 class StudioCLI:
     """Command line interface (CLI) to interact with/manage Lightning AI Studios."""
+
+    _studio_upload_status_path = "$HOME/.lightning/studios/uploads"
 
     def upload(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
         """Upload a file or folder to a studio.
@@ -81,14 +84,24 @@ class StudioCLI:
             ) from e
 
         print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
+        pairs = {}
         if os.path.isdir(path):
             for root, _, files in os.walk(path):
                 rel_root = os.path.relpath(root, path)
                 for f in files:
-                    selected_studio.upload_file(os.path.join(root, f), os.path.join(remote_path, rel_root, f))
+                    pairs[os.path.join(root, f)] = os.path.join(remote_path, rel_root, f)
 
         else:
-            selected_studio.upload_file(path, remote_path=remote_path)
+            pairs[path] = remote_path
+
+        upload_state = self._resolve_previous_upload_state(selected_studio, remote_path, pairs)
+
+        # need to create a copy here to avoid confusing the iterator with inplace deletions
+        # while iterating over same object
+        for k, v in upload_state.copy().items():
+            selected_studio.upload_file(k, v)
+            upload_state.pop(k)
+            self._dump_current_upload_state(selected_studio, remote_path, upload_state)
 
     def login(self) -> None:
         """Login to Lightning AI Studios."""
@@ -160,6 +173,44 @@ class StudioCLI:
                     continue
 
         raise InvalidNameError
+
+    def _dump_current_upload_state(self, studio: Studio, remote_path: str, state_dict: Dict[str, str]) -> None:
+        """Dumps the current upload state so that we can safely resume later."""
+        curr_path = os.path.join(self._studio_upload_status_path, studio._studio.id, remote_path + ".json")
+        if state_dict:
+            os.makedirs(os.path.dirname(curr_path), exist_ok=True)
+            with open(curr_path, "w") as f:
+                json.dump(state_dict, f, indent=4)
+            return
+
+        os.remove(curr_path)
+        os.removedirs(os.path.dirname(curr_path))
+
+    def _resolve_previous_upload_state(
+        self, studio: Studio, remote_path: str, state_dict: Dict[str, str]
+    ) -> Dict[str, str]:
+        """Resolves potential previous uploads to continue if possible."""
+        curr_path = os.path.join(self._studio_upload_status_path, studio._studio.id, remote_path + ".json")
+
+        # no previous download exists
+        if not os.path.isfile(curr_path):
+            return state_dict
+
+        menu = TerminalMenu(
+            [
+                "no, I accept that this may cause overwriting existing files",
+                "yes, continue previous upload",
+            ],
+            title=f"Found an incomplete upload for {studio.teamspace.name}/{studio.name}:{remote_path}. "
+            "Should we resume the previous upload?",
+        )
+        index = menu.show()
+        if index == 0:  # selected to start new upload
+            return state_dict
+
+        # at this point we know we want to resume the previous upload
+        with open(curr_path) as f:
+            return json.load(f)
 
 
 class InvalidNameError(ValueError):

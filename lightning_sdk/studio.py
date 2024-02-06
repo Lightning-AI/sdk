@@ -72,9 +72,6 @@ class Studio:
                 else:
                     raise ValueError(f"Studio {name} does not exist.") from e
 
-        print(
-            _internal_status_to_external_status(self._studio_api._get_studio_instance_status_from_object(self._studio))
-        )
         if (
             not self._skip_init
             and _internal_status_to_external_status(
