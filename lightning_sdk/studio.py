@@ -38,6 +38,9 @@ class Studio:
 
     """
 
+    # skips init of studio, only set when using this as a shell for names, ids etc.
+    _skip_init = False
+
     def __init__(
         self,
         name: Optional[str] = None,
@@ -69,7 +72,7 @@ class Studio:
                 else:
                     raise ValueError(f"Studio {name} does not exist.") from e
 
-        if self.status == Status.Running:
+        if not self._skip_init and self.status == Status.Running:
             self._setup()
 
     def _setup(self) -> None:

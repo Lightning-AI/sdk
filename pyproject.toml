@@ -27,7 +27,8 @@ dependencies = [
     "uvicorn",
     "websocket-client",
     "tqdm",
-    "fire",
+    "fire", # for CLI
+    "simple-term-menu", # for CLI
 ]
 dynamic = ["version"]
 
