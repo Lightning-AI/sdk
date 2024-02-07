@@ -53,6 +53,7 @@ class V1UpdateUserRequest(object):
         'organization': 'str',
         'preferred_color_scheme': 'str',
         'preferred_ide': 'str',
+        'preferred_shell': 'str',
         'preferred_vscode_marketplace': 'str',
         'role': 'str',
         'saw_create_first_project_dialog': 'bool',
@@ -76,6 +77,7 @@ class V1UpdateUserRequest(object):
         'organization': 'organization',
         'preferred_color_scheme': 'preferredColorScheme',
         'preferred_ide': 'preferredIde',
+        'preferred_shell': 'preferredShell',
         'preferred_vscode_marketplace': 'preferredVscodeMarketplace',
         'role': 'role',
         'saw_create_first_project_dialog': 'sawCreateFirstProjectDialog',
@@ -86,7 +88,7 @@ class V1UpdateUserRequest(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1UpdateUserRequest - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._complete_sign_up = None
@@ -100,6 +102,7 @@ class V1UpdateUserRequest(object):
         self._organization = None
         self._preferred_color_scheme = None
         self._preferred_ide = None
+        self._preferred_shell = None
         self._preferred_vscode_marketplace = None
         self._role = None
         self._saw_create_first_project_dialog = None
@@ -133,6 +136,8 @@ class V1UpdateUserRequest(object):
             self.preferred_color_scheme = preferred_color_scheme
         if preferred_ide is not None:
             self.preferred_ide = preferred_ide
+        if preferred_shell is not None:
+            self.preferred_shell = preferred_shell
         if preferred_vscode_marketplace is not None:
             self.preferred_vscode_marketplace = preferred_vscode_marketplace
         if role is not None:
@@ -401,6 +406,27 @@ class V1UpdateUserRequest(object):
         """
 
         self._preferred_ide = preferred_ide
+
+    @property
+    def preferred_shell(self) -> 'str':
+        """Gets the preferred_shell of this V1UpdateUserRequest.  # noqa: E501
+
+
+        :return: The preferred_shell of this V1UpdateUserRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._preferred_shell
+
+    @preferred_shell.setter
+    def preferred_shell(self, preferred_shell: 'str'):
+        """Sets the preferred_shell of this V1UpdateUserRequest.
+
+
+        :param preferred_shell: The preferred_shell of this V1UpdateUserRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._preferred_shell = preferred_shell
 
     @property
     def preferred_vscode_marketplace(self) -> 'str':

@@ -140,45 +140,43 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def billing_service_create_checkout_session(self, body: 'BillingCheckoutBody1', project_id: 'str', **kwargs) -> 'V1CreateCheckoutSessionResponse':  # noqa: E501
+    def billing_service_create_checkout_session(self, body: 'V1CreateCheckoutSessionRequest', **kwargs) -> 'V1CreateCheckoutSessionResponse':  # noqa: E501
         """billing_service_create_checkout_session  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_create_checkout_session(body, project_id, async_req=True)
+        >>> thread = api.billing_service_create_checkout_session(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param BillingCheckoutBody1 body: (required)
-        :param str project_id: (required)
+        :param V1CreateCheckoutSessionRequest body: (required)
         :return: V1CreateCheckoutSessionResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.billing_service_create_checkout_session_with_http_info(body, project_id, **kwargs)  # noqa: E501
+            return self.billing_service_create_checkout_session_with_http_info(body, **kwargs)  # noqa: E501
         else:
-            (data) = self.billing_service_create_checkout_session_with_http_info(body, project_id, **kwargs)  # noqa: E501
+            (data) = self.billing_service_create_checkout_session_with_http_info(body, **kwargs)  # noqa: E501
             return data
 
-    def billing_service_create_checkout_session_with_http_info(self, body: 'BillingCheckoutBody1', project_id: 'str', **kwargs) -> 'V1CreateCheckoutSessionResponse':  # noqa: E501
+    def billing_service_create_checkout_session_with_http_info(self, body: 'V1CreateCheckoutSessionRequest', **kwargs) -> 'V1CreateCheckoutSessionResponse':  # noqa: E501
         """billing_service_create_checkout_session  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_create_checkout_session_with_http_info(body, project_id, async_req=True)
+        >>> thread = api.billing_service_create_checkout_session_with_http_info(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param BillingCheckoutBody1 body: (required)
-        :param str project_id: (required)
+        :param V1CreateCheckoutSessionRequest body: (required)
         :return: V1CreateCheckoutSessionResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['body', 'project_id']  # noqa: E501
+        all_params = ['body']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -197,16 +195,10 @@ class BillingServiceApi(object):
         if ('body' not in params or
                 params['body'] is None):
             raise ValueError("Missing the required parameter `body` when calling `billing_service_create_checkout_session`")  # noqa: E501
-        # verify the required parameter 'project_id' is set
-        if ('project_id' not in params or
-                params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `billing_service_create_checkout_session`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'project_id' in params:
-            path_params['projectId'] = params['project_id']  # noqa: E501
 
         query_params = []
 
@@ -230,7 +222,7 @@ class BillingServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/billing/checkout', 'POST',
+            '/v1/billing/checkout', 'POST',
             path_params,
             query_params,
             header_params,
