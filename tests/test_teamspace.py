@@ -88,3 +88,41 @@ def test_teamspace_list_clusters_studios_org(
 
     # 2 clusters * 3 studios per cluster
     assert len(studios) == 6
+
+
+@pytest.mark.parametrize(
+    "kwargs,expected",
+    [
+        ({"user": "user-abc"}, "Teamspace(name=ts-abc, owner=User(name=user-abc))"),
+        ({"org": "org-abc"}, "Teamspace(name=ts-abc, owner=Organization(name=org-abc))"),
+    ],
+)
+def test_repr(
+    internal_teamspace_api_list_mocker,
+    internal_get_org_api_mocker,
+    internal_user_api_mocker,
+    internal_auth_mocker,
+    kwargs,
+    expected,
+):
+    ts = Teamspace(name="ts-abc", **kwargs)
+    assert repr(ts) == expected
+
+
+@pytest.mark.parametrize(
+    "kwargs,expected",
+    [
+        ({"user": "user-abc"}, "Teamspace(name=ts-abc, owner=User(name=user-abc))"),
+        ({"org": "org-abc"}, "Teamspace(name=ts-abc, owner=Organization(name=org-abc))"),
+    ],
+)
+def test_str(
+    internal_teamspace_api_list_mocker,
+    internal_get_org_api_mocker,
+    internal_user_api_mocker,
+    internal_auth_mocker,
+    kwargs,
+    expected,
+):
+    ts = Teamspace(name="ts-abc", **kwargs)
+    assert str(ts) == expected

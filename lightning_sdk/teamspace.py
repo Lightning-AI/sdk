@@ -101,3 +101,11 @@ class Teamspace:
         return (
             type(self) is type(other) and self.name == other.name and self.id == other.id and self.owner == other.owner
         )
+
+    def __repr__(self) -> str:
+        """Returns reader friendly representation."""
+        return f"Teamspace(name={self.name}, owner={self.owner!r})"
+
+    def __str__(self) -> str:
+        """Returns reader friendly representation."""
+        return repr(self)

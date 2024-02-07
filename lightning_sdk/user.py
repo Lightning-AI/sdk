@@ -36,3 +36,7 @@ class User(Owner):
     def id(self) -> str:
         """The user's ID."""
         return self._user.id
+
+    def __repr__(self) -> str:
+        """Returns reader friendly representation."""
+        return f"User(name={self.name})"

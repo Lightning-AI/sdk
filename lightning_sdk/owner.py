@@ -43,3 +43,7 @@ class Owner(ABC):
     def __eq__(self, o: "Owner") -> bool:
         """Checks for equality with provided object."""
         return type(o) is type(self) and self.id == o.id and self.name == o.name
+
+    def __str__(self) -> str:
+        """Returns reader friendly representation."""
+        return repr(self)

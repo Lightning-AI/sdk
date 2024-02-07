@@ -43,3 +43,13 @@ class SubUser(User):
 
 def test_inequality_user_subclass(internal_user_api_mocker):
     assert User("my-username") != SubUser("my-username")
+
+
+def test_repr(internal_user_api_mocker):
+    user = User("my-user-name")
+    assert repr(user) == "User(name=my-user-name)"
+
+
+def test_str(internal_user_api_mocker):
+    user = User("my-user-name")
+    assert str(user) == "User(name=my-user-name)"

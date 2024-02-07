@@ -334,6 +334,14 @@ class Studio:
             and self.owner == other.owner
         )
 
+    def __repr__(self) -> str:
+        """Returns reader friendly representation."""
+        return f"Studio(name={self.name}, teamspace={self.teamspace!r})"
+
+    def __str__(self) -> str:
+        """Returns reader friendly representation."""
+        return repr(self)
+
 
 def _internal_status_to_external_status(internal_status: str) -> Status:
     """Converts internal status strings from HTTP requests to external enums."""

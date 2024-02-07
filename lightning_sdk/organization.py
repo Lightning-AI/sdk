@@ -39,3 +39,7 @@ class Organization(Owner):
     def id(self) -> str:
         """The organization's ID."""
         return self._org.id
+
+    def __repr__(self) -> str:
+        """Returns reader friendly representation."""
+        return f"Organization(name={self.name})"

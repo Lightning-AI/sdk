@@ -43,3 +43,13 @@ class SubOrg(Organization):
 
 def test_inequality_org_subclass(internal_get_org_api_mocker):
     assert Organization("my-orgname") != SubOrg("my-orgname")
+
+
+def test_repr(internal_get_org_api_mocker):
+    org = Organization("my-org-name")
+    assert repr(org) == "Organization(name=my-org-name)"
+
+
+def test_str(internal_get_org_api_mocker):
+    org = Organization("my-org-name")
+    assert str(org) == "Organization(name=my-org-name)"

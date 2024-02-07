@@ -14,6 +14,7 @@ from lightning_sdk.plugin import (
 )
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
+from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.api.utils import _BYTES_PER_MB
 
 
@@ -424,3 +425,48 @@ def test_download_file(
 
     filepath = os.path.join(tmpdir, "file1")
     studio.download_file("file1", filepath)
+
+
+@pytest.mark.parametrize(
+    "kwargs,expected",
+    [
+        ({"user": "user-abc"}, "Studio(name=st-abc, teamspace=Teamspace(name=ts-abc, owner=User(name=user-abc)))"),
+        ({"org": "org-abc"}, "Studio(name=st-abc, teamspace=Teamspace(name=ts-abc, owner=Organization(name=org-abc)))"),
+    ],
+)
+def test_repr(
+    internal_studio_api_mocker_get_studio,
+    internal_teamspace_api_list_mocker,
+    internal_get_org_api_mocker,
+    internal_user_api_mocker,
+    internal_auth_mocker,
+    kwargs,
+    expected,
+):
+    studio = Studio(name="st-abc", teamspace="ts-abc", **kwargs)
+    assert repr(studio) == expected
+
+
+@pytest.mark.parametrize(
+    "kwargs,expected",
+    [
+        ({"user": "user-abc"}, "Studio(name=st-abc, teamspace=Teamspace(name=ts-abc, owner=User(name=user-abc)))"),
+        ({"org": "org-abc"}, "Studio(name=st-abc, teamspace=Teamspace(name=ts-abc, owner=Organization(name=org-abc)))"),
+    ],
+)
+def test_str(
+    internal_studio_api_mocker_get_studio,
+    internal_teamspace_api_list_mocker,
+    internal_get_org_api_mocker,
+    internal_user_api_mocker,
+    internal_auth_mocker,
+    kwargs,
+    expected,
+):
+    Studio._skip_init = True
+
+    teamspace = Teamspace(name="ts-abc", **kwargs)
+    studio = Studio(name="st-abc", teamspace=teamspace)
+    assert str(studio) == expected
+
+    Studio._skip_init = False
