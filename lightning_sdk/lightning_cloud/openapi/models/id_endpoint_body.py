@@ -45,6 +45,7 @@ class IdEndpointBody(object):
         'cloudspace': 'V1UpstreamCloudSpace',
         'created_at': 'datetime',
         'custom_domain': 'str',
+        'domains': 'list[str]',
         'name': 'str',
         'openai': 'V1UpstreamOpenAI',
         'ports': 'list[str]',
@@ -58,6 +59,7 @@ class IdEndpointBody(object):
         'cloudspace': 'cloudspace',
         'created_at': 'createdAt',
         'custom_domain': 'customDomain',
+        'domains': 'domains',
         'name': 'name',
         'openai': 'openai',
         'ports': 'ports',
@@ -66,12 +68,13 @@ class IdEndpointBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, domains: 'list[str]' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """IdEndpointBody - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
         self._created_at = None
         self._custom_domain = None
+        self._domains = None
         self._name = None
         self._openai = None
         self._ports = None
@@ -87,6 +90,8 @@ class IdEndpointBody(object):
             self.created_at = created_at
         if custom_domain is not None:
             self.custom_domain = custom_domain
+        if domains is not None:
+            self.domains = domains
         if name is not None:
             self.name = name
         if openai is not None:
@@ -183,6 +188,27 @@ class IdEndpointBody(object):
         """
 
         self._custom_domain = custom_domain
+
+    @property
+    def domains(self) -> 'list[str]':
+        """Gets the domains of this IdEndpointBody.  # noqa: E501
+
+
+        :return: The domains of this IdEndpointBody.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._domains
+
+    @domains.setter
+    def domains(self, domains: 'list[str]'):
+        """Sets the domains of this IdEndpointBody.
+
+
+        :param domains: The domains of this IdEndpointBody.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._domains = domains
 
     @property
     def name(self) -> 'str':
