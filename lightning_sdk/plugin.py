@@ -268,4 +268,4 @@ def _run_name(plugin_type: str) -> str:
 
 def _success_message(resp: "Externalv1LightningappInstance", plugin_instance: _RunnablePlugin) -> str:
     """Compiles the success message for a given runnable plugin."""
-    return f"{plugin_instance._plugin_run_name} {resp.name} was successfully launched. View it at https://lightning.ai/{plugin_instance._studio.owner}/{plugin_instance._studio._teamspace.name}/studios/{plugin_instance.studio}/app?app_id={plugin_instance._slug_name}&job_name={resp.name}"
+    return f"{plugin_instance._plugin_run_name} {resp.name} was successfully launched. View it at https://lightning.ai/{plugin_instance._studio.owner.name}/{plugin_instance._studio.teamspace.name}/studios/{plugin_instance.studio}/app?app_id={plugin_instance._slug_name}&job_name={resp.name}"
