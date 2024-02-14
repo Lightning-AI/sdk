@@ -29,6 +29,7 @@ dependencies = [
     "tqdm",
     "fire", # for CLI
     "simple-term-menu", # for CLI
+    "lightning-utilities", # for legacy CLI
 ]
 dynamic = ["version"]
 
