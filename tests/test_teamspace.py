@@ -13,20 +13,24 @@ from contextlib import nullcontext
 def test_teamspace_init(
     internal_teamspace_api_list_mocker, internal_user_api_mocker, internal_get_org_api_mocker, user, org
 ):
-    if user is None and org is None:
-        context = pytest.raises(
-            RuntimeError,
-            match="Neither user or org are specified, but one of them has to be the owner of the Teamspace",
-        )
-    else:
-        context = nullcontext()
-
     # convert -1 to actual objects since we can't do that outside without mocking API calls
     if user == -1:
         user = User("user-abc")
 
     if org == -1:
         org = Organization("org-abc")
+
+    if user is None and org is None:
+        context = pytest.raises(
+            RuntimeError,
+            match="Neither user or org are specified, but one of them has to be the owner of the Teamspace",
+        )
+    elif user is not None and org is not None:
+        context = pytest.raises(
+            ValueError, match="User and org are mutually exclusive. Please only specify the one who owns the teamspace."
+        )
+    else:
+        context = nullcontext()
 
     with context:
         Teamspace("ts-abc", user=user, org=org)
@@ -42,6 +46,14 @@ def test_teamspace_init_env(
             RuntimeError,
             match="Neither user or org are specified, but one of them has to be the owner of the Teamspace",
         )
+    elif user is not None and org is not None:
+        if user == -1 or org == -1:
+            context = nullcontext()
+        else:
+            context = pytest.raises(
+                ValueError,
+                match="User and org are mutually exclusive. Please only specify the one who owns the teamspace.",
+            )
     else:
         context = nullcontext()
 
@@ -50,11 +62,12 @@ def test_teamspace_init_env(
         new_dict["LIGHTNING_USERNAME"] = "user-abc"
         user = None
 
-    if org is not None:
+    if org == -1:
         new_dict["LIGHTNING_ORG"] = "org-abc"
         org = None
 
     with context, mock.patch.dict(os.environ, new_dict, clear=True):
+        print(user, org)
         Teamspace("ts-abc", user=user, org=org)
 
 
@@ -126,3 +139,10 @@ def test_str(
 ):
     ts = Teamspace(name="ts-abc", **kwargs)
     assert str(ts) == expected
+
+
+def test_teamspace_error_user_and_org():
+    with pytest.raises(
+        ValueError, match="User and org are mutually exclusive. Please only specify the one who owns the teamspace."
+    ):
+        Teamspace(name="ts-abc", user="foo", org="bar")

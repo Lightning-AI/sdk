@@ -151,7 +151,6 @@ def test_resolve_teamspace_name_env_var(provided):
 @pytest.mark.parametrize(
     "teamspace_name, org_name, user_name, expected_result",
     [
-        ("ts-abc", "org-abc", "user-abc", {"name": "ts-abc", "user": {"name": "user-abc"}}),
         ("ts-abc", None, "user-abc", {"name": "ts-abc", "user": {"name": "user-abc"}}),
         ("ts-def", "org-abc", None, {"name": "ts-def", "org": {"name": "org-abc"}}),
     ],
@@ -165,22 +164,29 @@ def test_resolve_teamspace_combinations(
     user_name,
     expected_result,
 ):
-    with mock.patch.dict(os.environ, {"LIGHTNING_TEAMSPACE": teamspace_name}):
-        org_env_var_value = org_name if org_name is not None else ""
-        user_env_var_value = user_name if user_name is not None else ""
+    org_env_var_value = org_name if org_name is not None else ""
+    user_env_var_value = user_name if user_name is not None else ""
 
-        with mock.patch.dict(
-            os.environ, {"LIGHTNING_ORG": org_env_var_value, "LIGHTNING_USERNAME": user_env_var_value}
-        ):
-            result = _resolve_teamspace(None, org_name, user_name)
+    with mock.patch.dict(
+        os.environ,
+        {
+            "LIGHTNING_ORG": org_env_var_value,
+            "LIGHTNING_USERNAME": user_env_var_value,
+            "LIGHTNING_TEAMSPACE": teamspace_name,
+        },
+        clear=True,
+    ):
+        result = _resolve_teamspace(None, org_name, user_name)
 
-            assert isinstance(result, Teamspace)
+        assert isinstance(result, Teamspace)
 
-            expected_org = expected_result.get("org", {})
-            expected_org_name = expected_org.get("name", None)
-            expected_user = expected_result.get("user", {})
-            expected_user_name = expected_user.get("name", None)
+        expected_org = expected_result.get("org", {})
+        expected_org_name = expected_org.get("name", None)
+        expected_user = expected_result.get("user", {})
+        expected_user_name = expected_user.get("name", None)
 
-            assert result == Teamspace(
-                teamspace_name, org=_resolve_org(expected_org_name), user=_resolve_user(expected_user_name)
-            )
+        print(expected_org_name, expected_user_name)
+
+        assert result == Teamspace(
+            teamspace_name, org=_resolve_org(expected_org_name), user=_resolve_user(expected_user_name)
+        )
