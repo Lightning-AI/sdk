@@ -44,22 +44,25 @@ class V1UpstreamCloudSpace(object):
         'auto_start': 'bool',
         'cloudspace_id': 'str',
         'commands': 'list[str]',
-        'port': 'str'
+        'port': 'str',
+        'studio_job_id': 'str'
     }
 
     attribute_map = {
         'auto_start': 'autoStart',
         'cloudspace_id': 'cloudspaceId',
         'commands': 'commands',
-        'port': 'port'
+        'port': 'port',
+        'studio_job_id': 'studioJobId'
     }
 
-    def __init__(self, auto_start: 'bool' =None, cloudspace_id: 'str' =None, commands: 'list[str]' =None, port: 'str' =None):  # noqa: E501
+    def __init__(self, auto_start: 'bool' =None, cloudspace_id: 'str' =None, commands: 'list[str]' =None, port: 'str' =None, studio_job_id: 'str' =None):  # noqa: E501
         """V1UpstreamCloudSpace - a model defined in Swagger"""  # noqa: E501
         self._auto_start = None
         self._cloudspace_id = None
         self._commands = None
         self._port = None
+        self._studio_job_id = None
         self.discriminator = None
         if auto_start is not None:
             self.auto_start = auto_start
@@ -69,6 +72,8 @@ class V1UpstreamCloudSpace(object):
             self.commands = commands
         if port is not None:
             self.port = port
+        if studio_job_id is not None:
+            self.studio_job_id = studio_job_id
 
     @property
     def auto_start(self) -> 'bool':
@@ -153,6 +158,27 @@ class V1UpstreamCloudSpace(object):
         """
 
         self._port = port
+
+    @property
+    def studio_job_id(self) -> 'str':
+        """Gets the studio_job_id of this V1UpstreamCloudSpace.  # noqa: E501
+
+
+        :return: The studio_job_id of this V1UpstreamCloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._studio_job_id
+
+    @studio_job_id.setter
+    def studio_job_id(self, studio_job_id: 'str'):
+        """Sets the studio_job_id of this V1UpstreamCloudSpace.
+
+
+        :param studio_job_id: The studio_job_id of this V1UpstreamCloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._studio_job_id = studio_job_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

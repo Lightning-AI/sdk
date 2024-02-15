@@ -42,6 +42,7 @@ class StudioappJobsBody(object):
     """
     swagger_types = {
         'app': 'V1StudioJobApp',
+        'auto_start': 'bool',
         'cloudspace_id': 'str',
         'command': 'str',
         'name': 'str',
@@ -51,6 +52,7 @@ class StudioappJobsBody(object):
 
     attribute_map = {
         'app': 'app',
+        'auto_start': 'autoStart',
         'cloudspace_id': 'cloudspaceId',
         'command': 'command',
         'name': 'name',
@@ -58,9 +60,10 @@ class StudioappJobsBody(object):
         'terminal_session_id': 'terminalSessionId'
     }
 
-    def __init__(self, app: 'V1StudioJobApp' =None, cloudspace_id: 'str' =None, command: 'str' =None, name: 'str' =None, port: 'str' =None, terminal_session_id: 'str' =None):  # noqa: E501
+    def __init__(self, app: 'V1StudioJobApp' =None, auto_start: 'bool' =None, cloudspace_id: 'str' =None, command: 'str' =None, name: 'str' =None, port: 'str' =None, terminal_session_id: 'str' =None):  # noqa: E501
         """StudioappJobsBody - a model defined in Swagger"""  # noqa: E501
         self._app = None
+        self._auto_start = None
         self._cloudspace_id = None
         self._command = None
         self._name = None
@@ -69,6 +72,8 @@ class StudioappJobsBody(object):
         self.discriminator = None
         if app is not None:
             self.app = app
+        if auto_start is not None:
+            self.auto_start = auto_start
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if command is not None:
@@ -100,6 +105,27 @@ class StudioappJobsBody(object):
         """
 
         self._app = app
+
+    @property
+    def auto_start(self) -> 'bool':
+        """Gets the auto_start of this StudioappJobsBody.  # noqa: E501
+
+
+        :return: The auto_start of this StudioappJobsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_start
+
+    @auto_start.setter
+    def auto_start(self, auto_start: 'bool'):
+        """Sets the auto_start of this StudioappJobsBody.
+
+
+        :param auto_start: The auto_start of this StudioappJobsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_start = auto_start
 
     @property
     def cloudspace_id(self) -> 'str':

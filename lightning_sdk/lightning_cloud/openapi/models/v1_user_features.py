@@ -53,12 +53,14 @@ class V1UserFeatures(object):
         'collab_v2': 'bool',
         'crypto_monitoring': 'bool',
         'custom_app_domain': 'bool',
+        'custom_instance_types': 'bool',
         'enable_crypto_crackdown': 'bool',
         'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
         'h100_instances': 'bool',
         'interruptible_instances': 'bool',
         'jobs_init': 'bool',
+        'kms': 'bool',
         'landing_studios': 'bool',
         'mmt_app': 'bool',
         'mmt_strategy_selector': 'bool',
@@ -66,7 +68,6 @@ class V1UserFeatures(object):
         'org_clusters': 'bool',
         'platform_docs': 'bool',
         'plugin_biz_chat': 'bool',
-        'plugin_data_prep': 'bool',
         'plugin_distributed': 'bool',
         'plugin_fiftyone': 'bool',
         'plugin_inference': 'bool',
@@ -107,12 +108,14 @@ class V1UserFeatures(object):
         'collab_v2': 'collabV2',
         'crypto_monitoring': 'cryptoMonitoring',
         'custom_app_domain': 'customAppDomain',
+        'custom_instance_types': 'customInstanceTypes',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
         'h100_instances': 'h100Instances',
         'interruptible_instances': 'interruptibleInstances',
         'jobs_init': 'jobsInit',
+        'kms': 'kms',
         'landing_studios': 'landingStudios',
         'mmt_app': 'mmtApp',
         'mmt_strategy_selector': 'mmtStrategySelector',
@@ -120,7 +123,6 @@ class V1UserFeatures(object):
         'org_clusters': 'orgClusters',
         'platform_docs': 'platformDocs',
         'plugin_biz_chat': 'pluginBizChat',
-        'plugin_data_prep': 'pluginDataPrep',
         'plugin_distributed': 'pluginDistributed',
         'plugin_fiftyone': 'pluginFiftyone',
         'plugin_inference': 'pluginInference',
@@ -148,7 +150,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, h100_instances: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_data_prep: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_react: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, settings_sync_v2: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, h100_instances: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, kms: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_react: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, settings_sync_v2: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._aws_trainium = None
         self._b2c_experience = None
@@ -162,12 +164,14 @@ class V1UserFeatures(object):
         self._collab_v2 = None
         self._crypto_monitoring = None
         self._custom_app_domain = None
+        self._custom_instance_types = None
         self._enable_crypto_crackdown = None
         self._featured_studios_admin = None
         self._filesystem_optimisation = None
         self._h100_instances = None
         self._interruptible_instances = None
         self._jobs_init = None
+        self._kms = None
         self._landing_studios = None
         self._mmt_app = None
         self._mmt_strategy_selector = None
@@ -175,7 +179,6 @@ class V1UserFeatures(object):
         self._org_clusters = None
         self._platform_docs = None
         self._plugin_biz_chat = None
-        self._plugin_data_prep = None
         self._plugin_distributed = None
         self._plugin_fiftyone = None
         self._plugin_inference = None
@@ -226,6 +229,8 @@ class V1UserFeatures(object):
             self.crypto_monitoring = crypto_monitoring
         if custom_app_domain is not None:
             self.custom_app_domain = custom_app_domain
+        if custom_instance_types is not None:
+            self.custom_instance_types = custom_instance_types
         if enable_crypto_crackdown is not None:
             self.enable_crypto_crackdown = enable_crypto_crackdown
         if featured_studios_admin is not None:
@@ -238,6 +243,8 @@ class V1UserFeatures(object):
             self.interruptible_instances = interruptible_instances
         if jobs_init is not None:
             self.jobs_init = jobs_init
+        if kms is not None:
+            self.kms = kms
         if landing_studios is not None:
             self.landing_studios = landing_studios
         if mmt_app is not None:
@@ -252,8 +259,6 @@ class V1UserFeatures(object):
             self.platform_docs = platform_docs
         if plugin_biz_chat is not None:
             self.plugin_biz_chat = plugin_biz_chat
-        if plugin_data_prep is not None:
-            self.plugin_data_prep = plugin_data_prep
         if plugin_distributed is not None:
             self.plugin_distributed = plugin_distributed
         if plugin_fiftyone is not None:
@@ -558,6 +563,27 @@ class V1UserFeatures(object):
         self._custom_app_domain = custom_app_domain
 
     @property
+    def custom_instance_types(self) -> 'bool':
+        """Gets the custom_instance_types of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The custom_instance_types of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._custom_instance_types
+
+    @custom_instance_types.setter
+    def custom_instance_types(self, custom_instance_types: 'bool'):
+        """Sets the custom_instance_types of this V1UserFeatures.
+
+
+        :param custom_instance_types: The custom_instance_types of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._custom_instance_types = custom_instance_types
+
+    @property
     def enable_crypto_crackdown(self) -> 'bool':
         """Gets the enable_crypto_crackdown of this V1UserFeatures.  # noqa: E501
 
@@ -682,6 +708,27 @@ class V1UserFeatures(object):
         """
 
         self._jobs_init = jobs_init
+
+    @property
+    def kms(self) -> 'bool':
+        """Gets the kms of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The kms of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._kms
+
+    @kms.setter
+    def kms(self, kms: 'bool'):
+        """Sets the kms of this V1UserFeatures.
+
+
+        :param kms: The kms of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._kms = kms
 
     @property
     def landing_studios(self) -> 'bool':
@@ -829,27 +876,6 @@ class V1UserFeatures(object):
         """
 
         self._plugin_biz_chat = plugin_biz_chat
-
-    @property
-    def plugin_data_prep(self) -> 'bool':
-        """Gets the plugin_data_prep of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_data_prep of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_data_prep
-
-    @plugin_data_prep.setter
-    def plugin_data_prep(self, plugin_data_prep: 'bool'):
-        """Sets the plugin_data_prep of this V1UserFeatures.
-
-
-        :param plugin_data_prep: The plugin_data_prep of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_data_prep = plugin_data_prep
 
     @property
     def plugin_distributed(self) -> 'bool':

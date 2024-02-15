@@ -47,6 +47,7 @@ class V1Endpoint(object):
         'custom_domain': 'str',
         'domains': 'list[str]',
         'id': 'str',
+        'managed': 'V1UpstreamManaged',
         'name': 'str',
         'openai': 'V1UpstreamOpenAI',
         'ports': 'list[str]',
@@ -63,6 +64,7 @@ class V1Endpoint(object):
         'custom_domain': 'customDomain',
         'domains': 'domains',
         'id': 'id',
+        'managed': 'managed',
         'name': 'name',
         'openai': 'openai',
         'ports': 'ports',
@@ -72,7 +74,7 @@ class V1Endpoint(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, domains: 'list[str]' =None, id: 'str' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, domains: 'list[str]' =None, id: 'str' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Endpoint - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
@@ -80,6 +82,7 @@ class V1Endpoint(object):
         self._custom_domain = None
         self._domains = None
         self._id = None
+        self._managed = None
         self._name = None
         self._openai = None
         self._ports = None
@@ -100,6 +103,8 @@ class V1Endpoint(object):
             self.domains = domains
         if id is not None:
             self.id = id
+        if managed is not None:
+            self.managed = managed
         if name is not None:
             self.name = name
         if openai is not None:
@@ -240,6 +245,27 @@ class V1Endpoint(object):
         """
 
         self._id = id
+
+    @property
+    def managed(self) -> 'V1UpstreamManaged':
+        """Gets the managed of this V1Endpoint.  # noqa: E501
+
+
+        :return: The managed of this V1Endpoint.  # noqa: E501
+        :rtype: V1UpstreamManaged
+        """
+        return self._managed
+
+    @managed.setter
+    def managed(self, managed: 'V1UpstreamManaged'):
+        """Sets the managed of this V1Endpoint.
+
+
+        :param managed: The managed of this V1Endpoint.  # noqa: E501
+        :type: V1UpstreamManaged
+        """
+
+        self._managed = managed
 
     @property
     def name(self) -> 'str':

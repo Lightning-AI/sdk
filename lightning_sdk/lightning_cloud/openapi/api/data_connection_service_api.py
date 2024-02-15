@@ -365,6 +365,7 @@ class DataConnectionServiceApi(object):
         :param str prefix:
         :param bool include_download_url:
         :param str cluster_id:
+        :param bool local_index:
         :return: V1GetArtifactsPageResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -391,12 +392,13 @@ class DataConnectionServiceApi(object):
         :param str prefix:
         :param bool include_download_url:
         :param str cluster_id:
+        :param bool local_index:
         :return: V1GetArtifactsPageResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'page_number', 'prefix', 'include_download_url', 'cluster_id']  # noqa: E501
+        all_params = ['project_id', 'id', 'page_number', 'prefix', 'include_download_url', 'cluster_id', 'local_index']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -437,6 +439,8 @@ class DataConnectionServiceApi(object):
             query_params.append(('includeDownloadUrl', params['include_download_url']))  # noqa: E501
         if 'cluster_id' in params:
             query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
+        if 'local_index' in params:
+            query_params.append(('localIndex', params['local_index']))  # noqa: E501
 
         header_params = {}
 
@@ -480,6 +484,7 @@ class DataConnectionServiceApi(object):
         :param str id: (required)
         :param str prefix:
         :param str cluster_id:
+        :param bool local_index:
         :return: V1GetFolderIndexResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -504,12 +509,13 @@ class DataConnectionServiceApi(object):
         :param str id: (required)
         :param str prefix:
         :param str cluster_id:
+        :param bool local_index:
         :return: V1GetFolderIndexResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'prefix', 'cluster_id']  # noqa: E501
+        all_params = ['project_id', 'id', 'prefix', 'cluster_id', 'local_index']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -546,6 +552,8 @@ class DataConnectionServiceApi(object):
             query_params.append(('prefix', params['prefix']))  # noqa: E501
         if 'cluster_id' in params:
             query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
+        if 'local_index' in params:
+            query_params.append(('localIndex', params['local_index']))  # noqa: E501
 
         header_params = {}
 

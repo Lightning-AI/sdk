@@ -41,6 +41,7 @@ class AssistantIdConversationsBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'auto_name': 'bool',
         'conversation_id': 'str',
         'max_tokens': 'str',
         'message': 'V1Message',
@@ -50,6 +51,7 @@ class AssistantIdConversationsBody(object):
     }
 
     attribute_map = {
+        'auto_name': 'autoName',
         'conversation_id': 'conversationId',
         'max_tokens': 'maxTokens',
         'message': 'message',
@@ -58,8 +60,9 @@ class AssistantIdConversationsBody(object):
         'stream': 'stream'
     }
 
-    def __init__(self, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, model: 'str' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, model: 'str' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
+        self._auto_name = None
         self._conversation_id = None
         self._max_tokens = None
         self._message = None
@@ -67,6 +70,8 @@ class AssistantIdConversationsBody(object):
         self._parent_message_id = None
         self._stream = None
         self.discriminator = None
+        if auto_name is not None:
+            self.auto_name = auto_name
         if conversation_id is not None:
             self.conversation_id = conversation_id
         if max_tokens is not None:
@@ -79,6 +84,27 @@ class AssistantIdConversationsBody(object):
             self.parent_message_id = parent_message_id
         if stream is not None:
             self.stream = stream
+
+    @property
+    def auto_name(self) -> 'bool':
+        """Gets the auto_name of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The auto_name of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_name
+
+    @auto_name.setter
+    def auto_name(self, auto_name: 'bool'):
+        """Sets the auto_name of this AssistantIdConversationsBody.
+
+
+        :param auto_name: The auto_name of this AssistantIdConversationsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_name = auto_name
 
     @property
     def conversation_id(self) -> 'str':

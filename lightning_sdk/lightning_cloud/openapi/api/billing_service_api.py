@@ -1032,6 +1032,7 @@ class BillingServiceApi(object):
         :param async_req bool
         :param str org_id:
         :param str product_id:
+        :param str tier:
         :return: V1QuoteSubscriptionResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1054,12 +1055,13 @@ class BillingServiceApi(object):
         :param async_req bool
         :param str org_id:
         :param str product_id:
+        :param str tier:
         :return: V1QuoteSubscriptionResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'product_id']  # noqa: E501
+        all_params = ['org_id', 'product_id', 'tier']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1084,6 +1086,8 @@ class BillingServiceApi(object):
             query_params.append(('orgId', params['org_id']))  # noqa: E501
         if 'product_id' in params:
             query_params.append(('productId', params['product_id']))  # noqa: E501
+        if 'tier' in params:
+            query_params.append(('tier', params['tier']))  # noqa: E501
 
         header_params = {}
 

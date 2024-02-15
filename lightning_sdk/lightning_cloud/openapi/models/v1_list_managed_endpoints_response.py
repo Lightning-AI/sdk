@@ -41,14 +41,40 @@ class V1ListManagedEndpointsResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'endpoints': 'list[V1ManagedEndpoint]'
     }
 
     attribute_map = {
+        'endpoints': 'endpoints'
     }
 
-    def __init__(self):  # noqa: E501
+    def __init__(self, endpoints: 'list[V1ManagedEndpoint]' =None):  # noqa: E501
         """V1ListManagedEndpointsResponse - a model defined in Swagger"""  # noqa: E501
+        self._endpoints = None
         self.discriminator = None
+        if endpoints is not None:
+            self.endpoints = endpoints
+
+    @property
+    def endpoints(self) -> 'list[V1ManagedEndpoint]':
+        """Gets the endpoints of this V1ListManagedEndpointsResponse.  # noqa: E501
+
+
+        :return: The endpoints of this V1ListManagedEndpointsResponse.  # noqa: E501
+        :rtype: list[V1ManagedEndpoint]
+        """
+        return self._endpoints
+
+    @endpoints.setter
+    def endpoints(self, endpoints: 'list[V1ManagedEndpoint]'):
+        """Sets the endpoints of this V1ListManagedEndpointsResponse.
+
+
+        :param endpoints: The endpoints of this V1ListManagedEndpointsResponse.  # noqa: E501
+        :type: list[V1ManagedEndpoint]
+        """
+
+        self._endpoints = endpoints
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

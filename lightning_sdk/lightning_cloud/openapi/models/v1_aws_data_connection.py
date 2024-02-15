@@ -42,6 +42,7 @@ class V1AwsDataConnection(object):
     """
     swagger_types = {
         'destination': 'str',
+        'kms_arn': 'str',
         'region': 'str',
         'secret_arn_name': 'str',
         'secret_arn_value': 'str',
@@ -54,6 +55,7 @@ class V1AwsDataConnection(object):
 
     attribute_map = {
         'destination': 'destination',
+        'kms_arn': 'kmsArn',
         'region': 'region',
         'secret_arn_name': 'secretArnName',
         'secret_arn_value': 'secretArnValue',
@@ -64,9 +66,10 @@ class V1AwsDataConnection(object):
         'source': 'source'
     }
 
-    def __init__(self, destination: 'str' =None, region: 'str' =None, secret_arn_name: 'str' =None, secret_arn_value: 'str' =None, secret_id_access_key_id: 'str' =None, secret_id_secret_access_key: 'str' =None, secret_value_access_key_id: 'str' =None, secret_value_secret_access_key: 'str' =None, source: 'str' =None):  # noqa: E501
+    def __init__(self, destination: 'str' =None, kms_arn: 'str' =None, region: 'str' =None, secret_arn_name: 'str' =None, secret_arn_value: 'str' =None, secret_id_access_key_id: 'str' =None, secret_id_secret_access_key: 'str' =None, secret_value_access_key_id: 'str' =None, secret_value_secret_access_key: 'str' =None, source: 'str' =None):  # noqa: E501
         """V1AwsDataConnection - a model defined in Swagger"""  # noqa: E501
         self._destination = None
+        self._kms_arn = None
         self._region = None
         self._secret_arn_name = None
         self._secret_arn_value = None
@@ -78,6 +81,8 @@ class V1AwsDataConnection(object):
         self.discriminator = None
         if destination is not None:
             self.destination = destination
+        if kms_arn is not None:
+            self.kms_arn = kms_arn
         if region is not None:
             self.region = region
         if secret_arn_name is not None:
@@ -115,6 +120,27 @@ class V1AwsDataConnection(object):
         """
 
         self._destination = destination
+
+    @property
+    def kms_arn(self) -> 'str':
+        """Gets the kms_arn of this V1AwsDataConnection.  # noqa: E501
+
+
+        :return: The kms_arn of this V1AwsDataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._kms_arn
+
+    @kms_arn.setter
+    def kms_arn(self, kms_arn: 'str'):
+        """Sets the kms_arn of this V1AwsDataConnection.
+
+
+        :param kms_arn: The kms_arn of this V1AwsDataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._kms_arn = kms_arn
 
     @property
     def region(self) -> 'str':

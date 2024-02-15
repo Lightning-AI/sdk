@@ -44,11 +44,15 @@ class V1Assistant(object):
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'description': 'str',
         'endpoint_id': 'str',
         'id': 'str',
+        'model': 'str',
         'name': 'str',
         'project_id': 'str',
+        'prompt_suggestions': 'list[V1PromptSuggestion]',
         'prompt_template': 'str',
+        'thumbnail_url': 'str',
         'updated_at': 'datetime',
         'user_id': 'str'
     }
@@ -57,25 +61,33 @@ class V1Assistant(object):
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'description': 'description',
         'endpoint_id': 'endpointId',
         'id': 'id',
+        'model': 'model',
         'name': 'name',
         'project_id': 'projectId',
+        'prompt_suggestions': 'promptSuggestions',
         'prompt_template': 'promptTemplate',
+        'thumbnail_url': 'thumbnailUrl',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, endpoint_id: 'str' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, prompt_template: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, model: 'str' =None, name: 'str' =None, project_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Assistant - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._created_at = None
+        self._description = None
         self._endpoint_id = None
         self._id = None
+        self._model = None
         self._name = None
         self._project_id = None
+        self._prompt_suggestions = None
         self._prompt_template = None
+        self._thumbnail_url = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
@@ -85,16 +97,24 @@ class V1Assistant(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if description is not None:
+            self.description = description
         if endpoint_id is not None:
             self.endpoint_id = endpoint_id
         if id is not None:
             self.id = id
+        if model is not None:
+            self.model = model
         if name is not None:
             self.name = name
         if project_id is not None:
             self.project_id = project_id
+        if prompt_suggestions is not None:
+            self.prompt_suggestions = prompt_suggestions
         if prompt_template is not None:
             self.prompt_template = prompt_template
+        if thumbnail_url is not None:
+            self.thumbnail_url = thumbnail_url
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -164,6 +184,27 @@ class V1Assistant(object):
         self._created_at = created_at
 
     @property
+    def description(self) -> 'str':
+        """Gets the description of this V1Assistant.  # noqa: E501
+
+
+        :return: The description of this V1Assistant.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description: 'str'):
+        """Sets the description of this V1Assistant.
+
+
+        :param description: The description of this V1Assistant.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
+
+    @property
     def endpoint_id(self) -> 'str':
         """Gets the endpoint_id of this V1Assistant.  # noqa: E501
 
@@ -204,6 +245,27 @@ class V1Assistant(object):
         """
 
         self._id = id
+
+    @property
+    def model(self) -> 'str':
+        """Gets the model of this V1Assistant.  # noqa: E501
+
+
+        :return: The model of this V1Assistant.  # noqa: E501
+        :rtype: str
+        """
+        return self._model
+
+    @model.setter
+    def model(self, model: 'str'):
+        """Sets the model of this V1Assistant.
+
+
+        :param model: The model of this V1Assistant.  # noqa: E501
+        :type: str
+        """
+
+        self._model = model
 
     @property
     def name(self) -> 'str':
@@ -248,6 +310,27 @@ class V1Assistant(object):
         self._project_id = project_id
 
     @property
+    def prompt_suggestions(self) -> 'list[V1PromptSuggestion]':
+        """Gets the prompt_suggestions of this V1Assistant.  # noqa: E501
+
+
+        :return: The prompt_suggestions of this V1Assistant.  # noqa: E501
+        :rtype: list[V1PromptSuggestion]
+        """
+        return self._prompt_suggestions
+
+    @prompt_suggestions.setter
+    def prompt_suggestions(self, prompt_suggestions: 'list[V1PromptSuggestion]'):
+        """Sets the prompt_suggestions of this V1Assistant.
+
+
+        :param prompt_suggestions: The prompt_suggestions of this V1Assistant.  # noqa: E501
+        :type: list[V1PromptSuggestion]
+        """
+
+        self._prompt_suggestions = prompt_suggestions
+
+    @property
     def prompt_template(self) -> 'str':
         """Gets the prompt_template of this V1Assistant.  # noqa: E501
 
@@ -267,6 +350,27 @@ class V1Assistant(object):
         """
 
         self._prompt_template = prompt_template
+
+    @property
+    def thumbnail_url(self) -> 'str':
+        """Gets the thumbnail_url of this V1Assistant.  # noqa: E501
+
+
+        :return: The thumbnail_url of this V1Assistant.  # noqa: E501
+        :rtype: str
+        """
+        return self._thumbnail_url
+
+    @thumbnail_url.setter
+    def thumbnail_url(self, thumbnail_url: 'str'):
+        """Sets the thumbnail_url of this V1Assistant.
+
+
+        :param thumbnail_url: The thumbnail_url of this V1Assistant.  # noqa: E501
+        :type: str
+        """
+
+        self._thumbnail_url = thumbnail_url
 
     @property
     def updated_at(self) -> 'datetime':
