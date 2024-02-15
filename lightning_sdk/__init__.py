@@ -18,4 +18,4 @@ __all__ = [
     "User",
 ]
 
-__version__ = "0.0.18alpha"
+__version__ = "0.0.19alpha"
