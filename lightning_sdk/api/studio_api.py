@@ -41,11 +41,13 @@ from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
     _COMPUTE_NAME_TO_MACHINE,
-    _DEFAULT_CLOUD_URL,
     _MACHINE_TO_COMPUTE_NAME,
     _DummyBody,
     _DummyResponse,
     _FileUploader,
+)
+from lightning_sdk.api.utils import (
+    _get_cloud_url as _cloud_url,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
@@ -582,10 +584,3 @@ class StudioApi:
             print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {cluster_id=}")
 
         return resp
-
-
-def _cloud_url() -> str:
-    # set cloud url with default url if not set before
-    cloud_url = os.environ.get("LIGHTNING_CLOUD_URL", _DEFAULT_CLOUD_URL)
-    os.environ["LIGHTNING_CLOUD_URL"] = cloud_url
-    return cloud_url

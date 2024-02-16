@@ -217,3 +217,9 @@ _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
 _COMPUTE_NAME_TO_MACHINE: Dict[str, Machine] = {v: k for k, v in _MACHINE_TO_COMPUTE_NAME.items()}
 
 _DEFAULT_CLOUD_URL = "https://lightning.ai:443"
+
+
+def _get_cloud_url() -> str:
+    cloud_url = os.environ.get("LIGHTNING_CLOUD_URL", _DEFAULT_CLOUD_URL)
+    os.environ["LIGHTNING_CLOUD_URL"] = cloud_url
+    return cloud_url

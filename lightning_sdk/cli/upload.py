@@ -7,6 +7,7 @@ from simple_term_menu import TerminalMenu
 from tqdm import tqdm
 
 from lightning_sdk.api import OrgApi, TeamspaceApi
+from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.studio import Studio
 from lightning_sdk.user import User
@@ -78,6 +79,17 @@ class _Uploads:
                 upload_state.pop(f.result())
                 self._dump_current_upload_state(selected_studio, remote_path, upload_state)
                 update_fn(1)
+
+        studio_url = (
+            _get_cloud_url().replace(":443", "")
+            + "/"
+            + selected_studio.owner.name
+            + "/"
+            + selected_studio.teamspace.name
+            + "/studios/"
+            + selected_studio.name
+        )
+        print(f"See your files at {studio_url}")
 
     def _get_studio_from_interactive_menu(self, possible_studios: List[Dict[str, str]]) -> Dict[str, str]:
         terminal_menu = self._prepare_terminal_menu_all_studios(possible_studios)
