@@ -1511,7 +1511,6 @@ def internal_studio_api_list_mocker(mocker):
     ]
 
     def side_effect(self, **kwargs):
-        print("page_token", kwargs.get("page_token"))
         if not kwargs.get("page_token", None):
             ret_val = return_values[0]
         else:

@@ -1,7 +1,8 @@
 import logging
 import os
 import warnings
-from typing import TYPE_CHECKING, List, Optional, Union
+from contextlib import contextmanager
+from typing import TYPE_CHECKING, Generator, List, Optional, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.machine import Machine
@@ -136,3 +137,16 @@ def _get_authed_user() -> "User":
     user_id = TeamspaceApi()._get_authed_user_id()
     _user = UserApi()._get_user_by_id(user_id)
     return User(name=_user.username)
+
+
+@contextmanager
+def skip_studio_init() -> Generator[None, None, None]:
+    """Skip studio init based on current runtime."""
+    from lightning_sdk.studio import Studio
+
+    prev_studio_init_state = Studio._skip_init
+    Studio._skip_init = True
+
+    yield
+
+    Studio._skip_init = prev_studio_init_state

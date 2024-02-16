@@ -1,17 +1,16 @@
 import concurrent.futures
 import json
 import os
-from itertools import chain
 from typing import Dict, List, Optional
 
 from simple_term_menu import TerminalMenu
 from tqdm import tqdm
 
-from lightning_sdk.cli.exceptions import InvalidNameError, StudioCliError
-from lightning_sdk.organization import Organization
+from lightning_sdk.api import OrgApi, TeamspaceApi
+from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.studio import Studio
 from lightning_sdk.user import User
-from lightning_sdk.utils import _get_authed_user, _get_organizations_for_authed_user
+from lightning_sdk.utils import _get_authed_user, skip_studio_init
 
 
 class _Uploads:
@@ -34,42 +33,13 @@ class _Uploads:
             remote_path = os.path.basename(path)
 
         user = _get_authed_user()
-        orgs = _get_organizations_for_authed_user()
-
-        terminal_menu = None
-
-        possible_studios = []
-
-        has_been_interactive = False
-        if studio is None:
-            has_been_interactive = True
-            if not possible_studios:
-                possible_studios = self._get_possible_studios(user, orgs)
-            terminal_menu = self._prepare_terminal_menu_all_studios(possible_studios)
-            terminal_menu.show()
-            studio = terminal_menu.chosen_menu_entry
+        possible_studios = self._get_possible_studios(user)
 
         try:
-            # gracefully handle wrong name
-            try:
-                selected_studio = self._get_studio_from_name(user, orgs, studio)
-            except InvalidNameError as e:
-                if has_been_interactive:
-                    raise StudioCliError(
-                        f"Could not find the given Studio {studio} to upload files to. "
-                        "Please contact Lightning AI directly to resolve this issue."
-                    ) from e
-
-                print(f"Could not find Studio {studio}")
-                if not possible_studios:
-                    possible_studios = self._get_possible_studios(user, orgs)
-                terminal_menu = self._prepare_terminal_menu_all_studios(possible_studios)
-                terminal_menu.show()
-                studio = terminal_menu.chosen_menu_entry
-                has_been_interactive = True
-                selected_studio = self._get_studio_from_name(user, orgs, studio)
-            except KeyboardInterrupt:
-                raise KeyboardInterrupt from None
+            if studio is None:
+                selected_studio = self._get_studio_from_interactive_menu(possible_studios)
+            else:
+                selected_studio = self._get_studio_from_name(studio)
 
         except KeyboardInterrupt:
             raise KeyboardInterrupt from None
@@ -81,7 +51,7 @@ class _Uploads:
                 "Please contact Lightning AI directly to resolve this issue."
             ) from e
 
-        print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
+        print(f"Uploading to {selected_studio['teamspace']}/{selected_studio['name']}")
         pairs = {}
         if os.path.isdir(path):
             for root, _, files in os.walk(path):
@@ -91,6 +61,9 @@ class _Uploads:
 
         else:
             pairs[path] = remote_path
+
+        with skip_studio_init():
+            selected_studio = Studio(**selected_studio)
 
         upload_state = self._resolve_previous_upload_state(selected_studio, remote_path, pairs)
 
@@ -105,6 +78,20 @@ class _Uploads:
                 upload_state.pop(f.result())
                 self._dump_current_upload_state(selected_studio, remote_path, upload_state)
                 update_fn(1)
+
+    def _get_studio_from_interactive_menu(self, possible_studios: List[Dict[str, str]]) -> Dict[str, str]:
+        terminal_menu = self._prepare_terminal_menu_all_studios(possible_studios)
+        terminal_menu.show()
+        return possible_studios[terminal_menu.chosen_menu_index]
+
+    def _get_studio_from_name(self, studio: str, possible_studios: List[Dict[str, str]]) -> Dict[str, str]:
+        teamspace, name = studio.split("/", maxsplit=1)
+        for st in possible_studios:
+            if st["teamspace"] == teamspace and name == st["name"]:
+                return st
+
+        print("Could not find Studio {studio}, please select it from the list:")
+        return self._get_studio_from_interactive_menu(possible_studios)
 
     def _start_parallel_upload(
         self, executor: concurrent.futures.ThreadPoolExecutor, studio: Studio, upload_state: Dict[str, str]
@@ -127,60 +114,55 @@ class _Uploads:
         return local_path
 
     def _prepare_terminal_menu_all_studios(
-        self, possible_studios: List[Studio], title: Optional[str] = None
+        self, possible_studios: List[Dict[str, str]], title: Optional[str] = None
     ) -> TerminalMenu:
         if title is None:
             title = "Please select a Studio of the following studios:"
 
         return TerminalMenu(
-            [f"{s.teamspace.name}/{s.name}" for s in possible_studios], title=title, clear_menu_on_exit=True
+            [f"{s['teamspace']}/{s['name']}" for s in possible_studios], title=title, clear_menu_on_exit=True
         )
 
-    def _get_possible_studios(self, user: User, orgs: List[Organization]) -> List[Studio]:
-        Studio._skip_init = True
-        teamspaces = list(user.teamspaces)
-        for _org in orgs:
-            teamspaces.extend(list(_org.teamspaces))
+    def _get_possible_studios(self, user: User) -> List[Dict[str, str]]:
+        teamspace_api = TeamspaceApi()
+        org_api = OrgApi()
+        user_api = user._user_api
+        possible_studios = []
 
-        all_studios = []
+        user_api._get_organizations_for_authed_user()
+        memberships = user_api._get_all_teamspace_memberships(user_id=user.id)
 
-        for t in chain(user.teamspaces, *[o.teamspaces for o in orgs]):
-            all_studios.extend(t.studios)
+        teamspaces = {}
+        # get all teamspace memberships
+        for membership in memberships:
+            teamspace_id = membership.project_id
 
-        Studio._skip_init = False
+            # get all studios for teamspace
+            all_studios = user._user_api._get_cloudspaces_for_user(user.id, teamspace_id)
 
-        return all_studios
+            for st in all_studios:
+                # populate teamspace info if necessary
+                if teamspace_id not in teamspaces:
+                    ts = teamspace_api._get_teamspace_by_id(teamspace_id)
+                    ts_name = ts.name
 
-    def _get_studio_from_name(self, user: User, orgs: List[Organization], name: str) -> Studio:
-        try:
-            teamspace, studio = name.split("/")
-        except:  # noqa: E722
-            raise InvalidNameError from None
-
-        ts = user.teamspaces
-        for org in orgs:
-            ts.extend(org.teamspaces)
-
-        possible_teamspaces = []
-        for t in ts:
-            if t.name == teamspace or t._teamspace.display_name == teamspace:
-                possible_teamspaces.append(t)
-
-        # try all teamspace-studioname combinations in case there are multiple teamspaces with that name
-        # (e.g. one personal and one org teamspace)
-        for t in possible_teamspaces:
-            for cl in t.clusters:
-                try:
-                    owner_kwargs = {}
-                    if isinstance(t.owner, User):
-                        owner_kwargs["user"] = t.owner.name
+                    # get organization if necessary
+                    if ts.owner_type == "organization":
+                        org_name = org_api._get_org_by_id(ts.owner_id).name
+                        user_name = None
                     else:
-                        owner_kwargs["org"] = t.owner.name
-                    return Studio(name=studio, teamspace=t.name, cluster=cl, **owner_kwargs)
-                except:  # noqa: E722
-                    continue
+                        org_name = None
 
-        raise InvalidNameError
+                        # don't do a request if not necessary
+                        if ts.owner_id == user.id:
+                            user_name = user.name
+                        else:
+                            user_name = user_api._get_user_by_id(ts.owner_id).username
+
+                    teamspaces[teamspace_id] = {"user": user_name, "org": org_name, "teamspace": ts_name}
+                possible_studios.append({"name": st.name, **teamspaces[teamspace_id]})
+
+        return possible_studios
 
     def _dump_current_upload_state(self, studio: Studio, remote_path: str, state_dict: Dict[str, str]) -> None:
         """Dumps the current upload state so that we can safely resume later."""
@@ -191,14 +173,18 @@ class _Uploads:
                 )
             )
         )
+
+        dirpath = os.path.dirname(curr_path)
         if state_dict:
             os.makedirs(os.path.dirname(curr_path), exist_ok=True)
             with open(curr_path, "w") as f:
                 json.dump(state_dict, f, indent=4)
             return
 
-        os.remove(curr_path)
-        os.removedirs(os.path.dirname(curr_path))
+        if os.path.exists(curr_path):
+            os.remove(curr_path)
+        if os.path.exists(dirpath):
+            os.removedirs(dirpath)
 
     def _resolve_previous_upload_state(
         self, studio: Studio, remote_path: str, state_dict: Dict[str, str]
