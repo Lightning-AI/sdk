@@ -40,7 +40,7 @@ class _Uploads:
             if studio is None:
                 selected_studio = self._get_studio_from_interactive_menu(possible_studios)
             else:
-                selected_studio = self._get_studio_from_name(studio)
+                selected_studio = self._get_studio_from_name(studio, possible_studios)
 
         except KeyboardInterrupt:
             raise KeyboardInterrupt from None
