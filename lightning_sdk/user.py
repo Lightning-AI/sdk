@@ -40,3 +40,4 @@ class User(Owner):
     def __repr__(self) -> str:
         """Returns reader friendly representation."""
         return f"User(name={self.name})"
+
