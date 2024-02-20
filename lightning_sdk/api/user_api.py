@@ -1,5 +1,6 @@
 from typing import List
 
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
     V1ListCloudSpacesResponse,

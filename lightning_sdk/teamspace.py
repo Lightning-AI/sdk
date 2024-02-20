@@ -4,7 +4,7 @@ from lightning_sdk.api import TeamspaceApi
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
 from lightning_sdk.user import User
-from lightning_sdk.utils import _resolve_org, _resolve_teamspace_name, _resolve_user, _get_organizations_for_authed_user
+from lightning_sdk.utils import _get_organizations_for_authed_user, _resolve_org, _resolve_teamspace_name, _resolve_user
 
 if TYPE_CHECKING:
     from lightning_sdk.studio import Studio
@@ -67,7 +67,6 @@ class Teamspace:
         except ValueError as e:
             raise _resolve_valueerror_message(e, self.owner, name) from e
 
-
     @property
     def name(self) -> str:
         """The teamspace's name."""
@@ -117,24 +116,29 @@ class Teamspace:
         """Returns reader friendly representation."""
         return repr(self)
 
-def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name: str):
+
+def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name: str) -> ValueError:
+    """Resolves the ValueError Message and replaces it with a nicer message."""
     message = error.args[0]
     if message.startswith("Teamspace") and message.endswith("does not exist"):
         entire_ts_name = f"{owner.name}/{teamspace_name}"
 
         if isinstance(owner, User):
             organizations = _get_organizations_for_authed_user()
-            message = (f"Teamspace {entire_ts_name} does not exist. "
-            "Is it maybe an organizational Teamspace? You are a member of the following organizations: "
-            f"{[o.name for o in organizations]}. Maybe specify one of these instead "
-            "of your user if the Teamspace belongs to the organization.")
+            message = (
+                f"Teamspace {entire_ts_name} does not exist. "
+                "Is it maybe an organizational Teamspace? You are a member of the following organizations: "
+                f"{[o.name for o in organizations]}. Maybe specify one of these instead "
+                "of your user if the Teamspace belongs to the organization."
+            )
         else:
             # organization teamspace owner
             user = User()
-            message = (f"Teamspace {entire_ts_name} does not exist. "
-            f"Is it maybe a user Teamspace. You specified org={owner.name}, "
-            f"but maybe the Teamspace is part of your user? Consider specifying user={user.name} instead of your org.")
+            message = (
+                f"Teamspace {entire_ts_name} does not exist. "
+                f"Is it maybe a user Teamspace. You specified org={owner.name}, "
+                "but maybe the Teamspace is part of your user? "
+                f"Consider specifying user={user.name} instead of your org."
+            )
 
     return ValueError(message, *error.args[1:])
-
-            
