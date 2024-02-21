@@ -61,9 +61,7 @@ class _FileUploader:
 
         self.local_path = file_path
 
-        self.remote_path = (
-            f"/cloudspaces/{studio_id}/code/content/{remote_path.replace('/teamspace/studios/this_studio/', '')}"
-        )
+        self.remote_path = _sanitize_remote_path(remote_path, studio_id)
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
         self.filesize = os.path.getsize(file_path)
         if progress_bar:
@@ -223,3 +221,7 @@ def _get_cloud_url() -> str:
     cloud_url = os.environ.get("LIGHTNING_CLOUD_URL", _DEFAULT_CLOUD_URL)
     os.environ["LIGHTNING_CLOUD_URL"] = cloud_url
     return cloud_url
+
+
+def _sanitize_remote_path(path: str, studio_id: str) -> str:
+    return f"/cloudspaces/{studio_id}/code/content/{path.replace('/teamspace/studios/this_studio/', '')}"

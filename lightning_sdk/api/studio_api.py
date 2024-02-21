@@ -45,6 +45,7 @@ from lightning_sdk.api.utils import (
     _DummyBody,
     _DummyResponse,
     _FileUploader,
+    _sanitize_remote_path,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
@@ -330,7 +331,7 @@ class StudioApi:
 
         query_params = {
             "clusterId": cluster_id,
-            "key": f"/cloudspaces/{studio_id}/code/content/{path}",
+            "key": _sanitize_remote_path(path, studio_id),
             "token": token,
         }
 
@@ -373,7 +374,7 @@ class StudioApi:
 
         query_params = {
             "clusterId": cluster_id,
-            "prefix": f"/cloudspaces/{studio_id}/code/content/{path}",
+            "prefix": _sanitize_remote_path(path, studio_id),
             "token": token,
         }
 
