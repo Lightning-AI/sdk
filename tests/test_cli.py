@@ -71,6 +71,7 @@ def test_upload():
     message = "The function received no value for the required argument: path"
     assert message in result.stderr or message in result.stdout
 
+
 @pytest.mark.skipif(
     not _LIGHTNING_AVAILABLE,
     reason="lightning run model is only available if lightning is installed",
@@ -116,6 +117,7 @@ FLAGS
 
     assert message in result.stderr or message in result.stdout
 
+
 @pytest.mark.skipif(
     not _LIGHTNING_AVAILABLE,
     reason="lightning run model is only available if lightning is installed",
@@ -160,6 +162,7 @@ FLAGS
         Number of machines (nodes) for distributed execution."""
 
     assert message in result.stderr or message in result.stdout
+
 
 @pytest.mark.skipif(
     not _LIGHTNING_AVAILABLE,
