@@ -16,6 +16,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
     V1CloudSpaceState,
     V1CloudSpaceInstanceConfig,
+    V1CloudSpaceInstanceStartupStatus,
     V1CreateCloudSpaceAppInstanceResponse,
     V1DeleteCloudSpaceResponse,
     V1ExecuteCloudSpaceCommandResponse,
@@ -290,7 +291,9 @@ def internal_studio_api_mocker_studio_status(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
-            requested=Externalv1CloudSpaceInstanceStatus(startup_percentage="0")
+            requested=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(initial_restore_finished=False)
+            )
         ),
         autospec=True,
     )
@@ -305,7 +308,16 @@ def internal_studio_api_mocker_switch_machine(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
-            requested=Externalv1CloudSpaceInstanceStatus(startup_percentage="100")
+            requested=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                )
+            ),
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                )
+            ),
         ),
         autospec=True,
     )
@@ -333,8 +345,16 @@ def internal_studio_api_mocker_start_studio(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
-            requested=Externalv1CloudSpaceInstanceStatus(startup_percentage="100"),
-            in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100"),
+            requested=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                )
+            ),
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                )
+            ),
         ),
         autospec=True,
     )
@@ -462,7 +482,12 @@ def internal_studio_api_mocker_duplicate_user(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
-            in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100", sync_in_progress=False)
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                ),
+                sync_in_progress=False,
+            )
         ),
         autospec=True,
     )
@@ -511,7 +536,12 @@ def internal_studio_api_mocker_duplicate_org(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
-            in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100", sync_in_progress=False)
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                ),
+                sync_in_progress=False,
+            )
         ),
         autospec=True,
     )
@@ -639,7 +669,12 @@ def internal_studio_start_mocker(mocker):
 
     def side_effect_status(*args, **kwargs):
         return V1GetCloudSpaceInstanceStatusResponse(
-            in_use=Externalv1CloudSpaceInstanceStatus(phase=status["st-abc"], startup_percentage="100")
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                phase=status["st-abc"],
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                ),
+            )
         )
 
     def side_effect_get_cloud_space_instance_config(self, project_id: str, id: str):
@@ -673,7 +708,12 @@ def internal_studio_stop_mocker(mocker):
 
     def side_effect_status(*args, **kwargs):
         return V1GetCloudSpaceInstanceStatusResponse(
-            in_use=Externalv1CloudSpaceInstanceStatus(phase=status["st-abc"], startup_percentage="100")
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                phase=status["st-abc"],
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                ),
+            )
         )
 
     def side_effect_stop(self, project_id, id):
@@ -776,8 +816,18 @@ def internal_studio_switch_mocker(mocker, internal_get_org_api_mocker, internal_
 
     def side_effect_status(*args, **kwargs):
         return V1GetCloudSpaceInstanceStatusResponse(
-            in_use=Externalv1CloudSpaceInstanceStatus(phase=status["st-abc"], startup_percentage="100"),
-            requested=Externalv1CloudSpaceInstanceStatus(phase=requested_status["st-abc"], startup_percentage="100"),
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                phase=status["st-abc"],
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                ),
+            ),
+            requested=Externalv1CloudSpaceInstanceStatus(
+                phase=requested_status["st-abc"],
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                ),
+            ),
         )
 
     def side_effect_switch_machines(self, project_id, id):
@@ -830,7 +880,10 @@ def internal_studio_run_mocker(mocker):
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
-                phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"
+                phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING",
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                ),
             )
         ),
         autospec=True,
@@ -862,7 +915,10 @@ def internal_studio_run_error_mocker(mocker):
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
-                phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"
+                phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING",
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                ),
             )
         ),
         autospec=True,
@@ -906,7 +962,12 @@ def internal_studio_duplicate_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
-            in_use=Externalv1CloudSpaceInstanceStatus(startup_percentage="100", sync_in_progress=False)
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                ),
+                sync_in_progress=False,
+            )
         ),
         autospec=True,
     )
@@ -1090,7 +1151,10 @@ def internal_studio_init_plugin_mocker(mocker, internal_get_org_api_mocker, inte
             id="st-abc",
             code_status=V1GetCloudSpaceInstanceStatusResponse(
                 in_use=Externalv1CloudSpaceInstanceStatus(
-                    phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"
+                    phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING",
+                    startup_status=V1CloudSpaceInstanceStartupStatus(
+                        initial_restore_finished=True, top_up_restore_finished=True
+                    ),
                 )
             ),
         ),
@@ -1102,7 +1166,10 @@ def internal_studio_init_plugin_mocker(mocker, internal_get_org_api_mocker, inte
             id="st-def",
             code_status=V1GetCloudSpaceInstanceStatusResponse(
                 in_use=Externalv1CloudSpaceInstanceStatus(
-                    phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"
+                    phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING",
+                    startup_status=V1CloudSpaceInstanceStartupStatus(
+                        initial_restore_finished=True, top_up_restore_finished=True
+                    ),
                 )
             ),
         ),
@@ -1118,7 +1185,10 @@ def internal_studio_init_plugin_mocker(mocker, internal_get_org_api_mocker, inte
             id=body.name,
             code_status=V1GetCloudSpaceInstanceStatusResponse(
                 in_use=Externalv1CloudSpaceInstanceStatus(
-                    phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING", startup_percentage="100"
+                    phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING",
+                    startup_status=V1CloudSpaceInstanceStartupStatus(
+                        initial_restore_finished=True, top_up_restore_finished=True
+                    ),
                 )
             ),
         )

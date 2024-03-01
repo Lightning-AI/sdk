@@ -154,7 +154,10 @@ class StudioApi:
         while self.get_studio_status(studio_id, teamspace_id).in_use.sync_in_progress:
             time.sleep(1)
 
-        while int(self.get_studio_status(studio_id, teamspace_id).in_use.startup_percentage) < 100:
+        while True:
+            startup_status = self.get_studio_status(studio_id, teamspace_id).in_use.startup_status
+            if startup_status and startup_status.top_up_restore_finished:
+                break
             time.sleep(1)
 
         if _LIGHTNING_DEBUG:
@@ -204,10 +207,21 @@ class StudioApi:
         """Switches given Studio to a new machine type."""
         self._request_switch(studio_id=studio_id, teamspace_id=teamspace_id, machine=machine)
 
-        while int(self.get_studio_status(studio_id, teamspace_id).requested.startup_percentage) < 100:
+        # Wait until it's time to switch
+        while True:
+            startup_status = self.get_studio_status(studio_id, teamspace_id).requested.startup_status
+            if startup_status and startup_status.initial_restore_finished:
+                break
             time.sleep(1)
 
         self._client.cloud_space_service_switch_cloud_space_instance(teamspace_id, studio_id)
+
+        # Wait until the new machine is ready to use
+        while True:
+            startup_status = self.get_studio_status(studio_id, teamspace_id).in_use.startup_status
+            if startup_status and startup_status.top_up_restore_finished:
+                break
+            time.sleep(1)
 
     def get_machine(self, studio_id: str, teamspace_id: str) -> Machine:
         """Get the current machine type the given Studio is running on."""
