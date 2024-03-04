@@ -41,6 +41,9 @@ class V1QuoteSubscriptionResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'annual_amount': 'int',
+        'annual_tax': 'int',
+        'features': 'list[V1BillingFeature]',
         'monthly_amount': 'int',
         'monthly_tax': 'int',
         'prorated_amount': 'int',
@@ -49,6 +52,9 @@ class V1QuoteSubscriptionResponse(object):
     }
 
     attribute_map = {
+        'annual_amount': 'annualAmount',
+        'annual_tax': 'annualTax',
+        'features': 'features',
         'monthly_amount': 'monthlyAmount',
         'monthly_tax': 'monthlyTax',
         'prorated_amount': 'proratedAmount',
@@ -56,14 +62,23 @@ class V1QuoteSubscriptionResponse(object):
         'trial_days': 'trialDays'
     }
 
-    def __init__(self, monthly_amount: 'int' =None, monthly_tax: 'int' =None, prorated_amount: 'int' =None, prorated_tax: 'int' =None, trial_days: 'int' =None):  # noqa: E501
+    def __init__(self, annual_amount: 'int' =None, annual_tax: 'int' =None, features: 'list[V1BillingFeature]' =None, monthly_amount: 'int' =None, monthly_tax: 'int' =None, prorated_amount: 'int' =None, prorated_tax: 'int' =None, trial_days: 'int' =None):  # noqa: E501
         """V1QuoteSubscriptionResponse - a model defined in Swagger"""  # noqa: E501
+        self._annual_amount = None
+        self._annual_tax = None
+        self._features = None
         self._monthly_amount = None
         self._monthly_tax = None
         self._prorated_amount = None
         self._prorated_tax = None
         self._trial_days = None
         self.discriminator = None
+        if annual_amount is not None:
+            self.annual_amount = annual_amount
+        if annual_tax is not None:
+            self.annual_tax = annual_tax
+        if features is not None:
+            self.features = features
         if monthly_amount is not None:
             self.monthly_amount = monthly_amount
         if monthly_tax is not None:
@@ -74,6 +89,69 @@ class V1QuoteSubscriptionResponse(object):
             self.prorated_tax = prorated_tax
         if trial_days is not None:
             self.trial_days = trial_days
+
+    @property
+    def annual_amount(self) -> 'int':
+        """Gets the annual_amount of this V1QuoteSubscriptionResponse.  # noqa: E501
+
+
+        :return: The annual_amount of this V1QuoteSubscriptionResponse.  # noqa: E501
+        :rtype: int
+        """
+        return self._annual_amount
+
+    @annual_amount.setter
+    def annual_amount(self, annual_amount: 'int'):
+        """Sets the annual_amount of this V1QuoteSubscriptionResponse.
+
+
+        :param annual_amount: The annual_amount of this V1QuoteSubscriptionResponse.  # noqa: E501
+        :type: int
+        """
+
+        self._annual_amount = annual_amount
+
+    @property
+    def annual_tax(self) -> 'int':
+        """Gets the annual_tax of this V1QuoteSubscriptionResponse.  # noqa: E501
+
+
+        :return: The annual_tax of this V1QuoteSubscriptionResponse.  # noqa: E501
+        :rtype: int
+        """
+        return self._annual_tax
+
+    @annual_tax.setter
+    def annual_tax(self, annual_tax: 'int'):
+        """Sets the annual_tax of this V1QuoteSubscriptionResponse.
+
+
+        :param annual_tax: The annual_tax of this V1QuoteSubscriptionResponse.  # noqa: E501
+        :type: int
+        """
+
+        self._annual_tax = annual_tax
+
+    @property
+    def features(self) -> 'list[V1BillingFeature]':
+        """Gets the features of this V1QuoteSubscriptionResponse.  # noqa: E501
+
+
+        :return: The features of this V1QuoteSubscriptionResponse.  # noqa: E501
+        :rtype: list[V1BillingFeature]
+        """
+        return self._features
+
+    @features.setter
+    def features(self, features: 'list[V1BillingFeature]'):
+        """Sets the features of this V1QuoteSubscriptionResponse.
+
+
+        :param features: The features of this V1QuoteSubscriptionResponse.  # noqa: E501
+        :type: list[V1BillingFeature]
+        """
+
+        self._features = features
 
     @property
     def monthly_amount(self) -> 'int':

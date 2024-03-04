@@ -43,6 +43,7 @@ class Externalv1UserStatus(object):
     swagger_types = {
         'completed_project_onboarding': 'bool',
         'completed_signup': 'bool',
+        'has_received_free_months': 'bool',
         'installed_grid': 'bool',
         'verified': 'bool',
         'verified_at': 'datetime'
@@ -51,15 +52,17 @@ class Externalv1UserStatus(object):
     attribute_map = {
         'completed_project_onboarding': 'completedProjectOnboarding',
         'completed_signup': 'completedSignup',
+        'has_received_free_months': 'hasReceivedFreeMonths',
         'installed_grid': 'installedGrid',
         'verified': 'verified',
         'verified_at': 'verifiedAt'
     }
 
-    def __init__(self, completed_project_onboarding: 'bool' =None, completed_signup: 'bool' =None, installed_grid: 'bool' =None, verified: 'bool' =None, verified_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, completed_project_onboarding: 'bool' =None, completed_signup: 'bool' =None, has_received_free_months: 'bool' =None, installed_grid: 'bool' =None, verified: 'bool' =None, verified_at: 'datetime' =None):  # noqa: E501
         """Externalv1UserStatus - a model defined in Swagger"""  # noqa: E501
         self._completed_project_onboarding = None
         self._completed_signup = None
+        self._has_received_free_months = None
         self._installed_grid = None
         self._verified = None
         self._verified_at = None
@@ -68,6 +71,8 @@ class Externalv1UserStatus(object):
             self.completed_project_onboarding = completed_project_onboarding
         if completed_signup is not None:
             self.completed_signup = completed_signup
+        if has_received_free_months is not None:
+            self.has_received_free_months = has_received_free_months
         if installed_grid is not None:
             self.installed_grid = installed_grid
         if verified is not None:
@@ -116,6 +121,27 @@ class Externalv1UserStatus(object):
         """
 
         self._completed_signup = completed_signup
+
+    @property
+    def has_received_free_months(self) -> 'bool':
+        """Gets the has_received_free_months of this Externalv1UserStatus.  # noqa: E501
+
+
+        :return: The has_received_free_months of this Externalv1UserStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._has_received_free_months
+
+    @has_received_free_months.setter
+    def has_received_free_months(self, has_received_free_months: 'bool'):
+        """Sets the has_received_free_months of this Externalv1UserStatus.
+
+
+        :param has_received_free_months: The has_received_free_months of this Externalv1UserStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._has_received_free_months = has_received_free_months
 
     @property
     def installed_grid(self) -> 'bool':

@@ -46,7 +46,6 @@ class V1Usage(object):
         'cost': 'float',
         'created_at': 'datetime',
         'deleted_at': 'datetime',
-        'details': 'list[V1UsageDetails]',
         'free': 'bool',
         'id': 'str',
         'name': 'str',
@@ -64,7 +63,6 @@ class V1Usage(object):
         'cost': 'cost',
         'created_at': 'createdAt',
         'deleted_at': 'deletedAt',
-        'details': 'details',
         'free': 'free',
         'id': 'id',
         'name': 'name',
@@ -76,14 +74,13 @@ class V1Usage(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, billed_time_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, details: 'list[V1UsageDetails]' =None, free: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, resource_type: 'str' =None, saved_cost: 'float' =None, session_ended_at: 'datetime' =None, session_started_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, billed_time_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, free: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, resource_type: 'str' =None, saved_cost: 'float' =None, session_ended_at: 'datetime' =None, session_started_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Usage - a model defined in Swagger"""  # noqa: E501
         self._billed_time_seconds = None
         self._cluster_id = None
         self._cost = None
         self._created_at = None
         self._deleted_at = None
-        self._details = None
         self._free = None
         self._id = None
         self._name = None
@@ -104,8 +101,6 @@ class V1Usage(object):
             self.created_at = created_at
         if deleted_at is not None:
             self.deleted_at = deleted_at
-        if details is not None:
-            self.details = details
         if free is not None:
             self.free = free
         if id is not None:
@@ -229,27 +224,6 @@ class V1Usage(object):
         """
 
         self._deleted_at = deleted_at
-
-    @property
-    def details(self) -> 'list[V1UsageDetails]':
-        """Gets the details of this V1Usage.  # noqa: E501
-
-
-        :return: The details of this V1Usage.  # noqa: E501
-        :rtype: list[V1UsageDetails]
-        """
-        return self._details
-
-    @details.setter
-    def details(self, details: 'list[V1UsageDetails]'):
-        """Sets the details of this V1Usage.
-
-
-        :param details: The details of this V1Usage.  # noqa: E501
-        :type: list[V1UsageDetails]
-        """
-
-        self._details = details
 
     @property
     def free(self) -> 'bool':

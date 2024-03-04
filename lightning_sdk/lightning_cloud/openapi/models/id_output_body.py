@@ -41,24 +41,50 @@ class IdOutputBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'is_user_workload_section': 'bool',
         'page_number': 'str',
         'total_lines': 'str'
     }
 
     attribute_map = {
+        'is_user_workload_section': 'isUserWorkloadSection',
         'page_number': 'pageNumber',
         'total_lines': 'totalLines'
     }
 
-    def __init__(self, page_number: 'str' =None, total_lines: 'str' =None):  # noqa: E501
+    def __init__(self, is_user_workload_section: 'bool' =None, page_number: 'str' =None, total_lines: 'str' =None):  # noqa: E501
         """IdOutputBody - a model defined in Swagger"""  # noqa: E501
+        self._is_user_workload_section = None
         self._page_number = None
         self._total_lines = None
         self.discriminator = None
+        if is_user_workload_section is not None:
+            self.is_user_workload_section = is_user_workload_section
         if page_number is not None:
             self.page_number = page_number
         if total_lines is not None:
             self.total_lines = total_lines
+
+    @property
+    def is_user_workload_section(self) -> 'bool':
+        """Gets the is_user_workload_section of this IdOutputBody.  # noqa: E501
+
+
+        :return: The is_user_workload_section of this IdOutputBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_user_workload_section
+
+    @is_user_workload_section.setter
+    def is_user_workload_section(self, is_user_workload_section: 'bool'):
+        """Sets the is_user_workload_section of this IdOutputBody.
+
+
+        :param is_user_workload_section: The is_user_workload_section of this IdOutputBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_user_workload_section = is_user_workload_section
 
     @property
     def page_number(self) -> 'str':

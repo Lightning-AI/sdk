@@ -41,29 +41,55 @@ class V1UsageReport(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'daily_usage': 'list[V1DailyUsage]',
         'total_cost': 'float',
         'total_saved_cost': 'float',
         'usage': 'list[V1Usage]'
     }
 
     attribute_map = {
+        'daily_usage': 'dailyUsage',
         'total_cost': 'totalCost',
         'total_saved_cost': 'totalSavedCost',
         'usage': 'usage'
     }
 
-    def __init__(self, total_cost: 'float' =None, total_saved_cost: 'float' =None, usage: 'list[V1Usage]' =None):  # noqa: E501
+    def __init__(self, daily_usage: 'list[V1DailyUsage]' =None, total_cost: 'float' =None, total_saved_cost: 'float' =None, usage: 'list[V1Usage]' =None):  # noqa: E501
         """V1UsageReport - a model defined in Swagger"""  # noqa: E501
+        self._daily_usage = None
         self._total_cost = None
         self._total_saved_cost = None
         self._usage = None
         self.discriminator = None
+        if daily_usage is not None:
+            self.daily_usage = daily_usage
         if total_cost is not None:
             self.total_cost = total_cost
         if total_saved_cost is not None:
             self.total_saved_cost = total_saved_cost
         if usage is not None:
             self.usage = usage
+
+    @property
+    def daily_usage(self) -> 'list[V1DailyUsage]':
+        """Gets the daily_usage of this V1UsageReport.  # noqa: E501
+
+
+        :return: The daily_usage of this V1UsageReport.  # noqa: E501
+        :rtype: list[V1DailyUsage]
+        """
+        return self._daily_usage
+
+    @daily_usage.setter
+    def daily_usage(self, daily_usage: 'list[V1DailyUsage]'):
+        """Sets the daily_usage of this V1UsageReport.
+
+
+        :param daily_usage: The daily_usage of this V1UsageReport.  # noqa: E501
+        :type: list[V1DailyUsage]
+        """
+
+        self._daily_usage = daily_usage
 
     @property
     def total_cost(self) -> 'float':

@@ -684,6 +684,7 @@ class ProjectsServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id: (required)
+        :param str org_id:
         :return: V1DeleteProjectClusterBindingResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -706,12 +707,13 @@ class ProjectsServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id: (required)
+        :param str org_id:
         :return: V1DeleteProjectClusterBindingResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'org_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -744,6 +746,8 @@ class ProjectsServiceApi(object):
             path_params['clusterId'] = params['cluster_id']  # noqa: E501
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 

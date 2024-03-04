@@ -41,6 +41,7 @@ class V1UserFeatures(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'apt_get_v2': 'bool',
         'aws_trainium': 'bool',
         'b2c_experience': 'bool',
         'byom': 'bool',
@@ -57,7 +58,6 @@ class V1UserFeatures(object):
         'enable_crypto_crackdown': 'bool',
         'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
-        'h100_instances': 'bool',
         'interruptible_instances': 'bool',
         'jobs_init': 'bool',
         'kms': 'bool',
@@ -77,7 +77,9 @@ class V1UserFeatures(object):
         'plugin_lightning_apps_distributed': 'bool',
         'plugin_mage_ai': 'bool',
         'plugin_milvus': 'bool',
+        'plugin_python_profiler': 'bool',
         'plugin_react': 'bool',
+        'plugin_service': 'bool',
         'plugin_sweeps': 'bool',
         'plugin_weviate': 'bool',
         'pricing_updates': 'bool',
@@ -88,7 +90,6 @@ class V1UserFeatures(object):
         'quests': 'bool',
         'restart_ide_on_hang': 'bool',
         'restartable_jobs': 'bool',
-        'settings_sync_v2': 'bool',
         'show_dev_admin': 'bool',
         'slurm': 'bool',
         'studio_publication': 'bool',
@@ -96,6 +97,7 @@ class V1UserFeatures(object):
     }
 
     attribute_map = {
+        'apt_get_v2': 'aptGetV2',
         'aws_trainium': 'awsTrainium',
         'b2c_experience': 'b2cExperience',
         'byom': 'byom',
@@ -112,7 +114,6 @@ class V1UserFeatures(object):
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
-        'h100_instances': 'h100Instances',
         'interruptible_instances': 'interruptibleInstances',
         'jobs_init': 'jobsInit',
         'kms': 'kms',
@@ -132,7 +133,9 @@ class V1UserFeatures(object):
         'plugin_lightning_apps_distributed': 'pluginLightningAppsDistributed',
         'plugin_mage_ai': 'pluginMageAi',
         'plugin_milvus': 'pluginMilvus',
+        'plugin_python_profiler': 'pluginPythonProfiler',
         'plugin_react': 'pluginReact',
+        'plugin_service': 'pluginService',
         'plugin_sweeps': 'pluginSweeps',
         'plugin_weviate': 'pluginWeviate',
         'pricing_updates': 'pricingUpdates',
@@ -143,15 +146,15 @@ class V1UserFeatures(object):
         'quests': 'quests',
         'restart_ide_on_hang': 'restartIdeOnHang',
         'restartable_jobs': 'restartableJobs',
-        'settings_sync_v2': 'settingsSyncV2',
         'show_dev_admin': 'showDevAdmin',
         'slurm': 'slurm',
         'studio_publication': 'studioPublication',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, h100_instances: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, kms: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_react: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, settings_sync_v2: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, kms: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
+        self._apt_get_v2 = None
         self._aws_trainium = None
         self._b2c_experience = None
         self._byom = None
@@ -168,7 +171,6 @@ class V1UserFeatures(object):
         self._enable_crypto_crackdown = None
         self._featured_studios_admin = None
         self._filesystem_optimisation = None
-        self._h100_instances = None
         self._interruptible_instances = None
         self._jobs_init = None
         self._kms = None
@@ -188,7 +190,9 @@ class V1UserFeatures(object):
         self._plugin_lightning_apps_distributed = None
         self._plugin_mage_ai = None
         self._plugin_milvus = None
+        self._plugin_python_profiler = None
         self._plugin_react = None
+        self._plugin_service = None
         self._plugin_sweeps = None
         self._plugin_weviate = None
         self._pricing_updates = None
@@ -199,12 +203,13 @@ class V1UserFeatures(object):
         self._quests = None
         self._restart_ide_on_hang = None
         self._restartable_jobs = None
-        self._settings_sync_v2 = None
         self._show_dev_admin = None
         self._slurm = None
         self._studio_publication = None
         self._writable_data_connections = None
         self.discriminator = None
+        if apt_get_v2 is not None:
+            self.apt_get_v2 = apt_get_v2
         if aws_trainium is not None:
             self.aws_trainium = aws_trainium
         if b2c_experience is not None:
@@ -237,8 +242,6 @@ class V1UserFeatures(object):
             self.featured_studios_admin = featured_studios_admin
         if filesystem_optimisation is not None:
             self.filesystem_optimisation = filesystem_optimisation
-        if h100_instances is not None:
-            self.h100_instances = h100_instances
         if interruptible_instances is not None:
             self.interruptible_instances = interruptible_instances
         if jobs_init is not None:
@@ -277,8 +280,12 @@ class V1UserFeatures(object):
             self.plugin_mage_ai = plugin_mage_ai
         if plugin_milvus is not None:
             self.plugin_milvus = plugin_milvus
+        if plugin_python_profiler is not None:
+            self.plugin_python_profiler = plugin_python_profiler
         if plugin_react is not None:
             self.plugin_react = plugin_react
+        if plugin_service is not None:
+            self.plugin_service = plugin_service
         if plugin_sweeps is not None:
             self.plugin_sweeps = plugin_sweeps
         if plugin_weviate is not None:
@@ -299,8 +306,6 @@ class V1UserFeatures(object):
             self.restart_ide_on_hang = restart_ide_on_hang
         if restartable_jobs is not None:
             self.restartable_jobs = restartable_jobs
-        if settings_sync_v2 is not None:
-            self.settings_sync_v2 = settings_sync_v2
         if show_dev_admin is not None:
             self.show_dev_admin = show_dev_admin
         if slurm is not None:
@@ -309,6 +314,27 @@ class V1UserFeatures(object):
             self.studio_publication = studio_publication
         if writable_data_connections is not None:
             self.writable_data_connections = writable_data_connections
+
+    @property
+    def apt_get_v2(self) -> 'bool':
+        """Gets the apt_get_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The apt_get_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._apt_get_v2
+
+    @apt_get_v2.setter
+    def apt_get_v2(self, apt_get_v2: 'bool'):
+        """Sets the apt_get_v2 of this V1UserFeatures.
+
+
+        :param apt_get_v2: The apt_get_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._apt_get_v2 = apt_get_v2
 
     @property
     def aws_trainium(self) -> 'bool':
@@ -645,27 +671,6 @@ class V1UserFeatures(object):
         """
 
         self._filesystem_optimisation = filesystem_optimisation
-
-    @property
-    def h100_instances(self) -> 'bool':
-        """Gets the h100_instances of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The h100_instances of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._h100_instances
-
-    @h100_instances.setter
-    def h100_instances(self, h100_instances: 'bool'):
-        """Sets the h100_instances of this V1UserFeatures.
-
-
-        :param h100_instances: The h100_instances of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._h100_instances = h100_instances
 
     @property
     def interruptible_instances(self) -> 'bool':
@@ -1067,6 +1072,27 @@ class V1UserFeatures(object):
         self._plugin_milvus = plugin_milvus
 
     @property
+    def plugin_python_profiler(self) -> 'bool':
+        """Gets the plugin_python_profiler of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_python_profiler of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_python_profiler
+
+    @plugin_python_profiler.setter
+    def plugin_python_profiler(self, plugin_python_profiler: 'bool'):
+        """Sets the plugin_python_profiler of this V1UserFeatures.
+
+
+        :param plugin_python_profiler: The plugin_python_profiler of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_python_profiler = plugin_python_profiler
+
+    @property
     def plugin_react(self) -> 'bool':
         """Gets the plugin_react of this V1UserFeatures.  # noqa: E501
 
@@ -1086,6 +1112,27 @@ class V1UserFeatures(object):
         """
 
         self._plugin_react = plugin_react
+
+    @property
+    def plugin_service(self) -> 'bool':
+        """Gets the plugin_service of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The plugin_service of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._plugin_service
+
+    @plugin_service.setter
+    def plugin_service(self, plugin_service: 'bool'):
+        """Sets the plugin_service of this V1UserFeatures.
+
+
+        :param plugin_service: The plugin_service of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._plugin_service = plugin_service
 
     @property
     def plugin_sweeps(self) -> 'bool':
@@ -1296,27 +1343,6 @@ class V1UserFeatures(object):
         """
 
         self._restartable_jobs = restartable_jobs
-
-    @property
-    def settings_sync_v2(self) -> 'bool':
-        """Gets the settings_sync_v2 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The settings_sync_v2 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._settings_sync_v2
-
-    @settings_sync_v2.setter
-    def settings_sync_v2(self, settings_sync_v2: 'bool'):
-        """Sets the settings_sync_v2 of this V1UserFeatures.
-
-
-        :param settings_sync_v2: The settings_sync_v2 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._settings_sync_v2 = settings_sync_v2
 
     @property
     def show_dev_admin(self) -> 'bool':

@@ -249,16 +249,15 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_delete_conversation(self, project_id: 'str', assistant_id: 'str', id: 'str', **kwargs) -> 'V1DeleteConversationResponse':  # noqa: E501
+    def assistants_service_delete_conversation(self, assistant_id: 'str', id: 'str', **kwargs) -> 'V1DeleteConversationResponse':  # noqa: E501
         """assistants_service_delete_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_delete_conversation(project_id, assistant_id, id, async_req=True)
+        >>> thread = api.assistants_service_delete_conversation(assistant_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
         :param str assistant_id: (required)
         :param str id: (required)
         :param bool delete_data:
@@ -268,21 +267,20 @@ class AssistantsServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.assistants_service_delete_conversation_with_http_info(project_id, assistant_id, id, **kwargs)  # noqa: E501
+            return self.assistants_service_delete_conversation_with_http_info(assistant_id, id, **kwargs)  # noqa: E501
         else:
-            (data) = self.assistants_service_delete_conversation_with_http_info(project_id, assistant_id, id, **kwargs)  # noqa: E501
+            (data) = self.assistants_service_delete_conversation_with_http_info(assistant_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_delete_conversation_with_http_info(self, project_id: 'str', assistant_id: 'str', id: 'str', **kwargs) -> 'V1DeleteConversationResponse':  # noqa: E501
+    def assistants_service_delete_conversation_with_http_info(self, assistant_id: 'str', id: 'str', **kwargs) -> 'V1DeleteConversationResponse':  # noqa: E501
         """assistants_service_delete_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_delete_conversation_with_http_info(project_id, assistant_id, id, async_req=True)
+        >>> thread = api.assistants_service_delete_conversation_with_http_info(assistant_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
         :param str assistant_id: (required)
         :param str id: (required)
         :param bool delete_data:
@@ -291,7 +289,7 @@ class AssistantsServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'assistant_id', 'id', 'delete_data']  # noqa: E501
+        all_params = ['assistant_id', 'id', 'delete_data']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -306,10 +304,6 @@ class AssistantsServiceApi(object):
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'project_id' is set
-        if ('project_id' not in params or
-                params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `assistants_service_delete_conversation`")  # noqa: E501
         # verify the required parameter 'assistant_id' is set
         if ('assistant_id' not in params or
                 params['assistant_id'] is None):
@@ -322,8 +316,6 @@ class AssistantsServiceApi(object):
         collection_formats = {}
 
         path_params = {}
-        if 'project_id' in params:
-            path_params['projectId'] = params['project_id']  # noqa: E501
         if 'assistant_id' in params:
             path_params['assistantId'] = params['assistant_id']  # noqa: E501
         if 'id' in params:
@@ -347,7 +339,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/assistants/{assistantId}/conversations/{id}', 'DELETE',
+            '/v1/assistants/{assistantId}/conversations/{id}', 'DELETE',
             path_params,
             query_params,
             header_params,
@@ -362,16 +354,108 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_get_conversation(self, project_id: 'str', assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
+    def assistants_service_get_assistant(self, id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
+        """assistants_service_get_assistant  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.assistants_service_get_assistant(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :return: V1Assistant
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.assistants_service_get_assistant_with_http_info(id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.assistants_service_get_assistant_with_http_info(id, **kwargs)  # noqa: E501
+            return data
+
+    def assistants_service_get_assistant_with_http_info(self, id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
+        """assistants_service_get_assistant  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.assistants_service_get_assistant_with_http_info(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :return: V1Assistant
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method assistants_service_get_assistant" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `assistants_service_get_assistant`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/assistants/{id}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1Assistant',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def assistants_service_get_conversation(self, assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
         """assistants_service_get_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_get_conversation(project_id, assistant_id, id, async_req=True)
+        >>> thread = api.assistants_service_get_conversation(assistant_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
         :param str assistant_id: (required)
         :param str id: (required)
         :return: V1Conversation
@@ -380,21 +464,20 @@ class AssistantsServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.assistants_service_get_conversation_with_http_info(project_id, assistant_id, id, **kwargs)  # noqa: E501
+            return self.assistants_service_get_conversation_with_http_info(assistant_id, id, **kwargs)  # noqa: E501
         else:
-            (data) = self.assistants_service_get_conversation_with_http_info(project_id, assistant_id, id, **kwargs)  # noqa: E501
+            (data) = self.assistants_service_get_conversation_with_http_info(assistant_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_get_conversation_with_http_info(self, project_id: 'str', assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
+    def assistants_service_get_conversation_with_http_info(self, assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
         """assistants_service_get_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_get_conversation_with_http_info(project_id, assistant_id, id, async_req=True)
+        >>> thread = api.assistants_service_get_conversation_with_http_info(assistant_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
         :param str assistant_id: (required)
         :param str id: (required)
         :return: V1Conversation
@@ -402,7 +485,7 @@ class AssistantsServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'assistant_id', 'id']  # noqa: E501
+        all_params = ['assistant_id', 'id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -417,10 +500,6 @@ class AssistantsServiceApi(object):
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'project_id' is set
-        if ('project_id' not in params or
-                params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `assistants_service_get_conversation`")  # noqa: E501
         # verify the required parameter 'assistant_id' is set
         if ('assistant_id' not in params or
                 params['assistant_id'] is None):
@@ -433,8 +512,6 @@ class AssistantsServiceApi(object):
         collection_formats = {}
 
         path_params = {}
-        if 'project_id' in params:
-            path_params['projectId'] = params['project_id']  # noqa: E501
         if 'assistant_id' in params:
             path_params['assistantId'] = params['assistant_id']  # noqa: E501
         if 'id' in params:
@@ -456,7 +533,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/assistants/{assistantId}/conversations/{id}', 'GET',
+            '/v1/assistants/{assistantId}/conversations/{id}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -564,45 +641,49 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_list_assistants(self, project_id: 'str', **kwargs) -> 'V1ListAssistantsResponse':  # noqa: E501
+    def assistants_service_list_assistants(self, **kwargs) -> 'V1ListAssistantsResponse':  # noqa: E501
         """assistants_service_list_assistants  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_list_assistants(project_id, async_req=True)
+        >>> thread = api.assistants_service_list_assistants(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str org_id:
+        :param str project_id:
         :param str cloudspace_id:
+        :param bool published:
         :return: V1ListAssistantsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.assistants_service_list_assistants_with_http_info(project_id, **kwargs)  # noqa: E501
+            return self.assistants_service_list_assistants_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.assistants_service_list_assistants_with_http_info(project_id, **kwargs)  # noqa: E501
+            (data) = self.assistants_service_list_assistants_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def assistants_service_list_assistants_with_http_info(self, project_id: 'str', **kwargs) -> 'V1ListAssistantsResponse':  # noqa: E501
+    def assistants_service_list_assistants_with_http_info(self, **kwargs) -> 'V1ListAssistantsResponse':  # noqa: E501
         """assistants_service_list_assistants  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_list_assistants_with_http_info(project_id, async_req=True)
+        >>> thread = api.assistants_service_list_assistants_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str org_id:
+        :param str project_id:
         :param str cloudspace_id:
+        :param bool published:
         :return: V1ListAssistantsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'cloudspace_id', 'published']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -617,20 +698,20 @@ class AssistantsServiceApi(object):
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'project_id' is set
-        if ('project_id' not in params or
-                params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `assistants_service_list_assistants`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'project_id' in params:
-            path_params['projectId'] = params['project_id']  # noqa: E501
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
         if 'cloudspace_id' in params:
             query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
+        if 'published' in params:
+            query_params.append(('published', params['published']))  # noqa: E501
 
         header_params = {}
 
@@ -646,7 +727,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/assistants', 'GET',
+            '/v1/assistants', 'GET',
             path_params,
             query_params,
             header_params,
@@ -661,16 +742,15 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_list_conversations(self, project_id: 'str', assistant_id: 'str', **kwargs) -> 'V1ListConversationsResponse':  # noqa: E501
+    def assistants_service_list_conversations(self, assistant_id: 'str', **kwargs) -> 'V1ListConversationsResponse':  # noqa: E501
         """Conversations  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_list_conversations(project_id, assistant_id, async_req=True)
+        >>> thread = api.assistants_service_list_conversations(assistant_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
         :param str assistant_id: (required)
         :param str page_token:
         :return: V1ListConversationsResponse
@@ -679,21 +759,20 @@ class AssistantsServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.assistants_service_list_conversations_with_http_info(project_id, assistant_id, **kwargs)  # noqa: E501
+            return self.assistants_service_list_conversations_with_http_info(assistant_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.assistants_service_list_conversations_with_http_info(project_id, assistant_id, **kwargs)  # noqa: E501
+            (data) = self.assistants_service_list_conversations_with_http_info(assistant_id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_list_conversations_with_http_info(self, project_id: 'str', assistant_id: 'str', **kwargs) -> 'V1ListConversationsResponse':  # noqa: E501
+    def assistants_service_list_conversations_with_http_info(self, assistant_id: 'str', **kwargs) -> 'V1ListConversationsResponse':  # noqa: E501
         """Conversations  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_list_conversations_with_http_info(project_id, assistant_id, async_req=True)
+        >>> thread = api.assistants_service_list_conversations_with_http_info(assistant_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
         :param str assistant_id: (required)
         :param str page_token:
         :return: V1ListConversationsResponse
@@ -701,7 +780,7 @@ class AssistantsServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'assistant_id', 'page_token']  # noqa: E501
+        all_params = ['assistant_id', 'page_token']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -716,10 +795,6 @@ class AssistantsServiceApi(object):
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'project_id' is set
-        if ('project_id' not in params or
-                params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `assistants_service_list_conversations`")  # noqa: E501
         # verify the required parameter 'assistant_id' is set
         if ('assistant_id' not in params or
                 params['assistant_id'] is None):
@@ -728,8 +803,6 @@ class AssistantsServiceApi(object):
         collection_formats = {}
 
         path_params = {}
-        if 'project_id' in params:
-            path_params['projectId'] = params['project_id']  # noqa: E501
         if 'assistant_id' in params:
             path_params['assistantId'] = params['assistant_id']  # noqa: E501
 
@@ -751,7 +824,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/assistants/{assistantId}/conversations', 'GET',
+            '/v1/assistants/{assistantId}/conversations', 'GET',
             path_params,
             query_params,
             header_params,
@@ -766,17 +839,16 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_start_conversation(self, body: 'AssistantIdConversationsBody', project_id: 'str', assistant_id: 'str', **kwargs) -> 'StreamResultOfV1ConversationResponseChunk':  # noqa: E501
+    def assistants_service_start_conversation(self, body: 'AssistantIdConversationsBody', assistant_id: 'str', **kwargs) -> 'StreamResultOfV1ConversationResponseChunk':  # noqa: E501
         """assistants_service_start_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_start_conversation(body, project_id, assistant_id, async_req=True)
+        >>> thread = api.assistants_service_start_conversation(body, assistant_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param AssistantIdConversationsBody body: (required)
-        :param str project_id: (required)
         :param str assistant_id: (required)
         :return: StreamResultOfV1ConversationResponseChunk
                  If the method is called asynchronously,
@@ -784,29 +856,28 @@ class AssistantsServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.assistants_service_start_conversation_with_http_info(body, project_id, assistant_id, **kwargs)  # noqa: E501
+            return self.assistants_service_start_conversation_with_http_info(body, assistant_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.assistants_service_start_conversation_with_http_info(body, project_id, assistant_id, **kwargs)  # noqa: E501
+            (data) = self.assistants_service_start_conversation_with_http_info(body, assistant_id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_start_conversation_with_http_info(self, body: 'AssistantIdConversationsBody', project_id: 'str', assistant_id: 'str', **kwargs) -> 'StreamResultOfV1ConversationResponseChunk':  # noqa: E501
+    def assistants_service_start_conversation_with_http_info(self, body: 'AssistantIdConversationsBody', assistant_id: 'str', **kwargs) -> 'StreamResultOfV1ConversationResponseChunk':  # noqa: E501
         """assistants_service_start_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_start_conversation_with_http_info(body, project_id, assistant_id, async_req=True)
+        >>> thread = api.assistants_service_start_conversation_with_http_info(body, assistant_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param AssistantIdConversationsBody body: (required)
-        :param str project_id: (required)
         :param str assistant_id: (required)
         :return: StreamResultOfV1ConversationResponseChunk
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['body', 'project_id', 'assistant_id']  # noqa: E501
+        all_params = ['body', 'assistant_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -825,10 +896,6 @@ class AssistantsServiceApi(object):
         if ('body' not in params or
                 params['body'] is None):
             raise ValueError("Missing the required parameter `body` when calling `assistants_service_start_conversation`")  # noqa: E501
-        # verify the required parameter 'project_id' is set
-        if ('project_id' not in params or
-                params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `assistants_service_start_conversation`")  # noqa: E501
         # verify the required parameter 'assistant_id' is set
         if ('assistant_id' not in params or
                 params['assistant_id'] is None):
@@ -837,8 +904,6 @@ class AssistantsServiceApi(object):
         collection_formats = {}
 
         path_params = {}
-        if 'project_id' in params:
-            path_params['projectId'] = params['project_id']  # noqa: E501
         if 'assistant_id' in params:
             path_params['assistantId'] = params['assistant_id']  # noqa: E501
 
@@ -864,7 +929,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/assistants/{assistantId}/conversations', 'POST',
+            '/v1/assistants/{assistantId}/conversations', 'POST',
             path_params,
             query_params,
             header_params,
@@ -992,17 +1057,16 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_update_conversation(self, body: 'ConversationsIdBody', project_id: 'str', assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
+    def assistants_service_update_conversation(self, body: 'ConversationsIdBody', assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
         """assistants_service_update_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_update_conversation(body, project_id, assistant_id, id, async_req=True)
+        >>> thread = api.assistants_service_update_conversation(body, assistant_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param ConversationsIdBody body: (required)
-        :param str project_id: (required)
         :param str assistant_id: (required)
         :param str id: (required)
         :return: V1Conversation
@@ -1011,22 +1075,21 @@ class AssistantsServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.assistants_service_update_conversation_with_http_info(body, project_id, assistant_id, id, **kwargs)  # noqa: E501
+            return self.assistants_service_update_conversation_with_http_info(body, assistant_id, id, **kwargs)  # noqa: E501
         else:
-            (data) = self.assistants_service_update_conversation_with_http_info(body, project_id, assistant_id, id, **kwargs)  # noqa: E501
+            (data) = self.assistants_service_update_conversation_with_http_info(body, assistant_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_update_conversation_with_http_info(self, body: 'ConversationsIdBody', project_id: 'str', assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
+    def assistants_service_update_conversation_with_http_info(self, body: 'ConversationsIdBody', assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
         """assistants_service_update_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_update_conversation_with_http_info(body, project_id, assistant_id, id, async_req=True)
+        >>> thread = api.assistants_service_update_conversation_with_http_info(body, assistant_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param ConversationsIdBody body: (required)
-        :param str project_id: (required)
         :param str assistant_id: (required)
         :param str id: (required)
         :return: V1Conversation
@@ -1034,7 +1097,7 @@ class AssistantsServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'project_id', 'assistant_id', 'id']  # noqa: E501
+        all_params = ['body', 'assistant_id', 'id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1053,10 +1116,6 @@ class AssistantsServiceApi(object):
         if ('body' not in params or
                 params['body'] is None):
             raise ValueError("Missing the required parameter `body` when calling `assistants_service_update_conversation`")  # noqa: E501
-        # verify the required parameter 'project_id' is set
-        if ('project_id' not in params or
-                params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `assistants_service_update_conversation`")  # noqa: E501
         # verify the required parameter 'assistant_id' is set
         if ('assistant_id' not in params or
                 params['assistant_id'] is None):
@@ -1069,8 +1128,6 @@ class AssistantsServiceApi(object):
         collection_formats = {}
 
         path_params = {}
-        if 'project_id' in params:
-            path_params['projectId'] = params['project_id']  # noqa: E501
         if 'assistant_id' in params:
             path_params['assistantId'] = params['assistant_id']  # noqa: E501
         if 'id' in params:
@@ -1098,7 +1155,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/assistants/{assistantId}/conversations/{id}', 'PUT',
+            '/v1/assistants/{assistantId}/conversations/{id}', 'PUT',
             path_params,
             query_params,
             header_params,

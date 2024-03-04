@@ -46,10 +46,13 @@ class AssistantsIdBody(object):
         'created_at': 'datetime',
         'description': 'str',
         'endpoint_id': 'str',
+        'knowledge': 'str',
         'model': 'str',
         'name': 'str',
+        'org_id': 'str',
         'prompt_suggestions': 'list[V1PromptSuggestion]',
         'prompt_template': 'str',
+        'publish_status': 'str',
         'thumbnail_url': 'str',
         'updated_at': 'datetime',
         'user_id': 'str'
@@ -61,26 +64,32 @@ class AssistantsIdBody(object):
         'created_at': 'createdAt',
         'description': 'description',
         'endpoint_id': 'endpointId',
+        'knowledge': 'knowledge',
         'model': 'model',
         'name': 'name',
+        'org_id': 'orgId',
         'prompt_suggestions': 'promptSuggestions',
         'prompt_template': 'promptTemplate',
+        'publish_status': 'publishStatus',
         'thumbnail_url': 'thumbnailUrl',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, model: 'str' =None, name: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, knowledge: 'str' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """AssistantsIdBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._created_at = None
         self._description = None
         self._endpoint_id = None
+        self._knowledge = None
         self._model = None
         self._name = None
+        self._org_id = None
         self._prompt_suggestions = None
         self._prompt_template = None
+        self._publish_status = None
         self._thumbnail_url = None
         self._updated_at = None
         self._user_id = None
@@ -95,14 +104,20 @@ class AssistantsIdBody(object):
             self.description = description
         if endpoint_id is not None:
             self.endpoint_id = endpoint_id
+        if knowledge is not None:
+            self.knowledge = knowledge
         if model is not None:
             self.model = model
         if name is not None:
             self.name = name
+        if org_id is not None:
+            self.org_id = org_id
         if prompt_suggestions is not None:
             self.prompt_suggestions = prompt_suggestions
         if prompt_template is not None:
             self.prompt_template = prompt_template
+        if publish_status is not None:
+            self.publish_status = publish_status
         if thumbnail_url is not None:
             self.thumbnail_url = thumbnail_url
         if updated_at is not None:
@@ -216,6 +231,27 @@ class AssistantsIdBody(object):
         self._endpoint_id = endpoint_id
 
     @property
+    def knowledge(self) -> 'str':
+        """Gets the knowledge of this AssistantsIdBody.  # noqa: E501
+
+
+        :return: The knowledge of this AssistantsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._knowledge
+
+    @knowledge.setter
+    def knowledge(self, knowledge: 'str'):
+        """Sets the knowledge of this AssistantsIdBody.
+
+
+        :param knowledge: The knowledge of this AssistantsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._knowledge = knowledge
+
+    @property
     def model(self) -> 'str':
         """Gets the model of this AssistantsIdBody.  # noqa: E501
 
@@ -258,6 +294,27 @@ class AssistantsIdBody(object):
         self._name = name
 
     @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this AssistantsIdBody.  # noqa: E501
+
+
+        :return: The org_id of this AssistantsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this AssistantsIdBody.
+
+
+        :param org_id: The org_id of this AssistantsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
+
+    @property
     def prompt_suggestions(self) -> 'list[V1PromptSuggestion]':
         """Gets the prompt_suggestions of this AssistantsIdBody.  # noqa: E501
 
@@ -298,6 +355,27 @@ class AssistantsIdBody(object):
         """
 
         self._prompt_template = prompt_template
+
+    @property
+    def publish_status(self) -> 'str':
+        """Gets the publish_status of this AssistantsIdBody.  # noqa: E501
+
+
+        :return: The publish_status of this AssistantsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._publish_status
+
+    @publish_status.setter
+    def publish_status(self, publish_status: 'str'):
+        """Sets the publish_status of this AssistantsIdBody.
+
+
+        :param publish_status: The publish_status of this AssistantsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._publish_status = publish_status
 
     @property
     def thumbnail_url(self) -> 'str':

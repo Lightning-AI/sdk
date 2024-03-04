@@ -45,7 +45,10 @@ class ProjectIdAssistantsBody(object):
         'cluster_id': 'str',
         'description': 'str',
         'endpoint': 'V1Endpoint',
+        'knowledge': 'str',
+        'model': 'str',
         'name': 'str',
+        'org_id': 'str',
         'prompt_suggestions': 'list[V1PromptSuggestion]',
         'prompt_template': 'str',
         'thumbnail_url': 'str'
@@ -56,19 +59,25 @@ class ProjectIdAssistantsBody(object):
         'cluster_id': 'clusterId',
         'description': 'description',
         'endpoint': 'endpoint',
+        'knowledge': 'knowledge',
+        'model': 'model',
         'name': 'name',
+        'org_id': 'orgId',
         'prompt_suggestions': 'promptSuggestions',
         'prompt_template': 'promptTemplate',
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, description: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, description: 'str' =None, endpoint: 'V1Endpoint' =None, knowledge: 'str' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """ProjectIdAssistantsBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._description = None
         self._endpoint = None
+        self._knowledge = None
+        self._model = None
         self._name = None
+        self._org_id = None
         self._prompt_suggestions = None
         self._prompt_template = None
         self._thumbnail_url = None
@@ -81,8 +90,14 @@ class ProjectIdAssistantsBody(object):
             self.description = description
         if endpoint is not None:
             self.endpoint = endpoint
+        if knowledge is not None:
+            self.knowledge = knowledge
+        if model is not None:
+            self.model = model
         if name is not None:
             self.name = name
+        if org_id is not None:
+            self.org_id = org_id
         if prompt_suggestions is not None:
             self.prompt_suggestions = prompt_suggestions
         if prompt_template is not None:
@@ -175,6 +190,48 @@ class ProjectIdAssistantsBody(object):
         self._endpoint = endpoint
 
     @property
+    def knowledge(self) -> 'str':
+        """Gets the knowledge of this ProjectIdAssistantsBody.  # noqa: E501
+
+
+        :return: The knowledge of this ProjectIdAssistantsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._knowledge
+
+    @knowledge.setter
+    def knowledge(self, knowledge: 'str'):
+        """Sets the knowledge of this ProjectIdAssistantsBody.
+
+
+        :param knowledge: The knowledge of this ProjectIdAssistantsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._knowledge = knowledge
+
+    @property
+    def model(self) -> 'str':
+        """Gets the model of this ProjectIdAssistantsBody.  # noqa: E501
+
+
+        :return: The model of this ProjectIdAssistantsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._model
+
+    @model.setter
+    def model(self, model: 'str'):
+        """Sets the model of this ProjectIdAssistantsBody.
+
+
+        :param model: The model of this ProjectIdAssistantsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._model = model
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this ProjectIdAssistantsBody.  # noqa: E501
 
@@ -194,6 +251,27 @@ class ProjectIdAssistantsBody(object):
         """
 
         self._name = name
+
+    @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this ProjectIdAssistantsBody.  # noqa: E501
+
+
+        :return: The org_id of this ProjectIdAssistantsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this ProjectIdAssistantsBody.
+
+
+        :param org_id: The org_id of this ProjectIdAssistantsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
 
     @property
     def prompt_suggestions(self) -> 'list[V1PromptSuggestion]':

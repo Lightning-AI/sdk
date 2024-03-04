@@ -43,6 +43,7 @@ class V1GetFolderIndexResponse(object):
     swagger_types = {
         'child_folder_names': 'list[str]',
         'last_modified_at': 'datetime',
+        'local_file_count': 'str',
         'nested_file_count': 'str',
         'page_size': 'int',
         'path': 'str',
@@ -53,6 +54,7 @@ class V1GetFolderIndexResponse(object):
     attribute_map = {
         'child_folder_names': 'childFolderNames',
         'last_modified_at': 'lastModifiedAt',
+        'local_file_count': 'localFileCount',
         'nested_file_count': 'nestedFileCount',
         'page_size': 'pageSize',
         'path': 'path',
@@ -60,10 +62,11 @@ class V1GetFolderIndexResponse(object):
         'status': 'status'
     }
 
-    def __init__(self, child_folder_names: 'list[str]' =None, last_modified_at: 'datetime' =None, nested_file_count: 'str' =None, page_size: 'int' =None, path: 'str' =None, size_bytes: 'str' =None, status: 'V1FolderIndexStatus' =None):  # noqa: E501
+    def __init__(self, child_folder_names: 'list[str]' =None, last_modified_at: 'datetime' =None, local_file_count: 'str' =None, nested_file_count: 'str' =None, page_size: 'int' =None, path: 'str' =None, size_bytes: 'str' =None, status: 'V1FolderIndexStatus' =None):  # noqa: E501
         """V1GetFolderIndexResponse - a model defined in Swagger"""  # noqa: E501
         self._child_folder_names = None
         self._last_modified_at = None
+        self._local_file_count = None
         self._nested_file_count = None
         self._page_size = None
         self._path = None
@@ -74,6 +77,8 @@ class V1GetFolderIndexResponse(object):
             self.child_folder_names = child_folder_names
         if last_modified_at is not None:
             self.last_modified_at = last_modified_at
+        if local_file_count is not None:
+            self.local_file_count = local_file_count
         if nested_file_count is not None:
             self.nested_file_count = nested_file_count
         if page_size is not None:
@@ -126,6 +131,27 @@ class V1GetFolderIndexResponse(object):
         """
 
         self._last_modified_at = last_modified_at
+
+    @property
+    def local_file_count(self) -> 'str':
+        """Gets the local_file_count of this V1GetFolderIndexResponse.  # noqa: E501
+
+
+        :return: The local_file_count of this V1GetFolderIndexResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._local_file_count
+
+    @local_file_count.setter
+    def local_file_count(self, local_file_count: 'str'):
+        """Sets the local_file_count of this V1GetFolderIndexResponse.
+
+
+        :param local_file_count: The local_file_count of this V1GetFolderIndexResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._local_file_count = local_file_count
 
     @property
     def nested_file_count(self) -> 'str':
