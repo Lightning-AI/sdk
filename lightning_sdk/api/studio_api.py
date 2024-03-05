@@ -545,7 +545,7 @@ class StudioApi:
             studio_id=studio_id,
             teamspace_id=teamspace_id,
             cluster_id=cluster_id,
-            plugin_type="data_prep",
+            plugin_type="litdata",
             entrypoint=entrypoint,
             name=name,
             dataPrepArguments=json.dumps(data_prep_args),
