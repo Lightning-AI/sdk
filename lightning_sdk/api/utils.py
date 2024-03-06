@@ -92,6 +92,7 @@ class _FileUploader:
 
         return self._multipart_upload(count=count)
 
+    @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
     def _singlepart_upload(self) -> None:
         """Does a single part upload."""
         body = ProjectIdStorageBody(cluster_id=self.cluster_id, count=1, filename=self.remote_path)
