@@ -1,14 +1,25 @@
 import os
 from time import sleep
 from typing import Any, Dict, Optional
+from uuid import uuid4
 
 import requests
 
+from lightning_sdk.lightning_cloud.openapi import (
+    CommandArgumentCommandArgumentType,
+    ProjectIdServiceexecutionBody,
+    V1CommandArgument,
+)
+from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.services.uploader import _ServiceFileUploader
+
 _FILE_TO_UPLOADS_KEY = "files_to_upload"
 _DOWNLOAD_IDS_KEY = "download_ids"
+_LIGHTNING_SERVICES_PIPELINE_ID = uuid4().hex
 
 
 class FileEndpoint:
+    # TODO: To be merged with the new Client
     """This class is used to communicate with the File Endpoint."""
 
     def __init__(
@@ -114,3 +125,147 @@ class FileEndpoint:
                 with open(os.path.join(output_dir, filename), "wb") as f:
                     for chunk in r.iter_content(chunk_size=8192):
                         f.write(chunk)
+
+
+class Argument:
+    """A holder for the service argument."""
+
+    def __init__(self, name: str, type: CommandArgumentCommandArgumentType, **kwargs: Any) -> None:  # noqa: A002
+        self._name = name
+        self._type = type
+        self._value = None
+        self._kwargs = kwargs
+
+    @property
+    def is_text(self) -> bool:
+        """Whether this argument is of type Text."""
+        return self._type == CommandArgumentCommandArgumentType.TEXT
+
+    @property
+    def is_file(self) -> bool:
+        """Whether this argument is of type File."""
+        return self._type == CommandArgumentCommandArgumentType.FILE
+
+    @property
+    def value(self) -> Any:
+        """Returns the value."""
+        return self._value
+
+    @value.setter
+    def value(self, value: Any) -> None:
+        """Store the value."""
+        if self.is_file and not os.path.exists(value):
+            raise ValueError(f"The argument {self._name} should be a valid file.")
+        self._value = value
+
+    @property
+    def name(self) -> str:
+        """Returns the name."""
+        return self._name
+
+    def to_openapi(self) -> V1CommandArgument:
+        """Convert the argument into its OpenAPI dataclass counterpart."""
+        if self.is_text:
+            return V1CommandArgument(name=self._name, type=self._type, value=str(self._value))
+
+        value = self._value.replace("/teamspace/studios/this_studio/", "")
+        return V1CommandArgument(name=self._name, type=self._type, value=value)
+
+
+class Client:
+    """This class is used to communicate with the Service Endpoint."""
+
+    def __init__(
+        self,
+        file_endpoint_teamspace_id: str,
+        file_endpoint_id: str,
+        teamspace_id: Optional[str] = None,
+    ) -> None:
+        """Constructor of the FileEndpoint.
+
+        Args:
+            file_endpoint_teamspace_id: The Teamspace Id of the Studio File Endpoint Service.
+            file_endpoint_id: The Id of the Studio File Endpoint Service.
+            teamspace_id: The Teamspace Id in usage.
+
+        """
+        self._teamspace_id = teamspace_id or os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
+        self._file_endpoint_teamspace_id = file_endpoint_teamspace_id
+        self._file_endpoint_id = file_endpoint_id
+        self._client = LightningClient()
+        self._file_endpoint = self._client.endpoint_service_get_file_endpoint(
+            project_id=file_endpoint_teamspace_id, id=self._file_endpoint_id
+        )
+        self._arguments = []
+
+        for argument in self._file_endpoint.arguments:
+            self._arguments.append(Argument(**argument.to_dict()))
+
+    def run(
+        self,
+        pipeline_id: Optional[str] = _LIGHTNING_SERVICES_PIPELINE_ID,
+        **kwargs: Dict[str, str],
+    ) -> None:
+        """The run method executes the file endpoint.
+
+        Args:
+            pipeline_id: The ID of the current pipeline
+            kwargs: The keyword arguments associated to the service
+
+        """
+        for argument in self._arguments:
+            if argument.is_file:
+                if argument.name not in kwargs:
+                    raise ValueError(f"This endpoint expects a file for the argument `{argument.name}`.")
+                value = kwargs[argument.name]
+                if not os.path.isfile(value):
+                    raise ValueError(f"This endpoint expects a file for the argument `{argument.name}`.")
+            else:
+                if argument.name not in kwargs:
+                    raise ValueError(f"This endpoint expects a value for the argument `{argument.name}`.")
+                value = kwargs[argument.name]
+                if os.path.isfile(value):
+                    raise ValueError(f"This endpoint doesn't expect a file for `{argument.name}`.")
+
+            argument.value = value
+
+        missing_names = [v.name for v in self._arguments if v.value is None]
+        if missing_names:
+            raise ValueError(f"You are missing values for the following arguments: {missing_names}")
+
+        service_execution = self._client.endpoint_service_create_service_execution(
+            project_id=self._teamspace_id,
+            body=ProjectIdServiceexecutionBody(
+                file_endpoint_id=self._file_endpoint_id,
+                pipeline_id=pipeline_id,
+                arguments=[argument.to_openapi() for argument in self._arguments],
+            ),
+        )
+
+        for argument in self._arguments:
+            if argument.is_text:
+                continue
+
+            upload_id = None
+            for service_argument in service_execution.arguments:
+                if argument.name == service_argument.name:
+                    upload_id = service_argument.id
+
+            if upload_id is None:
+                raise ValueError("This shouldn't have happened. Please, contact lightning.ai.")
+
+            # TODO: Move the logic to use pre-defined pre-signed URLs
+            _ServiceFileUploader(
+                client=self._client,
+                teamspace_id=self._file_endpoint_teamspace_id,
+                service_execution_id=service_execution.id,
+                upload_id=upload_id,
+                file_path=argument.value,
+                progress_bar=True,
+            )()
+
+        service_execution = self._client.endpoint_service_run_service_execution(
+            project_id=self._teamspace_id,
+            id=service_execution.id,
+            body={},
+        )

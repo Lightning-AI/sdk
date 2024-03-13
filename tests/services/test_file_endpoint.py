@@ -1,6 +1,16 @@
 import lightning_sdk.services.file_endpoint as file_endpoint_module
-from lightning_sdk.services.file_endpoint import FileEndpoint
+import lightning_sdk.services.uploader as uploader_module
+from lightning_sdk.services.file_endpoint import FileEndpoint, Client
 from unittest.mock import MagicMock
+from lightning_sdk.lightning_cloud.openapi import (
+    V1FileEndpoint,
+    V1CommandArgument,
+    CommandArgumentCommandArgumentType,
+    V1ServiceExecution,
+    V1UploadServiceExecutionArtifactResponse,
+    V1PresignedUrl,
+)
+import pytest
 
 
 def test_file_endpoint(monkeypatch):
@@ -26,3 +36,54 @@ def test_file_endpoint(monkeypatch):
     monkeypatch.setattr(file_endpoint_module, "sleep", MagicMock())
     client = FileEndpoint(url="url")
     client.run(files={"name": __file__})
+
+
+def test_file_endpoint_client(monkeypatch):
+    lightning_client_mock = MagicMock()
+    monkeypatch.setattr(file_endpoint_module, "LightningClient", MagicMock(return_value=lightning_client_mock))
+
+    requests_mock = MagicMock()
+
+    monkeypatch.setattr(uploader_module, "requests", requests_mock)
+
+    lightning_client_mock.endpoint_service_get_file_endpoint.return_value = V1FileEndpoint(
+        arguments=[
+            V1CommandArgument(name="image_size", type=CommandArgumentCommandArgumentType.TEXT),
+            V1CommandArgument(name="image_path", type=CommandArgumentCommandArgumentType.FILE),
+        ]
+    )
+
+    lightning_client_mock.endpoint_service_get_file_endpoint.return_value = V1FileEndpoint(
+        arguments=[
+            V1CommandArgument(name="image_size", type=CommandArgumentCommandArgumentType.TEXT),
+            V1CommandArgument(name="image_path", type=CommandArgumentCommandArgumentType.FILE),
+        ]
+    )
+
+    lightning_client_mock.endpoint_service_create_service_execution.return_value = V1ServiceExecution(
+        id="service_execution_id",
+        arguments=[
+            V1CommandArgument(name="image_size", type=CommandArgumentCommandArgumentType.TEXT, id="upload_id_1"),
+            V1CommandArgument(
+                name="image_path",
+                type=CommandArgumentCommandArgumentType.FILE,
+                id="upload_id_2",
+            ),
+        ],
+    )
+
+    lightning_client_mock.endpoint_service_upload_service_execution_artifact.return_value = (
+        V1UploadServiceExecutionArtifactResponse(upload_id=None, urls=[V1PresignedUrl(url="url")])
+    )
+
+    client = Client(file_endpoint_teamspace_id="file_endpoint_teamspace_id", file_endpoint_id="file_endpoint_id")
+
+    with pytest.raises(ValueError, match="This endpoint expects a value for the argument `image_size`."):
+        client.run()
+
+    with pytest.raises(ValueError, match="This endpoint expects a file for the argument `image_path`."):
+        client.run(image_size=256)
+
+    client.run(image_size=256, image_path=__file__)
+
+    requests_mock.put.assert_called()
