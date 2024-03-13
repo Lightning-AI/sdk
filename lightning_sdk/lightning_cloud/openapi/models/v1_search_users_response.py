@@ -44,7 +44,7 @@ class V1SearchUsersResponse(object):
         'next_page_token': 'str',
         'previous_page_token': 'str',
         'total_size': 'str',
-        'users': 'list[V1SearchUser]'
+        'users': 'list[V1ExternalSearchUser]'
     }
 
     attribute_map = {
@@ -54,7 +54,7 @@ class V1SearchUsersResponse(object):
         'users': 'users'
     }
 
-    def __init__(self, next_page_token: 'str' =None, previous_page_token: 'str' =None, total_size: 'str' =None, users: 'list[V1SearchUser]' =None):  # noqa: E501
+    def __init__(self, next_page_token: 'str' =None, previous_page_token: 'str' =None, total_size: 'str' =None, users: 'list[V1ExternalSearchUser]' =None):  # noqa: E501
         """V1SearchUsersResponse - a model defined in Swagger"""  # noqa: E501
         self._next_page_token = None
         self._previous_page_token = None
@@ -134,22 +134,22 @@ class V1SearchUsersResponse(object):
         self._total_size = total_size
 
     @property
-    def users(self) -> 'list[V1SearchUser]':
+    def users(self) -> 'list[V1ExternalSearchUser]':
         """Gets the users of this V1SearchUsersResponse.  # noqa: E501
 
 
         :return: The users of this V1SearchUsersResponse.  # noqa: E501
-        :rtype: list[V1SearchUser]
+        :rtype: list[V1ExternalSearchUser]
         """
         return self._users
 
     @users.setter
-    def users(self, users: 'list[V1SearchUser]'):
+    def users(self, users: 'list[V1ExternalSearchUser]'):
         """Sets the users of this V1SearchUsersResponse.
 
 
         :param users: The users of this V1SearchUsersResponse.  # noqa: E501
-        :type: list[V1SearchUser]
+        :type: list[V1ExternalSearchUser]
         """
 
         self._users = users

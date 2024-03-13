@@ -43,6 +43,119 @@ class EndpointServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
+    def endpoint_service_complete_upload_service_execution_artifact(self, body: 'IdCompleteBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CompleteUploadServiceExecutionArtifactResponse':  # noqa: E501
+        """endpoint_service_complete_upload_service_execution_artifact  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_complete_upload_service_execution_artifact(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IdCompleteBody body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1CompleteUploadServiceExecutionArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.endpoint_service_complete_upload_service_execution_artifact_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.endpoint_service_complete_upload_service_execution_artifact_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def endpoint_service_complete_upload_service_execution_artifact_with_http_info(self, body: 'IdCompleteBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CompleteUploadServiceExecutionArtifactResponse':  # noqa: E501
+        """endpoint_service_complete_upload_service_execution_artifact  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_complete_upload_service_execution_artifact_with_http_info(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IdCompleteBody body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1CompleteUploadServiceExecutionArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method endpoint_service_complete_upload_service_execution_artifact" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `endpoint_service_complete_upload_service_execution_artifact`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `endpoint_service_complete_upload_service_execution_artifact`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `endpoint_service_complete_upload_service_execution_artifact`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/service-execution/{id}/complete', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CompleteUploadServiceExecutionArtifactResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def endpoint_service_create_endpoint(self, body: 'ProjectIdEndpointsBody', project_id: 'str', **kwargs) -> 'V1Endpoint':  # noqa: E501
         """endpoint_service_create_endpoint  # noqa: E501
 
@@ -246,6 +359,111 @@ class EndpointServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1FileEndpoint',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def endpoint_service_create_service_execution(self, body: 'ProjectIdServiceexecutionBody', project_id: 'str', **kwargs) -> 'V1ServiceExecution':  # noqa: E501
+        """endpoint_service_create_service_execution  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_create_service_execution(body, project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ProjectIdServiceexecutionBody body: (required)
+        :param str project_id: (required)
+        :return: V1ServiceExecution
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.endpoint_service_create_service_execution_with_http_info(body, project_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.endpoint_service_create_service_execution_with_http_info(body, project_id, **kwargs)  # noqa: E501
+            return data
+
+    def endpoint_service_create_service_execution_with_http_info(self, body: 'ProjectIdServiceexecutionBody', project_id: 'str', **kwargs) -> 'V1ServiceExecution':  # noqa: E501
+        """endpoint_service_create_service_execution  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_create_service_execution_with_http_info(body, project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ProjectIdServiceexecutionBody body: (required)
+        :param str project_id: (required)
+        :return: V1ServiceExecution
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method endpoint_service_create_service_execution" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `endpoint_service_create_service_execution`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `endpoint_service_create_service_execution`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/service-execution', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ServiceExecution',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -459,6 +677,107 @@ class EndpointServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def endpoint_service_delete_service_execution(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DeleteServiceExecutionResponse':  # noqa: E501
+        """endpoint_service_delete_service_execution  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_delete_service_execution(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1DeleteServiceExecutionResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.endpoint_service_delete_service_execution_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.endpoint_service_delete_service_execution_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def endpoint_service_delete_service_execution_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DeleteServiceExecutionResponse':  # noqa: E501
+        """endpoint_service_delete_service_execution  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_delete_service_execution_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1DeleteServiceExecutionResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method endpoint_service_delete_service_execution" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `endpoint_service_delete_service_execution`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `endpoint_service_delete_service_execution`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/service-execution/{id}', 'DELETE',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1DeleteServiceExecutionResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def endpoint_service_get_endpoint(self, project_id: 'str', ref: 'str', **kwargs) -> 'V1Endpoint':  # noqa: E501
         """endpoint_service_get_endpoint  # noqa: E501
 
@@ -665,6 +984,107 @@ class EndpointServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def endpoint_service_get_service_execution(self, project_id: 'str', id: 'str', **kwargs) -> 'V1ServiceExecution':  # noqa: E501
+        """endpoint_service_get_service_execution  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_get_service_execution(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1ServiceExecution
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.endpoint_service_get_service_execution_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.endpoint_service_get_service_execution_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def endpoint_service_get_service_execution_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1ServiceExecution':  # noqa: E501
+        """endpoint_service_get_service_execution  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_get_service_execution_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1ServiceExecution
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method endpoint_service_get_service_execution" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `endpoint_service_get_service_execution`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `endpoint_service_get_service_execution`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/service-execution/{id}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ServiceExecution',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def endpoint_service_list_endpoints(self, project_id: 'str', **kwargs) -> 'V1ListEndpointsResponse':  # noqa: E501
         """endpoint_service_list_endpoints  # noqa: E501
 
@@ -856,6 +1276,212 @@ class EndpointServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1ListFileEndpointsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def endpoint_service_list_service_executions(self, project_id: 'str', **kwargs) -> 'V1ListServiceExecutionsResponse':  # noqa: E501
+        """endpoint_service_list_service_executions  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_list_service_executions(project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :return: V1ListServiceExecutionsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.endpoint_service_list_service_executions_with_http_info(project_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.endpoint_service_list_service_executions_with_http_info(project_id, **kwargs)  # noqa: E501
+            return data
+
+    def endpoint_service_list_service_executions_with_http_info(self, project_id: 'str', **kwargs) -> 'V1ListServiceExecutionsResponse':  # noqa: E501
+        """endpoint_service_list_service_executions  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_list_service_executions_with_http_info(project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :return: V1ListServiceExecutionsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method endpoint_service_list_service_executions" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `endpoint_service_list_service_executions`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/service-execution', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListServiceExecutionsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def endpoint_service_run_service_execution(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1ServiceExecution':  # noqa: E501
+        """endpoint_service_run_service_execution  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_run_service_execution(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param object body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1ServiceExecution
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.endpoint_service_run_service_execution_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.endpoint_service_run_service_execution_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def endpoint_service_run_service_execution_with_http_info(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1ServiceExecution':  # noqa: E501
+        """endpoint_service_run_service_execution  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_run_service_execution_with_http_info(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param object body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1ServiceExecution
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method endpoint_service_run_service_execution" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `endpoint_service_run_service_execution`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `endpoint_service_run_service_execution`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `endpoint_service_run_service_execution`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/service-execution/{id}/run', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ServiceExecution',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -1082,6 +1708,345 @@ class EndpointServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1FileEndpoint',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def endpoint_service_update_service_execution(self, body: 'ServiceexecutionIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ServiceExecution':  # noqa: E501
+        """endpoint_service_update_service_execution  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_update_service_execution(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ServiceexecutionIdBody body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1ServiceExecution
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.endpoint_service_update_service_execution_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.endpoint_service_update_service_execution_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def endpoint_service_update_service_execution_with_http_info(self, body: 'ServiceexecutionIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ServiceExecution':  # noqa: E501
+        """endpoint_service_update_service_execution  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_update_service_execution_with_http_info(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ServiceexecutionIdBody body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1ServiceExecution
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method endpoint_service_update_service_execution" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `endpoint_service_update_service_execution`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `endpoint_service_update_service_execution`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `endpoint_service_update_service_execution`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/service-execution/{id}', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ServiceExecution',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def endpoint_service_upload_service_execution_artifact(self, body: 'IdStorageBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UploadServiceExecutionArtifactResponse':  # noqa: E501
+        """endpoint_service_upload_service_execution_artifact  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_upload_service_execution_artifact(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IdStorageBody body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1UploadServiceExecutionArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.endpoint_service_upload_service_execution_artifact_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.endpoint_service_upload_service_execution_artifact_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def endpoint_service_upload_service_execution_artifact_with_http_info(self, body: 'IdStorageBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UploadServiceExecutionArtifactResponse':  # noqa: E501
+        """endpoint_service_upload_service_execution_artifact  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_upload_service_execution_artifact_with_http_info(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IdStorageBody body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1UploadServiceExecutionArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method endpoint_service_upload_service_execution_artifact" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `endpoint_service_upload_service_execution_artifact`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `endpoint_service_upload_service_execution_artifact`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `endpoint_service_upload_service_execution_artifact`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/service-execution/{id}/storage', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1UploadServiceExecutionArtifactResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def endpoint_service_upload_service_execution_artifact_parts(self, body: 'IdUploadsBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1UploadServiceExecutionArtifactPartsResponse':  # noqa: E501
+        """endpoint_service_upload_service_execution_artifact_parts  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_upload_service_execution_artifact_parts(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IdUploadsBody1 body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1UploadServiceExecutionArtifactPartsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.endpoint_service_upload_service_execution_artifact_parts_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.endpoint_service_upload_service_execution_artifact_parts_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def endpoint_service_upload_service_execution_artifact_parts_with_http_info(self, body: 'IdUploadsBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1UploadServiceExecutionArtifactPartsResponse':  # noqa: E501
+        """endpoint_service_upload_service_execution_artifact_parts  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.endpoint_service_upload_service_execution_artifact_parts_with_http_info(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IdUploadsBody1 body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1UploadServiceExecutionArtifactPartsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method endpoint_service_upload_service_execution_artifact_parts" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `endpoint_service_upload_service_execution_artifact_parts`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `endpoint_service_upload_service_execution_artifact_parts`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `endpoint_service_upload_service_execution_artifact_parts`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/service-execution/{id}/uploads', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1UploadServiceExecutionArtifactPartsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

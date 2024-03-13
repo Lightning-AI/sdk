@@ -46,6 +46,7 @@ class AssistantsIdBody(object):
         'created_at': 'datetime',
         'description': 'str',
         'endpoint_id': 'str',
+        'internal_assistant_name': 'str',
         'knowledge': 'str',
         'model': 'str',
         'name': 'str',
@@ -64,6 +65,7 @@ class AssistantsIdBody(object):
         'created_at': 'createdAt',
         'description': 'description',
         'endpoint_id': 'endpointId',
+        'internal_assistant_name': 'internalAssistantName',
         'knowledge': 'knowledge',
         'model': 'model',
         'name': 'name',
@@ -76,13 +78,14 @@ class AssistantsIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, knowledge: 'str' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """AssistantsIdBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._created_at = None
         self._description = None
         self._endpoint_id = None
+        self._internal_assistant_name = None
         self._knowledge = None
         self._model = None
         self._name = None
@@ -104,6 +107,8 @@ class AssistantsIdBody(object):
             self.description = description
         if endpoint_id is not None:
             self.endpoint_id = endpoint_id
+        if internal_assistant_name is not None:
+            self.internal_assistant_name = internal_assistant_name
         if knowledge is not None:
             self.knowledge = knowledge
         if model is not None:
@@ -229,6 +234,27 @@ class AssistantsIdBody(object):
         """
 
         self._endpoint_id = endpoint_id
+
+    @property
+    def internal_assistant_name(self) -> 'str':
+        """Gets the internal_assistant_name of this AssistantsIdBody.  # noqa: E501
+
+
+        :return: The internal_assistant_name of this AssistantsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._internal_assistant_name
+
+    @internal_assistant_name.setter
+    def internal_assistant_name(self, internal_assistant_name: 'str'):
+        """Sets the internal_assistant_name of this AssistantsIdBody.
+
+
+        :param internal_assistant_name: The internal_assistant_name of this AssistantsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._internal_assistant_name = internal_assistant_name
 
     @property
     def knowledge(self) -> 'str':

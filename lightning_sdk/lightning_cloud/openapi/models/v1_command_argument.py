@@ -41,29 +41,60 @@ class V1CommandArgument(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'id': 'str',
         'name': 'str',
+        'ready': 'bool',
         'type': 'CommandArgumentCommandArgumentType',
         'value': 'str'
     }
 
     attribute_map = {
+        'id': 'id',
         'name': 'name',
+        'ready': 'ready',
         'type': 'type',
         'value': 'value'
     }
 
-    def __init__(self, name: 'str' =None, type: 'CommandArgumentCommandArgumentType' =None, value: 'str' =None):  # noqa: E501
+    def __init__(self, id: 'str' =None, name: 'str' =None, ready: 'bool' =None, type: 'CommandArgumentCommandArgumentType' =None, value: 'str' =None):  # noqa: E501
         """V1CommandArgument - a model defined in Swagger"""  # noqa: E501
+        self._id = None
         self._name = None
+        self._ready = None
         self._type = None
         self._value = None
         self.discriminator = None
+        if id is not None:
+            self.id = id
         if name is not None:
             self.name = name
+        if ready is not None:
+            self.ready = ready
         if type is not None:
             self.type = type
         if value is not None:
             self.value = value
+
+    @property
+    def id(self) -> 'str':
+        """Gets the id of this V1CommandArgument.  # noqa: E501
+
+
+        :return: The id of this V1CommandArgument.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: 'str'):
+        """Sets the id of this V1CommandArgument.
+
+
+        :param id: The id of this V1CommandArgument.  # noqa: E501
+        :type: str
+        """
+
+        self._id = id
 
     @property
     def name(self) -> 'str':
@@ -85,6 +116,27 @@ class V1CommandArgument(object):
         """
 
         self._name = name
+
+    @property
+    def ready(self) -> 'bool':
+        """Gets the ready of this V1CommandArgument.  # noqa: E501
+
+
+        :return: The ready of this V1CommandArgument.  # noqa: E501
+        :rtype: bool
+        """
+        return self._ready
+
+    @ready.setter
+    def ready(self, ready: 'bool'):
+        """Sets the ready of this V1CommandArgument.
+
+
+        :param ready: The ready of this V1CommandArgument.  # noqa: E501
+        :type: bool
+        """
+
+        self._ready = ready
 
     @property
     def type(self) -> 'CommandArgumentCommandArgumentType':

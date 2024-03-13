@@ -667,6 +667,232 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def cloud_space_service_create_cloud_space_version(self, body: 'CloudSpaceIdVersionsBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
+        """cloud_space_service_create_cloud_space_version  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_create_cloud_space_version(body, project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CloudSpaceIdVersionsBody body: (required)
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :return: V1CloudSpaceVersion
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_create_cloud_space_version_with_http_info(body, project_id, cloud_space_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_create_cloud_space_version_with_http_info(body, project_id, cloud_space_id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_create_cloud_space_version_with_http_info(self, body: 'CloudSpaceIdVersionsBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
+        """cloud_space_service_create_cloud_space_version  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_create_cloud_space_version_with_http_info(body, project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CloudSpaceIdVersionsBody body: (required)
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :return: V1CloudSpaceVersion
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'cloud_space_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_create_cloud_space_version" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `cloud_space_service_create_cloud_space_version`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_create_cloud_space_version`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_create_cloud_space_version`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/versions', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CloudSpaceVersion',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cloud_space_service_create_cloud_space_version_publication(self, body: 'CloudSpaceIdVersionpublicationsBody1', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
+        """cloud_space_service_create_cloud_space_version_publication  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_create_cloud_space_version_publication(body, project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CloudSpaceIdVersionpublicationsBody1 body: (required)
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :return: V1CloudSpaceVersionPublication
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_create_cloud_space_version_publication_with_http_info(body, project_id, cloud_space_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_create_cloud_space_version_publication_with_http_info(body, project_id, cloud_space_id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_create_cloud_space_version_publication_with_http_info(self, body: 'CloudSpaceIdVersionpublicationsBody1', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
+        """cloud_space_service_create_cloud_space_version_publication  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_create_cloud_space_version_publication_with_http_info(body, project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CloudSpaceIdVersionpublicationsBody1 body: (required)
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :return: V1CloudSpaceVersionPublication
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'cloud_space_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_create_cloud_space_version_publication" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `cloud_space_service_create_cloud_space_version_publication`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_create_cloud_space_version_publication`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_create_cloud_space_version_publication`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/version-publications', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CloudSpaceVersionPublication',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def cloud_space_service_create_lightning_run(self, body: 'CloudspaceIdRunsBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1LightningRun':  # noqa: E501
         """cloud_space_service_create_lightning_run  # noqa: E501
 
@@ -1088,6 +1314,220 @@ class CloudSpaceServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1DeleteCloudSpaceAppResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cloud_space_service_delete_cloud_space_version(self, project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1DeleteCloudSpaceVersionResponse':  # noqa: E501
+        """cloud_space_service_delete_cloud_space_version  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_delete_cloud_space_version(project_id, cloud_space_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str id: (required)
+        :return: V1DeleteCloudSpaceVersionResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_delete_cloud_space_version_with_http_info(project_id, cloud_space_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_delete_cloud_space_version_with_http_info(project_id, cloud_space_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_delete_cloud_space_version_with_http_info(self, project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1DeleteCloudSpaceVersionResponse':  # noqa: E501
+        """cloud_space_service_delete_cloud_space_version  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_delete_cloud_space_version_with_http_info(project_id, cloud_space_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str id: (required)
+        :return: V1DeleteCloudSpaceVersionResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'cloud_space_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_delete_cloud_space_version" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_delete_cloud_space_version`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_delete_cloud_space_version`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `cloud_space_service_delete_cloud_space_version`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/versions/{id}', 'DELETE',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1DeleteCloudSpaceVersionResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cloud_space_service_delete_cloud_space_version_publication(self, project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1DeleteCloudSpaceVersionPublicationResponse':  # noqa: E501
+        """cloud_space_service_delete_cloud_space_version_publication  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_delete_cloud_space_version_publication(project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str org_id:
+        :return: V1DeleteCloudSpaceVersionPublicationResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_delete_cloud_space_version_publication_with_http_info(project_id, cloud_space_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_delete_cloud_space_version_publication_with_http_info(project_id, cloud_space_id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_delete_cloud_space_version_publication_with_http_info(self, project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1DeleteCloudSpaceVersionPublicationResponse':  # noqa: E501
+        """cloud_space_service_delete_cloud_space_version_publication  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_delete_cloud_space_version_publication_with_http_info(project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str org_id:
+        :return: V1DeleteCloudSpaceVersionPublicationResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'cloud_space_id', 'org_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_delete_cloud_space_version_publication" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_delete_cloud_space_version_publication`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_delete_cloud_space_version_publication`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/version-publications', 'DELETE',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1DeleteCloudSpaceVersionPublicationResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -2698,6 +3138,353 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def cloud_space_service_get_cloud_space_version_artifacts_page(self, project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1GetArtifactsPageResponse':  # noqa: E501
+        """cloud_space_service_get_cloud_space_version_artifacts_page  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_get_cloud_space_version_artifacts_page(project_id, cloud_space_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str id: (required)
+        :param str prefix:
+        :param str page_number:
+        :param bool include_download_url:
+        :param bool local_index:
+        :return: V1GetArtifactsPageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_get_cloud_space_version_artifacts_page_with_http_info(project_id, cloud_space_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_get_cloud_space_version_artifacts_page_with_http_info(project_id, cloud_space_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_get_cloud_space_version_artifacts_page_with_http_info(self, project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1GetArtifactsPageResponse':  # noqa: E501
+        """cloud_space_service_get_cloud_space_version_artifacts_page  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_get_cloud_space_version_artifacts_page_with_http_info(project_id, cloud_space_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str id: (required)
+        :param str prefix:
+        :param str page_number:
+        :param bool include_download_url:
+        :param bool local_index:
+        :return: V1GetArtifactsPageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'cloud_space_id', 'id', 'prefix', 'page_number', 'include_download_url', 'local_index']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_get_cloud_space_version_artifacts_page" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_get_cloud_space_version_artifacts_page`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_get_cloud_space_version_artifacts_page`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `cloud_space_service_get_cloud_space_version_artifacts_page`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'prefix' in params:
+            query_params.append(('prefix', params['prefix']))  # noqa: E501
+        if 'page_number' in params:
+            query_params.append(('pageNumber', params['page_number']))  # noqa: E501
+        if 'include_download_url' in params:
+            query_params.append(('includeDownloadUrl', params['include_download_url']))  # noqa: E501
+        if 'local_index' in params:
+            query_params.append(('localIndex', params['local_index']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/versions/{id}/artifact-page', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetArtifactsPageResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cloud_space_service_get_cloud_space_version_folder_index(self, project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1GetFolderIndexResponse':  # noqa: E501
+        """cloud_space_service_get_cloud_space_version_folder_index  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_get_cloud_space_version_folder_index(project_id, cloud_space_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str id: (required)
+        :param str prefix:
+        :param bool local_index:
+        :return: V1GetFolderIndexResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_get_cloud_space_version_folder_index_with_http_info(project_id, cloud_space_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_get_cloud_space_version_folder_index_with_http_info(project_id, cloud_space_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_get_cloud_space_version_folder_index_with_http_info(self, project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1GetFolderIndexResponse':  # noqa: E501
+        """cloud_space_service_get_cloud_space_version_folder_index  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_get_cloud_space_version_folder_index_with_http_info(project_id, cloud_space_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str id: (required)
+        :param str prefix:
+        :param bool local_index:
+        :return: V1GetFolderIndexResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'cloud_space_id', 'id', 'prefix', 'local_index']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_get_cloud_space_version_folder_index" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_get_cloud_space_version_folder_index`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_get_cloud_space_version_folder_index`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `cloud_space_service_get_cloud_space_version_folder_index`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'prefix' in params:
+            query_params.append(('prefix', params['prefix']))  # noqa: E501
+        if 'local_index' in params:
+            query_params.append(('localIndex', params['local_index']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/versions/{id}/folder-index', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetFolderIndexResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cloud_space_service_get_cloud_space_version_publication(self, project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
+        """cloud_space_service_get_cloud_space_version_publication  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_get_cloud_space_version_publication(project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str org_id:
+        :return: V1CloudSpaceVersionPublication
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_get_cloud_space_version_publication_with_http_info(project_id, cloud_space_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_get_cloud_space_version_publication_with_http_info(project_id, cloud_space_id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_get_cloud_space_version_publication_with_http_info(self, project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
+        """cloud_space_service_get_cloud_space_version_publication  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_get_cloud_space_version_publication_with_http_info(project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str org_id:
+        :return: V1CloudSpaceVersionPublication
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'cloud_space_id', 'org_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_get_cloud_space_version_publication" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_get_cloud_space_version_publication`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_get_cloud_space_version_publication`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/version-publication', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CloudSpaceVersionPublication',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def cloud_space_service_get_lightning_run(self, project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1LightningRun':  # noqa: E501
         """cloud_space_service_get_lightning_run  # noqa: E501
 
@@ -3935,6 +4722,216 @@ class CloudSpaceServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1ListCloudSpaceTagsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cloud_space_service_list_cloud_space_version_publications(self, project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1ListCloudSpaceVersionPublicationsResponse':  # noqa: E501
+        """cloud_space_service_list_cloud_space_version_publications  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_list_cloud_space_version_publications(project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :return: V1ListCloudSpaceVersionPublicationsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_list_cloud_space_version_publications_with_http_info(project_id, cloud_space_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_list_cloud_space_version_publications_with_http_info(project_id, cloud_space_id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_list_cloud_space_version_publications_with_http_info(self, project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1ListCloudSpaceVersionPublicationsResponse':  # noqa: E501
+        """cloud_space_service_list_cloud_space_version_publications  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_list_cloud_space_version_publications_with_http_info(project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :return: V1ListCloudSpaceVersionPublicationsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'cloud_space_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_list_cloud_space_version_publications" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_list_cloud_space_version_publications`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_list_cloud_space_version_publications`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/version-publications', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListCloudSpaceVersionPublicationsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cloud_space_service_list_cloud_space_versions(self, project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1ListCloudSpaceVersionsResponse':  # noqa: E501
+        """cloud_space_service_list_cloud_space_versions  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_list_cloud_space_versions(project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param bool draft:
+        :param str limit:
+        :return: V1ListCloudSpaceVersionsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_list_cloud_space_versions_with_http_info(project_id, cloud_space_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_list_cloud_space_versions_with_http_info(project_id, cloud_space_id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_list_cloud_space_versions_with_http_info(self, project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1ListCloudSpaceVersionsResponse':  # noqa: E501
+        """cloud_space_service_list_cloud_space_versions  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_list_cloud_space_versions_with_http_info(project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param bool draft:
+        :param str limit:
+        :return: V1ListCloudSpaceVersionsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'cloud_space_id', 'draft', 'limit']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_list_cloud_space_versions" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_list_cloud_space_versions`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_list_cloud_space_versions`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+
+        query_params = []
+        if 'draft' in params:
+            query_params.append(('draft', params['draft']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/versions', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListCloudSpaceVersionsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -5909,6 +6906,240 @@ class CloudSpaceServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1UpdateCloudSpacePublicationResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cloud_space_service_update_cloud_space_version(self, body: 'VersionsIdBody', project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
+        """cloud_space_service_update_cloud_space_version  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_update_cloud_space_version(body, project_id, cloud_space_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param VersionsIdBody body: (required)
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str id: (required)
+        :return: V1CloudSpaceVersion
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_update_cloud_space_version_with_http_info(body, project_id, cloud_space_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_update_cloud_space_version_with_http_info(body, project_id, cloud_space_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_update_cloud_space_version_with_http_info(self, body: 'VersionsIdBody', project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
+        """cloud_space_service_update_cloud_space_version  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_update_cloud_space_version_with_http_info(body, project_id, cloud_space_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param VersionsIdBody body: (required)
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :param str id: (required)
+        :return: V1CloudSpaceVersion
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'cloud_space_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_update_cloud_space_version" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `cloud_space_service_update_cloud_space_version`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_update_cloud_space_version`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_update_cloud_space_version`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `cloud_space_service_update_cloud_space_version`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/versions/{id}', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CloudSpaceVersion',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cloud_space_service_update_cloud_space_version_publication(self, body: 'CloudSpaceIdVersionpublicationsBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
+        """cloud_space_service_update_cloud_space_version_publication  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_update_cloud_space_version_publication(body, project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CloudSpaceIdVersionpublicationsBody body: (required)
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :return: V1CloudSpaceVersionPublication
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_update_cloud_space_version_publication_with_http_info(body, project_id, cloud_space_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_update_cloud_space_version_publication_with_http_info(body, project_id, cloud_space_id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_update_cloud_space_version_publication_with_http_info(self, body: 'CloudSpaceIdVersionpublicationsBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
+        """cloud_space_service_update_cloud_space_version_publication  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_update_cloud_space_version_publication_with_http_info(body, project_id, cloud_space_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CloudSpaceIdVersionpublicationsBody body: (required)
+        :param str project_id: (required)
+        :param str cloud_space_id: (required)
+        :return: V1CloudSpaceVersionPublication
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'cloud_space_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_update_cloud_space_version_publication" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `cloud_space_service_update_cloud_space_version_publication`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_update_cloud_space_version_publication`")  # noqa: E501
+        # verify the required parameter 'cloud_space_id' is set
+        if ('cloud_space_id' not in params or
+                params['cloud_space_id'] is None):
+            raise ValueError("Missing the required parameter `cloud_space_id` when calling `cloud_space_service_update_cloud_space_version_publication`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cloud_space_id' in params:
+            path_params['cloudSpaceId'] = params['cloud_space_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{cloudSpaceId}/version-publications', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CloudSpaceVersionPublication',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

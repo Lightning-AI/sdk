@@ -41,29 +41,55 @@ class V1UpdateBillingSubscriptionRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'billing_period': 'V1BillingPeriod',
         'org_id': 'str',
         'seats': 'int',
         'status': 'str'
     }
 
     attribute_map = {
+        'billing_period': 'billingPeriod',
         'org_id': 'orgId',
         'seats': 'seats',
         'status': 'status'
     }
 
-    def __init__(self, org_id: 'str' =None, seats: 'int' =None, status: 'str' =None):  # noqa: E501
+    def __init__(self, billing_period: 'V1BillingPeriod' =None, org_id: 'str' =None, seats: 'int' =None, status: 'str' =None):  # noqa: E501
         """V1UpdateBillingSubscriptionRequest - a model defined in Swagger"""  # noqa: E501
+        self._billing_period = None
         self._org_id = None
         self._seats = None
         self._status = None
         self.discriminator = None
+        if billing_period is not None:
+            self.billing_period = billing_period
         if org_id is not None:
             self.org_id = org_id
         if seats is not None:
             self.seats = seats
         if status is not None:
             self.status = status
+
+    @property
+    def billing_period(self) -> 'V1BillingPeriod':
+        """Gets the billing_period of this V1UpdateBillingSubscriptionRequest.  # noqa: E501
+
+
+        :return: The billing_period of this V1UpdateBillingSubscriptionRequest.  # noqa: E501
+        :rtype: V1BillingPeriod
+        """
+        return self._billing_period
+
+    @billing_period.setter
+    def billing_period(self, billing_period: 'V1BillingPeriod'):
+        """Sets the billing_period of this V1UpdateBillingSubscriptionRequest.
+
+
+        :param billing_period: The billing_period of this V1UpdateBillingSubscriptionRequest.  # noqa: E501
+        :type: V1BillingPeriod
+        """
+
+        self._billing_period = billing_period
 
     @property
     def org_id(self) -> 'str':

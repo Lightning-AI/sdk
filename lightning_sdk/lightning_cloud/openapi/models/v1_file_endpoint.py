@@ -43,11 +43,13 @@ class V1FileEndpoint(object):
     swagger_types = {
         'arguments': 'list[V1CommandArgument]',
         'cloudspace_id': 'str',
+        'cluster_id': 'str',
         'command': 'str',
         'function_name': 'str',
         'id': 'str',
         'method': 'str',
         'path': 'str',
+        'plugin_id': 'str',
         'project_id': 'str',
         'user_id': 'str'
     }
@@ -55,24 +57,28 @@ class V1FileEndpoint(object):
     attribute_map = {
         'arguments': 'arguments',
         'cloudspace_id': 'cloudspaceId',
+        'cluster_id': 'clusterId',
         'command': 'command',
         'function_name': 'functionName',
         'id': 'id',
         'method': 'method',
         'path': 'path',
+        'plugin_id': 'pluginId',
         'project_id': 'projectId',
         'user_id': 'userId'
     }
 
-    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, command: 'str' =None, function_name: 'str' =None, id: 'str' =None, method: 'str' =None, path: 'str' =None, project_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, function_name: 'str' =None, id: 'str' =None, method: 'str' =None, path: 'str' =None, plugin_id: 'str' =None, project_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1FileEndpoint - a model defined in Swagger"""  # noqa: E501
         self._arguments = None
         self._cloudspace_id = None
+        self._cluster_id = None
         self._command = None
         self._function_name = None
         self._id = None
         self._method = None
         self._path = None
+        self._plugin_id = None
         self._project_id = None
         self._user_id = None
         self.discriminator = None
@@ -80,6 +86,8 @@ class V1FileEndpoint(object):
             self.arguments = arguments
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if command is not None:
             self.command = command
         if function_name is not None:
@@ -90,6 +98,8 @@ class V1FileEndpoint(object):
             self.method = method
         if path is not None:
             self.path = path
+        if plugin_id is not None:
+            self.plugin_id = plugin_id
         if project_id is not None:
             self.project_id = project_id
         if user_id is not None:
@@ -136,6 +146,27 @@ class V1FileEndpoint(object):
         """
 
         self._cloudspace_id = cloudspace_id
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1FileEndpoint.  # noqa: E501
+
+
+        :return: The cluster_id of this V1FileEndpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1FileEndpoint.
+
+
+        :param cluster_id: The cluster_id of this V1FileEndpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def command(self) -> 'str':
@@ -241,6 +272,27 @@ class V1FileEndpoint(object):
         """
 
         self._path = path
+
+    @property
+    def plugin_id(self) -> 'str':
+        """Gets the plugin_id of this V1FileEndpoint.  # noqa: E501
+
+
+        :return: The plugin_id of this V1FileEndpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._plugin_id
+
+    @plugin_id.setter
+    def plugin_id(self, plugin_id: 'str'):
+        """Sets the plugin_id of this V1FileEndpoint.
+
+
+        :param plugin_id: The plugin_id of this V1FileEndpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._plugin_id = plugin_id
 
     @property
     def project_id(self) -> 'str':

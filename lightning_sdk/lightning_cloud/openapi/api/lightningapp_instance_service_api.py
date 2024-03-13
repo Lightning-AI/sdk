@@ -1223,8 +1223,9 @@ class LightningappInstanceServiceApi(object):
         :param str cluster_id:
         :param list[str] phase_in:
         :param list[str] phase_not_in:
-        :param str app_id:
+        :param str cloud_space_id:
         :param str release_id:
+        :param str source_app:
         :return: V1ListLightningappInstancesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1252,14 +1253,15 @@ class LightningappInstanceServiceApi(object):
         :param str cluster_id:
         :param list[str] phase_in:
         :param list[str] phase_not_in:
-        :param str app_id:
+        :param str cloud_space_id:
         :param str release_id:
+        :param str source_app:
         :return: V1ListLightningappInstancesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'page_token', 'limit', 'user_ids', 'cluster_id', 'phase_in', 'phase_not_in', 'app_id', 'release_id']  # noqa: E501
+        all_params = ['project_id', 'page_token', 'limit', 'user_ids', 'cluster_id', 'phase_in', 'phase_not_in', 'cloud_space_id', 'release_id', 'source_app']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1301,10 +1303,12 @@ class LightningappInstanceServiceApi(object):
         if 'phase_not_in' in params:
             query_params.append(('phaseNotIn', params['phase_not_in']))  # noqa: E501
             collection_formats['phaseNotIn'] = 'multi'  # noqa: E501
-        if 'app_id' in params:
-            query_params.append(('appId', params['app_id']))  # noqa: E501
+        if 'cloud_space_id' in params:
+            query_params.append(('cloudSpaceId', params['cloud_space_id']))  # noqa: E501
         if 'release_id' in params:
             query_params.append(('releaseId', params['release_id']))  # noqa: E501
+        if 'source_app' in params:
+            query_params.append(('sourceApp', params['source_app']))  # noqa: E501
 
         header_params = {}
 
