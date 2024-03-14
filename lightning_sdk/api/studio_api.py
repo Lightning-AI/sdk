@@ -15,7 +15,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
     IdCodeconfigBody,
     IdExecuteBody,
-    IdForkBody,
+    IdForkBody1,
     IdStartBody,
     ProjectIdCloudspacesBody,
     V1CloudSpace,
@@ -303,7 +303,7 @@ class StudioApi:
             init_kwargs["org"] = OrgApi()._get_org_by_id(target_teamspace.owner_id).name
 
         new_cloudspace = self._client.cloud_space_service_fork_cloud_space(
-            IdForkBody(target_project_id=target_teamspace_id), project_id=teamspace_id, id=studio_id
+            IdForkBody1(target_project_id=target_teamspace_id), project_id=teamspace_id, id=studio_id
         )
 
         while self.get_studio_by_id(new_cloudspace.id, target_teamspace_id).state != V1CloudSpaceState.READY:

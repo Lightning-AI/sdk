@@ -48,7 +48,7 @@ class ServiceexecutionIdBody(object):
         'file_endpoint_id': 'str',
         'file_endpoint_project_id': 'str',
         'pipeline_id': 'str',
-        'resource_id': 'str',
+        'result': 'str',
         'user_id': 'str'
     }
 
@@ -60,11 +60,11 @@ class ServiceexecutionIdBody(object):
         'file_endpoint_id': 'fileEndpointId',
         'file_endpoint_project_id': 'fileEndpointProjectId',
         'pipeline_id': 'pipelineId',
-        'resource_id': 'resourceId',
+        'result': 'result',
         'user_id': 'userId'
     }
 
-    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, download_ids: 'list[str]' =None, file_endpoint_id: 'str' =None, file_endpoint_project_id: 'str' =None, pipeline_id: 'str' =None, resource_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, download_ids: 'list[str]' =None, file_endpoint_id: 'str' =None, file_endpoint_project_id: 'str' =None, pipeline_id: 'str' =None, result: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """ServiceexecutionIdBody - a model defined in Swagger"""  # noqa: E501
         self._arguments = None
         self._cloudspace_id = None
@@ -73,7 +73,7 @@ class ServiceexecutionIdBody(object):
         self._file_endpoint_id = None
         self._file_endpoint_project_id = None
         self._pipeline_id = None
-        self._resource_id = None
+        self._result = None
         self._user_id = None
         self.discriminator = None
         if arguments is not None:
@@ -90,8 +90,8 @@ class ServiceexecutionIdBody(object):
             self.file_endpoint_project_id = file_endpoint_project_id
         if pipeline_id is not None:
             self.pipeline_id = pipeline_id
-        if resource_id is not None:
-            self.resource_id = resource_id
+        if result is not None:
+            self.result = result
         if user_id is not None:
             self.user_id = user_id
 
@@ -243,25 +243,25 @@ class ServiceexecutionIdBody(object):
         self._pipeline_id = pipeline_id
 
     @property
-    def resource_id(self) -> 'str':
-        """Gets the resource_id of this ServiceexecutionIdBody.  # noqa: E501
+    def result(self) -> 'str':
+        """Gets the result of this ServiceexecutionIdBody.  # noqa: E501
 
 
-        :return: The resource_id of this ServiceexecutionIdBody.  # noqa: E501
+        :return: The result of this ServiceexecutionIdBody.  # noqa: E501
         :rtype: str
         """
-        return self._resource_id
+        return self._result
 
-    @resource_id.setter
-    def resource_id(self, resource_id: 'str'):
-        """Sets the resource_id of this ServiceexecutionIdBody.
+    @result.setter
+    def result(self, result: 'str'):
+        """Sets the result of this ServiceexecutionIdBody.
 
 
-        :param resource_id: The resource_id of this ServiceexecutionIdBody.  # noqa: E501
+        :param result: The result of this ServiceexecutionIdBody.  # noqa: E501
         :type: str
         """
 
-        self._resource_id = resource_id
+        self._result = result
 
     @property
     def user_id(self) -> 'str':

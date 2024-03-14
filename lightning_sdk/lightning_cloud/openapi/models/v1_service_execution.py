@@ -50,7 +50,7 @@ class V1ServiceExecution(object):
         'id': 'str',
         'pipeline_id': 'str',
         'project_id': 'str',
-        'resource_id': 'str',
+        'result': 'str',
         'user_id': 'str'
     }
 
@@ -64,11 +64,11 @@ class V1ServiceExecution(object):
         'id': 'id',
         'pipeline_id': 'pipelineId',
         'project_id': 'projectId',
-        'resource_id': 'resourceId',
+        'result': 'result',
         'user_id': 'userId'
     }
 
-    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, download_ids: 'list[str]' =None, file_endpoint_id: 'str' =None, file_endpoint_project_id: 'str' =None, id: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, download_ids: 'list[str]' =None, file_endpoint_id: 'str' =None, file_endpoint_project_id: 'str' =None, id: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, result: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1ServiceExecution - a model defined in Swagger"""  # noqa: E501
         self._arguments = None
         self._cloudspace_id = None
@@ -79,7 +79,7 @@ class V1ServiceExecution(object):
         self._id = None
         self._pipeline_id = None
         self._project_id = None
-        self._resource_id = None
+        self._result = None
         self._user_id = None
         self.discriminator = None
         if arguments is not None:
@@ -100,8 +100,8 @@ class V1ServiceExecution(object):
             self.pipeline_id = pipeline_id
         if project_id is not None:
             self.project_id = project_id
-        if resource_id is not None:
-            self.resource_id = resource_id
+        if result is not None:
+            self.result = result
         if user_id is not None:
             self.user_id = user_id
 
@@ -295,25 +295,25 @@ class V1ServiceExecution(object):
         self._project_id = project_id
 
     @property
-    def resource_id(self) -> 'str':
-        """Gets the resource_id of this V1ServiceExecution.  # noqa: E501
+    def result(self) -> 'str':
+        """Gets the result of this V1ServiceExecution.  # noqa: E501
 
 
-        :return: The resource_id of this V1ServiceExecution.  # noqa: E501
+        :return: The result of this V1ServiceExecution.  # noqa: E501
         :rtype: str
         """
-        return self._resource_id
+        return self._result
 
-    @resource_id.setter
-    def resource_id(self, resource_id: 'str'):
-        """Sets the resource_id of this V1ServiceExecution.
+    @result.setter
+    def result(self, result: 'str'):
+        """Sets the result of this V1ServiceExecution.
 
 
-        :param resource_id: The resource_id of this V1ServiceExecution.  # noqa: E501
+        :param result: The result of this V1ServiceExecution.  # noqa: E501
         :type: str
         """
 
-        self._resource_id = resource_id
+        self._result = result
 
     @property
     def user_id(self) -> 'str':
