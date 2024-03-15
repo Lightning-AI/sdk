@@ -9,6 +9,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ServiceExecution,
     V1UploadServiceExecutionArtifactResponse,
     V1PresignedUrl,
+    V1GetServiceExecutionStatusResponse,
 )
 import pytest
 
@@ -41,6 +42,8 @@ def test_file_endpoint(monkeypatch):
 def test_file_endpoint_client(monkeypatch):
     lightning_client_mock = MagicMock()
     monkeypatch.setattr(file_endpoint_module, "LightningClient", MagicMock(return_value=lightning_client_mock))
+    monkeypatch.setattr(file_endpoint_module, "Auth", MagicMock())
+    monkeypatch.setattr(file_endpoint_module, "_get_project", MagicMock())
 
     requests_mock = MagicMock()
 
@@ -76,7 +79,11 @@ def test_file_endpoint_client(monkeypatch):
         V1UploadServiceExecutionArtifactResponse(upload_id=None, urls=[V1PresignedUrl(url="url")])
     )
 
-    client = Client(file_endpoint_teamspace_id="file_endpoint_teamspace_id", file_endpoint_id="file_endpoint_id")
+    lightning_client_mock.endpoint_service_get_service_execution_status.return_value = (
+        V1GetServiceExecutionStatusResponse(data={"phase": "COMPLETED"})
+    )
+
+    client = Client(id="file_endpoint_id")
 
     with pytest.raises(ValueError, match="This endpoint expects a value for the argument `image_size`."):
         client.run()

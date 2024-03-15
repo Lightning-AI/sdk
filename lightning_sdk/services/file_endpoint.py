@@ -1,3 +1,4 @@
+import json
 import os
 from time import sleep
 from typing import Any, Dict, Optional
@@ -5,6 +6,7 @@ from uuid import uuid4
 
 import requests
 
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     CommandArgumentCommandArgumentType,
     ProjectIdServiceexecutionBody,
@@ -12,6 +14,9 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.services.uploader import _ServiceFileUploader
+from lightning_sdk.services.utilities import _get_project
+from lightning_sdk.teamspace import Teamspace
+from lightning_sdk.utils import _resolve_teamspace
 
 _FILE_TO_UPLOADS_KEY = "files_to_upload"
 _DOWNLOAD_IDS_KEY = "download_ids"
@@ -177,25 +182,34 @@ class Client:
 
     def __init__(
         self,
-        file_endpoint_teamspace_id: str,
-        file_endpoint_id: str,
-        teamspace_id: Optional[str] = None,
+        id: str,  # noqa: A002
+        teamspace: Optional[str] = None,
     ) -> None:
         """Constructor of the FileEndpoint.
 
         Args:
-            file_endpoint_teamspace_id: The Teamspace Id of the Studio File Endpoint Service.
-            file_endpoint_id: The Id of the Studio File Endpoint Service.
-            teamspace_id: The Teamspace Id in usage.
+            id: The id of the Studio File Endpoint Service.
+            teamspace: The name of the Teamspace in which the Service
 
         """
-        self._teamspace_id = teamspace_id or os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
-        self._file_endpoint_teamspace_id = file_endpoint_teamspace_id
-        self._file_endpoint_id = file_endpoint_id
+        auth = Auth()
+
+        try:
+            auth.authenticate()
+        except ConnectionError as e:
+            raise e
+
+        self.id = id
+
         self._client = LightningClient()
-        self._file_endpoint = self._client.endpoint_service_get_file_endpoint(
-            project_id=file_endpoint_teamspace_id, id=self._file_endpoint_id
+        if teamspace is not None:
+            teamspace = _resolve_teamspace(teamspace, org=None, user=None)
+
+        self._teamspace_id = (
+            teamspace.id if isinstance(teamspace, Teamspace) else _get_project(client=self._client).project_id
         )
+
+        self._file_endpoint = self._client.endpoint_service_get_file_endpoint(project_id=self._teamspace_id, id=self.id)
         self._arguments = []
 
         for argument in self._file_endpoint.arguments:
@@ -204,12 +218,14 @@ class Client:
     def run(
         self,
         pipeline_id: Optional[str] = _LIGHTNING_SERVICES_PIPELINE_ID,
+        download_artifacts: bool = True,
         **kwargs: Dict[str, str],
     ) -> None:
         """The run method executes the file endpoint.
 
         Args:
             pipeline_id: The ID of the current pipeline
+            download_artifacts: Whether to download the artifacts associated to the service execution.
             kwargs: The keyword arguments associated to the service
 
         """
@@ -236,7 +252,7 @@ class Client:
         service_execution = self._client.endpoint_service_create_service_execution(
             project_id=self._teamspace_id,
             body=ProjectIdServiceexecutionBody(
-                file_endpoint_id=self._file_endpoint_id,
+                file_endpoint_id=self.id,
                 pipeline_id=pipeline_id,
                 arguments=[argument.to_openapi() for argument in self._arguments],
             ),
@@ -257,15 +273,48 @@ class Client:
             # TODO: Move the logic to use pre-defined pre-signed URLs
             _ServiceFileUploader(
                 client=self._client,
-                teamspace_id=self._file_endpoint_teamspace_id,
+                teamspace_id=self._teamspace_id,
                 service_execution_id=service_execution.id,
                 upload_id=upload_id,
                 file_path=argument.value,
                 progress_bar=True,
             )()
 
-        service_execution = self._client.endpoint_service_run_service_execution(
+        self._client.endpoint_service_run_service_execution(
             project_id=self._teamspace_id,
             id=service_execution.id,
             body={},
         )
+
+        sleep(1)
+
+        result = {}
+
+        while True:
+            service_execution_status = self._client.endpoint_service_get_service_execution_status(
+                project_id=self._teamspace_id,
+                id=service_execution.id,
+                body={},
+            )
+
+            if "phase" in service_execution_status.data:
+                phase = service_execution_status.data["phase"]
+
+                if "FAILED" in phase:
+                    print("Failed executing. Please, contact lightning.ai")
+                    raise ValueError(f"Failed executing {service_execution.id}. Please, contact lightning.ai")
+
+                if "COMPLETED" in phase:
+                    if "result" in service_execution_status.data:
+                        service_execution_status.data["result"] = json.loads(service_execution_status.data["result"])
+                    print(service_execution_status)
+                    break
+
+            print(service_execution_status)
+
+            sleep(3)
+
+        if download_artifacts and "result" in service_execution_status.data:
+            result = service_execution_status.data["result"]
+            for k, v in result.items():
+                print(k, v)

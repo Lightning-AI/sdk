@@ -84,6 +84,9 @@ extend-select = [
     "PYI",  # see: https://pypi.org/project/flake8-pyi/
 ]
 ignore = [
+    "D101",   # Missing docstring in public function
+    "D102",   # Missing docstring in public function
+    "D103",   # Missing docstring in public function
     "A003",   # Class attribute shadowing python builtin -> false positive
     "E731",   # Do not assign a lambda expression, use a def
     "D100",   # todo: Missing docstring in public module
