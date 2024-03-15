@@ -42,23 +42,28 @@ class IdForkBody1(object):
     """
     swagger_types = {
         'target_cluster_id': 'str',
-        'target_project_id': 'str'
+        'target_project_id': 'str',
+        'version_id': 'str'
     }
 
     attribute_map = {
         'target_cluster_id': 'targetClusterId',
-        'target_project_id': 'targetProjectId'
+        'target_project_id': 'targetProjectId',
+        'version_id': 'versionId'
     }
 
-    def __init__(self, target_cluster_id: 'str' =None, target_project_id: 'str' =None):  # noqa: E501
+    def __init__(self, target_cluster_id: 'str' =None, target_project_id: 'str' =None, version_id: 'str' =None):  # noqa: E501
         """IdForkBody1 - a model defined in Swagger"""  # noqa: E501
         self._target_cluster_id = None
         self._target_project_id = None
+        self._version_id = None
         self.discriminator = None
         if target_cluster_id is not None:
             self.target_cluster_id = target_cluster_id
         if target_project_id is not None:
             self.target_project_id = target_project_id
+        if version_id is not None:
+            self.version_id = version_id
 
     @property
     def target_cluster_id(self) -> 'str':
@@ -101,6 +106,27 @@ class IdForkBody1(object):
         """
 
         self._target_project_id = target_project_id
+
+    @property
+    def version_id(self) -> 'str':
+        """Gets the version_id of this IdForkBody1.  # noqa: E501
+
+
+        :return: The version_id of this IdForkBody1.  # noqa: E501
+        :rtype: str
+        """
+        return self._version_id
+
+    @version_id.setter
+    def version_id(self, version_id: 'str'):
+        """Sets the version_id of this IdForkBody1.
+
+
+        :param version_id: The version_id of this IdForkBody1.  # noqa: E501
+        :type: str
+        """
+
+        self._version_id = version_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
