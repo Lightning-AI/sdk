@@ -42,24 +42,29 @@ class AppsIdBody1(object):
     """
     swagger_types = {
         'cluster_id': 'str',
+        'keep_machines_after_stop': 'bool',
         'plugin_arguments': 'dict(str, str)',
         'source_app': 'str'
     }
 
     attribute_map = {
         'cluster_id': 'clusterId',
+        'keep_machines_after_stop': 'keepMachinesAfterStop',
         'plugin_arguments': 'pluginArguments',
         'source_app': 'sourceApp'
     }
 
-    def __init__(self, cluster_id: 'str' =None, plugin_arguments: 'dict(str, str)' =None, source_app: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, keep_machines_after_stop: 'bool' =None, plugin_arguments: 'dict(str, str)' =None, source_app: 'str' =None):  # noqa: E501
         """AppsIdBody1 - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
+        self._keep_machines_after_stop = None
         self._plugin_arguments = None
         self._source_app = None
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if keep_machines_after_stop is not None:
+            self.keep_machines_after_stop = keep_machines_after_stop
         if plugin_arguments is not None:
             self.plugin_arguments = plugin_arguments
         if source_app is not None:
@@ -85,6 +90,27 @@ class AppsIdBody1(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def keep_machines_after_stop(self) -> 'bool':
+        """Gets the keep_machines_after_stop of this AppsIdBody1.  # noqa: E501
+
+
+        :return: The keep_machines_after_stop of this AppsIdBody1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._keep_machines_after_stop
+
+    @keep_machines_after_stop.setter
+    def keep_machines_after_stop(self, keep_machines_after_stop: 'bool'):
+        """Sets the keep_machines_after_stop of this AppsIdBody1.
+
+
+        :param keep_machines_after_stop: The keep_machines_after_stop of this AppsIdBody1.  # noqa: E501
+        :type: bool
+        """
+
+        self._keep_machines_after_stop = keep_machines_after_stop
 
     @property
     def plugin_arguments(self) -> 'dict(str, str)':

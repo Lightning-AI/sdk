@@ -59,12 +59,16 @@ class V1LightningappInstanceSpec(object):
         'is_app_private': 'bool',
         'is_code_private': 'bool',
         'is_headless': 'bool',
+        'keep_machines_after_stop': 'bool',
+        'machines_reservation_time_minutes': 'str',
         'network_config': 'list[V1NetworkConfig]',
         'pause_automation': 'bool',
+        'ports': 'list[str]',
         'queue_server_type': 'V1QueueServerType',
         'redis_token': 'str',
         'release_id': 'str',
         'restart_policy': 'V1LightningappRestartPolicy',
+        'service_id': 'str',
         'should_mount_cloudspace_content': 'bool',
         'source_app': 'str',
         'source_code_url': 'str',
@@ -92,12 +96,16 @@ class V1LightningappInstanceSpec(object):
         'is_app_private': 'isAppPrivate',
         'is_code_private': 'isCodePrivate',
         'is_headless': 'isHeadless',
+        'keep_machines_after_stop': 'keepMachinesAfterStop',
+        'machines_reservation_time_minutes': 'machinesReservationTimeMinutes',
         'network_config': 'networkConfig',
         'pause_automation': 'pauseAutomation',
+        'ports': 'ports',
         'queue_server_type': 'queueServerType',
         'redis_token': 'redisToken',
         'release_id': 'releaseId',
         'restart_policy': 'restartPolicy',
+        'service_id': 'serviceId',
         'should_mount_cloudspace_content': 'shouldMountCloudspaceContent',
         'source_app': 'sourceApp',
         'source_code_url': 'sourceCodeUrl',
@@ -106,7 +114,7 @@ class V1LightningappInstanceSpec(object):
         'version': 'version'
     }
 
-    def __init__(self, app_entrypoint_file: 'str' =None, artifact_storage_uri: 'str' =None, auth: 'V1LightningAuth' =None, can_download_source_code: 'bool' =None, cloud_space_id: 'str' =None, cluster_driver: 'V1LightningappClusterDriver' =None, cluster_id: 'str' =None, compute_config: 'V1ComputeConfig' =None, dependency_cache_key: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, domain: 'str' =None, enable_app_server: 'bool' =None, env: 'list[V1EnvVar]' =None, flow_servers: 'list[V1Flowserver]' =None, image_spec: 'V1ImageSpec' =None, is_app_private: 'bool' =None, is_code_private: 'bool' =None, is_headless: 'bool' =None, network_config: 'list[V1NetworkConfig]' =None, pause_automation: 'bool' =None, queue_server_type: 'V1QueueServerType' =None, redis_token: 'str' =None, release_id: 'str' =None, restart_policy: 'V1LightningappRestartPolicy' =None, should_mount_cloudspace_content: 'bool' =None, source_app: 'str' =None, source_code_url: 'str' =None, user_id: 'str' =None, user_requested_flow_compute_config: 'V1UserRequestedFlowComputeConfig' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, app_entrypoint_file: 'str' =None, artifact_storage_uri: 'str' =None, auth: 'V1LightningAuth' =None, can_download_source_code: 'bool' =None, cloud_space_id: 'str' =None, cluster_driver: 'V1LightningappClusterDriver' =None, cluster_id: 'str' =None, compute_config: 'V1ComputeConfig' =None, dependency_cache_key: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, domain: 'str' =None, enable_app_server: 'bool' =None, env: 'list[V1EnvVar]' =None, flow_servers: 'list[V1Flowserver]' =None, image_spec: 'V1ImageSpec' =None, is_app_private: 'bool' =None, is_code_private: 'bool' =None, is_headless: 'bool' =None, keep_machines_after_stop: 'bool' =None, machines_reservation_time_minutes: 'str' =None, network_config: 'list[V1NetworkConfig]' =None, pause_automation: 'bool' =None, ports: 'list[str]' =None, queue_server_type: 'V1QueueServerType' =None, redis_token: 'str' =None, release_id: 'str' =None, restart_policy: 'V1LightningappRestartPolicy' =None, service_id: 'str' =None, should_mount_cloudspace_content: 'bool' =None, source_app: 'str' =None, source_code_url: 'str' =None, user_id: 'str' =None, user_requested_flow_compute_config: 'V1UserRequestedFlowComputeConfig' =None, version: 'str' =None):  # noqa: E501
         """V1LightningappInstanceSpec - a model defined in Swagger"""  # noqa: E501
         self._app_entrypoint_file = None
         self._artifact_storage_uri = None
@@ -126,12 +134,16 @@ class V1LightningappInstanceSpec(object):
         self._is_app_private = None
         self._is_code_private = None
         self._is_headless = None
+        self._keep_machines_after_stop = None
+        self._machines_reservation_time_minutes = None
         self._network_config = None
         self._pause_automation = None
+        self._ports = None
         self._queue_server_type = None
         self._redis_token = None
         self._release_id = None
         self._restart_policy = None
+        self._service_id = None
         self._should_mount_cloudspace_content = None
         self._source_app = None
         self._source_code_url = None
@@ -175,10 +187,16 @@ class V1LightningappInstanceSpec(object):
             self.is_code_private = is_code_private
         if is_headless is not None:
             self.is_headless = is_headless
+        if keep_machines_after_stop is not None:
+            self.keep_machines_after_stop = keep_machines_after_stop
+        if machines_reservation_time_minutes is not None:
+            self.machines_reservation_time_minutes = machines_reservation_time_minutes
         if network_config is not None:
             self.network_config = network_config
         if pause_automation is not None:
             self.pause_automation = pause_automation
+        if ports is not None:
+            self.ports = ports
         if queue_server_type is not None:
             self.queue_server_type = queue_server_type
         if redis_token is not None:
@@ -187,6 +205,8 @@ class V1LightningappInstanceSpec(object):
             self.release_id = release_id
         if restart_policy is not None:
             self.restart_policy = restart_policy
+        if service_id is not None:
+            self.service_id = service_id
         if should_mount_cloudspace_content is not None:
             self.should_mount_cloudspace_content = should_mount_cloudspace_content
         if source_app is not None:
@@ -581,6 +601,48 @@ class V1LightningappInstanceSpec(object):
         self._is_headless = is_headless
 
     @property
+    def keep_machines_after_stop(self) -> 'bool':
+        """Gets the keep_machines_after_stop of this V1LightningappInstanceSpec.  # noqa: E501
+
+
+        :return: The keep_machines_after_stop of this V1LightningappInstanceSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._keep_machines_after_stop
+
+    @keep_machines_after_stop.setter
+    def keep_machines_after_stop(self, keep_machines_after_stop: 'bool'):
+        """Sets the keep_machines_after_stop of this V1LightningappInstanceSpec.
+
+
+        :param keep_machines_after_stop: The keep_machines_after_stop of this V1LightningappInstanceSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._keep_machines_after_stop = keep_machines_after_stop
+
+    @property
+    def machines_reservation_time_minutes(self) -> 'str':
+        """Gets the machines_reservation_time_minutes of this V1LightningappInstanceSpec.  # noqa: E501
+
+
+        :return: The machines_reservation_time_minutes of this V1LightningappInstanceSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._machines_reservation_time_minutes
+
+    @machines_reservation_time_minutes.setter
+    def machines_reservation_time_minutes(self, machines_reservation_time_minutes: 'str'):
+        """Sets the machines_reservation_time_minutes of this V1LightningappInstanceSpec.
+
+
+        :param machines_reservation_time_minutes: The machines_reservation_time_minutes of this V1LightningappInstanceSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._machines_reservation_time_minutes = machines_reservation_time_minutes
+
+    @property
     def network_config(self) -> 'list[V1NetworkConfig]':
         """Gets the network_config of this V1LightningappInstanceSpec.  # noqa: E501
 
@@ -621,6 +683,27 @@ class V1LightningappInstanceSpec(object):
         """
 
         self._pause_automation = pause_automation
+
+    @property
+    def ports(self) -> 'list[str]':
+        """Gets the ports of this V1LightningappInstanceSpec.  # noqa: E501
+
+
+        :return: The ports of this V1LightningappInstanceSpec.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._ports
+
+    @ports.setter
+    def ports(self, ports: 'list[str]'):
+        """Sets the ports of this V1LightningappInstanceSpec.
+
+
+        :param ports: The ports of this V1LightningappInstanceSpec.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._ports = ports
 
     @property
     def queue_server_type(self) -> 'V1QueueServerType':
@@ -705,6 +788,27 @@ class V1LightningappInstanceSpec(object):
         """
 
         self._restart_policy = restart_policy
+
+    @property
+    def service_id(self) -> 'str':
+        """Gets the service_id of this V1LightningappInstanceSpec.  # noqa: E501
+
+
+        :return: The service_id of this V1LightningappInstanceSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._service_id
+
+    @service_id.setter
+    def service_id(self, service_id: 'str'):
+        """Sets the service_id of this V1LightningappInstanceSpec.
+
+
+        :param service_id: The service_id of this V1LightningappInstanceSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._service_id = service_id
 
     @property
     def should_mount_cloudspace_content(self) -> 'bool':

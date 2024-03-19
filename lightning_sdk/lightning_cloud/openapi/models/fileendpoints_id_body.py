@@ -45,10 +45,13 @@ class FileendpointsIdBody(object):
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'command': 'str',
+        'description': 'str',
         'function_name': 'str',
         'method': 'str',
         'path': 'str',
         'plugin_id': 'str',
+        'project_owner_name': 'str',
+        'published': 'bool',
         'user_id': 'str'
     }
 
@@ -57,23 +60,29 @@ class FileendpointsIdBody(object):
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'command': 'command',
+        'description': 'description',
         'function_name': 'functionName',
         'method': 'method',
         'path': 'path',
         'plugin_id': 'pluginId',
+        'project_owner_name': 'projectOwnerName',
+        'published': 'published',
         'user_id': 'userId'
     }
 
-    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, function_name: 'str' =None, method: 'str' =None, path: 'str' =None, plugin_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, description: 'str' =None, function_name: 'str' =None, method: 'str' =None, path: 'str' =None, plugin_id: 'str' =None, project_owner_name: 'str' =None, published: 'bool' =None, user_id: 'str' =None):  # noqa: E501
         """FileendpointsIdBody - a model defined in Swagger"""  # noqa: E501
         self._arguments = None
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
+        self._description = None
         self._function_name = None
         self._method = None
         self._path = None
         self._plugin_id = None
+        self._project_owner_name = None
+        self._published = None
         self._user_id = None
         self.discriminator = None
         if arguments is not None:
@@ -84,6 +93,8 @@ class FileendpointsIdBody(object):
             self.cluster_id = cluster_id
         if command is not None:
             self.command = command
+        if description is not None:
+            self.description = description
         if function_name is not None:
             self.function_name = function_name
         if method is not None:
@@ -92,6 +103,10 @@ class FileendpointsIdBody(object):
             self.path = path
         if plugin_id is not None:
             self.plugin_id = plugin_id
+        if project_owner_name is not None:
+            self.project_owner_name = project_owner_name
+        if published is not None:
+            self.published = published
         if user_id is not None:
             self.user_id = user_id
 
@@ -180,6 +195,27 @@ class FileendpointsIdBody(object):
         self._command = command
 
     @property
+    def description(self) -> 'str':
+        """Gets the description of this FileendpointsIdBody.  # noqa: E501
+
+
+        :return: The description of this FileendpointsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description: 'str'):
+        """Sets the description of this FileendpointsIdBody.
+
+
+        :param description: The description of this FileendpointsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
+
+    @property
     def function_name(self) -> 'str':
         """Gets the function_name of this FileendpointsIdBody.  # noqa: E501
 
@@ -262,6 +298,48 @@ class FileendpointsIdBody(object):
         """
 
         self._plugin_id = plugin_id
+
+    @property
+    def project_owner_name(self) -> 'str':
+        """Gets the project_owner_name of this FileendpointsIdBody.  # noqa: E501
+
+
+        :return: The project_owner_name of this FileendpointsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_owner_name
+
+    @project_owner_name.setter
+    def project_owner_name(self, project_owner_name: 'str'):
+        """Sets the project_owner_name of this FileendpointsIdBody.
+
+
+        :param project_owner_name: The project_owner_name of this FileendpointsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._project_owner_name = project_owner_name
+
+    @property
+    def published(self) -> 'bool':
+        """Gets the published of this FileendpointsIdBody.  # noqa: E501
+
+
+        :return: The published of this FileendpointsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._published
+
+    @published.setter
+    def published(self, published: 'bool'):
+        """Sets the published of this FileendpointsIdBody.
+
+
+        :param published: The published of this FileendpointsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._published = published
 
     @property
     def user_id(self) -> 'str':

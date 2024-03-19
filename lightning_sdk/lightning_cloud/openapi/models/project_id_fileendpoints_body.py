@@ -45,6 +45,7 @@ class ProjectIdFileendpointsBody(object):
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'command': 'str',
+        'description': 'str',
         'function_name': 'str',
         'method': 'str',
         'path': 'str',
@@ -57,6 +58,7 @@ class ProjectIdFileendpointsBody(object):
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'command': 'command',
+        'description': 'description',
         'function_name': 'functionName',
         'method': 'method',
         'path': 'path',
@@ -64,12 +66,13 @@ class ProjectIdFileendpointsBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, function_name: 'str' =None, method: 'str' =None, path: 'str' =None, plugin_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, description: 'str' =None, function_name: 'str' =None, method: 'str' =None, path: 'str' =None, plugin_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """ProjectIdFileendpointsBody - a model defined in Swagger"""  # noqa: E501
         self._arguments = None
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
+        self._description = None
         self._function_name = None
         self._method = None
         self._path = None
@@ -84,6 +87,8 @@ class ProjectIdFileendpointsBody(object):
             self.cluster_id = cluster_id
         if command is not None:
             self.command = command
+        if description is not None:
+            self.description = description
         if function_name is not None:
             self.function_name = function_name
         if method is not None:
@@ -178,6 +183,27 @@ class ProjectIdFileendpointsBody(object):
         """
 
         self._command = command
+
+    @property
+    def description(self) -> 'str':
+        """Gets the description of this ProjectIdFileendpointsBody.  # noqa: E501
+
+
+        :return: The description of this ProjectIdFileendpointsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description: 'str'):
+        """Sets the description of this ProjectIdFileendpointsBody.
+
+
+        :param description: The description of this ProjectIdFileendpointsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
 
     @property
     def function_name(self) -> 'str':

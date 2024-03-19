@@ -47,6 +47,7 @@ class IdGetBody1(object):
         'display_name': 'str',
         'domain': 'str',
         'env': 'list[V1EnvVar]',
+        'keep_machines_after_stop': 'bool',
         'name': 'str',
         'queue_server_type': 'V1QueueServerType',
         'source_app': 'str'
@@ -59,12 +60,13 @@ class IdGetBody1(object):
         'display_name': 'displayName',
         'domain': 'domain',
         'env': 'env',
+        'keep_machines_after_stop': 'keepMachinesAfterStop',
         'name': 'name',
         'queue_server_type': 'queueServerType',
         'source_app': 'sourceApp'
     }
 
-    def __init__(self, auth: 'V1LightningAuth' =None, cluster_id: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, display_name: 'str' =None, domain: 'str' =None, env: 'list[V1EnvVar]' =None, name: 'str' =None, queue_server_type: 'V1QueueServerType' =None, source_app: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1LightningAuth' =None, cluster_id: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, display_name: 'str' =None, domain: 'str' =None, env: 'list[V1EnvVar]' =None, keep_machines_after_stop: 'bool' =None, name: 'str' =None, queue_server_type: 'V1QueueServerType' =None, source_app: 'str' =None):  # noqa: E501
         """IdGetBody1 - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cluster_id = None
@@ -72,6 +74,7 @@ class IdGetBody1(object):
         self._display_name = None
         self._domain = None
         self._env = None
+        self._keep_machines_after_stop = None
         self._name = None
         self._queue_server_type = None
         self._source_app = None
@@ -88,6 +91,8 @@ class IdGetBody1(object):
             self.domain = domain
         if env is not None:
             self.env = env
+        if keep_machines_after_stop is not None:
+            self.keep_machines_after_stop = keep_machines_after_stop
         if name is not None:
             self.name = name
         if queue_server_type is not None:
@@ -222,6 +227,27 @@ class IdGetBody1(object):
         """
 
         self._env = env
+
+    @property
+    def keep_machines_after_stop(self) -> 'bool':
+        """Gets the keep_machines_after_stop of this IdGetBody1.  # noqa: E501
+
+
+        :return: The keep_machines_after_stop of this IdGetBody1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._keep_machines_after_stop
+
+    @keep_machines_after_stop.setter
+    def keep_machines_after_stop(self, keep_machines_after_stop: 'bool'):
+        """Sets the keep_machines_after_stop of this IdGetBody1.
+
+
+        :param keep_machines_after_stop: The keep_machines_after_stop of this IdGetBody1.  # noqa: E501
+        :type: bool
+        """
+
+        self._keep_machines_after_stop = keep_machines_after_stop
 
     @property
     def name(self) -> 'str':

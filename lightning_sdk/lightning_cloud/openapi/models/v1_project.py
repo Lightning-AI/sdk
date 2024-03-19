@@ -43,9 +43,11 @@ class V1Project(object):
     swagger_types = {
         'abac_enabled': 'bool',
         'created_at': 'datetime',
+        'creator_id': 'str',
         'description': 'str',
         'display_name': 'str',
         'id': 'str',
+        'is_default': 'bool',
         'name': 'str',
         'owner_id': 'str',
         'owner_type': 'V1OwnerType',
@@ -58,9 +60,11 @@ class V1Project(object):
     attribute_map = {
         'abac_enabled': 'abacEnabled',
         'created_at': 'createdAt',
+        'creator_id': 'creatorId',
         'description': 'description',
         'display_name': 'displayName',
         'id': 'id',
+        'is_default': 'isDefault',
         'name': 'name',
         'owner_id': 'ownerId',
         'owner_type': 'ownerType',
@@ -70,13 +74,15 @@ class V1Project(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, is_default: 'bool' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Project - a model defined in Swagger"""  # noqa: E501
         self._abac_enabled = None
         self._created_at = None
+        self._creator_id = None
         self._description = None
         self._display_name = None
         self._id = None
+        self._is_default = None
         self._name = None
         self._owner_id = None
         self._owner_type = None
@@ -89,12 +95,16 @@ class V1Project(object):
             self.abac_enabled = abac_enabled
         if created_at is not None:
             self.created_at = created_at
+        if creator_id is not None:
+            self.creator_id = creator_id
         if description is not None:
             self.description = description
         if display_name is not None:
             self.display_name = display_name
         if id is not None:
             self.id = id
+        if is_default is not None:
+            self.is_default = is_default
         if name is not None:
             self.name = name
         if owner_id is not None:
@@ -151,6 +161,27 @@ class V1Project(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def creator_id(self) -> 'str':
+        """Gets the creator_id of this V1Project.  # noqa: E501
+
+
+        :return: The creator_id of this V1Project.  # noqa: E501
+        :rtype: str
+        """
+        return self._creator_id
+
+    @creator_id.setter
+    def creator_id(self, creator_id: 'str'):
+        """Sets the creator_id of this V1Project.
+
+
+        :param creator_id: The creator_id of this V1Project.  # noqa: E501
+        :type: str
+        """
+
+        self._creator_id = creator_id
 
     @property
     def description(self) -> 'str':
@@ -214,6 +245,27 @@ class V1Project(object):
         """
 
         self._id = id
+
+    @property
+    def is_default(self) -> 'bool':
+        """Gets the is_default of this V1Project.  # noqa: E501
+
+
+        :return: The is_default of this V1Project.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_default
+
+    @is_default.setter
+    def is_default(self, is_default: 'bool'):
+        """Sets the is_default of this V1Project.
+
+
+        :param is_default: The is_default of this V1Project.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_default = is_default
 
     @property
     def name(self) -> 'str':

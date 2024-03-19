@@ -62,7 +62,6 @@ class V1UserFeatures(object):
         'jobs_init': 'bool',
         'kms': 'bool',
         'landing_studios': 'bool',
-        'launch_job_with_sleeping_studio': 'bool',
         'mmt_app': 'bool',
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
@@ -120,7 +119,6 @@ class V1UserFeatures(object):
         'jobs_init': 'jobsInit',
         'kms': 'kms',
         'landing_studios': 'landingStudios',
-        'launch_job_with_sleeping_studio': 'launchJobWithSleepingStudio',
         'mmt_app': 'mmtApp',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
@@ -156,7 +154,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, kms: 'bool' =None, landing_studios: 'bool' =None, launch_job_with_sleeping_studio: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, reusable_job_machines: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, kms: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, reusable_job_machines: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._apt_get_v2 = None
         self._aws_trainium = None
@@ -179,7 +177,6 @@ class V1UserFeatures(object):
         self._jobs_init = None
         self._kms = None
         self._landing_studios = None
-        self._launch_job_with_sleeping_studio = None
         self._mmt_app = None
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
@@ -256,8 +253,6 @@ class V1UserFeatures(object):
             self.kms = kms
         if landing_studios is not None:
             self.landing_studios = landing_studios
-        if launch_job_with_sleeping_studio is not None:
-            self.launch_job_with_sleeping_studio = launch_job_with_sleeping_studio
         if mmt_app is not None:
             self.mmt_app = mmt_app
         if mmt_strategy_selector is not None:
@@ -765,27 +760,6 @@ class V1UserFeatures(object):
         """
 
         self._landing_studios = landing_studios
-
-    @property
-    def launch_job_with_sleeping_studio(self) -> 'bool':
-        """Gets the launch_job_with_sleeping_studio of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The launch_job_with_sleeping_studio of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._launch_job_with_sleeping_studio
-
-    @launch_job_with_sleeping_studio.setter
-    def launch_job_with_sleeping_studio(self, launch_job_with_sleeping_studio: 'bool'):
-        """Sets the launch_job_with_sleeping_studio of this V1UserFeatures.
-
-
-        :param launch_job_with_sleeping_studio: The launch_job_with_sleeping_studio of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._launch_job_with_sleeping_studio = launch_job_with_sleeping_studio
 
     @property
     def mmt_app(self) -> 'bool':

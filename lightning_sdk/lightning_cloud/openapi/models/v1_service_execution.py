@@ -42,54 +42,51 @@ class V1ServiceExecution(object):
     """
     swagger_types = {
         'arguments': 'list[V1CommandArgument]',
+        'artifacts': 'list[V1ServiceArtifact]',
         'cloudspace_id': 'str',
         'cluster_id': 'str',
-        'download_ids': 'list[str]',
         'file_endpoint_id': 'str',
         'file_endpoint_project_id': 'str',
         'id': 'str',
         'pipeline_id': 'str',
         'project_id': 'str',
-        'result': 'str',
         'user_id': 'str'
     }
 
     attribute_map = {
         'arguments': 'arguments',
+        'artifacts': 'artifacts',
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
-        'download_ids': 'downloadIds',
         'file_endpoint_id': 'fileEndpointId',
         'file_endpoint_project_id': 'fileEndpointProjectId',
         'id': 'id',
         'pipeline_id': 'pipelineId',
         'project_id': 'projectId',
-        'result': 'result',
         'user_id': 'userId'
     }
 
-    def __init__(self, arguments: 'list[V1CommandArgument]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, download_ids: 'list[str]' =None, file_endpoint_id: 'str' =None, file_endpoint_project_id: 'str' =None, id: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, result: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, arguments: 'list[V1CommandArgument]' =None, artifacts: 'list[V1ServiceArtifact]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, file_endpoint_id: 'str' =None, file_endpoint_project_id: 'str' =None, id: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1ServiceExecution - a model defined in Swagger"""  # noqa: E501
         self._arguments = None
+        self._artifacts = None
         self._cloudspace_id = None
         self._cluster_id = None
-        self._download_ids = None
         self._file_endpoint_id = None
         self._file_endpoint_project_id = None
         self._id = None
         self._pipeline_id = None
         self._project_id = None
-        self._result = None
         self._user_id = None
         self.discriminator = None
         if arguments is not None:
             self.arguments = arguments
+        if artifacts is not None:
+            self.artifacts = artifacts
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
-        if download_ids is not None:
-            self.download_ids = download_ids
         if file_endpoint_id is not None:
             self.file_endpoint_id = file_endpoint_id
         if file_endpoint_project_id is not None:
@@ -100,8 +97,6 @@ class V1ServiceExecution(object):
             self.pipeline_id = pipeline_id
         if project_id is not None:
             self.project_id = project_id
-        if result is not None:
-            self.result = result
         if user_id is not None:
             self.user_id = user_id
 
@@ -125,6 +120,27 @@ class V1ServiceExecution(object):
         """
 
         self._arguments = arguments
+
+    @property
+    def artifacts(self) -> 'list[V1ServiceArtifact]':
+        """Gets the artifacts of this V1ServiceExecution.  # noqa: E501
+
+
+        :return: The artifacts of this V1ServiceExecution.  # noqa: E501
+        :rtype: list[V1ServiceArtifact]
+        """
+        return self._artifacts
+
+    @artifacts.setter
+    def artifacts(self, artifacts: 'list[V1ServiceArtifact]'):
+        """Sets the artifacts of this V1ServiceExecution.
+
+
+        :param artifacts: The artifacts of this V1ServiceExecution.  # noqa: E501
+        :type: list[V1ServiceArtifact]
+        """
+
+        self._artifacts = artifacts
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -167,27 +183,6 @@ class V1ServiceExecution(object):
         """
 
         self._cluster_id = cluster_id
-
-    @property
-    def download_ids(self) -> 'list[str]':
-        """Gets the download_ids of this V1ServiceExecution.  # noqa: E501
-
-
-        :return: The download_ids of this V1ServiceExecution.  # noqa: E501
-        :rtype: list[str]
-        """
-        return self._download_ids
-
-    @download_ids.setter
-    def download_ids(self, download_ids: 'list[str]'):
-        """Sets the download_ids of this V1ServiceExecution.
-
-
-        :param download_ids: The download_ids of this V1ServiceExecution.  # noqa: E501
-        :type: list[str]
-        """
-
-        self._download_ids = download_ids
 
     @property
     def file_endpoint_id(self) -> 'str':
@@ -293,27 +288,6 @@ class V1ServiceExecution(object):
         """
 
         self._project_id = project_id
-
-    @property
-    def result(self) -> 'str':
-        """Gets the result of this V1ServiceExecution.  # noqa: E501
-
-
-        :return: The result of this V1ServiceExecution.  # noqa: E501
-        :rtype: str
-        """
-        return self._result
-
-    @result.setter
-    def result(self, result: 'str'):
-        """Sets the result of this V1ServiceExecution.
-
-
-        :param result: The result of this V1ServiceExecution.  # noqa: E501
-        :type: str
-        """
-
-        self._result = result
 
     @property
     def user_id(self) -> 'str':

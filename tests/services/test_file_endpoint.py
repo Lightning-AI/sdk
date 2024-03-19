@@ -80,7 +80,7 @@ def test_file_endpoint_client(monkeypatch):
     )
 
     lightning_client_mock.endpoint_service_get_service_execution_status.return_value = (
-        V1GetServiceExecutionStatusResponse(data={"phase": "COMPLETED"})
+        V1GetServiceExecutionStatusResponse(phase="COMPLETED")
     )
 
     client = Client(id="file_endpoint_id")

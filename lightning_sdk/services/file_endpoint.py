@@ -1,4 +1,3 @@
-import json
 import os
 from time import sleep
 from typing import Any, Dict, Optional
@@ -218,14 +217,12 @@ class Client:
     def run(
         self,
         pipeline_id: Optional[str] = _LIGHTNING_SERVICES_PIPELINE_ID,
-        download_artifacts: bool = True,
         **kwargs: Dict[str, str],
     ) -> None:
         """The run method executes the file endpoint.
 
         Args:
             pipeline_id: The ID of the current pipeline
-            download_artifacts: Whether to download the artifacts associated to the service execution.
             kwargs: The keyword arguments associated to the service
 
         """
@@ -288,8 +285,6 @@ class Client:
 
         sleep(1)
 
-        result = {}
-
         while True:
             service_execution_status = self._client.endpoint_service_get_service_execution_status(
                 project_id=self._teamspace_id,
@@ -297,24 +292,14 @@ class Client:
                 body={},
             )
 
-            if "phase" in service_execution_status.data:
-                phase = service_execution_status.data["phase"]
+            if "FAILED" in service_execution_status.phase:
+                print("Failed executing. Please, contact lightning.ai")
+                raise ValueError(f"Failed executing {service_execution.id}. Please, contact lightning.ai")
 
-                if "FAILED" in phase:
-                    print("Failed executing. Please, contact lightning.ai")
-                    raise ValueError(f"Failed executing {service_execution.id}. Please, contact lightning.ai")
-
-                if "COMPLETED" in phase:
-                    if "result" in service_execution_status.data:
-                        service_execution_status.data["result"] = json.loads(service_execution_status.data["result"])
-                    print(service_execution_status)
-                    break
+            if "COMPLETED" in service_execution_status.phase:
+                print(service_execution_status)
+                break
 
             print(service_execution_status)
 
             sleep(3)
-
-        if download_artifacts and "result" in service_execution_status.data:
-            result = service_execution_status.data["result"]
-            for k, v in result.items():
-                print(k, v)

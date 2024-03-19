@@ -41,39 +41,96 @@ class V1CommandArgument(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'defaults': 'list[str]',
+        'description': 'str',
         'id': 'str',
         'name': 'str',
         'ready': 'bool',
+        'required': 'bool',
         'type': 'CommandArgumentCommandArgumentType',
         'value': 'str'
     }
 
     attribute_map = {
+        'defaults': 'defaults',
+        'description': 'description',
         'id': 'id',
         'name': 'name',
         'ready': 'ready',
+        'required': 'required',
         'type': 'type',
         'value': 'value'
     }
 
-    def __init__(self, id: 'str' =None, name: 'str' =None, ready: 'bool' =None, type: 'CommandArgumentCommandArgumentType' =None, value: 'str' =None):  # noqa: E501
+    def __init__(self, defaults: 'list[str]' =None, description: 'str' =None, id: 'str' =None, name: 'str' =None, ready: 'bool' =None, required: 'bool' =None, type: 'CommandArgumentCommandArgumentType' =None, value: 'str' =None):  # noqa: E501
         """V1CommandArgument - a model defined in Swagger"""  # noqa: E501
+        self._defaults = None
+        self._description = None
         self._id = None
         self._name = None
         self._ready = None
+        self._required = None
         self._type = None
         self._value = None
         self.discriminator = None
+        if defaults is not None:
+            self.defaults = defaults
+        if description is not None:
+            self.description = description
         if id is not None:
             self.id = id
         if name is not None:
             self.name = name
         if ready is not None:
             self.ready = ready
+        if required is not None:
+            self.required = required
         if type is not None:
             self.type = type
         if value is not None:
             self.value = value
+
+    @property
+    def defaults(self) -> 'list[str]':
+        """Gets the defaults of this V1CommandArgument.  # noqa: E501
+
+
+        :return: The defaults of this V1CommandArgument.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._defaults
+
+    @defaults.setter
+    def defaults(self, defaults: 'list[str]'):
+        """Sets the defaults of this V1CommandArgument.
+
+
+        :param defaults: The defaults of this V1CommandArgument.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._defaults = defaults
+
+    @property
+    def description(self) -> 'str':
+        """Gets the description of this V1CommandArgument.  # noqa: E501
+
+
+        :return: The description of this V1CommandArgument.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description: 'str'):
+        """Sets the description of this V1CommandArgument.
+
+
+        :param description: The description of this V1CommandArgument.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
 
     @property
     def id(self) -> 'str':
@@ -137,6 +194,27 @@ class V1CommandArgument(object):
         """
 
         self._ready = ready
+
+    @property
+    def required(self) -> 'bool':
+        """Gets the required of this V1CommandArgument.  # noqa: E501
+
+
+        :return: The required of this V1CommandArgument.  # noqa: E501
+        :rtype: bool
+        """
+        return self._required
+
+    @required.setter
+    def required(self, required: 'bool'):
+        """Sets the required of this V1CommandArgument.
+
+
+        :param required: The required of this V1CommandArgument.  # noqa: E501
+        :type: bool
+        """
+
+        self._required = required
 
     @property
     def type(self) -> 'CommandArgumentCommandArgumentType':
