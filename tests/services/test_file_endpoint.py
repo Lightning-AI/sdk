@@ -1,3 +1,4 @@
+import os
 import lightning_sdk.services.file_endpoint as file_endpoint_module
 import lightning_sdk.services.uploader as uploader_module
 from lightning_sdk.services.file_endpoint import FileEndpoint, Client
@@ -10,6 +11,10 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UploadServiceExecutionArtifactResponse,
     V1PresignedUrl,
     V1GetServiceExecutionStatusResponse,
+    V1ServiceArtifact,
+    ServiceArtifactArtifactKind,
+    V1DownloadServiceExecutionArtifactResponse,
+    V1ProjectArtifact,
 )
 import pytest
 
@@ -39,7 +44,7 @@ def test_file_endpoint(monkeypatch):
     client.run(files={"name": __file__})
 
 
-def test_file_endpoint_client(monkeypatch):
+def test_file_endpoint_client(tmpdir, monkeypatch):
     lightning_client_mock = MagicMock()
     monkeypatch.setattr(file_endpoint_module, "LightningClient", MagicMock(return_value=lightning_client_mock))
     monkeypatch.setattr(file_endpoint_module, "Auth", MagicMock())
@@ -80,7 +85,24 @@ def test_file_endpoint_client(monkeypatch):
     )
 
     lightning_client_mock.endpoint_service_get_service_execution_status.return_value = (
-        V1GetServiceExecutionStatusResponse(phase="COMPLETED")
+        V1GetServiceExecutionStatusResponse(
+            phase="COMPLETED",
+            artifacts=[
+                V1ServiceArtifact(kind=ServiceArtifactArtifactKind.JSON, value={}),
+                V1ServiceArtifact(kind=ServiceArtifactArtifactKind.FILE, value="a.txt"),
+                V1ServiceArtifact(kind=ServiceArtifactArtifactKind.FOLDER, value="a"),
+            ],
+        )
+    )
+
+    lightning_client_mock.endpoint_service_download_service_execution_artifact.return_value = V1DownloadServiceExecutionArtifactResponse(
+        next_page_token="",
+        artifacts=[
+            V1ProjectArtifact(
+                filename="a.txt",
+                url="https://raw.githubusercontent.com/Lightning-AI/pytorch-lightning/093fac191dd8cc815df7123932fc4493917cd9bd/docs/source-pytorch/conf.py",
+            )
+        ],
     )
 
     client = Client(id="file_endpoint_id")
@@ -91,6 +113,9 @@ def test_file_endpoint_client(monkeypatch):
     with pytest.raises(ValueError, match="This endpoint expects a file for the argument `image_path`."):
         client.run(image_size=256)
 
-    client.run(image_size=256, image_path=__file__)
+    client.run(image_size=256, image_path=__file__, artifacts_dir=tmpdir)
 
     requests_mock.put.assert_called()
+
+    assert os.path.exists(os.path.join(tmpdir, "a.txt"))
+    assert os.path.exists(os.path.join(tmpdir, "a", "a.txt"))

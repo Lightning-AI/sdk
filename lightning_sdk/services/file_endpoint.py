@@ -1,15 +1,18 @@
+import contextlib
 import os
 from time import sleep
 from typing import Any, Dict, Optional
 from uuid import uuid4
 
 import requests
+import urllib3
 
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     CommandArgumentCommandArgumentType,
     ProjectIdServiceexecutionBody,
     V1CommandArgument,
+    V1ServiceArtifact,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.services.uploader import _ServiceFileUploader
@@ -17,9 +20,12 @@ from lightning_sdk.services.utilities import _get_project
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils import _resolve_teamspace
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 _FILE_TO_UPLOADS_KEY = "files_to_upload"
 _DOWNLOAD_IDS_KEY = "download_ids"
 _LIGHTNING_SERVICES_PIPELINE_ID = uuid4().hex
+_CHUNK_SIZE = 1024
 
 
 class FileEndpoint:
@@ -39,14 +45,17 @@ class FileEndpoint:
         self.url = url
 
     def run(
-        self, args: Optional[Dict[str, str]] = None, files: Optional[Dict[str, str]] = None, output_dir: str = "results"
+        self,
+        args: Optional[Dict[str, str]] = None,
+        files: Optional[Dict[str, str]] = None,
+        artifacts_dir: str = "results",
     ) -> None:
         """The run method executes the file endpoint.
 
         Args:
             args: The arguments sent as json data to the file endpoint
             files: The files to be uploaded to the file endpoint
-            output_dir: The directory output where the artifacts files will be downloaded.
+            artifacts_dir: The directory output where the artifacts files will be downloaded.
 
         """
         if files is None:
@@ -67,7 +76,7 @@ class FileEndpoint:
         data = self._check_progress(data)
 
         if _DOWNLOAD_IDS_KEY in data:
-            self._download_files(data, output_dir)
+            self._download_files(data, artifacts_dir)
 
     def _upload_files(self, data: Dict[str, Any], files: Dict[str, str]) -> None:
         """Upload the files to the Studio."""
@@ -115,9 +124,9 @@ class FileEndpoint:
 
         return data
 
-    def _download_files(self, data: Dict[str, str], output_dir: str) -> None:
+    def _download_files(self, data: Dict[str, str], artifacts_dir: str) -> None:
         """Download the artifact files."""
-        os.makedirs(output_dir, exist_ok=True)
+        os.makedirs(artifacts_dir, exist_ok=True)
 
         for download_id in data[_DOWNLOAD_IDS_KEY]:
             url = f"{self.url}?download_id={download_id}"
@@ -126,7 +135,7 @@ class FileEndpoint:
                 r.raise_for_status()
                 filename = r.headers["Content-Disposition"].split("filename=")[1]
                 filename = os.path.basename(filename)
-                with open(os.path.join(output_dir, filename), "wb") as f:
+                with open(os.path.join(artifacts_dir, filename), "wb") as f:
                     for chunk in r.iter_content(chunk_size=8192):
                         f.write(chunk)
 
@@ -181,12 +190,14 @@ class Client:
 
     def __init__(
         self,
-        id: str,  # noqa: A002
+        name: Optional[str] = None,
+        id: Optional[str] = None,  # noqa: A002 TODO: TO BE DELETED
         teamspace: Optional[str] = None,
     ) -> None:
         """Constructor of the FileEndpoint.
 
         Args:
+            name: The name of the Studio File Endpoint Service.
             id: The id of the Studio File Endpoint Service.
             teamspace: The name of the Teamspace in which the Service
 
@@ -198,7 +209,8 @@ class Client:
         except ConnectionError as e:
             raise e
 
-        self.id = id
+        self._name = name
+        self._id = id
 
         self._client = LightningClient()
         if teamspace is not None:
@@ -208,7 +220,14 @@ class Client:
             teamspace.id if isinstance(teamspace, Teamspace) else _get_project(client=self._client).project_id
         )
 
-        self._file_endpoint = self._client.endpoint_service_get_file_endpoint(project_id=self._teamspace_id, id=self.id)
+        if isinstance(name, str):
+            self._file_endpoint = self._client.endpoint_service_get_file_endpoint_by_name(
+                project_id=self._teamspace_id, name=self._name
+            )
+        else:
+            self._file_endpoint = self._client.endpoint_service_get_file_endpoint(
+                project_id=self._teamspace_id, id=self._id
+            )
         self._arguments = []
 
         for argument in self._file_endpoint.arguments:
@@ -217,12 +236,16 @@ class Client:
     def run(
         self,
         pipeline_id: Optional[str] = _LIGHTNING_SERVICES_PIPELINE_ID,
+        download_artifacts: bool = True,
+        artifacts_dir: str = "results",
         **kwargs: Dict[str, str],
     ) -> None:
         """The run method executes the file endpoint.
 
         Args:
             pipeline_id: The ID of the current pipeline
+            download_artifacts: Whether to download the artifacts associated to the service execution.
+            artifacts_dir: Output directory where the artifacts will be downloaded to.
             kwargs: The keyword arguments associated to the service
 
         """
@@ -249,11 +272,13 @@ class Client:
         service_execution = self._client.endpoint_service_create_service_execution(
             project_id=self._teamspace_id,
             body=ProjectIdServiceexecutionBody(
-                file_endpoint_id=self.id,
+                file_endpoint_id=self._file_endpoint.id,
                 pipeline_id=pipeline_id,
                 arguments=[argument.to_openapi() for argument in self._arguments],
             ),
         )
+
+        print(service_execution)
 
         for argument in self._arguments:
             if argument.is_text:
@@ -303,3 +328,64 @@ class Client:
             print(service_execution_status)
 
             sleep(3)
+
+        if download_artifacts:
+            for artifact in service_execution_status.artifacts:
+                if not isinstance(artifact, V1ServiceArtifact):
+                    continue
+
+                if artifact.kind == "JSON":
+                    continue
+
+                if artifact.kind == "FILE":
+                    artifact_dir = os.path.join(artifacts_dir)
+                    os.makedirs(artifact_dir, exist_ok=True)
+
+                    download_artifacts = self._client.endpoint_service_download_service_execution_artifact(
+                        project_id=self._teamspace_id,
+                        id=service_execution.id,
+                        artifact_id=artifact.id,
+                    )
+
+                    for download_artifact in download_artifacts.artifacts:
+                        filepath = os.path.join(artifact_dir, download_artifact.filename)
+
+                        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+                        with contextlib.suppress(ConnectionError):
+                            request = requests.get(download_artifact.url, stream=True, verify=False)
+
+                            chunk_size = 1024
+
+                            with open(filepath, "wb") as fp:
+                                for chunk in request.iter_content(chunk_size=chunk_size):
+                                    fp.write(chunk)  # type: ignore
+
+                else:
+                    artifact_dir = os.path.join(artifacts_dir, artifact.value)
+                    os.makedirs(artifact_dir, exist_ok=True)
+
+                    next_page_token = ""
+                    while True:
+                        download_artifacts = self._client.endpoint_service_download_service_execution_artifact(
+                            project_id=self._teamspace_id,
+                            id=service_execution.id,
+                            artifact_id=artifact.id,
+                            page_token=next_page_token,
+                        )
+
+                        for download_artifact in download_artifacts.artifacts:
+                            filepath = os.path.join(artifact_dir, download_artifact.filename)
+
+                            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+                            with contextlib.suppress(ConnectionError):
+                                request = requests.get(download_artifact.url, stream=True, verify=False)
+                                with open(filepath, "wb") as fp:
+                                    for chunk in request.iter_content(chunk_size=_CHUNK_SIZE):
+                                        fp.write(chunk)  # type: ignore
+
+                        next_page_token = download_artifacts.next_page_token
+
+                        if next_page_token == "":
+                            break
