@@ -48,6 +48,7 @@ class IdGetBody1(object):
         'domain': 'str',
         'env': 'list[V1EnvVar]',
         'keep_machines_after_stop': 'bool',
+        'machines_reservation_time_minutes': 'str',
         'name': 'str',
         'queue_server_type': 'V1QueueServerType',
         'source_app': 'str'
@@ -61,12 +62,13 @@ class IdGetBody1(object):
         'domain': 'domain',
         'env': 'env',
         'keep_machines_after_stop': 'keepMachinesAfterStop',
+        'machines_reservation_time_minutes': 'machinesReservationTimeMinutes',
         'name': 'name',
         'queue_server_type': 'queueServerType',
         'source_app': 'sourceApp'
     }
 
-    def __init__(self, auth: 'V1LightningAuth' =None, cluster_id: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, display_name: 'str' =None, domain: 'str' =None, env: 'list[V1EnvVar]' =None, keep_machines_after_stop: 'bool' =None, name: 'str' =None, queue_server_type: 'V1QueueServerType' =None, source_app: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1LightningAuth' =None, cluster_id: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, display_name: 'str' =None, domain: 'str' =None, env: 'list[V1EnvVar]' =None, keep_machines_after_stop: 'bool' =None, machines_reservation_time_minutes: 'str' =None, name: 'str' =None, queue_server_type: 'V1QueueServerType' =None, source_app: 'str' =None):  # noqa: E501
         """IdGetBody1 - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cluster_id = None
@@ -75,6 +77,7 @@ class IdGetBody1(object):
         self._domain = None
         self._env = None
         self._keep_machines_after_stop = None
+        self._machines_reservation_time_minutes = None
         self._name = None
         self._queue_server_type = None
         self._source_app = None
@@ -93,6 +96,8 @@ class IdGetBody1(object):
             self.env = env
         if keep_machines_after_stop is not None:
             self.keep_machines_after_stop = keep_machines_after_stop
+        if machines_reservation_time_minutes is not None:
+            self.machines_reservation_time_minutes = machines_reservation_time_minutes
         if name is not None:
             self.name = name
         if queue_server_type is not None:
@@ -248,6 +253,27 @@ class IdGetBody1(object):
         """
 
         self._keep_machines_after_stop = keep_machines_after_stop
+
+    @property
+    def machines_reservation_time_minutes(self) -> 'str':
+        """Gets the machines_reservation_time_minutes of this IdGetBody1.  # noqa: E501
+
+
+        :return: The machines_reservation_time_minutes of this IdGetBody1.  # noqa: E501
+        :rtype: str
+        """
+        return self._machines_reservation_time_minutes
+
+    @machines_reservation_time_minutes.setter
+    def machines_reservation_time_minutes(self, machines_reservation_time_minutes: 'str'):
+        """Sets the machines_reservation_time_minutes of this IdGetBody1.
+
+
+        :param machines_reservation_time_minutes: The machines_reservation_time_minutes of this IdGetBody1.  # noqa: E501
+        :type: str
+        """
+
+        self._machines_reservation_time_minutes = machines_reservation_time_minutes
 
     @property
     def name(self) -> 'str':

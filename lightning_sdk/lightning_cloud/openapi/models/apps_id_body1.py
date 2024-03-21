@@ -43,30 +43,40 @@ class AppsIdBody1(object):
     swagger_types = {
         'cluster_id': 'str',
         'keep_machines_after_stop': 'bool',
+        'machines_reservation_time_minutes': 'str',
         'plugin_arguments': 'dict(str, str)',
+        'service_id': 'str',
         'source_app': 'str'
     }
 
     attribute_map = {
         'cluster_id': 'clusterId',
         'keep_machines_after_stop': 'keepMachinesAfterStop',
+        'machines_reservation_time_minutes': 'machinesReservationTimeMinutes',
         'plugin_arguments': 'pluginArguments',
+        'service_id': 'serviceId',
         'source_app': 'sourceApp'
     }
 
-    def __init__(self, cluster_id: 'str' =None, keep_machines_after_stop: 'bool' =None, plugin_arguments: 'dict(str, str)' =None, source_app: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, keep_machines_after_stop: 'bool' =None, machines_reservation_time_minutes: 'str' =None, plugin_arguments: 'dict(str, str)' =None, service_id: 'str' =None, source_app: 'str' =None):  # noqa: E501
         """AppsIdBody1 - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._keep_machines_after_stop = None
+        self._machines_reservation_time_minutes = None
         self._plugin_arguments = None
+        self._service_id = None
         self._source_app = None
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if keep_machines_after_stop is not None:
             self.keep_machines_after_stop = keep_machines_after_stop
+        if machines_reservation_time_minutes is not None:
+            self.machines_reservation_time_minutes = machines_reservation_time_minutes
         if plugin_arguments is not None:
             self.plugin_arguments = plugin_arguments
+        if service_id is not None:
+            self.service_id = service_id
         if source_app is not None:
             self.source_app = source_app
 
@@ -113,6 +123,27 @@ class AppsIdBody1(object):
         self._keep_machines_after_stop = keep_machines_after_stop
 
     @property
+    def machines_reservation_time_minutes(self) -> 'str':
+        """Gets the machines_reservation_time_minutes of this AppsIdBody1.  # noqa: E501
+
+
+        :return: The machines_reservation_time_minutes of this AppsIdBody1.  # noqa: E501
+        :rtype: str
+        """
+        return self._machines_reservation_time_minutes
+
+    @machines_reservation_time_minutes.setter
+    def machines_reservation_time_minutes(self, machines_reservation_time_minutes: 'str'):
+        """Sets the machines_reservation_time_minutes of this AppsIdBody1.
+
+
+        :param machines_reservation_time_minutes: The machines_reservation_time_minutes of this AppsIdBody1.  # noqa: E501
+        :type: str
+        """
+
+        self._machines_reservation_time_minutes = machines_reservation_time_minutes
+
+    @property
     def plugin_arguments(self) -> 'dict(str, str)':
         """Gets the plugin_arguments of this AppsIdBody1.  # noqa: E501
 
@@ -132,6 +163,27 @@ class AppsIdBody1(object):
         """
 
         self._plugin_arguments = plugin_arguments
+
+    @property
+    def service_id(self) -> 'str':
+        """Gets the service_id of this AppsIdBody1.  # noqa: E501
+
+
+        :return: The service_id of this AppsIdBody1.  # noqa: E501
+        :rtype: str
+        """
+        return self._service_id
+
+    @service_id.setter
+    def service_id(self, service_id: 'str'):
+        """Sets the service_id of this AppsIdBody1.
+
+
+        :param service_id: The service_id of this AppsIdBody1.  # noqa: E501
+        :type: str
+        """
+
+        self._service_id = service_id
 
     @property
     def source_app(self) -> 'str':

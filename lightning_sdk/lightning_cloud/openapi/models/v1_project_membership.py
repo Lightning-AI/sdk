@@ -47,19 +47,24 @@ class V1ProjectMembership(object):
         'datastore_count': 'str',
         'description': 'str',
         'display_name': 'str',
+        'first_name': 'str',
         'free_credits_enabled': 'bool',
         'inactive': 'bool',
         'is_default': 'bool',
         'job_count': 'str',
+        'job_title': 'str',
+        'last_name': 'str',
         'membership_count': 'str',
         'name': 'str',
+        'organization': 'str',
         'owner_id': 'str',
         'owner_type': 'V1OwnerType',
         'project_id': 'str',
         'quotas': 'V1Quotas',
         'roles': 'list[V1Role]',
         'updated_at': 'datetime',
-        'user_id': 'str'
+        'user_id': 'str',
+        'username': 'str'
     }
 
     attribute_map = {
@@ -69,22 +74,27 @@ class V1ProjectMembership(object):
         'datastore_count': 'datastoreCount',
         'description': 'description',
         'display_name': 'displayName',
+        'first_name': 'firstName',
         'free_credits_enabled': 'freeCreditsEnabled',
         'inactive': 'inactive',
         'is_default': 'isDefault',
         'job_count': 'jobCount',
+        'job_title': 'jobTitle',
+        'last_name': 'lastName',
         'membership_count': 'membershipCount',
         'name': 'name',
+        'organization': 'organization',
         'owner_id': 'ownerId',
         'owner_type': 'ownerType',
         'project_id': 'projectId',
         'quotas': 'quotas',
         'roles': 'roles',
         'updated_at': 'updatedAt',
-        'user_id': 'userId'
+        'user_id': 'userId',
+        'username': 'username'
     }
 
-    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_credits_enabled: 'bool' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, membership_count: 'str' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, organization: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
         """V1ProjectMembership - a model defined in Swagger"""  # noqa: E501
         self._balance = None
         self._created_at = None
@@ -92,12 +102,16 @@ class V1ProjectMembership(object):
         self._datastore_count = None
         self._description = None
         self._display_name = None
+        self._first_name = None
         self._free_credits_enabled = None
         self._inactive = None
         self._is_default = None
         self._job_count = None
+        self._job_title = None
+        self._last_name = None
         self._membership_count = None
         self._name = None
+        self._organization = None
         self._owner_id = None
         self._owner_type = None
         self._project_id = None
@@ -105,6 +119,7 @@ class V1ProjectMembership(object):
         self._roles = None
         self._updated_at = None
         self._user_id = None
+        self._username = None
         self.discriminator = None
         if balance is not None:
             self.balance = balance
@@ -118,6 +133,8 @@ class V1ProjectMembership(object):
             self.description = description
         if display_name is not None:
             self.display_name = display_name
+        if first_name is not None:
+            self.first_name = first_name
         if free_credits_enabled is not None:
             self.free_credits_enabled = free_credits_enabled
         if inactive is not None:
@@ -126,10 +143,16 @@ class V1ProjectMembership(object):
             self.is_default = is_default
         if job_count is not None:
             self.job_count = job_count
+        if job_title is not None:
+            self.job_title = job_title
+        if last_name is not None:
+            self.last_name = last_name
         if membership_count is not None:
             self.membership_count = membership_count
         if name is not None:
             self.name = name
+        if organization is not None:
+            self.organization = organization
         if owner_id is not None:
             self.owner_id = owner_id
         if owner_type is not None:
@@ -144,6 +167,8 @@ class V1ProjectMembership(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+        if username is not None:
+            self.username = username
 
     @property
     def balance(self) -> 'float':
@@ -272,6 +297,27 @@ class V1ProjectMembership(object):
         self._display_name = display_name
 
     @property
+    def first_name(self) -> 'str':
+        """Gets the first_name of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The first_name of this V1ProjectMembership.  # noqa: E501
+        :rtype: str
+        """
+        return self._first_name
+
+    @first_name.setter
+    def first_name(self, first_name: 'str'):
+        """Sets the first_name of this V1ProjectMembership.
+
+
+        :param first_name: The first_name of this V1ProjectMembership.  # noqa: E501
+        :type: str
+        """
+
+        self._first_name = first_name
+
+    @property
     def free_credits_enabled(self) -> 'bool':
         """Gets the free_credits_enabled of this V1ProjectMembership.  # noqa: E501
 
@@ -356,6 +402,48 @@ class V1ProjectMembership(object):
         self._job_count = job_count
 
     @property
+    def job_title(self) -> 'str':
+        """Gets the job_title of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The job_title of this V1ProjectMembership.  # noqa: E501
+        :rtype: str
+        """
+        return self._job_title
+
+    @job_title.setter
+    def job_title(self, job_title: 'str'):
+        """Sets the job_title of this V1ProjectMembership.
+
+
+        :param job_title: The job_title of this V1ProjectMembership.  # noqa: E501
+        :type: str
+        """
+
+        self._job_title = job_title
+
+    @property
+    def last_name(self) -> 'str':
+        """Gets the last_name of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The last_name of this V1ProjectMembership.  # noqa: E501
+        :rtype: str
+        """
+        return self._last_name
+
+    @last_name.setter
+    def last_name(self, last_name: 'str'):
+        """Sets the last_name of this V1ProjectMembership.
+
+
+        :param last_name: The last_name of this V1ProjectMembership.  # noqa: E501
+        :type: str
+        """
+
+        self._last_name = last_name
+
+    @property
     def membership_count(self) -> 'str':
         """Gets the membership_count of this V1ProjectMembership.  # noqa: E501
 
@@ -396,6 +484,27 @@ class V1ProjectMembership(object):
         """
 
         self._name = name
+
+    @property
+    def organization(self) -> 'str':
+        """Gets the organization of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The organization of this V1ProjectMembership.  # noqa: E501
+        :rtype: str
+        """
+        return self._organization
+
+    @organization.setter
+    def organization(self, organization: 'str'):
+        """Sets the organization of this V1ProjectMembership.
+
+
+        :param organization: The organization of this V1ProjectMembership.  # noqa: E501
+        :type: str
+        """
+
+        self._organization = organization
 
     @property
     def owner_id(self) -> 'str':
@@ -543,6 +652,27 @@ class V1ProjectMembership(object):
         """
 
         self._user_id = user_id
+
+    @property
+    def username(self) -> 'str':
+        """Gets the username of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The username of this V1ProjectMembership.  # noqa: E501
+        :rtype: str
+        """
+        return self._username
+
+    @username.setter
+    def username(self, username: 'str'):
+        """Sets the username of this V1ProjectMembership.
+
+
+        :param username: The username of this V1ProjectMembership.  # noqa: E501
+        :type: str
+        """
+
+        self._username = username
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
