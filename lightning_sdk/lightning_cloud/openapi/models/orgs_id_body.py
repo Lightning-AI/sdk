@@ -42,6 +42,7 @@ class OrgsIdBody(object):
     """
     swagger_types = {
         'allow_guest': 'bool',
+        'auto_join_domains': 'list[str]',
         'description': 'str',
         'display_name': 'str',
         'domain': 'str',
@@ -53,6 +54,7 @@ class OrgsIdBody(object):
 
     attribute_map = {
         'allow_guest': 'allowGuest',
+        'auto_join_domains': 'autoJoinDomains',
         'description': 'description',
         'display_name': 'displayName',
         'domain': 'domain',
@@ -62,9 +64,10 @@ class OrgsIdBody(object):
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, twitter_username: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
+        self._auto_join_domains = None
         self._description = None
         self._display_name = None
         self._domain = None
@@ -75,6 +78,8 @@ class OrgsIdBody(object):
         self.discriminator = None
         if allow_guest is not None:
             self.allow_guest = allow_guest
+        if auto_join_domains is not None:
+            self.auto_join_domains = auto_join_domains
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -110,6 +115,27 @@ class OrgsIdBody(object):
         """
 
         self._allow_guest = allow_guest
+
+    @property
+    def auto_join_domains(self) -> 'list[str]':
+        """Gets the auto_join_domains of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The auto_join_domains of this OrgsIdBody.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._auto_join_domains
+
+    @auto_join_domains.setter
+    def auto_join_domains(self, auto_join_domains: 'list[str]'):
+        """Sets the auto_join_domains of this OrgsIdBody.
+
+
+        :param auto_join_domains: The auto_join_domains of this OrgsIdBody.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._auto_join_domains = auto_join_domains
 
     @property
     def description(self) -> 'str':

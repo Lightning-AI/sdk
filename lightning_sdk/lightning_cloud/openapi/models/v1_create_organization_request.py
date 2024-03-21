@@ -41,6 +41,7 @@ class V1CreateOrganizationRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'auto_join_domains': 'list[str]',
         'description': 'str',
         'display_name': 'str',
         'domain': 'str',
@@ -50,6 +51,7 @@ class V1CreateOrganizationRequest(object):
     }
 
     attribute_map = {
+        'auto_join_domains': 'autoJoinDomains',
         'description': 'description',
         'display_name': 'displayName',
         'domain': 'domain',
@@ -58,8 +60,9 @@ class V1CreateOrganizationRequest(object):
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, location: 'str' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, location: 'str' =None, twitter_username: 'str' =None):  # noqa: E501
         """V1CreateOrganizationRequest - a model defined in Swagger"""  # noqa: E501
+        self._auto_join_domains = None
         self._description = None
         self._display_name = None
         self._domain = None
@@ -67,6 +70,8 @@ class V1CreateOrganizationRequest(object):
         self._location = None
         self._twitter_username = None
         self.discriminator = None
+        if auto_join_domains is not None:
+            self.auto_join_domains = auto_join_domains
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -79,6 +84,27 @@ class V1CreateOrganizationRequest(object):
             self.location = location
         if twitter_username is not None:
             self.twitter_username = twitter_username
+
+    @property
+    def auto_join_domains(self) -> 'list[str]':
+        """Gets the auto_join_domains of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The auto_join_domains of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._auto_join_domains
+
+    @auto_join_domains.setter
+    def auto_join_domains(self, auto_join_domains: 'list[str]'):
+        """Sets the auto_join_domains of this V1CreateOrganizationRequest.
+
+
+        :param auto_join_domains: The auto_join_domains of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._auto_join_domains = auto_join_domains
 
     @property
     def description(self) -> 'str':

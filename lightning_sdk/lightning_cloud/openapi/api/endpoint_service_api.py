@@ -778,49 +778,49 @@ class EndpointServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def endpoint_service_download_service_execution_artifact(self, project_id: 'str', id: 'str', artifact_id: 'str', **kwargs) -> 'V1DownloadServiceExecutionArtifactResponse':  # noqa: E501
+    def endpoint_service_download_service_execution_artifact(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DownloadServiceExecutionArtifactResponse':  # noqa: E501
         """endpoint_service_download_service_execution_artifact  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.endpoint_service_download_service_execution_artifact(project_id, id, artifact_id, async_req=True)
+        >>> thread = api.endpoint_service_download_service_execution_artifact(project_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
-        :param str artifact_id: (required)
         :param str page_token:
+        :param str filepath:
         :return: V1DownloadServiceExecutionArtifactResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.endpoint_service_download_service_execution_artifact_with_http_info(project_id, id, artifact_id, **kwargs)  # noqa: E501
+            return self.endpoint_service_download_service_execution_artifact_with_http_info(project_id, id, **kwargs)  # noqa: E501
         else:
-            (data) = self.endpoint_service_download_service_execution_artifact_with_http_info(project_id, id, artifact_id, **kwargs)  # noqa: E501
+            (data) = self.endpoint_service_download_service_execution_artifact_with_http_info(project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def endpoint_service_download_service_execution_artifact_with_http_info(self, project_id: 'str', id: 'str', artifact_id: 'str', **kwargs) -> 'V1DownloadServiceExecutionArtifactResponse':  # noqa: E501
+    def endpoint_service_download_service_execution_artifact_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DownloadServiceExecutionArtifactResponse':  # noqa: E501
         """endpoint_service_download_service_execution_artifact  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.endpoint_service_download_service_execution_artifact_with_http_info(project_id, id, artifact_id, async_req=True)
+        >>> thread = api.endpoint_service_download_service_execution_artifact_with_http_info(project_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
-        :param str artifact_id: (required)
         :param str page_token:
+        :param str filepath:
         :return: V1DownloadServiceExecutionArtifactResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'artifact_id', 'page_token']  # noqa: E501
+        all_params = ['project_id', 'id', 'page_token', 'filepath']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -843,10 +843,6 @@ class EndpointServiceApi(object):
         if ('id' not in params or
                 params['id'] is None):
             raise ValueError("Missing the required parameter `id` when calling `endpoint_service_download_service_execution_artifact`")  # noqa: E501
-        # verify the required parameter 'artifact_id' is set
-        if ('artifact_id' not in params or
-                params['artifact_id'] is None):
-            raise ValueError("Missing the required parameter `artifact_id` when calling `endpoint_service_download_service_execution_artifact`")  # noqa: E501
 
         collection_formats = {}
 
@@ -855,12 +851,12 @@ class EndpointServiceApi(object):
             path_params['projectId'] = params['project_id']  # noqa: E501
         if 'id' in params:
             path_params['id'] = params['id']  # noqa: E501
-        if 'artifact_id' in params:
-            path_params['artifactId'] = params['artifact_id']  # noqa: E501
 
         query_params = []
         if 'page_token' in params:
             query_params.append(('pageToken', params['page_token']))  # noqa: E501
+        if 'filepath' in params:
+            query_params.append(('filepath', params['filepath']))  # noqa: E501
 
         header_params = {}
 
@@ -876,7 +872,7 @@ class EndpointServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/service-execution/{id}/storage/{artifactId}', 'GET',
+            '/v1/projects/{projectId}/service-execution/{id}/storage', 'GET',
             path_params,
             query_params,
             header_params,

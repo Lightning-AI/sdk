@@ -45,6 +45,7 @@ class V1ServiceExecution(object):
         'artifacts': 'list[V1ServiceArtifact]',
         'cloudspace_id': 'str',
         'cluster_id': 'str',
+        'file_endpoint_cluster_id': 'str',
         'file_endpoint_id': 'str',
         'file_endpoint_project_id': 'str',
         'id': 'str',
@@ -58,6 +59,7 @@ class V1ServiceExecution(object):
         'artifacts': 'artifacts',
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
+        'file_endpoint_cluster_id': 'fileEndpointClusterId',
         'file_endpoint_id': 'fileEndpointId',
         'file_endpoint_project_id': 'fileEndpointProjectId',
         'id': 'id',
@@ -66,12 +68,13 @@ class V1ServiceExecution(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, arguments: 'list[V1CommandArgument]' =None, artifacts: 'list[V1ServiceArtifact]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, file_endpoint_id: 'str' =None, file_endpoint_project_id: 'str' =None, id: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, arguments: 'list[V1CommandArgument]' =None, artifacts: 'list[V1ServiceArtifact]' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, file_endpoint_cluster_id: 'str' =None, file_endpoint_id: 'str' =None, file_endpoint_project_id: 'str' =None, id: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1ServiceExecution - a model defined in Swagger"""  # noqa: E501
         self._arguments = None
         self._artifacts = None
         self._cloudspace_id = None
         self._cluster_id = None
+        self._file_endpoint_cluster_id = None
         self._file_endpoint_id = None
         self._file_endpoint_project_id = None
         self._id = None
@@ -87,6 +90,8 @@ class V1ServiceExecution(object):
             self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if file_endpoint_cluster_id is not None:
+            self.file_endpoint_cluster_id = file_endpoint_cluster_id
         if file_endpoint_id is not None:
             self.file_endpoint_id = file_endpoint_id
         if file_endpoint_project_id is not None:
@@ -183,6 +188,27 @@ class V1ServiceExecution(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def file_endpoint_cluster_id(self) -> 'str':
+        """Gets the file_endpoint_cluster_id of this V1ServiceExecution.  # noqa: E501
+
+
+        :return: The file_endpoint_cluster_id of this V1ServiceExecution.  # noqa: E501
+        :rtype: str
+        """
+        return self._file_endpoint_cluster_id
+
+    @file_endpoint_cluster_id.setter
+    def file_endpoint_cluster_id(self, file_endpoint_cluster_id: 'str'):
+        """Sets the file_endpoint_cluster_id of this V1ServiceExecution.
+
+
+        :param file_endpoint_cluster_id: The file_endpoint_cluster_id of this V1ServiceExecution.  # noqa: E501
+        :type: str
+        """
+
+        self._file_endpoint_cluster_id = file_endpoint_cluster_id
 
     @property
     def file_endpoint_id(self) -> 'str':
