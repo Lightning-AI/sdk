@@ -40,7 +40,7 @@ def test_file_endpoint(monkeypatch):
 
     monkeypatch.setattr(file_endpoint_module, "requests", requests_mock)
     monkeypatch.setattr(file_endpoint_module, "sleep", MagicMock())
-    client = FileEndpoint(url="url")
+    client = FileEndpoint(url="url", teamspace="")
     client.run(files={"name": __file__})
 
 

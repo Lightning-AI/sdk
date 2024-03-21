@@ -10,8 +10,8 @@ class LLMFinetune(FileEndpoint):
 
     """
 
-    def __init__(self) -> None:
-        super().__init__(url="https://finetune-01hra53x9nzbhc774s2ecp7bcp.cloudspaces.litng.ai")
+    def __init__(self, teamspace: str) -> None:
+        super().__init__(url="https://finetune-01hra53x9nzbhc774s2ecp7bcp.cloudspaces.litng.ai", teamspace=teamspace)
 
     def run(
         self,

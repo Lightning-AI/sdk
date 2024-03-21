@@ -31,7 +31,7 @@ def test_llm_finetune(monkeypatch):
         {"run_id": "run_id", "stage": "completed"},
     ]
 
-    def fn(url, json=None, files=None):
+    def fn(url, json=None, files=None, headers=None):
         expected_url, expected_json = arguments.pop(0)
         assert expected_url == url
         assert expected_json == json
@@ -40,6 +40,7 @@ def test_llm_finetune(monkeypatch):
         response.status_code = 200
         json = responses.pop(0)
         response.json.return_value = json
+        response.headers = {file_endpoint_module._LIGHTNING_SERVICE_EXECUTION_ID_HEADER: "service_id"}
         return response
 
     requests_mock.post = fn
@@ -47,5 +48,5 @@ def test_llm_finetune(monkeypatch):
     monkeypatch.setattr(file_endpoint_module, "requests", requests_mock)
     monkeypatch.setattr(file_endpoint_module, "sleep", MagicMock())
 
-    client = LLMFinetune()
+    client = LLMFinetune(teamspace="")
     client.run(data_path=__file__)

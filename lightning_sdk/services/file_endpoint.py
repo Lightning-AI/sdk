@@ -26,22 +26,37 @@ _FILE_TO_UPLOADS_KEY = "files_to_upload"
 _DOWNLOAD_IDS_KEY = "download_ids"
 _LIGHTNING_SERVICES_PIPELINE_ID = uuid4().hex
 _CHUNK_SIZE = 1024
+_LIGHTNING_SERVICE_EXECUTION_ID_HEADER = "X-Lightning-Service-Execution-Id"
+_LIGHTNING_AUTHORIZATION_HEADER = "X-Lightning-Authorization"
+_LIGHTNING_TEAMSPACE_HEADER = "X-Lightning-Teamspace"
 
 
 class FileEndpoint:
-    # TODO: To be merged with the new Client
     """This class is used to communicate with the File Endpoint."""
 
     def __init__(
         self,
         url: str,
+        teamspace: str,
     ) -> None:
         """Constructor of the FileEndpoint.
 
         Args:
             url: The url of the Studio File Endpoint Service
+            teamspace: The name of the teamspace you want to attach the artifacts and data to.
 
         """
+        self._auth = Auth()
+
+        try:
+            self._auth.authenticate()
+        except ConnectionError as e:
+            raise e
+
+        self.headers = {
+            _LIGHTNING_AUTHORIZATION_HEADER: f"Bearer {self._auth.api_key}",
+            _LIGHTNING_TEAMSPACE_HEADER: teamspace.lower(),
+        }
         self.url = url
 
     def run(
@@ -63,10 +78,14 @@ class FileEndpoint:
         if args is None:
             args = {}
 
-        response = requests.post(self.url, json=args)
-
+        response = requests.post(self.url, json=args, headers=self.headers)
         if response.status_code != 200:
             raise Exception(f"The endpoint isn't reachable. Status code: {response.status_code}")
+
+        self.headers = {
+            **self.headers,
+            _LIGHTNING_SERVICE_EXECUTION_ID_HEADER: response.headers[_LIGHTNING_SERVICE_EXECUTION_ID_HEADER],
+        }
 
         data = response.json()
 
@@ -93,7 +112,7 @@ class FileEndpoint:
             name = file_to_upload["name"]
             url = f"{self.url}?upload_id={upload_id}"
             with open(files[name], "rb") as f:
-                response = requests.post(url, files={upload_id: f})
+                response = requests.post(url, files={upload_id: f}, headers=self.headers)
 
             if response.status_code != 200:
                 raise Exception(f"Failed to upload the file {name}. Status code: {response.status_code}")
@@ -102,7 +121,7 @@ class FileEndpoint:
         """Check the current Studio status."""
         while True:
             url = f"{self.url}?run_id={data['run_id']}"
-            response = requests.post(url)
+            response = requests.post(url, headers=self.headers)
 
             if response.status_code != 200:
                 raise Exception(f"The file endpoint had an error. Status code: {response.status_code}")
@@ -131,7 +150,7 @@ class FileEndpoint:
         for download_id in data[_DOWNLOAD_IDS_KEY]:
             url = f"{self.url}?download_id={download_id}"
 
-            with requests.post(url, stream=True) as r:
+            with requests.post(url, stream=True, headers=self.headers) as r:
                 r.raise_for_status()
                 filename = r.headers["Content-Disposition"].split("filename=")[1]
                 filename = os.path.basename(filename)

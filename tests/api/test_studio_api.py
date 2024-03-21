@@ -5,8 +5,8 @@ import subprocess
 import pytest
 from unittest import mock
 
-import lightning_sdk
 from lightning_sdk.api.studio_api import StudioApi
+from lightning_sdk.api import studio_api as studio_api_module
 from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
@@ -254,6 +254,20 @@ def test_create_job(internal_studio_api_create_app_mocker):
 
     resp = studio_api.create_job("my-entry-point", "fancy-job-name", Machine.A10G, "st-abc", "ts-abc", "cluster-abc")
     assert resp.name == "fancy-job-name"
+
+
+def test_create_job_with_service_id(monkeypatch):
+    monkeypatch.setenv("LIGHTNING_SERVICE_EXECUTION_ID", "service_id")
+    mock_client = mock.MagicMock()
+
+    monkeypatch.setattr(studio_api_module, "LightningClient", mock.MagicMock(return_value=mock_client))
+    studio_api = StudioApi()
+
+    studio_api.create_job("my-entry-point", "fancy-job-name", Machine.A10G, "st-abc", "ts-abc", "cluster-abc")
+    assert (
+        mock_client.cloud_space_service_create_cloud_space_app_instance._mock_mock_calls[0].kwargs["body"].service_id
+        == "service_id"
+    )
 
 
 def test_create_mmt(internal_studio_api_create_app_mocker):

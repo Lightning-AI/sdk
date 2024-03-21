@@ -53,6 +53,8 @@ from lightning_sdk.api.utils import (
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
+_LIGHTNING_SERVICE_EXECUTION_ID_KEY = "LIGHTNING_SERVICE_EXECUTION_ID"
+
 
 class StudioApi:
     """Internal API client for Studio requests (mainly http requests)."""
@@ -589,7 +591,11 @@ class StudioApi:
         self, studio_id: str, teamspace_id: str, cluster_id: str, plugin_type: str, **other_arguments: Any
     ) -> Externalv1LightningappInstance:
         """Creates an arbitrary app."""
-        body = AppsIdBody(cluster_id=cluster_id, plugin_arguments=other_arguments)
+        body = AppsIdBody(
+            cluster_id=cluster_id,
+            plugin_arguments=other_arguments,
+            service_id=os.getenv(_LIGHTNING_SERVICE_EXECUTION_ID_KEY),
+        )
 
         resp = self._client.cloud_space_service_create_cloud_space_app_instance(
             body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
