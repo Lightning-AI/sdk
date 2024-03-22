@@ -48,7 +48,6 @@ class _FileUploader:
     def __init__(
         self,
         client: LightningClient,
-        studio_id: str,
         teamspace_id: str,
         cluster_id: str,
         file_path: str,
@@ -61,7 +60,7 @@ class _FileUploader:
 
         self.local_path = file_path
 
-        self.remote_path = _sanitize_remote_path(remote_path, studio_id)
+        self.remote_path = remote_path
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
         self.filesize = os.path.getsize(file_path)
         if progress_bar:
@@ -117,6 +116,10 @@ class _FileUploader:
         self.client.lightningapp_instance_service_complete_upload_project_artifact(
             body=completed_body, project_id=self.teamspace_id
         )
+
+        # clean the progress bar
+        if self.progress_bar:
+            self.progress_bar.close()
 
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload."""
@@ -224,5 +227,5 @@ def _get_cloud_url() -> str:
     return cloud_url
 
 
-def _sanitize_remote_path(path: str, studio_id: str) -> str:
+def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:
     return f"/cloudspaces/{studio_id}/code/content/{path.replace('/teamspace/studios/this_studio/', '')}"

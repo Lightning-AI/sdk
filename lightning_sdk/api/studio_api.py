@@ -45,7 +45,7 @@ from lightning_sdk.api.utils import (
     _DummyBody,
     _DummyResponse,
     _FileUploader,
-    _sanitize_remote_path,
+    _sanitize_studio_remote_path,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
@@ -328,11 +328,10 @@ class StudioApi:
         """Uploads file to given remote path on the studio."""
         _FileUploader(
             client=self._client,
-            studio_id=studio_id,
             teamspace_id=teamspace_id,
             cluster_id=cluster_id,
             file_path=file_path,
-            remote_path=remote_path,
+            remote_path=_sanitize_studio_remote_path(remote_path, studio_id),
             progress_bar=progress_bar,
         )()
 
@@ -347,7 +346,7 @@ class StudioApi:
 
         query_params = {
             "clusterId": cluster_id,
-            "key": _sanitize_remote_path(path, studio_id),
+            "key": _sanitize_studio_remote_path(path, studio_id),
             "token": token,
         }
 
@@ -390,7 +389,7 @@ class StudioApi:
 
         query_params = {
             "clusterId": cluster_id,
-            "prefix": _sanitize_remote_path(path, studio_id),
+            "prefix": _sanitize_studio_remote_path(path, studio_id),
             "token": token,
         }
 

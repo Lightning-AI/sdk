@@ -1,9 +1,9 @@
 from typing import Literal
 
-from lightning_sdk.services.file_endpoint import FileEndpoint
+from lightning_sdk.services.file_endpoint import Client
 
 
-class LLMFinetune(FileEndpoint):
+class LLMFinetune(Client):
     """The LLM Finetune is the client to the LLM Finetune Service Studio.
 
     Learn more: https://lightning.ai/lightning-ai/studios/llm-finetune-service~01h5rahq6gbhw5m4bzyws0at5h.
@@ -11,7 +11,7 @@ class LLMFinetune(FileEndpoint):
     """
 
     def __init__(self, teamspace: str) -> None:
-        super().__init__(url="https://finetune-01hra53x9nzbhc774s2ecp7bcp.cloudspaces.litng.ai", teamspace=teamspace)
+        super().__init__(name="lightning-al/llm-finetune", teamspace=teamspace)
 
     def run(
         self,
@@ -22,16 +22,14 @@ class LLMFinetune(FileEndpoint):
         learning_rate: float = 0.0002,
         micro_batch_size: int = 2,
         global_batch_size: int = 8,
-        output_dir: str = "results",
     ) -> None:
         """The run method executes the LLM Finetune Service."""
-        args = {
-            "model": str(model),
-            "mode": str(mode),
-            "epochs": str(epochs),
-            "learning_rate": str(learning_rate),
-            "micro_batch_size": str(micro_batch_size),
-            "global_batch_size": str(global_batch_size),
-        }
-        files = {"data_path": data_path}
-        super().run(args, files, output_dir)
+        super().run(
+            data_path=data_path,
+            model=model,
+            mode=mode,
+            epochs=epochs,
+            learning_rate=learning_rate,
+            micro_batch_size=micro_batch_size,
+            global_batch_size=global_batch_size,
+        )

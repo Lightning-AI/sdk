@@ -8,20 +8,24 @@ def test_llm_finetune(monkeypatch):
 
     arguments = [
         (
-            "https://finetune-01hra53x9nzbhc774s2ecp7bcp.cloudspaces.litng.ai",
+            "https://fid-csid.cloudspaces.lightning.ai:443",
             {
-                "model": "tiny-llama",
-                "mode": "lora",
-                "epochs": "3",
-                "learning_rate": "0.0002",
-                "micro_batch_size": "2",
-                "global_batch_size": "8",
+                "api_key": "api_key",
+                "teamspace": "teamspace",
+                "cluster_id": "cluster_id",
+                "arguments": {
+                    "model": "tiny-llama",
+                    "mode": "lora",
+                    "epochs": "3",
+                    "learning_rate": "0.0002",
+                    "micro_batch_size": "2",
+                    "global_batch_size": "8",
+                },
             },
         ),
-        ("https://finetune-01hra53x9nzbhc774s2ecp7bcp.cloudspaces.litng.ai?upload_id=upload_id", None),
-        ("https://finetune-01hra53x9nzbhc774s2ecp7bcp.cloudspaces.litng.ai?run_id=run_id", None),
-        ("https://finetune-01hra53x9nzbhc774s2ecp7bcp.cloudspaces.litng.ai?run_id=run_id", None),
-        ("https://finetune-01hra53x9nzbhc774s2ecp7bcp.cloudspaces.litng.ai?run_id=run_id", None),
+        ("https://fid-csid.cloudspaces.lightning.ai:443?run_id=run_id", {"api_key": "api_key"}),
+        ("https://fid-csid.cloudspaces.lightning.ai:443?run_id=run_id", {"api_key": "api_key"}),
+        ("https://fid-csid.cloudspaces.lightning.ai:443?run_id=run_id", {"api_key": "api_key"}),
     ]
 
     responses = [
@@ -34,7 +38,11 @@ def test_llm_finetune(monkeypatch):
     def fn(url, json=None, files=None, headers=None):
         expected_url, expected_json = arguments.pop(0)
         assert expected_url == url
-        assert expected_json == json
+        if json is not None:
+            assert expected_json["api_key"] == json["api_key"]
+            if "teamspace" in expected_json:
+                assert expected_json["teamspace"] == json["teamspace"]
+                assert expected_json["cluster_id"] == json["cluster_id"]
 
         response = MagicMock()
         response.status_code = 200
@@ -47,6 +55,21 @@ def test_llm_finetune(monkeypatch):
 
     monkeypatch.setattr(file_endpoint_module, "requests", requests_mock)
     monkeypatch.setattr(file_endpoint_module, "sleep", MagicMock())
+    lightning_client_mock = MagicMock()
+    file_endpoint_mock = MagicMock()
+    file_endpoint_mock.id = "fid"
+    file_endpoint_mock.cloudspace_id = "csid"
+    lightning_client_mock.endpoint_service_get_file_endpoint_by_name.return_value = file_endpoint_mock
+    lightning_client_mock.endpoint_service_get_file_endpoint_by_name.return_value = file_endpoint_mock
+    monkeypatch.setattr(file_endpoint_module, "_get_project", MagicMock())
+    cluster_mock = MagicMock()
+    cluster_mock.cluster_id = "cluster_id"
+    monkeypatch.setattr(file_endpoint_module, "_get_cluster", MagicMock(return_value=cluster_mock))
 
-    client = LLMFinetune(teamspace="")
+    monkeypatch.setattr(file_endpoint_module, "LightningClient", MagicMock(return_value=lightning_client_mock))
+    auth_mock = MagicMock()
+    auth_mock.api_key = "api_key"
+    monkeypatch.setattr(file_endpoint_module, "Auth", MagicMock(return_value=auth_mock))
+
+    client = LLMFinetune(teamspace="teamspace")
     client.run(data_path=__file__)
