@@ -15,6 +15,7 @@ from lightning_sdk.services.utilities import _get_cluster, _get_project, _get_se
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 _LIGHTNING_SERVICE_EXECUTION_ID_HEADER = "X-Lightning-Service-Execution-Id"
+_AUTHORIZATION_HEADER = "Authorization"
 
 
 class Client:
@@ -50,7 +51,7 @@ class Client:
             project_id=self._project.project_id, name=self._name
         )
 
-        self.headers = {}
+        self.headers = {_AUTHORIZATION_HEADER: f"Bearer {self._auth.api_key}"}
 
         self._arguments = []
         for argument in self._file_endpoint.arguments:
@@ -107,13 +108,12 @@ class Client:
             )()
 
         json = {
-            "api_key": self._auth.api_key,
-            "teamspace": self._teamspace,
+            "teamspace_id": self._project.project_id,
             "cluster_id": self._cluster.cluster_id,
-            "arguments": {},
+            "input": {},
         }
         for argument in self._arguments:
-            json["arguments"].update(**argument.to_dict())
+            json["input"].update(**argument.to_dict())
 
         response = requests.post(self.url, json=json, headers=self.headers)
         if response.status_code != 200:
@@ -130,7 +130,7 @@ class Client:
         """Check the current Studio status."""
         while True:
             url = f"{self.url}?run_id={data['run_id']}"
-            response = requests.post(url, json={"api_key": self._auth.api_key}, headers=self.headers)
+            response = requests.post(url, headers=self.headers)
 
             if response.status_code != 200:
                 raise Exception(f"The file endpoint had an error. Status code: {response.status_code}")
