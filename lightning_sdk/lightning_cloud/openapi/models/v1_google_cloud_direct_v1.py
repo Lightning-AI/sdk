@@ -44,22 +44,25 @@ class V1GoogleCloudDirectV1(object):
         'bucket_name': 'str',
         'primary_region': 'str',
         'project_id': 'str',
-        'regions': 'list[str]'
+        'regions': 'list[str]',
+        'source_cidr_ips': 'list[str]'
     }
 
     attribute_map = {
         'bucket_name': 'bucketName',
         'primary_region': 'primaryRegion',
         'project_id': 'projectId',
-        'regions': 'regions'
+        'regions': 'regions',
+        'source_cidr_ips': 'sourceCidrIps'
     }
 
-    def __init__(self, bucket_name: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._primary_region = None
         self._project_id = None
         self._regions = None
+        self._source_cidr_ips = None
         self.discriminator = None
         if bucket_name is not None:
             self.bucket_name = bucket_name
@@ -69,6 +72,8 @@ class V1GoogleCloudDirectV1(object):
             self.project_id = project_id
         if regions is not None:
             self.regions = regions
+        if source_cidr_ips is not None:
+            self.source_cidr_ips = source_cidr_ips
 
     @property
     def bucket_name(self) -> 'str':
@@ -153,6 +158,29 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._regions = regions
+
+    @property
+    def source_cidr_ips(self) -> 'list[str]':
+        """Gets the source_cidr_ips of this V1GoogleCloudDirectV1.  # noqa: E501
+
+        source_cidr_ips allows modifying default 0.0.0.0/0 source, so that it can only allow specific incoming traffic into the GCP  instances. This should always include controlplane's IP address, otherwise it will not work.  # noqa: E501
+
+        :return: The source_cidr_ips of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._source_cidr_ips
+
+    @source_cidr_ips.setter
+    def source_cidr_ips(self, source_cidr_ips: 'list[str]'):
+        """Sets the source_cidr_ips of this V1GoogleCloudDirectV1.
+
+        source_cidr_ips allows modifying default 0.0.0.0/0 source, so that it can only allow specific incoming traffic into the GCP  instances. This should always include controlplane's IP address, otherwise it will not work.  # noqa: E501
+
+        :param source_cidr_ips: The source_cidr_ips of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._source_cidr_ips = source_cidr_ips
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

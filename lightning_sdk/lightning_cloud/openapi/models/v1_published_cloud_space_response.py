@@ -53,6 +53,10 @@ class V1PublishedCloudSpaceResponse(object):
         'project_name': 'str',
         'project_owner_name': 'str',
         'published_at': 'datetime',
+        'studio_creator_avatar_url': 'str',
+        'studio_creator_first_name': 'str',
+        'studio_creator_id': 'str',
+        'studio_creator_last_name': 'str',
         'studio_creator_username': 'str',
         'tags': 'list[V1CloudSpaceTag]',
         'thumbnail_url': 'str'
@@ -71,12 +75,16 @@ class V1PublishedCloudSpaceResponse(object):
         'project_name': 'projectName',
         'project_owner_name': 'projectOwnerName',
         'published_at': 'publishedAt',
+        'studio_creator_avatar_url': 'studioCreatorAvatarUrl',
+        'studio_creator_first_name': 'studioCreatorFirstName',
+        'studio_creator_id': 'studioCreatorId',
+        'studio_creator_last_name': 'studioCreatorLastName',
         'studio_creator_username': 'studioCreatorUsername',
         'tags': 'tags',
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, featured: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_name: 'str' =None, published_at: 'datetime' =None, studio_creator_username: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, featured: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_name: 'str' =None, published_at: 'datetime' =None, studio_creator_avatar_url: 'str' =None, studio_creator_first_name: 'str' =None, studio_creator_id: 'str' =None, studio_creator_last_name: 'str' =None, studio_creator_username: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """V1PublishedCloudSpaceResponse - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._creation_timestamp = None
@@ -90,6 +98,10 @@ class V1PublishedCloudSpaceResponse(object):
         self._project_name = None
         self._project_owner_name = None
         self._published_at = None
+        self._studio_creator_avatar_url = None
+        self._studio_creator_first_name = None
+        self._studio_creator_id = None
+        self._studio_creator_last_name = None
         self._studio_creator_username = None
         self._tags = None
         self._thumbnail_url = None
@@ -118,6 +130,14 @@ class V1PublishedCloudSpaceResponse(object):
             self.project_owner_name = project_owner_name
         if published_at is not None:
             self.published_at = published_at
+        if studio_creator_avatar_url is not None:
+            self.studio_creator_avatar_url = studio_creator_avatar_url
+        if studio_creator_first_name is not None:
+            self.studio_creator_first_name = studio_creator_first_name
+        if studio_creator_id is not None:
+            self.studio_creator_id = studio_creator_id
+        if studio_creator_last_name is not None:
+            self.studio_creator_last_name = studio_creator_last_name
         if studio_creator_username is not None:
             self.studio_creator_username = studio_creator_username
         if tags is not None:
@@ -376,6 +396,90 @@ class V1PublishedCloudSpaceResponse(object):
         """
 
         self._published_at = published_at
+
+    @property
+    def studio_creator_avatar_url(self) -> 'str':
+        """Gets the studio_creator_avatar_url of this V1PublishedCloudSpaceResponse.  # noqa: E501
+
+
+        :return: The studio_creator_avatar_url of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._studio_creator_avatar_url
+
+    @studio_creator_avatar_url.setter
+    def studio_creator_avatar_url(self, studio_creator_avatar_url: 'str'):
+        """Sets the studio_creator_avatar_url of this V1PublishedCloudSpaceResponse.
+
+
+        :param studio_creator_avatar_url: The studio_creator_avatar_url of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._studio_creator_avatar_url = studio_creator_avatar_url
+
+    @property
+    def studio_creator_first_name(self) -> 'str':
+        """Gets the studio_creator_first_name of this V1PublishedCloudSpaceResponse.  # noqa: E501
+
+
+        :return: The studio_creator_first_name of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._studio_creator_first_name
+
+    @studio_creator_first_name.setter
+    def studio_creator_first_name(self, studio_creator_first_name: 'str'):
+        """Sets the studio_creator_first_name of this V1PublishedCloudSpaceResponse.
+
+
+        :param studio_creator_first_name: The studio_creator_first_name of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._studio_creator_first_name = studio_creator_first_name
+
+    @property
+    def studio_creator_id(self) -> 'str':
+        """Gets the studio_creator_id of this V1PublishedCloudSpaceResponse.  # noqa: E501
+
+
+        :return: The studio_creator_id of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._studio_creator_id
+
+    @studio_creator_id.setter
+    def studio_creator_id(self, studio_creator_id: 'str'):
+        """Sets the studio_creator_id of this V1PublishedCloudSpaceResponse.
+
+
+        :param studio_creator_id: The studio_creator_id of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._studio_creator_id = studio_creator_id
+
+    @property
+    def studio_creator_last_name(self) -> 'str':
+        """Gets the studio_creator_last_name of this V1PublishedCloudSpaceResponse.  # noqa: E501
+
+
+        :return: The studio_creator_last_name of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._studio_creator_last_name
+
+    @studio_creator_last_name.setter
+    def studio_creator_last_name(self, studio_creator_last_name: 'str'):
+        """Sets the studio_creator_last_name of this V1PublishedCloudSpaceResponse.
+
+
+        :param studio_creator_last_name: The studio_creator_last_name of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._studio_creator_last_name = studio_creator_last_name
 
     @property
     def studio_creator_username(self) -> 'str':

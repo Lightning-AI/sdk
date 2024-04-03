@@ -58,9 +58,9 @@ class V1UserFeatures(object):
         'enable_crypto_crackdown': 'bool',
         'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
+        'gcp': 'bool',
         'interruptible_instances': 'bool',
         'jobs_init': 'bool',
-        'kms': 'bool',
         'landing_studios': 'bool',
         'mmt_app': 'bool',
         'mmt_strategy_selector': 'bool',
@@ -114,9 +114,9 @@ class V1UserFeatures(object):
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
+        'gcp': 'gcp',
         'interruptible_instances': 'interruptibleInstances',
         'jobs_init': 'jobsInit',
-        'kms': 'kms',
         'landing_studios': 'landingStudios',
         'mmt_app': 'mmtApp',
         'mmt_strategy_selector': 'mmtStrategySelector',
@@ -152,7 +152,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, kms: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._apt_get_v2 = None
         self._aws_trainium = None
@@ -171,9 +171,9 @@ class V1UserFeatures(object):
         self._enable_crypto_crackdown = None
         self._featured_studios_admin = None
         self._filesystem_optimisation = None
+        self._gcp = None
         self._interruptible_instances = None
         self._jobs_init = None
-        self._kms = None
         self._landing_studios = None
         self._mmt_app = None
         self._mmt_strategy_selector = None
@@ -242,12 +242,12 @@ class V1UserFeatures(object):
             self.featured_studios_admin = featured_studios_admin
         if filesystem_optimisation is not None:
             self.filesystem_optimisation = filesystem_optimisation
+        if gcp is not None:
+            self.gcp = gcp
         if interruptible_instances is not None:
             self.interruptible_instances = interruptible_instances
         if jobs_init is not None:
             self.jobs_init = jobs_init
-        if kms is not None:
-            self.kms = kms
         if landing_studios is not None:
             self.landing_studios = landing_studios
         if mmt_app is not None:
@@ -673,6 +673,27 @@ class V1UserFeatures(object):
         self._filesystem_optimisation = filesystem_optimisation
 
     @property
+    def gcp(self) -> 'bool':
+        """Gets the gcp of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The gcp of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._gcp
+
+    @gcp.setter
+    def gcp(self, gcp: 'bool'):
+        """Sets the gcp of this V1UserFeatures.
+
+
+        :param gcp: The gcp of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._gcp = gcp
+
+    @property
     def interruptible_instances(self) -> 'bool':
         """Gets the interruptible_instances of this V1UserFeatures.  # noqa: E501
 
@@ -713,27 +734,6 @@ class V1UserFeatures(object):
         """
 
         self._jobs_init = jobs_init
-
-    @property
-    def kms(self) -> 'bool':
-        """Gets the kms of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The kms of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._kms
-
-    @kms.setter
-    def kms(self, kms: 'bool'):
-        """Sets the kms of this V1UserFeatures.
-
-
-        :param kms: The kms of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._kms = kms
 
     @property
     def landing_studios(self) -> 'bool':

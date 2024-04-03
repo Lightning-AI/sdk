@@ -18,6 +18,7 @@ from lightning_sdk.lightning_cloud.openapi.api.lightningwork_service_api import 
 from lightning_sdk.lightning_cloud.openapi.api.lit_page_service_api import LitPageServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.models_store_api import ModelsStoreApi
 from lightning_sdk.lightning_cloud.openapi.api.organizations_service_api import OrganizationsServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.profiler_service_api import ProfilerServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.projects_service_api import ProjectsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.quest_service_api import QuestServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.ssh_public_key_service_api import SSHPublicKeyServiceApi

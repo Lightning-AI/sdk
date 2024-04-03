@@ -42,6 +42,7 @@ class V1TransferUserBalanceRequest(object):
     """
     swagger_types = {
         'amount': 'float',
+        'org_dst_id': 'str',
         'project_dst_id': 'str',
         'project_src_id': 'str',
         'user_dst': 'bool',
@@ -50,15 +51,17 @@ class V1TransferUserBalanceRequest(object):
 
     attribute_map = {
         'amount': 'amount',
+        'org_dst_id': 'orgDstId',
         'project_dst_id': 'projectDstId',
         'project_src_id': 'projectSrcId',
         'user_dst': 'userDst',
         'user_src': 'userSrc'
     }
 
-    def __init__(self, amount: 'float' =None, project_dst_id: 'str' =None, project_src_id: 'str' =None, user_dst: 'bool' =None, user_src: 'bool' =None):  # noqa: E501
+    def __init__(self, amount: 'float' =None, org_dst_id: 'str' =None, project_dst_id: 'str' =None, project_src_id: 'str' =None, user_dst: 'bool' =None, user_src: 'bool' =None):  # noqa: E501
         """V1TransferUserBalanceRequest - a model defined in Swagger"""  # noqa: E501
         self._amount = None
+        self._org_dst_id = None
         self._project_dst_id = None
         self._project_src_id = None
         self._user_dst = None
@@ -66,6 +69,8 @@ class V1TransferUserBalanceRequest(object):
         self.discriminator = None
         if amount is not None:
             self.amount = amount
+        if org_dst_id is not None:
+            self.org_dst_id = org_dst_id
         if project_dst_id is not None:
             self.project_dst_id = project_dst_id
         if project_src_id is not None:
@@ -95,6 +100,27 @@ class V1TransferUserBalanceRequest(object):
         """
 
         self._amount = amount
+
+    @property
+    def org_dst_id(self) -> 'str':
+        """Gets the org_dst_id of this V1TransferUserBalanceRequest.  # noqa: E501
+
+
+        :return: The org_dst_id of this V1TransferUserBalanceRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_dst_id
+
+    @org_dst_id.setter
+    def org_dst_id(self, org_dst_id: 'str'):
+        """Sets the org_dst_id of this V1TransferUserBalanceRequest.
+
+
+        :param org_dst_id: The org_dst_id of this V1TransferUserBalanceRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._org_dst_id = org_dst_id
 
     @property
     def project_dst_id(self) -> 'str':

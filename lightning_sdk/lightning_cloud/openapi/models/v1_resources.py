@@ -45,6 +45,7 @@ class V1Resources(object):
         'cpus': 'str',
         'extra': 'dict(str, str)',
         'gpu': 'str',
+        'gpu_type': 'str',
         'memory_mb': 'str',
         'storage_gb': 'str'
     }
@@ -54,16 +55,18 @@ class V1Resources(object):
         'cpus': 'cpus',
         'extra': 'extra',
         'gpu': 'gpu',
+        'gpu_type': 'gpuType',
         'memory_mb': 'memoryMb',
         'storage_gb': 'storageGb'
     }
 
-    def __init__(self, cpu: 'str' =None, cpus: 'str' =None, extra: 'dict(str, str)' =None, gpu: 'str' =None, memory_mb: 'str' =None, storage_gb: 'str' =None):  # noqa: E501
+    def __init__(self, cpu: 'str' =None, cpus: 'str' =None, extra: 'dict(str, str)' =None, gpu: 'str' =None, gpu_type: 'str' =None, memory_mb: 'str' =None, storage_gb: 'str' =None):  # noqa: E501
         """V1Resources - a model defined in Swagger"""  # noqa: E501
         self._cpu = None
         self._cpus = None
         self._extra = None
         self._gpu = None
+        self._gpu_type = None
         self._memory_mb = None
         self._storage_gb = None
         self.discriminator = None
@@ -75,6 +78,8 @@ class V1Resources(object):
             self.extra = extra
         if gpu is not None:
             self.gpu = gpu
+        if gpu_type is not None:
+            self.gpu_type = gpu_type
         if memory_mb is not None:
             self.memory_mb = memory_mb
         if storage_gb is not None:
@@ -163,6 +168,27 @@ class V1Resources(object):
         """
 
         self._gpu = gpu
+
+    @property
+    def gpu_type(self) -> 'str':
+        """Gets the gpu_type of this V1Resources.  # noqa: E501
+
+
+        :return: The gpu_type of this V1Resources.  # noqa: E501
+        :rtype: str
+        """
+        return self._gpu_type
+
+    @gpu_type.setter
+    def gpu_type(self, gpu_type: 'str'):
+        """Sets the gpu_type of this V1Resources.
+
+
+        :param gpu_type: The gpu_type of this V1Resources.  # noqa: E501
+        :type: str
+        """
+
+        self._gpu_type = gpu_type
 
     @property
     def memory_mb(self) -> 'str':

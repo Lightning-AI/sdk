@@ -47,6 +47,7 @@ class V1CloudSpaceCodeVersion(object):
         'name': 'str',
         'number_of_files': 'str',
         'status': 'V1CloudSpaceCodeVersionStatus',
+        'sync_duration': 'str',
         'sync_percentage': 'str',
         'total_size_bytes': 'str',
         'updated_at': 'datetime',
@@ -60,13 +61,14 @@ class V1CloudSpaceCodeVersion(object):
         'name': 'name',
         'number_of_files': 'numberOfFiles',
         'status': 'status',
+        'sync_duration': 'syncDuration',
         'sync_percentage': 'syncPercentage',
         'total_size_bytes': 'totalSizeBytes',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, cloud_space_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, status: 'V1CloudSpaceCodeVersionStatus' =None, sync_percentage: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_space_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, number_of_files: 'str' =None, status: 'V1CloudSpaceCodeVersionStatus' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1CloudSpaceCodeVersion - a model defined in Swagger"""  # noqa: E501
         self._cloud_space_id = None
         self._created_at = None
@@ -74,6 +76,7 @@ class V1CloudSpaceCodeVersion(object):
         self._name = None
         self._number_of_files = None
         self._status = None
+        self._sync_duration = None
         self._sync_percentage = None
         self._total_size_bytes = None
         self._updated_at = None
@@ -91,6 +94,8 @@ class V1CloudSpaceCodeVersion(object):
             self.number_of_files = number_of_files
         if status is not None:
             self.status = status
+        if sync_duration is not None:
+            self.sync_duration = sync_duration
         if sync_percentage is not None:
             self.sync_percentage = sync_percentage
         if total_size_bytes is not None:
@@ -225,6 +230,27 @@ class V1CloudSpaceCodeVersion(object):
         """
 
         self._status = status
+
+    @property
+    def sync_duration(self) -> 'str':
+        """Gets the sync_duration of this V1CloudSpaceCodeVersion.  # noqa: E501
+
+
+        :return: The sync_duration of this V1CloudSpaceCodeVersion.  # noqa: E501
+        :rtype: str
+        """
+        return self._sync_duration
+
+    @sync_duration.setter
+    def sync_duration(self, sync_duration: 'str'):
+        """Sets the sync_duration of this V1CloudSpaceCodeVersion.
+
+
+        :param sync_duration: The sync_duration of this V1CloudSpaceCodeVersion.  # noqa: E501
+        :type: str
+        """
+
+        self._sync_duration = sync_duration
 
     @property
     def sync_percentage(self) -> 'str':

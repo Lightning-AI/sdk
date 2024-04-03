@@ -47,6 +47,7 @@ class Externalv1LightningappInstance(object):
         'id': 'str',
         'name': 'str',
         'project_id': 'str',
+        'provider_user_id': 'str',
         'spec': 'V1LightningappInstanceSpec',
         'status': 'V1LightningappInstanceStatus',
         'updated_at': 'datetime'
@@ -59,12 +60,13 @@ class Externalv1LightningappInstance(object):
         'id': 'id',
         'name': 'name',
         'project_id': 'projectId',
+        'provider_user_id': 'providerUserId',
         'spec': 'spec',
         'status': 'status',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1LightningappInstanceSpec' =None, status: 'V1LightningappInstanceStatus' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, provider_user_id: 'str' =None, spec: 'V1LightningappInstanceSpec' =None, status: 'V1LightningappInstanceStatus' =None, updated_at: 'datetime' =None):  # noqa: E501
         """Externalv1LightningappInstance - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._description = None
@@ -72,6 +74,7 @@ class Externalv1LightningappInstance(object):
         self._id = None
         self._name = None
         self._project_id = None
+        self._provider_user_id = None
         self._spec = None
         self._status = None
         self._updated_at = None
@@ -88,6 +91,8 @@ class Externalv1LightningappInstance(object):
             self.name = name
         if project_id is not None:
             self.project_id = project_id
+        if provider_user_id is not None:
+            self.provider_user_id = provider_user_id
         if spec is not None:
             self.spec = spec
         if status is not None:
@@ -220,6 +225,27 @@ class Externalv1LightningappInstance(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def provider_user_id(self) -> 'str':
+        """Gets the provider_user_id of this Externalv1LightningappInstance.  # noqa: E501
+
+
+        :return: The provider_user_id of this Externalv1LightningappInstance.  # noqa: E501
+        :rtype: str
+        """
+        return self._provider_user_id
+
+    @provider_user_id.setter
+    def provider_user_id(self, provider_user_id: 'str'):
+        """Sets the provider_user_id of this Externalv1LightningappInstance.
+
+
+        :param provider_user_id: The provider_user_id of this Externalv1LightningappInstance.  # noqa: E501
+        :type: str
+        """
+
+        self._provider_user_id = provider_user_id
 
     @property
     def spec(self) -> 'V1LightningappInstanceSpec':

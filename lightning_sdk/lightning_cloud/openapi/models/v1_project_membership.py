@@ -41,12 +41,14 @@ class V1ProjectMembership(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'avatar_url': 'str',
         'balance': 'float',
         'created_at': 'datetime',
         'creator_id': 'str',
         'datastore_count': 'str',
         'description': 'str',
         'display_name': 'str',
+        'email': 'str',
         'first_name': 'str',
         'free_credits_enabled': 'bool',
         'inactive': 'bool',
@@ -68,12 +70,14 @@ class V1ProjectMembership(object):
     }
 
     attribute_map = {
+        'avatar_url': 'avatarUrl',
         'balance': 'balance',
         'created_at': 'createdAt',
         'creator_id': 'creatorId',
         'datastore_count': 'datastoreCount',
         'description': 'description',
         'display_name': 'displayName',
+        'email': 'email',
         'first_name': 'firstName',
         'free_credits_enabled': 'freeCreditsEnabled',
         'inactive': 'inactive',
@@ -94,14 +98,16 @@ class V1ProjectMembership(object):
         'username': 'username'
     }
 
-    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, organization: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, avatar_url: 'str' =None, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, email: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, organization: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
         """V1ProjectMembership - a model defined in Swagger"""  # noqa: E501
+        self._avatar_url = None
         self._balance = None
         self._created_at = None
         self._creator_id = None
         self._datastore_count = None
         self._description = None
         self._display_name = None
+        self._email = None
         self._first_name = None
         self._free_credits_enabled = None
         self._inactive = None
@@ -121,6 +127,8 @@ class V1ProjectMembership(object):
         self._user_id = None
         self._username = None
         self.discriminator = None
+        if avatar_url is not None:
+            self.avatar_url = avatar_url
         if balance is not None:
             self.balance = balance
         if created_at is not None:
@@ -133,6 +141,8 @@ class V1ProjectMembership(object):
             self.description = description
         if display_name is not None:
             self.display_name = display_name
+        if email is not None:
+            self.email = email
         if first_name is not None:
             self.first_name = first_name
         if free_credits_enabled is not None:
@@ -169,6 +179,27 @@ class V1ProjectMembership(object):
             self.user_id = user_id
         if username is not None:
             self.username = username
+
+    @property
+    def avatar_url(self) -> 'str':
+        """Gets the avatar_url of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The avatar_url of this V1ProjectMembership.  # noqa: E501
+        :rtype: str
+        """
+        return self._avatar_url
+
+    @avatar_url.setter
+    def avatar_url(self, avatar_url: 'str'):
+        """Sets the avatar_url of this V1ProjectMembership.
+
+
+        :param avatar_url: The avatar_url of this V1ProjectMembership.  # noqa: E501
+        :type: str
+        """
+
+        self._avatar_url = avatar_url
 
     @property
     def balance(self) -> 'float':
@@ -295,6 +326,27 @@ class V1ProjectMembership(object):
         """
 
         self._display_name = display_name
+
+    @property
+    def email(self) -> 'str':
+        """Gets the email of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The email of this V1ProjectMembership.  # noqa: E501
+        :rtype: str
+        """
+        return self._email
+
+    @email.setter
+    def email(self, email: 'str'):
+        """Sets the email of this V1ProjectMembership.
+
+
+        :param email: The email of this V1ProjectMembership.  # noqa: E501
+        :type: str
+        """
+
+        self._email = email
 
     @property
     def first_name(self) -> 'str':

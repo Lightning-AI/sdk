@@ -45,6 +45,8 @@ class SlurmJobsBody(object):
         'cluster_id': 'str',
         'command': 'str',
         'name': 'str',
+        'num_gpus': 'str',
+        'service_id': 'str',
         'sync_env': 'bool',
         'work_dir': 'str'
     }
@@ -54,16 +56,20 @@ class SlurmJobsBody(object):
         'cluster_id': 'clusterId',
         'command': 'command',
         'name': 'name',
+        'num_gpus': 'numGpus',
+        'service_id': 'serviceId',
         'sync_env': 'syncEnv',
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, name: 'str' =None, sync_env: 'bool' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, service_id: 'str' =None, sync_env: 'bool' =None, work_dir: 'str' =None):  # noqa: E501
         """SlurmJobsBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
         self._name = None
+        self._num_gpus = None
+        self._service_id = None
         self._sync_env = None
         self._work_dir = None
         self.discriminator = None
@@ -75,6 +81,10 @@ class SlurmJobsBody(object):
             self.command = command
         if name is not None:
             self.name = name
+        if num_gpus is not None:
+            self.num_gpus = num_gpus
+        if service_id is not None:
+            self.service_id = service_id
         if sync_env is not None:
             self.sync_env = sync_env
         if work_dir is not None:
@@ -165,6 +175,48 @@ class SlurmJobsBody(object):
         """
 
         self._name = name
+
+    @property
+    def num_gpus(self) -> 'str':
+        """Gets the num_gpus of this SlurmJobsBody.  # noqa: E501
+
+
+        :return: The num_gpus of this SlurmJobsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._num_gpus
+
+    @num_gpus.setter
+    def num_gpus(self, num_gpus: 'str'):
+        """Sets the num_gpus of this SlurmJobsBody.
+
+
+        :param num_gpus: The num_gpus of this SlurmJobsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._num_gpus = num_gpus
+
+    @property
+    def service_id(self) -> 'str':
+        """Gets the service_id of this SlurmJobsBody.  # noqa: E501
+
+
+        :return: The service_id of this SlurmJobsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._service_id
+
+    @service_id.setter
+    def service_id(self, service_id: 'str'):
+        """Sets the service_id of this SlurmJobsBody.
+
+
+        :param service_id: The service_id of this SlurmJobsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._service_id = service_id
 
     @property
     def sync_env(self) -> 'bool':

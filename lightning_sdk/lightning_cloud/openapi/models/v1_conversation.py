@@ -46,6 +46,7 @@ class V1Conversation(object):
         'id': 'str',
         'messages': 'list[V1Message]',
         'model': 'str',
+        'project_id': 'str',
         'title': 'str',
         'updated_at': 'datetime',
         'user_id': 'str'
@@ -57,18 +58,20 @@ class V1Conversation(object):
         'id': 'id',
         'messages': 'messages',
         'model': 'model',
+        'project_id': 'projectId',
         'title': 'title',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, assistant_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, messages: 'list[V1Message]' =None, model: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, messages: 'list[V1Message]' =None, model: 'str' =None, project_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Conversation - a model defined in Swagger"""  # noqa: E501
         self._assistant_id = None
         self._created_at = None
         self._id = None
         self._messages = None
         self._model = None
+        self._project_id = None
         self._title = None
         self._updated_at = None
         self._user_id = None
@@ -83,6 +86,8 @@ class V1Conversation(object):
             self.messages = messages
         if model is not None:
             self.model = model
+        if project_id is not None:
+            self.project_id = project_id
         if title is not None:
             self.title = title
         if updated_at is not None:
@@ -194,6 +199,27 @@ class V1Conversation(object):
         """
 
         self._model = model
+
+    @property
+    def project_id(self) -> 'str':
+        """Gets the project_id of this V1Conversation.  # noqa: E501
+
+
+        :return: The project_id of this V1Conversation.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, project_id: 'str'):
+        """Sets the project_id of this V1Conversation.
+
+
+        :param project_id: The project_id of this V1Conversation.  # noqa: E501
+        :type: str
+        """
+
+        self._project_id = project_id
 
     @property
     def title(self) -> 'str':
