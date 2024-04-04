@@ -1,14 +1,14 @@
-import time
 from datetime import datetime
 
 import pytest
-
+import re
 from lightning_sdk.machine import Machine
 from lightning_sdk.plugin import (
     InferenceServerPlugin,
     JobsPlugin,
     MultiMachineTrainingPlugin,
     MultiMachineDataPrepPlugin,
+    SlurmJobsPlugin,
     Plugin,
     _run_name,
 )
@@ -110,3 +110,15 @@ def test_run_data_prep(
         )
 
     plugin.run(command="python my-file.py", name="my-fancy-data-prep-name", num_instances=42, machine=cloud_compute)
+
+
+def test_slurm_job(internal_studio_init_mocker, internal_studio_status_mocker, internal_slurm_run_mocker):
+    studio = Studio("st-ghi", "ts-abc", "org-abc")
+    plugin = SlurmJobsPlugin("slurm", "", studio)
+    plugin.run(command="python my-file.py", name="my-fancy-slurm-name")
+
+    with pytest.raises(ValueError, match="The argument `num_gpus` needs to be strictly positive."):
+        plugin.run("", num_gpus=0)
+
+    with pytest.raises(ValueError, match="The argument `work_dir` needs to be a proper path on the SLURM Cluster."):
+        plugin.run("", work_dir="")

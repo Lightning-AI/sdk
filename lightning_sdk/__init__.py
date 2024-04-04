@@ -1,6 +1,6 @@
 from lightning_sdk.machine import Machine
 from lightning_sdk.organization import Organization
-from lightning_sdk.plugin import JobsPlugin, MultiMachineTrainingPlugin, Plugin
+from lightning_sdk.plugin import JobsPlugin, MultiMachineTrainingPlugin, Plugin, SlurmJobsPlugin
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
@@ -12,6 +12,7 @@ __all__ = [
     "MultiMachineTrainingPlugin",
     "Organization",
     "Plugin",
+    "SlurmJobsPlugin",
     "Status",
     "Studio",
     "Teamspace",

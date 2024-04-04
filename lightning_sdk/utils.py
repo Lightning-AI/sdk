@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from lightning_sdk.user import User
 
 
+_LIGHTNING_SERVICE_EXECUTION_ID_KEY = "LIGHTNING_SERVICE_EXECUTION_ID"
+
+
 def _setup_logger(name: str, level: int = logging.INFO) -> logging.Logger:
     _logger = logging.getLogger(name)
     _handler = logging.StreamHandler()

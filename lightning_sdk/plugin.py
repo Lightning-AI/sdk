@@ -1,11 +1,12 @@
 import datetime
 import logging
+import os
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional, Protocol, runtime_checkable
 
 from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
-from lightning_sdk.utils import _resolve_deprecated_cloud_compute, _setup_logger
+from lightning_sdk.utils import _LIGHTNING_SERVICE_EXECUTION_ID_KEY, _resolve_deprecated_cloud_compute, _setup_logger
 
 if TYPE_CHECKING:
     from lightning_sdk.lightning_cloud.openapi import Externalv1LightningappInstance
@@ -239,6 +240,95 @@ class InferenceServerPlugin(_Plugin):
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
             cluster_id=self._studio._studio.cluster_id,
+        )
+
+        _logger.info(_success_message(resp, self))
+        return resp
+
+
+class SlurmJobsPlugin(_Plugin):
+    """Plugin handling asynchronous SLURM jobs."""
+
+    _plugin_run_name = "slurm"
+    _slug_name = "slurm"
+
+    def run(
+        self,
+        command: str,
+        name: Optional[str] = None,
+        cluster_id: Optional[str] = None,
+        work_dir: str = "/home/lightning_manager",
+        num_gpus: int = 1,
+        sync_env: bool = True,
+    ) -> "Externalv1LightningappInstance":
+        """Launches an asynchronous SLURM job.
+
+        Args:
+            command: The command to be passed to the SLURM Job.
+            name: The name of the SLURM Job.
+            cluster_id: The name of the SLURM Cluster to submit the job on.
+                If the cluster_id isn't provided, the oldest running SLURM cluster will be selected.
+            work_dir: The position where the the files will be created on the SLURM cluster.
+            num_gpus: The number of GPUs requested.
+            sync_env: Whether to force an environement sync.
+
+        """
+        from lightning_sdk.lightning_cloud.openapi import SlurmJobsBody
+
+        if work_dir == "":
+            raise ValueError("The argument `work_dir` needs to be a proper path on the SLURM Cluster.")
+
+        if num_gpus <= 0:
+            raise ValueError("The argument `num_gpus` needs to be strictly positive.")
+
+        if name is None:
+            name = _run_name("slurm")
+
+        client = self._studio._studio_api._client
+
+        clusters = client.cluster_service_list_project_clusters(project_id=self._studio._teamspace.id).clusters
+        slurm_clusters = [cluster for cluster in clusters if cluster.spec.slurm_v1 is not None]
+        running_slurm_clusters = [
+            cluster for cluster in slurm_clusters if cluster.status.phase == "CLUSTER_STATE_RUNNING"
+        ]
+        running_slurm_clusters = sorted(running_slurm_clusters, key=lambda x: x.created_at)
+
+        if not running_slurm_clusters:
+            raise RuntimeError(
+                "You don't have any running SLURM clusters associated to this project. "
+                "Please, check your Teamspace Cloud Account."
+            )
+
+        selected_cluster = None
+
+        if cluster_id:
+            for cluster in running_slurm_clusters:
+                if cluster.cluster_id == cluster_id:
+                    selected_cluster = cluster
+                    break
+
+            if not selected_cluster:
+                raise ValueError(f"The provided cluster {cluster_id} wasn't found.")
+        else:
+            selected_cluster = running_slurm_clusters[0]
+
+        service_id = os.getenv(_LIGHTNING_SERVICE_EXECUTION_ID_KEY)
+
+        if service_id:
+            command = f"{_LIGHTNING_SERVICE_EXECUTION_ID_KEY}={service_id} {command}"
+
+        resp = client.slurm_jobs_user_service_create_user_slurm_job(
+            project_id=self._studio._teamspace.id,
+            body=SlurmJobsBody(
+                cloudspace_id=self._studio._studio.id,
+                cluster_id=selected_cluster.id,
+                command=command,
+                name=name,
+                sync_env=sync_env,
+                work_dir=work_dir,
+                service_id=service_id,
+                num_gpus=num_gpus,
+            ),
         )
 
         _logger.info(_success_message(resp, self))

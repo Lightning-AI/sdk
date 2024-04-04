@@ -1,14 +1,7 @@
 import json
-import math
 from unittest import mock
-from unittest.mock import Mock
-
 import pytest
-from datetime import datetime
-
-from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.openapi import (
-    AppsIdBody1,
     Externalv1CloudSpaceInstanceStatus,
     Externalv1LightningappInstance,
     IdCodeconfigBody,
@@ -21,7 +14,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1DeleteCloudSpaceResponse,
     V1ExecuteCloudSpaceCommandResponse,
     V1GetCloudSpaceInstanceStatusResponse,
-    V1GetUserResponse,
     V1LightningRun,
     V1ListCloudSpacesResponse,
     V1ListMembershipsResponse,
@@ -37,10 +29,14 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UploadProjectArtifactResponse,
     V1UserRequestedComputeConfig,
     V1LoginResponse,
-    V1GetArtifactsPageResponse,
-    V1Artifact,
     V1ListProjectClusterBindingsResponse,
     V1ProjectClusterBinding,
+    V1ListProjectClustersResponse,
+    Externalv1Cluster,
+    V1ClusterSpec,
+    V1ClusterStatus,
+    V1ClusterState,
+    V1SLURMJob,
 )
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -1644,6 +1640,51 @@ def keep_alive_mocker(mocker):
 
     mocker.patch("lightning_sdk.api.studio_api.StudioApi._send_keepalives", side_effect=side_effect, autospec=True)
     mocker.patch("threading.Thread", autospec=True)
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_slurm_run_mocker(mocker, monkeypatch):
+    def cluster_service_list_project_clusters_side_effect(self, project_id):
+        assert project_id == "ts-abc001"
+        return V1ListProjectClustersResponse(
+            clusters=[
+                Externalv1Cluster(
+                    id="slurm-cluster",
+                    spec=V1ClusterSpec(slurm_v1=True),
+                    status=V1ClusterStatus(phase=V1ClusterState.RUNNING),
+                )
+            ]
+        )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_project_clusters",
+        autospec=True,
+        side_effect=cluster_service_list_project_clusters_side_effect,
+    )
+
+    def slurm_jobs_user_service_create_user_slurm_job_side_effect(self, project_id, body):
+        assert project_id == "ts-abc001"
+        assert body.cloudspace_id == "st-ghi"
+        assert body.cluster_id == "slurm-cluster"
+        assert body.command == "LIGHTNING_SERVICE_EXECUTION_ID=service_id python my-file.py"
+        assert body.num_gpus == 1
+        assert body.service_id == "service_id"
+        assert body.sync_env == True
+        assert body.work_dir == "/home/lightning_manager"
+
+        return V1SLURMJob(name="slurm")
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.slurm_jobs_user_service_api.SlurmJobsUserServiceApi.slurm_jobs_user_service_create_user_slurm_job",
+        autospec=True,
+        side_effect=slurm_jobs_user_service_create_user_slurm_job_side_effect,
+    )
+
+    monkeypatch.setenv("LIGHTNING_SERVICE_EXECUTION_ID", "service_id")
 
     yield [mocker]
 
