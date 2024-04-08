@@ -41,6 +41,7 @@ class V1AgentJob(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cache_id': 'str',
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'command': 'str',
@@ -48,11 +49,14 @@ class V1AgentJob(object):
         'conda_env_path': 'str',
         'created_at': 'datetime',
         'id': 'str',
+        'linked_project_id': 'str',
+        'linked_user_id': 'str',
         'message': 'str',
         'name': 'str',
         'num_gpus': 'str',
         'project_id': 'str',
         'run_id': 'str',
+        'service_id': 'str',
         'slurm_v1_status': 'V1SlurmV1JobStatus',
         'state': 'str',
         'updated_at': 'datetime',
@@ -63,6 +67,7 @@ class V1AgentJob(object):
     }
 
     attribute_map = {
+        'cache_id': 'cacheId',
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'command': 'command',
@@ -70,11 +75,14 @@ class V1AgentJob(object):
         'conda_env_path': 'condaEnvPath',
         'created_at': 'createdAt',
         'id': 'id',
+        'linked_project_id': 'linkedProjectId',
+        'linked_user_id': 'linkedUserId',
         'message': 'message',
         'name': 'name',
         'num_gpus': 'numGpus',
         'project_id': 'projectId',
         'run_id': 'runId',
+        'service_id': 'serviceId',
         'slurm_v1_status': 'slurmV1Status',
         'state': 'state',
         'updated_at': 'updatedAt',
@@ -84,8 +92,9 @@ class V1AgentJob(object):
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, conda_checksum: 'str' =None, conda_env_path: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, conda_checksum: 'str' =None, conda_env_path: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1AgentJob - a model defined in Swagger"""  # noqa: E501
+        self._cache_id = None
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
@@ -93,11 +102,14 @@ class V1AgentJob(object):
         self._conda_env_path = None
         self._created_at = None
         self._id = None
+        self._linked_project_id = None
+        self._linked_user_id = None
         self._message = None
         self._name = None
         self._num_gpus = None
         self._project_id = None
         self._run_id = None
+        self._service_id = None
         self._slurm_v1_status = None
         self._state = None
         self._updated_at = None
@@ -106,6 +118,8 @@ class V1AgentJob(object):
         self._upload_percentage = None
         self._work_dir = None
         self.discriminator = None
+        if cache_id is not None:
+            self.cache_id = cache_id
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
@@ -120,6 +134,10 @@ class V1AgentJob(object):
             self.created_at = created_at
         if id is not None:
             self.id = id
+        if linked_project_id is not None:
+            self.linked_project_id = linked_project_id
+        if linked_user_id is not None:
+            self.linked_user_id = linked_user_id
         if message is not None:
             self.message = message
         if name is not None:
@@ -130,6 +148,8 @@ class V1AgentJob(object):
             self.project_id = project_id
         if run_id is not None:
             self.run_id = run_id
+        if service_id is not None:
+            self.service_id = service_id
         if slurm_v1_status is not None:
             self.slurm_v1_status = slurm_v1_status
         if state is not None:
@@ -144,6 +164,27 @@ class V1AgentJob(object):
             self.upload_percentage = upload_percentage
         if work_dir is not None:
             self.work_dir = work_dir
+
+    @property
+    def cache_id(self) -> 'str':
+        """Gets the cache_id of this V1AgentJob.  # noqa: E501
+
+
+        :return: The cache_id of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._cache_id
+
+    @cache_id.setter
+    def cache_id(self, cache_id: 'str'):
+        """Sets the cache_id of this V1AgentJob.
+
+
+        :param cache_id: The cache_id of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._cache_id = cache_id
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -293,6 +334,48 @@ class V1AgentJob(object):
         self._id = id
 
     @property
+    def linked_project_id(self) -> 'str':
+        """Gets the linked_project_id of this V1AgentJob.  # noqa: E501
+
+
+        :return: The linked_project_id of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._linked_project_id
+
+    @linked_project_id.setter
+    def linked_project_id(self, linked_project_id: 'str'):
+        """Sets the linked_project_id of this V1AgentJob.
+
+
+        :param linked_project_id: The linked_project_id of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._linked_project_id = linked_project_id
+
+    @property
+    def linked_user_id(self) -> 'str':
+        """Gets the linked_user_id of this V1AgentJob.  # noqa: E501
+
+
+        :return: The linked_user_id of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._linked_user_id
+
+    @linked_user_id.setter
+    def linked_user_id(self, linked_user_id: 'str'):
+        """Sets the linked_user_id of this V1AgentJob.
+
+
+        :param linked_user_id: The linked_user_id of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._linked_user_id = linked_user_id
+
+    @property
     def message(self) -> 'str':
         """Gets the message of this V1AgentJob.  # noqa: E501
 
@@ -396,6 +479,27 @@ class V1AgentJob(object):
         """
 
         self._run_id = run_id
+
+    @property
+    def service_id(self) -> 'str':
+        """Gets the service_id of this V1AgentJob.  # noqa: E501
+
+
+        :return: The service_id of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._service_id
+
+    @service_id.setter
+    def service_id(self, service_id: 'str'):
+        """Sets the service_id of this V1AgentJob.
+
+
+        :param service_id: The service_id of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._service_id = service_id
 
     @property
     def slurm_v1_status(self) -> 'V1SlurmV1JobStatus':

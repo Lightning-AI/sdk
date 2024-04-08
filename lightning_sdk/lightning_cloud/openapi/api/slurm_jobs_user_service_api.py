@@ -473,6 +473,7 @@ class SlurmJobsUserServiceApi(object):
         :param list[str] cluster_id_in:
         :param list[str] cluster_id_not_in:
         :param list[str] state_in:
+        :param bool include_linked_instances:
         :return: V1ListUserSLURMJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -498,12 +499,13 @@ class SlurmJobsUserServiceApi(object):
         :param list[str] cluster_id_in:
         :param list[str] cluster_id_not_in:
         :param list[str] state_in:
+        :param bool include_linked_instances:
         :return: V1ListUserSLURMJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_ids', 'cluster_id_in', 'cluster_id_not_in', 'state_in']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_ids', 'cluster_id_in', 'cluster_id_not_in', 'state_in', 'include_linked_instances']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -542,6 +544,8 @@ class SlurmJobsUserServiceApi(object):
         if 'state_in' in params:
             query_params.append(('stateIn', params['state_in']))  # noqa: E501
             collection_formats['stateIn'] = 'multi'  # noqa: E501
+        if 'include_linked_instances' in params:
+            query_params.append(('includeLinkedInstances', params['include_linked_instances']))  # noqa: E501
 
         header_params = {}
 

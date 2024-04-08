@@ -43,20 +43,23 @@ class V1MagicLinkLoginRequest(object):
     swagger_types = {
         'collab_session_id': 'str',
         'email': 'str',
-        'redirect_url': 'str'
+        'redirect_url': 'str',
+        'referrer_params': 'str'
     }
 
     attribute_map = {
         'collab_session_id': 'collabSessionId',
         'email': 'email',
-        'redirect_url': 'redirectUrl'
+        'redirect_url': 'redirectUrl',
+        'referrer_params': 'referrerParams'
     }
 
-    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, redirect_url: 'str' =None):  # noqa: E501
+    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None):  # noqa: E501
         """V1MagicLinkLoginRequest - a model defined in Swagger"""  # noqa: E501
         self._collab_session_id = None
         self._email = None
         self._redirect_url = None
+        self._referrer_params = None
         self.discriminator = None
         if collab_session_id is not None:
             self.collab_session_id = collab_session_id
@@ -64,6 +67,8 @@ class V1MagicLinkLoginRequest(object):
             self.email = email
         if redirect_url is not None:
             self.redirect_url = redirect_url
+        if referrer_params is not None:
+            self.referrer_params = referrer_params
 
     @property
     def collab_session_id(self) -> 'str':
@@ -127,6 +132,27 @@ class V1MagicLinkLoginRequest(object):
         """
 
         self._redirect_url = redirect_url
+
+    @property
+    def referrer_params(self) -> 'str':
+        """Gets the referrer_params of this V1MagicLinkLoginRequest.  # noqa: E501
+
+
+        :return: The referrer_params of this V1MagicLinkLoginRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._referrer_params
+
+    @referrer_params.setter
+    def referrer_params(self, referrer_params: 'str'):
+        """Sets the referrer_params of this V1MagicLinkLoginRequest.
+
+
+        :param referrer_params: The referrer_params of this V1MagicLinkLoginRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._referrer_params = referrer_params
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

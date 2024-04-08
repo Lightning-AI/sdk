@@ -41,6 +41,7 @@ class SlurmJobsBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cache_id': 'str',
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'command': 'str',
@@ -52,6 +53,7 @@ class SlurmJobsBody(object):
     }
 
     attribute_map = {
+        'cache_id': 'cacheId',
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'command': 'command',
@@ -62,8 +64,9 @@ class SlurmJobsBody(object):
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, service_id: 'str' =None, sync_env: 'bool' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, service_id: 'str' =None, sync_env: 'bool' =None, work_dir: 'str' =None):  # noqa: E501
         """SlurmJobsBody - a model defined in Swagger"""  # noqa: E501
+        self._cache_id = None
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
@@ -73,6 +76,8 @@ class SlurmJobsBody(object):
         self._sync_env = None
         self._work_dir = None
         self.discriminator = None
+        if cache_id is not None:
+            self.cache_id = cache_id
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
@@ -89,6 +94,27 @@ class SlurmJobsBody(object):
             self.sync_env = sync_env
         if work_dir is not None:
             self.work_dir = work_dir
+
+    @property
+    def cache_id(self) -> 'str':
+        """Gets the cache_id of this SlurmJobsBody.  # noqa: E501
+
+
+        :return: The cache_id of this SlurmJobsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cache_id
+
+    @cache_id.setter
+    def cache_id(self, cache_id: 'str'):
+        """Sets the cache_id of this SlurmJobsBody.
+
+
+        :param cache_id: The cache_id of this SlurmJobsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cache_id = cache_id
 
     @property
     def cloudspace_id(self) -> 'str':

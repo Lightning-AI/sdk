@@ -93,6 +93,7 @@ class V1UserFeatures(object):
         'show_dev_admin': 'bool',
         'slurm': 'bool',
         'studio_publication': 'bool',
+        'teamspace_storage_tab': 'bool',
         'writable_data_connections': 'bool'
     }
 
@@ -149,10 +150,11 @@ class V1UserFeatures(object):
         'show_dev_admin': 'showDevAdmin',
         'slurm': 'slurm',
         'studio_publication': 'studioPublication',
+        'teamspace_storage_tab': 'teamspaceStorageTab',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, teamspace_storage_tab: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._apt_get_v2 = None
         self._aws_trainium = None
@@ -206,6 +208,7 @@ class V1UserFeatures(object):
         self._show_dev_admin = None
         self._slurm = None
         self._studio_publication = None
+        self._teamspace_storage_tab = None
         self._writable_data_connections = None
         self.discriminator = None
         if apt_get_v2 is not None:
@@ -312,6 +315,8 @@ class V1UserFeatures(object):
             self.slurm = slurm
         if studio_publication is not None:
             self.studio_publication = studio_publication
+        if teamspace_storage_tab is not None:
+            self.teamspace_storage_tab = teamspace_storage_tab
         if writable_data_connections is not None:
             self.writable_data_connections = writable_data_connections
 
@@ -1406,6 +1411,27 @@ class V1UserFeatures(object):
         """
 
         self._studio_publication = studio_publication
+
+    @property
+    def teamspace_storage_tab(self) -> 'bool':
+        """Gets the teamspace_storage_tab of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The teamspace_storage_tab of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._teamspace_storage_tab
+
+    @teamspace_storage_tab.setter
+    def teamspace_storage_tab(self, teamspace_storage_tab: 'bool'):
+        """Sets the teamspace_storage_tab of this V1UserFeatures.
+
+
+        :param teamspace_storage_tab: The teamspace_storage_tab of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._teamspace_storage_tab = teamspace_storage_tab
 
     @property
     def writable_data_connections(self) -> 'bool':

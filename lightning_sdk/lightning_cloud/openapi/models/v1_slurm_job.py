@@ -41,6 +41,7 @@ class V1SLURMJob(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cache_id': 'str',
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'command': 'str',
@@ -65,6 +66,7 @@ class V1SLURMJob(object):
     }
 
     attribute_map = {
+        'cache_id': 'cacheId',
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'command': 'command',
@@ -88,8 +90,9 @@ class V1SLURMJob(object):
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, user_id: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, user_id: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1SLURMJob - a model defined in Swagger"""  # noqa: E501
+        self._cache_id = None
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
@@ -112,6 +115,8 @@ class V1SLURMJob(object):
         self._user_id = None
         self._work_dir = None
         self.discriminator = None
+        if cache_id is not None:
+            self.cache_id = cache_id
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
@@ -154,6 +159,27 @@ class V1SLURMJob(object):
             self.user_id = user_id
         if work_dir is not None:
             self.work_dir = work_dir
+
+    @property
+    def cache_id(self) -> 'str':
+        """Gets the cache_id of this V1SLURMJob.  # noqa: E501
+
+
+        :return: The cache_id of this V1SLURMJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._cache_id
+
+    @cache_id.setter
+    def cache_id(self, cache_id: 'str'):
+        """Sets the cache_id of this V1SLURMJob.
+
+
+        :param cache_id: The cache_id of this V1SLURMJob.  # noqa: E501
+        :type: str
+        """
+
+        self._cache_id = cache_id
 
     @property
     def cloudspace_id(self) -> 'str':
