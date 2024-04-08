@@ -260,6 +260,7 @@ class SlurmJobsPlugin(_Plugin):
         work_dir: str = "/home/lightning_manager",
         num_gpus: int = 1,
         sync_env: bool = True,
+        cache_id: Optional[str] = None,
     ) -> "Externalv1LightningappInstance":
         """Launches an asynchronous SLURM job.
 
@@ -271,6 +272,8 @@ class SlurmJobsPlugin(_Plugin):
             work_dir: The position where the the files will be created on the SLURM cluster.
             num_gpus: The number of GPUs requested.
             sync_env: Whether to force an environement sync.
+            cache_id: A string to avoid re-downloading the Studio files to the SLURM cluster.
+                If you update your files and don't change the cache_id, they won't be used.
 
         """
         from lightning_sdk.lightning_cloud.openapi import SlurmJobsBody
@@ -314,8 +317,25 @@ class SlurmJobsPlugin(_Plugin):
 
         service_id = os.getenv(_LIGHTNING_SERVICE_EXECUTION_ID_KEY)
 
+        # TODO: Move this to the BE
+        envs = [
+            f"LIGHTNING_CLOUD_PROJECT_ID={os.getenv('LIGHTNING_CLOUD_PROJECT_ID')}",
+            f"LIGHTNING_USERNAME={os.getenv('LIGHTNING_USERNAME')}",
+            f"LIGHTNING_USER_ID={os.getenv('LIGHTNING_USER_ID')}",
+            f"LIGHTNING_API_KEY={os.getenv('LIGHTNING_API_KEY')}",
+            f"LIGHTNING_CLOUD_URL={os.getenv('LIGHTNING_CLOUD_URL')}",
+        ]
+
         if service_id:
-            command = f"{_LIGHTNING_SERVICE_EXECUTION_ID_KEY}={service_id} {command}"
+            envs.append(f"{_LIGHTNING_SERVICE_EXECUTION_ID_KEY}={service_id}")
+
+        if "&&" in command:
+            # We are adding the env varaibles to the latest command
+            splits = command.split("&&")
+            splits[-1] = " ".join(envs) + " " + splits[-1]
+            command = " && ".join(splits)
+        else:
+            command = " ".join(envs) + " " + command
 
         resp = client.slurm_jobs_user_service_create_user_slurm_job(
             project_id=self._studio._teamspace.id,
@@ -328,6 +348,7 @@ class SlurmJobsPlugin(_Plugin):
                 work_dir=work_dir,
                 service_id=service_id,
                 num_gpus=num_gpus,
+                cache_id=cache_id,
             ),
         )
 

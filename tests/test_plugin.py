@@ -115,7 +115,7 @@ def test_run_data_prep(
 def test_slurm_job(internal_studio_init_mocker, internal_studio_status_mocker, internal_slurm_run_mocker):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     plugin = SlurmJobsPlugin("slurm", "", studio)
-    plugin.run(command="python my-file.py", name="my-fancy-slurm-name")
+    plugin.run(command="python my-file.py", name="my-fancy-slurm-name", cache_id="2", num_gpus=2)
 
     with pytest.raises(ValueError, match="The argument `num_gpus` needs to be strictly positive."):
         plugin.run("", num_gpus=0)

@@ -1670,11 +1670,17 @@ def internal_slurm_run_mocker(mocker, monkeypatch):
         assert project_id == "ts-abc001"
         assert body.cloudspace_id == "st-ghi"
         assert body.cluster_id == "slurm-cluster"
-        assert body.command == "LIGHTNING_SERVICE_EXECUTION_ID=service_id python my-file.py"
-        assert body.num_gpus == 1
+        assert "LIGHTNING_CLOUD_PROJECT_ID" in body.command
+        assert "LIGHTNING_USERNAME" in body.command
+        assert "LIGHTNING_USER_ID" in body.command
+        assert "LIGHTNING_API_KEY" in body.command
+        assert "LIGHTNING_SERVICE_EXECUTION_ID=service_id" in body.command
+        assert "python my-file.py" in body.command
+        assert body.num_gpus == 2
         assert body.service_id == "service_id"
         assert body.sync_env == True
         assert body.work_dir == "/home/lightning_manager"
+        assert body.cache_id == "2"
 
         return V1SLURMJob(name="slurm")
 
