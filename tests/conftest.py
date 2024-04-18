@@ -1,6 +1,8 @@
 import json
 from unittest import mock
 import pytest
+
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
     Externalv1LightningappInstance,
@@ -1691,6 +1693,24 @@ def internal_slurm_run_mocker(mocker, monkeypatch):
     )
 
     monkeypatch.setenv("LIGHTNING_SERVICE_EXECUTION_ID", "service_id")
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_job_api_mocker_get_job(mocker):
+    def find_instance(self, project_id, name):
+        if name in ["j-abc", "j-def"]:
+            return Externalv1LightningappInstance(name=name, project_id=project_id, id=name)
+        raise ApiException(status=404)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
+        side_effect=find_instance,
+        autospec=True,
+    )
 
     yield [mocker]
 
