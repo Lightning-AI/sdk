@@ -52,6 +52,7 @@ class V1GetUserResponse(object):
         'internal_docs_admin': 'bool',
         'is_internal': 'bool',
         'last_name': 'str',
+        'non_developer_mode': 'bool',
         'opted_in_marketing_emails': 'bool',
         'organization': 'str',
         'organizations': 'list[V1Organization]',
@@ -84,6 +85,7 @@ class V1GetUserResponse(object):
         'internal_docs_admin': 'internalDocsAdmin',
         'is_internal': 'isInternal',
         'last_name': 'lastName',
+        'non_developer_mode': 'nonDeveloperMode',
         'opted_in_marketing_emails': 'optedInMarketingEmails',
         'organization': 'organization',
         'organizations': 'organizations',
@@ -104,7 +106,7 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, is_internal: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._api_key = None
@@ -117,6 +119,7 @@ class V1GetUserResponse(object):
         self._internal_docs_admin = None
         self._is_internal = None
         self._last_name = None
+        self._non_developer_mode = None
         self._opted_in_marketing_emails = None
         self._organization = None
         self._organizations = None
@@ -158,6 +161,8 @@ class V1GetUserResponse(object):
             self.is_internal = is_internal
         if last_name is not None:
             self.last_name = last_name
+        if non_developer_mode is not None:
+            self.non_developer_mode = non_developer_mode
         if opted_in_marketing_emails is not None:
             self.opted_in_marketing_emails = opted_in_marketing_emails
         if organization is not None:
@@ -425,6 +430,27 @@ class V1GetUserResponse(object):
         """
 
         self._last_name = last_name
+
+    @property
+    def non_developer_mode(self) -> 'bool':
+        """Gets the non_developer_mode of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The non_developer_mode of this V1GetUserResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._non_developer_mode
+
+    @non_developer_mode.setter
+    def non_developer_mode(self, non_developer_mode: 'bool'):
+        """Sets the non_developer_mode of this V1GetUserResponse.
+
+
+        :param non_developer_mode: The non_developer_mode of this V1GetUserResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._non_developer_mode = non_developer_mode
 
     @property
     def opted_in_marketing_emails(self) -> 'bool':

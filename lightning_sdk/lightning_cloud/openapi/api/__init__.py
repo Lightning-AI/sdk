@@ -15,6 +15,7 @@ from lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api import Endpo
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api import LightningappInstanceServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_v2_service_api import LightningappV2ServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningwork_service_api import LightningworkServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.lit_logger_service_api import LitLoggerServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lit_page_service_api import LitPageServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.models_store_api import ModelsStoreApi
 from lightning_sdk.lightning_cloud.openapi.api.organizations_service_api import OrganizationsServiceApi
@@ -24,5 +25,6 @@ from lightning_sdk.lightning_cloud.openapi.api.quest_service_api import QuestSer
 from lightning_sdk.lightning_cloud.openapi.api.ssh_public_key_service_api import SSHPublicKeyServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.secret_service_api import SecretServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.slurm_jobs_user_service_api import SlurmJobsUserServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.snowflake_service_api import SnowflakeServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.studio_jobs_service_api import StudioJobsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.user_service_api import UserServiceApi

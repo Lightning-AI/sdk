@@ -34,6 +34,7 @@ DOT_IGNORE_FILENAME = ".lightningignore"
 
 LEEWAY = 100
 IS_DEV_ENV = True
+LIGHTNING_CLOUD_PROJECT_ID = os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
 
 
 def reset_global_variables() -> None:

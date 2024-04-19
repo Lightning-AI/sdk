@@ -52,6 +52,7 @@ class V1Metadata(object):
         'linked_project_id': 'str',
         'linked_user_id': 'str',
         'name': 'str',
+        'org_id': 'str',
         'project_id': 'str',
         'resource_version': 'str',
         'updated_at': 'datetime'
@@ -69,12 +70,13 @@ class V1Metadata(object):
         'linked_project_id': 'linkedProjectId',
         'linked_user_id': 'linkedUserId',
         'name': 'name',
+        'org_id': 'orgId',
         'project_id': 'projectId',
         'resource_version': 'resourceVersion',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, annotations: 'dict(str, str)' =None, creation_timestamp: 'datetime' =None, deletion_timestamp: 'datetime' =None, display_name: 'str' =None, finalizers: 'list[str]' =None, id: 'str' =None, labels: 'dict(str, str)' =None, last_updated_by_user_at: 'datetime' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, name: 'str' =None, project_id: 'str' =None, resource_version: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, annotations: 'dict(str, str)' =None, creation_timestamp: 'datetime' =None, deletion_timestamp: 'datetime' =None, display_name: 'str' =None, finalizers: 'list[str]' =None, id: 'str' =None, labels: 'dict(str, str)' =None, last_updated_by_user_at: 'datetime' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, resource_version: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Metadata - a model defined in Swagger"""  # noqa: E501
         self._annotations = None
         self._creation_timestamp = None
@@ -87,6 +89,7 @@ class V1Metadata(object):
         self._linked_project_id = None
         self._linked_user_id = None
         self._name = None
+        self._org_id = None
         self._project_id = None
         self._resource_version = None
         self._updated_at = None
@@ -113,6 +116,8 @@ class V1Metadata(object):
             self.linked_user_id = linked_user_id
         if name is not None:
             self.name = name
+        if org_id is not None:
+            self.org_id = org_id
         if project_id is not None:
             self.project_id = project_id
         if resource_version is not None:
@@ -352,6 +357,27 @@ class V1Metadata(object):
         """
 
         self._name = name
+
+    @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this V1Metadata.  # noqa: E501
+
+
+        :return: The org_id of this V1Metadata.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this V1Metadata.
+
+
+        :param org_id: The org_id of this V1Metadata.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
 
     @property
     def project_id(self) -> 'str':

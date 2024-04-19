@@ -41,6 +41,7 @@ class V1StudioJobApp(object):
     STREAMLIT = "STUDIO_JOB_APP_STREAMLIT"
     GRADIO = "STUDIO_JOB_APP_GRADIO"
     REACT = "STUDIO_JOB_APP_REACT"
+    ENDPOINT = "STUDIO_JOB_APP_ENDPOINT"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

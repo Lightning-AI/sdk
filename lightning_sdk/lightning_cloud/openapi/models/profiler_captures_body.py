@@ -43,32 +43,47 @@ class ProfilerCapturesBody(object):
     swagger_types = {
         'cloudspace_id': 'str',
         'display_name': 'str',
-        'name': 'str',
-        'number_of_processes': 'int'
+        'duration': 'float',
+        'number_of_processes': 'int',
+        'pids': 'list[int]',
+        'sampling_duration': 'int',
+        'sampling_interval': 'int'
     }
 
     attribute_map = {
         'cloudspace_id': 'cloudspaceId',
         'display_name': 'displayName',
-        'name': 'name',
-        'number_of_processes': 'numberOfProcesses'
+        'duration': 'duration',
+        'number_of_processes': 'numberOfProcesses',
+        'pids': 'pids',
+        'sampling_duration': 'samplingDuration',
+        'sampling_interval': 'samplingInterval'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, display_name: 'str' =None, name: 'str' =None, number_of_processes: 'int' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, display_name: 'str' =None, duration: 'float' =None, number_of_processes: 'int' =None, pids: 'list[int]' =None, sampling_duration: 'int' =None, sampling_interval: 'int' =None):  # noqa: E501
         """ProfilerCapturesBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._display_name = None
-        self._name = None
+        self._duration = None
         self._number_of_processes = None
+        self._pids = None
+        self._sampling_duration = None
+        self._sampling_interval = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if display_name is not None:
             self.display_name = display_name
-        if name is not None:
-            self.name = name
+        if duration is not None:
+            self.duration = duration
         if number_of_processes is not None:
             self.number_of_processes = number_of_processes
+        if pids is not None:
+            self.pids = pids
+        if sampling_duration is not None:
+            self.sampling_duration = sampling_duration
+        if sampling_interval is not None:
+            self.sampling_interval = sampling_interval
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -113,25 +128,25 @@ class ProfilerCapturesBody(object):
         self._display_name = display_name
 
     @property
-    def name(self) -> 'str':
-        """Gets the name of this ProfilerCapturesBody.  # noqa: E501
+    def duration(self) -> 'float':
+        """Gets the duration of this ProfilerCapturesBody.  # noqa: E501
 
 
-        :return: The name of this ProfilerCapturesBody.  # noqa: E501
-        :rtype: str
+        :return: The duration of this ProfilerCapturesBody.  # noqa: E501
+        :rtype: float
         """
-        return self._name
+        return self._duration
 
-    @name.setter
-    def name(self, name: 'str'):
-        """Sets the name of this ProfilerCapturesBody.
+    @duration.setter
+    def duration(self, duration: 'float'):
+        """Sets the duration of this ProfilerCapturesBody.
 
 
-        :param name: The name of this ProfilerCapturesBody.  # noqa: E501
-        :type: str
+        :param duration: The duration of this ProfilerCapturesBody.  # noqa: E501
+        :type: float
         """
 
-        self._name = name
+        self._duration = duration
 
     @property
     def number_of_processes(self) -> 'int':
@@ -153,6 +168,69 @@ class ProfilerCapturesBody(object):
         """
 
         self._number_of_processes = number_of_processes
+
+    @property
+    def pids(self) -> 'list[int]':
+        """Gets the pids of this ProfilerCapturesBody.  # noqa: E501
+
+
+        :return: The pids of this ProfilerCapturesBody.  # noqa: E501
+        :rtype: list[int]
+        """
+        return self._pids
+
+    @pids.setter
+    def pids(self, pids: 'list[int]'):
+        """Sets the pids of this ProfilerCapturesBody.
+
+
+        :param pids: The pids of this ProfilerCapturesBody.  # noqa: E501
+        :type: list[int]
+        """
+
+        self._pids = pids
+
+    @property
+    def sampling_duration(self) -> 'int':
+        """Gets the sampling_duration of this ProfilerCapturesBody.  # noqa: E501
+
+
+        :return: The sampling_duration of this ProfilerCapturesBody.  # noqa: E501
+        :rtype: int
+        """
+        return self._sampling_duration
+
+    @sampling_duration.setter
+    def sampling_duration(self, sampling_duration: 'int'):
+        """Sets the sampling_duration of this ProfilerCapturesBody.
+
+
+        :param sampling_duration: The sampling_duration of this ProfilerCapturesBody.  # noqa: E501
+        :type: int
+        """
+
+        self._sampling_duration = sampling_duration
+
+    @property
+    def sampling_interval(self) -> 'int':
+        """Gets the sampling_interval of this ProfilerCapturesBody.  # noqa: E501
+
+
+        :return: The sampling_interval of this ProfilerCapturesBody.  # noqa: E501
+        :rtype: int
+        """
+        return self._sampling_interval
+
+    @sampling_interval.setter
+    def sampling_interval(self, sampling_interval: 'int'):
+        """Sets the sampling_interval of this ProfilerCapturesBody.
+
+
+        :param sampling_interval: The sampling_interval of this ProfilerCapturesBody.  # noqa: E501
+        :type: int
+        """
+
+        self._sampling_interval = sampling_interval
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -45,6 +45,7 @@ class Update(object):
         'gcp': 'V1GcpDataConnection',
         'name': 'str',
         'run_cmds': 'list[str]',
+        'snowflake': 'V1SnowflakeDataConnection',
         'writable': 'bool'
     }
 
@@ -53,15 +54,17 @@ class Update(object):
         'gcp': 'gcp',
         'name': 'name',
         'run_cmds': 'runCmds',
+        'snowflake': 'snowflake',
         'writable': 'writable'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, gcp: 'V1GcpDataConnection' =None, name: 'str' =None, run_cmds: 'list[str]' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, aws: 'V1AwsDataConnection' =None, gcp: 'V1GcpDataConnection' =None, name: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Update - a model defined in Swagger"""  # noqa: E501
         self._aws = None
         self._gcp = None
         self._name = None
         self._run_cmds = None
+        self._snowflake = None
         self._writable = None
         self.discriminator = None
         if aws is not None:
@@ -72,6 +75,8 @@ class Update(object):
             self.name = name
         if run_cmds is not None:
             self.run_cmds = run_cmds
+        if snowflake is not None:
+            self.snowflake = snowflake
         if writable is not None:
             self.writable = writable
 
@@ -158,6 +163,27 @@ class Update(object):
         """
 
         self._run_cmds = run_cmds
+
+    @property
+    def snowflake(self) -> 'V1SnowflakeDataConnection':
+        """Gets the snowflake of this Update.  # noqa: E501
+
+
+        :return: The snowflake of this Update.  # noqa: E501
+        :rtype: V1SnowflakeDataConnection
+        """
+        return self._snowflake
+
+    @snowflake.setter
+    def snowflake(self, snowflake: 'V1SnowflakeDataConnection'):
+        """Sets the snowflake of this Update.
+
+
+        :param snowflake: The snowflake of this Update.  # noqa: E501
+        :type: V1SnowflakeDataConnection
+        """
+
+        self._snowflake = snowflake
 
     @property
     def writable(self) -> 'bool':

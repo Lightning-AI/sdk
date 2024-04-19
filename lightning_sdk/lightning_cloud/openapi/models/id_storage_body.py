@@ -41,45 +41,29 @@ class IdStorageBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'argument_upload_id': 'str',
-        'count': 'str'
+        'count': 'str',
+        'filename': 'str',
+        'job_id': 'str'
     }
 
     attribute_map = {
-        'argument_upload_id': 'argumentUploadId',
-        'count': 'count'
+        'count': 'count',
+        'filename': 'filename',
+        'job_id': 'jobId'
     }
 
-    def __init__(self, argument_upload_id: 'str' =None, count: 'str' =None):  # noqa: E501
+    def __init__(self, count: 'str' =None, filename: 'str' =None, job_id: 'str' =None):  # noqa: E501
         """IdStorageBody - a model defined in Swagger"""  # noqa: E501
-        self._argument_upload_id = None
         self._count = None
+        self._filename = None
+        self._job_id = None
         self.discriminator = None
-        if argument_upload_id is not None:
-            self.argument_upload_id = argument_upload_id
         if count is not None:
             self.count = count
-
-    @property
-    def argument_upload_id(self) -> 'str':
-        """Gets the argument_upload_id of this IdStorageBody.  # noqa: E501
-
-
-        :return: The argument_upload_id of this IdStorageBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._argument_upload_id
-
-    @argument_upload_id.setter
-    def argument_upload_id(self, argument_upload_id: 'str'):
-        """Sets the argument_upload_id of this IdStorageBody.
-
-
-        :param argument_upload_id: The argument_upload_id of this IdStorageBody.  # noqa: E501
-        :type: str
-        """
-
-        self._argument_upload_id = argument_upload_id
+        if filename is not None:
+            self.filename = filename
+        if job_id is not None:
+            self.job_id = job_id
 
     @property
     def count(self) -> 'str':
@@ -101,6 +85,48 @@ class IdStorageBody(object):
         """
 
         self._count = count
+
+    @property
+    def filename(self) -> 'str':
+        """Gets the filename of this IdStorageBody.  # noqa: E501
+
+
+        :return: The filename of this IdStorageBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._filename
+
+    @filename.setter
+    def filename(self, filename: 'str'):
+        """Sets the filename of this IdStorageBody.
+
+
+        :param filename: The filename of this IdStorageBody.  # noqa: E501
+        :type: str
+        """
+
+        self._filename = filename
+
+    @property
+    def job_id(self) -> 'str':
+        """Gets the job_id of this IdStorageBody.  # noqa: E501
+
+
+        :return: The job_id of this IdStorageBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._job_id
+
+    @job_id.setter
+    def job_id(self, job_id: 'str'):
+        """Sets the job_id of this IdStorageBody.
+
+
+        :param job_id: The job_id of this IdStorageBody.  # noqa: E501
+        :type: str
+        """
+
+        self._job_id = job_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

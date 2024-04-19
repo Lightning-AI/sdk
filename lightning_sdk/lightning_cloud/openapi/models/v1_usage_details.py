@@ -49,9 +49,11 @@ class V1UsageDetails(object):
         'hourly_price': 'float',
         'instance_count': 'str',
         'instance_type': 'str',
+        'resource_name': 'str',
         'saved_cost': 'float',
         'spot': 'bool',
-        'started_at': 'datetime'
+        'started_at': 'datetime',
+        'user_id': 'str'
     }
 
     attribute_map = {
@@ -63,12 +65,14 @@ class V1UsageDetails(object):
         'hourly_price': 'hourlyPrice',
         'instance_count': 'instanceCount',
         'instance_type': 'instanceType',
+        'resource_name': 'resourceName',
         'saved_cost': 'savedCost',
         'spot': 'spot',
-        'started_at': 'startedAt'
+        'started_at': 'startedAt',
+        'user_id': 'userId'
     }
 
-    def __init__(self, billed_bytes: 'str' =None, billed_time_seconds: 'str' =None, cost: 'float' =None, ended_at: 'datetime' =None, free: 'bool' =None, hourly_price: 'float' =None, instance_count: 'str' =None, instance_type: 'str' =None, saved_cost: 'float' =None, spot: 'bool' =None, started_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, billed_bytes: 'str' =None, billed_time_seconds: 'str' =None, cost: 'float' =None, ended_at: 'datetime' =None, free: 'bool' =None, hourly_price: 'float' =None, instance_count: 'str' =None, instance_type: 'str' =None, resource_name: 'str' =None, saved_cost: 'float' =None, spot: 'bool' =None, started_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1UsageDetails - a model defined in Swagger"""  # noqa: E501
         self._billed_bytes = None
         self._billed_time_seconds = None
@@ -78,9 +82,11 @@ class V1UsageDetails(object):
         self._hourly_price = None
         self._instance_count = None
         self._instance_type = None
+        self._resource_name = None
         self._saved_cost = None
         self._spot = None
         self._started_at = None
+        self._user_id = None
         self.discriminator = None
         if billed_bytes is not None:
             self.billed_bytes = billed_bytes
@@ -98,12 +104,16 @@ class V1UsageDetails(object):
             self.instance_count = instance_count
         if instance_type is not None:
             self.instance_type = instance_type
+        if resource_name is not None:
+            self.resource_name = resource_name
         if saved_cost is not None:
             self.saved_cost = saved_cost
         if spot is not None:
             self.spot = spot
         if started_at is not None:
             self.started_at = started_at
+        if user_id is not None:
+            self.user_id = user_id
 
     @property
     def billed_bytes(self) -> 'str':
@@ -274,6 +284,27 @@ class V1UsageDetails(object):
         self._instance_type = instance_type
 
     @property
+    def resource_name(self) -> 'str':
+        """Gets the resource_name of this V1UsageDetails.  # noqa: E501
+
+
+        :return: The resource_name of this V1UsageDetails.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_name
+
+    @resource_name.setter
+    def resource_name(self, resource_name: 'str'):
+        """Sets the resource_name of this V1UsageDetails.
+
+
+        :param resource_name: The resource_name of this V1UsageDetails.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_name = resource_name
+
+    @property
     def saved_cost(self) -> 'float':
         """Gets the saved_cost of this V1UsageDetails.  # noqa: E501
 
@@ -335,6 +366,27 @@ class V1UsageDetails(object):
         """
 
         self._started_at = started_at
+
+    @property
+    def user_id(self) -> 'str':
+        """Gets the user_id of this V1UsageDetails.  # noqa: E501
+
+
+        :return: The user_id of this V1UsageDetails.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id: 'str'):
+        """Sets the user_id of this V1UsageDetails.
+
+
+        :param user_id: The user_id of this V1UsageDetails.  # noqa: E501
+        :type: str
+        """
+
+        self._user_id = user_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

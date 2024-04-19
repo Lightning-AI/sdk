@@ -43,37 +43,47 @@ class V1UpstreamCloudSpace(object):
     swagger_types = {
         'auto_start': 'bool',
         'cloudspace_id': 'str',
-        'commands': 'list[str]',
+        'command': 'str',
+        'instance_type': 'str',
         'port': 'str',
-        'studio_job_id': 'str'
+        'studio_job_id': 'str',
+        'terminal_session_id': 'str'
     }
 
     attribute_map = {
         'auto_start': 'autoStart',
         'cloudspace_id': 'cloudspaceId',
-        'commands': 'commands',
+        'command': 'command',
+        'instance_type': 'instanceType',
         'port': 'port',
-        'studio_job_id': 'studioJobId'
+        'studio_job_id': 'studioJobId',
+        'terminal_session_id': 'terminalSessionId'
     }
 
-    def __init__(self, auto_start: 'bool' =None, cloudspace_id: 'str' =None, commands: 'list[str]' =None, port: 'str' =None, studio_job_id: 'str' =None):  # noqa: E501
+    def __init__(self, auto_start: 'bool' =None, cloudspace_id: 'str' =None, command: 'str' =None, instance_type: 'str' =None, port: 'str' =None, studio_job_id: 'str' =None, terminal_session_id: 'str' =None):  # noqa: E501
         """V1UpstreamCloudSpace - a model defined in Swagger"""  # noqa: E501
         self._auto_start = None
         self._cloudspace_id = None
-        self._commands = None
+        self._command = None
+        self._instance_type = None
         self._port = None
         self._studio_job_id = None
+        self._terminal_session_id = None
         self.discriminator = None
         if auto_start is not None:
             self.auto_start = auto_start
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
-        if commands is not None:
-            self.commands = commands
+        if command is not None:
+            self.command = command
+        if instance_type is not None:
+            self.instance_type = instance_type
         if port is not None:
             self.port = port
         if studio_job_id is not None:
             self.studio_job_id = studio_job_id
+        if terminal_session_id is not None:
+            self.terminal_session_id = terminal_session_id
 
     @property
     def auto_start(self) -> 'bool':
@@ -118,25 +128,46 @@ class V1UpstreamCloudSpace(object):
         self._cloudspace_id = cloudspace_id
 
     @property
-    def commands(self) -> 'list[str]':
-        """Gets the commands of this V1UpstreamCloudSpace.  # noqa: E501
+    def command(self) -> 'str':
+        """Gets the command of this V1UpstreamCloudSpace.  # noqa: E501
 
 
-        :return: The commands of this V1UpstreamCloudSpace.  # noqa: E501
-        :rtype: list[str]
+        :return: The command of this V1UpstreamCloudSpace.  # noqa: E501
+        :rtype: str
         """
-        return self._commands
+        return self._command
 
-    @commands.setter
-    def commands(self, commands: 'list[str]'):
-        """Sets the commands of this V1UpstreamCloudSpace.
+    @command.setter
+    def command(self, command: 'str'):
+        """Sets the command of this V1UpstreamCloudSpace.
 
 
-        :param commands: The commands of this V1UpstreamCloudSpace.  # noqa: E501
-        :type: list[str]
+        :param command: The command of this V1UpstreamCloudSpace.  # noqa: E501
+        :type: str
         """
 
-        self._commands = commands
+        self._command = command
+
+    @property
+    def instance_type(self) -> 'str':
+        """Gets the instance_type of this V1UpstreamCloudSpace.  # noqa: E501
+
+
+        :return: The instance_type of this V1UpstreamCloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._instance_type
+
+    @instance_type.setter
+    def instance_type(self, instance_type: 'str'):
+        """Sets the instance_type of this V1UpstreamCloudSpace.
+
+
+        :param instance_type: The instance_type of this V1UpstreamCloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._instance_type = instance_type
 
     @property
     def port(self) -> 'str':
@@ -179,6 +210,27 @@ class V1UpstreamCloudSpace(object):
         """
 
         self._studio_job_id = studio_job_id
+
+    @property
+    def terminal_session_id(self) -> 'str':
+        """Gets the terminal_session_id of this V1UpstreamCloudSpace.  # noqa: E501
+
+
+        :return: The terminal_session_id of this V1UpstreamCloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._terminal_session_id
+
+    @terminal_session_id.setter
+    def terminal_session_id(self, terminal_session_id: 'str'):
+        """Sets the terminal_session_id of this V1UpstreamCloudSpace.
+
+
+        :param terminal_session_id: The terminal_session_id of this V1UpstreamCloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._terminal_session_id = terminal_session_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -49,6 +49,7 @@ class V1UpdateUserRequest(object):
         'first_name': 'str',
         'general_audience_mode': 'bool',
         'last_name': 'str',
+        'non_developer_mode': 'bool',
         'opted_in_marketing_emails': 'bool',
         'organization': 'str',
         'preferred_color_scheme': 'str',
@@ -73,6 +74,7 @@ class V1UpdateUserRequest(object):
         'first_name': 'firstName',
         'general_audience_mode': 'generalAudienceMode',
         'last_name': 'lastName',
+        'non_developer_mode': 'nonDeveloperMode',
         'opted_in_marketing_emails': 'optedInMarketingEmails',
         'organization': 'organization',
         'preferred_color_scheme': 'preferredColorScheme',
@@ -88,7 +90,7 @@ class V1UpdateUserRequest(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1UpdateUserRequest - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._complete_sign_up = None
@@ -98,6 +100,7 @@ class V1UpdateUserRequest(object):
         self._first_name = None
         self._general_audience_mode = None
         self._last_name = None
+        self._non_developer_mode = None
         self._opted_in_marketing_emails = None
         self._organization = None
         self._preferred_color_scheme = None
@@ -128,6 +131,8 @@ class V1UpdateUserRequest(object):
             self.general_audience_mode = general_audience_mode
         if last_name is not None:
             self.last_name = last_name
+        if non_developer_mode is not None:
+            self.non_developer_mode = non_developer_mode
         if opted_in_marketing_emails is not None:
             self.opted_in_marketing_emails = opted_in_marketing_emails
         if organization is not None:
@@ -322,6 +327,27 @@ class V1UpdateUserRequest(object):
         """
 
         self._last_name = last_name
+
+    @property
+    def non_developer_mode(self) -> 'bool':
+        """Gets the non_developer_mode of this V1UpdateUserRequest.  # noqa: E501
+
+
+        :return: The non_developer_mode of this V1UpdateUserRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._non_developer_mode
+
+    @non_developer_mode.setter
+    def non_developer_mode(self, non_developer_mode: 'bool'):
+        """Sets the non_developer_mode of this V1UpdateUserRequest.
+
+
+        :param non_developer_mode: The non_developer_mode of this V1UpdateUserRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._non_developer_mode = non_developer_mode
 
     @property
     def opted_in_marketing_emails(self) -> 'bool':

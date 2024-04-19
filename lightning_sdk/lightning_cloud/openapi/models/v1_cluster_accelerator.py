@@ -44,12 +44,14 @@ class V1ClusterAccelerator(object):
         'accelerator_type': 'str',
         'allowed_resources': 'list[str]',
         'available_in_seconds': 'str',
+        'available_zones': 'list[str]',
         'cluster_id': 'str',
         'cost': 'float',
         'device_card': 'str',
         'device_info': 'str',
         'display_name': 'str',
         'enabled': 'bool',
+        'family': 'str',
         'instance_id': 'str',
         'is_tier_restricted': 'bool',
         'quota_checked_at': 'datetime',
@@ -67,12 +69,14 @@ class V1ClusterAccelerator(object):
         'accelerator_type': 'acceleratorType',
         'allowed_resources': 'allowedResources',
         'available_in_seconds': 'availableInSeconds',
+        'available_zones': 'availableZones',
         'cluster_id': 'clusterId',
         'cost': 'cost',
         'device_card': 'deviceCard',
         'device_info': 'deviceInfo',
         'display_name': 'displayName',
         'enabled': 'enabled',
+        'family': 'family',
         'instance_id': 'instanceId',
         'is_tier_restricted': 'isTierRestricted',
         'quota_checked_at': 'quotaCheckedAt',
@@ -86,17 +90,19 @@ class V1ClusterAccelerator(object):
         'slug': 'slug'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_zones: 'list[str]' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
         self._available_in_seconds = None
+        self._available_zones = None
         self._cluster_id = None
         self._cost = None
         self._device_card = None
         self._device_info = None
         self._display_name = None
         self._enabled = None
+        self._family = None
         self._instance_id = None
         self._is_tier_restricted = None
         self._quota_checked_at = None
@@ -115,6 +121,8 @@ class V1ClusterAccelerator(object):
             self.allowed_resources = allowed_resources
         if available_in_seconds is not None:
             self.available_in_seconds = available_in_seconds
+        if available_zones is not None:
+            self.available_zones = available_zones
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if cost is not None:
@@ -127,6 +135,8 @@ class V1ClusterAccelerator(object):
             self.display_name = display_name
         if enabled is not None:
             self.enabled = enabled
+        if family is not None:
+            self.family = family
         if instance_id is not None:
             self.instance_id = instance_id
         if is_tier_restricted is not None:
@@ -212,6 +222,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._available_in_seconds = available_in_seconds
+
+    @property
+    def available_zones(self) -> 'list[str]':
+        """Gets the available_zones of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The available_zones of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._available_zones
+
+    @available_zones.setter
+    def available_zones(self, available_zones: 'list[str]'):
+        """Sets the available_zones of this V1ClusterAccelerator.
+
+
+        :param available_zones: The available_zones of this V1ClusterAccelerator.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._available_zones = available_zones
 
     @property
     def cluster_id(self) -> 'str':
@@ -338,6 +369,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._enabled = enabled
+
+    @property
+    def family(self) -> 'str':
+        """Gets the family of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The family of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: str
+        """
+        return self._family
+
+    @family.setter
+    def family(self, family: 'str'):
+        """Sets the family of this V1ClusterAccelerator.
+
+
+        :param family: The family of this V1ClusterAccelerator.  # noqa: E501
+        :type: str
+        """
+
+        self._family = family
 
     @property
     def instance_id(self) -> 'str':

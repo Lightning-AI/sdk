@@ -49,6 +49,8 @@ class V1DataConnection(object):
         'name': 'str',
         'project_id': 'str',
         'run_cmds': 'list[str]',
+        'snowflake': 'V1SnowflakeDataConnection',
+        'type': 'str',
         'writable': 'bool'
     }
 
@@ -61,10 +63,12 @@ class V1DataConnection(object):
         'name': 'name',
         'project_id': 'projectId',
         'run_cmds': 'runCmds',
+        'snowflake': 'snowflake',
+        'type': 'type',
         'writable': 'writable'
     }
 
-    def __init__(self, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, name: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, name: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, type: 'str' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._accessible = None
         self._aws = None
@@ -74,6 +78,8 @@ class V1DataConnection(object):
         self._name = None
         self._project_id = None
         self._run_cmds = None
+        self._snowflake = None
+        self._type = None
         self._writable = None
         self.discriminator = None
         if accessible is not None:
@@ -92,6 +98,10 @@ class V1DataConnection(object):
             self.project_id = project_id
         if run_cmds is not None:
             self.run_cmds = run_cmds
+        if snowflake is not None:
+            self.snowflake = snowflake
+        if type is not None:
+            self.type = type
         if writable is not None:
             self.writable = writable
 
@@ -262,6 +272,48 @@ class V1DataConnection(object):
         """
 
         self._run_cmds = run_cmds
+
+    @property
+    def snowflake(self) -> 'V1SnowflakeDataConnection':
+        """Gets the snowflake of this V1DataConnection.  # noqa: E501
+
+
+        :return: The snowflake of this V1DataConnection.  # noqa: E501
+        :rtype: V1SnowflakeDataConnection
+        """
+        return self._snowflake
+
+    @snowflake.setter
+    def snowflake(self, snowflake: 'V1SnowflakeDataConnection'):
+        """Sets the snowflake of this V1DataConnection.
+
+
+        :param snowflake: The snowflake of this V1DataConnection.  # noqa: E501
+        :type: V1SnowflakeDataConnection
+        """
+
+        self._snowflake = snowflake
+
+    @property
+    def type(self) -> 'str':
+        """Gets the type of this V1DataConnection.  # noqa: E501
+
+
+        :return: The type of this V1DataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._type
+
+    @type.setter
+    def type(self, type: 'str'):
+        """Sets the type of this V1DataConnection.
+
+
+        :param type: The type of this V1DataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._type = type
 
     @property
     def writable(self) -> 'bool':

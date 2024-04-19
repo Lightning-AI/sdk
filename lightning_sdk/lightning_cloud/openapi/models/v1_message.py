@@ -41,31 +41,47 @@ class V1Message(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'assistant_id': 'str',
         'author': 'V1MessageAuthor',
+        'completion_tokens': 'str',
         'content': 'V1MessageContent',
         'conversation_id': 'str',
         'created_at': 'datetime',
-        'id': 'str'
+        'id': 'str',
+        'model': 'str',
+        'prompt_tokens': 'str'
     }
 
     attribute_map = {
+        'assistant_id': 'assistantId',
         'author': 'author',
+        'completion_tokens': 'completionTokens',
         'content': 'content',
         'conversation_id': 'conversationId',
         'created_at': 'createdAt',
-        'id': 'id'
+        'id': 'id',
+        'model': 'model',
+        'prompt_tokens': 'promptTokens'
     }
 
-    def __init__(self, author: 'V1MessageAuthor' =None, content: 'V1MessageContent' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'V1MessageContent' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
+        self._assistant_id = None
         self._author = None
+        self._completion_tokens = None
         self._content = None
         self._conversation_id = None
         self._created_at = None
         self._id = None
+        self._model = None
+        self._prompt_tokens = None
         self.discriminator = None
+        if assistant_id is not None:
+            self.assistant_id = assistant_id
         if author is not None:
             self.author = author
+        if completion_tokens is not None:
+            self.completion_tokens = completion_tokens
         if content is not None:
             self.content = content
         if conversation_id is not None:
@@ -74,6 +90,31 @@ class V1Message(object):
             self.created_at = created_at
         if id is not None:
             self.id = id
+        if model is not None:
+            self.model = model
+        if prompt_tokens is not None:
+            self.prompt_tokens = prompt_tokens
+
+    @property
+    def assistant_id(self) -> 'str':
+        """Gets the assistant_id of this V1Message.  # noqa: E501
+
+
+        :return: The assistant_id of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._assistant_id
+
+    @assistant_id.setter
+    def assistant_id(self, assistant_id: 'str'):
+        """Sets the assistant_id of this V1Message.
+
+
+        :param assistant_id: The assistant_id of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._assistant_id = assistant_id
 
     @property
     def author(self) -> 'V1MessageAuthor':
@@ -95,6 +136,27 @@ class V1Message(object):
         """
 
         self._author = author
+
+    @property
+    def completion_tokens(self) -> 'str':
+        """Gets the completion_tokens of this V1Message.  # noqa: E501
+
+
+        :return: The completion_tokens of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._completion_tokens
+
+    @completion_tokens.setter
+    def completion_tokens(self, completion_tokens: 'str'):
+        """Sets the completion_tokens of this V1Message.
+
+
+        :param completion_tokens: The completion_tokens of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._completion_tokens = completion_tokens
 
     @property
     def content(self) -> 'V1MessageContent':
@@ -179,6 +241,48 @@ class V1Message(object):
         """
 
         self._id = id
+
+    @property
+    def model(self) -> 'str':
+        """Gets the model of this V1Message.  # noqa: E501
+
+
+        :return: The model of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._model
+
+    @model.setter
+    def model(self, model: 'str'):
+        """Sets the model of this V1Message.
+
+
+        :param model: The model of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._model = model
+
+    @property
+    def prompt_tokens(self) -> 'str':
+        """Gets the prompt_tokens of this V1Message.  # noqa: E501
+
+
+        :return: The prompt_tokens of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._prompt_tokens
+
+    @prompt_tokens.setter
+    def prompt_tokens(self, prompt_tokens: 'str'):
+        """Sets the prompt_tokens of this V1Message.
+
+
+        :param prompt_tokens: The prompt_tokens of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._prompt_tokens = prompt_tokens
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

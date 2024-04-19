@@ -51,7 +51,9 @@ class V1PublishedCloudSpaceResponse(object):
         'name': 'str',
         'project_id': 'str',
         'project_name': 'str',
+        'project_owner_id': 'str',
         'project_owner_name': 'str',
+        'project_owner_type': 'V1OwnerType',
         'published_at': 'datetime',
         'studio_creator_avatar_url': 'str',
         'studio_creator_first_name': 'str',
@@ -73,7 +75,9 @@ class V1PublishedCloudSpaceResponse(object):
         'name': 'name',
         'project_id': 'projectId',
         'project_name': 'projectName',
+        'project_owner_id': 'projectOwnerId',
         'project_owner_name': 'projectOwnerName',
+        'project_owner_type': 'projectOwnerType',
         'published_at': 'publishedAt',
         'studio_creator_avatar_url': 'studioCreatorAvatarUrl',
         'studio_creator_first_name': 'studioCreatorFirstName',
@@ -84,7 +88,7 @@ class V1PublishedCloudSpaceResponse(object):
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, featured: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_name: 'str' =None, published_at: 'datetime' =None, studio_creator_avatar_url: 'str' =None, studio_creator_first_name: 'str' =None, studio_creator_id: 'str' =None, studio_creator_last_name: 'str' =None, studio_creator_username: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, featured: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_id: 'str' =None, project_owner_name: 'str' =None, project_owner_type: 'V1OwnerType' =None, published_at: 'datetime' =None, studio_creator_avatar_url: 'str' =None, studio_creator_first_name: 'str' =None, studio_creator_id: 'str' =None, studio_creator_last_name: 'str' =None, studio_creator_username: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """V1PublishedCloudSpaceResponse - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._creation_timestamp = None
@@ -96,7 +100,9 @@ class V1PublishedCloudSpaceResponse(object):
         self._name = None
         self._project_id = None
         self._project_name = None
+        self._project_owner_id = None
         self._project_owner_name = None
+        self._project_owner_type = None
         self._published_at = None
         self._studio_creator_avatar_url = None
         self._studio_creator_first_name = None
@@ -126,8 +132,12 @@ class V1PublishedCloudSpaceResponse(object):
             self.project_id = project_id
         if project_name is not None:
             self.project_name = project_name
+        if project_owner_id is not None:
+            self.project_owner_id = project_owner_id
         if project_owner_name is not None:
             self.project_owner_name = project_owner_name
+        if project_owner_type is not None:
+            self.project_owner_type = project_owner_type
         if published_at is not None:
             self.published_at = published_at
         if studio_creator_avatar_url is not None:
@@ -356,6 +366,27 @@ class V1PublishedCloudSpaceResponse(object):
         self._project_name = project_name
 
     @property
+    def project_owner_id(self) -> 'str':
+        """Gets the project_owner_id of this V1PublishedCloudSpaceResponse.  # noqa: E501
+
+
+        :return: The project_owner_id of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_owner_id
+
+    @project_owner_id.setter
+    def project_owner_id(self, project_owner_id: 'str'):
+        """Sets the project_owner_id of this V1PublishedCloudSpaceResponse.
+
+
+        :param project_owner_id: The project_owner_id of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._project_owner_id = project_owner_id
+
+    @property
     def project_owner_name(self) -> 'str':
         """Gets the project_owner_name of this V1PublishedCloudSpaceResponse.  # noqa: E501
 
@@ -375,6 +406,27 @@ class V1PublishedCloudSpaceResponse(object):
         """
 
         self._project_owner_name = project_owner_name
+
+    @property
+    def project_owner_type(self) -> 'V1OwnerType':
+        """Gets the project_owner_type of this V1PublishedCloudSpaceResponse.  # noqa: E501
+
+
+        :return: The project_owner_type of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :rtype: V1OwnerType
+        """
+        return self._project_owner_type
+
+    @project_owner_type.setter
+    def project_owner_type(self, project_owner_type: 'V1OwnerType'):
+        """Sets the project_owner_type of this V1PublishedCloudSpaceResponse.
+
+
+        :param project_owner_type: The project_owner_type of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :type: V1OwnerType
+        """
+
+        self._project_owner_type = project_owner_type
 
     @property
     def published_at(self) -> 'datetime':

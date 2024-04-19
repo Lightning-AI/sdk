@@ -62,10 +62,10 @@ class V1UserFeatures(object):
         'interruptible_instances': 'bool',
         'jobs_init': 'bool',
         'landing_studios': 'bool',
+        'lit_logger': 'bool',
         'mmt_app': 'bool',
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
-        'org_clusters': 'bool',
         'platform_docs': 'bool',
         'plugin_biz_chat': 'bool',
         'plugin_distributed': 'bool',
@@ -92,7 +92,8 @@ class V1UserFeatures(object):
         'restartable_jobs': 'bool',
         'show_dev_admin': 'bool',
         'slurm': 'bool',
-        'studio_publication': 'bool',
+        'slurm_machine_selector': 'bool',
+        'snowflake_connection': 'bool',
         'teamspace_storage_tab': 'bool',
         'writable_data_connections': 'bool'
     }
@@ -119,10 +120,10 @@ class V1UserFeatures(object):
         'interruptible_instances': 'interruptibleInstances',
         'jobs_init': 'jobsInit',
         'landing_studios': 'landingStudios',
+        'lit_logger': 'litLogger',
         'mmt_app': 'mmtApp',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
-        'org_clusters': 'orgClusters',
         'platform_docs': 'platformDocs',
         'plugin_biz_chat': 'pluginBizChat',
         'plugin_distributed': 'pluginDistributed',
@@ -149,12 +150,13 @@ class V1UserFeatures(object):
         'restartable_jobs': 'restartableJobs',
         'show_dev_admin': 'showDevAdmin',
         'slurm': 'slurm',
-        'studio_publication': 'studioPublication',
+        'slurm_machine_selector': 'slurmMachineSelector',
+        'snowflake_connection': 'snowflakeConnection',
         'teamspace_storage_tab': 'teamspaceStorageTab',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, org_clusters: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, studio_publication: 'bool' =None, teamspace_storage_tab: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, teamspace_storage_tab: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._apt_get_v2 = None
         self._aws_trainium = None
@@ -177,10 +179,10 @@ class V1UserFeatures(object):
         self._interruptible_instances = None
         self._jobs_init = None
         self._landing_studios = None
+        self._lit_logger = None
         self._mmt_app = None
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
-        self._org_clusters = None
         self._platform_docs = None
         self._plugin_biz_chat = None
         self._plugin_distributed = None
@@ -207,7 +209,8 @@ class V1UserFeatures(object):
         self._restartable_jobs = None
         self._show_dev_admin = None
         self._slurm = None
-        self._studio_publication = None
+        self._slurm_machine_selector = None
+        self._snowflake_connection = None
         self._teamspace_storage_tab = None
         self._writable_data_connections = None
         self.discriminator = None
@@ -253,14 +256,14 @@ class V1UserFeatures(object):
             self.jobs_init = jobs_init
         if landing_studios is not None:
             self.landing_studios = landing_studios
+        if lit_logger is not None:
+            self.lit_logger = lit_logger
         if mmt_app is not None:
             self.mmt_app = mmt_app
         if mmt_strategy_selector is not None:
             self.mmt_strategy_selector = mmt_strategy_selector
         if mountpoint_s3 is not None:
             self.mountpoint_s3 = mountpoint_s3
-        if org_clusters is not None:
-            self.org_clusters = org_clusters
         if platform_docs is not None:
             self.platform_docs = platform_docs
         if plugin_biz_chat is not None:
@@ -313,8 +316,10 @@ class V1UserFeatures(object):
             self.show_dev_admin = show_dev_admin
         if slurm is not None:
             self.slurm = slurm
-        if studio_publication is not None:
-            self.studio_publication = studio_publication
+        if slurm_machine_selector is not None:
+            self.slurm_machine_selector = slurm_machine_selector
+        if snowflake_connection is not None:
+            self.snowflake_connection = snowflake_connection
         if teamspace_storage_tab is not None:
             self.teamspace_storage_tab = teamspace_storage_tab
         if writable_data_connections is not None:
@@ -762,6 +767,27 @@ class V1UserFeatures(object):
         self._landing_studios = landing_studios
 
     @property
+    def lit_logger(self) -> 'bool':
+        """Gets the lit_logger of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The lit_logger of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._lit_logger
+
+    @lit_logger.setter
+    def lit_logger(self, lit_logger: 'bool'):
+        """Sets the lit_logger of this V1UserFeatures.
+
+
+        :param lit_logger: The lit_logger of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._lit_logger = lit_logger
+
+    @property
     def mmt_app(self) -> 'bool':
         """Gets the mmt_app of this V1UserFeatures.  # noqa: E501
 
@@ -823,27 +849,6 @@ class V1UserFeatures(object):
         """
 
         self._mountpoint_s3 = mountpoint_s3
-
-    @property
-    def org_clusters(self) -> 'bool':
-        """Gets the org_clusters of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The org_clusters of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._org_clusters
-
-    @org_clusters.setter
-    def org_clusters(self, org_clusters: 'bool'):
-        """Sets the org_clusters of this V1UserFeatures.
-
-
-        :param org_clusters: The org_clusters of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._org_clusters = org_clusters
 
     @property
     def platform_docs(self) -> 'bool':
@@ -1392,25 +1397,46 @@ class V1UserFeatures(object):
         self._slurm = slurm
 
     @property
-    def studio_publication(self) -> 'bool':
-        """Gets the studio_publication of this V1UserFeatures.  # noqa: E501
+    def slurm_machine_selector(self) -> 'bool':
+        """Gets the slurm_machine_selector of this V1UserFeatures.  # noqa: E501
 
 
-        :return: The studio_publication of this V1UserFeatures.  # noqa: E501
+        :return: The slurm_machine_selector of this V1UserFeatures.  # noqa: E501
         :rtype: bool
         """
-        return self._studio_publication
+        return self._slurm_machine_selector
 
-    @studio_publication.setter
-    def studio_publication(self, studio_publication: 'bool'):
-        """Sets the studio_publication of this V1UserFeatures.
+    @slurm_machine_selector.setter
+    def slurm_machine_selector(self, slurm_machine_selector: 'bool'):
+        """Sets the slurm_machine_selector of this V1UserFeatures.
 
 
-        :param studio_publication: The studio_publication of this V1UserFeatures.  # noqa: E501
+        :param slurm_machine_selector: The slurm_machine_selector of this V1UserFeatures.  # noqa: E501
         :type: bool
         """
 
-        self._studio_publication = studio_publication
+        self._slurm_machine_selector = slurm_machine_selector
+
+    @property
+    def snowflake_connection(self) -> 'bool':
+        """Gets the snowflake_connection of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The snowflake_connection of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._snowflake_connection
+
+    @snowflake_connection.setter
+    def snowflake_connection(self, snowflake_connection: 'bool'):
+        """Sets the snowflake_connection of this V1UserFeatures.
+
+
+        :param snowflake_connection: The snowflake_connection of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._snowflake_connection = snowflake_connection
 
     @property
     def teamspace_storage_tab(self) -> 'bool':
