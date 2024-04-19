@@ -19,6 +19,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LightningRun,
     V1ListCloudSpacesResponse,
     V1ListMembershipsResponse,
+    V1LightningappInstanceStatus,
+    V1LightningappInstanceState,
     V1ListOrganizationsResponse,
     V1Membership,
     V1PresignedUrl,
@@ -1709,6 +1711,45 @@ def internal_job_api_mocker_get_job(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
         side_effect=find_instance,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_job_api_mocker_get_job_status(mocker):
+    def find_instance(self, project_id, name):
+        return Externalv1LightningappInstance(name=name, project_id=project_id, id=name)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
+        side_effect=find_instance,
+        autospec=True,
+    )
+
+    phases = {
+        "j-abc": None,
+        "j-def": V1LightningappInstanceState.UNSPECIFIED,
+        "j-ghi": V1LightningappInstanceState.IMAGE_BUILDING,
+        "j-jkl": V1LightningappInstanceState.NOT_STARTED,
+        "j-mno": V1LightningappInstanceState.PENDING,
+        "j-pqr": V1LightningappInstanceState.RUNNING,
+        "j-stu": V1LightningappInstanceState.FAILED,
+        "j-vwx": V1LightningappInstanceState.STOPPED,
+        "j-yz": V1LightningappInstanceState.COMPLETED,
+    }
+
+    def get_instance_status(self, project_id, id):
+        return Externalv1LightningappInstance(
+            name=id, project_id=project_id, id=id, status=V1LightningappInstanceStatus(phase=phases[id])
+        )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_get_lightningapp_instance",
+        side_effect=get_instance_status,
         autospec=True,
     )
 

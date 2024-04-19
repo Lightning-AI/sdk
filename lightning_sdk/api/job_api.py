@@ -31,5 +31,5 @@ class JobApi:
         status: V1LightningappInstanceStatus = instance.status
 
         if status is not None:
-            return status.state
+            return status.phase
         return None
