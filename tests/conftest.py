@@ -17,6 +17,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ExecuteCloudSpaceCommandResponse,
     V1GetCloudSpaceInstanceStatusResponse,
     V1LightningRun,
+    V1LightningappInstanceState,
+    V1LightningappInstanceStatus,
     V1ListCloudSpacesResponse,
     V1ListMembershipsResponse,
     V1LightningappInstanceStatus,
@@ -1750,6 +1752,50 @@ def internal_job_api_mocker_get_job_status(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_get_lightningapp_instance",
         side_effect=get_instance_status,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_job_api_mocker_stop_job(mocker):
+    status = {"j-abc": V1LightningappInstanceState.RUNNING}
+
+    def find_instance(self, project_id, name):
+        if name in ["j-abc", "j-def"]:
+            return Externalv1LightningappInstance(
+                name=name, project_id=project_id, id=name, status=V1LightningappInstanceStatus(phase=status[name])
+            )
+        raise ApiException(status=404)
+
+    def get_instance(self, project_id, id):
+        if id in ["j-abc", "j-def"]:
+            return Externalv1LightningappInstance(
+                name=id, project_id=project_id, id=id, status=V1LightningappInstanceStatus(phase=status[id])
+            )
+        raise ApiException(status=404)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
+        side_effect=find_instance,
+        autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_get_lightningapp_instance",
+        side_effect=get_instance,
+        autospec=True,
+    )
+
+    def update_state(self, project_id, id, body):
+        status[id] = body.spec.desired_state
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_update_lightningapp_instance",
+        side_effect=update_state,
         autospec=True,
     )
 

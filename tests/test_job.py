@@ -58,3 +58,19 @@ def test_job_status(
     assert isinstance(status, Status)
 
     assert status == expected_status
+
+
+@mock.patch.dict(os.environ, clear=True)
+def test_stop_job(
+    internal_job_api_mocker_stop_job,
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+):
+    studio = Studio("st-abc", "ts-abc", org="org-abc")
+    job = Job("j-abc", studio)
+    status = job.status
+
+    assert status == Status.Running
+    job.stop()
+    status = job.status
+    assert status == Status.Stopped

@@ -41,3 +41,13 @@ def test_job_status(internal_job_api_mocker_get_job_status, name, expected_statu
     else:
         assert isinstance(status, str)
     assert status == expected_status
+
+
+def test_stop_job(internal_job_api_mocker_stop_job):
+    job_api = JobApi()
+    status = job_api.get_job_status("j-abc", "ts-abc")
+
+    assert status == "LIGHTNINGAPP_INSTANCE_STATE_RUNNING"
+    job_api.stop_job("j-abc", "ts-abc")
+    status = job_api.get_job_status("j-abc", "ts-abc")
+    assert status == "LIGHTNINGAPP_INSTANCE_STATE_STOPPED"

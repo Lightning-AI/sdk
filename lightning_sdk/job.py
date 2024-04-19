@@ -20,6 +20,12 @@ class Job:
         status: V1LightningappInstanceState = self._job_api.get_job_status(self._job.id, self.studio.teamspace.id)
         return _internal_status_to_external_status(status)
 
+    def stop(self) -> None:
+        if self.status in (Status.Stopped, Status.Failed):
+            return None
+
+        return self._job_api.stop_job(self._job.id, self.studio.teamspace.id)
+
 
 def _internal_status_to_external_status(internal_status: str) -> Status:
     """Converts internal status strings from HTTP requests to external enums."""
