@@ -8,11 +8,13 @@ authors = [
     {name = "Lightning-AI", email = "justus@lightning.ai"},
 ]
 description = "SDK to develop using Lightning AI Studios"
+license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.8"
 keywords = ["deep learning", "machine learning", "pytorch", "AI"]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
     "backoff",
