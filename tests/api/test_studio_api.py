@@ -63,11 +63,12 @@ def test_get_studio_status(internal_studio_api_mocker_studio_status):
         Machine.DATA_PREP,
         Machine.T4,
         Machine.T4_X_4,
-        Machine.V100,
-        Machine.V100_X_4,
+        Machine.L4,
+        Machine.L4_X_4,
         Machine.A10G,
         Machine.A10G_X_4,
         Machine.A100_X_8,
+        Machine.H100_X_8,
     ),
 )
 def test_switch_studio_machine(internal_studio_api_mocker_switch_machine, machine):
@@ -114,11 +115,12 @@ def test_delete_studio(internal_studio_api_mocker_delete):
         ("st-def", Machine.DATA_PREP),
         ("st-ghi", Machine.T4),
         ("st-jkl", Machine.T4_X_4),
-        ("st-mno", Machine.V100),
-        ("st-pqr", Machine.V100_X_4),
+        ("st-mno", Machine.L4),
+        ("st-pqr", Machine.L4_X_4),
         ("st-stu", Machine.A10G),
         ("st-vwx", Machine.A10G_X_4),
         ("st-yza", Machine.A100_X_8),
+        ("st-bcd", Machine.H100_X_8),
     ],
 )
 def test_get_machine(internal_studio_api_mocker_get_machine, name, expected_machine):

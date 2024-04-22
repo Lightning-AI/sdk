@@ -428,15 +428,17 @@ def internal_studio_api_mocker_get_machine(mocker):
         elif id == "st-jkl":
             instance = "g4dn.12xlarge"
         elif id == "st-mno":
-            instance = "p3.2xlarge"
+            instance = "g6.4xlarge"
         elif id == "st-pqr":
-            instance = "p3.8xlarge"
+            instance = "g6.12xlarge"
         elif id == "st-stu":
             instance = "g5.8xlarge"
         elif id == "st-vwx":
             instance = "g5.12xlarge"
         elif id == "st-yza":
             instance = "p4d.24xlarge"
+        elif id == "st-bcd":
+            instance = "p5.48xlarge"
 
         assert instance is not None
         return V1CloudSpaceInstanceConfig(compute_config=V1UserRequestedComputeConfig(name=instance))

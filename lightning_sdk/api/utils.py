@@ -209,11 +209,12 @@ _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
     Machine.DATA_PREP: "data-large-3000",
     Machine.T4: "g4dn.2xlarge",
     Machine.T4_X_4: "g4dn.12xlarge",
-    Machine.V100: "p3.2xlarge",
-    Machine.V100_X_4: "p3.8xlarge",
+    Machine.L4: "g6.4xlarge",
+    Machine.L4_X_4: "g6.12xlarge",
     Machine.A10G: "g5.8xlarge",
     Machine.A10G_X_4: "g5.12xlarge",
     Machine.A100_X_8: "p4d.24xlarge",
+    Machine.H100_X_8: "p5.48xlarge",
 }
 
 _COMPUTE_NAME_TO_MACHINE: Dict[str, Machine] = {v: k for k, v in _MACHINE_TO_COMPUTE_NAME.items()}
