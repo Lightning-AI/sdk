@@ -1,4 +1,8 @@
+from functools import cached_property
+
 from lightning_sdk.api.job_api import JobApi
+from lightning_sdk.job.work import Work
+from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 
@@ -32,6 +36,28 @@ class Job:
 
     def delete(self) -> None:
         self._job_api.delete_job(self._job.id, self.studio.teamspace.id)
+
+    def _name_filter(self, orig_name: str) -> str:
+        return orig_name.replace("root.", "")
+
+    @cached_property
+    def work(self) -> Work:
+        _work = self._job_api.list_works(self._job.id, self.studio.teamspace.id)
+        if len(_work) == 0:
+            raise ValueError("No works found for job")
+        return Work(_work[0].id, self, self.studio.teamspace)
+
+    @property
+    def machine(self) -> Machine:
+        return self.work.machine
+
+    @property
+    def id(self) -> str:
+        return self._job.id
+
+    @property
+    def name(self) -> str:
+        return self._job.name
 
 
 def _internal_status_to_external_status(internal_status: str) -> Status:

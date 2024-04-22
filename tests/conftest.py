@@ -6,6 +6,7 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
     Externalv1LightningappInstance,
+    Externalv1Lightningwork,
     IdCodeconfigBody,
     ProjectIdCloudspacesBody,
     V1CloudSpace,
@@ -29,6 +30,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Organization,
     V1Plugin,
     V1PluginsListResponse,
+    V1LightningworkSpec,
     V1Project,
     V1SearchUser,
     V1SearchUsersResponse,
@@ -43,6 +45,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterStatus,
     V1ClusterState,
     V1SLURMJob,
+    V1ListLightningworkResponse,
 )
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -1827,6 +1830,71 @@ def internal_job_api_mocker_delete_job(mocker):
         side_effect=delete_instance,
         autospec=True,
     )
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_job_api_mocker_get_work(mocker):
+    def find_instance(self, project_id, name):
+        if name == "j-abc":
+            return Externalv1LightningappInstance(name=name, project_id=project_id, id=name)
+        raise ApiException(status=404)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
+        side_effect=find_instance,
+        autospec=True,
+    )
+
+    def get_instance(self, project_id, id):
+        if id == "j-abc":
+            return Externalv1LightningappInstance(name=id, project_id=project_id, id=id)
+        raise ApiException(status=404)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_get_lightningapp_instance",
+        side_effect=get_instance,
+        autospec=True,
+    )
+
+    def list_works(self, project_id, app_id):
+        return V1ListLightningworkResponse(
+            lightningworks=[
+                Externalv1Lightningwork(
+                    display_name="work abc",
+                    name="root.w-abc",
+                    id="w-abc",
+                    project_id=project_id,
+                    spec=V1LightningworkSpec(
+                        user_requested_compute_config=V1UserRequestedComputeConfig(name="g4dn.12xlarge")
+                    ),
+                )
+            ]
+        )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningwork_service_api.LightningworkServiceApi.lightningwork_service_list_lightningwork",
+        side_effect=list_works,
+        autospec=True,
+    )
+
+    def get_work(self, project_id, app_id, id):
+        return Externalv1Lightningwork(
+            display_name="work abc",
+            name="root.w-abc",
+            id="w-abc",
+            project_id=project_id,
+            spec=V1LightningworkSpec(user_requested_compute_config=V1UserRequestedComputeConfig(name="g4dn.12xlarge")),
+        )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningwork_service_api.LightningworkServiceApi.lightningwork_service_get_lightningwork",
+        side_effect=get_work,
+        autospec=True,
+    )
+
     yield [mocker]
 
     mocker.resetall()

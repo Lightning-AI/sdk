@@ -2,6 +2,7 @@ from lightning_sdk.api.job_api import JobApi
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
     V1LightningappInstanceState,
+    Externalv1Lightningwork,
 )
 from click.exceptions import ClickException
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -63,3 +64,20 @@ def test_delete_job(internal_job_api_mocker_delete_job):
 
     with pytest.raises(ValueError, match="Job j-abc does not exist"):
         job_api.get_job("j-abc", "ts-abc")
+
+
+def test_get_work(internal_job_api_mocker_get_work):
+    job_api = JobApi()
+    works = job_api.list_works("j-abc", "ts-abc")
+    assert isinstance(works, list)
+    for w in works:
+        assert isinstance(w, Externalv1Lightningwork)
+        assert w.id == "w-abc"
+        assert w.display_name == "work abc"
+        assert w.name == "root.w-abc"
+
+    w = job_api.get_work("j-abc", "ts-abc", "w-abc")
+    assert isinstance(w, Externalv1Lightningwork)
+    assert w.id == "w-abc"
+    assert w.name == "root.w-abc"
+    assert w.display_name == "work abc"

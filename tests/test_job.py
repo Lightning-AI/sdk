@@ -1,10 +1,12 @@
 from lightning_sdk.studio import Studio
 from lightning_sdk.job import Job
+from lightning_sdk.job.work import Work
 from lightning_sdk.status import Status
 from lightning_sdk.lightning_cloud.openapi import Externalv1LightningappInstance
 from unittest import mock
 import os
 import pytest
+from lightning_sdk.machine import Machine
 
 
 @mock.patch.dict(os.environ, clear=True)
@@ -92,3 +94,20 @@ def test_delete_job(
 
     with pytest.raises(ValueError, match="Job j-abc does not exist in Teamspace ts-abc"):
         Job("j-abc", studio)
+
+
+@mock.patch.dict(os.environ, clear=True)
+def test_get_work(
+    internal_job_api_mocker_get_work,
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+):
+    studio = Studio("st-abc", "ts-abc", org="org-abc")
+    job = Job("j-abc", studio)
+    assert isinstance(job.work, Work)
+
+    assert job.work.id == "w-abc"
+    assert job.work.name == "w-abc"
+
+    assert job.work.machine == Machine.T4_X_4
+    assert job.machine == Machine.T4_X_4
