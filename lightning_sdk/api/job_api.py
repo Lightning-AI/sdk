@@ -56,3 +56,6 @@ class JobApi:
             ):
                 break
             time.sleep(1)
+
+    def delete_job(self, job_id: str, teamspace_id: str) -> None:
+        self._client.lightningapp_instance_service_delete_lightningapp_instance(project_id=teamspace_id, id=job_id)

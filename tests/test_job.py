@@ -74,3 +74,21 @@ def test_stop_job(
     job.stop()
     status = job.status
     assert status == Status.Stopped
+
+
+@mock.patch.dict(os.environ, clear=True)
+def test_delete_job(
+    internal_job_api_mocker_delete_job,
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+):
+    studio = Studio("st-abc", "ts-abc", org="org-abc")
+    job = Job("j-abc", studio)
+
+    job.delete()
+
+    with pytest.raises(RuntimeError, match="Job j-abc does not exist in Teamspace ts-abc. Did you delete it?"):
+        job.status
+
+    with pytest.raises(ValueError, match="Job j-abc does not exist in Teamspace ts-abc"):
+        Job("j-abc", studio)

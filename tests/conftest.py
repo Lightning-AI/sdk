@@ -1802,3 +1802,31 @@ def internal_job_api_mocker_stop_job(mocker):
     yield [mocker]
 
     mocker.resetall()
+
+
+@pytest.fixture
+def internal_job_api_mocker_delete_job(mocker):
+    names = ["j-abc", "j-def"]
+
+    def find_instance(self, project_id, name):
+        if name in names:
+            return Externalv1LightningappInstance(name=name, project_id=project_id, id=name)
+        raise ApiException(status=404)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
+        side_effect=find_instance,
+        autospec=True,
+    )
+
+    def delete_instance(self, project_id, id):
+        names.remove(id)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_delete_lightningapp_instance",
+        side_effect=delete_instance,
+        autospec=True,
+    )
+    yield [mocker]
+
+    mocker.resetall()

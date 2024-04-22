@@ -3,7 +3,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
     V1LightningappInstanceState,
 )
-
+from click.exceptions import ClickException
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 import pytest
 
 
@@ -51,3 +52,14 @@ def test_stop_job(internal_job_api_mocker_stop_job):
     job_api.stop_job("j-abc", "ts-abc")
     status = job_api.get_job_status("j-abc", "ts-abc")
     assert status == "LIGHTNINGAPP_INSTANCE_STATE_STOPPED"
+
+
+def test_delete_job(internal_job_api_mocker_delete_job):
+    job_api = JobApi()
+    job_api.delete_job("j-abc", "ts-abc")
+
+    with pytest.raises((ApiException, ClickException)):
+        job_api.get_job_status("j-abc", "ts-abc")
+
+    with pytest.raises(ValueError, match="Job j-abc does not exist"):
+        job_api.get_job("j-abc", "ts-abc")

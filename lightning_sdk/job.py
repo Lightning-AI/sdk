@@ -1,5 +1,4 @@
 from lightning_sdk.api.job_api import JobApi
-from lightning_sdk.lightning_cloud.openapi import V1LightningappInstanceState
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 
@@ -17,14 +16,22 @@ class Job:
 
     @property
     def status(self) -> Status:
-        status: V1LightningappInstanceState = self._job_api.get_job_status(self._job.id, self.studio.teamspace.id)
-        return _internal_status_to_external_status(status)
+        try:
+            status = self._job_api.get_job_status(self._job.id, self.studio.teamspace.id)
+            return _internal_status_to_external_status(status)
+        except Exception:
+            raise RuntimeError(
+                f"Job {self.job_name} does not exist in Teamspace {self.studio.teamspace.name}. Did you delete it?"
+            ) from None
 
     def stop(self) -> None:
         if self.status in (Status.Stopped, Status.Failed):
             return None
 
         return self._job_api.stop_job(self._job.id, self.studio.teamspace.id)
+
+    def delete(self) -> None:
+        self._job_api.delete_job(self._job.id, self.studio.teamspace.id)
 
 
 def _internal_status_to_external_status(internal_status: str) -> Status:
