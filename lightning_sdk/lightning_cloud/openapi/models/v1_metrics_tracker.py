@@ -41,34 +41,60 @@ class V1MetricsTracker(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'max_user_step': 'str',
         'name': 'str',
-        'num_values': 'str',
+        'num_rows': 'str',
         'started_at': 'datetime',
         'updated_at': 'datetime'
     }
 
     attribute_map = {
+        'max_user_step': 'maxUserStep',
         'name': 'name',
-        'num_values': 'numValues',
+        'num_rows': 'numRows',
         'started_at': 'startedAt',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, name: 'str' =None, num_values: 'str' =None, started_at: 'datetime' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, max_user_step: 'str' =None, name: 'str' =None, num_rows: 'str' =None, started_at: 'datetime' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1MetricsTracker - a model defined in Swagger"""  # noqa: E501
+        self._max_user_step = None
         self._name = None
-        self._num_values = None
+        self._num_rows = None
         self._started_at = None
         self._updated_at = None
         self.discriminator = None
+        if max_user_step is not None:
+            self.max_user_step = max_user_step
         if name is not None:
             self.name = name
-        if num_values is not None:
-            self.num_values = num_values
+        if num_rows is not None:
+            self.num_rows = num_rows
         if started_at is not None:
             self.started_at = started_at
         if updated_at is not None:
             self.updated_at = updated_at
+
+    @property
+    def max_user_step(self) -> 'str':
+        """Gets the max_user_step of this V1MetricsTracker.  # noqa: E501
+
+
+        :return: The max_user_step of this V1MetricsTracker.  # noqa: E501
+        :rtype: str
+        """
+        return self._max_user_step
+
+    @max_user_step.setter
+    def max_user_step(self, max_user_step: 'str'):
+        """Sets the max_user_step of this V1MetricsTracker.
+
+
+        :param max_user_step: The max_user_step of this V1MetricsTracker.  # noqa: E501
+        :type: str
+        """
+
+        self._max_user_step = max_user_step
 
     @property
     def name(self) -> 'str':
@@ -92,25 +118,25 @@ class V1MetricsTracker(object):
         self._name = name
 
     @property
-    def num_values(self) -> 'str':
-        """Gets the num_values of this V1MetricsTracker.  # noqa: E501
+    def num_rows(self) -> 'str':
+        """Gets the num_rows of this V1MetricsTracker.  # noqa: E501
 
 
-        :return: The num_values of this V1MetricsTracker.  # noqa: E501
+        :return: The num_rows of this V1MetricsTracker.  # noqa: E501
         :rtype: str
         """
-        return self._num_values
+        return self._num_rows
 
-    @num_values.setter
-    def num_values(self, num_values: 'str'):
-        """Sets the num_values of this V1MetricsTracker.
+    @num_rows.setter
+    def num_rows(self, num_rows: 'str'):
+        """Sets the num_rows of this V1MetricsTracker.
 
 
-        :param num_values: The num_values of this V1MetricsTracker.  # noqa: E501
+        :param num_rows: The num_rows of this V1MetricsTracker.  # noqa: E501
         :type: str
         """
 
-        self._num_values = num_values
+        self._num_rows = num_rows
 
     @property
     def started_at(self) -> 'datetime':

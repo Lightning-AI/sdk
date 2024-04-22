@@ -61,6 +61,7 @@ class V1CloudSpace(object):
         'is_favorite': 'bool',
         'is_published': 'bool',
         'license': 'str',
+        'license_url': 'str',
         'message': 'str',
         'multi_user_edit': 'bool',
         'name': 'str',
@@ -106,6 +107,7 @@ class V1CloudSpace(object):
         'is_favorite': 'isFavorite',
         'is_published': 'isPublished',
         'license': 'license',
+        'license_url': 'licenseUrl',
         'message': 'message',
         'multi_user_edit': 'multiUserEdit',
         'name': 'name',
@@ -130,7 +132,7 @@ class V1CloudSpace(object):
         'web_path': 'webPath'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cluster_id = None
@@ -152,6 +154,7 @@ class V1CloudSpace(object):
         self._is_favorite = None
         self._is_published = None
         self._license = None
+        self._license_url = None
         self._message = None
         self._multi_user_edit = None
         self._name = None
@@ -215,6 +218,8 @@ class V1CloudSpace(object):
             self.is_published = is_published
         if license is not None:
             self.license = license
+        if license_url is not None:
+            self.license_url = license_url
         if message is not None:
             self.message = message
         if multi_user_edit is not None:
@@ -679,6 +684,27 @@ class V1CloudSpace(object):
         """
 
         self._license = license
+
+    @property
+    def license_url(self) -> 'str':
+        """Gets the license_url of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The license_url of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._license_url
+
+    @license_url.setter
+    def license_url(self, license_url: 'str'):
+        """Sets the license_url of this V1CloudSpace.
+
+
+        :param license_url: The license_url of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._license_url = license_url
 
     @property
     def message(self) -> 'str':

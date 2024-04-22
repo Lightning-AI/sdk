@@ -45,11 +45,11 @@ class V1MetricsStream(object):
         'cloudspace_id': 'str',
         'created_at': 'datetime',
         'id': 'str',
-        'metrics': 'list[V1MetricsTracker]',
         'name': 'str',
         'project_id': 'str',
         'source_id': 'str',
         'stopped_at': 'datetime',
+        'trackers': 'dict(str, V1MetricsTracker)',
         'user_id': 'str',
         'work_id': 'str'
     }
@@ -59,26 +59,26 @@ class V1MetricsStream(object):
         'cloudspace_id': 'cloudspaceId',
         'created_at': 'createdAt',
         'id': 'id',
-        'metrics': 'metrics',
         'name': 'name',
         'project_id': 'projectId',
         'source_id': 'sourceId',
         'stopped_at': 'stoppedAt',
+        'trackers': 'trackers',
         'user_id': 'userId',
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, metrics: 'list[V1MetricsTracker]' =None, name: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, user_id: 'str' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, work_id: 'str' =None):  # noqa: E501
         """V1MetricsStream - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
         self._created_at = None
         self._id = None
-        self._metrics = None
         self._name = None
         self._project_id = None
         self._source_id = None
         self._stopped_at = None
+        self._trackers = None
         self._user_id = None
         self._work_id = None
         self.discriminator = None
@@ -90,8 +90,6 @@ class V1MetricsStream(object):
             self.created_at = created_at
         if id is not None:
             self.id = id
-        if metrics is not None:
-            self.metrics = metrics
         if name is not None:
             self.name = name
         if project_id is not None:
@@ -100,6 +98,8 @@ class V1MetricsStream(object):
             self.source_id = source_id
         if stopped_at is not None:
             self.stopped_at = stopped_at
+        if trackers is not None:
+            self.trackers = trackers
         if user_id is not None:
             self.user_id = user_id
         if work_id is not None:
@@ -190,27 +190,6 @@ class V1MetricsStream(object):
         self._id = id
 
     @property
-    def metrics(self) -> 'list[V1MetricsTracker]':
-        """Gets the metrics of this V1MetricsStream.  # noqa: E501
-
-
-        :return: The metrics of this V1MetricsStream.  # noqa: E501
-        :rtype: list[V1MetricsTracker]
-        """
-        return self._metrics
-
-    @metrics.setter
-    def metrics(self, metrics: 'list[V1MetricsTracker]'):
-        """Sets the metrics of this V1MetricsStream.
-
-
-        :param metrics: The metrics of this V1MetricsStream.  # noqa: E501
-        :type: list[V1MetricsTracker]
-        """
-
-        self._metrics = metrics
-
-    @property
     def name(self) -> 'str':
         """Gets the name of this V1MetricsStream.  # noqa: E501
 
@@ -293,6 +272,27 @@ class V1MetricsStream(object):
         """
 
         self._stopped_at = stopped_at
+
+    @property
+    def trackers(self) -> 'dict(str, V1MetricsTracker)':
+        """Gets the trackers of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The trackers of this V1MetricsStream.  # noqa: E501
+        :rtype: dict(str, V1MetricsTracker)
+        """
+        return self._trackers
+
+    @trackers.setter
+    def trackers(self, trackers: 'dict(str, V1MetricsTracker)'):
+        """Sets the trackers of this V1MetricsStream.
+
+
+        :param trackers: The trackers of this V1MetricsStream.  # noqa: E501
+        :type: dict(str, V1MetricsTracker)
+        """
+
+        self._trackers = trackers
 
     @property
     def user_id(self) -> 'str':

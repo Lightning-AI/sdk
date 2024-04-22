@@ -53,6 +53,7 @@ class CloudspacesIdBody(object):
         'is_favorite': 'bool',
         'is_published': 'bool',
         'license': 'str',
+        'license_url': 'str',
         'multi_user_edit': 'bool',
         'operating_cost': 'str',
         'paper_authors': 'str',
@@ -79,6 +80,7 @@ class CloudspacesIdBody(object):
         'is_favorite': 'isFavorite',
         'is_published': 'isPublished',
         'license': 'license',
+        'license_url': 'licenseUrl',
         'multi_user_edit': 'multiUserEdit',
         'operating_cost': 'operatingCost',
         'paper_authors': 'paperAuthors',
@@ -92,7 +94,7 @@ class CloudspacesIdBody(object):
         'user_metadata': 'userMetadata'
     }
 
-    def __init__(self, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, multi_user_edit: 'bool' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
+    def __init__(self, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, multi_user_edit: 'bool' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
         """CloudspacesIdBody - a model defined in Swagger"""  # noqa: E501
         self._code_url = None
         self._data_connection_mounts = None
@@ -106,6 +108,7 @@ class CloudspacesIdBody(object):
         self._is_favorite = None
         self._is_published = None
         self._license = None
+        self._license_url = None
         self._multi_user_edit = None
         self._operating_cost = None
         self._paper_authors = None
@@ -142,6 +145,8 @@ class CloudspacesIdBody(object):
             self.is_published = is_published
         if license is not None:
             self.license = license
+        if license_url is not None:
+            self.license_url = license_url
         if multi_user_edit is not None:
             self.multi_user_edit = multi_user_edit
         if operating_cost is not None:
@@ -416,6 +421,27 @@ class CloudspacesIdBody(object):
         """
 
         self._license = license
+
+    @property
+    def license_url(self) -> 'str':
+        """Gets the license_url of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The license_url of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._license_url
+
+    @license_url.setter
+    def license_url(self, license_url: 'str'):
+        """Sets the license_url of this CloudspacesIdBody.
+
+
+        :param license_url: The license_url of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._license_url = license_url
 
     @property
     def multi_user_edit(self) -> 'bool':

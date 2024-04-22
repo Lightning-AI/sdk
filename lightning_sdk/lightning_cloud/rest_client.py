@@ -116,30 +116,40 @@ def _retry_wrapper(self,
             try:
                 return func(self, *args, **kwargs)
             except (ApiException, urllib3.exceptions.HTTPError) as ex:
-                # retry if the backend fails with all errors except 4xx but not 408 - (Request Timeout)
-                if (isinstance(ex, urllib3.exceptions.HTTPError)
-                        or ex.status in (408, 409)
-                        or not str(ex.status).startswith("4")):
-                    consecutive_errors += 1
-                    backoff_time = _get_next_backoff_time(consecutive_errors)
-
-                    msg = (f"error: {str(ex)}" if isinstance(
-                        ex, urllib3.exceptions.HTTPError) else
-                           f"response: {ex.status}")
-                    logger.debug(
-                        f"The {func.__name__} request failed to reach the server, {msg}."
-                        f" Retrying after {backoff_time} seconds.")
-
-                    if max_tries is not None and consecutive_errors == max_tries:
-                        raise Exception(
-                            f"The {func.__name__} request failed to reach the server, {msg}."
-                        )
-
-                    time.sleep(backoff_time)
-                else:
+                if not _should_retry(ex):
                     raise ex
 
+                consecutive_errors += 1
+                backoff_time = _get_next_backoff_time(consecutive_errors)
+
+                msg = (f"error: {str(ex)}" if isinstance(
+                    ex, urllib3.exceptions.HTTPError) else
+                        f"response: {ex.status}")
+                logger.debug(
+                    f"The {func.__name__} request failed to reach the server, {msg}."
+                    f" Retrying after {backoff_time} seconds.")
+
+                if max_tries is not None and consecutive_errors == max_tries:
+                    raise Exception(
+                        f"The {func.__name__} request failed to reach the server, {msg}."
+                    )
+
+                time.sleep(backoff_time)
+
     return wrapped
+
+
+def _should_retry(ex: BaseException) -> bool:
+    if isinstance(ex, urllib3.exceptions.HTTPError):
+        return True
+
+    if str(ex.status).startswith("4") and ex.status not in (400, 401, 404):
+        return True
+
+    if str(ex.status).startswith("5"):
+        return True
+
+    return False
 
 
 class LightningClient(GridRestClient):
