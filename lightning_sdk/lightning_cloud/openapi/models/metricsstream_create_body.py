@@ -43,6 +43,8 @@ class MetricsstreamCreateBody(object):
     swagger_types = {
         'app_id': 'str',
         'cloudspace_id': 'str',
+        'dark_color': 'str',
+        'light_color': 'str',
         'name': 'str',
         'work_id': 'str'
     }
@@ -50,14 +52,18 @@ class MetricsstreamCreateBody(object):
     attribute_map = {
         'app_id': 'appId',
         'cloudspace_id': 'cloudspaceId',
+        'dark_color': 'darkColor',
+        'light_color': 'lightColor',
         'name': 'name',
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, name: 'str' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, work_id: 'str' =None):  # noqa: E501
         """MetricsstreamCreateBody - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
+        self._dark_color = None
+        self._light_color = None
         self._name = None
         self._work_id = None
         self.discriminator = None
@@ -65,6 +71,10 @@ class MetricsstreamCreateBody(object):
             self.app_id = app_id
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
+        if dark_color is not None:
+            self.dark_color = dark_color
+        if light_color is not None:
+            self.light_color = light_color
         if name is not None:
             self.name = name
         if work_id is not None:
@@ -111,6 +121,48 @@ class MetricsstreamCreateBody(object):
         """
 
         self._cloudspace_id = cloudspace_id
+
+    @property
+    def dark_color(self) -> 'str':
+        """Gets the dark_color of this MetricsstreamCreateBody.  # noqa: E501
+
+
+        :return: The dark_color of this MetricsstreamCreateBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._dark_color
+
+    @dark_color.setter
+    def dark_color(self, dark_color: 'str'):
+        """Sets the dark_color of this MetricsstreamCreateBody.
+
+
+        :param dark_color: The dark_color of this MetricsstreamCreateBody.  # noqa: E501
+        :type: str
+        """
+
+        self._dark_color = dark_color
+
+    @property
+    def light_color(self) -> 'str':
+        """Gets the light_color of this MetricsstreamCreateBody.  # noqa: E501
+
+
+        :return: The light_color of this MetricsstreamCreateBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._light_color
+
+    @light_color.setter
+    def light_color(self, light_color: 'str'):
+        """Sets the light_color of this MetricsstreamCreateBody.
+
+
+        :param light_color: The light_color of this MetricsstreamCreateBody.  # noqa: E501
+        :type: str
+        """
+
+        self._light_color = light_color
 
     @property
     def name(self) -> 'str':

@@ -45,6 +45,7 @@ class V1GoogleCloudDirectV1(object):
         'primary_region': 'str',
         'project_id': 'str',
         'regions': 'list[str]',
+        'service_account_email': 'str',
         'source_cidr_ips': 'list[str]'
     }
 
@@ -53,15 +54,17 @@ class V1GoogleCloudDirectV1(object):
         'primary_region': 'primaryRegion',
         'project_id': 'projectId',
         'regions': 'regions',
+        'service_account_email': 'serviceAccountEmail',
         'source_cidr_ips': 'sourceCidrIps'
     }
 
-    def __init__(self, bucket_name: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._primary_region = None
         self._project_id = None
         self._regions = None
+        self._service_account_email = None
         self._source_cidr_ips = None
         self.discriminator = None
         if bucket_name is not None:
@@ -72,6 +75,8 @@ class V1GoogleCloudDirectV1(object):
             self.project_id = project_id
         if regions is not None:
             self.regions = regions
+        if service_account_email is not None:
+            self.service_account_email = service_account_email
         if source_cidr_ips is not None:
             self.source_cidr_ips = source_cidr_ips
 
@@ -158,6 +163,27 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._regions = regions
+
+    @property
+    def service_account_email(self) -> 'str':
+        """Gets the service_account_email of this V1GoogleCloudDirectV1.  # noqa: E501
+
+
+        :return: The service_account_email of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._service_account_email
+
+    @service_account_email.setter
+    def service_account_email(self, service_account_email: 'str'):
+        """Sets the service_account_email of this V1GoogleCloudDirectV1.
+
+
+        :param service_account_email: The service_account_email of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._service_account_email = service_account_email
 
     @property
     def source_cidr_ips(self) -> 'list[str]':

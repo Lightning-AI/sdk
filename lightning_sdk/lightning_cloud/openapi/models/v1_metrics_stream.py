@@ -44,7 +44,9 @@ class V1MetricsStream(object):
         'app_id': 'str',
         'cloudspace_id': 'str',
         'created_at': 'datetime',
+        'dark_color': 'str',
         'id': 'str',
+        'light_color': 'str',
         'name': 'str',
         'project_id': 'str',
         'source_id': 'str',
@@ -58,7 +60,9 @@ class V1MetricsStream(object):
         'app_id': 'appId',
         'cloudspace_id': 'cloudspaceId',
         'created_at': 'createdAt',
+        'dark_color': 'darkColor',
         'id': 'id',
+        'light_color': 'lightColor',
         'name': 'name',
         'project_id': 'projectId',
         'source_id': 'sourceId',
@@ -68,12 +72,14 @@ class V1MetricsStream(object):
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, light_color: 'str' =None, name: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, work_id: 'str' =None):  # noqa: E501
         """V1MetricsStream - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
         self._created_at = None
+        self._dark_color = None
         self._id = None
+        self._light_color = None
         self._name = None
         self._project_id = None
         self._source_id = None
@@ -88,8 +94,12 @@ class V1MetricsStream(object):
             self.cloudspace_id = cloudspace_id
         if created_at is not None:
             self.created_at = created_at
+        if dark_color is not None:
+            self.dark_color = dark_color
         if id is not None:
             self.id = id
+        if light_color is not None:
+            self.light_color = light_color
         if name is not None:
             self.name = name
         if project_id is not None:
@@ -169,6 +179,27 @@ class V1MetricsStream(object):
         self._created_at = created_at
 
     @property
+    def dark_color(self) -> 'str':
+        """Gets the dark_color of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The dark_color of this V1MetricsStream.  # noqa: E501
+        :rtype: str
+        """
+        return self._dark_color
+
+    @dark_color.setter
+    def dark_color(self, dark_color: 'str'):
+        """Sets the dark_color of this V1MetricsStream.
+
+
+        :param dark_color: The dark_color of this V1MetricsStream.  # noqa: E501
+        :type: str
+        """
+
+        self._dark_color = dark_color
+
+    @property
     def id(self) -> 'str':
         """Gets the id of this V1MetricsStream.  # noqa: E501
 
@@ -188,6 +219,27 @@ class V1MetricsStream(object):
         """
 
         self._id = id
+
+    @property
+    def light_color(self) -> 'str':
+        """Gets the light_color of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The light_color of this V1MetricsStream.  # noqa: E501
+        :rtype: str
+        """
+        return self._light_color
+
+    @light_color.setter
+    def light_color(self, light_color: 'str'):
+        """Sets the light_color of this V1MetricsStream.
+
+
+        :param light_color: The light_color of this V1MetricsStream.  # noqa: E501
+        :type: str
+        """
+
+        self._light_color = light_color
 
     @property
     def name(self) -> 'str':
