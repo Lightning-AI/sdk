@@ -4,8 +4,11 @@ from enum import Enum
 class Machine(Enum):
     """Enum holding all supported machine types for studios."""
 
+    CPU_SMALL = "CPU_SMALL"
     CPU = "CPU"
     DATA_PREP = "DATA_PREP"
+    DATA_PREP_MAX = "DATA_PREP_MAX"
+    DATA_PREP_ULTRA = "DATA_PREP_ULTRA"
     T4 = "T4"
     T4_X_4 = "T4_X_4"
     L4 = "L4"

@@ -203,10 +203,12 @@ class _DummyResponse:
 
 
 # TODO: This should really come from some kind of metadata service
-# TODO: Add trainium instances once feature flag is lifted
 _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
+    Machine.CPU_SMALL: "m3.medium",
     Machine.CPU: "cpu-4",
     Machine.DATA_PREP: "data-large-3000",
+    Machine.DATA_PREP_MAX: "data-max-3000",
+    Machine.DATA_PREP_ULTRA: "data-ultra-3000",
     Machine.T4: "g4dn.2xlarge",
     Machine.T4_X_4: "g4dn.12xlarge",
     Machine.L4: "g6.4xlarge",
