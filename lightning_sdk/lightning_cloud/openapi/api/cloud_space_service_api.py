@@ -1006,7 +1006,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_create_lightning_run_instance(self, body: 'IdGetBody1', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def cloud_space_service_create_lightning_run_instance(self, body: 'IdGetBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """cloud_space_service_create_lightning_run_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1015,7 +1015,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdGetBody1 body: (required)
+        :param IdGetBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
@@ -1030,7 +1030,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_create_lightning_run_instance_with_http_info(body, project_id, cloudspace_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_create_lightning_run_instance_with_http_info(self, body: 'IdGetBody1', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def cloud_space_service_create_lightning_run_instance_with_http_info(self, body: 'IdGetBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """cloud_space_service_create_lightning_run_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1039,7 +1039,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdGetBody1 body: (required)
+        :param IdGetBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)

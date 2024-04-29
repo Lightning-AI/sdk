@@ -61,6 +61,7 @@ class V1UserFeatures(object):
         'gcp': 'bool',
         'interruptible_instances': 'bool',
         'jobs_init': 'bool',
+        'l4x8': 'bool',
         'landing_studios': 'bool',
         'lit_logger': 'bool',
         'mmt_app': 'bool',
@@ -90,6 +91,7 @@ class V1UserFeatures(object):
         'quests': 'bool',
         'restart_ide_on_hang': 'bool',
         'restartable_jobs': 'bool',
+        'runnable_public_studio_page': 'bool',
         'show_dev_admin': 'bool',
         'slurm': 'bool',
         'slurm_machine_selector': 'bool',
@@ -119,6 +121,7 @@ class V1UserFeatures(object):
         'gcp': 'gcp',
         'interruptible_instances': 'interruptibleInstances',
         'jobs_init': 'jobsInit',
+        'l4x8': 'l4x8',
         'landing_studios': 'landingStudios',
         'lit_logger': 'litLogger',
         'mmt_app': 'mmtApp',
@@ -148,6 +151,7 @@ class V1UserFeatures(object):
         'quests': 'quests',
         'restart_ide_on_hang': 'restartIdeOnHang',
         'restartable_jobs': 'restartableJobs',
+        'runnable_public_studio_page': 'runnablePublicStudioPage',
         'show_dev_admin': 'showDevAdmin',
         'slurm': 'slurm',
         'slurm_machine_selector': 'slurmMachineSelector',
@@ -156,7 +160,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, teamspace_storage_tab: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, teamspace_storage_tab: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._apt_get_v2 = None
         self._aws_trainium = None
@@ -178,6 +182,7 @@ class V1UserFeatures(object):
         self._gcp = None
         self._interruptible_instances = None
         self._jobs_init = None
+        self._l4x8 = None
         self._landing_studios = None
         self._lit_logger = None
         self._mmt_app = None
@@ -207,6 +212,7 @@ class V1UserFeatures(object):
         self._quests = None
         self._restart_ide_on_hang = None
         self._restartable_jobs = None
+        self._runnable_public_studio_page = None
         self._show_dev_admin = None
         self._slurm = None
         self._slurm_machine_selector = None
@@ -254,6 +260,8 @@ class V1UserFeatures(object):
             self.interruptible_instances = interruptible_instances
         if jobs_init is not None:
             self.jobs_init = jobs_init
+        if l4x8 is not None:
+            self.l4x8 = l4x8
         if landing_studios is not None:
             self.landing_studios = landing_studios
         if lit_logger is not None:
@@ -312,6 +320,8 @@ class V1UserFeatures(object):
             self.restart_ide_on_hang = restart_ide_on_hang
         if restartable_jobs is not None:
             self.restartable_jobs = restartable_jobs
+        if runnable_public_studio_page is not None:
+            self.runnable_public_studio_page = runnable_public_studio_page
         if show_dev_admin is not None:
             self.show_dev_admin = show_dev_admin
         if slurm is not None:
@@ -744,6 +754,27 @@ class V1UserFeatures(object):
         """
 
         self._jobs_init = jobs_init
+
+    @property
+    def l4x8(self) -> 'bool':
+        """Gets the l4x8 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The l4x8 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._l4x8
+
+    @l4x8.setter
+    def l4x8(self, l4x8: 'bool'):
+        """Sets the l4x8 of this V1UserFeatures.
+
+
+        :param l4x8: The l4x8 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._l4x8 = l4x8
 
     @property
     def landing_studios(self) -> 'bool':
@@ -1353,6 +1384,27 @@ class V1UserFeatures(object):
         """
 
         self._restartable_jobs = restartable_jobs
+
+    @property
+    def runnable_public_studio_page(self) -> 'bool':
+        """Gets the runnable_public_studio_page of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The runnable_public_studio_page of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._runnable_public_studio_page
+
+    @runnable_public_studio_page.setter
+    def runnable_public_studio_page(self, runnable_public_studio_page: 'bool'):
+        """Sets the runnable_public_studio_page of this V1UserFeatures.
+
+
+        :param runnable_public_studio_page: The runnable_public_studio_page of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._runnable_public_studio_page = runnable_public_studio_page
 
     @property
     def show_dev_admin(self) -> 'bool':

@@ -47,8 +47,13 @@ class IdGetBody(object):
         'display_name': 'str',
         'domain': 'str',
         'env': 'list[V1EnvVar]',
+        'keep_machines_after_stop': 'bool',
+        'linked_project_id': 'str',
+        'linked_user_id': 'str',
+        'machines_reservation_time_minutes': 'str',
         'name': 'str',
-        'queue_server_type': 'V1QueueServerType'
+        'queue_server_type': 'V1QueueServerType',
+        'source_app': 'str'
     }
 
     attribute_map = {
@@ -58,11 +63,16 @@ class IdGetBody(object):
         'display_name': 'displayName',
         'domain': 'domain',
         'env': 'env',
+        'keep_machines_after_stop': 'keepMachinesAfterStop',
+        'linked_project_id': 'linkedProjectId',
+        'linked_user_id': 'linkedUserId',
+        'machines_reservation_time_minutes': 'machinesReservationTimeMinutes',
         'name': 'name',
-        'queue_server_type': 'queueServerType'
+        'queue_server_type': 'queueServerType',
+        'source_app': 'sourceApp'
     }
 
-    def __init__(self, auth: 'V1LightningAuth' =None, cluster_id: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, display_name: 'str' =None, domain: 'str' =None, env: 'list[V1EnvVar]' =None, name: 'str' =None, queue_server_type: 'V1QueueServerType' =None):  # noqa: E501
+    def __init__(self, auth: 'V1LightningAuth' =None, cluster_id: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, display_name: 'str' =None, domain: 'str' =None, env: 'list[V1EnvVar]' =None, keep_machines_after_stop: 'bool' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, machines_reservation_time_minutes: 'str' =None, name: 'str' =None, queue_server_type: 'V1QueueServerType' =None, source_app: 'str' =None):  # noqa: E501
         """IdGetBody - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cluster_id = None
@@ -70,8 +80,13 @@ class IdGetBody(object):
         self._display_name = None
         self._domain = None
         self._env = None
+        self._keep_machines_after_stop = None
+        self._linked_project_id = None
+        self._linked_user_id = None
+        self._machines_reservation_time_minutes = None
         self._name = None
         self._queue_server_type = None
+        self._source_app = None
         self.discriminator = None
         if auth is not None:
             self.auth = auth
@@ -85,10 +100,20 @@ class IdGetBody(object):
             self.domain = domain
         if env is not None:
             self.env = env
+        if keep_machines_after_stop is not None:
+            self.keep_machines_after_stop = keep_machines_after_stop
+        if linked_project_id is not None:
+            self.linked_project_id = linked_project_id
+        if linked_user_id is not None:
+            self.linked_user_id = linked_user_id
+        if machines_reservation_time_minutes is not None:
+            self.machines_reservation_time_minutes = machines_reservation_time_minutes
         if name is not None:
             self.name = name
         if queue_server_type is not None:
             self.queue_server_type = queue_server_type
+        if source_app is not None:
+            self.source_app = source_app
 
     @property
     def auth(self) -> 'V1LightningAuth':
@@ -219,6 +244,90 @@ class IdGetBody(object):
         self._env = env
 
     @property
+    def keep_machines_after_stop(self) -> 'bool':
+        """Gets the keep_machines_after_stop of this IdGetBody.  # noqa: E501
+
+
+        :return: The keep_machines_after_stop of this IdGetBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._keep_machines_after_stop
+
+    @keep_machines_after_stop.setter
+    def keep_machines_after_stop(self, keep_machines_after_stop: 'bool'):
+        """Sets the keep_machines_after_stop of this IdGetBody.
+
+
+        :param keep_machines_after_stop: The keep_machines_after_stop of this IdGetBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._keep_machines_after_stop = keep_machines_after_stop
+
+    @property
+    def linked_project_id(self) -> 'str':
+        """Gets the linked_project_id of this IdGetBody.  # noqa: E501
+
+
+        :return: The linked_project_id of this IdGetBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._linked_project_id
+
+    @linked_project_id.setter
+    def linked_project_id(self, linked_project_id: 'str'):
+        """Sets the linked_project_id of this IdGetBody.
+
+
+        :param linked_project_id: The linked_project_id of this IdGetBody.  # noqa: E501
+        :type: str
+        """
+
+        self._linked_project_id = linked_project_id
+
+    @property
+    def linked_user_id(self) -> 'str':
+        """Gets the linked_user_id of this IdGetBody.  # noqa: E501
+
+
+        :return: The linked_user_id of this IdGetBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._linked_user_id
+
+    @linked_user_id.setter
+    def linked_user_id(self, linked_user_id: 'str'):
+        """Sets the linked_user_id of this IdGetBody.
+
+
+        :param linked_user_id: The linked_user_id of this IdGetBody.  # noqa: E501
+        :type: str
+        """
+
+        self._linked_user_id = linked_user_id
+
+    @property
+    def machines_reservation_time_minutes(self) -> 'str':
+        """Gets the machines_reservation_time_minutes of this IdGetBody.  # noqa: E501
+
+
+        :return: The machines_reservation_time_minutes of this IdGetBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._machines_reservation_time_minutes
+
+    @machines_reservation_time_minutes.setter
+    def machines_reservation_time_minutes(self, machines_reservation_time_minutes: 'str'):
+        """Sets the machines_reservation_time_minutes of this IdGetBody.
+
+
+        :param machines_reservation_time_minutes: The machines_reservation_time_minutes of this IdGetBody.  # noqa: E501
+        :type: str
+        """
+
+        self._machines_reservation_time_minutes = machines_reservation_time_minutes
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this IdGetBody.  # noqa: E501
 
@@ -259,6 +368,27 @@ class IdGetBody(object):
         """
 
         self._queue_server_type = queue_server_type
+
+    @property
+    def source_app(self) -> 'str':
+        """Gets the source_app of this IdGetBody.  # noqa: E501
+
+
+        :return: The source_app of this IdGetBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._source_app
+
+    @source_app.setter
+    def source_app(self, source_app: 'str'):
+        """Sets the source_app of this IdGetBody.
+
+
+        :param source_app: The source_app of this IdGetBody.  # noqa: E501
+        :type: str
+        """
+
+        self._source_app = source_app
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
