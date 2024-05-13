@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Optional, Protocol, runtime_checkable
 
 from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
+from lightning_sdk.job import Job
 from lightning_sdk.utils import _LIGHTNING_SERVICE_EXECUTION_ID_KEY, _resolve_deprecated_cloud_compute, _setup_logger
 
 if TYPE_CHECKING:
@@ -126,7 +127,10 @@ class JobsPlugin(_Plugin):
         )
 
         _logger.info(_success_message(resp, self))
-        return resp
+
+        job = Job(resp.name, self._studio)
+        
+        return job
 
 
 class MultiMachineTrainingPlugin(_Plugin):
@@ -162,8 +166,9 @@ class MultiMachineTrainingPlugin(_Plugin):
             cluster_id=self._studio._studio.cluster_id,
         )
 
-        _logger.info(_success_message(resp, self))
-        return resp
+        job = Job(resp.name, self._studio)
+        
+        return job
 
 
 class MultiMachineDataPrepPlugin(_Plugin):
@@ -196,8 +201,9 @@ class MultiMachineDataPrepPlugin(_Plugin):
             cluster_id=self._studio._studio.cluster_id,
         )
 
-        _logger.info(_success_message(resp, self))
-        return resp
+        job = Job(resp.name, self._studio)
+        
+        return job
 
 
 class InferenceServerPlugin(_Plugin):
