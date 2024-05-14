@@ -17,7 +17,7 @@ class UserApi:
     def __init__(self) -> None:
         super().__init__()
 
-        self._client = LightningClient(max_tries=3)
+        self._client = LightningClient(max_tries=7)
 
     def get_user(self, name: str) -> V1SearchUser:
         """Gets user by name."""

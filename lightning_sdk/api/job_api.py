@@ -24,7 +24,7 @@ from lightning_sdk.machine import Machine
 class JobApi:
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
-        self._client = LightningClient(max_tries=3)
+        self._client = LightningClient(max_tries=7)
 
     def get_job(self, job_name: str, teamspace_id: str) -> Externalv1LightningappInstance:
         try:

@@ -63,7 +63,7 @@ class StudioApi:
         super().__init__()
 
         self._cloud_url = _cloud_url()
-        self._client = LightningClient(max_tries=3)
+        self._client = LightningClient(max_tries=7)
         self._keep_alive_threads: Mapping[str, Thread] = {}
         self._keep_alive_events: Mapping[str, Event] = {}
 
