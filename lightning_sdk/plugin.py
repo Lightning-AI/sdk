@@ -4,9 +4,9 @@ import os
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional, Protocol, runtime_checkable
 
+from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
-from lightning_sdk.job import Job
 from lightning_sdk.utils import _LIGHTNING_SERVICE_EXECUTION_ID_KEY, _resolve_deprecated_cloud_compute, _setup_logger
 
 if TYPE_CHECKING:
@@ -128,9 +128,7 @@ class JobsPlugin(_Plugin):
 
         _logger.info(_success_message(resp, self))
 
-        job = Job(resp.name, self._studio)
-        
-        return job
+        return Job(resp.name, self._studio)
 
 
 class MultiMachineTrainingPlugin(_Plugin):
@@ -166,9 +164,7 @@ class MultiMachineTrainingPlugin(_Plugin):
             cluster_id=self._studio._studio.cluster_id,
         )
 
-        job = Job(resp.name, self._studio)
-        
-        return job
+        return Job(resp.name, self._studio)
 
 
 class MultiMachineDataPrepPlugin(_Plugin):
@@ -201,9 +197,7 @@ class MultiMachineDataPrepPlugin(_Plugin):
             cluster_id=self._studio._studio.cluster_id,
         )
 
-        job = Job(resp.name, self._studio)
-        
-        return job
+        return Job(resp.name, self._studio)
 
 
 class InferenceServerPlugin(_Plugin):
@@ -249,7 +243,7 @@ class InferenceServerPlugin(_Plugin):
         )
 
         _logger.info(_success_message(resp, self))
-        return resp
+        return Job(resp.name, self._studio)
 
 
 class SlurmJobsPlugin(_Plugin):

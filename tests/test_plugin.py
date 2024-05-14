@@ -23,7 +23,13 @@ def test_run_plugin(internal_studio_init_mocker, internal_studio_status_mocker, 
 
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
-def test_run_job(internal_studio_init_mocker, internal_studio_status_mocker, internal_job_run_mocker, cloud_compute):
+def test_run_job(
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_job_run_mocker,
+    internal_job_api_mocker_all_jobs_valid,
+    cloud_compute,
+):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     plugin = JobsPlugin(
         "jobs", "Launch asynchronous scripts from a Studio - Like submitting a job to a cluster", studio
@@ -36,7 +42,13 @@ def test_run_job(internal_studio_init_mocker, internal_studio_status_mocker, int
 
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
-def test_run_mmt(internal_studio_init_mocker, internal_studio_status_mocker, internal_mmt_run_mocker, cloud_compute):
+def test_run_mmt(
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_mmt_run_mocker,
+    internal_job_api_mocker_all_jobs_valid,
+    cloud_compute,
+):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     plugin = MultiMachineTrainingPlugin(
         "multi-machine-training", "Train a model across multiple cloud machines", studio
@@ -50,7 +62,11 @@ def test_run_mmt(internal_studio_init_mocker, internal_studio_status_mocker, int
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
 def test_run_inference(
-    internal_studio_init_mocker, internal_studio_status_mocker, internal_inference_run_mocker, cloud_compute
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_inference_run_mocker,
+    internal_job_api_mocker_all_jobs_valid,
+    cloud_compute,
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     plugin = InferenceServerPlugin("inference-server", "Deploy an ML model accessible via API", studio)
@@ -97,7 +113,11 @@ def test_run_name():
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
 def test_run_data_prep(
-    internal_studio_init_mocker, internal_studio_status_mocker, internal_data_prep_run_mocker, cloud_compute
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_data_prep_run_mocker,
+    internal_job_api_mocker_all_jobs_valid,
+    cloud_compute,
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     plugin = MultiMachineDataPrepPlugin(

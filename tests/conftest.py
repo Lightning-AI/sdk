@@ -1900,3 +1900,19 @@ def internal_job_api_mocker_get_work(mocker):
     yield [mocker]
 
     mocker.resetall()
+
+
+@pytest.fixture
+def internal_job_api_mocker_all_jobs_valid(mocker):
+    def find_instance(self, project_id, name):
+        return Externalv1LightningappInstance(name=name, project_id=project_id, id=name)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
+        side_effect=find_instance,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
