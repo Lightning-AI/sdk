@@ -1,3 +1,4 @@
+from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.plugin import JobsPlugin, MultiMachineTrainingPlugin, Plugin, SlurmJobsPlugin
@@ -7,6 +8,7 @@ from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 
 __all__ = [
+    "Job",
     "JobsPlugin",
     "Machine",
     "MultiMachineTrainingPlugin",
