@@ -1374,6 +1374,7 @@ class OrganizationsServiceApi(object):
 
         :param async_req bool
         :param str org_id: (required)
+        :param str user_id:
         :return: V1ListOrgRolesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1395,12 +1396,13 @@ class OrganizationsServiceApi(object):
 
         :param async_req bool
         :param str org_id: (required)
+        :param str user_id:
         :return: V1ListOrgRolesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id']  # noqa: E501
+        all_params = ['org_id', 'user_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1427,6 +1429,8 @@ class OrganizationsServiceApi(object):
             path_params['orgId'] = params['org_id']  # noqa: E501
 
         query_params = []
+        if 'user_id' in params:
+            query_params.append(('userId', params['user_id']))  # noqa: E501
 
         header_params = {}
 

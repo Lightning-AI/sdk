@@ -43,7 +43,7 @@ class V1MetricsTracker(object):
     swagger_types = {
         'max_user_step': 'str',
         'name': 'str',
-        'num_rows': 'str',
+        'num_rows': 'int',
         'started_at': 'datetime',
         'updated_at': 'datetime'
     }
@@ -56,7 +56,7 @@ class V1MetricsTracker(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, max_user_step: 'str' =None, name: 'str' =None, num_rows: 'str' =None, started_at: 'datetime' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, max_user_step: 'str' =None, name: 'str' =None, num_rows: 'int' =None, started_at: 'datetime' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1MetricsTracker - a model defined in Swagger"""  # noqa: E501
         self._max_user_step = None
         self._name = None
@@ -118,22 +118,22 @@ class V1MetricsTracker(object):
         self._name = name
 
     @property
-    def num_rows(self) -> 'str':
+    def num_rows(self) -> 'int':
         """Gets the num_rows of this V1MetricsTracker.  # noqa: E501
 
 
         :return: The num_rows of this V1MetricsTracker.  # noqa: E501
-        :rtype: str
+        :rtype: int
         """
         return self._num_rows
 
     @num_rows.setter
-    def num_rows(self, num_rows: 'str'):
+    def num_rows(self, num_rows: 'int'):
         """Sets the num_rows of this V1MetricsTracker.
 
 
         :param num_rows: The num_rows of this V1MetricsTracker.  # noqa: E501
-        :type: str
+        :type: int
         """
 
         self._num_rows = num_rows

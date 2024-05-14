@@ -44,7 +44,6 @@ class V1ConversationResponseChunk(object):
         'choices': 'list[V1ResponseChoice]',
         'conversation_id': 'str',
         'id': 'str',
-        'model': 'str',
         'object': 'str'
     }
 
@@ -52,16 +51,14 @@ class V1ConversationResponseChunk(object):
         'choices': 'choices',
         'conversation_id': 'conversationId',
         'id': 'id',
-        'model': 'model',
         'object': 'object'
     }
 
-    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, id: 'str' =None, model: 'str' =None, object: 'str' =None):  # noqa: E501
+    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, id: 'str' =None, object: 'str' =None):  # noqa: E501
         """V1ConversationResponseChunk - a model defined in Swagger"""  # noqa: E501
         self._choices = None
         self._conversation_id = None
         self._id = None
-        self._model = None
         self._object = None
         self.discriminator = None
         if choices is not None:
@@ -70,8 +67,6 @@ class V1ConversationResponseChunk(object):
             self.conversation_id = conversation_id
         if id is not None:
             self.id = id
-        if model is not None:
-            self.model = model
         if object is not None:
             self.object = object
 
@@ -137,27 +132,6 @@ class V1ConversationResponseChunk(object):
         """
 
         self._id = id
-
-    @property
-    def model(self) -> 'str':
-        """Gets the model of this V1ConversationResponseChunk.  # noqa: E501
-
-
-        :return: The model of this V1ConversationResponseChunk.  # noqa: E501
-        :rtype: str
-        """
-        return self._model
-
-    @model.setter
-    def model(self, model: 'str'):
-        """Sets the model of this V1ConversationResponseChunk.
-
-
-        :param model: The model of this V1ConversationResponseChunk.  # noqa: E501
-        :type: str
-        """
-
-        self._model = model
 
     @property
     def object(self) -> 'str':

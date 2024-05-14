@@ -41,66 +41,40 @@ class JobsIdBody2(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'last_started_at': 'datetime',
-        'last_stopped_at': 'datetime'
+        'state': 'str'
     }
 
     attribute_map = {
-        'last_started_at': 'lastStartedAt',
-        'last_stopped_at': 'lastStoppedAt'
+        'state': 'state'
     }
 
-    def __init__(self, last_started_at: 'datetime' =None, last_stopped_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, state: 'str' =None):  # noqa: E501
         """JobsIdBody2 - a model defined in Swagger"""  # noqa: E501
-        self._last_started_at = None
-        self._last_stopped_at = None
+        self._state = None
         self.discriminator = None
-        if last_started_at is not None:
-            self.last_started_at = last_started_at
-        if last_stopped_at is not None:
-            self.last_stopped_at = last_stopped_at
+        if state is not None:
+            self.state = state
 
     @property
-    def last_started_at(self) -> 'datetime':
-        """Gets the last_started_at of this JobsIdBody2.  # noqa: E501
+    def state(self) -> 'str':
+        """Gets the state of this JobsIdBody2.  # noqa: E501
 
 
-        :return: The last_started_at of this JobsIdBody2.  # noqa: E501
-        :rtype: datetime
+        :return: The state of this JobsIdBody2.  # noqa: E501
+        :rtype: str
         """
-        return self._last_started_at
+        return self._state
 
-    @last_started_at.setter
-    def last_started_at(self, last_started_at: 'datetime'):
-        """Sets the last_started_at of this JobsIdBody2.
-
-
-        :param last_started_at: The last_started_at of this JobsIdBody2.  # noqa: E501
-        :type: datetime
-        """
-
-        self._last_started_at = last_started_at
-
-    @property
-    def last_stopped_at(self) -> 'datetime':
-        """Gets the last_stopped_at of this JobsIdBody2.  # noqa: E501
+    @state.setter
+    def state(self, state: 'str'):
+        """Sets the state of this JobsIdBody2.
 
 
-        :return: The last_stopped_at of this JobsIdBody2.  # noqa: E501
-        :rtype: datetime
-        """
-        return self._last_stopped_at
-
-    @last_stopped_at.setter
-    def last_stopped_at(self, last_stopped_at: 'datetime'):
-        """Sets the last_stopped_at of this JobsIdBody2.
-
-
-        :param last_stopped_at: The last_stopped_at of this JobsIdBody2.  # noqa: E501
-        :type: datetime
+        :param state: The state of this JobsIdBody2.  # noqa: E501
+        :type: str
         """
 
-        self._last_stopped_at = last_stopped_at
+        self._state = state
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -43,25 +43,30 @@ class V1CreateClusterRequest(object):
     swagger_types = {
         'name': 'str',
         'org_id': 'str',
+        'phase': 'V1ClusterState',
         'spec': 'V1ClusterSpec'
     }
 
     attribute_map = {
         'name': 'name',
         'org_id': 'orgId',
+        'phase': 'phase',
         'spec': 'spec'
     }
 
-    def __init__(self, name: 'str' =None, org_id: 'str' =None, spec: 'V1ClusterSpec' =None):  # noqa: E501
+    def __init__(self, name: 'str' =None, org_id: 'str' =None, phase: 'V1ClusterState' =None, spec: 'V1ClusterSpec' =None):  # noqa: E501
         """V1CreateClusterRequest - a model defined in Swagger"""  # noqa: E501
         self._name = None
         self._org_id = None
+        self._phase = None
         self._spec = None
         self.discriminator = None
         if name is not None:
             self.name = name
         if org_id is not None:
             self.org_id = org_id
+        if phase is not None:
+            self.phase = phase
         if spec is not None:
             self.spec = spec
 
@@ -106,6 +111,27 @@ class V1CreateClusterRequest(object):
         """
 
         self._org_id = org_id
+
+    @property
+    def phase(self) -> 'V1ClusterState':
+        """Gets the phase of this V1CreateClusterRequest.  # noqa: E501
+
+
+        :return: The phase of this V1CreateClusterRequest.  # noqa: E501
+        :rtype: V1ClusterState
+        """
+        return self._phase
+
+    @phase.setter
+    def phase(self, phase: 'V1ClusterState'):
+        """Sets the phase of this V1CreateClusterRequest.
+
+
+        :param phase: The phase of this V1CreateClusterRequest.  # noqa: E501
+        :type: V1ClusterState
+        """
+
+        self._phase = phase
 
     @property
     def spec(self) -> 'V1ClusterSpec':

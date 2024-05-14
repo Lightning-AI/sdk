@@ -43,6 +43,7 @@ class V1DataConnection(object):
     swagger_types = {
         'accessible': 'bool',
         'aws': 'V1AwsDataConnection',
+        'cluster_id': 'str',
         'gcp': 'V1GcpDataConnection',
         'id': 'str',
         'index': 'V1Index',
@@ -57,6 +58,7 @@ class V1DataConnection(object):
     attribute_map = {
         'accessible': 'accessible',
         'aws': 'aws',
+        'cluster_id': 'clusterId',
         'gcp': 'gcp',
         'id': 'id',
         'index': 'index',
@@ -68,10 +70,11 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, name: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, type: 'str' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, name: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, type: 'str' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._accessible = None
         self._aws = None
+        self._cluster_id = None
         self._gcp = None
         self._id = None
         self._index = None
@@ -86,6 +89,8 @@ class V1DataConnection(object):
             self.accessible = accessible
         if aws is not None:
             self.aws = aws
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if gcp is not None:
             self.gcp = gcp
         if id is not None:
@@ -146,6 +151,27 @@ class V1DataConnection(object):
         """
 
         self._aws = aws
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1DataConnection.  # noqa: E501
+
+
+        :return: The cluster_id of this V1DataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1DataConnection.
+
+
+        :param cluster_id: The cluster_id of this V1DataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def gcp(self) -> 'V1GcpDataConnection':

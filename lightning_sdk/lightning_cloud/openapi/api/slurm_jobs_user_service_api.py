@@ -576,7 +576,7 @@ class SlurmJobsUserServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def slurm_jobs_user_service_update_user_slurm_job(self, body: 'JobsIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
+    def slurm_jobs_user_service_update_user_slurm_job(self, body: 'JobsIdBody2', project_id: 'str', id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
         """UpdateUserSLURMJob is used to update a specific SLURM job for an authenticated user. For updating SLURM Jobs from an agent, please use the SLURMJobsAgentService.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -585,7 +585,7 @@ class SlurmJobsUserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobsIdBody1 body: (required)
+        :param JobsIdBody2 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1SLURMJob
@@ -599,7 +599,7 @@ class SlurmJobsUserServiceApi(object):
             (data) = self.slurm_jobs_user_service_update_user_slurm_job_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def slurm_jobs_user_service_update_user_slurm_job_with_http_info(self, body: 'JobsIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
+    def slurm_jobs_user_service_update_user_slurm_job_with_http_info(self, body: 'JobsIdBody2', project_id: 'str', id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
         """UpdateUserSLURMJob is used to update a specific SLURM job for an authenticated user. For updating SLURM Jobs from an agent, please use the SLURMJobsAgentService.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -608,7 +608,7 @@ class SlurmJobsUserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobsIdBody1 body: (required)
+        :param JobsIdBody2 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1SLURMJob

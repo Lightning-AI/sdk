@@ -832,6 +832,7 @@ class BillingServiceApi(object):
         :param str resource_id:
         :param str resource_type:
         :param datetime session_ended_at:
+        :param datetime session_started_at:
         :return: V1GetUsageDetailsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -856,12 +857,13 @@ class BillingServiceApi(object):
         :param str resource_id:
         :param str resource_type:
         :param datetime session_ended_at:
+        :param datetime session_started_at:
         :return: V1GetUsageDetailsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'resource_id', 'resource_type', 'session_ended_at']  # noqa: E501
+        all_params = ['project_id', 'resource_id', 'resource_type', 'session_ended_at', 'session_started_at']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -890,6 +892,8 @@ class BillingServiceApi(object):
             query_params.append(('resourceType', params['resource_type']))  # noqa: E501
         if 'session_ended_at' in params:
             query_params.append(('sessionEndedAt', params['session_ended_at']))  # noqa: E501
+        if 'session_started_at' in params:
+            query_params.append(('sessionStartedAt', params['session_started_at']))  # noqa: E501
 
         header_params = {}
 

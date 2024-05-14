@@ -43,7 +43,7 @@ class AssistantsServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def assistants_service_create_assistant(self, body: 'ProjectIdAssistantsBody', project_id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
+    def assistants_service_create_assistant(self, body: 'ProjectIdAgentsBody', project_id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
         """assistants_service_create_assistant  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdAssistantsBody body: (required)
+        :param ProjectIdAgentsBody body: (required)
         :param str project_id: (required)
         :return: V1Assistant
                  If the method is called asynchronously,
@@ -65,7 +65,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_create_assistant_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_create_assistant_with_http_info(self, body: 'ProjectIdAssistantsBody', project_id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
+    def assistants_service_create_assistant_with_http_info(self, body: 'ProjectIdAgentsBody', project_id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
         """assistants_service_create_assistant  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,7 +74,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdAssistantsBody body: (required)
+        :param ProjectIdAgentsBody body: (required)
         :param str project_id: (required)
         :return: V1Assistant
                  If the method is called asynchronously,
@@ -133,7 +133,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/assistants', 'POST',
+            '/v1/projects/{projectId}/agents', 'POST',
             path_params,
             query_params,
             header_params,
@@ -234,7 +234,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/assistants/{id}', 'DELETE',
+            '/v1/projects/{projectId}/agents/{id}', 'DELETE',
             path_params,
             query_params,
             header_params,
@@ -339,7 +339,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/assistants/{assistantId}/conversations/{id}', 'DELETE',
+            '/v1/agents/{assistantId}/conversations/{id}', 'DELETE',
             path_params,
             query_params,
             header_params,
@@ -432,7 +432,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/assistants/{id}', 'GET',
+            '/v1/agents/{id}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -533,7 +533,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/assistants/{assistantId}/conversations/{id}', 'GET',
+            '/v1/agents/{assistantId}/conversations/{id}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -626,7 +626,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/assistant-managed-endpoints', 'GET',
+            '/v1/projects/{projectId}/agent-managed-endpoints', 'GET',
             path_params,
             query_params,
             header_params,
@@ -727,7 +727,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/assistants', 'GET',
+            '/v1/agents', 'GET',
             path_params,
             query_params,
             header_params,
@@ -824,7 +824,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/assistants/{assistantId}/conversations', 'GET',
+            '/v1/agents/{assistantId}/conversations', 'GET',
             path_params,
             query_params,
             header_params,
@@ -929,7 +929,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/assistants/{assistantId}/conversations', 'POST',
+            '/v1/agents/{assistantId}/conversations', 'POST',
             path_params,
             query_params,
             header_params,
@@ -944,7 +944,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_update_assistant(self, body: 'AssistantsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
+    def assistants_service_update_assistant(self, body: 'AgentsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
         """assistants_service_update_assistant  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -953,7 +953,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AssistantsIdBody body: (required)
+        :param AgentsIdBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1Assistant
@@ -967,7 +967,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_update_assistant_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_update_assistant_with_http_info(self, body: 'AssistantsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
+    def assistants_service_update_assistant_with_http_info(self, body: 'AgentsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
         """assistants_service_update_assistant  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -976,7 +976,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AssistantsIdBody body: (required)
+        :param AgentsIdBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1Assistant
@@ -1042,7 +1042,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/assistants/{id}', 'PUT',
+            '/v1/projects/{projectId}/agents/{id}', 'PUT',
             path_params,
             query_params,
             header_params,
@@ -1155,7 +1155,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/assistants/{assistantId}/conversations/{id}', 'PUT',
+            '/v1/agents/{assistantId}/conversations/{id}', 'PUT',
             path_params,
             query_params,
             header_params,

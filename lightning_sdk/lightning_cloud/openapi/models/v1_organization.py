@@ -52,6 +52,7 @@ class V1Organization(object):
         'id': 'str',
         'location': 'str',
         'name': 'str',
+        'teamspace_default_credits': 'float',
         'twitter_username': 'str',
         'updated_at': 'datetime'
     }
@@ -68,11 +69,12 @@ class V1Organization(object):
         'id': 'id',
         'location': 'location',
         'name': 'name',
+        'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
         self._auto_join_domains = None
@@ -85,6 +87,7 @@ class V1Organization(object):
         self._id = None
         self._location = None
         self._name = None
+        self._teamspace_default_credits = None
         self._twitter_username = None
         self._updated_at = None
         self.discriminator = None
@@ -110,6 +113,8 @@ class V1Organization(object):
             self.location = location
         if name is not None:
             self.name = name
+        if teamspace_default_credits is not None:
+            self.teamspace_default_credits = teamspace_default_credits
         if twitter_username is not None:
             self.twitter_username = twitter_username
         if updated_at is not None:
@@ -345,6 +350,27 @@ class V1Organization(object):
         """
 
         self._name = name
+
+    @property
+    def teamspace_default_credits(self) -> 'float':
+        """Gets the teamspace_default_credits of this V1Organization.  # noqa: E501
+
+
+        :return: The teamspace_default_credits of this V1Organization.  # noqa: E501
+        :rtype: float
+        """
+        return self._teamspace_default_credits
+
+    @teamspace_default_credits.setter
+    def teamspace_default_credits(self, teamspace_default_credits: 'float'):
+        """Sets the teamspace_default_credits of this V1Organization.
+
+
+        :param teamspace_default_credits: The teamspace_default_credits of this V1Organization.  # noqa: E501
+        :type: float
+        """
+
+        self._teamspace_default_credits = teamspace_default_credits
 
     @property
     def twitter_username(self) -> 'str':

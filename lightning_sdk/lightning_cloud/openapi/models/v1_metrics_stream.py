@@ -43,16 +43,21 @@ class V1MetricsStream(object):
     swagger_types = {
         'app_id': 'str',
         'cloudspace_id': 'str',
+        'cluster_id': 'str',
         'created_at': 'datetime',
         'dark_color': 'str',
         'id': 'str',
         'job_name': 'str',
         'light_color': 'str',
         'name': 'str',
+        'persisted': 'bool',
         'plugin_id': 'str',
         'project_id': 'str',
         'source_id': 'str',
         'stopped_at': 'datetime',
+        'store_created_at': 'bool',
+        'store_step': 'bool',
+        'tags': 'list[V1MetricsTags]',
         'trackers': 'dict(str, V1MetricsTracker)',
         'user_id': 'str',
         'work_id': 'str'
@@ -61,35 +66,45 @@ class V1MetricsStream(object):
     attribute_map = {
         'app_id': 'appId',
         'cloudspace_id': 'cloudspaceId',
+        'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'dark_color': 'darkColor',
         'id': 'id',
         'job_name': 'jobName',
         'light_color': 'lightColor',
         'name': 'name',
+        'persisted': 'persisted',
         'plugin_id': 'pluginId',
         'project_id': 'projectId',
         'source_id': 'sourceId',
         'stopped_at': 'stoppedAt',
+        'store_created_at': 'storeCreatedAt',
+        'store_step': 'storeStep',
+        'tags': 'tags',
         'trackers': 'trackers',
         'user_id': 'userId',
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, work_id: 'str' =None):  # noqa: E501
         """V1MetricsStream - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
+        self._cluster_id = None
         self._created_at = None
         self._dark_color = None
         self._id = None
         self._job_name = None
         self._light_color = None
         self._name = None
+        self._persisted = None
         self._plugin_id = None
         self._project_id = None
         self._source_id = None
         self._stopped_at = None
+        self._store_created_at = None
+        self._store_step = None
+        self._tags = None
         self._trackers = None
         self._user_id = None
         self._work_id = None
@@ -98,6 +113,8 @@ class V1MetricsStream(object):
             self.app_id = app_id
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
         if dark_color is not None:
@@ -110,6 +127,8 @@ class V1MetricsStream(object):
             self.light_color = light_color
         if name is not None:
             self.name = name
+        if persisted is not None:
+            self.persisted = persisted
         if plugin_id is not None:
             self.plugin_id = plugin_id
         if project_id is not None:
@@ -118,6 +137,12 @@ class V1MetricsStream(object):
             self.source_id = source_id
         if stopped_at is not None:
             self.stopped_at = stopped_at
+        if store_created_at is not None:
+            self.store_created_at = store_created_at
+        if store_step is not None:
+            self.store_step = store_step
+        if tags is not None:
+            self.tags = tags
         if trackers is not None:
             self.trackers = trackers
         if user_id is not None:
@@ -166,6 +191,27 @@ class V1MetricsStream(object):
         """
 
         self._cloudspace_id = cloudspace_id
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The cluster_id of this V1MetricsStream.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1MetricsStream.
+
+
+        :param cluster_id: The cluster_id of this V1MetricsStream.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def created_at(self) -> 'datetime':
@@ -294,6 +340,27 @@ class V1MetricsStream(object):
         self._name = name
 
     @property
+    def persisted(self) -> 'bool':
+        """Gets the persisted of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The persisted of this V1MetricsStream.  # noqa: E501
+        :rtype: bool
+        """
+        return self._persisted
+
+    @persisted.setter
+    def persisted(self, persisted: 'bool'):
+        """Sets the persisted of this V1MetricsStream.
+
+
+        :param persisted: The persisted of this V1MetricsStream.  # noqa: E501
+        :type: bool
+        """
+
+        self._persisted = persisted
+
+    @property
     def plugin_id(self) -> 'str':
         """Gets the plugin_id of this V1MetricsStream.  # noqa: E501
 
@@ -376,6 +443,69 @@ class V1MetricsStream(object):
         """
 
         self._stopped_at = stopped_at
+
+    @property
+    def store_created_at(self) -> 'bool':
+        """Gets the store_created_at of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The store_created_at of this V1MetricsStream.  # noqa: E501
+        :rtype: bool
+        """
+        return self._store_created_at
+
+    @store_created_at.setter
+    def store_created_at(self, store_created_at: 'bool'):
+        """Sets the store_created_at of this V1MetricsStream.
+
+
+        :param store_created_at: The store_created_at of this V1MetricsStream.  # noqa: E501
+        :type: bool
+        """
+
+        self._store_created_at = store_created_at
+
+    @property
+    def store_step(self) -> 'bool':
+        """Gets the store_step of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The store_step of this V1MetricsStream.  # noqa: E501
+        :rtype: bool
+        """
+        return self._store_step
+
+    @store_step.setter
+    def store_step(self, store_step: 'bool'):
+        """Sets the store_step of this V1MetricsStream.
+
+
+        :param store_step: The store_step of this V1MetricsStream.  # noqa: E501
+        :type: bool
+        """
+
+        self._store_step = store_step
+
+    @property
+    def tags(self) -> 'list[V1MetricsTags]':
+        """Gets the tags of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The tags of this V1MetricsStream.  # noqa: E501
+        :rtype: list[V1MetricsTags]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[V1MetricsTags]'):
+        """Sets the tags of this V1MetricsStream.
+
+
+        :param tags: The tags of this V1MetricsStream.  # noqa: E501
+        :type: list[V1MetricsTags]
+        """
+
+        self._tags = tags
 
     @property
     def trackers(self) -> 'dict(str, V1MetricsTracker)':

@@ -49,6 +49,7 @@ class OrgsIdBody(object):
         'email': 'str',
         'featured_gallery': 'bool',
         'location': 'str',
+        'teamspace_default_credits': 'float',
         'twitter_username': 'str'
     }
 
@@ -61,10 +62,11 @@ class OrgsIdBody(object):
         'email': 'email',
         'featured_gallery': 'featuredGallery',
         'location': 'location',
+        'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
         self._auto_join_domains = None
@@ -74,6 +76,7 @@ class OrgsIdBody(object):
         self._email = None
         self._featured_gallery = None
         self._location = None
+        self._teamspace_default_credits = None
         self._twitter_username = None
         self.discriminator = None
         if allow_guest is not None:
@@ -92,6 +95,8 @@ class OrgsIdBody(object):
             self.featured_gallery = featured_gallery
         if location is not None:
             self.location = location
+        if teamspace_default_credits is not None:
+            self.teamspace_default_credits = teamspace_default_credits
         if twitter_username is not None:
             self.twitter_username = twitter_username
 
@@ -262,6 +267,27 @@ class OrgsIdBody(object):
         """
 
         self._location = location
+
+    @property
+    def teamspace_default_credits(self) -> 'float':
+        """Gets the teamspace_default_credits of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The teamspace_default_credits of this OrgsIdBody.  # noqa: E501
+        :rtype: float
+        """
+        return self._teamspace_default_credits
+
+    @teamspace_default_credits.setter
+    def teamspace_default_credits(self, teamspace_default_credits: 'float'):
+        """Sets the teamspace_default_credits of this OrgsIdBody.
+
+
+        :param teamspace_default_credits: The teamspace_default_credits of this OrgsIdBody.  # noqa: E501
+        :type: float
+        """
+
+        self._teamspace_default_credits = teamspace_default_credits
 
     @property
     def twitter_username(self) -> 'str':

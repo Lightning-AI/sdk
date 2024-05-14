@@ -34,7 +34,7 @@ def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeou
         # There is a race condition where one machine might create the entry before another machine
         # and this request would fail with duplicated key
         # In this case, it is fine not to raise 
-        if 'duplicate key value violates unique constraint' in str(ex.body):
+        if isinstance(ex, ApiException) and 'duplicate key value violates unique constraint' in str(ex.body):
             pass
         else:
             raise ex

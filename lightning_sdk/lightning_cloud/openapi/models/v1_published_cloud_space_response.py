@@ -41,6 +41,7 @@ class V1PublishedCloudSpaceResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'about_page_has_content': 'bool',
         'cluster_id': 'str',
         'creation_timestamp': 'datetime',
         'description': 'str',
@@ -65,6 +66,7 @@ class V1PublishedCloudSpaceResponse(object):
     }
 
     attribute_map = {
+        'about_page_has_content': 'aboutPageHasContent',
         'cluster_id': 'clusterId',
         'creation_timestamp': 'creationTimestamp',
         'description': 'description',
@@ -88,8 +90,9 @@ class V1PublishedCloudSpaceResponse(object):
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, featured: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_id: 'str' =None, project_owner_name: 'str' =None, project_owner_type: 'V1OwnerType' =None, published_at: 'datetime' =None, studio_creator_avatar_url: 'str' =None, studio_creator_first_name: 'str' =None, studio_creator_id: 'str' =None, studio_creator_last_name: 'str' =None, studio_creator_username: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, about_page_has_content: 'bool' =None, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, featured: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_id: 'str' =None, project_owner_name: 'str' =None, project_owner_type: 'V1OwnerType' =None, published_at: 'datetime' =None, studio_creator_avatar_url: 'str' =None, studio_creator_first_name: 'str' =None, studio_creator_id: 'str' =None, studio_creator_last_name: 'str' =None, studio_creator_username: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """V1PublishedCloudSpaceResponse - a model defined in Swagger"""  # noqa: E501
+        self._about_page_has_content = None
         self._cluster_id = None
         self._creation_timestamp = None
         self._description = None
@@ -112,6 +115,8 @@ class V1PublishedCloudSpaceResponse(object):
         self._tags = None
         self._thumbnail_url = None
         self.discriminator = None
+        if about_page_has_content is not None:
+            self.about_page_has_content = about_page_has_content
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if creation_timestamp is not None:
@@ -154,6 +159,27 @@ class V1PublishedCloudSpaceResponse(object):
             self.tags = tags
         if thumbnail_url is not None:
             self.thumbnail_url = thumbnail_url
+
+    @property
+    def about_page_has_content(self) -> 'bool':
+        """Gets the about_page_has_content of this V1PublishedCloudSpaceResponse.  # noqa: E501
+
+
+        :return: The about_page_has_content of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._about_page_has_content
+
+    @about_page_has_content.setter
+    def about_page_has_content(self, about_page_has_content: 'bool'):
+        """Sets the about_page_has_content of this V1PublishedCloudSpaceResponse.
+
+
+        :param about_page_has_content: The about_page_has_content of this V1PublishedCloudSpaceResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._about_page_has_content = about_page_has_content
 
     @property
     def cluster_id(self) -> 'str':

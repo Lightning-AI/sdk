@@ -55,6 +55,7 @@ class V1UserFeatures(object):
         'crypto_monitoring': 'bool',
         'custom_app_domain': 'bool',
         'custom_instance_types': 'bool',
+        'docs_agent': 'bool',
         'enable_crypto_crackdown': 'bool',
         'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
@@ -64,6 +65,7 @@ class V1UserFeatures(object):
         'l4x8': 'bool',
         'landing_studios': 'bool',
         'lit_logger': 'bool',
+        'lit_logger_storage_v2': 'bool',
         'mmt_app': 'bool',
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
@@ -97,6 +99,7 @@ class V1UserFeatures(object):
         'slurm_machine_selector': 'bool',
         'snowflake_connection': 'bool',
         'teamspace_storage_tab': 'bool',
+        'unified_billing_ux': 'bool',
         'writable_data_connections': 'bool'
     }
 
@@ -115,6 +118,7 @@ class V1UserFeatures(object):
         'crypto_monitoring': 'cryptoMonitoring',
         'custom_app_domain': 'customAppDomain',
         'custom_instance_types': 'customInstanceTypes',
+        'docs_agent': 'docsAgent',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
@@ -124,6 +128,7 @@ class V1UserFeatures(object):
         'l4x8': 'l4x8',
         'landing_studios': 'landingStudios',
         'lit_logger': 'litLogger',
+        'lit_logger_storage_v2': 'litLoggerStorageV2',
         'mmt_app': 'mmtApp',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
@@ -157,10 +162,11 @@ class V1UserFeatures(object):
         'slurm_machine_selector': 'slurmMachineSelector',
         'snowflake_connection': 'snowflakeConnection',
         'teamspace_storage_tab': 'teamspaceStorageTab',
+        'unified_billing_ux': 'unifiedBillingUx',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, teamspace_storage_tab: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._apt_get_v2 = None
         self._aws_trainium = None
@@ -176,6 +182,7 @@ class V1UserFeatures(object):
         self._crypto_monitoring = None
         self._custom_app_domain = None
         self._custom_instance_types = None
+        self._docs_agent = None
         self._enable_crypto_crackdown = None
         self._featured_studios_admin = None
         self._filesystem_optimisation = None
@@ -185,6 +192,7 @@ class V1UserFeatures(object):
         self._l4x8 = None
         self._landing_studios = None
         self._lit_logger = None
+        self._lit_logger_storage_v2 = None
         self._mmt_app = None
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
@@ -218,6 +226,7 @@ class V1UserFeatures(object):
         self._slurm_machine_selector = None
         self._snowflake_connection = None
         self._teamspace_storage_tab = None
+        self._unified_billing_ux = None
         self._writable_data_connections = None
         self.discriminator = None
         if apt_get_v2 is not None:
@@ -248,6 +257,8 @@ class V1UserFeatures(object):
             self.custom_app_domain = custom_app_domain
         if custom_instance_types is not None:
             self.custom_instance_types = custom_instance_types
+        if docs_agent is not None:
+            self.docs_agent = docs_agent
         if enable_crypto_crackdown is not None:
             self.enable_crypto_crackdown = enable_crypto_crackdown
         if featured_studios_admin is not None:
@@ -266,6 +277,8 @@ class V1UserFeatures(object):
             self.landing_studios = landing_studios
         if lit_logger is not None:
             self.lit_logger = lit_logger
+        if lit_logger_storage_v2 is not None:
+            self.lit_logger_storage_v2 = lit_logger_storage_v2
         if mmt_app is not None:
             self.mmt_app = mmt_app
         if mmt_strategy_selector is not None:
@@ -332,6 +345,8 @@ class V1UserFeatures(object):
             self.snowflake_connection = snowflake_connection
         if teamspace_storage_tab is not None:
             self.teamspace_storage_tab = teamspace_storage_tab
+        if unified_billing_ux is not None:
+            self.unified_billing_ux = unified_billing_ux
         if writable_data_connections is not None:
             self.writable_data_connections = writable_data_connections
 
@@ -630,6 +645,27 @@ class V1UserFeatures(object):
         self._custom_instance_types = custom_instance_types
 
     @property
+    def docs_agent(self) -> 'bool':
+        """Gets the docs_agent of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The docs_agent of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._docs_agent
+
+    @docs_agent.setter
+    def docs_agent(self, docs_agent: 'bool'):
+        """Sets the docs_agent of this V1UserFeatures.
+
+
+        :param docs_agent: The docs_agent of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._docs_agent = docs_agent
+
+    @property
     def enable_crypto_crackdown(self) -> 'bool':
         """Gets the enable_crypto_crackdown of this V1UserFeatures.  # noqa: E501
 
@@ -817,6 +853,27 @@ class V1UserFeatures(object):
         """
 
         self._lit_logger = lit_logger
+
+    @property
+    def lit_logger_storage_v2(self) -> 'bool':
+        """Gets the lit_logger_storage_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The lit_logger_storage_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._lit_logger_storage_v2
+
+    @lit_logger_storage_v2.setter
+    def lit_logger_storage_v2(self, lit_logger_storage_v2: 'bool'):
+        """Sets the lit_logger_storage_v2 of this V1UserFeatures.
+
+
+        :param lit_logger_storage_v2: The lit_logger_storage_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._lit_logger_storage_v2 = lit_logger_storage_v2
 
     @property
     def mmt_app(self) -> 'bool':
@@ -1510,6 +1567,27 @@ class V1UserFeatures(object):
         """
 
         self._teamspace_storage_tab = teamspace_storage_tab
+
+    @property
+    def unified_billing_ux(self) -> 'bool':
+        """Gets the unified_billing_ux of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The unified_billing_ux of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._unified_billing_ux
+
+    @unified_billing_ux.setter
+    def unified_billing_ux(self, unified_billing_ux: 'bool'):
+        """Sets the unified_billing_ux of this V1UserFeatures.
+
+
+        :param unified_billing_ux: The unified_billing_ux of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._unified_billing_ux = unified_billing_ux
 
     @property
     def writable_data_connections(self) -> 'bool':

@@ -45,7 +45,6 @@ class AssistantIdConversationsBody(object):
         'conversation_id': 'str',
         'max_tokens': 'str',
         'message': 'V1Message',
-        'model': 'str',
         'parent_message_id': 'str',
         'stream': 'bool'
     }
@@ -55,18 +54,16 @@ class AssistantIdConversationsBody(object):
         'conversation_id': 'conversationId',
         'max_tokens': 'maxTokens',
         'message': 'message',
-        'model': 'model',
         'parent_message_id': 'parentMessageId',
         'stream': 'stream'
     }
 
-    def __init__(self, auto_name: 'bool' =None, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, model: 'str' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._conversation_id = None
         self._max_tokens = None
         self._message = None
-        self._model = None
         self._parent_message_id = None
         self._stream = None
         self.discriminator = None
@@ -78,8 +75,6 @@ class AssistantIdConversationsBody(object):
             self.max_tokens = max_tokens
         if message is not None:
             self.message = message
-        if model is not None:
-            self.model = model
         if parent_message_id is not None:
             self.parent_message_id = parent_message_id
         if stream is not None:
@@ -168,27 +163,6 @@ class AssistantIdConversationsBody(object):
         """
 
         self._message = message
-
-    @property
-    def model(self) -> 'str':
-        """Gets the model of this AssistantIdConversationsBody.  # noqa: E501
-
-
-        :return: The model of this AssistantIdConversationsBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._model
-
-    @model.setter
-    def model(self, model: 'str'):
-        """Sets the model of this AssistantIdConversationsBody.
-
-
-        :param model: The model of this AssistantIdConversationsBody.  # noqa: E501
-        :type: str
-        """
-
-        self._model = model
 
     @property
     def parent_message_id(self) -> 'str':

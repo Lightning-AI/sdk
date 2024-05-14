@@ -48,6 +48,8 @@ class V1SlurmNode(object):
         'cores': 'int',
         'cpus': 'int',
         'free_memory': 'str',
+        'gpu_type': 'str',
+        'gpus': 'int',
         'hostname': 'str',
         'idle_cpus': 'int',
         'name': 'str',
@@ -64,6 +66,8 @@ class V1SlurmNode(object):
         'cores': 'cores',
         'cpus': 'cpus',
         'free_memory': 'freeMemory',
+        'gpu_type': 'gpuType',
+        'gpus': 'gpus',
         'hostname': 'hostname',
         'idle_cpus': 'idleCpus',
         'name': 'name',
@@ -72,7 +76,7 @@ class V1SlurmNode(object):
         'state': 'state'
     }
 
-    def __init__(self, address: 'str' =None, alloc_cpus: 'int' =None, alloc_memory: 'str' =None, architecture: 'str' =None, cores: 'int' =None, cpus: 'int' =None, free_memory: 'str' =None, hostname: 'str' =None, idle_cpus: 'int' =None, name: 'str' =None, operating_system: 'str' =None, slurmd_version: 'str' =None, state: 'str' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, alloc_cpus: 'int' =None, alloc_memory: 'str' =None, architecture: 'str' =None, cores: 'int' =None, cpus: 'int' =None, free_memory: 'str' =None, gpu_type: 'str' =None, gpus: 'int' =None, hostname: 'str' =None, idle_cpus: 'int' =None, name: 'str' =None, operating_system: 'str' =None, slurmd_version: 'str' =None, state: 'str' =None):  # noqa: E501
         """V1SlurmNode - a model defined in Swagger"""  # noqa: E501
         self._address = None
         self._alloc_cpus = None
@@ -81,6 +85,8 @@ class V1SlurmNode(object):
         self._cores = None
         self._cpus = None
         self._free_memory = None
+        self._gpu_type = None
+        self._gpus = None
         self._hostname = None
         self._idle_cpus = None
         self._name = None
@@ -102,6 +108,10 @@ class V1SlurmNode(object):
             self.cpus = cpus
         if free_memory is not None:
             self.free_memory = free_memory
+        if gpu_type is not None:
+            self.gpu_type = gpu_type
+        if gpus is not None:
+            self.gpus = gpus
         if hostname is not None:
             self.hostname = hostname
         if idle_cpus is not None:
@@ -261,6 +271,48 @@ class V1SlurmNode(object):
         """
 
         self._free_memory = free_memory
+
+    @property
+    def gpu_type(self) -> 'str':
+        """Gets the gpu_type of this V1SlurmNode.  # noqa: E501
+
+
+        :return: The gpu_type of this V1SlurmNode.  # noqa: E501
+        :rtype: str
+        """
+        return self._gpu_type
+
+    @gpu_type.setter
+    def gpu_type(self, gpu_type: 'str'):
+        """Sets the gpu_type of this V1SlurmNode.
+
+
+        :param gpu_type: The gpu_type of this V1SlurmNode.  # noqa: E501
+        :type: str
+        """
+
+        self._gpu_type = gpu_type
+
+    @property
+    def gpus(self) -> 'int':
+        """Gets the gpus of this V1SlurmNode.  # noqa: E501
+
+
+        :return: The gpus of this V1SlurmNode.  # noqa: E501
+        :rtype: int
+        """
+        return self._gpus
+
+    @gpus.setter
+    def gpus(self, gpus: 'int'):
+        """Sets the gpus of this V1SlurmNode.
+
+
+        :param gpus: The gpus of this V1SlurmNode.  # noqa: E501
+        :type: int
+        """
+
+        self._gpus = gpus
 
     @property
     def hostname(self) -> 'str':

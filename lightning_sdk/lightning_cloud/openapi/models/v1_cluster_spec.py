@@ -55,6 +55,7 @@ class V1ClusterSpec(object):
         'padding_factor': 'str',
         'pause_automation': 'bool',
         'performance_profile': 'V1ClusterPerformanceProfile',
+        'security_options': 'V1ClusterSecurityOptions',
         'slurm_v1': 'V1SlurmV1',
         'user_id': 'str'
     }
@@ -74,11 +75,12 @@ class V1ClusterSpec(object):
         'padding_factor': 'paddingFactor',
         'pause_automation': 'pauseAutomation',
         'performance_profile': 'performanceProfile',
+        'security_options': 'securityOptions',
         'slurm_v1': 'slurmV1',
         'user_id': 'userId'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, cost_factor: 'str' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, driver: 'V1ClusterDriver' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, gridlet_version: 'str' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, padding_factor: 'str' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, slurm_v1: 'V1SlurmV1' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, cost_factor: 'str' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, driver: 'V1ClusterDriver' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, gridlet_version: 'str' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, padding_factor: 'str' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, user_id: 'str' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_instance_types = None
@@ -94,6 +96,7 @@ class V1ClusterSpec(object):
         self._padding_factor = None
         self._pause_automation = None
         self._performance_profile = None
+        self._security_options = None
         self._slurm_v1 = None
         self._user_id = None
         self.discriminator = None
@@ -125,6 +128,8 @@ class V1ClusterSpec(object):
             self.pause_automation = pause_automation
         if performance_profile is not None:
             self.performance_profile = performance_profile
+        if security_options is not None:
+            self.security_options = security_options
         if slurm_v1 is not None:
             self.slurm_v1 = slurm_v1
         if user_id is not None:
@@ -429,6 +434,27 @@ class V1ClusterSpec(object):
         """
 
         self._performance_profile = performance_profile
+
+    @property
+    def security_options(self) -> 'V1ClusterSecurityOptions':
+        """Gets the security_options of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The security_options of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1ClusterSecurityOptions
+        """
+        return self._security_options
+
+    @security_options.setter
+    def security_options(self, security_options: 'V1ClusterSecurityOptions'):
+        """Sets the security_options of this V1ClusterSpec.
+
+
+        :param security_options: The security_options of this V1ClusterSpec.  # noqa: E501
+        :type: V1ClusterSecurityOptions
+        """
+
+        self._security_options = security_options
 
     @property
     def slurm_v1(self) -> 'V1SlurmV1':

@@ -1778,6 +1778,7 @@ class ProjectsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
+        :param str user_id:
         :return: V1ListProjectRolesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1799,12 +1800,13 @@ class ProjectsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
+        :param str user_id:
         :return: V1ListProjectRolesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id']  # noqa: E501
+        all_params = ['project_id', 'user_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1831,6 +1833,8 @@ class ProjectsServiceApi(object):
             path_params['projectId'] = params['project_id']  # noqa: E501
 
         query_params = []
+        if 'user_id' in params:
+            query_params.append(('userId', params['user_id']))  # noqa: E501
 
         header_params = {}
 

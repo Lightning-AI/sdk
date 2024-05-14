@@ -46,6 +46,9 @@ class MetricsstreamCreateBody(object):
         'dark_color': 'str',
         'light_color': 'str',
         'name': 'str',
+        'store_created_at': 'bool',
+        'store_step': 'bool',
+        'tags': 'list[V1MetricsTags]',
         'work_id': 'str'
     }
 
@@ -55,16 +58,22 @@ class MetricsstreamCreateBody(object):
         'dark_color': 'darkColor',
         'light_color': 'lightColor',
         'name': 'name',
+        'store_created_at': 'storeCreatedAt',
+        'store_step': 'storeStep',
+        'tags': 'tags',
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, tags: 'list[V1MetricsTags]' =None, work_id: 'str' =None):  # noqa: E501
         """MetricsstreamCreateBody - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
         self._dark_color = None
         self._light_color = None
         self._name = None
+        self._store_created_at = None
+        self._store_step = None
+        self._tags = None
         self._work_id = None
         self.discriminator = None
         if app_id is not None:
@@ -77,6 +86,12 @@ class MetricsstreamCreateBody(object):
             self.light_color = light_color
         if name is not None:
             self.name = name
+        if store_created_at is not None:
+            self.store_created_at = store_created_at
+        if store_step is not None:
+            self.store_step = store_step
+        if tags is not None:
+            self.tags = tags
         if work_id is not None:
             self.work_id = work_id
 
@@ -184,6 +199,69 @@ class MetricsstreamCreateBody(object):
         """
 
         self._name = name
+
+    @property
+    def store_created_at(self) -> 'bool':
+        """Gets the store_created_at of this MetricsstreamCreateBody.  # noqa: E501
+
+
+        :return: The store_created_at of this MetricsstreamCreateBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._store_created_at
+
+    @store_created_at.setter
+    def store_created_at(self, store_created_at: 'bool'):
+        """Sets the store_created_at of this MetricsstreamCreateBody.
+
+
+        :param store_created_at: The store_created_at of this MetricsstreamCreateBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._store_created_at = store_created_at
+
+    @property
+    def store_step(self) -> 'bool':
+        """Gets the store_step of this MetricsstreamCreateBody.  # noqa: E501
+
+
+        :return: The store_step of this MetricsstreamCreateBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._store_step
+
+    @store_step.setter
+    def store_step(self, store_step: 'bool'):
+        """Sets the store_step of this MetricsstreamCreateBody.
+
+
+        :param store_step: The store_step of this MetricsstreamCreateBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._store_step = store_step
+
+    @property
+    def tags(self) -> 'list[V1MetricsTags]':
+        """Gets the tags of this MetricsstreamCreateBody.  # noqa: E501
+
+
+        :return: The tags of this MetricsstreamCreateBody.  # noqa: E501
+        :rtype: list[V1MetricsTags]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[V1MetricsTags]'):
+        """Sets the tags of this MetricsstreamCreateBody.
+
+
+        :param tags: The tags of this MetricsstreamCreateBody.  # noqa: E501
+        :type: list[V1MetricsTags]
+        """
+
+        self._tags = tags
 
     @property
     def work_id(self) -> 'str':

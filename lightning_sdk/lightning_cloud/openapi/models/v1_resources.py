@@ -41,10 +41,10 @@ class V1Resources(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'cpu': 'str',
+        'cpu': 'int',
         'cpus': 'str',
         'extra': 'dict(str, str)',
-        'gpu': 'str',
+        'gpu': 'int',
         'gpu_type': 'str',
         'memory_mb': 'str',
         'storage_gb': 'str'
@@ -60,7 +60,7 @@ class V1Resources(object):
         'storage_gb': 'storageGb'
     }
 
-    def __init__(self, cpu: 'str' =None, cpus: 'str' =None, extra: 'dict(str, str)' =None, gpu: 'str' =None, gpu_type: 'str' =None, memory_mb: 'str' =None, storage_gb: 'str' =None):  # noqa: E501
+    def __init__(self, cpu: 'int' =None, cpus: 'str' =None, extra: 'dict(str, str)' =None, gpu: 'int' =None, gpu_type: 'str' =None, memory_mb: 'str' =None, storage_gb: 'str' =None):  # noqa: E501
         """V1Resources - a model defined in Swagger"""  # noqa: E501
         self._cpu = None
         self._cpus = None
@@ -86,22 +86,22 @@ class V1Resources(object):
             self.storage_gb = storage_gb
 
     @property
-    def cpu(self) -> 'str':
+    def cpu(self) -> 'int':
         """Gets the cpu of this V1Resources.  # noqa: E501
 
 
         :return: The cpu of this V1Resources.  # noqa: E501
-        :rtype: str
+        :rtype: int
         """
         return self._cpu
 
     @cpu.setter
-    def cpu(self, cpu: 'str'):
+    def cpu(self, cpu: 'int'):
         """Sets the cpu of this V1Resources.
 
 
         :param cpu: The cpu of this V1Resources.  # noqa: E501
-        :type: str
+        :type: int
         """
 
         self._cpu = cpu
@@ -149,22 +149,22 @@ class V1Resources(object):
         self._extra = extra
 
     @property
-    def gpu(self) -> 'str':
+    def gpu(self) -> 'int':
         """Gets the gpu of this V1Resources.  # noqa: E501
 
 
         :return: The gpu of this V1Resources.  # noqa: E501
-        :rtype: str
+        :rtype: int
         """
         return self._gpu
 
     @gpu.setter
-    def gpu(self, gpu: 'str'):
+    def gpu(self, gpu: 'int'):
         """Sets the gpu of this V1Resources.
 
 
         :param gpu: The gpu of this V1Resources.  # noqa: E501
-        :type: str
+        :type: int
         """
 
         self._gpu = gpu

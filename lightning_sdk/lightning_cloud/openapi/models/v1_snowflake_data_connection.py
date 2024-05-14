@@ -42,6 +42,7 @@ class V1SnowflakeDataConnection(object):
     """
     swagger_types = {
         'bucket_name': 'str',
+        'compress': 'bool',
         'format': 'str',
         'query': 'str',
         'secret_account': 'str',
@@ -51,6 +52,7 @@ class V1SnowflakeDataConnection(object):
 
     attribute_map = {
         'bucket_name': 'bucketName',
+        'compress': 'compress',
         'format': 'format',
         'query': 'query',
         'secret_account': 'secretAccount',
@@ -58,9 +60,10 @@ class V1SnowflakeDataConnection(object):
         'secret_username': 'secretUsername'
     }
 
-    def __init__(self, bucket_name: 'str' =None, format: 'str' =None, query: 'str' =None, secret_account: 'str' =None, secret_password: 'str' =None, secret_username: 'str' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, compress: 'bool' =None, format: 'str' =None, query: 'str' =None, secret_account: 'str' =None, secret_password: 'str' =None, secret_username: 'str' =None):  # noqa: E501
         """V1SnowflakeDataConnection - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
+        self._compress = None
         self._format = None
         self._query = None
         self._secret_account = None
@@ -69,6 +72,8 @@ class V1SnowflakeDataConnection(object):
         self.discriminator = None
         if bucket_name is not None:
             self.bucket_name = bucket_name
+        if compress is not None:
+            self.compress = compress
         if format is not None:
             self.format = format
         if query is not None:
@@ -100,6 +105,27 @@ class V1SnowflakeDataConnection(object):
         """
 
         self._bucket_name = bucket_name
+
+    @property
+    def compress(self) -> 'bool':
+        """Gets the compress of this V1SnowflakeDataConnection.  # noqa: E501
+
+
+        :return: The compress of this V1SnowflakeDataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._compress
+
+    @compress.setter
+    def compress(self, compress: 'bool'):
+        """Sets the compress of this V1SnowflakeDataConnection.
+
+
+        :param compress: The compress of this V1SnowflakeDataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._compress = compress
 
     @property
     def format(self) -> 'str':

@@ -43,6 +43,7 @@ class SnowflakeExportBody(object):
     swagger_types = {
         'account': 'str',
         'cluster_id': 'str',
+        'compress': 'bool',
         'connection_id': 'str',
         'format': 'str',
         'password': 'str',
@@ -54,6 +55,7 @@ class SnowflakeExportBody(object):
     attribute_map = {
         'account': 'account',
         'cluster_id': 'clusterId',
+        'compress': 'compress',
         'connection_id': 'connectionId',
         'format': 'format',
         'password': 'password',
@@ -62,10 +64,11 @@ class SnowflakeExportBody(object):
         'username': 'username'
     }
 
-    def __init__(self, account: 'str' =None, cluster_id: 'str' =None, connection_id: 'str' =None, format: 'str' =None, password: 'str' =None, query: 'str' =None, query_name: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, account: 'str' =None, cluster_id: 'str' =None, compress: 'bool' =None, connection_id: 'str' =None, format: 'str' =None, password: 'str' =None, query: 'str' =None, query_name: 'str' =None, username: 'str' =None):  # noqa: E501
         """SnowflakeExportBody - a model defined in Swagger"""  # noqa: E501
         self._account = None
         self._cluster_id = None
+        self._compress = None
         self._connection_id = None
         self._format = None
         self._password = None
@@ -77,6 +80,8 @@ class SnowflakeExportBody(object):
             self.account = account
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if compress is not None:
+            self.compress = compress
         if connection_id is not None:
             self.connection_id = connection_id
         if format is not None:
@@ -131,6 +136,27 @@ class SnowflakeExportBody(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def compress(self) -> 'bool':
+        """Gets the compress of this SnowflakeExportBody.  # noqa: E501
+
+
+        :return: The compress of this SnowflakeExportBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._compress
+
+    @compress.setter
+    def compress(self, compress: 'bool'):
+        """Sets the compress of this SnowflakeExportBody.
+
+
+        :param compress: The compress of this SnowflakeExportBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._compress = compress
 
     @property
     def connection_id(self) -> 'str':
