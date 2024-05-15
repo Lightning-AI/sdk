@@ -43,25 +43,30 @@ class V1GetUserBalanceResponse(object):
     swagger_types = {
         'account_id': 'str',
         'balance': 'float',
+        'total_spent': 'float',
         'transactions': 'list[V1Transaction]'
     }
 
     attribute_map = {
         'account_id': 'accountId',
         'balance': 'balance',
+        'total_spent': 'totalSpent',
         'transactions': 'transactions'
     }
 
-    def __init__(self, account_id: 'str' =None, balance: 'float' =None, transactions: 'list[V1Transaction]' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, balance: 'float' =None, total_spent: 'float' =None, transactions: 'list[V1Transaction]' =None):  # noqa: E501
         """V1GetUserBalanceResponse - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
         self._balance = None
+        self._total_spent = None
         self._transactions = None
         self.discriminator = None
         if account_id is not None:
             self.account_id = account_id
         if balance is not None:
             self.balance = balance
+        if total_spent is not None:
+            self.total_spent = total_spent
         if transactions is not None:
             self.transactions = transactions
 
@@ -106,6 +111,27 @@ class V1GetUserBalanceResponse(object):
         """
 
         self._balance = balance
+
+    @property
+    def total_spent(self) -> 'float':
+        """Gets the total_spent of this V1GetUserBalanceResponse.  # noqa: E501
+
+
+        :return: The total_spent of this V1GetUserBalanceResponse.  # noqa: E501
+        :rtype: float
+        """
+        return self._total_spent
+
+    @total_spent.setter
+    def total_spent(self, total_spent: 'float'):
+        """Sets the total_spent of this V1GetUserBalanceResponse.
+
+
+        :param total_spent: The total_spent of this V1GetUserBalanceResponse.  # noqa: E501
+        :type: float
+        """
+
+        self._total_spent = total_spent
 
     @property
     def transactions(self) -> 'list[V1Transaction]':

@@ -42,23 +42,28 @@ class V1ExecuteCloudSpaceCommandResponse(object):
     """
     swagger_types = {
         'exit_code': 'int',
-        'output': 'str'
+        'output': 'str',
+        'session_name': 'str'
     }
 
     attribute_map = {
         'exit_code': 'exitCode',
-        'output': 'output'
+        'output': 'output',
+        'session_name': 'sessionName'
     }
 
-    def __init__(self, exit_code: 'int' =None, output: 'str' =None):  # noqa: E501
+    def __init__(self, exit_code: 'int' =None, output: 'str' =None, session_name: 'str' =None):  # noqa: E501
         """V1ExecuteCloudSpaceCommandResponse - a model defined in Swagger"""  # noqa: E501
         self._exit_code = None
         self._output = None
+        self._session_name = None
         self.discriminator = None
         if exit_code is not None:
             self.exit_code = exit_code
         if output is not None:
             self.output = output
+        if session_name is not None:
+            self.session_name = session_name
 
     @property
     def exit_code(self) -> 'int':
@@ -101,6 +106,27 @@ class V1ExecuteCloudSpaceCommandResponse(object):
         """
 
         self._output = output
+
+    @property
+    def session_name(self) -> 'str':
+        """Gets the session_name of this V1ExecuteCloudSpaceCommandResponse.  # noqa: E501
+
+
+        :return: The session_name of this V1ExecuteCloudSpaceCommandResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._session_name
+
+    @session_name.setter
+    def session_name(self, session_name: 'str'):
+        """Sets the session_name of this V1ExecuteCloudSpaceCommandResponse.
+
+
+        :param session_name: The session_name of this V1ExecuteCloudSpaceCommandResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._session_name = session_name
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
