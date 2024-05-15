@@ -4,7 +4,7 @@ import subprocess
 
 import pytest
 from unittest import mock
-
+from unittest.mock import ANY
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api import studio_api as studio_api_module
 from lightning_sdk.api.utils import _BYTES_PER_MB
@@ -100,6 +100,14 @@ def test_run_command(internal_studio_api_mocker_run_command):
     # explicitly no stripping on api level
     assert outputs == " foo-response bar-response "
     assert exit_code == 0
+
+    from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import CloudSpaceServiceApi
+
+    expected = {"project_id": "ts-abc", "id": "st-abc", "session": "session-name", "_preload_content": False}
+    assert (
+        CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space_stream.mock_calls[0].kwargs
+        == expected
+    )
 
 
 def test_delete_studio(internal_studio_api_mocker_delete):

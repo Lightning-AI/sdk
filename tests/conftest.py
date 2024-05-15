@@ -385,7 +385,9 @@ def internal_studio_api_mocker_run_command(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
         autospec=True,
-        return_value=V1ExecuteCloudSpaceCommandResponse(exit_code=0, output="Command Started Successfully"),
+        return_value=V1ExecuteCloudSpaceCommandResponse(
+            exit_code=0, output="Command Started Successfully", session_name="session-name"
+        ),
     )
     resp = _DummyResponse
     resp.data = b'{"result":{"output":" foo-res","exitCode":0}}\n{"result":{"output":"ponse ba","exitCode":0}}\n{"result":{"output":"r-respon","exitCode":0}}\n{"result":{"output":"se ","exitCode":0}}\n'

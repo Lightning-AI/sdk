@@ -5,7 +5,6 @@ import warnings
 import zipfile
 from threading import Event, Thread
 from typing import Any, Dict, Mapping, Optional, Tuple
-from uuid import uuid4
 
 import backoff
 import requests
@@ -285,9 +284,8 @@ class StudioApi:
 
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Tuple[str, int]:
         """Run given commands in a given Studio."""
-        session_id = str(uuid4())
         response_submit = self._client.cloud_space_service_execute_command_in_cloud_space(
-            IdExecuteBody("; ".join(commands), detached=True, session_name=session_id),
+            IdExecuteBody("; ".join(commands), detached=True),
             project_id=teamspace_id,
             id=studio_id,
         )
@@ -295,12 +293,17 @@ class StudioApi:
         if not response_submit:
             raise RuntimeError("Unable to submit command")
 
+        if response_submit.session_name == "":
+            raise RuntimeError("The session name should be defined.")
+
         while True:
             output = ""
             exit_code = None
 
             for resp in self._get_detached_command_status(
-                studio_id=studio_id, teamspace_id=teamspace_id, session_id=session_id
+                studio_id=studio_id,
+                teamspace_id=teamspace_id,
+                session_id=response_submit.session_name,
             ):
                 if resp.exit_code != -1:
                     if exit_code is None:
