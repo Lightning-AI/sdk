@@ -502,6 +502,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_service_artifact import V1S
 from lightning_sdk.lightning_cloud.openapi.models.v1_service_execution import V1ServiceExecution
 from lightning_sdk.lightning_cloud.openapi.models.v1_service_health import V1ServiceHealth
 from lightning_sdk.lightning_cloud.openapi.models.v1_setup_confirmed_ssh_public_key_response import V1SetupConfirmedSSHPublicKeyResponse
+from lightning_sdk.lightning_cloud.openapi.models.v1_should_start_syncing_response import V1ShouldStartSyncingResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_slurm_node import V1SlurmNode
 from lightning_sdk.lightning_cloud.openapi.models.v1_slurm_v1 import V1SlurmV1
 from lightning_sdk.lightning_cloud.openapi.models.v1_slurm_v1_job_status import V1SlurmV1JobStatus
