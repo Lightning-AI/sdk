@@ -249,6 +249,99 @@ class SecretServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def secret_service_delete_user_secret(self, id: 'str', **kwargs) -> 'V1DeleteSecretResponse':  # noqa: E501
+        """secret_service_delete_user_secret  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.secret_service_delete_user_secret(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :return: V1DeleteSecretResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.secret_service_delete_user_secret_with_http_info(id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.secret_service_delete_user_secret_with_http_info(id, **kwargs)  # noqa: E501
+            return data
+
+    def secret_service_delete_user_secret_with_http_info(self, id: 'str', **kwargs) -> 'V1DeleteSecretResponse':  # noqa: E501
+        """secret_service_delete_user_secret  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.secret_service_delete_user_secret_with_http_info(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :return: V1DeleteSecretResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method secret_service_delete_user_secret" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `secret_service_delete_user_secret`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/secrets/{id}', 'DELETE',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1DeleteSecretResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def secret_service_get_secret(self, project_id: 'str', id: 'str', **kwargs) -> 'V1Secret':  # noqa: E501
         """secret_service_get_secret  # noqa: E501
 
@@ -350,6 +443,103 @@ class SecretServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def secret_service_get_user_secret(self, body: 'V1GetUserSecretRequest', **kwargs) -> 'V1Secret':  # noqa: E501
+        """secret_service_get_user_secret  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.secret_service_get_user_secret(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1GetUserSecretRequest body: (required)
+        :return: V1Secret
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.secret_service_get_user_secret_with_http_info(body, **kwargs)  # noqa: E501
+        else:
+            (data) = self.secret_service_get_user_secret_with_http_info(body, **kwargs)  # noqa: E501
+            return data
+
+    def secret_service_get_user_secret_with_http_info(self, body: 'V1GetUserSecretRequest', **kwargs) -> 'V1Secret':  # noqa: E501
+        """secret_service_get_user_secret  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.secret_service_get_user_secret_with_http_info(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1GetUserSecretRequest body: (required)
+        :return: V1Secret
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method secret_service_get_user_secret" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `secret_service_get_user_secret`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/secrets', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1Secret',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def secret_service_list_secrets(self, project_id: 'str', **kwargs) -> 'V1ListSecretsResponse':  # noqa: E501
         """secret_service_list_secrets  # noqa: E501
 
@@ -429,6 +619,91 @@ class SecretServiceApi(object):
 
         return self.api_client.call_api(
             '/v1/projects/{projectId}/secrets', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListSecretsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def secret_service_list_user_secrets(self, **kwargs) -> 'V1ListSecretsResponse':  # noqa: E501
+        """secret_service_list_user_secrets  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.secret_service_list_user_secrets(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :return: V1ListSecretsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.secret_service_list_user_secrets_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.secret_service_list_user_secrets_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def secret_service_list_user_secrets_with_http_info(self, **kwargs) -> 'V1ListSecretsResponse':  # noqa: E501
+        """secret_service_list_user_secrets  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.secret_service_list_user_secrets_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :return: V1ListSecretsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = []  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method secret_service_list_user_secrets" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/secrets', 'GET',
             path_params,
             query_params,
             header_params,
@@ -542,6 +817,111 @@ class SecretServiceApi(object):
 
         return self.api_client.call_api(
             '/v1/projects/{projectId}/secrets/{id}', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1Secret',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def secret_service_update_user_secret(self, body: 'SecretsIdBody1', id: 'str', **kwargs) -> 'V1Secret':  # noqa: E501
+        """secret_service_update_user_secret  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.secret_service_update_user_secret(body, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param SecretsIdBody1 body: (required)
+        :param str id: (required)
+        :return: V1Secret
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.secret_service_update_user_secret_with_http_info(body, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.secret_service_update_user_secret_with_http_info(body, id, **kwargs)  # noqa: E501
+            return data
+
+    def secret_service_update_user_secret_with_http_info(self, body: 'SecretsIdBody1', id: 'str', **kwargs) -> 'V1Secret':  # noqa: E501
+        """secret_service_update_user_secret  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.secret_service_update_user_secret_with_http_info(body, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param SecretsIdBody1 body: (required)
+        :param str id: (required)
+        :return: V1Secret
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method secret_service_update_user_secret" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `secret_service_update_user_secret`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `secret_service_update_user_secret`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/secrets/{id}', 'PUT',
             path_params,
             query_params,
             header_params,

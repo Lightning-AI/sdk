@@ -49,9 +49,7 @@ class V1UserFeatures(object):
         'cap_drop': 'list[str]',
         'cluster_running_notification': 'bool',
         'code_tab': 'bool',
-        'collab_mouse_tracking': 'bool',
         'collab_screen_sharing': 'bool',
-        'collab_v2': 'bool',
         'crypto_monitoring': 'bool',
         'custom_app_domain': 'bool',
         'custom_instance_types': 'bool',
@@ -90,7 +88,6 @@ class V1UserFeatures(object):
         'product_generator': 'bool',
         'project_selector': 'bool',
         'publish_ai_app': 'bool',
-        'quests': 'bool',
         'restart_ide_on_hang': 'bool',
         'restartable_jobs': 'bool',
         'runnable_public_studio_page': 'bool',
@@ -113,9 +110,7 @@ class V1UserFeatures(object):
         'cap_drop': 'capDrop',
         'cluster_running_notification': 'clusterRunningNotification',
         'code_tab': 'codeTab',
-        'collab_mouse_tracking': 'collabMouseTracking',
         'collab_screen_sharing': 'collabScreenSharing',
-        'collab_v2': 'collabV2',
         'crypto_monitoring': 'cryptoMonitoring',
         'custom_app_domain': 'customAppDomain',
         'custom_instance_types': 'customInstanceTypes',
@@ -154,7 +149,6 @@ class V1UserFeatures(object):
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
         'publish_ai_app': 'publishAiApp',
-        'quests': 'quests',
         'restart_ide_on_hang': 'restartIdeOnHang',
         'restartable_jobs': 'restartableJobs',
         'runnable_public_studio_page': 'runnablePublicStudioPage',
@@ -168,7 +162,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, import_from_studio_into_about: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, import_from_studio_into_about: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._apt_get_v2 = None
         self._aws_trainium = None
@@ -178,9 +172,7 @@ class V1UserFeatures(object):
         self._cap_drop = None
         self._cluster_running_notification = None
         self._code_tab = None
-        self._collab_mouse_tracking = None
         self._collab_screen_sharing = None
-        self._collab_v2 = None
         self._crypto_monitoring = None
         self._custom_app_domain = None
         self._custom_instance_types = None
@@ -219,7 +211,6 @@ class V1UserFeatures(object):
         self._product_generator = None
         self._project_selector = None
         self._publish_ai_app = None
-        self._quests = None
         self._restart_ide_on_hang = None
         self._restartable_jobs = None
         self._runnable_public_studio_page = None
@@ -248,12 +239,8 @@ class V1UserFeatures(object):
             self.cluster_running_notification = cluster_running_notification
         if code_tab is not None:
             self.code_tab = code_tab
-        if collab_mouse_tracking is not None:
-            self.collab_mouse_tracking = collab_mouse_tracking
         if collab_screen_sharing is not None:
             self.collab_screen_sharing = collab_screen_sharing
-        if collab_v2 is not None:
-            self.collab_v2 = collab_v2
         if crypto_monitoring is not None:
             self.crypto_monitoring = crypto_monitoring
         if custom_app_domain is not None:
@@ -330,8 +317,6 @@ class V1UserFeatures(object):
             self.project_selector = project_selector
         if publish_ai_app is not None:
             self.publish_ai_app = publish_ai_app
-        if quests is not None:
-            self.quests = quests
         if restart_ide_on_hang is not None:
             self.restart_ide_on_hang = restart_ide_on_hang
         if restartable_jobs is not None:
@@ -524,27 +509,6 @@ class V1UserFeatures(object):
         self._code_tab = code_tab
 
     @property
-    def collab_mouse_tracking(self) -> 'bool':
-        """Gets the collab_mouse_tracking of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The collab_mouse_tracking of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._collab_mouse_tracking
-
-    @collab_mouse_tracking.setter
-    def collab_mouse_tracking(self, collab_mouse_tracking: 'bool'):
-        """Sets the collab_mouse_tracking of this V1UserFeatures.
-
-
-        :param collab_mouse_tracking: The collab_mouse_tracking of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._collab_mouse_tracking = collab_mouse_tracking
-
-    @property
     def collab_screen_sharing(self) -> 'bool':
         """Gets the collab_screen_sharing of this V1UserFeatures.  # noqa: E501
 
@@ -564,27 +528,6 @@ class V1UserFeatures(object):
         """
 
         self._collab_screen_sharing = collab_screen_sharing
-
-    @property
-    def collab_v2(self) -> 'bool':
-        """Gets the collab_v2 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The collab_v2 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._collab_v2
-
-    @collab_v2.setter
-    def collab_v2(self, collab_v2: 'bool'):
-        """Sets the collab_v2 of this V1UserFeatures.
-
-
-        :param collab_v2: The collab_v2 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._collab_v2 = collab_v2
 
     @property
     def crypto_monitoring(self) -> 'bool':
@@ -1383,27 +1326,6 @@ class V1UserFeatures(object):
         """
 
         self._publish_ai_app = publish_ai_app
-
-    @property
-    def quests(self) -> 'bool':
-        """Gets the quests of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The quests of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._quests
-
-    @quests.setter
-    def quests(self, quests: 'bool'):
-        """Sets the quests of this V1UserFeatures.
-
-
-        :param quests: The quests of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._quests = quests
 
     @property
     def restart_ide_on_hang(self) -> 'bool':

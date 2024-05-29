@@ -44,25 +44,31 @@ class V1Secret(object):
         'created_at': 'datetime',
         'id': 'str',
         'name': 'str',
+        'org_id': 'str',
         'project_id': 'str',
-        'updated_at': 'datetime'
+        'updated_at': 'datetime',
+        'user_id': 'str'
     }
 
     attribute_map = {
         'created_at': 'createdAt',
         'id': 'id',
         'name': 'name',
+        'org_id': 'orgId',
         'project_id': 'projectId',
-        'updated_at': 'updatedAt'
+        'updated_at': 'updatedAt',
+        'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Secret - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._id = None
         self._name = None
+        self._org_id = None
         self._project_id = None
         self._updated_at = None
+        self._user_id = None
         self.discriminator = None
         if created_at is not None:
             self.created_at = created_at
@@ -70,10 +76,14 @@ class V1Secret(object):
             self.id = id
         if name is not None:
             self.name = name
+        if org_id is not None:
+            self.org_id = org_id
         if project_id is not None:
             self.project_id = project_id
         if updated_at is not None:
             self.updated_at = updated_at
+        if user_id is not None:
+            self.user_id = user_id
 
     @property
     def created_at(self) -> 'datetime':
@@ -139,6 +149,27 @@ class V1Secret(object):
         self._name = name
 
     @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this V1Secret.  # noqa: E501
+
+
+        :return: The org_id of this V1Secret.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this V1Secret.
+
+
+        :param org_id: The org_id of this V1Secret.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
+
+    @property
     def project_id(self) -> 'str':
         """Gets the project_id of this V1Secret.  # noqa: E501
 
@@ -179,6 +210,27 @@ class V1Secret(object):
         """
 
         self._updated_at = updated_at
+
+    @property
+    def user_id(self) -> 'str':
+        """Gets the user_id of this V1Secret.  # noqa: E501
+
+
+        :return: The user_id of this V1Secret.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id: 'str'):
+        """Sets the user_id of this V1Secret.
+
+
+        :param user_id: The user_id of this V1Secret.  # noqa: E501
+        :type: str
+        """
+
+        self._user_id = user_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
