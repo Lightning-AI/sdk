@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 from uuid import uuid4
 
 _LIGHTNING_DEBUG = {
@@ -11,5 +12,9 @@ _LIGHTNING_DEBUG = {
     "yes": True,
 }.get(os.getenv("LIGHTNING_DEBUG", "").lower(), False)
 
-# The LightningRunId is created globally to be available across all processes and threads
-__GLOBAL_LIGHTNING_RUN_ID__ = str(uuid4().hex)
+
+def fn() -> str:
+    return str(uuid4().hex)
+
+
+__GLOBAL_LIGHTNING_RUN_IDS_STORE__ = defaultdict(fn)

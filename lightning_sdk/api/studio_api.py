@@ -9,7 +9,7 @@ from typing import Any, Dict, Mapping, Optional, Tuple
 import backoff
 import requests
 
-from lightning_sdk.constants import __GLOBAL_LIGHTNING_RUN_ID__, _LIGHTNING_DEBUG
+from lightning_sdk.constants import __GLOBAL_LIGHTNING_RUN_IDS_STORE__, _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
@@ -625,7 +625,7 @@ class StudioApi:
             cluster_id=cluster_id,
             plugin_arguments=other_arguments,
             service_id=os.getenv(_LIGHTNING_SERVICE_EXECUTION_ID_KEY),
-            run_id=__GLOBAL_LIGHTNING_RUN_ID__,
+            run_id=__GLOBAL_LIGHTNING_RUN_IDS_STORE__[studio_id],
         )
 
         resp = self._client.cloud_space_service_create_cloud_space_app_instance(
