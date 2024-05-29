@@ -45,9 +45,9 @@ class AppsIdBody1(object):
         'keep_machines_after_stop': 'bool',
         'machines_reservation_time_minutes': 'str',
         'plugin_arguments': 'dict(str, str)',
-        'run_id': 'str',
         'service_id': 'str',
-        'source_app': 'str'
+        'source_app': 'str',
+        'unique_id': 'str'
     }
 
     attribute_map = {
@@ -55,20 +55,20 @@ class AppsIdBody1(object):
         'keep_machines_after_stop': 'keepMachinesAfterStop',
         'machines_reservation_time_minutes': 'machinesReservationTimeMinutes',
         'plugin_arguments': 'pluginArguments',
-        'run_id': 'runId',
         'service_id': 'serviceId',
-        'source_app': 'sourceApp'
+        'source_app': 'sourceApp',
+        'unique_id': 'uniqueId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, keep_machines_after_stop: 'bool' =None, machines_reservation_time_minutes: 'str' =None, plugin_arguments: 'dict(str, str)' =None, run_id: 'str' =None, service_id: 'str' =None, source_app: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, keep_machines_after_stop: 'bool' =None, machines_reservation_time_minutes: 'str' =None, plugin_arguments: 'dict(str, str)' =None, service_id: 'str' =None, source_app: 'str' =None, unique_id: 'str' =None):  # noqa: E501
         """AppsIdBody1 - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._keep_machines_after_stop = None
         self._machines_reservation_time_minutes = None
         self._plugin_arguments = None
-        self._run_id = None
         self._service_id = None
         self._source_app = None
+        self._unique_id = None
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
@@ -78,12 +78,12 @@ class AppsIdBody1(object):
             self.machines_reservation_time_minutes = machines_reservation_time_minutes
         if plugin_arguments is not None:
             self.plugin_arguments = plugin_arguments
-        if run_id is not None:
-            self.run_id = run_id
         if service_id is not None:
             self.service_id = service_id
         if source_app is not None:
             self.source_app = source_app
+        if unique_id is not None:
+            self.unique_id = unique_id
 
     @property
     def cluster_id(self) -> 'str':
@@ -170,27 +170,6 @@ class AppsIdBody1(object):
         self._plugin_arguments = plugin_arguments
 
     @property
-    def run_id(self) -> 'str':
-        """Gets the run_id of this AppsIdBody1.  # noqa: E501
-
-
-        :return: The run_id of this AppsIdBody1.  # noqa: E501
-        :rtype: str
-        """
-        return self._run_id
-
-    @run_id.setter
-    def run_id(self, run_id: 'str'):
-        """Sets the run_id of this AppsIdBody1.
-
-
-        :param run_id: The run_id of this AppsIdBody1.  # noqa: E501
-        :type: str
-        """
-
-        self._run_id = run_id
-
-    @property
     def service_id(self) -> 'str':
         """Gets the service_id of this AppsIdBody1.  # noqa: E501
 
@@ -231,6 +210,27 @@ class AppsIdBody1(object):
         """
 
         self._source_app = source_app
+
+    @property
+    def unique_id(self) -> 'str':
+        """Gets the unique_id of this AppsIdBody1.  # noqa: E501
+
+
+        :return: The unique_id of this AppsIdBody1.  # noqa: E501
+        :rtype: str
+        """
+        return self._unique_id
+
+    @unique_id.setter
+    def unique_id(self, unique_id: 'str'):
+        """Sets the unique_id of this AppsIdBody1.
+
+
+        :param unique_id: The unique_id of this AppsIdBody1.  # noqa: E501
+        :type: str
+        """
+
+        self._unique_id = unique_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

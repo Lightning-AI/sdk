@@ -960,16 +960,16 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_list_assistant_managed_endpoints(self, project_id: 'str', **kwargs) -> 'V1ListManagedEndpointsResponse':  # noqa: E501
+    def assistants_service_list_assistant_managed_endpoints(self, **kwargs) -> 'V1ListManagedEndpointsResponse':  # noqa: E501
         """ListAssistantManagedEndpoints returns a list of managed endpoint that users can use when creating their own assistant. These are served and managed by Lightning or 3rd parties  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_list_assistant_managed_endpoints(project_id, async_req=True)
+        >>> thread = api.assistants_service_list_assistant_managed_endpoints(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id:
         :param str org_id:
         :return: V1ListManagedEndpointsResponse
                  If the method is called asynchronously,
@@ -977,21 +977,21 @@ class AssistantsServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.assistants_service_list_assistant_managed_endpoints_with_http_info(project_id, **kwargs)  # noqa: E501
+            return self.assistants_service_list_assistant_managed_endpoints_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.assistants_service_list_assistant_managed_endpoints_with_http_info(project_id, **kwargs)  # noqa: E501
+            (data) = self.assistants_service_list_assistant_managed_endpoints_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def assistants_service_list_assistant_managed_endpoints_with_http_info(self, project_id: 'str', **kwargs) -> 'V1ListManagedEndpointsResponse':  # noqa: E501
+    def assistants_service_list_assistant_managed_endpoints_with_http_info(self, **kwargs) -> 'V1ListManagedEndpointsResponse':  # noqa: E501
         """ListAssistantManagedEndpoints returns a list of managed endpoint that users can use when creating their own assistant. These are served and managed by Lightning or 3rd parties  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_list_assistant_managed_endpoints_with_http_info(project_id, async_req=True)
+        >>> thread = api.assistants_service_list_assistant_managed_endpoints_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id:
         :param str org_id:
         :return: V1ListManagedEndpointsResponse
                  If the method is called asynchronously,
@@ -1013,18 +1013,14 @@ class AssistantsServiceApi(object):
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'project_id' is set
-        if ('project_id' not in params or
-                params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `assistants_service_list_assistant_managed_endpoints`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'project_id' in params:
-            path_params['projectId'] = params['project_id']  # noqa: E501
 
         query_params = []
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
         if 'org_id' in params:
             query_params.append(('orgId', params['org_id']))  # noqa: E501
 
@@ -1042,7 +1038,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/agent-managed-endpoints', 'GET',
+            '/v1/agent-managed-endpoints', 'GET',
             path_params,
             query_params,
             header_params,

@@ -62,6 +62,7 @@ class V1LightningRun(object):
         'should_mount_cloudspace_content': 'bool',
         'source_code_url': 'str',
         'source_upload_url': 'str',
+        'unique_id': 'str',
         'user_id': 'str',
         'user_requested_flow_compute_config': 'V1UserRequestedFlowComputeConfig',
         'version': 'str',
@@ -90,13 +91,14 @@ class V1LightningRun(object):
         'should_mount_cloudspace_content': 'shouldMountCloudspaceContent',
         'source_code_url': 'sourceCodeUrl',
         'source_upload_url': 'sourceUploadUrl',
+        'unique_id': 'uniqueId',
         'user_id': 'userId',
         'user_requested_flow_compute_config': 'userRequestedFlowComputeConfig',
         'version': 'version',
         'works': 'works'
     }
 
-    def __init__(self, app_entrypoint_file: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dependency_cache_key: 'str' =None, description: 'str' =None, enable_app_server: 'bool' =None, env: 'list[V1EnvVar]' =None, flow_servers: 'list[V1Flowserver]' =None, id: 'str' =None, image_id: 'str' =None, image_spec: 'V1ImageSpec' =None, is_headless: 'bool' =None, is_published: 'bool' =None, network_config: 'list[V1NetworkConfig]' =None, parent_id: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, should_mount_cloudspace_content: 'bool' =None, source_code_url: 'str' =None, source_upload_url: 'str' =None, user_id: 'str' =None, user_requested_flow_compute_config: 'V1UserRequestedFlowComputeConfig' =None, version: 'str' =None, works: 'list[V1Work]' =None):  # noqa: E501
+    def __init__(self, app_entrypoint_file: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dependency_cache_key: 'str' =None, description: 'str' =None, enable_app_server: 'bool' =None, env: 'list[V1EnvVar]' =None, flow_servers: 'list[V1Flowserver]' =None, id: 'str' =None, image_id: 'str' =None, image_spec: 'V1ImageSpec' =None, is_headless: 'bool' =None, is_published: 'bool' =None, network_config: 'list[V1NetworkConfig]' =None, parent_id: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, should_mount_cloudspace_content: 'bool' =None, source_code_url: 'str' =None, source_upload_url: 'str' =None, unique_id: 'str' =None, user_id: 'str' =None, user_requested_flow_compute_config: 'V1UserRequestedFlowComputeConfig' =None, version: 'str' =None, works: 'list[V1Work]' =None):  # noqa: E501
         """V1LightningRun - a model defined in Swagger"""  # noqa: E501
         self._app_entrypoint_file = None
         self._cloudspace_id = None
@@ -119,6 +121,7 @@ class V1LightningRun(object):
         self._should_mount_cloudspace_content = None
         self._source_code_url = None
         self._source_upload_url = None
+        self._unique_id = None
         self._user_id = None
         self._user_requested_flow_compute_config = None
         self._version = None
@@ -166,6 +169,8 @@ class V1LightningRun(object):
             self.source_code_url = source_code_url
         if source_upload_url is not None:
             self.source_upload_url = source_upload_url
+        if unique_id is not None:
+            self.unique_id = unique_id
         if user_id is not None:
             self.user_id = user_id
         if user_requested_flow_compute_config is not None:
@@ -617,6 +622,27 @@ class V1LightningRun(object):
         """
 
         self._source_upload_url = source_upload_url
+
+    @property
+    def unique_id(self) -> 'str':
+        """Gets the unique_id of this V1LightningRun.  # noqa: E501
+
+
+        :return: The unique_id of this V1LightningRun.  # noqa: E501
+        :rtype: str
+        """
+        return self._unique_id
+
+    @unique_id.setter
+    def unique_id(self, unique_id: 'str'):
+        """Sets the unique_id of this V1LightningRun.
+
+
+        :param unique_id: The unique_id of this V1LightningRun.  # noqa: E501
+        :type: str
+        """
+
+        self._unique_id = unique_id
 
     @property
     def user_id(self) -> 'str':

@@ -41,29 +41,48 @@ class V1ManagedEndpoint(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'api_key': 'str',
+        'base_url': 'str',
         'description': 'str',
         'id': 'str',
         'models': 'list[str]',
         'models_metadata': 'list[V1ManagedModel]',
-        'name': 'str'
+        'name': 'str',
+        'org_id': 'str',
+        'project_id': 'str',
+        'publish_status': 'str'
     }
 
     attribute_map = {
+        'api_key': 'apiKey',
+        'base_url': 'baseUrl',
         'description': 'description',
         'id': 'id',
         'models': 'models',
         'models_metadata': 'modelsMetadata',
-        'name': 'name'
+        'name': 'name',
+        'org_id': 'orgId',
+        'project_id': 'projectId',
+        'publish_status': 'publishStatus'
     }
 
-    def __init__(self, description: 'str' =None, id: 'str' =None, models: 'list[str]' =None, models_metadata: 'list[V1ManagedModel]' =None, name: 'str' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, base_url: 'str' =None, description: 'str' =None, id: 'str' =None, models: 'list[str]' =None, models_metadata: 'list[V1ManagedModel]' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, publish_status: 'str' =None):  # noqa: E501
         """V1ManagedEndpoint - a model defined in Swagger"""  # noqa: E501
+        self._api_key = None
+        self._base_url = None
         self._description = None
         self._id = None
         self._models = None
         self._models_metadata = None
         self._name = None
+        self._org_id = None
+        self._project_id = None
+        self._publish_status = None
         self.discriminator = None
+        if api_key is not None:
+            self.api_key = api_key
+        if base_url is not None:
+            self.base_url = base_url
         if description is not None:
             self.description = description
         if id is not None:
@@ -74,6 +93,54 @@ class V1ManagedEndpoint(object):
             self.models_metadata = models_metadata
         if name is not None:
             self.name = name
+        if org_id is not None:
+            self.org_id = org_id
+        if project_id is not None:
+            self.project_id = project_id
+        if publish_status is not None:
+            self.publish_status = publish_status
+
+    @property
+    def api_key(self) -> 'str':
+        """Gets the api_key of this V1ManagedEndpoint.  # noqa: E501
+
+
+        :return: The api_key of this V1ManagedEndpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._api_key
+
+    @api_key.setter
+    def api_key(self, api_key: 'str'):
+        """Sets the api_key of this V1ManagedEndpoint.
+
+
+        :param api_key: The api_key of this V1ManagedEndpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._api_key = api_key
+
+    @property
+    def base_url(self) -> 'str':
+        """Gets the base_url of this V1ManagedEndpoint.  # noqa: E501
+
+
+        :return: The base_url of this V1ManagedEndpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._base_url
+
+    @base_url.setter
+    def base_url(self, base_url: 'str'):
+        """Sets the base_url of this V1ManagedEndpoint.
+
+
+        :param base_url: The base_url of this V1ManagedEndpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._base_url = base_url
 
     @property
     def description(self) -> 'str':
@@ -179,6 +246,69 @@ class V1ManagedEndpoint(object):
         """
 
         self._name = name
+
+    @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this V1ManagedEndpoint.  # noqa: E501
+
+
+        :return: The org_id of this V1ManagedEndpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this V1ManagedEndpoint.
+
+
+        :param org_id: The org_id of this V1ManagedEndpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
+
+    @property
+    def project_id(self) -> 'str':
+        """Gets the project_id of this V1ManagedEndpoint.  # noqa: E501
+
+
+        :return: The project_id of this V1ManagedEndpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, project_id: 'str'):
+        """Sets the project_id of this V1ManagedEndpoint.
+
+
+        :param project_id: The project_id of this V1ManagedEndpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._project_id = project_id
+
+    @property
+    def publish_status(self) -> 'str':
+        """Gets the publish_status of this V1ManagedEndpoint.  # noqa: E501
+
+
+        :return: The publish_status of this V1ManagedEndpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._publish_status
+
+    @publish_status.setter
+    def publish_status(self, publish_status: 'str'):
+        """Sets the publish_status of this V1ManagedEndpoint.
+
+
+        :param publish_status: The publish_status of this V1ManagedEndpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._publish_status = publish_status
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

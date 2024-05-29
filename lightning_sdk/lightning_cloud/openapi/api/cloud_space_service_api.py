@@ -3626,6 +3626,7 @@ class CloudSpaceServiceApi(object):
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
+        :param str unique_id:
         :return: V1LightningRun
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3649,12 +3650,13 @@ class CloudSpaceServiceApi(object):
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
+        :param str unique_id:
         :return: V1LightningRun
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'id']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'id', 'unique_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3693,6 +3695,8 @@ class CloudSpaceServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'unique_id' in params:
+            query_params.append(('uniqueId', params['unique_id']))  # noqa: E501
 
         header_params = {}
 

@@ -42,13 +42,13 @@ def test_run_job_plugins(
     from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import CloudSpaceServiceApi
 
     CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance
-    from lightning_sdk.constants import __GLOBAL_LIGHTNING_RUN_IDS_STORE__
+    from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
 
     calls = CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance.mock_calls
     assert len(calls) == 3
-    assert calls[0].kwargs["body"].run_id == __GLOBAL_LIGHTNING_RUN_IDS_STORE__["st-ghi"]
-    assert calls[1].kwargs["body"].run_id == __GLOBAL_LIGHTNING_RUN_IDS_STORE__["st-ghi"]
-    assert calls[2].kwargs["body"].run_id == __GLOBAL_LIGHTNING_RUN_IDS_STORE__["st-ghi-2"]
+    assert calls[0].kwargs["body"].unique_id == __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__["st-ghi"]
+    assert calls[1].kwargs["body"].unique_id == __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__["st-ghi"]
+    assert calls[2].kwargs["body"].unique_id == __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__["st-ghi-2"]
 
 
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
