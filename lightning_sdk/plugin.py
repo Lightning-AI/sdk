@@ -128,7 +128,7 @@ class JobsPlugin(_Plugin):
 
         _logger.info(_success_message(resp, self))
 
-        return Job(resp.name, self._studio)
+        return Job(resp.name, self._studio.teamspace)
 
 
 class MultiMachineTrainingPlugin(_Plugin):
@@ -164,7 +164,7 @@ class MultiMachineTrainingPlugin(_Plugin):
             cluster_id=self._studio._studio.cluster_id,
         )
 
-        return Job(resp.name, self._studio)
+        return Job(resp.name, self._studio.teamspace)
 
 
 class MultiMachineDataPrepPlugin(_Plugin):
@@ -197,7 +197,7 @@ class MultiMachineDataPrepPlugin(_Plugin):
             cluster_id=self._studio._studio.cluster_id,
         )
 
-        return Job(resp.name, self._studio)
+        return Job(resp.name, self._studio.teamspace)
 
 
 class InferenceServerPlugin(_Plugin):
@@ -243,7 +243,7 @@ class InferenceServerPlugin(_Plugin):
         )
 
         _logger.info(_success_message(resp, self))
-        return Job(resp.name, self._studio)
+        return Job(resp.name, self._studio.teamspace)
 
 
 class SlurmJobsPlugin(_Plugin):

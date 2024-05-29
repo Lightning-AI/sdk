@@ -4,48 +4,48 @@ from lightning_sdk.api.job_api import JobApi
 from lightning_sdk.job.work import Work
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
-from lightning_sdk.studio import Studio
+from lightning_sdk.teamspace import Teamspace
 
 
 class Job:
-    def __init__(self, job_name: str, studio: Studio) -> None:
+    def __init__(self, job_name: str, teamspace: Teamspace) -> None:
         self.job_name = job_name
-        self.studio = studio
+        self.teamspace = teamspace
         self._job_api = JobApi()
 
         try:
-            self._job = self._job_api.get_job(job_name, self.studio.teamspace.id)
+            self._job = self._job_api.get_job(job_name, self.teamspace.id)
         except ValueError as e:
-            raise ValueError(f"Job {job_name} does not exist in Teamspace {self.studio.teamspace.name}") from e
+            raise ValueError(f"Job {job_name} does not exist in Teamspace {self.teamspace.name}") from e
 
     @property
     def status(self) -> Status:
         try:
-            status = self._job_api.get_job_status(self._job.id, self.studio.teamspace.id)
+            status = self._job_api.get_job_status(self._job.id, self.teamspace.id)
             return _internal_status_to_external_status(status)
         except Exception:
             raise RuntimeError(
-                f"Job {self.job_name} does not exist in Teamspace {self.studio.teamspace.name}. Did you delete it?"
+                f"Job {self.job_name} does not exist in Teamspace {self.teamspace.name}. Did you delete it?"
             ) from None
 
     def stop(self) -> None:
         if self.status in (Status.Stopped, Status.Failed):
             return None
 
-        return self._job_api.stop_job(self._job.id, self.studio.teamspace.id)
+        return self._job_api.stop_job(self._job.id, self.teamspace.id)
 
     def delete(self) -> None:
-        self._job_api.delete_job(self._job.id, self.studio.teamspace.id)
+        self._job_api.delete_job(self._job.id, self.teamspace.id)
 
     def _name_filter(self, orig_name: str) -> str:
         return orig_name.replace("root.", "")
 
     @cached_property
     def work(self) -> Work:
-        _work = self._job_api.list_works(self._job.id, self.studio.teamspace.id)
+        _work = self._job_api.list_works(self._job.id, self.teamspace.id)
         if len(_work) == 0:
             raise ValueError("No works found for job")
-        return Work(_work[0].id, self, self.studio.teamspace)
+        return Work(_work[0].id, self, self.teamspace)
 
     @property
     def machine(self) -> Machine:

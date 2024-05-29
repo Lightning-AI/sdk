@@ -16,7 +16,7 @@ def test_job_init(
     internal_job_api_mocker_get_job,
 ):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
-    job = Job("j-abc", studio)
+    job = Job("j-abc", studio.teamspace)
     assert isinstance(job._job, Externalv1LightningappInstance)
 
 
@@ -29,7 +29,7 @@ def test_job_init_error(
     studio = Studio("st-abc", "ts-abc", org="org-abc")
 
     with pytest.raises(ValueError, match="Job xyz does not exist in Teamspace ts-abc"):
-        Job("xyz", studio)
+        Job("xyz", studio.teamspace)
 
 
 @mock.patch.dict(os.environ, clear=True)
@@ -55,7 +55,7 @@ def test_job_status(
     expected_status,
 ):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
-    job = Job(name, studio)
+    job = Job(name, studio.teamspace)
     status = job.status
     assert isinstance(status, Status)
 
@@ -69,7 +69,7 @@ def test_stop_job(
     internal_studio_status_mocker,
 ):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
-    job = Job("j-abc", studio)
+    job = Job("j-abc", studio.teamspace)
     status = job.status
 
     assert status == Status.Running
@@ -85,7 +85,7 @@ def test_delete_job(
     internal_studio_status_mocker,
 ):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
-    job = Job("j-abc", studio)
+    job = Job("j-abc", studio.teamspace)
 
     job.delete()
 
@@ -93,7 +93,7 @@ def test_delete_job(
         job.status
 
     with pytest.raises(ValueError, match="Job j-abc does not exist in Teamspace ts-abc"):
-        Job("j-abc", studio)
+        Job("j-abc", studio.teamspace)
 
 
 @mock.patch.dict(os.environ, clear=True)
@@ -103,7 +103,7 @@ def test_get_work(
     internal_studio_status_mocker,
 ):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
-    job = Job("j-abc", studio)
+    job = Job("j-abc", studio.teamspace)
     assert isinstance(job.work, Work)
 
     assert job.work.id == "w-abc"
