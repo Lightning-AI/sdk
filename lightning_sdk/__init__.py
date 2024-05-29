@@ -1,3 +1,4 @@
+from lightning_sdk.helpers import _check_version_and_prompt_upgrade
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
 from lightning_sdk.organization import Organization
@@ -22,3 +23,4 @@ __all__ = [
 ]
 
 __version__ = "0.1.9"
+_check_version_and_prompt_upgrade(__version__)
