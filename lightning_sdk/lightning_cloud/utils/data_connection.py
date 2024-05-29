@@ -23,6 +23,7 @@ def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeou
         name=bucket_name,
         create_index=True,
         cluster_id=cluster_id,
+        access_cluster_ids=[cluster_id],
         aws=V1AwsDataConnection(
             source=f"s3://{bucket_name}",
             region=region

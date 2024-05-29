@@ -44,33 +44,38 @@ class V1LightningworkStatus(object):
         'ip_address': 'str',
         'last_state_status_transition_timestamp': 'datetime',
         'message': 'str',
+        'number_of_files': 'str',
         'phase': 'V1LightningworkState',
         'reason': 'V1LightningworkStatusReason',
         'server_id': 'str',
         'server_instance_id': 'str',
         'start_timestamp': 'datetime',
         'stop_timestamp': 'datetime',
-        'total_cost': 'float'
+        'total_cost': 'float',
+        'total_size_bytes': 'str'
     }
 
     attribute_map = {
         'ip_address': 'ipAddress',
         'last_state_status_transition_timestamp': 'lastStateStatusTransitionTimestamp',
         'message': 'message',
+        'number_of_files': 'numberOfFiles',
         'phase': 'phase',
         'reason': 'reason',
         'server_id': 'serverId',
         'server_instance_id': 'serverInstanceId',
         'start_timestamp': 'startTimestamp',
         'stop_timestamp': 'stopTimestamp',
-        'total_cost': 'totalCost'
+        'total_cost': 'totalCost',
+        'total_size_bytes': 'totalSizeBytes'
     }
 
-    def __init__(self, ip_address: 'str' =None, last_state_status_transition_timestamp: 'datetime' =None, message: 'str' =None, phase: 'V1LightningworkState' =None, reason: 'V1LightningworkStatusReason' =None, server_id: 'str' =None, server_instance_id: 'str' =None, start_timestamp: 'datetime' =None, stop_timestamp: 'datetime' =None, total_cost: 'float' =None):  # noqa: E501
+    def __init__(self, ip_address: 'str' =None, last_state_status_transition_timestamp: 'datetime' =None, message: 'str' =None, number_of_files: 'str' =None, phase: 'V1LightningworkState' =None, reason: 'V1LightningworkStatusReason' =None, server_id: 'str' =None, server_instance_id: 'str' =None, start_timestamp: 'datetime' =None, stop_timestamp: 'datetime' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None):  # noqa: E501
         """V1LightningworkStatus - a model defined in Swagger"""  # noqa: E501
         self._ip_address = None
         self._last_state_status_transition_timestamp = None
         self._message = None
+        self._number_of_files = None
         self._phase = None
         self._reason = None
         self._server_id = None
@@ -78,6 +83,7 @@ class V1LightningworkStatus(object):
         self._start_timestamp = None
         self._stop_timestamp = None
         self._total_cost = None
+        self._total_size_bytes = None
         self.discriminator = None
         if ip_address is not None:
             self.ip_address = ip_address
@@ -85,6 +91,8 @@ class V1LightningworkStatus(object):
             self.last_state_status_transition_timestamp = last_state_status_transition_timestamp
         if message is not None:
             self.message = message
+        if number_of_files is not None:
+            self.number_of_files = number_of_files
         if phase is not None:
             self.phase = phase
         if reason is not None:
@@ -99,6 +107,8 @@ class V1LightningworkStatus(object):
             self.stop_timestamp = stop_timestamp
         if total_cost is not None:
             self.total_cost = total_cost
+        if total_size_bytes is not None:
+            self.total_size_bytes = total_size_bytes
 
     @property
     def ip_address(self) -> 'str':
@@ -162,6 +172,27 @@ class V1LightningworkStatus(object):
         """
 
         self._message = message
+
+    @property
+    def number_of_files(self) -> 'str':
+        """Gets the number_of_files of this V1LightningworkStatus.  # noqa: E501
+
+
+        :return: The number_of_files of this V1LightningworkStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._number_of_files
+
+    @number_of_files.setter
+    def number_of_files(self, number_of_files: 'str'):
+        """Sets the number_of_files of this V1LightningworkStatus.
+
+
+        :param number_of_files: The number_of_files of this V1LightningworkStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._number_of_files = number_of_files
 
     @property
     def phase(self) -> 'V1LightningworkState':
@@ -309,6 +340,27 @@ class V1LightningworkStatus(object):
         """
 
         self._total_cost = total_cost
+
+    @property
+    def total_size_bytes(self) -> 'str':
+        """Gets the total_size_bytes of this V1LightningworkStatus.  # noqa: E501
+
+
+        :return: The total_size_bytes of this V1LightningworkStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_size_bytes
+
+    @total_size_bytes.setter
+    def total_size_bytes(self, total_size_bytes: 'str'):
+        """Sets the total_size_bytes of this V1LightningworkStatus.
+
+
+        :param total_size_bytes: The total_size_bytes of this V1LightningworkStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._total_size_bytes = total_size_bytes
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

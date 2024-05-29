@@ -57,6 +57,7 @@ class V1ClusterSpec(object):
         'performance_profile': 'V1ClusterPerformanceProfile',
         'security_options': 'V1ClusterSecurityOptions',
         'slurm_v1': 'V1SlurmV1',
+        'tags': 'list[V1ClusterResourceTag]',
         'user_id': 'str'
     }
 
@@ -77,10 +78,11 @@ class V1ClusterSpec(object):
         'performance_profile': 'performanceProfile',
         'security_options': 'securityOptions',
         'slurm_v1': 'slurmV1',
+        'tags': 'tags',
         'user_id': 'userId'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, cost_factor: 'str' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, driver: 'V1ClusterDriver' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, gridlet_version: 'str' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, padding_factor: 'str' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, cost_factor: 'str' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, driver: 'V1ClusterDriver' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, gridlet_version: 'str' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, padding_factor: 'str' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tags: 'list[V1ClusterResourceTag]' =None, user_id: 'str' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_instance_types = None
@@ -98,6 +100,7 @@ class V1ClusterSpec(object):
         self._performance_profile = None
         self._security_options = None
         self._slurm_v1 = None
+        self._tags = None
         self._user_id = None
         self.discriminator = None
         if auth_token is not None:
@@ -132,6 +135,8 @@ class V1ClusterSpec(object):
             self.security_options = security_options
         if slurm_v1 is not None:
             self.slurm_v1 = slurm_v1
+        if tags is not None:
+            self.tags = tags
         if user_id is not None:
             self.user_id = user_id
 
@@ -476,6 +481,27 @@ class V1ClusterSpec(object):
         """
 
         self._slurm_v1 = slurm_v1
+
+    @property
+    def tags(self) -> 'list[V1ClusterResourceTag]':
+        """Gets the tags of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The tags of this V1ClusterSpec.  # noqa: E501
+        :rtype: list[V1ClusterResourceTag]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[V1ClusterResourceTag]'):
+        """Sets the tags of this V1ClusterSpec.
+
+
+        :param tags: The tags of this V1ClusterSpec.  # noqa: E501
+        :type: list[V1ClusterResourceTag]
+        """
+
+        self._tags = tags
 
     @property
     def user_id(self) -> 'str':

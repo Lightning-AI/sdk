@@ -43,23 +43,20 @@ class V1ListPublishedCloudSpacesResponse(object):
     swagger_types = {
         'next_page_token': 'str',
         'previous_page_token': 'str',
-        'published': 'list[V1PublishedCloudSpaceResponse]',
-        'user_engaged_cloudspace_ids': 'dict(str, V1CloudSpaceIdList)'
+        'published': 'list[V1PublishedCloudSpaceResponse]'
     }
 
     attribute_map = {
         'next_page_token': 'nextPageToken',
         'previous_page_token': 'previousPageToken',
-        'published': 'published',
-        'user_engaged_cloudspace_ids': 'userEngagedCloudspaceIds'
+        'published': 'published'
     }
 
-    def __init__(self, next_page_token: 'str' =None, previous_page_token: 'str' =None, published: 'list[V1PublishedCloudSpaceResponse]' =None, user_engaged_cloudspace_ids: 'dict(str, V1CloudSpaceIdList)' =None):  # noqa: E501
+    def __init__(self, next_page_token: 'str' =None, previous_page_token: 'str' =None, published: 'list[V1PublishedCloudSpaceResponse]' =None):  # noqa: E501
         """V1ListPublishedCloudSpacesResponse - a model defined in Swagger"""  # noqa: E501
         self._next_page_token = None
         self._previous_page_token = None
         self._published = None
-        self._user_engaged_cloudspace_ids = None
         self.discriminator = None
         if next_page_token is not None:
             self.next_page_token = next_page_token
@@ -67,8 +64,6 @@ class V1ListPublishedCloudSpacesResponse(object):
             self.previous_page_token = previous_page_token
         if published is not None:
             self.published = published
-        if user_engaged_cloudspace_ids is not None:
-            self.user_engaged_cloudspace_ids = user_engaged_cloudspace_ids
 
     @property
     def next_page_token(self) -> 'str':
@@ -132,27 +127,6 @@ class V1ListPublishedCloudSpacesResponse(object):
         """
 
         self._published = published
-
-    @property
-    def user_engaged_cloudspace_ids(self) -> 'dict(str, V1CloudSpaceIdList)':
-        """Gets the user_engaged_cloudspace_ids of this V1ListPublishedCloudSpacesResponse.  # noqa: E501
-
-
-        :return: The user_engaged_cloudspace_ids of this V1ListPublishedCloudSpacesResponse.  # noqa: E501
-        :rtype: dict(str, V1CloudSpaceIdList)
-        """
-        return self._user_engaged_cloudspace_ids
-
-    @user_engaged_cloudspace_ids.setter
-    def user_engaged_cloudspace_ids(self, user_engaged_cloudspace_ids: 'dict(str, V1CloudSpaceIdList)'):
-        """Sets the user_engaged_cloudspace_ids of this V1ListPublishedCloudSpacesResponse.
-
-
-        :param user_engaged_cloudspace_ids: The user_engaged_cloudspace_ids of this V1ListPublishedCloudSpacesResponse.  # noqa: E501
-        :type: dict(str, V1CloudSpaceIdList)
-        """
-
-        self._user_engaged_cloudspace_ids = user_engaged_cloudspace_ids
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -41,7 +41,11 @@ class V1MetricsTracker(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'max_index': 'int',
         'max_user_step': 'str',
+        'max_value': 'float',
+        'min_index': 'int',
+        'min_value': 'float',
         'name': 'str',
         'num_rows': 'int',
         'started_at': 'datetime',
@@ -49,23 +53,39 @@ class V1MetricsTracker(object):
     }
 
     attribute_map = {
+        'max_index': 'maxIndex',
         'max_user_step': 'maxUserStep',
+        'max_value': 'maxValue',
+        'min_index': 'minIndex',
+        'min_value': 'minValue',
         'name': 'name',
         'num_rows': 'numRows',
         'started_at': 'startedAt',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, max_user_step: 'str' =None, name: 'str' =None, num_rows: 'int' =None, started_at: 'datetime' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, max_index: 'int' =None, max_user_step: 'str' =None, max_value: 'float' =None, min_index: 'int' =None, min_value: 'float' =None, name: 'str' =None, num_rows: 'int' =None, started_at: 'datetime' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1MetricsTracker - a model defined in Swagger"""  # noqa: E501
+        self._max_index = None
         self._max_user_step = None
+        self._max_value = None
+        self._min_index = None
+        self._min_value = None
         self._name = None
         self._num_rows = None
         self._started_at = None
         self._updated_at = None
         self.discriminator = None
+        if max_index is not None:
+            self.max_index = max_index
         if max_user_step is not None:
             self.max_user_step = max_user_step
+        if max_value is not None:
+            self.max_value = max_value
+        if min_index is not None:
+            self.min_index = min_index
+        if min_value is not None:
+            self.min_value = min_value
         if name is not None:
             self.name = name
         if num_rows is not None:
@@ -74,6 +94,27 @@ class V1MetricsTracker(object):
             self.started_at = started_at
         if updated_at is not None:
             self.updated_at = updated_at
+
+    @property
+    def max_index(self) -> 'int':
+        """Gets the max_index of this V1MetricsTracker.  # noqa: E501
+
+
+        :return: The max_index of this V1MetricsTracker.  # noqa: E501
+        :rtype: int
+        """
+        return self._max_index
+
+    @max_index.setter
+    def max_index(self, max_index: 'int'):
+        """Sets the max_index of this V1MetricsTracker.
+
+
+        :param max_index: The max_index of this V1MetricsTracker.  # noqa: E501
+        :type: int
+        """
+
+        self._max_index = max_index
 
     @property
     def max_user_step(self) -> 'str':
@@ -95,6 +136,69 @@ class V1MetricsTracker(object):
         """
 
         self._max_user_step = max_user_step
+
+    @property
+    def max_value(self) -> 'float':
+        """Gets the max_value of this V1MetricsTracker.  # noqa: E501
+
+
+        :return: The max_value of this V1MetricsTracker.  # noqa: E501
+        :rtype: float
+        """
+        return self._max_value
+
+    @max_value.setter
+    def max_value(self, max_value: 'float'):
+        """Sets the max_value of this V1MetricsTracker.
+
+
+        :param max_value: The max_value of this V1MetricsTracker.  # noqa: E501
+        :type: float
+        """
+
+        self._max_value = max_value
+
+    @property
+    def min_index(self) -> 'int':
+        """Gets the min_index of this V1MetricsTracker.  # noqa: E501
+
+
+        :return: The min_index of this V1MetricsTracker.  # noqa: E501
+        :rtype: int
+        """
+        return self._min_index
+
+    @min_index.setter
+    def min_index(self, min_index: 'int'):
+        """Sets the min_index of this V1MetricsTracker.
+
+
+        :param min_index: The min_index of this V1MetricsTracker.  # noqa: E501
+        :type: int
+        """
+
+        self._min_index = min_index
+
+    @property
+    def min_value(self) -> 'float':
+        """Gets the min_value of this V1MetricsTracker.  # noqa: E501
+
+
+        :return: The min_value of this V1MetricsTracker.  # noqa: E501
+        :rtype: float
+        """
+        return self._min_value
+
+    @min_value.setter
+    def min_value(self, min_value: 'float'):
+        """Sets the min_value of this V1MetricsTracker.
+
+
+        :param min_value: The min_value of this V1MetricsTracker.  # noqa: E501
+        :type: float
+        """
+
+        self._min_value = min_value
 
     @property
     def name(self) -> 'str':

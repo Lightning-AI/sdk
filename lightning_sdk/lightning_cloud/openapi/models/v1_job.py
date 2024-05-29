@@ -45,6 +45,7 @@ class V1Job(object):
         'cluster_id': 'str',
         'command': 'str',
         'created_at': 'datetime',
+        'endpoint': 'V1Endpoint',
         'entrypoint': 'str',
         'env': 'list[V1EnvVar]',
         'id': 'str',
@@ -64,6 +65,7 @@ class V1Job(object):
         'state': 'str',
         'stopped_at': 'datetime',
         'updated_at': 'datetime',
+        'urls': 'list[str]',
         'user_id': 'str'
     }
 
@@ -72,6 +74,7 @@ class V1Job(object):
         'cluster_id': 'clusterId',
         'command': 'command',
         'created_at': 'createdAt',
+        'endpoint': 'endpoint',
         'entrypoint': 'entrypoint',
         'env': 'env',
         'id': 'id',
@@ -91,15 +94,17 @@ class V1Job(object):
         'state': 'state',
         'stopped_at': 'stoppedAt',
         'updated_at': 'updatedAt',
+        'urls': 'urls',
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, message: 'str' =None, name: 'str' =None, preemptible: 'bool' =None, project_id: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, endpoint: 'V1Endpoint' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, message: 'str' =None, name: 'str' =None, preemptible: 'bool' =None, project_id: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
         self._created_at = None
+        self._endpoint = None
         self._entrypoint = None
         self._env = None
         self._id = None
@@ -119,6 +124,7 @@ class V1Job(object):
         self._state = None
         self._stopped_at = None
         self._updated_at = None
+        self._urls = None
         self._user_id = None
         self.discriminator = None
         if cloudspace_id is not None:
@@ -129,6 +135,8 @@ class V1Job(object):
             self.command = command
         if created_at is not None:
             self.created_at = created_at
+        if endpoint is not None:
+            self.endpoint = endpoint
         if entrypoint is not None:
             self.entrypoint = entrypoint
         if env is not None:
@@ -167,6 +175,8 @@ class V1Job(object):
             self.stopped_at = stopped_at
         if updated_at is not None:
             self.updated_at = updated_at
+        if urls is not None:
+            self.urls = urls
         if user_id is not None:
             self.user_id = user_id
 
@@ -253,6 +263,27 @@ class V1Job(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def endpoint(self) -> 'V1Endpoint':
+        """Gets the endpoint of this V1Job.  # noqa: E501
+
+
+        :return: The endpoint of this V1Job.  # noqa: E501
+        :rtype: V1Endpoint
+        """
+        return self._endpoint
+
+    @endpoint.setter
+    def endpoint(self, endpoint: 'V1Endpoint'):
+        """Sets the endpoint of this V1Job.
+
+
+        :param endpoint: The endpoint of this V1Job.  # noqa: E501
+        :type: V1Endpoint
+        """
+
+        self._endpoint = endpoint
 
     @property
     def entrypoint(self) -> 'str':
@@ -652,6 +683,27 @@ class V1Job(object):
         """
 
         self._updated_at = updated_at
+
+    @property
+    def urls(self) -> 'list[str]':
+        """Gets the urls of this V1Job.  # noqa: E501
+
+
+        :return: The urls of this V1Job.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._urls
+
+    @urls.setter
+    def urls(self, urls: 'list[str]'):
+        """Sets the urls of this V1Job.
+
+
+        :param urls: The urls of this V1Job.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._urls = urls
 
     @property
     def user_id(self) -> 'str':

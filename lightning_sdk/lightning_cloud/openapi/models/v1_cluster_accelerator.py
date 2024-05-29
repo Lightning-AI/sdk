@@ -54,6 +54,8 @@ class V1ClusterAccelerator(object):
         'family': 'str',
         'instance_id': 'str',
         'is_tier_restricted': 'bool',
+        'local_disk_size': 'str',
+        'local_disk_supported': 'bool',
         'quota_checked_at': 'datetime',
         'quota_code': 'str',
         'quota_name': 'str',
@@ -79,6 +81,8 @@ class V1ClusterAccelerator(object):
         'family': 'family',
         'instance_id': 'instanceId',
         'is_tier_restricted': 'isTierRestricted',
+        'local_disk_size': 'localDiskSize',
+        'local_disk_supported': 'localDiskSupported',
         'quota_checked_at': 'quotaCheckedAt',
         'quota_code': 'quotaCode',
         'quota_name': 'quotaName',
@@ -90,7 +94,7 @@ class V1ClusterAccelerator(object):
         'slug': 'slug'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_zones: 'list[str]' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_zones: 'list[str]' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -105,6 +109,8 @@ class V1ClusterAccelerator(object):
         self._family = None
         self._instance_id = None
         self._is_tier_restricted = None
+        self._local_disk_size = None
+        self._local_disk_supported = None
         self._quota_checked_at = None
         self._quota_code = None
         self._quota_name = None
@@ -141,6 +147,10 @@ class V1ClusterAccelerator(object):
             self.instance_id = instance_id
         if is_tier_restricted is not None:
             self.is_tier_restricted = is_tier_restricted
+        if local_disk_size is not None:
+            self.local_disk_size = local_disk_size
+        if local_disk_supported is not None:
+            self.local_disk_supported = local_disk_supported
         if quota_checked_at is not None:
             self.quota_checked_at = quota_checked_at
         if quota_code is not None:
@@ -432,6 +442,48 @@ class V1ClusterAccelerator(object):
         """
 
         self._is_tier_restricted = is_tier_restricted
+
+    @property
+    def local_disk_size(self) -> 'str':
+        """Gets the local_disk_size of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The local_disk_size of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: str
+        """
+        return self._local_disk_size
+
+    @local_disk_size.setter
+    def local_disk_size(self, local_disk_size: 'str'):
+        """Sets the local_disk_size of this V1ClusterAccelerator.
+
+
+        :param local_disk_size: The local_disk_size of this V1ClusterAccelerator.  # noqa: E501
+        :type: str
+        """
+
+        self._local_disk_size = local_disk_size
+
+    @property
+    def local_disk_supported(self) -> 'bool':
+        """Gets the local_disk_supported of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The local_disk_supported of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: bool
+        """
+        return self._local_disk_supported
+
+    @local_disk_supported.setter
+    def local_disk_supported(self, local_disk_supported: 'bool'):
+        """Sets the local_disk_supported of this V1ClusterAccelerator.
+
+
+        :param local_disk_supported: The local_disk_supported of this V1ClusterAccelerator.  # noqa: E501
+        :type: bool
+        """
+
+        self._local_disk_supported = local_disk_supported
 
     @property
     def quota_checked_at(self) -> 'datetime':

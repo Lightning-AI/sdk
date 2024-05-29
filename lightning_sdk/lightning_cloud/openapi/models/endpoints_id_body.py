@@ -46,6 +46,7 @@ class EndpointsIdBody(object):
         'created_at': 'datetime',
         'custom_domain': 'str',
         'domains': 'list[str]',
+        'job': 'V1UpstreamJob',
         'managed': 'V1UpstreamManaged',
         'name': 'str',
         'openai': 'V1UpstreamOpenAI',
@@ -61,6 +62,7 @@ class EndpointsIdBody(object):
         'created_at': 'createdAt',
         'custom_domain': 'customDomain',
         'domains': 'domains',
+        'job': 'job',
         'managed': 'managed',
         'name': 'name',
         'openai': 'openai',
@@ -70,13 +72,14 @@ class EndpointsIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, domains: 'list[str]' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, domains: 'list[str]' =None, job: 'V1UpstreamJob' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """EndpointsIdBody - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
         self._created_at = None
         self._custom_domain = None
         self._domains = None
+        self._job = None
         self._managed = None
         self._name = None
         self._openai = None
@@ -95,6 +98,8 @@ class EndpointsIdBody(object):
             self.custom_domain = custom_domain
         if domains is not None:
             self.domains = domains
+        if job is not None:
+            self.job = job
         if managed is not None:
             self.managed = managed
         if name is not None:
@@ -214,6 +219,27 @@ class EndpointsIdBody(object):
         """
 
         self._domains = domains
+
+    @property
+    def job(self) -> 'V1UpstreamJob':
+        """Gets the job of this EndpointsIdBody.  # noqa: E501
+
+
+        :return: The job of this EndpointsIdBody.  # noqa: E501
+        :rtype: V1UpstreamJob
+        """
+        return self._job
+
+    @job.setter
+    def job(self, job: 'V1UpstreamJob'):
+        """Sets the job of this EndpointsIdBody.
+
+
+        :param job: The job of this EndpointsIdBody.  # noqa: E501
+        :type: V1UpstreamJob
+        """
+
+        self._job = job
 
     @property
     def managed(self) -> 'V1UpstreamManaged':

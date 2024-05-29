@@ -41,118 +41,14 @@ class V1DeleteMetricsStreamResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'app_id': 'str',
-        'cloudspace_id': 'str',
-        'id': 'str',
-        'project_id': 'str'
     }
 
     attribute_map = {
-        'app_id': 'appId',
-        'cloudspace_id': 'cloudspaceId',
-        'id': 'id',
-        'project_id': 'projectId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, id: 'str' =None, project_id: 'str' =None):  # noqa: E501
+    def __init__(self):  # noqa: E501
         """V1DeleteMetricsStreamResponse - a model defined in Swagger"""  # noqa: E501
-        self._app_id = None
-        self._cloudspace_id = None
-        self._id = None
-        self._project_id = None
         self.discriminator = None
-        if app_id is not None:
-            self.app_id = app_id
-        if cloudspace_id is not None:
-            self.cloudspace_id = cloudspace_id
-        if id is not None:
-            self.id = id
-        if project_id is not None:
-            self.project_id = project_id
-
-    @property
-    def app_id(self) -> 'str':
-        """Gets the app_id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-
-
-        :return: The app_id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-        :rtype: str
-        """
-        return self._app_id
-
-    @app_id.setter
-    def app_id(self, app_id: 'str'):
-        """Sets the app_id of this V1DeleteMetricsStreamResponse.
-
-
-        :param app_id: The app_id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-        :type: str
-        """
-
-        self._app_id = app_id
-
-    @property
-    def cloudspace_id(self) -> 'str':
-        """Gets the cloudspace_id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-
-
-        :return: The cloudspace_id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-        :rtype: str
-        """
-        return self._cloudspace_id
-
-    @cloudspace_id.setter
-    def cloudspace_id(self, cloudspace_id: 'str'):
-        """Sets the cloudspace_id of this V1DeleteMetricsStreamResponse.
-
-
-        :param cloudspace_id: The cloudspace_id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-        :type: str
-        """
-
-        self._cloudspace_id = cloudspace_id
-
-    @property
-    def id(self) -> 'str':
-        """Gets the id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-
-
-        :return: The id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-        :rtype: str
-        """
-        return self._id
-
-    @id.setter
-    def id(self, id: 'str'):
-        """Sets the id of this V1DeleteMetricsStreamResponse.
-
-
-        :param id: The id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-        :type: str
-        """
-
-        self._id = id
-
-    @property
-    def project_id(self) -> 'str':
-        """Gets the project_id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-
-
-        :return: The project_id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-        :rtype: str
-        """
-        return self._project_id
-
-    @project_id.setter
-    def project_id(self, project_id: 'str'):
-        """Sets the project_id of this V1DeleteMetricsStreamResponse.
-
-
-        :param project_id: The project_id of this V1DeleteMetricsStreamResponse.  # noqa: E501
-        :type: str
-        """
-
-        self._project_id = project_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

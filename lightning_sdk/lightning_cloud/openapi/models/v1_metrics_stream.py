@@ -51,6 +51,7 @@ class V1MetricsStream(object):
         'light_color': 'str',
         'name': 'str',
         'persisted': 'bool',
+        'phase': 'V1PhaseType',
         'plugin_id': 'str',
         'project_id': 'str',
         'source_id': 'str',
@@ -74,6 +75,7 @@ class V1MetricsStream(object):
         'light_color': 'lightColor',
         'name': 'name',
         'persisted': 'persisted',
+        'phase': 'phase',
         'plugin_id': 'pluginId',
         'project_id': 'projectId',
         'source_id': 'sourceId',
@@ -86,7 +88,7 @@ class V1MetricsStream(object):
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, work_id: 'str' =None):  # noqa: E501
         """V1MetricsStream - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
@@ -98,6 +100,7 @@ class V1MetricsStream(object):
         self._light_color = None
         self._name = None
         self._persisted = None
+        self._phase = None
         self._plugin_id = None
         self._project_id = None
         self._source_id = None
@@ -129,6 +132,8 @@ class V1MetricsStream(object):
             self.name = name
         if persisted is not None:
             self.persisted = persisted
+        if phase is not None:
+            self.phase = phase
         if plugin_id is not None:
             self.plugin_id = plugin_id
         if project_id is not None:
@@ -359,6 +364,27 @@ class V1MetricsStream(object):
         """
 
         self._persisted = persisted
+
+    @property
+    def phase(self) -> 'V1PhaseType':
+        """Gets the phase of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The phase of this V1MetricsStream.  # noqa: E501
+        :rtype: V1PhaseType
+        """
+        return self._phase
+
+    @phase.setter
+    def phase(self, phase: 'V1PhaseType'):
+        """Sets the phase of this V1MetricsStream.
+
+
+        :param phase: The phase of this V1MetricsStream.  # noqa: E501
+        :type: V1PhaseType
+        """
+
+        self._phase = phase
 
     @property
     def plugin_id(self) -> 'str':

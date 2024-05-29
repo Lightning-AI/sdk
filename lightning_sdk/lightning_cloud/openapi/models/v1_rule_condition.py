@@ -42,23 +42,28 @@ class V1RuleCondition(object):
     """
     swagger_types = {
         'cloudspace_id': 'str',
-        'project_id': 'str'
+        'project_id': 'str',
+        'resource_owner': 'bool'
     }
 
     attribute_map = {
         'cloudspace_id': 'cloudspaceId',
-        'project_id': 'projectId'
+        'project_id': 'projectId',
+        'resource_owner': 'resourceOwner'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, project_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, project_id: 'str' =None, resource_owner: 'bool' =None):  # noqa: E501
         """V1RuleCondition - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._project_id = None
+        self._resource_owner = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if project_id is not None:
             self.project_id = project_id
+        if resource_owner is not None:
+            self.resource_owner = resource_owner
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -101,6 +106,27 @@ class V1RuleCondition(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def resource_owner(self) -> 'bool':
+        """Gets the resource_owner of this V1RuleCondition.  # noqa: E501
+
+
+        :return: The resource_owner of this V1RuleCondition.  # noqa: E501
+        :rtype: bool
+        """
+        return self._resource_owner
+
+    @resource_owner.setter
+    def resource_owner(self, resource_owner: 'bool'):
+        """Sets the resource_owner of this V1RuleCondition.
+
+
+        :param resource_owner: The resource_owner of this V1RuleCondition.  # noqa: E501
+        :type: bool
+        """
+
+        self._resource_owner = resource_owner
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

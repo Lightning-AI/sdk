@@ -41,6 +41,7 @@ class Create(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'access_cluster_ids': 'list[str]',
         'aws': 'V1AwsDataConnection',
         'cluster_id': 'str',
         'create_index': 'bool',
@@ -54,6 +55,7 @@ class Create(object):
     }
 
     attribute_map = {
+        'access_cluster_ids': 'accessClusterIds',
         'aws': 'aws',
         'cluster_id': 'clusterId',
         'create_index': 'createIndex',
@@ -66,8 +68,9 @@ class Create(object):
         'writable': 'writable'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, name: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, name: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Create - a model defined in Swagger"""  # noqa: E501
+        self._access_cluster_ids = None
         self._aws = None
         self._cluster_id = None
         self._create_index = None
@@ -79,6 +82,8 @@ class Create(object):
         self._snowflake = None
         self._writable = None
         self.discriminator = None
+        if access_cluster_ids is not None:
+            self.access_cluster_ids = access_cluster_ids
         if aws is not None:
             self.aws = aws
         if cluster_id is not None:
@@ -99,6 +104,27 @@ class Create(object):
             self.snowflake = snowflake
         if writable is not None:
             self.writable = writable
+
+    @property
+    def access_cluster_ids(self) -> 'list[str]':
+        """Gets the access_cluster_ids of this Create.  # noqa: E501
+
+
+        :return: The access_cluster_ids of this Create.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._access_cluster_ids
+
+    @access_cluster_ids.setter
+    def access_cluster_ids(self, access_cluster_ids: 'list[str]'):
+        """Sets the access_cluster_ids of this Create.
+
+
+        :param access_cluster_ids: The access_cluster_ids of this Create.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._access_cluster_ids = access_cluster_ids
 
     @property
     def aws(self) -> 'V1AwsDataConnection':

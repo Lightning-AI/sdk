@@ -49,11 +49,13 @@ class V1Project(object):
         'id': 'str',
         'is_default': 'bool',
         'name': 'str',
+        'number_of_files_uploads': 'str',
         'owner_id': 'str',
         'owner_type': 'V1OwnerType',
         'private': 'bool',
         'project_settings': 'V1ProjectSettings',
         'quotas': 'V1Quotas',
+        'total_size_uploads_bytes': 'str',
         'updated_at': 'datetime'
     }
 
@@ -66,15 +68,17 @@ class V1Project(object):
         'id': 'id',
         'is_default': 'isDefault',
         'name': 'name',
+        'number_of_files_uploads': 'numberOfFilesUploads',
         'owner_id': 'ownerId',
         'owner_type': 'ownerType',
         'private': 'private',
         'project_settings': 'projectSettings',
         'quotas': 'quotas',
+        'total_size_uploads_bytes': 'totalSizeUploadsBytes',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, is_default: 'bool' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, is_default: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Project - a model defined in Swagger"""  # noqa: E501
         self._abac_enabled = None
         self._created_at = None
@@ -84,11 +88,13 @@ class V1Project(object):
         self._id = None
         self._is_default = None
         self._name = None
+        self._number_of_files_uploads = None
         self._owner_id = None
         self._owner_type = None
         self._private = None
         self._project_settings = None
         self._quotas = None
+        self._total_size_uploads_bytes = None
         self._updated_at = None
         self.discriminator = None
         if abac_enabled is not None:
@@ -107,6 +113,8 @@ class V1Project(object):
             self.is_default = is_default
         if name is not None:
             self.name = name
+        if number_of_files_uploads is not None:
+            self.number_of_files_uploads = number_of_files_uploads
         if owner_id is not None:
             self.owner_id = owner_id
         if owner_type is not None:
@@ -117,6 +125,8 @@ class V1Project(object):
             self.project_settings = project_settings
         if quotas is not None:
             self.quotas = quotas
+        if total_size_uploads_bytes is not None:
+            self.total_size_uploads_bytes = total_size_uploads_bytes
         if updated_at is not None:
             self.updated_at = updated_at
 
@@ -289,6 +299,27 @@ class V1Project(object):
         self._name = name
 
     @property
+    def number_of_files_uploads(self) -> 'str':
+        """Gets the number_of_files_uploads of this V1Project.  # noqa: E501
+
+
+        :return: The number_of_files_uploads of this V1Project.  # noqa: E501
+        :rtype: str
+        """
+        return self._number_of_files_uploads
+
+    @number_of_files_uploads.setter
+    def number_of_files_uploads(self, number_of_files_uploads: 'str'):
+        """Sets the number_of_files_uploads of this V1Project.
+
+
+        :param number_of_files_uploads: The number_of_files_uploads of this V1Project.  # noqa: E501
+        :type: str
+        """
+
+        self._number_of_files_uploads = number_of_files_uploads
+
+    @property
     def owner_id(self) -> 'str':
         """Gets the owner_id of this V1Project.  # noqa: E501
 
@@ -392,6 +423,27 @@ class V1Project(object):
         """
 
         self._quotas = quotas
+
+    @property
+    def total_size_uploads_bytes(self) -> 'str':
+        """Gets the total_size_uploads_bytes of this V1Project.  # noqa: E501
+
+
+        :return: The total_size_uploads_bytes of this V1Project.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_size_uploads_bytes
+
+    @total_size_uploads_bytes.setter
+    def total_size_uploads_bytes(self, total_size_uploads_bytes: 'str'):
+        """Sets the total_size_uploads_bytes of this V1Project.
+
+
+        :param total_size_uploads_bytes: The total_size_uploads_bytes of this V1Project.  # noqa: E501
+        :type: str
+        """
+
+        self._total_size_uploads_bytes = total_size_uploads_bytes
 
     @property
     def updated_at(self) -> 'datetime':

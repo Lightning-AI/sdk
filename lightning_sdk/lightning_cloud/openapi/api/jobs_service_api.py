@@ -43,47 +43,45 @@ class JobsServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def jobs_service_create_job(self, body: 'CloudspaceIdJobsBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
+    def jobs_service_create_job(self, body: 'ProjectIdJobsBody', project_id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
         """jobs_service_create_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.jobs_service_create_job(body, project_id, cloudspace_id, async_req=True)
+        >>> thread = api.jobs_service_create_job(body, project_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspaceIdJobsBody body: (required)
+        :param ProjectIdJobsBody body: (required)
         :param str project_id: (required)
-        :param str cloudspace_id: (required)
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.jobs_service_create_job_with_http_info(body, project_id, cloudspace_id, **kwargs)  # noqa: E501
+            return self.jobs_service_create_job_with_http_info(body, project_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.jobs_service_create_job_with_http_info(body, project_id, cloudspace_id, **kwargs)  # noqa: E501
+            (data) = self.jobs_service_create_job_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_create_job_with_http_info(self, body: 'CloudspaceIdJobsBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
+    def jobs_service_create_job_with_http_info(self, body: 'ProjectIdJobsBody', project_id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
         """jobs_service_create_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.jobs_service_create_job_with_http_info(body, project_id, cloudspace_id, async_req=True)
+        >>> thread = api.jobs_service_create_job_with_http_info(body, project_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspaceIdJobsBody body: (required)
+        :param ProjectIdJobsBody body: (required)
         :param str project_id: (required)
-        :param str cloudspace_id: (required)
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['body', 'project_id', 'cloudspace_id']  # noqa: E501
+        all_params = ['body', 'project_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -106,18 +104,12 @@ class JobsServiceApi(object):
         if ('project_id' not in params or
                 params['project_id'] is None):
             raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_create_job`")  # noqa: E501
-        # verify the required parameter 'cloudspace_id' is set
-        if ('cloudspace_id' not in params or
-                params['cloudspace_id'] is None):
-            raise ValueError("Missing the required parameter `cloudspace_id` when calling `jobs_service_create_job`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
         if 'project_id' in params:
             path_params['projectId'] = params['project_id']  # noqa: E501
-        if 'cloudspace_id' in params:
-            path_params['cloudspaceId'] = params['cloudspace_id']  # noqa: E501
 
         query_params = []
 
@@ -141,7 +133,7 @@ class JobsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/cloudspaces/{cloudspaceId}/jobs', 'POST',
+            '/v1/projects/{projectId}/jobs', 'POST',
             path_params,
             query_params,
             header_params,
@@ -156,47 +148,47 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_delete_job(self, project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1DeleteJobResponse':  # noqa: E501
+    def jobs_service_delete_job(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DeleteJobResponse':  # noqa: E501
         """jobs_service_delete_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.jobs_service_delete_job(project_id, cloudspace_id, id, async_req=True)
+        >>> thread = api.jobs_service_delete_job(project_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str project_id: (required)
-        :param str cloudspace_id: (required)
         :param str id: (required)
+        :param str cloudspace_id:
         :return: V1DeleteJobResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.jobs_service_delete_job_with_http_info(project_id, cloudspace_id, id, **kwargs)  # noqa: E501
+            return self.jobs_service_delete_job_with_http_info(project_id, id, **kwargs)  # noqa: E501
         else:
-            (data) = self.jobs_service_delete_job_with_http_info(project_id, cloudspace_id, id, **kwargs)  # noqa: E501
+            (data) = self.jobs_service_delete_job_with_http_info(project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_delete_job_with_http_info(self, project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1DeleteJobResponse':  # noqa: E501
+    def jobs_service_delete_job_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DeleteJobResponse':  # noqa: E501
         """jobs_service_delete_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.jobs_service_delete_job_with_http_info(project_id, cloudspace_id, id, async_req=True)
+        >>> thread = api.jobs_service_delete_job_with_http_info(project_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str project_id: (required)
-        :param str cloudspace_id: (required)
         :param str id: (required)
+        :param str cloudspace_id:
         :return: V1DeleteJobResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'id']  # noqa: E501
+        all_params = ['project_id', 'id', 'cloudspace_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -215,10 +207,6 @@ class JobsServiceApi(object):
         if ('project_id' not in params or
                 params['project_id'] is None):
             raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_delete_job`")  # noqa: E501
-        # verify the required parameter 'cloudspace_id' is set
-        if ('cloudspace_id' not in params or
-                params['cloudspace_id'] is None):
-            raise ValueError("Missing the required parameter `cloudspace_id` when calling `jobs_service_delete_job`")  # noqa: E501
         # verify the required parameter 'id' is set
         if ('id' not in params or
                 params['id'] is None):
@@ -229,12 +217,12 @@ class JobsServiceApi(object):
         path_params = {}
         if 'project_id' in params:
             path_params['projectId'] = params['project_id']  # noqa: E501
-        if 'cloudspace_id' in params:
-            path_params['cloudspaceId'] = params['cloudspace_id']  # noqa: E501
         if 'id' in params:
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'cloudspace_id' in params:
+            query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
 
         header_params = {}
 
@@ -250,7 +238,7 @@ class JobsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/cloudspaces/{cloudspaceId}/jobs/{id}', 'DELETE',
+            '/v1/projects/{projectId}/jobs/{id}', 'DELETE',
             path_params,
             query_params,
             header_params,
@@ -265,47 +253,152 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_get_job(self, project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
-        """jobs_service_get_job  # noqa: E501
+    def jobs_service_download_job_logs(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DownloadJobLogsResponse':  # noqa: E501
+        """jobs_service_download_job_logs  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.jobs_service_get_job(project_id, cloudspace_id, id, async_req=True)
+        >>> thread = api.jobs_service_download_job_logs(project_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str project_id: (required)
-        :param str cloudspace_id: (required)
         :param str id: (required)
+        :param str cloudspace_id:
+        :return: V1DownloadJobLogsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_download_job_logs_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_download_job_logs_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_download_job_logs_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DownloadJobLogsResponse':  # noqa: E501
+        """jobs_service_download_job_logs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_download_job_logs_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str cloudspace_id:
+        :return: V1DownloadJobLogsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id', 'cloudspace_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_download_job_logs" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_download_job_logs`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `jobs_service_download_job_logs`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'cloudspace_id' in params:
+            query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/jobs/{id}/download-logs', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1DownloadJobLogsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def jobs_service_get_job(self, project_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
+        """jobs_service_get_job  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_get_job(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str cloudspace_id:
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.jobs_service_get_job_with_http_info(project_id, cloudspace_id, id, **kwargs)  # noqa: E501
+            return self.jobs_service_get_job_with_http_info(project_id, id, **kwargs)  # noqa: E501
         else:
-            (data) = self.jobs_service_get_job_with_http_info(project_id, cloudspace_id, id, **kwargs)  # noqa: E501
+            (data) = self.jobs_service_get_job_with_http_info(project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_get_job_with_http_info(self, project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
+    def jobs_service_get_job_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
         """jobs_service_get_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.jobs_service_get_job_with_http_info(project_id, cloudspace_id, id, async_req=True)
+        >>> thread = api.jobs_service_get_job_with_http_info(project_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str project_id: (required)
-        :param str cloudspace_id: (required)
         :param str id: (required)
+        :param str cloudspace_id:
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'id']  # noqa: E501
+        all_params = ['project_id', 'id', 'cloudspace_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -324,10 +417,6 @@ class JobsServiceApi(object):
         if ('project_id' not in params or
                 params['project_id'] is None):
             raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_get_job`")  # noqa: E501
-        # verify the required parameter 'cloudspace_id' is set
-        if ('cloudspace_id' not in params or
-                params['cloudspace_id'] is None):
-            raise ValueError("Missing the required parameter `cloudspace_id` when calling `jobs_service_get_job`")  # noqa: E501
         # verify the required parameter 'id' is set
         if ('id' not in params or
                 params['id'] is None):
@@ -338,12 +427,12 @@ class JobsServiceApi(object):
         path_params = {}
         if 'project_id' in params:
             path_params['projectId'] = params['project_id']  # noqa: E501
-        if 'cloudspace_id' in params:
-            path_params['cloudspaceId'] = params['cloudspace_id']  # noqa: E501
         if 'id' in params:
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'cloudspace_id' in params:
+            query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
 
         header_params = {}
 
@@ -359,7 +448,7 @@ class JobsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/cloudspaces/{cloudspaceId}/jobs/{id}', 'GET',
+            '/v1/projects/{projectId}/jobs/{id}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -374,45 +463,281 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_list_jobs(self, project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1ListJobsResponse':  # noqa: E501
-        """jobs_service_list_jobs  # noqa: E501
+    def jobs_service_get_job_logs(self, project_id: 'str', id: 'str', **kwargs) -> 'V1JobLogsResponse':  # noqa: E501
+        """jobs_service_get_job_logs  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.jobs_service_list_jobs(project_id, cloudspace_id, async_req=True)
+        >>> thread = api.jobs_service_get_job_logs(project_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str project_id: (required)
-        :param str cloudspace_id: (required)
+        :param str id: (required)
+        :param str cloudspace_id:
+        :param str since:
+        :param str until:
+        :return: V1JobLogsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_get_job_logs_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_get_job_logs_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_get_job_logs_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1JobLogsResponse':  # noqa: E501
+        """jobs_service_get_job_logs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_get_job_logs_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str cloudspace_id:
+        :param str since:
+        :param str until:
+        :return: V1JobLogsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id', 'cloudspace_id', 'since', 'until']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_get_job_logs" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_get_job_logs`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `jobs_service_get_job_logs`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'cloudspace_id' in params:
+            query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
+        if 'since' in params:
+            query_params.append(('since', params['since']))  # noqa: E501
+        if 'until' in params:
+            query_params.append(('until', params['until']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/jobs/{id}/page-logs', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1JobLogsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def jobs_service_get_job_system_metrics(self, project_id: 'str', id: 'str', **kwargs) -> 'V1GetJobSystemMetricsResponse':  # noqa: E501
+        """jobs_service_get_job_system_metrics  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_get_job_system_metrics(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str cloudspace_id:
+        :param datetime start:
+        :param datetime end:
+        :param str frequency:
+        :param bool first_query:
+        :return: V1GetJobSystemMetricsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_get_job_system_metrics_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_get_job_system_metrics_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_get_job_system_metrics_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1GetJobSystemMetricsResponse':  # noqa: E501
+        """jobs_service_get_job_system_metrics  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_get_job_system_metrics_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str cloudspace_id:
+        :param datetime start:
+        :param datetime end:
+        :param str frequency:
+        :param bool first_query:
+        :return: V1GetJobSystemMetricsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id', 'cloudspace_id', 'start', 'end', 'frequency', 'first_query']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_get_job_system_metrics" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_get_job_system_metrics`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `jobs_service_get_job_system_metrics`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'cloudspace_id' in params:
+            query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
+        if 'start' in params:
+            query_params.append(('start', params['start']))  # noqa: E501
+        if 'end' in params:
+            query_params.append(('end', params['end']))  # noqa: E501
+        if 'frequency' in params:
+            query_params.append(('frequency', params['frequency']))  # noqa: E501
+        if 'first_query' in params:
+            query_params.append(('firstQuery', params['first_query']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/jobs/{id}/system-metrics', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetJobSystemMetricsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def jobs_service_list_jobs(self, project_id: 'str', **kwargs) -> 'V1ListJobsResponse':  # noqa: E501
+        """jobs_service_list_jobs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_list_jobs(project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cloudspace_id:
+        :param str user_id:
         :return: V1ListJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.jobs_service_list_jobs_with_http_info(project_id, cloudspace_id, **kwargs)  # noqa: E501
+            return self.jobs_service_list_jobs_with_http_info(project_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.jobs_service_list_jobs_with_http_info(project_id, cloudspace_id, **kwargs)  # noqa: E501
+            (data) = self.jobs_service_list_jobs_with_http_info(project_id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_list_jobs_with_http_info(self, project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1ListJobsResponse':  # noqa: E501
+    def jobs_service_list_jobs_with_http_info(self, project_id: 'str', **kwargs) -> 'V1ListJobsResponse':  # noqa: E501
         """jobs_service_list_jobs  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.jobs_service_list_jobs_with_http_info(project_id, cloudspace_id, async_req=True)
+        >>> thread = api.jobs_service_list_jobs_with_http_info(project_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str project_id: (required)
-        :param str cloudspace_id: (required)
+        :param str cloudspace_id:
+        :param str user_id:
         :return: V1ListJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'user_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -431,20 +756,18 @@ class JobsServiceApi(object):
         if ('project_id' not in params or
                 params['project_id'] is None):
             raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_list_jobs`")  # noqa: E501
-        # verify the required parameter 'cloudspace_id' is set
-        if ('cloudspace_id' not in params or
-                params['cloudspace_id'] is None):
-            raise ValueError("Missing the required parameter `cloudspace_id` when calling `jobs_service_list_jobs`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
         if 'project_id' in params:
             path_params['projectId'] = params['project_id']  # noqa: E501
-        if 'cloudspace_id' in params:
-            path_params['cloudspaceId'] = params['cloudspace_id']  # noqa: E501
 
         query_params = []
+        if 'cloudspace_id' in params:
+            query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
+        if 'user_id' in params:
+            query_params.append(('userId', params['user_id']))  # noqa: E501
 
         header_params = {}
 
@@ -460,7 +783,7 @@ class JobsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/cloudspaces/{cloudspaceId}/jobs', 'GET',
+            '/v1/projects/{projectId}/jobs', 'GET',
             path_params,
             query_params,
             header_params,
@@ -475,18 +798,17 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_update_job(self, body: 'JobsIdBody1', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
+    def jobs_service_update_job(self, body: 'JobsIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
         """jobs_service_update_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.jobs_service_update_job(body, project_id, cloudspace_id, id, async_req=True)
+        >>> thread = api.jobs_service_update_job(body, project_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param JobsIdBody1 body: (required)
         :param str project_id: (required)
-        :param str cloudspace_id: (required)
         :param str id: (required)
         :return: V1Job
                  If the method is called asynchronously,
@@ -494,30 +816,29 @@ class JobsServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.jobs_service_update_job_with_http_info(body, project_id, cloudspace_id, id, **kwargs)  # noqa: E501
+            return self.jobs_service_update_job_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
         else:
-            (data) = self.jobs_service_update_job_with_http_info(body, project_id, cloudspace_id, id, **kwargs)  # noqa: E501
+            (data) = self.jobs_service_update_job_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_update_job_with_http_info(self, body: 'JobsIdBody1', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
+    def jobs_service_update_job_with_http_info(self, body: 'JobsIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
         """jobs_service_update_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.jobs_service_update_job_with_http_info(body, project_id, cloudspace_id, id, async_req=True)
+        >>> thread = api.jobs_service_update_job_with_http_info(body, project_id, id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param JobsIdBody1 body: (required)
         :param str project_id: (required)
-        :param str cloudspace_id: (required)
         :param str id: (required)
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['body', 'project_id', 'cloudspace_id', 'id']  # noqa: E501
+        all_params = ['body', 'project_id', 'id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -540,10 +861,6 @@ class JobsServiceApi(object):
         if ('project_id' not in params or
                 params['project_id'] is None):
             raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_update_job`")  # noqa: E501
-        # verify the required parameter 'cloudspace_id' is set
-        if ('cloudspace_id' not in params or
-                params['cloudspace_id'] is None):
-            raise ValueError("Missing the required parameter `cloudspace_id` when calling `jobs_service_update_job`")  # noqa: E501
         # verify the required parameter 'id' is set
         if ('id' not in params or
                 params['id'] is None):
@@ -554,8 +871,6 @@ class JobsServiceApi(object):
         path_params = {}
         if 'project_id' in params:
             path_params['projectId'] = params['project_id']  # noqa: E501
-        if 'cloudspace_id' in params:
-            path_params['cloudspaceId'] = params['cloudspace_id']  # noqa: E501
         if 'id' in params:
             path_params['id'] = params['id']  # noqa: E501
 
@@ -581,7 +896,7 @@ class JobsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/cloudspaces/{cloudspaceId}/jobs/{id}', 'PUT',
+            '/v1/projects/{projectId}/jobs/{id}', 'PUT',
             path_params,
             query_params,
             header_params,

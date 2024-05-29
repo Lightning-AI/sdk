@@ -47,6 +47,7 @@ class V1Endpoint(object):
         'custom_domain': 'str',
         'domains': 'list[str]',
         'id': 'str',
+        'job': 'V1UpstreamJob',
         'managed': 'V1UpstreamManaged',
         'name': 'str',
         'openai': 'V1UpstreamOpenAI',
@@ -64,6 +65,7 @@ class V1Endpoint(object):
         'custom_domain': 'customDomain',
         'domains': 'domains',
         'id': 'id',
+        'job': 'job',
         'managed': 'managed',
         'name': 'name',
         'openai': 'openai',
@@ -74,7 +76,7 @@ class V1Endpoint(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, domains: 'list[str]' =None, id: 'str' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, domains: 'list[str]' =None, id: 'str' =None, job: 'V1UpstreamJob' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Endpoint - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
@@ -82,6 +84,7 @@ class V1Endpoint(object):
         self._custom_domain = None
         self._domains = None
         self._id = None
+        self._job = None
         self._managed = None
         self._name = None
         self._openai = None
@@ -103,6 +106,8 @@ class V1Endpoint(object):
             self.domains = domains
         if id is not None:
             self.id = id
+        if job is not None:
+            self.job = job
         if managed is not None:
             self.managed = managed
         if name is not None:
@@ -245,6 +250,27 @@ class V1Endpoint(object):
         """
 
         self._id = id
+
+    @property
+    def job(self) -> 'V1UpstreamJob':
+        """Gets the job of this V1Endpoint.  # noqa: E501
+
+
+        :return: The job of this V1Endpoint.  # noqa: E501
+        :rtype: V1UpstreamJob
+        """
+        return self._job
+
+    @job.setter
+    def job(self, job: 'V1UpstreamJob'):
+        """Sets the job of this V1Endpoint.
+
+
+        :param job: The job of this V1Endpoint.  # noqa: E501
+        :type: V1UpstreamJob
+        """
+
+        self._job = job
 
     @property
     def managed(self) -> 'V1UpstreamManaged':

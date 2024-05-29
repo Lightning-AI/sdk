@@ -60,6 +60,7 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
         'gcp': 'bool',
+        'import_from_studio_into_about': 'bool',
         'interruptible_instances': 'bool',
         'jobs_init': 'bool',
         'jobs_v2': 'bool',
@@ -70,7 +71,6 @@ class V1UserFeatures(object):
         'mmt_app': 'bool',
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
-        'platform_docs': 'bool',
         'plugin_biz_chat': 'bool',
         'plugin_distributed': 'bool',
         'plugin_fiftyone': 'bool',
@@ -89,7 +89,6 @@ class V1UserFeatures(object):
         'pricing_updates': 'bool',
         'product_generator': 'bool',
         'project_selector': 'bool',
-        'public_studio_drive': 'bool',
         'publish_ai_app': 'bool',
         'quests': 'bool',
         'restart_ide_on_hang': 'bool',
@@ -125,6 +124,7 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
         'gcp': 'gcp',
+        'import_from_studio_into_about': 'importFromStudioIntoAbout',
         'interruptible_instances': 'interruptibleInstances',
         'jobs_init': 'jobsInit',
         'jobs_v2': 'jobsV2',
@@ -135,7 +135,6 @@ class V1UserFeatures(object):
         'mmt_app': 'mmtApp',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
-        'platform_docs': 'platformDocs',
         'plugin_biz_chat': 'pluginBizChat',
         'plugin_distributed': 'pluginDistributed',
         'plugin_fiftyone': 'pluginFiftyone',
@@ -154,7 +153,6 @@ class V1UserFeatures(object):
         'pricing_updates': 'pricingUpdates',
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
-        'public_studio_drive': 'publicStudioDrive',
         'publish_ai_app': 'publishAiApp',
         'quests': 'quests',
         'restart_ide_on_hang': 'restartIdeOnHang',
@@ -170,7 +168,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, platform_docs: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, public_studio_drive: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_mouse_tracking: 'bool' =None, collab_screen_sharing: 'bool' =None, collab_v2: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, import_from_studio_into_about: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, quests: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._apt_get_v2 = None
         self._aws_trainium = None
@@ -191,6 +189,7 @@ class V1UserFeatures(object):
         self._featured_studios_admin = None
         self._filesystem_optimisation = None
         self._gcp = None
+        self._import_from_studio_into_about = None
         self._interruptible_instances = None
         self._jobs_init = None
         self._jobs_v2 = None
@@ -201,7 +200,6 @@ class V1UserFeatures(object):
         self._mmt_app = None
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
-        self._platform_docs = None
         self._plugin_biz_chat = None
         self._plugin_distributed = None
         self._plugin_fiftyone = None
@@ -220,7 +218,6 @@ class V1UserFeatures(object):
         self._pricing_updates = None
         self._product_generator = None
         self._project_selector = None
-        self._public_studio_drive = None
         self._publish_ai_app = None
         self._quests = None
         self._restart_ide_on_hang = None
@@ -273,6 +270,8 @@ class V1UserFeatures(object):
             self.filesystem_optimisation = filesystem_optimisation
         if gcp is not None:
             self.gcp = gcp
+        if import_from_studio_into_about is not None:
+            self.import_from_studio_into_about = import_from_studio_into_about
         if interruptible_instances is not None:
             self.interruptible_instances = interruptible_instances
         if jobs_init is not None:
@@ -293,8 +292,6 @@ class V1UserFeatures(object):
             self.mmt_strategy_selector = mmt_strategy_selector
         if mountpoint_s3 is not None:
             self.mountpoint_s3 = mountpoint_s3
-        if platform_docs is not None:
-            self.platform_docs = platform_docs
         if plugin_biz_chat is not None:
             self.plugin_biz_chat = plugin_biz_chat
         if plugin_distributed is not None:
@@ -331,8 +328,6 @@ class V1UserFeatures(object):
             self.product_generator = product_generator
         if project_selector is not None:
             self.project_selector = project_selector
-        if public_studio_drive is not None:
-            self.public_studio_drive = public_studio_drive
         if publish_ai_app is not None:
             self.publish_ai_app = publish_ai_app
         if quests is not None:
@@ -760,6 +755,27 @@ class V1UserFeatures(object):
         self._gcp = gcp
 
     @property
+    def import_from_studio_into_about(self) -> 'bool':
+        """Gets the import_from_studio_into_about of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The import_from_studio_into_about of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._import_from_studio_into_about
+
+    @import_from_studio_into_about.setter
+    def import_from_studio_into_about(self, import_from_studio_into_about: 'bool'):
+        """Sets the import_from_studio_into_about of this V1UserFeatures.
+
+
+        :param import_from_studio_into_about: The import_from_studio_into_about of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._import_from_studio_into_about = import_from_studio_into_about
+
+    @property
     def interruptible_instances(self) -> 'bool':
         """Gets the interruptible_instances of this V1UserFeatures.  # noqa: E501
 
@@ -968,27 +984,6 @@ class V1UserFeatures(object):
         """
 
         self._mountpoint_s3 = mountpoint_s3
-
-    @property
-    def platform_docs(self) -> 'bool':
-        """Gets the platform_docs of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The platform_docs of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._platform_docs
-
-    @platform_docs.setter
-    def platform_docs(self, platform_docs: 'bool'):
-        """Sets the platform_docs of this V1UserFeatures.
-
-
-        :param platform_docs: The platform_docs of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._platform_docs = platform_docs
 
     @property
     def plugin_biz_chat(self) -> 'bool':
@@ -1367,27 +1362,6 @@ class V1UserFeatures(object):
         """
 
         self._project_selector = project_selector
-
-    @property
-    def public_studio_drive(self) -> 'bool':
-        """Gets the public_studio_drive of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The public_studio_drive of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._public_studio_drive
-
-    @public_studio_drive.setter
-    def public_studio_drive(self, public_studio_drive: 'bool'):
-        """Sets the public_studio_drive of this V1UserFeatures.
-
-
-        :param public_studio_drive: The public_studio_drive of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._public_studio_drive = public_studio_drive
 
     @property
     def publish_ai_app(self) -> 'bool':

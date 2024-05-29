@@ -48,6 +48,7 @@ class V1LitPage(object):
         'creator_id': 'str',
         'display_content_from_id': 'str',
         'display_published_studio_id': 'str',
+        'feature_flag': 'str',
         'id': 'str',
         'order': 'int',
         'parent_id': 'str',
@@ -67,6 +68,7 @@ class V1LitPage(object):
         'creator_id': 'creatorId',
         'display_content_from_id': 'displayContentFromId',
         'display_published_studio_id': 'displayPublishedStudioId',
+        'feature_flag': 'featureFlag',
         'id': 'id',
         'order': 'order',
         'parent_id': 'parentId',
@@ -78,7 +80,7 @@ class V1LitPage(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, category: 'str' =None, children: 'list[V1LitPage]' =None, content: 'str' =None, created_at: 'datetime' =None, creator_id: 'str' =None, display_content_from_id: 'str' =None, display_published_studio_id: 'str' =None, id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, published: 'bool' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, category: 'str' =None, children: 'list[V1LitPage]' =None, content: 'str' =None, created_at: 'datetime' =None, creator_id: 'str' =None, display_content_from_id: 'str' =None, display_published_studio_id: 'str' =None, feature_flag: 'str' =None, id: 'str' =None, order: 'int' =None, parent_id: 'str' =None, path: 'str' =None, published: 'bool' =None, resource_id: 'str' =None, resource_type: 'str' =None, type: 'V1LitPageType' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1LitPage - a model defined in Swagger"""  # noqa: E501
         self._category = None
         self._children = None
@@ -87,6 +89,7 @@ class V1LitPage(object):
         self._creator_id = None
         self._display_content_from_id = None
         self._display_published_studio_id = None
+        self._feature_flag = None
         self._id = None
         self._order = None
         self._parent_id = None
@@ -111,6 +114,8 @@ class V1LitPage(object):
             self.display_content_from_id = display_content_from_id
         if display_published_studio_id is not None:
             self.display_published_studio_id = display_published_studio_id
+        if feature_flag is not None:
+            self.feature_flag = feature_flag
         if id is not None:
             self.id = id
         if order is not None:
@@ -276,6 +281,27 @@ class V1LitPage(object):
         """
 
         self._display_published_studio_id = display_published_studio_id
+
+    @property
+    def feature_flag(self) -> 'str':
+        """Gets the feature_flag of this V1LitPage.  # noqa: E501
+
+
+        :return: The feature_flag of this V1LitPage.  # noqa: E501
+        :rtype: str
+        """
+        return self._feature_flag
+
+    @feature_flag.setter
+    def feature_flag(self, feature_flag: 'str'):
+        """Sets the feature_flag of this V1LitPage.
+
+
+        :param feature_flag: The feature_flag of this V1LitPage.  # noqa: E501
+        :type: str
+        """
+
+        self._feature_flag = feature_flag
 
     @property
     def id(self) -> 'str':

@@ -43,30 +43,30 @@ class Validate(object):
     swagger_types = {
         'aws': 'V1AwsDataConnection',
         'check_is_public': 'bool',
-        'cluster_id': 'str',
+        'cluster_ids': 'list[str]',
         'gcp': 'V1GcpDataConnection'
     }
 
     attribute_map = {
         'aws': 'aws',
         'check_is_public': 'checkIsPublic',
-        'cluster_id': 'clusterId',
+        'cluster_ids': 'clusterIds',
         'gcp': 'gcp'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, check_is_public: 'bool' =None, cluster_id: 'str' =None, gcp: 'V1GcpDataConnection' =None):  # noqa: E501
+    def __init__(self, aws: 'V1AwsDataConnection' =None, check_is_public: 'bool' =None, cluster_ids: 'list[str]' =None, gcp: 'V1GcpDataConnection' =None):  # noqa: E501
         """Validate - a model defined in Swagger"""  # noqa: E501
         self._aws = None
         self._check_is_public = None
-        self._cluster_id = None
+        self._cluster_ids = None
         self._gcp = None
         self.discriminator = None
         if aws is not None:
             self.aws = aws
         if check_is_public is not None:
             self.check_is_public = check_is_public
-        if cluster_id is not None:
-            self.cluster_id = cluster_id
+        if cluster_ids is not None:
+            self.cluster_ids = cluster_ids
         if gcp is not None:
             self.gcp = gcp
 
@@ -113,25 +113,25 @@ class Validate(object):
         self._check_is_public = check_is_public
 
     @property
-    def cluster_id(self) -> 'str':
-        """Gets the cluster_id of this Validate.  # noqa: E501
+    def cluster_ids(self) -> 'list[str]':
+        """Gets the cluster_ids of this Validate.  # noqa: E501
 
 
-        :return: The cluster_id of this Validate.  # noqa: E501
-        :rtype: str
+        :return: The cluster_ids of this Validate.  # noqa: E501
+        :rtype: list[str]
         """
-        return self._cluster_id
+        return self._cluster_ids
 
-    @cluster_id.setter
-    def cluster_id(self, cluster_id: 'str'):
-        """Sets the cluster_id of this Validate.
+    @cluster_ids.setter
+    def cluster_ids(self, cluster_ids: 'list[str]'):
+        """Sets the cluster_ids of this Validate.
 
 
-        :param cluster_id: The cluster_id of this Validate.  # noqa: E501
-        :type: str
+        :param cluster_ids: The cluster_ids of this Validate.  # noqa: E501
+        :type: list[str]
         """
 
-        self._cluster_id = cluster_id
+        self._cluster_ids = cluster_ids
 
     @property
     def gcp(self) -> 'V1GcpDataConnection':

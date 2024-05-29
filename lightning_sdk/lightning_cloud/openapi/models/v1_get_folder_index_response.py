@@ -42,6 +42,7 @@ class V1GetFolderIndexResponse(object):
     """
     swagger_types = {
         'child_folder_names': 'list[str]',
+        'folder_cluster_mappings': 'dict(str, V1ClusterNames)',
         'last_modified_at': 'datetime',
         'local_file_count': 'str',
         'nested_file_count': 'str',
@@ -53,6 +54,7 @@ class V1GetFolderIndexResponse(object):
 
     attribute_map = {
         'child_folder_names': 'childFolderNames',
+        'folder_cluster_mappings': 'folderClusterMappings',
         'last_modified_at': 'lastModifiedAt',
         'local_file_count': 'localFileCount',
         'nested_file_count': 'nestedFileCount',
@@ -62,9 +64,10 @@ class V1GetFolderIndexResponse(object):
         'status': 'status'
     }
 
-    def __init__(self, child_folder_names: 'list[str]' =None, last_modified_at: 'datetime' =None, local_file_count: 'str' =None, nested_file_count: 'str' =None, page_size: 'int' =None, path: 'str' =None, size_bytes: 'str' =None, status: 'V1FolderIndexStatus' =None):  # noqa: E501
+    def __init__(self, child_folder_names: 'list[str]' =None, folder_cluster_mappings: 'dict(str, V1ClusterNames)' =None, last_modified_at: 'datetime' =None, local_file_count: 'str' =None, nested_file_count: 'str' =None, page_size: 'int' =None, path: 'str' =None, size_bytes: 'str' =None, status: 'V1FolderIndexStatus' =None):  # noqa: E501
         """V1GetFolderIndexResponse - a model defined in Swagger"""  # noqa: E501
         self._child_folder_names = None
+        self._folder_cluster_mappings = None
         self._last_modified_at = None
         self._local_file_count = None
         self._nested_file_count = None
@@ -75,6 +78,8 @@ class V1GetFolderIndexResponse(object):
         self.discriminator = None
         if child_folder_names is not None:
             self.child_folder_names = child_folder_names
+        if folder_cluster_mappings is not None:
+            self.folder_cluster_mappings = folder_cluster_mappings
         if last_modified_at is not None:
             self.last_modified_at = last_modified_at
         if local_file_count is not None:
@@ -110,6 +115,27 @@ class V1GetFolderIndexResponse(object):
         """
 
         self._child_folder_names = child_folder_names
+
+    @property
+    def folder_cluster_mappings(self) -> 'dict(str, V1ClusterNames)':
+        """Gets the folder_cluster_mappings of this V1GetFolderIndexResponse.  # noqa: E501
+
+
+        :return: The folder_cluster_mappings of this V1GetFolderIndexResponse.  # noqa: E501
+        :rtype: dict(str, V1ClusterNames)
+        """
+        return self._folder_cluster_mappings
+
+    @folder_cluster_mappings.setter
+    def folder_cluster_mappings(self, folder_cluster_mappings: 'dict(str, V1ClusterNames)'):
+        """Sets the folder_cluster_mappings of this V1GetFolderIndexResponse.
+
+
+        :param folder_cluster_mappings: The folder_cluster_mappings of this V1GetFolderIndexResponse.  # noqa: E501
+        :type: dict(str, V1ClusterNames)
+        """
+
+        self._folder_cluster_mappings = folder_cluster_mappings
 
     @property
     def last_modified_at(self) -> 'datetime':

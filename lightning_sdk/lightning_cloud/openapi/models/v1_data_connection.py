@@ -41,6 +41,7 @@ class V1DataConnection(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'access_cluster_ids': 'list[str]',
         'accessible': 'bool',
         'aws': 'V1AwsDataConnection',
         'cluster_id': 'str',
@@ -48,14 +49,17 @@ class V1DataConnection(object):
         'id': 'str',
         'index': 'V1Index',
         'name': 'str',
+        'number_of_files': 'str',
         'project_id': 'str',
         'run_cmds': 'list[str]',
         'snowflake': 'V1SnowflakeDataConnection',
+        'total_size_bytes': 'str',
         'type': 'str',
         'writable': 'bool'
     }
 
     attribute_map = {
+        'access_cluster_ids': 'accessClusterIds',
         'accessible': 'accessible',
         'aws': 'aws',
         'cluster_id': 'clusterId',
@@ -63,15 +67,18 @@ class V1DataConnection(object):
         'id': 'id',
         'index': 'index',
         'name': 'name',
+        'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
         'run_cmds': 'runCmds',
         'snowflake': 'snowflake',
+        'total_size_bytes': 'totalSizeBytes',
         'type': 'type',
         'writable': 'writable'
     }
 
-    def __init__(self, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, name: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, type: 'str' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, total_size_bytes: 'str' =None, type: 'str' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
+        self._access_cluster_ids = None
         self._accessible = None
         self._aws = None
         self._cluster_id = None
@@ -79,12 +86,16 @@ class V1DataConnection(object):
         self._id = None
         self._index = None
         self._name = None
+        self._number_of_files = None
         self._project_id = None
         self._run_cmds = None
         self._snowflake = None
+        self._total_size_bytes = None
         self._type = None
         self._writable = None
         self.discriminator = None
+        if access_cluster_ids is not None:
+            self.access_cluster_ids = access_cluster_ids
         if accessible is not None:
             self.accessible = accessible
         if aws is not None:
@@ -99,16 +110,41 @@ class V1DataConnection(object):
             self.index = index
         if name is not None:
             self.name = name
+        if number_of_files is not None:
+            self.number_of_files = number_of_files
         if project_id is not None:
             self.project_id = project_id
         if run_cmds is not None:
             self.run_cmds = run_cmds
         if snowflake is not None:
             self.snowflake = snowflake
+        if total_size_bytes is not None:
+            self.total_size_bytes = total_size_bytes
         if type is not None:
             self.type = type
         if writable is not None:
             self.writable = writable
+
+    @property
+    def access_cluster_ids(self) -> 'list[str]':
+        """Gets the access_cluster_ids of this V1DataConnection.  # noqa: E501
+
+
+        :return: The access_cluster_ids of this V1DataConnection.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._access_cluster_ids
+
+    @access_cluster_ids.setter
+    def access_cluster_ids(self, access_cluster_ids: 'list[str]'):
+        """Sets the access_cluster_ids of this V1DataConnection.
+
+
+        :param access_cluster_ids: The access_cluster_ids of this V1DataConnection.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._access_cluster_ids = access_cluster_ids
 
     @property
     def accessible(self) -> 'bool':
@@ -258,6 +294,27 @@ class V1DataConnection(object):
         self._name = name
 
     @property
+    def number_of_files(self) -> 'str':
+        """Gets the number_of_files of this V1DataConnection.  # noqa: E501
+
+
+        :return: The number_of_files of this V1DataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._number_of_files
+
+    @number_of_files.setter
+    def number_of_files(self, number_of_files: 'str'):
+        """Sets the number_of_files of this V1DataConnection.
+
+
+        :param number_of_files: The number_of_files of this V1DataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._number_of_files = number_of_files
+
+    @property
     def project_id(self) -> 'str':
         """Gets the project_id of this V1DataConnection.  # noqa: E501
 
@@ -319,6 +376,27 @@ class V1DataConnection(object):
         """
 
         self._snowflake = snowflake
+
+    @property
+    def total_size_bytes(self) -> 'str':
+        """Gets the total_size_bytes of this V1DataConnection.  # noqa: E501
+
+
+        :return: The total_size_bytes of this V1DataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_size_bytes
+
+    @total_size_bytes.setter
+    def total_size_bytes(self, total_size_bytes: 'str'):
+        """Sets the total_size_bytes of this V1DataConnection.
+
+
+        :param total_size_bytes: The total_size_bytes of this V1DataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._total_size_bytes = total_size_bytes
 
     @property
     def type(self) -> 'str':

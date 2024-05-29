@@ -41,24 +41,76 @@ class ProjectIdMembershipsBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'add_to_org': 'bool',
+        'email': 'str',
         'role_ids': 'list[str]',
         'user_id': 'str'
     }
 
     attribute_map = {
+        'add_to_org': 'addToOrg',
+        'email': 'email',
         'role_ids': 'roleIds',
         'user_id': 'userId'
     }
 
-    def __init__(self, role_ids: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, add_to_org: 'bool' =None, email: 'str' =None, role_ids: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """ProjectIdMembershipsBody - a model defined in Swagger"""  # noqa: E501
+        self._add_to_org = None
+        self._email = None
         self._role_ids = None
         self._user_id = None
         self.discriminator = None
+        if add_to_org is not None:
+            self.add_to_org = add_to_org
+        if email is not None:
+            self.email = email
         if role_ids is not None:
             self.role_ids = role_ids
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def add_to_org(self) -> 'bool':
+        """Gets the add_to_org of this ProjectIdMembershipsBody.  # noqa: E501
+
+
+        :return: The add_to_org of this ProjectIdMembershipsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._add_to_org
+
+    @add_to_org.setter
+    def add_to_org(self, add_to_org: 'bool'):
+        """Sets the add_to_org of this ProjectIdMembershipsBody.
+
+
+        :param add_to_org: The add_to_org of this ProjectIdMembershipsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._add_to_org = add_to_org
+
+    @property
+    def email(self) -> 'str':
+        """Gets the email of this ProjectIdMembershipsBody.  # noqa: E501
+
+
+        :return: The email of this ProjectIdMembershipsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._email
+
+    @email.setter
+    def email(self, email: 'str'):
+        """Sets the email of this ProjectIdMembershipsBody.
+
+
+        :param email: The email of this ProjectIdMembershipsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._email = email
 
     @property
     def role_ids(self) -> 'list[str]':

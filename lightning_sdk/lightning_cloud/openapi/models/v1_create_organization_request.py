@@ -47,7 +47,8 @@ class V1CreateOrganizationRequest(object):
         'domain': 'str',
         'email': 'str',
         'location': 'str',
-        'twitter_username': 'str'
+        'twitter_username': 'str',
+        'type': 'str'
     }
 
     attribute_map = {
@@ -57,10 +58,11 @@ class V1CreateOrganizationRequest(object):
         'domain': 'domain',
         'email': 'email',
         'location': 'location',
-        'twitter_username': 'twitterUsername'
+        'twitter_username': 'twitterUsername',
+        'type': 'type'
     }
 
-    def __init__(self, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, location: 'str' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, location: 'str' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
         """V1CreateOrganizationRequest - a model defined in Swagger"""  # noqa: E501
         self._auto_join_domains = None
         self._description = None
@@ -69,6 +71,7 @@ class V1CreateOrganizationRequest(object):
         self._email = None
         self._location = None
         self._twitter_username = None
+        self._type = None
         self.discriminator = None
         if auto_join_domains is not None:
             self.auto_join_domains = auto_join_domains
@@ -84,6 +87,8 @@ class V1CreateOrganizationRequest(object):
             self.location = location
         if twitter_username is not None:
             self.twitter_username = twitter_username
+        if type is not None:
+            self.type = type
 
     @property
     def auto_join_domains(self) -> 'list[str]':
@@ -231,6 +236,27 @@ class V1CreateOrganizationRequest(object):
         """
 
         self._twitter_username = twitter_username
+
+    @property
+    def type(self) -> 'str':
+        """Gets the type of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The type of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._type
+
+    @type.setter
+    def type(self, type: 'str'):
+        """Sets the type of this V1CreateOrganizationRequest.
+
+
+        :param type: The type of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._type = type
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
