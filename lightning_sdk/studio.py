@@ -271,7 +271,7 @@ class Studio:
 
     @property
     def auto_shutdown_time(self) -> int:
-        """Returns the time in settings a Studio has to be idle for auto-shutdown to kick in (if enabled)."""
+        """Returns the time in seconds a Studio has to be idle for auto-shutdown to kick in (if enabled)."""
         return self._studio.code_config.idle_shutdown_seconds
 
     @auto_shutdown_time.setter
