@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import warnings
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional, Protocol, runtime_checkable
 
@@ -82,10 +83,20 @@ class _Plugin(ABC):
 
 
 class Plugin(_Plugin):
-    """Plugin class to handle arbitrary plugins on the Studio."""
+    """Plugin class to handle arbitrary plugins on the Studio.
+
+    While plugins can be installed and uninstalled via the SDK, most of them are designed to be run from the Studio's UI
+    only. Calling run just won't do anything in most cases.
+
+    """
 
     def run(self) -> str:
         """Executes the command of the plugin on the Studio."""
+        warnings.warn(
+            "While plugins can be installed and uninstalled via the SDK, most of them are designed to "
+            "be run from the Studio's UI only. "
+            "Calling run just won't do anything in most cases."
+        )
         if self._has_been_executed:
             logging.info("This plugin has already been executed and can be run only once per Studio.")
             return None
