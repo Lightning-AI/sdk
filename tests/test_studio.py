@@ -481,3 +481,12 @@ def test_str(
     assert str(studio) == expected
 
     Studio._skip_init = False
+
+
+def studio_autoshutdown(internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_switch_mocker):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+    studio.auto_shutdown
+    studio.auto_shutdown_time
+
+    studio.auto_shutdown = False
+    studio.auto_shutdown_time = 42

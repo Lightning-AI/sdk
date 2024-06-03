@@ -1,4 +1,5 @@
 import os
+import warnings
 from typing import TYPE_CHECKING, Any, Mapping, Optional, Tuple, Union
 
 from lightning_sdk.api.studio_api import StudioApi
@@ -257,6 +258,31 @@ class Studio:
         )
 
     @property
+    def auto_shutdown(self) -> bool:
+        """Returns if a Studio has auto-shutdown enabled."""
+        return not self._studio.code_config.disable_auto_shutdown
+
+    @auto_shutdown.setter
+    def auto_shutdown(self, value: bool) -> None:
+        if not value and self.machine == Machine.CPU:
+            warnings.warn("Disabling auto-shutdown will convert the Studio from free to paid!")
+        self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, enabled=value, studio=self._studio)
+        self._update_studio_reference()
+
+    @property
+    def auto_shutdown_time(self) -> int:
+        """Returns the time in settings a Studio has to be idle for auto-shutdown to kick in (if enabled)."""
+        return self._studio.code_config.idle_shutdown_seconds
+
+    @auto_shutdown_time.setter
+    def auto_shutdown_time(self, value: int) -> None:
+        warnings.warn("Setting auto-shutdown time will convert the Studio from free to paid!")
+        self._studio_api.update_autoshutdown(
+            self._studio.id, self._teamspace.id, idle_shutdown_seconds=value, studio=self._studio
+        )
+        self._update_studio_reference()
+
+    @property
     def available_plugins(self) -> Mapping[str, str]:
         """All available plugins to install in the current Studio."""
         return self._studio_api.list_available_plugins(self._studio.id, self._teamspace.id)
@@ -341,6 +367,9 @@ class Studio:
     def __str__(self) -> str:
         """Returns reader friendly representation."""
         return repr(self)
+
+    def _update_studio_reference(self) -> None:
+        self._studio = self._studio_api.get_studio_by_id(studio_id=self._studio.id, teamspace_id=self._teamspace.id)
 
 
 def _internal_status_to_external_status(internal_status: str) -> Status:

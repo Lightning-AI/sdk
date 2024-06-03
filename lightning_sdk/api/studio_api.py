@@ -320,6 +320,28 @@ class StudioApi:
 
             time.sleep(1)
 
+    def update_autoshutdown(
+        self,
+        studio_id: str,
+        teamspace_id: str,
+        studio: V1CloudSpace,
+        enabled: Optional[bool] = None,
+        idle_shutdown_seconds: int = 0,
+    ) -> None:
+        """Update the autoshutdown time of the given Studio."""
+        if enabled is None:
+            enabled = not studio.code_config.disable_auto_shutdown
+        body = IdCodeconfigBody(
+            disable_auto_shutdown=not enabled,
+            idle_shutdown_seconds=idle_shutdown_seconds,
+            compute_config=studio.code_config.compute_config,
+        )
+        self._client.cloud_space_service_update_cloud_space_instance_config(
+            id=studio_id,
+            project_id=teamspace_id,
+            body=body,
+        )
+
     def duplicate_studio(self, studio_id: str, teamspace_id: str, target_teamspace_id: str) -> Dict[str, str]:
         """Duplicates the given Studio from a given Teamspace into a given target Teamspace."""
         target_teamspace = self._client.projects_service_get_project(target_teamspace_id)
