@@ -43,6 +43,7 @@ class V1ManagedModel(object):
     swagger_types = {
         'completion_token_price': 'float',
         'description': 'str',
+        'endpoint_id': 'str',
         'id': 'str',
         'name': 'str',
         'prompt_token_price': 'float'
@@ -51,15 +52,17 @@ class V1ManagedModel(object):
     attribute_map = {
         'completion_token_price': 'completionTokenPrice',
         'description': 'description',
+        'endpoint_id': 'endpointId',
         'id': 'id',
         'name': 'name',
         'prompt_token_price': 'promptTokenPrice'
     }
 
-    def __init__(self, completion_token_price: 'float' =None, description: 'str' =None, id: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None):  # noqa: E501
+    def __init__(self, completion_token_price: 'float' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._completion_token_price = None
         self._description = None
+        self._endpoint_id = None
         self._id = None
         self._name = None
         self._prompt_token_price = None
@@ -68,6 +71,8 @@ class V1ManagedModel(object):
             self.completion_token_price = completion_token_price
         if description is not None:
             self.description = description
+        if endpoint_id is not None:
+            self.endpoint_id = endpoint_id
         if id is not None:
             self.id = id
         if name is not None:
@@ -116,6 +121,27 @@ class V1ManagedModel(object):
         """
 
         self._description = description
+
+    @property
+    def endpoint_id(self) -> 'str':
+        """Gets the endpoint_id of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The endpoint_id of this V1ManagedModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._endpoint_id
+
+    @endpoint_id.setter
+    def endpoint_id(self, endpoint_id: 'str'):
+        """Sets the endpoint_id of this V1ManagedModel.
+
+
+        :param endpoint_id: The endpoint_id of this V1ManagedModel.  # noqa: E501
+        :type: str
+        """
+
+        self._endpoint_id = endpoint_id
 
     @property
     def id(self) -> 'str':

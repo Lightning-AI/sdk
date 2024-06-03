@@ -64,7 +64,8 @@ class V1ClusterAccelerator(object):
         'quota_utilization': 'str',
         'quota_value': 'str',
         'resources': 'V1Resources',
-        'slug': 'str'
+        'slug': 'str',
+        'spot_price': 'float'
     }
 
     attribute_map = {
@@ -91,10 +92,11 @@ class V1ClusterAccelerator(object):
         'quota_utilization': 'quotaUtilization',
         'quota_value': 'quotaValue',
         'resources': 'resources',
-        'slug': 'slug'
+        'slug': 'slug',
+        'spot_price': 'spotPrice'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_zones: 'list[str]' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_zones: 'list[str]' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -120,6 +122,7 @@ class V1ClusterAccelerator(object):
         self._quota_value = None
         self._resources = None
         self._slug = None
+        self._spot_price = None
         self.discriminator = None
         if accelerator_type is not None:
             self.accelerator_type = accelerator_type
@@ -169,6 +172,8 @@ class V1ClusterAccelerator(object):
             self.resources = resources
         if slug is not None:
             self.slug = slug
+        if spot_price is not None:
+            self.spot_price = spot_price
 
     @property
     def accelerator_type(self) -> 'str':
@@ -673,6 +678,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._slug = slug
+
+    @property
+    def spot_price(self) -> 'float':
+        """Gets the spot_price of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The spot_price of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: float
+        """
+        return self._spot_price
+
+    @spot_price.setter
+    def spot_price(self, spot_price: 'float'):
+        """Sets the spot_price of this V1ClusterAccelerator.
+
+
+        :param spot_price: The spot_price of this V1ClusterAccelerator.  # noqa: E501
+        :type: float
+        """
+
+        self._spot_price = spot_price
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

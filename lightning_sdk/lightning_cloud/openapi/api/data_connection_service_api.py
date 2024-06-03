@@ -802,7 +802,7 @@ class DataConnectionServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def data_connection_service_refresh_data_connection_index(self, body: 'IdIndexBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1RefreshIndexResponse':  # noqa: E501
+    def data_connection_service_refresh_data_connection_index(self, body: 'IdIndexBody2', project_id: 'str', id: 'str', **kwargs) -> 'V1RefreshIndexResponse':  # noqa: E501
         """data_connection_service_refresh_data_connection_index  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -811,7 +811,7 @@ class DataConnectionServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdIndexBody1 body: (required)
+        :param IdIndexBody2 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1RefreshIndexResponse
@@ -825,7 +825,7 @@ class DataConnectionServiceApi(object):
             (data) = self.data_connection_service_refresh_data_connection_index_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def data_connection_service_refresh_data_connection_index_with_http_info(self, body: 'IdIndexBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1RefreshIndexResponse':  # noqa: E501
+    def data_connection_service_refresh_data_connection_index_with_http_info(self, body: 'IdIndexBody2', project_id: 'str', id: 'str', **kwargs) -> 'V1RefreshIndexResponse':  # noqa: E501
         """data_connection_service_refresh_data_connection_index  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -834,7 +834,7 @@ class DataConnectionServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdIndexBody1 body: (required)
+        :param IdIndexBody2 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1RefreshIndexResponse
