@@ -485,8 +485,14 @@ def test_str(
 
 def studio_autoshutdown(internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_switch_mocker):
     studio = Studio("st-abc", "ts-abc", "org-abc")
+
+    # TODO: remove auto_shutdown after proper deprecation phase
+    studio.auto_sleep
     studio.auto_shutdown
+    studio.auto_sleep_time
     studio.auto_shutdown_time
 
+    studio.auto_sleep = False
     studio.auto_shutdown = False
+    studio.auto_sleep_time = 42
     studio.auto_shutdown_time = 42

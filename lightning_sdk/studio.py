@@ -258,29 +258,49 @@ class Studio:
         )
 
     @property
-    def auto_shutdown(self) -> bool:
-        """Returns if a Studio has auto-shutdown enabled."""
+    def auto_sleep(self) -> bool:
+        """Returns if a Studio has auto-sleep enabled."""
         return not self._studio.code_config.disable_auto_shutdown
 
-    @auto_shutdown.setter
-    def auto_shutdown(self, value: bool) -> None:
+    @auto_sleep.setter
+    def auto_sleep(self, value: bool) -> None:
         if not value and self.machine == Machine.CPU:
-            warnings.warn("Disabling auto-shutdown will convert the Studio from free to paid!")
+            warnings.warn("Disabling auto-sleep will convert the Studio from free to paid!")
         self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, enabled=value, studio=self._studio)
         self._update_studio_reference()
 
     @property
-    def auto_shutdown_time(self) -> int:
-        """Returns the time in seconds a Studio has to be idle for auto-shutdown to kick in (if enabled)."""
+    def auto_sleep_time(self) -> int:
+        """Returns the time in seconds a Studio has to be idle for auto-sleep to kick in (if enabled)."""
         return self._studio.code_config.idle_shutdown_seconds
 
-    @auto_shutdown_time.setter
-    def auto_shutdown_time(self, value: int) -> None:
-        warnings.warn("Setting auto-shutdown time will convert the Studio from free to paid!")
+    @auto_sleep_time.setter
+    def auto_sleep_time(self, value: int) -> None:
+        warnings.warn("Setting auto-sleep time will convert the Studio from free to paid!")
         self._studio_api.update_autoshutdown(
             self._studio.id, self._teamspace.id, idle_shutdown_seconds=value, studio=self._studio
         )
         self._update_studio_reference()
+
+    @property
+    def auto_shutdown(self) -> bool:
+        warnings.warn("auto_shutdown is deprecated. Use auto_sleep instead", DeprecationWarning)
+        return self.auto_sleep
+
+    @auto_shutdown.setter
+    def auto_shutdown(self, value: bool) -> None:
+        warnings.warn("auto_shutdown is deprecated. Use auto_sleep instead", DeprecationWarning)
+        self.auto_sleep = value
+
+    @property
+    def auto_shutdown_time(self) -> int:
+        warnings.warn("auto_shutdown_time is deprecated. Use auto_sleep_time instead", DeprecationWarning)
+        return self.auto_sleep_time
+
+    @auto_shutdown_time.setter
+    def auto_shutdown_time(self, value: int) -> None:
+        warnings.warn("auto_shutdown_time is deprecated. Use auto_sleep_time instead", DeprecationWarning)
+        self.auto_sleep_time = value
 
     @property
     def available_plugins(self) -> Mapping[str, str]:
