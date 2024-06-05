@@ -67,6 +67,7 @@ class V1RuleResource(object):
     ORGCLUSTERENCRYPTIONKEYS = "orgClusterEncryptionKeys"
     CLOUDSPACE = "cloudSpace"
     FEATUREDORGSTUDIOGALLERY = "featuredOrgStudioGallery"
+    MANAGEDENDPOINT = "managedEndpoint"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

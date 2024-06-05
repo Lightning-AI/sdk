@@ -193,6 +193,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_cluster_security_options im
 from lightning_sdk.lightning_cloud.openapi.models.v1_cluster_spec import V1ClusterSpec
 from lightning_sdk.lightning_cloud.openapi.models.v1_cluster_state import V1ClusterState
 from lightning_sdk.lightning_cloud.openapi.models.v1_cluster_status import V1ClusterStatus
+from lightning_sdk.lightning_cloud.openapi.models.v1_cluster_tagging_options import V1ClusterTaggingOptions
 from lightning_sdk.lightning_cloud.openapi.models.v1_cluster_type import V1ClusterType
 from lightning_sdk.lightning_cloud.openapi.models.v1_collab_action import V1CollabAction
 from lightning_sdk.lightning_cloud.openapi.models.v1_collab_session import V1CollabSession

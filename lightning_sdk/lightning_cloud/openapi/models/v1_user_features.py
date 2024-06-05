@@ -100,6 +100,7 @@ class V1UserFeatures(object):
         'unified_billing_ux': 'bool',
         'unified_billing_ux_v2': 'bool',
         'use_local_disk': 'bool',
+        'use_rclone_mounts_only': 'bool',
         'writable_data_connections': 'bool'
     }
 
@@ -163,10 +164,11 @@ class V1UserFeatures(object):
         'unified_billing_ux': 'unifiedBillingUx',
         'unified_billing_ux_v2': 'unifiedBillingUxV2',
         'use_local_disk': 'useLocalDisk',
+        'use_rclone_mounts_only': 'useRcloneMountsOnly',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, import_from_studio_into_about: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, import_from_studio_into_about: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._apt_get_v2 = None
         self._aws_trainium = None
@@ -227,6 +229,7 @@ class V1UserFeatures(object):
         self._unified_billing_ux = None
         self._unified_billing_ux_v2 = None
         self._use_local_disk = None
+        self._use_rclone_mounts_only = None
         self._writable_data_connections = None
         self.discriminator = None
         if apt_get_v2 is not None:
@@ -347,6 +350,8 @@ class V1UserFeatures(object):
             self.unified_billing_ux_v2 = unified_billing_ux_v2
         if use_local_disk is not None:
             self.use_local_disk = use_local_disk
+        if use_rclone_mounts_only is not None:
+            self.use_rclone_mounts_only = use_rclone_mounts_only
         if writable_data_connections is not None:
             self.writable_data_connections = writable_data_connections
 
@@ -1588,6 +1593,27 @@ class V1UserFeatures(object):
         """
 
         self._use_local_disk = use_local_disk
+
+    @property
+    def use_rclone_mounts_only(self) -> 'bool':
+        """Gets the use_rclone_mounts_only of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The use_rclone_mounts_only of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._use_rclone_mounts_only
+
+    @use_rclone_mounts_only.setter
+    def use_rclone_mounts_only(self, use_rclone_mounts_only: 'bool'):
+        """Sets the use_rclone_mounts_only of this V1UserFeatures.
+
+
+        :param use_rclone_mounts_only: The use_rclone_mounts_only of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._use_rclone_mounts_only = use_rclone_mounts_only
 
     @property
     def writable_data_connections(self) -> 'bool':

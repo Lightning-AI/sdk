@@ -50,7 +50,8 @@ class V1ManagedEndpoint(object):
         'name': 'str',
         'org_id': 'str',
         'project_id': 'str',
-        'publish_status': 'str'
+        'publish_status': 'str',
+        'user_id': 'str'
     }
 
     attribute_map = {
@@ -63,10 +64,11 @@ class V1ManagedEndpoint(object):
         'name': 'name',
         'org_id': 'orgId',
         'project_id': 'projectId',
-        'publish_status': 'publishStatus'
+        'publish_status': 'publishStatus',
+        'user_id': 'userId'
     }
 
-    def __init__(self, api_key: 'str' =None, base_url: 'str' =None, description: 'str' =None, id: 'str' =None, models: 'list[str]' =None, models_metadata: 'list[V1ManagedModel]' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, publish_status: 'str' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, base_url: 'str' =None, description: 'str' =None, id: 'str' =None, models: 'list[str]' =None, models_metadata: 'list[V1ManagedModel]' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, publish_status: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1ManagedEndpoint - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._base_url = None
@@ -78,6 +80,7 @@ class V1ManagedEndpoint(object):
         self._org_id = None
         self._project_id = None
         self._publish_status = None
+        self._user_id = None
         self.discriminator = None
         if api_key is not None:
             self.api_key = api_key
@@ -99,6 +102,8 @@ class V1ManagedEndpoint(object):
             self.project_id = project_id
         if publish_status is not None:
             self.publish_status = publish_status
+        if user_id is not None:
+            self.user_id = user_id
 
     @property
     def api_key(self) -> 'str':
@@ -309,6 +314,27 @@ class V1ManagedEndpoint(object):
         """
 
         self._publish_status = publish_status
+
+    @property
+    def user_id(self) -> 'str':
+        """Gets the user_id of this V1ManagedEndpoint.  # noqa: E501
+
+
+        :return: The user_id of this V1ManagedEndpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id: 'str'):
+        """Sets the user_id of this V1ManagedEndpoint.
+
+
+        :param user_id: The user_id of this V1ManagedEndpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._user_id = user_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
