@@ -54,13 +54,13 @@ class V1Job(object):
         'instance_type': 'str',
         'message': 'str',
         'name': 'str',
-        'preemptible': 'bool',
         'project_id': 'str',
         'resources': 'V1Resources',
         'restart_policy': 'str',
         'run_id': 'str',
         'skip_data_connections_setup': 'bool',
         'skip_filesystem_setup': 'bool',
+        'spot': 'bool',
         'started_at': 'datetime',
         'state': 'str',
         'stopped_at': 'datetime',
@@ -83,13 +83,13 @@ class V1Job(object):
         'instance_type': 'instanceType',
         'message': 'message',
         'name': 'name',
-        'preemptible': 'preemptible',
         'project_id': 'projectId',
         'resources': 'resources',
         'restart_policy': 'restartPolicy',
         'run_id': 'runId',
         'skip_data_connections_setup': 'skipDataConnectionsSetup',
         'skip_filesystem_setup': 'skipFilesystemSetup',
+        'spot': 'spot',
         'started_at': 'startedAt',
         'state': 'state',
         'stopped_at': 'stoppedAt',
@@ -98,7 +98,7 @@ class V1Job(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, endpoint: 'V1Endpoint' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, message: 'str' =None, name: 'str' =None, preemptible: 'bool' =None, project_id: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, endpoint: 'V1Endpoint' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -113,13 +113,13 @@ class V1Job(object):
         self._instance_type = None
         self._message = None
         self._name = None
-        self._preemptible = None
         self._project_id = None
         self._resources = None
         self._restart_policy = None
         self._run_id = None
         self._skip_data_connections_setup = None
         self._skip_filesystem_setup = None
+        self._spot = None
         self._started_at = None
         self._state = None
         self._stopped_at = None
@@ -153,8 +153,6 @@ class V1Job(object):
             self.message = message
         if name is not None:
             self.name = name
-        if preemptible is not None:
-            self.preemptible = preemptible
         if project_id is not None:
             self.project_id = project_id
         if resources is not None:
@@ -167,6 +165,8 @@ class V1Job(object):
             self.skip_data_connections_setup = skip_data_connections_setup
         if skip_filesystem_setup is not None:
             self.skip_filesystem_setup = skip_filesystem_setup
+        if spot is not None:
+            self.spot = spot
         if started_at is not None:
             self.started_at = started_at
         if state is not None:
@@ -454,27 +454,6 @@ class V1Job(object):
         self._name = name
 
     @property
-    def preemptible(self) -> 'bool':
-        """Gets the preemptible of this V1Job.  # noqa: E501
-
-
-        :return: The preemptible of this V1Job.  # noqa: E501
-        :rtype: bool
-        """
-        return self._preemptible
-
-    @preemptible.setter
-    def preemptible(self, preemptible: 'bool'):
-        """Sets the preemptible of this V1Job.
-
-
-        :param preemptible: The preemptible of this V1Job.  # noqa: E501
-        :type: bool
-        """
-
-        self._preemptible = preemptible
-
-    @property
     def project_id(self) -> 'str':
         """Gets the project_id of this V1Job.  # noqa: E501
 
@@ -599,6 +578,27 @@ class V1Job(object):
         """
 
         self._skip_filesystem_setup = skip_filesystem_setup
+
+    @property
+    def spot(self) -> 'bool':
+        """Gets the spot of this V1Job.  # noqa: E501
+
+
+        :return: The spot of this V1Job.  # noqa: E501
+        :rtype: bool
+        """
+        return self._spot
+
+    @spot.setter
+    def spot(self, spot: 'bool'):
+        """Sets the spot of this V1Job.
+
+
+        :param spot: The spot of this V1Job.  # noqa: E501
+        :type: bool
+        """
+
+        self._spot = spot
 
     @property
     def started_at(self) -> 'datetime':

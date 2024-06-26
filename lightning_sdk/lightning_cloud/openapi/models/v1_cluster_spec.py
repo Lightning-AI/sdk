@@ -45,14 +45,12 @@ class V1ClusterSpec(object):
         'available_instance_types': 'list[str]',
         'aws_v1': 'V1AWSDirectV1',
         'cluster_type': 'V1ClusterType',
-        'cost_factor': 'str',
         'deletion_options': 'V1ClusterDeletionOptions',
         'desired_state': 'V1ClusterState',
         'driver': 'V1ClusterDriver',
         'google_cloud_v1': 'V1GoogleCloudDirectV1',
         'gridlet_version': 'str',
         'overprovisioning': 'list[V1InstanceOverprovisioningSpec]',
-        'padding_factor': 'str',
         'pause_automation': 'bool',
         'performance_profile': 'V1ClusterPerformanceProfile',
         'security_options': 'V1ClusterSecurityOptions',
@@ -66,14 +64,12 @@ class V1ClusterSpec(object):
         'available_instance_types': 'availableInstanceTypes',
         'aws_v1': 'awsV1',
         'cluster_type': 'clusterType',
-        'cost_factor': 'costFactor',
         'deletion_options': 'deletionOptions',
         'desired_state': 'desiredState',
         'driver': 'driver',
         'google_cloud_v1': 'googleCloudV1',
         'gridlet_version': 'gridletVersion',
         'overprovisioning': 'overprovisioning',
-        'padding_factor': 'paddingFactor',
         'pause_automation': 'pauseAutomation',
         'performance_profile': 'performanceProfile',
         'security_options': 'securityOptions',
@@ -82,20 +78,18 @@ class V1ClusterSpec(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, cost_factor: 'str' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, driver: 'V1ClusterDriver' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, gridlet_version: 'str' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, padding_factor: 'str' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, driver: 'V1ClusterDriver' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, gridlet_version: 'str' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_instance_types = None
         self._aws_v1 = None
         self._cluster_type = None
-        self._cost_factor = None
         self._deletion_options = None
         self._desired_state = None
         self._driver = None
         self._google_cloud_v1 = None
         self._gridlet_version = None
         self._overprovisioning = None
-        self._padding_factor = None
         self._pause_automation = None
         self._performance_profile = None
         self._security_options = None
@@ -111,8 +105,6 @@ class V1ClusterSpec(object):
             self.aws_v1 = aws_v1
         if cluster_type is not None:
             self.cluster_type = cluster_type
-        if cost_factor is not None:
-            self.cost_factor = cost_factor
         if deletion_options is not None:
             self.deletion_options = deletion_options
         if desired_state is not None:
@@ -125,8 +117,6 @@ class V1ClusterSpec(object):
             self.gridlet_version = gridlet_version
         if overprovisioning is not None:
             self.overprovisioning = overprovisioning
-        if padding_factor is not None:
-            self.padding_factor = padding_factor
         if pause_automation is not None:
             self.pause_automation = pause_automation
         if performance_profile is not None:
@@ -225,29 +215,6 @@ class V1ClusterSpec(object):
         """
 
         self._cluster_type = cluster_type
-
-    @property
-    def cost_factor(self) -> 'str':
-        """Gets the cost_factor of this V1ClusterSpec.  # noqa: E501
-
-        costController needs for calculating costOfGoods - string since it's decimal. Note: This value is stored in a separate column in the database, not with the rest of the cluster JSON in spec.  # noqa: E501
-
-        :return: The cost_factor of this V1ClusterSpec.  # noqa: E501
-        :rtype: str
-        """
-        return self._cost_factor
-
-    @cost_factor.setter
-    def cost_factor(self, cost_factor: 'str'):
-        """Sets the cost_factor of this V1ClusterSpec.
-
-        costController needs for calculating costOfGoods - string since it's decimal. Note: This value is stored in a separate column in the database, not with the rest of the cluster JSON in spec.  # noqa: E501
-
-        :param cost_factor: The cost_factor of this V1ClusterSpec.  # noqa: E501
-        :type: str
-        """
-
-        self._cost_factor = cost_factor
 
     @property
     def deletion_options(self) -> 'V1ClusterDeletionOptions':
@@ -374,29 +341,6 @@ class V1ClusterSpec(object):
         """
 
         self._overprovisioning = overprovisioning
-
-    @property
-    def padding_factor(self) -> 'str':
-        """Gets the padding_factor of this V1ClusterSpec.  # noqa: E501
-
-        costController needs for calculating paddingValue - string since it's decimal Note: This value is stored in a separate column in the database, not with the rest of the cluster JSON in spec.  # noqa: E501
-
-        :return: The padding_factor of this V1ClusterSpec.  # noqa: E501
-        :rtype: str
-        """
-        return self._padding_factor
-
-    @padding_factor.setter
-    def padding_factor(self, padding_factor: 'str'):
-        """Sets the padding_factor of this V1ClusterSpec.
-
-        costController needs for calculating paddingValue - string since it's decimal Note: This value is stored in a separate column in the database, not with the rest of the cluster JSON in spec.  # noqa: E501
-
-        :param padding_factor: The padding_factor of this V1ClusterSpec.  # noqa: E501
-        :type: str
-        """
-
-        self._padding_factor = padding_factor
 
     @property
     def pause_automation(self) -> 'bool':

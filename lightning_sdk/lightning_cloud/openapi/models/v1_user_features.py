@@ -42,6 +42,7 @@ class V1UserFeatures(object):
     """
     swagger_types = {
         'apt_get_v2': 'bool',
+        'auto_fast_load': 'bool',
         'aws_trainium': 'bool',
         'b2c_experience': 'bool',
         'byom': 'bool',
@@ -50,6 +51,7 @@ class V1UserFeatures(object):
         'cluster_running_notification': 'bool',
         'code_tab': 'bool',
         'collab_screen_sharing': 'bool',
+        'cost_attribution_settings': 'bool',
         'crypto_monitoring': 'bool',
         'custom_app_domain': 'bool',
         'custom_instance_types': 'bool',
@@ -67,6 +69,7 @@ class V1UserFeatures(object):
         'lit_logger': 'bool',
         'lit_logger_storage_v2': 'bool',
         'mmt_app': 'bool',
+        'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
         'plugin_biz_chat': 'bool',
@@ -97,6 +100,7 @@ class V1UserFeatures(object):
         'snowflake_connection': 'bool',
         'spot': 'bool',
         'teamspace_storage_tab': 'bool',
+        'testable_entrypoint': 'bool',
         'unified_billing_ux': 'bool',
         'unified_billing_ux_v2': 'bool',
         'use_local_disk': 'bool',
@@ -106,6 +110,7 @@ class V1UserFeatures(object):
 
     attribute_map = {
         'apt_get_v2': 'aptGetV2',
+        'auto_fast_load': 'autoFastLoad',
         'aws_trainium': 'awsTrainium',
         'b2c_experience': 'b2cExperience',
         'byom': 'byom',
@@ -114,6 +119,7 @@ class V1UserFeatures(object):
         'cluster_running_notification': 'clusterRunningNotification',
         'code_tab': 'codeTab',
         'collab_screen_sharing': 'collabScreenSharing',
+        'cost_attribution_settings': 'costAttributionSettings',
         'crypto_monitoring': 'cryptoMonitoring',
         'custom_app_domain': 'customAppDomain',
         'custom_instance_types': 'customInstanceTypes',
@@ -131,6 +137,7 @@ class V1UserFeatures(object):
         'lit_logger': 'litLogger',
         'lit_logger_storage_v2': 'litLoggerStorageV2',
         'mmt_app': 'mmtApp',
+        'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
         'plugin_biz_chat': 'pluginBizChat',
@@ -161,6 +168,7 @@ class V1UserFeatures(object):
         'snowflake_connection': 'snowflakeConnection',
         'spot': 'spot',
         'teamspace_storage_tab': 'teamspaceStorageTab',
+        'testable_entrypoint': 'testableEntrypoint',
         'unified_billing_ux': 'unifiedBillingUx',
         'unified_billing_ux_v2': 'unifiedBillingUxV2',
         'use_local_disk': 'useLocalDisk',
@@ -168,9 +176,10 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, import_from_studio_into_about: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, import_from_studio_into_about: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, teamspace_storage_tab: 'bool' =None, testable_entrypoint: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._apt_get_v2 = None
+        self._auto_fast_load = None
         self._aws_trainium = None
         self._b2c_experience = None
         self._byom = None
@@ -179,6 +188,7 @@ class V1UserFeatures(object):
         self._cluster_running_notification = None
         self._code_tab = None
         self._collab_screen_sharing = None
+        self._cost_attribution_settings = None
         self._crypto_monitoring = None
         self._custom_app_domain = None
         self._custom_instance_types = None
@@ -196,6 +206,7 @@ class V1UserFeatures(object):
         self._lit_logger = None
         self._lit_logger_storage_v2 = None
         self._mmt_app = None
+        self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
         self._plugin_biz_chat = None
@@ -226,6 +237,7 @@ class V1UserFeatures(object):
         self._snowflake_connection = None
         self._spot = None
         self._teamspace_storage_tab = None
+        self._testable_entrypoint = None
         self._unified_billing_ux = None
         self._unified_billing_ux_v2 = None
         self._use_local_disk = None
@@ -234,6 +246,8 @@ class V1UserFeatures(object):
         self.discriminator = None
         if apt_get_v2 is not None:
             self.apt_get_v2 = apt_get_v2
+        if auto_fast_load is not None:
+            self.auto_fast_load = auto_fast_load
         if aws_trainium is not None:
             self.aws_trainium = aws_trainium
         if b2c_experience is not None:
@@ -250,6 +264,8 @@ class V1UserFeatures(object):
             self.code_tab = code_tab
         if collab_screen_sharing is not None:
             self.collab_screen_sharing = collab_screen_sharing
+        if cost_attribution_settings is not None:
+            self.cost_attribution_settings = cost_attribution_settings
         if crypto_monitoring is not None:
             self.crypto_monitoring = crypto_monitoring
         if custom_app_domain is not None:
@@ -284,6 +300,8 @@ class V1UserFeatures(object):
             self.lit_logger_storage_v2 = lit_logger_storage_v2
         if mmt_app is not None:
             self.mmt_app = mmt_app
+        if mmt_fault_tolerance is not None:
+            self.mmt_fault_tolerance = mmt_fault_tolerance
         if mmt_strategy_selector is not None:
             self.mmt_strategy_selector = mmt_strategy_selector
         if mountpoint_s3 is not None:
@@ -344,6 +362,8 @@ class V1UserFeatures(object):
             self.spot = spot
         if teamspace_storage_tab is not None:
             self.teamspace_storage_tab = teamspace_storage_tab
+        if testable_entrypoint is not None:
+            self.testable_entrypoint = testable_entrypoint
         if unified_billing_ux is not None:
             self.unified_billing_ux = unified_billing_ux
         if unified_billing_ux_v2 is not None:
@@ -375,6 +395,27 @@ class V1UserFeatures(object):
         """
 
         self._apt_get_v2 = apt_get_v2
+
+    @property
+    def auto_fast_load(self) -> 'bool':
+        """Gets the auto_fast_load of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The auto_fast_load of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_fast_load
+
+    @auto_fast_load.setter
+    def auto_fast_load(self, auto_fast_load: 'bool'):
+        """Sets the auto_fast_load of this V1UserFeatures.
+
+
+        :param auto_fast_load: The auto_fast_load of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_fast_load = auto_fast_load
 
     @property
     def aws_trainium(self) -> 'bool':
@@ -543,6 +584,27 @@ class V1UserFeatures(object):
         """
 
         self._collab_screen_sharing = collab_screen_sharing
+
+    @property
+    def cost_attribution_settings(self) -> 'bool':
+        """Gets the cost_attribution_settings of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The cost_attribution_settings of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._cost_attribution_settings
+
+    @cost_attribution_settings.setter
+    def cost_attribution_settings(self, cost_attribution_settings: 'bool'):
+        """Sets the cost_attribution_settings of this V1UserFeatures.
+
+
+        :param cost_attribution_settings: The cost_attribution_settings of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._cost_attribution_settings = cost_attribution_settings
 
     @property
     def crypto_monitoring(self) -> 'bool':
@@ -900,6 +962,27 @@ class V1UserFeatures(object):
         """
 
         self._mmt_app = mmt_app
+
+    @property
+    def mmt_fault_tolerance(self) -> 'bool':
+        """Gets the mmt_fault_tolerance of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The mmt_fault_tolerance of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._mmt_fault_tolerance
+
+    @mmt_fault_tolerance.setter
+    def mmt_fault_tolerance(self, mmt_fault_tolerance: 'bool'):
+        """Sets the mmt_fault_tolerance of this V1UserFeatures.
+
+
+        :param mmt_fault_tolerance: The mmt_fault_tolerance of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._mmt_fault_tolerance = mmt_fault_tolerance
 
     @property
     def mmt_strategy_selector(self) -> 'bool':
@@ -1530,6 +1613,27 @@ class V1UserFeatures(object):
         """
 
         self._teamspace_storage_tab = teamspace_storage_tab
+
+    @property
+    def testable_entrypoint(self) -> 'bool':
+        """Gets the testable_entrypoint of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The testable_entrypoint of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._testable_entrypoint
+
+    @testable_entrypoint.setter
+    def testable_entrypoint(self, testable_entrypoint: 'bool'):
+        """Sets the testable_entrypoint of this V1UserFeatures.
+
+
+        :param testable_entrypoint: The testable_entrypoint of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._testable_entrypoint = testable_entrypoint
 
     @property
     def unified_billing_ux(self) -> 'bool':

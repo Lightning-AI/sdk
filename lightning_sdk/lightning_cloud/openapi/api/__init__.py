@@ -12,6 +12,7 @@ from lightning_sdk.lightning_cloud.openapi.api.cluster_service_api import Cluste
 from lightning_sdk.lightning_cloud.openapi.api.data_connection_service_api import DataConnectionServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.dataset_service_api import DatasetServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api import EndpointServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.experiments_service_api import ExperimentsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.jobs_service_api import JobsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api import LightningappInstanceServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_v2_service_api import LightningappV2ServiceApi

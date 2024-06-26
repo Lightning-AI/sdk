@@ -47,11 +47,10 @@ class V1UserRequestedComputeConfig(object):
         'disk_size': 'int',
         'gpu_image_override': 'str',
         'id': 'str',
-        'is_byom': 'bool',
         'name': 'str',
-        'preemptible': 'bool',
         'same_compute_on_resume': 'bool',
-        'shm_size': 'int'
+        'shm_size': 'int',
+        'spot': 'bool'
     }
 
     attribute_map = {
@@ -61,14 +60,13 @@ class V1UserRequestedComputeConfig(object):
         'disk_size': 'diskSize',
         'gpu_image_override': 'gpuImageOverride',
         'id': 'id',
-        'is_byom': 'isByom',
         'name': 'name',
-        'preemptible': 'preemptible',
         'same_compute_on_resume': 'sameComputeOnResume',
-        'shm_size': 'shmSize'
+        'shm_size': 'shmSize',
+        'spot': 'spot'
     }
 
-    def __init__(self, affinity_identifier: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, is_byom: 'bool' =None, name: 'str' =None, preemptible: 'bool' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None):  # noqa: E501
+    def __init__(self, affinity_identifier: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, name: 'str' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None, spot: 'bool' =None):  # noqa: E501
         """V1UserRequestedComputeConfig - a model defined in Swagger"""  # noqa: E501
         self._affinity_identifier = None
         self._count = None
@@ -76,11 +74,10 @@ class V1UserRequestedComputeConfig(object):
         self._disk_size = None
         self._gpu_image_override = None
         self._id = None
-        self._is_byom = None
         self._name = None
-        self._preemptible = None
         self._same_compute_on_resume = None
         self._shm_size = None
+        self._spot = None
         self.discriminator = None
         if affinity_identifier is not None:
             self.affinity_identifier = affinity_identifier
@@ -94,16 +91,14 @@ class V1UserRequestedComputeConfig(object):
             self.gpu_image_override = gpu_image_override
         if id is not None:
             self.id = id
-        if is_byom is not None:
-            self.is_byom = is_byom
         if name is not None:
             self.name = name
-        if preemptible is not None:
-            self.preemptible = preemptible
         if same_compute_on_resume is not None:
             self.same_compute_on_resume = same_compute_on_resume
         if shm_size is not None:
             self.shm_size = shm_size
+        if spot is not None:
+            self.spot = spot
 
     @property
     def affinity_identifier(self) -> 'str':
@@ -238,27 +233,6 @@ class V1UserRequestedComputeConfig(object):
         self._id = id
 
     @property
-    def is_byom(self) -> 'bool':
-        """Gets the is_byom of this V1UserRequestedComputeConfig.  # noqa: E501
-
-
-        :return: The is_byom of this V1UserRequestedComputeConfig.  # noqa: E501
-        :rtype: bool
-        """
-        return self._is_byom
-
-    @is_byom.setter
-    def is_byom(self, is_byom: 'bool'):
-        """Sets the is_byom of this V1UserRequestedComputeConfig.
-
-
-        :param is_byom: The is_byom of this V1UserRequestedComputeConfig.  # noqa: E501
-        :type: bool
-        """
-
-        self._is_byom = is_byom
-
-    @property
     def name(self) -> 'str':
         """Gets the name of this V1UserRequestedComputeConfig.  # noqa: E501
 
@@ -278,27 +252,6 @@ class V1UserRequestedComputeConfig(object):
         """
 
         self._name = name
-
-    @property
-    def preemptible(self) -> 'bool':
-        """Gets the preemptible of this V1UserRequestedComputeConfig.  # noqa: E501
-
-
-        :return: The preemptible of this V1UserRequestedComputeConfig.  # noqa: E501
-        :rtype: bool
-        """
-        return self._preemptible
-
-    @preemptible.setter
-    def preemptible(self, preemptible: 'bool'):
-        """Sets the preemptible of this V1UserRequestedComputeConfig.
-
-
-        :param preemptible: The preemptible of this V1UserRequestedComputeConfig.  # noqa: E501
-        :type: bool
-        """
-
-        self._preemptible = preemptible
 
     @property
     def same_compute_on_resume(self) -> 'bool':
@@ -341,6 +294,27 @@ class V1UserRequestedComputeConfig(object):
         """
 
         self._shm_size = shm_size
+
+    @property
+    def spot(self) -> 'bool':
+        """Gets the spot of this V1UserRequestedComputeConfig.  # noqa: E501
+
+
+        :return: The spot of this V1UserRequestedComputeConfig.  # noqa: E501
+        :rtype: bool
+        """
+        return self._spot
+
+    @spot.setter
+    def spot(self, spot: 'bool'):
+        """Sets the spot of this V1UserRequestedComputeConfig.
+
+
+        :param spot: The spot of this V1UserRequestedComputeConfig.  # noqa: E501
+        :type: bool
+        """
+
+        self._spot = spot
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

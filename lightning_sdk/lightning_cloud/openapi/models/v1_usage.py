@@ -54,6 +54,7 @@ class V1Usage(object):
         'saved_cost': 'float',
         'session_ended_at': 'datetime',
         'session_started_at': 'datetime',
+        'spot': 'bool',
         'user_id': 'str'
     }
 
@@ -71,10 +72,11 @@ class V1Usage(object):
         'saved_cost': 'savedCost',
         'session_ended_at': 'sessionEndedAt',
         'session_started_at': 'sessionStartedAt',
+        'spot': 'spot',
         'user_id': 'userId'
     }
 
-    def __init__(self, billed_time_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, free: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, resource_type: 'str' =None, saved_cost: 'float' =None, session_ended_at: 'datetime' =None, session_started_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, billed_time_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, free: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, resource_type: 'str' =None, saved_cost: 'float' =None, session_ended_at: 'datetime' =None, session_started_at: 'datetime' =None, spot: 'bool' =None, user_id: 'str' =None):  # noqa: E501
         """V1Usage - a model defined in Swagger"""  # noqa: E501
         self._billed_time_seconds = None
         self._cluster_id = None
@@ -89,6 +91,7 @@ class V1Usage(object):
         self._saved_cost = None
         self._session_ended_at = None
         self._session_started_at = None
+        self._spot = None
         self._user_id = None
         self.discriminator = None
         if billed_time_seconds is not None:
@@ -117,6 +120,8 @@ class V1Usage(object):
             self.session_ended_at = session_ended_at
         if session_started_at is not None:
             self.session_started_at = session_started_at
+        if spot is not None:
+            self.spot = spot
         if user_id is not None:
             self.user_id = user_id
 
@@ -392,6 +397,27 @@ class V1Usage(object):
         """
 
         self._session_started_at = session_started_at
+
+    @property
+    def spot(self) -> 'bool':
+        """Gets the spot of this V1Usage.  # noqa: E501
+
+
+        :return: The spot of this V1Usage.  # noqa: E501
+        :rtype: bool
+        """
+        return self._spot
+
+    @spot.setter
+    def spot(self, spot: 'bool'):
+        """Sets the spot of this V1Usage.
+
+
+        :param spot: The spot of this V1Usage.  # noqa: E501
+        :type: bool
+        """
+
+        self._spot = spot
 
     @property
     def user_id(self) -> 'str':

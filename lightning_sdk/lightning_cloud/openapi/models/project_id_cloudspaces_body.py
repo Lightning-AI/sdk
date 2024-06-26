@@ -50,8 +50,8 @@ class ProjectIdCloudspacesBody(object):
         'disk_size': 'str',
         'display_name': 'str',
         'name': 'str',
-        'preemptible': 'bool',
-        'seed_files': 'list[V1CloudSpaceSeedFile]'
+        'seed_files': 'list[V1CloudSpaceSeedFile]',
+        'spot': 'bool'
     }
 
     attribute_map = {
@@ -64,11 +64,11 @@ class ProjectIdCloudspacesBody(object):
         'disk_size': 'diskSize',
         'display_name': 'displayName',
         'name': 'name',
-        'preemptible': 'preemptible',
-        'seed_files': 'seedFiles'
+        'seed_files': 'seedFiles',
+        'spot': 'spot'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, preemptible: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, spot: 'bool' =None):  # noqa: E501
         """ProjectIdCloudspacesBody - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cloud_space_instance_cpu_image_override = None
@@ -79,8 +79,8 @@ class ProjectIdCloudspacesBody(object):
         self._disk_size = None
         self._display_name = None
         self._name = None
-        self._preemptible = None
         self._seed_files = None
+        self._spot = None
         self.discriminator = None
         if can_download_source_code is not None:
             self.can_download_source_code = can_download_source_code
@@ -100,10 +100,10 @@ class ProjectIdCloudspacesBody(object):
             self.display_name = display_name
         if name is not None:
             self.name = name
-        if preemptible is not None:
-            self.preemptible = preemptible
         if seed_files is not None:
             self.seed_files = seed_files
+        if spot is not None:
+            self.spot = spot
 
     @property
     def can_download_source_code(self) -> 'bool':
@@ -295,27 +295,6 @@ class ProjectIdCloudspacesBody(object):
         self._name = name
 
     @property
-    def preemptible(self) -> 'bool':
-        """Gets the preemptible of this ProjectIdCloudspacesBody.  # noqa: E501
-
-
-        :return: The preemptible of this ProjectIdCloudspacesBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._preemptible
-
-    @preemptible.setter
-    def preemptible(self, preemptible: 'bool'):
-        """Sets the preemptible of this ProjectIdCloudspacesBody.
-
-
-        :param preemptible: The preemptible of this ProjectIdCloudspacesBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._preemptible = preemptible
-
-    @property
     def seed_files(self) -> 'list[V1CloudSpaceSeedFile]':
         """Gets the seed_files of this ProjectIdCloudspacesBody.  # noqa: E501
 
@@ -335,6 +314,27 @@ class ProjectIdCloudspacesBody(object):
         """
 
         self._seed_files = seed_files
+
+    @property
+    def spot(self) -> 'bool':
+        """Gets the spot of this ProjectIdCloudspacesBody.  # noqa: E501
+
+
+        :return: The spot of this ProjectIdCloudspacesBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._spot
+
+    @spot.setter
+    def spot(self, spot: 'bool'):
+        """Sets the spot of this ProjectIdCloudspacesBody.
+
+
+        :param spot: The spot of this ProjectIdCloudspacesBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._spot = spot
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

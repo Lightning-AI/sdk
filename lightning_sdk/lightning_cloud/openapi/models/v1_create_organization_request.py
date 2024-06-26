@@ -46,6 +46,7 @@ class V1CreateOrganizationRequest(object):
         'display_name': 'str',
         'domain': 'str',
         'email': 'str',
+        'featured_gallery': 'bool',
         'location': 'str',
         'twitter_username': 'str',
         'type': 'str'
@@ -57,18 +58,20 @@ class V1CreateOrganizationRequest(object):
         'display_name': 'displayName',
         'domain': 'domain',
         'email': 'email',
+        'featured_gallery': 'featuredGallery',
         'location': 'location',
         'twitter_username': 'twitterUsername',
         'type': 'type'
     }
 
-    def __init__(self, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, location: 'str' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
         """V1CreateOrganizationRequest - a model defined in Swagger"""  # noqa: E501
         self._auto_join_domains = None
         self._description = None
         self._display_name = None
         self._domain = None
         self._email = None
+        self._featured_gallery = None
         self._location = None
         self._twitter_username = None
         self._type = None
@@ -83,6 +86,8 @@ class V1CreateOrganizationRequest(object):
             self.domain = domain
         if email is not None:
             self.email = email
+        if featured_gallery is not None:
+            self.featured_gallery = featured_gallery
         if location is not None:
             self.location = location
         if twitter_username is not None:
@@ -194,6 +199,27 @@ class V1CreateOrganizationRequest(object):
         """
 
         self._email = email
+
+    @property
+    def featured_gallery(self) -> 'bool':
+        """Gets the featured_gallery of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The featured_gallery of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._featured_gallery
+
+    @featured_gallery.setter
+    def featured_gallery(self, featured_gallery: 'bool'):
+        """Sets the featured_gallery of this V1CreateOrganizationRequest.
+
+
+        :param featured_gallery: The featured_gallery of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._featured_gallery = featured_gallery
 
     @property
     def location(self) -> 'str':

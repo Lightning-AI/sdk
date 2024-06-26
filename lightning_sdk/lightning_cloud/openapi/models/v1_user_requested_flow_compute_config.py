@@ -42,28 +42,28 @@ class V1UserRequestedFlowComputeConfig(object):
     """
     swagger_types = {
         'name': 'str',
-        'preemptible': 'bool',
-        'shm_size': 'int'
+        'shm_size': 'int',
+        'spot': 'bool'
     }
 
     attribute_map = {
         'name': 'name',
-        'preemptible': 'preemptible',
-        'shm_size': 'shmSize'
+        'shm_size': 'shmSize',
+        'spot': 'spot'
     }
 
-    def __init__(self, name: 'str' =None, preemptible: 'bool' =None, shm_size: 'int' =None):  # noqa: E501
+    def __init__(self, name: 'str' =None, shm_size: 'int' =None, spot: 'bool' =None):  # noqa: E501
         """V1UserRequestedFlowComputeConfig - a model defined in Swagger"""  # noqa: E501
         self._name = None
-        self._preemptible = None
         self._shm_size = None
+        self._spot = None
         self.discriminator = None
         if name is not None:
             self.name = name
-        if preemptible is not None:
-            self.preemptible = preemptible
         if shm_size is not None:
             self.shm_size = shm_size
+        if spot is not None:
+            self.spot = spot
 
     @property
     def name(self) -> 'str':
@@ -87,27 +87,6 @@ class V1UserRequestedFlowComputeConfig(object):
         self._name = name
 
     @property
-    def preemptible(self) -> 'bool':
-        """Gets the preemptible of this V1UserRequestedFlowComputeConfig.  # noqa: E501
-
-
-        :return: The preemptible of this V1UserRequestedFlowComputeConfig.  # noqa: E501
-        :rtype: bool
-        """
-        return self._preemptible
-
-    @preemptible.setter
-    def preemptible(self, preemptible: 'bool'):
-        """Sets the preemptible of this V1UserRequestedFlowComputeConfig.
-
-
-        :param preemptible: The preemptible of this V1UserRequestedFlowComputeConfig.  # noqa: E501
-        :type: bool
-        """
-
-        self._preemptible = preemptible
-
-    @property
     def shm_size(self) -> 'int':
         """Gets the shm_size of this V1UserRequestedFlowComputeConfig.  # noqa: E501
 
@@ -127,6 +106,27 @@ class V1UserRequestedFlowComputeConfig(object):
         """
 
         self._shm_size = shm_size
+
+    @property
+    def spot(self) -> 'bool':
+        """Gets the spot of this V1UserRequestedFlowComputeConfig.  # noqa: E501
+
+
+        :return: The spot of this V1UserRequestedFlowComputeConfig.  # noqa: E501
+        :rtype: bool
+        """
+        return self._spot
+
+    @spot.setter
+    def spot(self, spot: 'bool'):
+        """Sets the spot of this V1UserRequestedFlowComputeConfig.
+
+
+        :param spot: The spot of this V1UserRequestedFlowComputeConfig.  # noqa: E501
+        :type: bool
+        """
+
+        self._spot = spot
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

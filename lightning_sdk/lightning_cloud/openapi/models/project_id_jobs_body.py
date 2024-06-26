@@ -50,11 +50,11 @@ class ProjectIdJobsBody(object):
         'image': 'str',
         'instance_name': 'str',
         'name': 'str',
-        'preemptible': 'bool',
         'restart_policy': 'str',
         'run_id': 'str',
         'skip_data_connections_setup': 'bool',
-        'skip_filesystem_setup': 'bool'
+        'skip_filesystem_setup': 'bool',
+        'spot': 'bool'
     }
 
     attribute_map = {
@@ -67,14 +67,14 @@ class ProjectIdJobsBody(object):
         'image': 'image',
         'instance_name': 'instanceName',
         'name': 'name',
-        'preemptible': 'preemptible',
         'restart_policy': 'restartPolicy',
         'run_id': 'runId',
         'skip_data_connections_setup': 'skipDataConnectionsSetup',
-        'skip_filesystem_setup': 'skipFilesystemSetup'
+        'skip_filesystem_setup': 'skipFilesystemSetup',
+        'spot': 'spot'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, endpoint: 'V1Endpoint' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, instance_name: 'str' =None, name: 'str' =None, preemptible: 'bool' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, endpoint: 'V1Endpoint' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, instance_name: 'str' =None, name: 'str' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None):  # noqa: E501
         """ProjectIdJobsBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -85,11 +85,11 @@ class ProjectIdJobsBody(object):
         self._image = None
         self._instance_name = None
         self._name = None
-        self._preemptible = None
         self._restart_policy = None
         self._run_id = None
         self._skip_data_connections_setup = None
         self._skip_filesystem_setup = None
+        self._spot = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
@@ -109,8 +109,6 @@ class ProjectIdJobsBody(object):
             self.instance_name = instance_name
         if name is not None:
             self.name = name
-        if preemptible is not None:
-            self.preemptible = preemptible
         if restart_policy is not None:
             self.restart_policy = restart_policy
         if run_id is not None:
@@ -119,6 +117,8 @@ class ProjectIdJobsBody(object):
             self.skip_data_connections_setup = skip_data_connections_setup
         if skip_filesystem_setup is not None:
             self.skip_filesystem_setup = skip_filesystem_setup
+        if spot is not None:
+            self.spot = spot
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -310,27 +310,6 @@ class ProjectIdJobsBody(object):
         self._name = name
 
     @property
-    def preemptible(self) -> 'bool':
-        """Gets the preemptible of this ProjectIdJobsBody.  # noqa: E501
-
-
-        :return: The preemptible of this ProjectIdJobsBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._preemptible
-
-    @preemptible.setter
-    def preemptible(self, preemptible: 'bool'):
-        """Sets the preemptible of this ProjectIdJobsBody.
-
-
-        :param preemptible: The preemptible of this ProjectIdJobsBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._preemptible = preemptible
-
-    @property
     def restart_policy(self) -> 'str':
         """Gets the restart_policy of this ProjectIdJobsBody.  # noqa: E501
 
@@ -413,6 +392,27 @@ class ProjectIdJobsBody(object):
         """
 
         self._skip_filesystem_setup = skip_filesystem_setup
+
+    @property
+    def spot(self) -> 'bool':
+        """Gets the spot of this ProjectIdJobsBody.  # noqa: E501
+
+
+        :return: The spot of this ProjectIdJobsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._spot
+
+    @spot.setter
+    def spot(self, spot: 'bool'):
+        """Sets the spot of this ProjectIdJobsBody.
+
+
+        :param spot: The spot of this ProjectIdJobsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._spot = spot
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

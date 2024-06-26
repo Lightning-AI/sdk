@@ -41,29 +41,60 @@ class V1ClusterSecurityOptions(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'containers_non_privileged': 'bool',
         'encrypt_instance_volumes': 'bool',
         'kms_key_id': 'str',
-        'protect_instance_metadata': 'bool'
+        'protect_instance_metadata': 'bool',
+        'rootless_docker': 'bool'
     }
 
     attribute_map = {
+        'containers_non_privileged': 'containersNonPrivileged',
         'encrypt_instance_volumes': 'encryptInstanceVolumes',
         'kms_key_id': 'kmsKeyId',
-        'protect_instance_metadata': 'protectInstanceMetadata'
+        'protect_instance_metadata': 'protectInstanceMetadata',
+        'rootless_docker': 'rootlessDocker'
     }
 
-    def __init__(self, encrypt_instance_volumes: 'bool' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None):  # noqa: E501
+    def __init__(self, containers_non_privileged: 'bool' =None, encrypt_instance_volumes: 'bool' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
+        self._containers_non_privileged = None
         self._encrypt_instance_volumes = None
         self._kms_key_id = None
         self._protect_instance_metadata = None
+        self._rootless_docker = None
         self.discriminator = None
+        if containers_non_privileged is not None:
+            self.containers_non_privileged = containers_non_privileged
         if encrypt_instance_volumes is not None:
             self.encrypt_instance_volumes = encrypt_instance_volumes
         if kms_key_id is not None:
             self.kms_key_id = kms_key_id
         if protect_instance_metadata is not None:
             self.protect_instance_metadata = protect_instance_metadata
+        if rootless_docker is not None:
+            self.rootless_docker = rootless_docker
+
+    @property
+    def containers_non_privileged(self) -> 'bool':
+        """Gets the containers_non_privileged of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The containers_non_privileged of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._containers_non_privileged
+
+    @containers_non_privileged.setter
+    def containers_non_privileged(self, containers_non_privileged: 'bool'):
+        """Sets the containers_non_privileged of this V1ClusterSecurityOptions.
+
+
+        :param containers_non_privileged: The containers_non_privileged of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._containers_non_privileged = containers_non_privileged
 
     @property
     def encrypt_instance_volumes(self) -> 'bool':
@@ -127,6 +158,27 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._protect_instance_metadata = protect_instance_metadata
+
+    @property
+    def rootless_docker(self) -> 'bool':
+        """Gets the rootless_docker of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The rootless_docker of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._rootless_docker
+
+    @rootless_docker.setter
+    def rootless_docker(self, rootless_docker: 'bool'):
+        """Sets the rootless_docker of this V1ClusterSecurityOptions.
+
+
+        :param rootless_docker: The rootless_docker of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._rootless_docker = rootless_docker
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
