@@ -146,3 +146,20 @@ def test_teamspace_error_user_and_org():
         ValueError, match="User and org are mutually exclusive. Please only specify the one who owns the teamspace."
     ):
         Teamspace(name="ts-abc", user="foo", org="bar")
+
+
+def test_create_agent(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    internal_auth_mocker,
+    internal_teamspace_api_create_agent_mocker,
+    internal_agents_api_get_agent_mocker,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+    agent = ts.create_agent(
+        name="test-sdk",
+        base_url="test-sdk",
+        api_key="test-sdk",
+        model="test-sdk",
+    )
+    assert agent._agent.name == "test-sdk"

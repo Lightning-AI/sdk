@@ -53,3 +53,19 @@ def test_list_clusters(internal_teamspace_api_cluster_list_mocker):
     assert len(clusters) == 2
     for cl in clusters:
         assert isinstance(cl, V1ProjectClusterBinding)
+
+
+def test_create_agent(internal_teamspace_api_create_agent_mocker):
+    teamspace_api = TeamspaceApi()
+    agent = teamspace_api.create_agent(
+        name="test-sdk",
+        teamspace_id="ts-abc",
+        base_url="test-sdk",
+        api_key="test-sdk",
+        model="test-sdk",
+        org_id="org-abc",
+    )
+
+    assert agent.name == "test-sdk"
+    assert agent.project_id == "ts-abc"
+    assert agent.model == "test-sdk"

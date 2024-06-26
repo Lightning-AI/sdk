@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, List, Optional, Union
 
+from lightning_sdk.agents import Agent
 from lightning_sdk.api import TeamspaceApi
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
@@ -115,6 +116,30 @@ class Teamspace:
     def __str__(self) -> str:
         """Returns reader friendly representation."""
         return repr(self)
+
+    def create_agent(
+        self,
+        name: str,
+        api_key: str,
+        base_url: str,
+        model: str,
+        org_id: Optional[str] = "",
+        prompt_template: Optional[str] = "",
+        description: Optional[str] = "",
+        prompt_suggestions: Optional[List[str]] = None,
+    ) -> "Agent":
+        agent = self._teamspace_api.create_agent(
+            teamspace_id=self.id,
+            name=name,
+            api_key=api_key,
+            base_url=base_url,
+            model=model,
+            org_id=org_id,
+            prompt_template=prompt_template,
+            description=description,
+            prompt_suggestions=prompt_suggestions,
+        )
+        return Agent(agent.id)
 
 
 def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name: str) -> ValueError:

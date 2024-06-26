@@ -1,7 +1,16 @@
 from typing import List, Optional
 
 from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.lightning_cloud.openapi import V1CloudSpace, V1Project, V1ProjectClusterBinding
+from lightning_sdk.lightning_cloud.openapi import (
+    ProjectIdAgentsBody,
+    V1Assistant,
+    V1CloudSpace,
+    V1Endpoint,
+    V1Project,
+    V1ProjectClusterBinding,
+    V1PromptSuggestion,
+    V1UpstreamOpenAI,
+)
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 __all__ = ["TeamspaceApi"]
@@ -78,3 +87,36 @@ class TeamspaceApi:
         auth = Auth()
         auth.authenticate()
         return auth.user_id
+
+    def create_agent(
+        self,
+        name: str,
+        teamspace_id: str,
+        api_key: str,
+        base_url: str,
+        model: str,
+        org_id: Optional[str] = "",
+        prompt_template: Optional[str] = "",
+        description: Optional[str] = "",
+        prompt_suggestions: Optional[List[str]] = None,
+    ) -> V1Assistant:
+        openai_endpoint = V1UpstreamOpenAI(api_key=api_key, base_url=base_url)
+
+        endpoint = V1Endpoint(
+            name=name,
+            openai=openai_endpoint,
+            project_id=teamspace_id,
+        )
+
+        ([V1PromptSuggestion(content=suggestion) for suggestion in prompt_suggestions] if prompt_suggestions else None)
+
+        body = ProjectIdAgentsBody(
+            endpoint=endpoint,
+            name=name,
+            model=model,
+            org_id=org_id,
+            prompt_template=prompt_template,
+            description=description,
+        )
+
+        return self._client.assistants_service_create_assistant(body=body, project_id=teamspace_id)

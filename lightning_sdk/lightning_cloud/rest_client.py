@@ -13,6 +13,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     AuthServiceApi,
     CloudSpaceServiceApi,
     ClusterServiceApi,
+    AssistantsServiceApi,
     Configuration,
     DataConnectionServiceApi,
     LightningappInstanceServiceApi,
@@ -82,6 +83,7 @@ class GridRestClient(
         EndpointServiceApi,
         SlurmJobsUserServiceApi,
         LitLoggerServiceApi,
+        AssistantsServiceApi,
 ):
 
     def __init__(self, api_client: Optional[ApiClient] = None):

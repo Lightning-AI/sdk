@@ -46,6 +46,9 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterState,
     V1SLURMJob,
     V1ListLightningworkResponse,
+    V1Assistant,
+    V1Endpoint,
+    V1UpstreamOpenAI,
 )
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -1912,6 +1915,101 @@ def internal_job_api_mocker_all_jobs_valid(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
         side_effect=find_instance,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_teamspace_api_create_agent_mocker(mocker):
+    def create_agent(self, body, project_id, **kwargs):
+        return V1Assistant(name=body.name, project_id=project_id, id=body.name, model=body.model)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.assistants_service_api.AssistantsServiceApi.assistants_service_create_assistant",
+        side_effect=create_agent,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_agents_api_get_agent_mocker(mocker):
+    def get_agent(self, id):
+        return V1Assistant(name=id, id=id, project_id="project_id", model="model", endpoint_id="enpoint_id")
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.assistants_service_api.AssistantsServiceApi.assistants_service_get_assistant",
+        side_effect=get_agent,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_agents_api_delete_agent_mocker(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.assistants_service_api.AssistantsServiceApi.assistants_service_delete_assistant",
+        return_value=None,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_agents_api_update_agent_mocker(mocker):
+    def update_agent(self, id, project_id, body):
+        return V1Assistant(name=body.name, project_id=project_id, id=id)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.assistants_service_api.AssistantsServiceApi.assistants_service_update_assistant",
+        side_effect=update_agent,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_agents_api_update_agent_endpoint_mocker(mocker):
+    def update_agent_endpoint(self, project_id, id, body, **kwargs):
+        return V1Endpoint(openai=V1UpstreamOpenAI(base_url=body.openai.base_url, api_key=body.openai.api_key))
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_update_endpoint",
+        side_effect=update_agent_endpoint,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture
+def internal_agents_api_get_agent_endpoint_mocker(mocker):
+    def get_agent_endpoint(self, project_id, ref):
+        return V1Endpoint(
+            id=ref, project_id=project_id, openai=V1UpstreamOpenAI(base_url="https://api.openai.com", api_key="api_key")
+        )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_get_endpoint",
+        side_effect=get_agent_endpoint,
         autospec=True,
     )
 

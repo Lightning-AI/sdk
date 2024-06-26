@@ -1,3 +1,4 @@
+from lightning_sdk.api.agents_api import AgentApi
 from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.teamspace_api import TeamspaceApi
@@ -8,4 +9,5 @@ __all__ = [
     "StudioApi",
     "TeamspaceApi",
     "UserApi",
+    "AgentApi",
 ]
