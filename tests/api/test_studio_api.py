@@ -348,3 +348,10 @@ def test_download_folder(_, tmpdir, internal_studio_api_login, internal_studio_a
 
     filepath = os.path.join(tmpdir, "file1")
     studio_api.download_folder("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
+
+
+def test_temporary_machine_patching():
+    assert studio_api_module._temporary_machine_patching("cpu-4:v2") == "cpu-4"
+    assert studio_api_module._temporary_machine_patching("data-large") == "data-large-3000"
+    assert studio_api_module._temporary_machine_patching("data-max") == "data-max-3000"
+    assert studio_api_module._temporary_machine_patching("data-ultra") == "data-ultra-3000"

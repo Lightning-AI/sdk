@@ -255,7 +255,7 @@ class StudioApi:
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
             project_id=teamspace_id, id=studio_id
         )
-        return _COMPUTE_NAME_TO_MACHINE[response.compute_config.name]
+        return _COMPUTE_NAME_TO_MACHINE[_temporary_machine_patching(response.compute_config.name)]
 
     def _get_detached_command_status(
         self, studio_id: str, teamspace_id: str, session_id: str
@@ -658,3 +658,13 @@ class StudioApi:
             print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {cluster_id=}")
 
         return resp
+
+
+def _temporary_machine_patching(name: str) -> str:
+    if name == "cpu-4:v2":
+        return "cpu-4"
+
+    if name in ["data-large", "data-max", "data-ultra"]:
+        return f"{name}-3000"
+
+    return name
