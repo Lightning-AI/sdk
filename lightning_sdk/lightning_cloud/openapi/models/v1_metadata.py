@@ -44,6 +44,7 @@ class V1Metadata(object):
         'annotations': 'dict(str, str)',
         'creation_timestamp': 'datetime',
         'deletion_timestamp': 'datetime',
+        'deployment_id': 'str',
         'display_name': 'str',
         'finalizers': 'list[str]',
         'id': 'str',
@@ -62,6 +63,7 @@ class V1Metadata(object):
         'annotations': 'annotations',
         'creation_timestamp': 'creationTimestamp',
         'deletion_timestamp': 'deletionTimestamp',
+        'deployment_id': 'deploymentId',
         'display_name': 'displayName',
         'finalizers': 'finalizers',
         'id': 'id',
@@ -76,11 +78,12 @@ class V1Metadata(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, annotations: 'dict(str, str)' =None, creation_timestamp: 'datetime' =None, deletion_timestamp: 'datetime' =None, display_name: 'str' =None, finalizers: 'list[str]' =None, id: 'str' =None, labels: 'dict(str, str)' =None, last_updated_by_user_at: 'datetime' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, resource_version: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, annotations: 'dict(str, str)' =None, creation_timestamp: 'datetime' =None, deletion_timestamp: 'datetime' =None, deployment_id: 'str' =None, display_name: 'str' =None, finalizers: 'list[str]' =None, id: 'str' =None, labels: 'dict(str, str)' =None, last_updated_by_user_at: 'datetime' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, resource_version: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Metadata - a model defined in Swagger"""  # noqa: E501
         self._annotations = None
         self._creation_timestamp = None
         self._deletion_timestamp = None
+        self._deployment_id = None
         self._display_name = None
         self._finalizers = None
         self._id = None
@@ -100,6 +103,8 @@ class V1Metadata(object):
             self.creation_timestamp = creation_timestamp
         if deletion_timestamp is not None:
             self.deletion_timestamp = deletion_timestamp
+        if deployment_id is not None:
+            self.deployment_id = deployment_id
         if display_name is not None:
             self.display_name = display_name
         if finalizers is not None:
@@ -187,6 +192,27 @@ class V1Metadata(object):
         """
 
         self._deletion_timestamp = deletion_timestamp
+
+    @property
+    def deployment_id(self) -> 'str':
+        """Gets the deployment_id of this V1Metadata.  # noqa: E501
+
+
+        :return: The deployment_id of this V1Metadata.  # noqa: E501
+        :rtype: str
+        """
+        return self._deployment_id
+
+    @deployment_id.setter
+    def deployment_id(self, deployment_id: 'str'):
+        """Sets the deployment_id of this V1Metadata.
+
+
+        :param deployment_id: The deployment_id of this V1Metadata.  # noqa: E501
+        :type: str
+        """
+
+        self._deployment_id = deployment_id
 
     @property
     def display_name(self) -> 'str':

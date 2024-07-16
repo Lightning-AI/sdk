@@ -127,6 +127,7 @@ class Teamspace:
         prompt_template: Optional[str] = "",
         description: Optional[str] = "",
         prompt_suggestions: Optional[List[str]] = None,
+        file_uploads_enabled: Optional[bool] = None,
     ) -> "Agent":
         agent = self._teamspace_api.create_agent(
             teamspace_id=self.id,
@@ -138,6 +139,7 @@ class Teamspace:
             prompt_template=prompt_template,
             description=description,
             prompt_suggestions=prompt_suggestions,
+            file_uploads_enabled=file_uploads_enabled,
         )
         return Agent(agent.id)
 

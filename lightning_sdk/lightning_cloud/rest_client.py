@@ -11,9 +11,9 @@ from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     ApiClient,
     AuthServiceApi,
+    AssistantsServiceApi,
     CloudSpaceServiceApi,
     ClusterServiceApi,
-    AssistantsServiceApi,
     Configuration,
     DataConnectionServiceApi,
     LightningappInstanceServiceApi,
@@ -69,6 +69,7 @@ class GridRestClient(
         LightningappInstanceServiceApi,
         LightningappV2ServiceApi,
         AuthServiceApi,
+        AssistantsServiceApi,
         CloudSpaceServiceApi,
         ClusterServiceApi,
         ProjectsServiceApi,
@@ -83,7 +84,6 @@ class GridRestClient(
         EndpointServiceApi,
         SlurmJobsUserServiceApi,
         LitLoggerServiceApi,
-        AssistantsServiceApi,
 ):
 
     def __init__(self, api_client: Optional[ApiClient] = None):

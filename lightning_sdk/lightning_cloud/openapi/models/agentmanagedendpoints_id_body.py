@@ -44,7 +44,6 @@ class AgentmanagedendpointsIdBody(object):
         'api_key': 'str',
         'base_url': 'str',
         'description': 'str',
-        'models': 'list[str]',
         'models_metadata': 'list[V1ManagedModel]',
         'name': 'str',
         'org_id': 'str',
@@ -56,7 +55,6 @@ class AgentmanagedendpointsIdBody(object):
         'api_key': 'apiKey',
         'base_url': 'baseUrl',
         'description': 'description',
-        'models': 'models',
         'models_metadata': 'modelsMetadata',
         'name': 'name',
         'org_id': 'orgId',
@@ -64,12 +62,11 @@ class AgentmanagedendpointsIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, api_key: 'str' =None, base_url: 'str' =None, description: 'str' =None, models: 'list[str]' =None, models_metadata: 'list[V1ManagedModel]' =None, name: 'str' =None, org_id: 'str' =None, publish_status: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, base_url: 'str' =None, description: 'str' =None, models_metadata: 'list[V1ManagedModel]' =None, name: 'str' =None, org_id: 'str' =None, publish_status: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """AgentmanagedendpointsIdBody - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._base_url = None
         self._description = None
-        self._models = None
         self._models_metadata = None
         self._name = None
         self._org_id = None
@@ -82,8 +79,6 @@ class AgentmanagedendpointsIdBody(object):
             self.base_url = base_url
         if description is not None:
             self.description = description
-        if models is not None:
-            self.models = models
         if models_metadata is not None:
             self.models_metadata = models_metadata
         if name is not None:
@@ -157,27 +152,6 @@ class AgentmanagedendpointsIdBody(object):
         """
 
         self._description = description
-
-    @property
-    def models(self) -> 'list[str]':
-        """Gets the models of this AgentmanagedendpointsIdBody.  # noqa: E501
-
-
-        :return: The models of this AgentmanagedendpointsIdBody.  # noqa: E501
-        :rtype: list[str]
-        """
-        return self._models
-
-    @models.setter
-    def models(self, models: 'list[str]'):
-        """Sets the models of this AgentmanagedendpointsIdBody.
-
-
-        :param models: The models of this AgentmanagedendpointsIdBody.  # noqa: E501
-        :type: list[str]
-        """
-
-        self._models = models
 
     @property
     def models_metadata(self) -> 'list[V1ManagedModel]':

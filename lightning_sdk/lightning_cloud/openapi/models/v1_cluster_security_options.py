@@ -45,7 +45,8 @@ class V1ClusterSecurityOptions(object):
         'encrypt_instance_volumes': 'bool',
         'kms_key_id': 'str',
         'protect_instance_metadata': 'bool',
-        'rootless_docker': 'bool'
+        'rootless_docker': 'bool',
+        'ssh_disabled': 'bool'
     }
 
     attribute_map = {
@@ -53,16 +54,18 @@ class V1ClusterSecurityOptions(object):
         'encrypt_instance_volumes': 'encryptInstanceVolumes',
         'kms_key_id': 'kmsKeyId',
         'protect_instance_metadata': 'protectInstanceMetadata',
-        'rootless_docker': 'rootlessDocker'
+        'rootless_docker': 'rootlessDocker',
+        'ssh_disabled': 'sshDisabled'
     }
 
-    def __init__(self, containers_non_privileged: 'bool' =None, encrypt_instance_volumes: 'bool' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None):  # noqa: E501
+    def __init__(self, containers_non_privileged: 'bool' =None, encrypt_instance_volumes: 'bool' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
         self._containers_non_privileged = None
         self._encrypt_instance_volumes = None
         self._kms_key_id = None
         self._protect_instance_metadata = None
         self._rootless_docker = None
+        self._ssh_disabled = None
         self.discriminator = None
         if containers_non_privileged is not None:
             self.containers_non_privileged = containers_non_privileged
@@ -74,6 +77,8 @@ class V1ClusterSecurityOptions(object):
             self.protect_instance_metadata = protect_instance_metadata
         if rootless_docker is not None:
             self.rootless_docker = rootless_docker
+        if ssh_disabled is not None:
+            self.ssh_disabled = ssh_disabled
 
     @property
     def containers_non_privileged(self) -> 'bool':
@@ -179,6 +184,27 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._rootless_docker = rootless_docker
+
+    @property
+    def ssh_disabled(self) -> 'bool':
+        """Gets the ssh_disabled of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The ssh_disabled of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._ssh_disabled
+
+    @ssh_disabled.setter
+    def ssh_disabled(self, ssh_disabled: 'bool'):
+        """Sets the ssh_disabled of this V1ClusterSecurityOptions.
+
+
+        :param ssh_disabled: The ssh_disabled of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._ssh_disabled = ssh_disabled
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -99,6 +99,7 @@ class TeamspaceApi:
         prompt_template: Optional[str] = "",
         description: Optional[str] = "",
         prompt_suggestions: Optional[List[str]] = None,
+        file_uploads_enabled: Optional[bool] = None,
     ) -> V1Assistant:
         openai_endpoint = V1UpstreamOpenAI(api_key=api_key, base_url=base_url)
 
@@ -117,6 +118,7 @@ class TeamspaceApi:
             org_id=org_id,
             prompt_template=prompt_template,
             description=description,
+            file_uploads_enabled=file_uploads_enabled,
         )
 
         return self._client.assistants_service_create_assistant(body=body, project_id=teamspace_id)

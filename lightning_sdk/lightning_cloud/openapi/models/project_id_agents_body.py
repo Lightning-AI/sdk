@@ -45,6 +45,7 @@ class ProjectIdAgentsBody(object):
         'cluster_id': 'str',
         'description': 'str',
         'endpoint': 'V1Endpoint',
+        'file_uploads_enabled': 'bool',
         'internal_assistant_name': 'str',
         'knowledge': 'str',
         'model': 'str',
@@ -60,6 +61,7 @@ class ProjectIdAgentsBody(object):
         'cluster_id': 'clusterId',
         'description': 'description',
         'endpoint': 'endpoint',
+        'file_uploads_enabled': 'fileUploadsEnabled',
         'internal_assistant_name': 'internalAssistantName',
         'knowledge': 'knowledge',
         'model': 'model',
@@ -70,12 +72,13 @@ class ProjectIdAgentsBody(object):
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, description: 'str' =None, endpoint: 'V1Endpoint' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, description: 'str' =None, endpoint: 'V1Endpoint' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """ProjectIdAgentsBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._description = None
         self._endpoint = None
+        self._file_uploads_enabled = None
         self._internal_assistant_name = None
         self._knowledge = None
         self._model = None
@@ -93,6 +96,8 @@ class ProjectIdAgentsBody(object):
             self.description = description
         if endpoint is not None:
             self.endpoint = endpoint
+        if file_uploads_enabled is not None:
+            self.file_uploads_enabled = file_uploads_enabled
         if internal_assistant_name is not None:
             self.internal_assistant_name = internal_assistant_name
         if knowledge is not None:
@@ -193,6 +198,27 @@ class ProjectIdAgentsBody(object):
         """
 
         self._endpoint = endpoint
+
+    @property
+    def file_uploads_enabled(self) -> 'bool':
+        """Gets the file_uploads_enabled of this ProjectIdAgentsBody.  # noqa: E501
+
+
+        :return: The file_uploads_enabled of this ProjectIdAgentsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._file_uploads_enabled
+
+    @file_uploads_enabled.setter
+    def file_uploads_enabled(self, file_uploads_enabled: 'bool'):
+        """Sets the file_uploads_enabled of this ProjectIdAgentsBody.
+
+
+        :param file_uploads_enabled: The file_uploads_enabled of this ProjectIdAgentsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._file_uploads_enabled = file_uploads_enabled
 
     @property
     def internal_assistant_name(self) -> 'str':

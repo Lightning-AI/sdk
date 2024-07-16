@@ -47,6 +47,7 @@ class V1LightningappInstanceStatus(object):
         'ip_address': 'str',
         'last_state_status_transition_timestamp': 'datetime',
         'message': 'str',
+        'modified_volume': 'bool',
         'phase': 'V1LightningappInstanceState',
         'server_id': 'str',
         'source_upload_url': 'str',
@@ -63,6 +64,7 @@ class V1LightningappInstanceStatus(object):
         'ip_address': 'ipAddress',
         'last_state_status_transition_timestamp': 'lastStateStatusTransitionTimestamp',
         'message': 'message',
+        'modified_volume': 'modifiedVolume',
         'phase': 'phase',
         'server_id': 'serverId',
         'source_upload_url': 'sourceUploadUrl',
@@ -72,7 +74,7 @@ class V1LightningappInstanceStatus(object):
         'url': 'url'
     }
 
-    def __init__(self, code_server_url: 'str' =None, dependency_cache_state: 'V1DependencyCacheState' =None, image_id: 'str' =None, ip_address: 'str' =None, last_state_status_transition_timestamp: 'datetime' =None, message: 'str' =None, phase: 'V1LightningappInstanceState' =None, server_id: 'str' =None, source_upload_url: 'str' =None, start_timestamp: 'datetime' =None, stop_timestamp: 'datetime' =None, total_cost: 'float' =None, url: 'str' =None):  # noqa: E501
+    def __init__(self, code_server_url: 'str' =None, dependency_cache_state: 'V1DependencyCacheState' =None, image_id: 'str' =None, ip_address: 'str' =None, last_state_status_transition_timestamp: 'datetime' =None, message: 'str' =None, modified_volume: 'bool' =None, phase: 'V1LightningappInstanceState' =None, server_id: 'str' =None, source_upload_url: 'str' =None, start_timestamp: 'datetime' =None, stop_timestamp: 'datetime' =None, total_cost: 'float' =None, url: 'str' =None):  # noqa: E501
         """V1LightningappInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._code_server_url = None
         self._dependency_cache_state = None
@@ -80,6 +82,7 @@ class V1LightningappInstanceStatus(object):
         self._ip_address = None
         self._last_state_status_transition_timestamp = None
         self._message = None
+        self._modified_volume = None
         self._phase = None
         self._server_id = None
         self._source_upload_url = None
@@ -100,6 +103,8 @@ class V1LightningappInstanceStatus(object):
             self.last_state_status_transition_timestamp = last_state_status_transition_timestamp
         if message is not None:
             self.message = message
+        if modified_volume is not None:
+            self.modified_volume = modified_volume
         if phase is not None:
             self.phase = phase
         if server_id is not None:
@@ -240,6 +245,27 @@ class V1LightningappInstanceStatus(object):
         """
 
         self._message = message
+
+    @property
+    def modified_volume(self) -> 'bool':
+        """Gets the modified_volume of this V1LightningappInstanceStatus.  # noqa: E501
+
+
+        :return: The modified_volume of this V1LightningappInstanceStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._modified_volume
+
+    @modified_volume.setter
+    def modified_volume(self, modified_volume: 'bool'):
+        """Sets the modified_volume of this V1LightningappInstanceStatus.
+
+
+        :param modified_volume: The modified_volume of this V1LightningappInstanceStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._modified_volume = modified_volume
 
     @property
     def phase(self) -> 'V1LightningappInstanceState':

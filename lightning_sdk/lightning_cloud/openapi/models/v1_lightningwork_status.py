@@ -44,6 +44,7 @@ class V1LightningworkStatus(object):
         'ip_address': 'str',
         'last_state_status_transition_timestamp': 'datetime',
         'message': 'str',
+        'modified_volume': 'bool',
         'number_of_files': 'str',
         'phase': 'V1LightningworkState',
         'reason': 'V1LightningworkStatusReason',
@@ -60,6 +61,7 @@ class V1LightningworkStatus(object):
         'ip_address': 'ipAddress',
         'last_state_status_transition_timestamp': 'lastStateStatusTransitionTimestamp',
         'message': 'message',
+        'modified_volume': 'modifiedVolume',
         'number_of_files': 'numberOfFiles',
         'phase': 'phase',
         'reason': 'reason',
@@ -72,11 +74,12 @@ class V1LightningworkStatus(object):
         'total_size_bytes': 'totalSizeBytes'
     }
 
-    def __init__(self, ip_address: 'str' =None, last_state_status_transition_timestamp: 'datetime' =None, message: 'str' =None, number_of_files: 'str' =None, phase: 'V1LightningworkState' =None, reason: 'V1LightningworkStatusReason' =None, server_id: 'str' =None, server_instance_id: 'str' =None, start_timestamp: 'datetime' =None, stop_timestamp: 'datetime' =None, symlinks_created: 'bool' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, ip_address: 'str' =None, last_state_status_transition_timestamp: 'datetime' =None, message: 'str' =None, modified_volume: 'bool' =None, number_of_files: 'str' =None, phase: 'V1LightningworkState' =None, reason: 'V1LightningworkStatusReason' =None, server_id: 'str' =None, server_instance_id: 'str' =None, start_timestamp: 'datetime' =None, stop_timestamp: 'datetime' =None, symlinks_created: 'bool' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None):  # noqa: E501
         """V1LightningworkStatus - a model defined in Swagger"""  # noqa: E501
         self._ip_address = None
         self._last_state_status_transition_timestamp = None
         self._message = None
+        self._modified_volume = None
         self._number_of_files = None
         self._phase = None
         self._reason = None
@@ -94,6 +97,8 @@ class V1LightningworkStatus(object):
             self.last_state_status_transition_timestamp = last_state_status_transition_timestamp
         if message is not None:
             self.message = message
+        if modified_volume is not None:
+            self.modified_volume = modified_volume
         if number_of_files is not None:
             self.number_of_files = number_of_files
         if phase is not None:
@@ -177,6 +182,27 @@ class V1LightningworkStatus(object):
         """
 
         self._message = message
+
+    @property
+    def modified_volume(self) -> 'bool':
+        """Gets the modified_volume of this V1LightningworkStatus.  # noqa: E501
+
+
+        :return: The modified_volume of this V1LightningworkStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._modified_volume
+
+    @modified_volume.setter
+    def modified_volume(self, modified_volume: 'bool'):
+        """Sets the modified_volume of this V1LightningworkStatus.
+
+
+        :param modified_volume: The modified_volume of this V1LightningworkStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._modified_volume = modified_volume
 
     @property
     def number_of_files(self) -> 'str':

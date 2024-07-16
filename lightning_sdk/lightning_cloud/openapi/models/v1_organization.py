@@ -42,6 +42,8 @@ class V1Organization(object):
     """
     swagger_types = {
         'allow_guest': 'bool',
+        'allow_member_invitations': 'bool',
+        'allow_member_teamspace_creation': 'bool',
         'auto_join_domains': 'list[str]',
         'created_at': 'datetime',
         'description': 'str',
@@ -59,6 +61,8 @@ class V1Organization(object):
 
     attribute_map = {
         'allow_guest': 'allowGuest',
+        'allow_member_invitations': 'allowMemberInvitations',
+        'allow_member_teamspace_creation': 'allowMemberTeamspaceCreation',
         'auto_join_domains': 'autoJoinDomains',
         'created_at': 'createdAt',
         'description': 'description',
@@ -74,9 +78,11 @@ class V1Organization(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
+        self._allow_member_invitations = None
+        self._allow_member_teamspace_creation = None
         self._auto_join_domains = None
         self._created_at = None
         self._description = None
@@ -93,6 +99,10 @@ class V1Organization(object):
         self.discriminator = None
         if allow_guest is not None:
             self.allow_guest = allow_guest
+        if allow_member_invitations is not None:
+            self.allow_member_invitations = allow_member_invitations
+        if allow_member_teamspace_creation is not None:
+            self.allow_member_teamspace_creation = allow_member_teamspace_creation
         if auto_join_domains is not None:
             self.auto_join_domains = auto_join_domains
         if created_at is not None:
@@ -140,6 +150,48 @@ class V1Organization(object):
         """
 
         self._allow_guest = allow_guest
+
+    @property
+    def allow_member_invitations(self) -> 'bool':
+        """Gets the allow_member_invitations of this V1Organization.  # noqa: E501
+
+
+        :return: The allow_member_invitations of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_member_invitations
+
+    @allow_member_invitations.setter
+    def allow_member_invitations(self, allow_member_invitations: 'bool'):
+        """Sets the allow_member_invitations of this V1Organization.
+
+
+        :param allow_member_invitations: The allow_member_invitations of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_member_invitations = allow_member_invitations
+
+    @property
+    def allow_member_teamspace_creation(self) -> 'bool':
+        """Gets the allow_member_teamspace_creation of this V1Organization.  # noqa: E501
+
+
+        :return: The allow_member_teamspace_creation of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_member_teamspace_creation
+
+    @allow_member_teamspace_creation.setter
+    def allow_member_teamspace_creation(self, allow_member_teamspace_creation: 'bool'):
+        """Sets the allow_member_teamspace_creation of this V1Organization.
+
+
+        :param allow_member_teamspace_creation: The allow_member_teamspace_creation of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_member_teamspace_creation = allow_member_teamspace_creation
 
     @property
     def auto_join_domains(self) -> 'list[str]':

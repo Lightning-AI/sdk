@@ -5512,6 +5512,7 @@ class CloudSpaceServiceApi(object):
         :param str sort_by:
         :param str org_id:
         :param str tag:
+        :param str internal_name:
         :return: V1ListPublishedCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -5539,12 +5540,13 @@ class CloudSpaceServiceApi(object):
         :param str sort_by:
         :param str org_id:
         :param str tag:
+        :param str internal_name:
         :return: V1ListPublishedCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['username', 'search_query', 'page_token', 'limit', 'sort_by', 'org_id', 'tag']  # noqa: E501
+        all_params = ['username', 'search_query', 'page_token', 'limit', 'sort_by', 'org_id', 'tag', 'internal_name']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -5579,6 +5581,8 @@ class CloudSpaceServiceApi(object):
             query_params.append(('orgId', params['org_id']))  # noqa: E501
         if 'tag' in params:
             query_params.append(('tag', params['tag']))  # noqa: E501
+        if 'internal_name' in params:
+            query_params.append(('internalName', params['internal_name']))  # noqa: E501
 
         header_params = {}
 

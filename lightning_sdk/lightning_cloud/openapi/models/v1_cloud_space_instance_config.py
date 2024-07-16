@@ -41,75 +41,44 @@ class V1CloudSpaceInstanceConfig(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'auto_start_ports': 'list[str]',
         'compute_config': 'V1UserRequestedComputeConfig',
         'data_connection_mounts': 'list[V1DataConnectionMount]',
         'disable_auto_shutdown': 'bool',
-        'enable_auto_start': 'bool',
         'ide': 'str',
         'idle_shutdown_seconds': 'int',
         'publish_with_compute_name': 'str'
     }
 
     attribute_map = {
-        'auto_start_ports': 'autoStartPorts',
         'compute_config': 'computeConfig',
         'data_connection_mounts': 'dataConnectionMounts',
         'disable_auto_shutdown': 'disableAutoShutdown',
-        'enable_auto_start': 'enableAutoStart',
         'ide': 'ide',
         'idle_shutdown_seconds': 'idleShutdownSeconds',
         'publish_with_compute_name': 'publishWithComputeName'
     }
 
-    def __init__(self, auto_start_ports: 'list[str]' =None, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, enable_auto_start: 'bool' =None, ide: 'str' =None, idle_shutdown_seconds: 'int' =None, publish_with_compute_name: 'str' =None):  # noqa: E501
+    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, ide: 'str' =None, idle_shutdown_seconds: 'int' =None, publish_with_compute_name: 'str' =None):  # noqa: E501
         """V1CloudSpaceInstanceConfig - a model defined in Swagger"""  # noqa: E501
-        self._auto_start_ports = None
         self._compute_config = None
         self._data_connection_mounts = None
         self._disable_auto_shutdown = None
-        self._enable_auto_start = None
         self._ide = None
         self._idle_shutdown_seconds = None
         self._publish_with_compute_name = None
         self.discriminator = None
-        if auto_start_ports is not None:
-            self.auto_start_ports = auto_start_ports
         if compute_config is not None:
             self.compute_config = compute_config
         if data_connection_mounts is not None:
             self.data_connection_mounts = data_connection_mounts
         if disable_auto_shutdown is not None:
             self.disable_auto_shutdown = disable_auto_shutdown
-        if enable_auto_start is not None:
-            self.enable_auto_start = enable_auto_start
         if ide is not None:
             self.ide = ide
         if idle_shutdown_seconds is not None:
             self.idle_shutdown_seconds = idle_shutdown_seconds
         if publish_with_compute_name is not None:
             self.publish_with_compute_name = publish_with_compute_name
-
-    @property
-    def auto_start_ports(self) -> 'list[str]':
-        """Gets the auto_start_ports of this V1CloudSpaceInstanceConfig.  # noqa: E501
-
-
-        :return: The auto_start_ports of this V1CloudSpaceInstanceConfig.  # noqa: E501
-        :rtype: list[str]
-        """
-        return self._auto_start_ports
-
-    @auto_start_ports.setter
-    def auto_start_ports(self, auto_start_ports: 'list[str]'):
-        """Sets the auto_start_ports of this V1CloudSpaceInstanceConfig.
-
-
-        :param auto_start_ports: The auto_start_ports of this V1CloudSpaceInstanceConfig.  # noqa: E501
-        :type: list[str]
-        """
-
-        self._auto_start_ports = auto_start_ports
 
     @property
     def compute_config(self) -> 'V1UserRequestedComputeConfig':
@@ -173,27 +142,6 @@ class V1CloudSpaceInstanceConfig(object):
         """
 
         self._disable_auto_shutdown = disable_auto_shutdown
-
-    @property
-    def enable_auto_start(self) -> 'bool':
-        """Gets the enable_auto_start of this V1CloudSpaceInstanceConfig.  # noqa: E501
-
-
-        :return: The enable_auto_start of this V1CloudSpaceInstanceConfig.  # noqa: E501
-        :rtype: bool
-        """
-        return self._enable_auto_start
-
-    @enable_auto_start.setter
-    def enable_auto_start(self, enable_auto_start: 'bool'):
-        """Sets the enable_auto_start of this V1CloudSpaceInstanceConfig.
-
-
-        :param enable_auto_start: The enable_auto_start of this V1CloudSpaceInstanceConfig.  # noqa: E501
-        :type: bool
-        """
-
-        self._enable_auto_start = enable_auto_start
 
     @property
     def ide(self) -> 'str':

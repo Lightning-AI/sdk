@@ -41,26 +41,14 @@ class V1Job(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'cloudspace_id': 'str',
-        'cluster_id': 'str',
-        'command': 'str',
         'created_at': 'datetime',
+        'deployment_id': 'str',
         'endpoint': 'V1Endpoint',
-        'entrypoint': 'str',
-        'env': 'list[V1EnvVar]',
         'id': 'str',
-        'image': 'str',
-        'instance_name': 'str',
-        'instance_type': 'str',
         'message': 'str',
         'name': 'str',
         'project_id': 'str',
-        'resources': 'V1Resources',
-        'restart_policy': 'str',
-        'run_id': 'str',
-        'skip_data_connections_setup': 'bool',
-        'skip_filesystem_setup': 'bool',
-        'spot': 'bool',
+        'spec': 'V1JobSpec',
         'started_at': 'datetime',
         'state': 'str',
         'stopped_at': 'datetime',
@@ -70,26 +58,14 @@ class V1Job(object):
     }
 
     attribute_map = {
-        'cloudspace_id': 'cloudspaceId',
-        'cluster_id': 'clusterId',
-        'command': 'command',
         'created_at': 'createdAt',
+        'deployment_id': 'deploymentId',
         'endpoint': 'endpoint',
-        'entrypoint': 'entrypoint',
-        'env': 'env',
         'id': 'id',
-        'image': 'image',
-        'instance_name': 'instanceName',
-        'instance_type': 'instanceType',
         'message': 'message',
         'name': 'name',
         'project_id': 'projectId',
-        'resources': 'resources',
-        'restart_policy': 'restartPolicy',
-        'run_id': 'runId',
-        'skip_data_connections_setup': 'skipDataConnectionsSetup',
-        'skip_filesystem_setup': 'skipFilesystemSetup',
-        'spot': 'spot',
+        'spec': 'spec',
         'started_at': 'startedAt',
         'state': 'state',
         'stopped_at': 'stoppedAt',
@@ -98,28 +74,16 @@ class V1Job(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, endpoint: 'V1Endpoint' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, image: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
-        self._cloudspace_id = None
-        self._cluster_id = None
-        self._command = None
         self._created_at = None
+        self._deployment_id = None
         self._endpoint = None
-        self._entrypoint = None
-        self._env = None
         self._id = None
-        self._image = None
-        self._instance_name = None
-        self._instance_type = None
         self._message = None
         self._name = None
         self._project_id = None
-        self._resources = None
-        self._restart_policy = None
-        self._run_id = None
-        self._skip_data_connections_setup = None
-        self._skip_filesystem_setup = None
-        self._spot = None
+        self._spec = None
         self._started_at = None
         self._state = None
         self._stopped_at = None
@@ -127,46 +91,22 @@ class V1Job(object):
         self._urls = None
         self._user_id = None
         self.discriminator = None
-        if cloudspace_id is not None:
-            self.cloudspace_id = cloudspace_id
-        if cluster_id is not None:
-            self.cluster_id = cluster_id
-        if command is not None:
-            self.command = command
         if created_at is not None:
             self.created_at = created_at
+        if deployment_id is not None:
+            self.deployment_id = deployment_id
         if endpoint is not None:
             self.endpoint = endpoint
-        if entrypoint is not None:
-            self.entrypoint = entrypoint
-        if env is not None:
-            self.env = env
         if id is not None:
             self.id = id
-        if image is not None:
-            self.image = image
-        if instance_name is not None:
-            self.instance_name = instance_name
-        if instance_type is not None:
-            self.instance_type = instance_type
         if message is not None:
             self.message = message
         if name is not None:
             self.name = name
         if project_id is not None:
             self.project_id = project_id
-        if resources is not None:
-            self.resources = resources
-        if restart_policy is not None:
-            self.restart_policy = restart_policy
-        if run_id is not None:
-            self.run_id = run_id
-        if skip_data_connections_setup is not None:
-            self.skip_data_connections_setup = skip_data_connections_setup
-        if skip_filesystem_setup is not None:
-            self.skip_filesystem_setup = skip_filesystem_setup
-        if spot is not None:
-            self.spot = spot
+        if spec is not None:
+            self.spec = spec
         if started_at is not None:
             self.started_at = started_at
         if state is not None:
@@ -179,69 +119,6 @@ class V1Job(object):
             self.urls = urls
         if user_id is not None:
             self.user_id = user_id
-
-    @property
-    def cloudspace_id(self) -> 'str':
-        """Gets the cloudspace_id of this V1Job.  # noqa: E501
-
-
-        :return: The cloudspace_id of this V1Job.  # noqa: E501
-        :rtype: str
-        """
-        return self._cloudspace_id
-
-    @cloudspace_id.setter
-    def cloudspace_id(self, cloudspace_id: 'str'):
-        """Sets the cloudspace_id of this V1Job.
-
-
-        :param cloudspace_id: The cloudspace_id of this V1Job.  # noqa: E501
-        :type: str
-        """
-
-        self._cloudspace_id = cloudspace_id
-
-    @property
-    def cluster_id(self) -> 'str':
-        """Gets the cluster_id of this V1Job.  # noqa: E501
-
-
-        :return: The cluster_id of this V1Job.  # noqa: E501
-        :rtype: str
-        """
-        return self._cluster_id
-
-    @cluster_id.setter
-    def cluster_id(self, cluster_id: 'str'):
-        """Sets the cluster_id of this V1Job.
-
-
-        :param cluster_id: The cluster_id of this V1Job.  # noqa: E501
-        :type: str
-        """
-
-        self._cluster_id = cluster_id
-
-    @property
-    def command(self) -> 'str':
-        """Gets the command of this V1Job.  # noqa: E501
-
-
-        :return: The command of this V1Job.  # noqa: E501
-        :rtype: str
-        """
-        return self._command
-
-    @command.setter
-    def command(self, command: 'str'):
-        """Sets the command of this V1Job.
-
-
-        :param command: The command of this V1Job.  # noqa: E501
-        :type: str
-        """
-
-        self._command = command
 
     @property
     def created_at(self) -> 'datetime':
@@ -265,6 +142,27 @@ class V1Job(object):
         self._created_at = created_at
 
     @property
+    def deployment_id(self) -> 'str':
+        """Gets the deployment_id of this V1Job.  # noqa: E501
+
+
+        :return: The deployment_id of this V1Job.  # noqa: E501
+        :rtype: str
+        """
+        return self._deployment_id
+
+    @deployment_id.setter
+    def deployment_id(self, deployment_id: 'str'):
+        """Sets the deployment_id of this V1Job.
+
+
+        :param deployment_id: The deployment_id of this V1Job.  # noqa: E501
+        :type: str
+        """
+
+        self._deployment_id = deployment_id
+
+    @property
     def endpoint(self) -> 'V1Endpoint':
         """Gets the endpoint of this V1Job.  # noqa: E501
 
@@ -286,48 +184,6 @@ class V1Job(object):
         self._endpoint = endpoint
 
     @property
-    def entrypoint(self) -> 'str':
-        """Gets the entrypoint of this V1Job.  # noqa: E501
-
-
-        :return: The entrypoint of this V1Job.  # noqa: E501
-        :rtype: str
-        """
-        return self._entrypoint
-
-    @entrypoint.setter
-    def entrypoint(self, entrypoint: 'str'):
-        """Sets the entrypoint of this V1Job.
-
-
-        :param entrypoint: The entrypoint of this V1Job.  # noqa: E501
-        :type: str
-        """
-
-        self._entrypoint = entrypoint
-
-    @property
-    def env(self) -> 'list[V1EnvVar]':
-        """Gets the env of this V1Job.  # noqa: E501
-
-
-        :return: The env of this V1Job.  # noqa: E501
-        :rtype: list[V1EnvVar]
-        """
-        return self._env
-
-    @env.setter
-    def env(self, env: 'list[V1EnvVar]'):
-        """Sets the env of this V1Job.
-
-
-        :param env: The env of this V1Job.  # noqa: E501
-        :type: list[V1EnvVar]
-        """
-
-        self._env = env
-
-    @property
     def id(self) -> 'str':
         """Gets the id of this V1Job.  # noqa: E501
 
@@ -347,69 +203,6 @@ class V1Job(object):
         """
 
         self._id = id
-
-    @property
-    def image(self) -> 'str':
-        """Gets the image of this V1Job.  # noqa: E501
-
-
-        :return: The image of this V1Job.  # noqa: E501
-        :rtype: str
-        """
-        return self._image
-
-    @image.setter
-    def image(self, image: 'str'):
-        """Sets the image of this V1Job.
-
-
-        :param image: The image of this V1Job.  # noqa: E501
-        :type: str
-        """
-
-        self._image = image
-
-    @property
-    def instance_name(self) -> 'str':
-        """Gets the instance_name of this V1Job.  # noqa: E501
-
-
-        :return: The instance_name of this V1Job.  # noqa: E501
-        :rtype: str
-        """
-        return self._instance_name
-
-    @instance_name.setter
-    def instance_name(self, instance_name: 'str'):
-        """Sets the instance_name of this V1Job.
-
-
-        :param instance_name: The instance_name of this V1Job.  # noqa: E501
-        :type: str
-        """
-
-        self._instance_name = instance_name
-
-    @property
-    def instance_type(self) -> 'str':
-        """Gets the instance_type of this V1Job.  # noqa: E501
-
-
-        :return: The instance_type of this V1Job.  # noqa: E501
-        :rtype: str
-        """
-        return self._instance_type
-
-    @instance_type.setter
-    def instance_type(self, instance_type: 'str'):
-        """Sets the instance_type of this V1Job.
-
-
-        :param instance_type: The instance_type of this V1Job.  # noqa: E501
-        :type: str
-        """
-
-        self._instance_type = instance_type
 
     @property
     def message(self) -> 'str':
@@ -475,130 +268,25 @@ class V1Job(object):
         self._project_id = project_id
 
     @property
-    def resources(self) -> 'V1Resources':
-        """Gets the resources of this V1Job.  # noqa: E501
+    def spec(self) -> 'V1JobSpec':
+        """Gets the spec of this V1Job.  # noqa: E501
 
 
-        :return: The resources of this V1Job.  # noqa: E501
-        :rtype: V1Resources
+        :return: The spec of this V1Job.  # noqa: E501
+        :rtype: V1JobSpec
         """
-        return self._resources
+        return self._spec
 
-    @resources.setter
-    def resources(self, resources: 'V1Resources'):
-        """Sets the resources of this V1Job.
-
-
-        :param resources: The resources of this V1Job.  # noqa: E501
-        :type: V1Resources
-        """
-
-        self._resources = resources
-
-    @property
-    def restart_policy(self) -> 'str':
-        """Gets the restart_policy of this V1Job.  # noqa: E501
+    @spec.setter
+    def spec(self, spec: 'V1JobSpec'):
+        """Sets the spec of this V1Job.
 
 
-        :return: The restart_policy of this V1Job.  # noqa: E501
-        :rtype: str
-        """
-        return self._restart_policy
-
-    @restart_policy.setter
-    def restart_policy(self, restart_policy: 'str'):
-        """Sets the restart_policy of this V1Job.
-
-
-        :param restart_policy: The restart_policy of this V1Job.  # noqa: E501
-        :type: str
+        :param spec: The spec of this V1Job.  # noqa: E501
+        :type: V1JobSpec
         """
 
-        self._restart_policy = restart_policy
-
-    @property
-    def run_id(self) -> 'str':
-        """Gets the run_id of this V1Job.  # noqa: E501
-
-
-        :return: The run_id of this V1Job.  # noqa: E501
-        :rtype: str
-        """
-        return self._run_id
-
-    @run_id.setter
-    def run_id(self, run_id: 'str'):
-        """Sets the run_id of this V1Job.
-
-
-        :param run_id: The run_id of this V1Job.  # noqa: E501
-        :type: str
-        """
-
-        self._run_id = run_id
-
-    @property
-    def skip_data_connections_setup(self) -> 'bool':
-        """Gets the skip_data_connections_setup of this V1Job.  # noqa: E501
-
-
-        :return: The skip_data_connections_setup of this V1Job.  # noqa: E501
-        :rtype: bool
-        """
-        return self._skip_data_connections_setup
-
-    @skip_data_connections_setup.setter
-    def skip_data_connections_setup(self, skip_data_connections_setup: 'bool'):
-        """Sets the skip_data_connections_setup of this V1Job.
-
-
-        :param skip_data_connections_setup: The skip_data_connections_setup of this V1Job.  # noqa: E501
-        :type: bool
-        """
-
-        self._skip_data_connections_setup = skip_data_connections_setup
-
-    @property
-    def skip_filesystem_setup(self) -> 'bool':
-        """Gets the skip_filesystem_setup of this V1Job.  # noqa: E501
-
-
-        :return: The skip_filesystem_setup of this V1Job.  # noqa: E501
-        :rtype: bool
-        """
-        return self._skip_filesystem_setup
-
-    @skip_filesystem_setup.setter
-    def skip_filesystem_setup(self, skip_filesystem_setup: 'bool'):
-        """Sets the skip_filesystem_setup of this V1Job.
-
-
-        :param skip_filesystem_setup: The skip_filesystem_setup of this V1Job.  # noqa: E501
-        :type: bool
-        """
-
-        self._skip_filesystem_setup = skip_filesystem_setup
-
-    @property
-    def spot(self) -> 'bool':
-        """Gets the spot of this V1Job.  # noqa: E501
-
-
-        :return: The spot of this V1Job.  # noqa: E501
-        :rtype: bool
-        """
-        return self._spot
-
-    @spot.setter
-    def spot(self, spot: 'bool'):
-        """Sets the spot of this V1Job.
-
-
-        :param spot: The spot of this V1Job.  # noqa: E501
-        :type: bool
-        """
-
-        self._spot = spot
+        self._spec = spec
 
     @property
     def started_at(self) -> 'datetime':

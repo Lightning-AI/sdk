@@ -68,6 +68,8 @@ class V1RuleResource(object):
     CLOUDSPACE = "cloudSpace"
     FEATUREDORGSTUDIOGALLERY = "featuredOrgStudioGallery"
     MANAGEDENDPOINT = "managedEndpoint"
+    JOB = "job"
+    DEPLOYMENT = "deployment"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

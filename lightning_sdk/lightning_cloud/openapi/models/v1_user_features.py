@@ -41,6 +41,7 @@ class V1UserFeatures(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'agents_v2': 'bool',
         'apt_get_v2': 'bool',
         'auto_fast_load': 'bool',
         'aws_trainium': 'bool',
@@ -60,11 +61,10 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
         'gcp': 'bool',
-        'import_from_studio_into_about': 'bool',
+        'inference_job_deployment_plugin': 'bool',
         'interruptible_instances': 'bool',
         'jobs_init': 'bool',
         'jobs_v2': 'bool',
-        'l4x8': 'bool',
         'landing_studios': 'bool',
         'lit_logger': 'bool',
         'lit_logger_storage_v2': 'bool',
@@ -72,6 +72,9 @@ class V1UserFeatures(object):
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
         'mountpoint_s3': 'bool',
+        'new_cpu_instance': 'bool',
+        'new_data_prep_cpu_instance': 'bool',
+        'org_level_member_permissions': 'bool',
         'plugin_biz_chat': 'bool',
         'plugin_distributed': 'bool',
         'plugin_fiftyone': 'bool',
@@ -99,8 +102,8 @@ class V1UserFeatures(object):
         'slurm_machine_selector': 'bool',
         'snowflake_connection': 'bool',
         'spot': 'bool',
+        'studio_config': 'bool',
         'teamspace_storage_tab': 'bool',
-        'testable_entrypoint': 'bool',
         'unified_billing_ux': 'bool',
         'unified_billing_ux_v2': 'bool',
         'use_local_disk': 'bool',
@@ -109,6 +112,7 @@ class V1UserFeatures(object):
     }
 
     attribute_map = {
+        'agents_v2': 'agentsV2',
         'apt_get_v2': 'aptGetV2',
         'auto_fast_load': 'autoFastLoad',
         'aws_trainium': 'awsTrainium',
@@ -128,11 +132,10 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
         'gcp': 'gcp',
-        'import_from_studio_into_about': 'importFromStudioIntoAbout',
+        'inference_job_deployment_plugin': 'inferenceJobDeploymentPlugin',
         'interruptible_instances': 'interruptibleInstances',
         'jobs_init': 'jobsInit',
         'jobs_v2': 'jobsV2',
-        'l4x8': 'l4x8',
         'landing_studios': 'landingStudios',
         'lit_logger': 'litLogger',
         'lit_logger_storage_v2': 'litLoggerStorageV2',
@@ -140,6 +143,9 @@ class V1UserFeatures(object):
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'mountpoint_s3': 'mountpointS3',
+        'new_cpu_instance': 'newCpuInstance',
+        'new_data_prep_cpu_instance': 'newDataPrepCpuInstance',
+        'org_level_member_permissions': 'orgLevelMemberPermissions',
         'plugin_biz_chat': 'pluginBizChat',
         'plugin_distributed': 'pluginDistributed',
         'plugin_fiftyone': 'pluginFiftyone',
@@ -167,8 +173,8 @@ class V1UserFeatures(object):
         'slurm_machine_selector': 'slurmMachineSelector',
         'snowflake_connection': 'snowflakeConnection',
         'spot': 'spot',
+        'studio_config': 'studioConfig',
         'teamspace_storage_tab': 'teamspaceStorageTab',
-        'testable_entrypoint': 'testableEntrypoint',
         'unified_billing_ux': 'unifiedBillingUx',
         'unified_billing_ux_v2': 'unifiedBillingUxV2',
         'use_local_disk': 'useLocalDisk',
@@ -176,8 +182,9 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, import_from_studio_into_about: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, l4x8: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, teamspace_storage_tab: 'bool' =None, testable_entrypoint: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, new_cpu_instance: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, studio_config: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
+        self._agents_v2 = None
         self._apt_get_v2 = None
         self._auto_fast_load = None
         self._aws_trainium = None
@@ -197,11 +204,10 @@ class V1UserFeatures(object):
         self._featured_studios_admin = None
         self._filesystem_optimisation = None
         self._gcp = None
-        self._import_from_studio_into_about = None
+        self._inference_job_deployment_plugin = None
         self._interruptible_instances = None
         self._jobs_init = None
         self._jobs_v2 = None
-        self._l4x8 = None
         self._landing_studios = None
         self._lit_logger = None
         self._lit_logger_storage_v2 = None
@@ -209,6 +215,9 @@ class V1UserFeatures(object):
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
         self._mountpoint_s3 = None
+        self._new_cpu_instance = None
+        self._new_data_prep_cpu_instance = None
+        self._org_level_member_permissions = None
         self._plugin_biz_chat = None
         self._plugin_distributed = None
         self._plugin_fiftyone = None
@@ -236,14 +245,16 @@ class V1UserFeatures(object):
         self._slurm_machine_selector = None
         self._snowflake_connection = None
         self._spot = None
+        self._studio_config = None
         self._teamspace_storage_tab = None
-        self._testable_entrypoint = None
         self._unified_billing_ux = None
         self._unified_billing_ux_v2 = None
         self._use_local_disk = None
         self._use_rclone_mounts_only = None
         self._writable_data_connections = None
         self.discriminator = None
+        if agents_v2 is not None:
+            self.agents_v2 = agents_v2
         if apt_get_v2 is not None:
             self.apt_get_v2 = apt_get_v2
         if auto_fast_load is not None:
@@ -282,16 +293,14 @@ class V1UserFeatures(object):
             self.filesystem_optimisation = filesystem_optimisation
         if gcp is not None:
             self.gcp = gcp
-        if import_from_studio_into_about is not None:
-            self.import_from_studio_into_about = import_from_studio_into_about
+        if inference_job_deployment_plugin is not None:
+            self.inference_job_deployment_plugin = inference_job_deployment_plugin
         if interruptible_instances is not None:
             self.interruptible_instances = interruptible_instances
         if jobs_init is not None:
             self.jobs_init = jobs_init
         if jobs_v2 is not None:
             self.jobs_v2 = jobs_v2
-        if l4x8 is not None:
-            self.l4x8 = l4x8
         if landing_studios is not None:
             self.landing_studios = landing_studios
         if lit_logger is not None:
@@ -306,6 +315,12 @@ class V1UserFeatures(object):
             self.mmt_strategy_selector = mmt_strategy_selector
         if mountpoint_s3 is not None:
             self.mountpoint_s3 = mountpoint_s3
+        if new_cpu_instance is not None:
+            self.new_cpu_instance = new_cpu_instance
+        if new_data_prep_cpu_instance is not None:
+            self.new_data_prep_cpu_instance = new_data_prep_cpu_instance
+        if org_level_member_permissions is not None:
+            self.org_level_member_permissions = org_level_member_permissions
         if plugin_biz_chat is not None:
             self.plugin_biz_chat = plugin_biz_chat
         if plugin_distributed is not None:
@@ -360,10 +375,10 @@ class V1UserFeatures(object):
             self.snowflake_connection = snowflake_connection
         if spot is not None:
             self.spot = spot
+        if studio_config is not None:
+            self.studio_config = studio_config
         if teamspace_storage_tab is not None:
             self.teamspace_storage_tab = teamspace_storage_tab
-        if testable_entrypoint is not None:
-            self.testable_entrypoint = testable_entrypoint
         if unified_billing_ux is not None:
             self.unified_billing_ux = unified_billing_ux
         if unified_billing_ux_v2 is not None:
@@ -374,6 +389,27 @@ class V1UserFeatures(object):
             self.use_rclone_mounts_only = use_rclone_mounts_only
         if writable_data_connections is not None:
             self.writable_data_connections = writable_data_connections
+
+    @property
+    def agents_v2(self) -> 'bool':
+        """Gets the agents_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The agents_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._agents_v2
+
+    @agents_v2.setter
+    def agents_v2(self, agents_v2: 'bool'):
+        """Sets the agents_v2 of this V1UserFeatures.
+
+
+        :param agents_v2: The agents_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._agents_v2 = agents_v2
 
     @property
     def apt_get_v2(self) -> 'bool':
@@ -775,25 +811,25 @@ class V1UserFeatures(object):
         self._gcp = gcp
 
     @property
-    def import_from_studio_into_about(self) -> 'bool':
-        """Gets the import_from_studio_into_about of this V1UserFeatures.  # noqa: E501
+    def inference_job_deployment_plugin(self) -> 'bool':
+        """Gets the inference_job_deployment_plugin of this V1UserFeatures.  # noqa: E501
 
 
-        :return: The import_from_studio_into_about of this V1UserFeatures.  # noqa: E501
+        :return: The inference_job_deployment_plugin of this V1UserFeatures.  # noqa: E501
         :rtype: bool
         """
-        return self._import_from_studio_into_about
+        return self._inference_job_deployment_plugin
 
-    @import_from_studio_into_about.setter
-    def import_from_studio_into_about(self, import_from_studio_into_about: 'bool'):
-        """Sets the import_from_studio_into_about of this V1UserFeatures.
+    @inference_job_deployment_plugin.setter
+    def inference_job_deployment_plugin(self, inference_job_deployment_plugin: 'bool'):
+        """Sets the inference_job_deployment_plugin of this V1UserFeatures.
 
 
-        :param import_from_studio_into_about: The import_from_studio_into_about of this V1UserFeatures.  # noqa: E501
+        :param inference_job_deployment_plugin: The inference_job_deployment_plugin of this V1UserFeatures.  # noqa: E501
         :type: bool
         """
 
-        self._import_from_studio_into_about = import_from_studio_into_about
+        self._inference_job_deployment_plugin = inference_job_deployment_plugin
 
     @property
     def interruptible_instances(self) -> 'bool':
@@ -857,27 +893,6 @@ class V1UserFeatures(object):
         """
 
         self._jobs_v2 = jobs_v2
-
-    @property
-    def l4x8(self) -> 'bool':
-        """Gets the l4x8 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The l4x8 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._l4x8
-
-    @l4x8.setter
-    def l4x8(self, l4x8: 'bool'):
-        """Sets the l4x8 of this V1UserFeatures.
-
-
-        :param l4x8: The l4x8 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._l4x8 = l4x8
 
     @property
     def landing_studios(self) -> 'bool':
@@ -1025,6 +1040,69 @@ class V1UserFeatures(object):
         """
 
         self._mountpoint_s3 = mountpoint_s3
+
+    @property
+    def new_cpu_instance(self) -> 'bool':
+        """Gets the new_cpu_instance of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The new_cpu_instance of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._new_cpu_instance
+
+    @new_cpu_instance.setter
+    def new_cpu_instance(self, new_cpu_instance: 'bool'):
+        """Sets the new_cpu_instance of this V1UserFeatures.
+
+
+        :param new_cpu_instance: The new_cpu_instance of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._new_cpu_instance = new_cpu_instance
+
+    @property
+    def new_data_prep_cpu_instance(self) -> 'bool':
+        """Gets the new_data_prep_cpu_instance of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The new_data_prep_cpu_instance of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._new_data_prep_cpu_instance
+
+    @new_data_prep_cpu_instance.setter
+    def new_data_prep_cpu_instance(self, new_data_prep_cpu_instance: 'bool'):
+        """Sets the new_data_prep_cpu_instance of this V1UserFeatures.
+
+
+        :param new_data_prep_cpu_instance: The new_data_prep_cpu_instance of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._new_data_prep_cpu_instance = new_data_prep_cpu_instance
+
+    @property
+    def org_level_member_permissions(self) -> 'bool':
+        """Gets the org_level_member_permissions of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The org_level_member_permissions of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._org_level_member_permissions
+
+    @org_level_member_permissions.setter
+    def org_level_member_permissions(self, org_level_member_permissions: 'bool'):
+        """Sets the org_level_member_permissions of this V1UserFeatures.
+
+
+        :param org_level_member_permissions: The org_level_member_permissions of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._org_level_member_permissions = org_level_member_permissions
 
     @property
     def plugin_biz_chat(self) -> 'bool':
@@ -1594,6 +1672,27 @@ class V1UserFeatures(object):
         self._spot = spot
 
     @property
+    def studio_config(self) -> 'bool':
+        """Gets the studio_config of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The studio_config of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._studio_config
+
+    @studio_config.setter
+    def studio_config(self, studio_config: 'bool'):
+        """Sets the studio_config of this V1UserFeatures.
+
+
+        :param studio_config: The studio_config of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._studio_config = studio_config
+
+    @property
     def teamspace_storage_tab(self) -> 'bool':
         """Gets the teamspace_storage_tab of this V1UserFeatures.  # noqa: E501
 
@@ -1613,27 +1712,6 @@ class V1UserFeatures(object):
         """
 
         self._teamspace_storage_tab = teamspace_storage_tab
-
-    @property
-    def testable_entrypoint(self) -> 'bool':
-        """Gets the testable_entrypoint of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The testable_entrypoint of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._testable_entrypoint
-
-    @testable_entrypoint.setter
-    def testable_entrypoint(self, testable_entrypoint: 'bool'):
-        """Sets the testable_entrypoint of this V1UserFeatures.
-
-
-        :param testable_entrypoint: The testable_entrypoint of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._testable_entrypoint = testable_entrypoint
 
     @property
     def unified_billing_ux(self) -> 'bool':

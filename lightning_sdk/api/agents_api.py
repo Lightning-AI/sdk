@@ -42,6 +42,7 @@ class AgentApi:
         prompt_suggestions: Optional[List[str]] = None,
         knowledge: Optional[str] = None,
         publish_status: Optional[str] = None,
+        file_uploads_enabled: Optional[bool] = None,
     ) -> V1Assistant:
         """Update the agent with provided details."""
         agent = self.get_agent(agent_id)
@@ -58,6 +59,7 @@ class AgentApi:
             prompt_template=agent.prompt_template,
             user_id=agent.user_id,
             publish_status=agent.publish_status,
+            file_uploads_enabled=agent.file_uploads_enabled,
         )
 
         if name is not None:
@@ -75,6 +77,8 @@ class AgentApi:
             body.knowledge = knowledge
         if publish_status is not None:
             body.publish_status = publish_status
+        if file_uploads_enabled is not None:
+            body.file_uploads_enabled = file_uploads_enabled
 
         return self._client.assistants_service_update_assistant(
             id=agent_id,

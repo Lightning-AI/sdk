@@ -189,7 +189,7 @@ class V1GoogleCloudDirectV1(object):
     def source_cidr_ips(self) -> 'list[str]':
         """Gets the source_cidr_ips of this V1GoogleCloudDirectV1.  # noqa: E501
 
-        source_cidr_ips allows modifying default 0.0.0.0/0 source, so that it can only allow specific incoming traffic into the GCP  instances. This should always include controlplane's IP address, otherwise it will not work.  # noqa: E501
+        source_cidr_ips allows modifying default 0.0.0.0/0 source, so that it can only allow specific incoming traffic into the GCP instances. This should always include controlplane's IP address, otherwise it will not work.  # noqa: E501
 
         :return: The source_cidr_ips of this V1GoogleCloudDirectV1.  # noqa: E501
         :rtype: list[str]
@@ -200,7 +200,7 @@ class V1GoogleCloudDirectV1(object):
     def source_cidr_ips(self, source_cidr_ips: 'list[str]'):
         """Sets the source_cidr_ips of this V1GoogleCloudDirectV1.
 
-        source_cidr_ips allows modifying default 0.0.0.0/0 source, so that it can only allow specific incoming traffic into the GCP  instances. This should always include controlplane's IP address, otherwise it will not work.  # noqa: E501
+        source_cidr_ips allows modifying default 0.0.0.0/0 source, so that it can only allow specific incoming traffic into the GCP instances. This should always include controlplane's IP address, otherwise it will not work.  # noqa: E501
 
         :param source_cidr_ips: The source_cidr_ips of this V1GoogleCloudDirectV1.  # noqa: E501
         :type: list[str]

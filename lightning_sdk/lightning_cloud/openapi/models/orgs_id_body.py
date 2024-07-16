@@ -42,6 +42,8 @@ class OrgsIdBody(object):
     """
     swagger_types = {
         'allow_guest': 'bool',
+        'allow_member_invitations': 'bool',
+        'allow_member_teamspace_creation': 'bool',
         'auto_join_domains': 'list[str]',
         'description': 'str',
         'display_name': 'str',
@@ -55,6 +57,8 @@ class OrgsIdBody(object):
 
     attribute_map = {
         'allow_guest': 'allowGuest',
+        'allow_member_invitations': 'allowMemberInvitations',
+        'allow_member_teamspace_creation': 'allowMemberTeamspaceCreation',
         'auto_join_domains': 'autoJoinDomains',
         'description': 'description',
         'display_name': 'displayName',
@@ -66,9 +70,11 @@ class OrgsIdBody(object):
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
+        self._allow_member_invitations = None
+        self._allow_member_teamspace_creation = None
         self._auto_join_domains = None
         self._description = None
         self._display_name = None
@@ -81,6 +87,10 @@ class OrgsIdBody(object):
         self.discriminator = None
         if allow_guest is not None:
             self.allow_guest = allow_guest
+        if allow_member_invitations is not None:
+            self.allow_member_invitations = allow_member_invitations
+        if allow_member_teamspace_creation is not None:
+            self.allow_member_teamspace_creation = allow_member_teamspace_creation
         if auto_join_domains is not None:
             self.auto_join_domains = auto_join_domains
         if description is not None:
@@ -120,6 +130,48 @@ class OrgsIdBody(object):
         """
 
         self._allow_guest = allow_guest
+
+    @property
+    def allow_member_invitations(self) -> 'bool':
+        """Gets the allow_member_invitations of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The allow_member_invitations of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_member_invitations
+
+    @allow_member_invitations.setter
+    def allow_member_invitations(self, allow_member_invitations: 'bool'):
+        """Sets the allow_member_invitations of this OrgsIdBody.
+
+
+        :param allow_member_invitations: The allow_member_invitations of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_member_invitations = allow_member_invitations
+
+    @property
+    def allow_member_teamspace_creation(self) -> 'bool':
+        """Gets the allow_member_teamspace_creation of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The allow_member_teamspace_creation of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_member_teamspace_creation
+
+    @allow_member_teamspace_creation.setter
+    def allow_member_teamspace_creation(self, allow_member_teamspace_creation: 'bool'):
+        """Sets the allow_member_teamspace_creation of this OrgsIdBody.
+
+
+        :param allow_member_teamspace_creation: The allow_member_teamspace_creation of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_member_teamspace_creation = allow_member_teamspace_creation
 
     @property
     def auto_join_domains(self) -> 'list[str]':
