@@ -2,6 +2,7 @@ from fire import Fire
 from lightning_utilities.core.imports import RequirementCache
 
 from lightning_sdk.api.studio_api import _cloud_url
+from lightning_sdk.cli.download import _Downloads
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
 from lightning_sdk.cli.upload import _Uploads
 from lightning_sdk.lightning_cloud.login import Auth
@@ -9,7 +10,7 @@ from lightning_sdk.lightning_cloud.login import Auth
 _LIGHTNING_AVAILABLE = RequirementCache("lightning")
 
 
-class StudioCLI(_Uploads):
+class StudioCLI(_Uploads, _Downloads):
     """Command line interface (CLI) to interact with/manage Lightning AI Studios."""
 
     def __init__(self) -> None:

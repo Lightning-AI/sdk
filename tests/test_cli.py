@@ -27,6 +27,9 @@ GROUPS
 COMMANDS
     COMMAND is one of the following:
 
+     download
+       Download a file or folder from a studio.
+
      login
        Login to Lightning AI Studios.
 
@@ -52,6 +55,9 @@ DESCRIPTION
 
 COMMANDS
     COMMAND is one of the following:
+
+     download
+       Download a file or folder from a studio.
 
      login
        Login to Lightning AI Studios.
