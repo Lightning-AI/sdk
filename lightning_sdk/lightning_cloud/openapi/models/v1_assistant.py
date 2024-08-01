@@ -50,6 +50,7 @@ class V1Assistant(object):
         'id': 'str',
         'internal_assistant_name': 'str',
         'knowledge': 'str',
+        'knowledge_configuration': 'V1KnowledgeConfiguration',
         'model': 'str',
         'name': 'str',
         'org_id': 'str',
@@ -72,6 +73,7 @@ class V1Assistant(object):
         'id': 'id',
         'internal_assistant_name': 'internalAssistantName',
         'knowledge': 'knowledge',
+        'knowledge_configuration': 'knowledgeConfiguration',
         'model': 'model',
         'name': 'name',
         'org_id': 'orgId',
@@ -84,7 +86,7 @@ class V1Assistant(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, file_uploads_enabled: 'bool' =None, id: 'str' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, file_uploads_enabled: 'bool' =None, id: 'str' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Assistant - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -95,6 +97,7 @@ class V1Assistant(object):
         self._id = None
         self._internal_assistant_name = None
         self._knowledge = None
+        self._knowledge_configuration = None
         self._model = None
         self._name = None
         self._org_id = None
@@ -124,6 +127,8 @@ class V1Assistant(object):
             self.internal_assistant_name = internal_assistant_name
         if knowledge is not None:
             self.knowledge = knowledge
+        if knowledge_configuration is not None:
+            self.knowledge_configuration = knowledge_configuration
         if model is not None:
             self.model = model
         if name is not None:
@@ -333,6 +338,27 @@ class V1Assistant(object):
         """
 
         self._knowledge = knowledge
+
+    @property
+    def knowledge_configuration(self) -> 'V1KnowledgeConfiguration':
+        """Gets the knowledge_configuration of this V1Assistant.  # noqa: E501
+
+
+        :return: The knowledge_configuration of this V1Assistant.  # noqa: E501
+        :rtype: V1KnowledgeConfiguration
+        """
+        return self._knowledge_configuration
+
+    @knowledge_configuration.setter
+    def knowledge_configuration(self, knowledge_configuration: 'V1KnowledgeConfiguration'):
+        """Sets the knowledge_configuration of this V1Assistant.
+
+
+        :param knowledge_configuration: The knowledge_configuration of this V1Assistant.  # noqa: E501
+        :type: V1KnowledgeConfiguration
+        """
+
+        self._knowledge_configuration = knowledge_configuration
 
     @property
     def model(self) -> 'str':

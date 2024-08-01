@@ -45,9 +45,12 @@ class V1Job(object):
         'deployment_id': 'str',
         'endpoint': 'V1Endpoint',
         'id': 'str',
+        'is_healthy': 'bool',
         'message': 'str',
         'name': 'str',
         'project_id': 'str',
+        'ready_at': 'datetime',
+        'release_id': 'str',
         'spec': 'V1JobSpec',
         'started_at': 'datetime',
         'state': 'str',
@@ -62,9 +65,12 @@ class V1Job(object):
         'deployment_id': 'deploymentId',
         'endpoint': 'endpoint',
         'id': 'id',
+        'is_healthy': 'isHealthy',
         'message': 'message',
         'name': 'name',
         'project_id': 'projectId',
+        'ready_at': 'readyAt',
+        'release_id': 'releaseId',
         'spec': 'spec',
         'started_at': 'startedAt',
         'state': 'state',
@@ -74,15 +80,18 @@ class V1Job(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deployment_id = None
         self._endpoint = None
         self._id = None
+        self._is_healthy = None
         self._message = None
         self._name = None
         self._project_id = None
+        self._ready_at = None
+        self._release_id = None
         self._spec = None
         self._started_at = None
         self._state = None
@@ -99,12 +108,18 @@ class V1Job(object):
             self.endpoint = endpoint
         if id is not None:
             self.id = id
+        if is_healthy is not None:
+            self.is_healthy = is_healthy
         if message is not None:
             self.message = message
         if name is not None:
             self.name = name
         if project_id is not None:
             self.project_id = project_id
+        if ready_at is not None:
+            self.ready_at = ready_at
+        if release_id is not None:
+            self.release_id = release_id
         if spec is not None:
             self.spec = spec
         if started_at is not None:
@@ -205,6 +220,27 @@ class V1Job(object):
         self._id = id
 
     @property
+    def is_healthy(self) -> 'bool':
+        """Gets the is_healthy of this V1Job.  # noqa: E501
+
+
+        :return: The is_healthy of this V1Job.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_healthy
+
+    @is_healthy.setter
+    def is_healthy(self, is_healthy: 'bool'):
+        """Sets the is_healthy of this V1Job.
+
+
+        :param is_healthy: The is_healthy of this V1Job.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_healthy = is_healthy
+
+    @property
     def message(self) -> 'str':
         """Gets the message of this V1Job.  # noqa: E501
 
@@ -266,6 +302,48 @@ class V1Job(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def ready_at(self) -> 'datetime':
+        """Gets the ready_at of this V1Job.  # noqa: E501
+
+
+        :return: The ready_at of this V1Job.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._ready_at
+
+    @ready_at.setter
+    def ready_at(self, ready_at: 'datetime'):
+        """Sets the ready_at of this V1Job.
+
+
+        :param ready_at: The ready_at of this V1Job.  # noqa: E501
+        :type: datetime
+        """
+
+        self._ready_at = ready_at
+
+    @property
+    def release_id(self) -> 'str':
+        """Gets the release_id of this V1Job.  # noqa: E501
+
+
+        :return: The release_id of this V1Job.  # noqa: E501
+        :rtype: str
+        """
+        return self._release_id
+
+    @release_id.setter
+    def release_id(self, release_id: 'str'):
+        """Sets the release_id of this V1Job.
+
+
+        :param release_id: The release_id of this V1Job.  # noqa: E501
+        :type: str
+        """
+
+        self._release_id = release_id
 
     @property
     def spec(self) -> 'V1JobSpec':

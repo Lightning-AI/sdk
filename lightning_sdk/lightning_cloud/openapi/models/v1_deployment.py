@@ -48,9 +48,11 @@ class V1Deployment(object):
         'id': 'str',
         'name': 'str',
         'project_id': 'str',
+        'release_id': 'str',
         'replicas': 'str',
         'spec': 'V1JobSpec',
         'status': 'V1DeploymentStatus',
+        'strategy': 'V1DeploymentStrategy',
         'updated_at': 'datetime',
         'user_id': 'str'
     }
@@ -63,14 +65,16 @@ class V1Deployment(object):
         'id': 'id',
         'name': 'name',
         'project_id': 'projectId',
+        'release_id': 'releaseId',
         'replicas': 'replicas',
         'spec': 'spec',
         'status': 'status',
+        'strategy': 'strategy',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, replicas: 'str' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'str' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
         self._created_at = None
@@ -79,9 +83,11 @@ class V1Deployment(object):
         self._id = None
         self._name = None
         self._project_id = None
+        self._release_id = None
         self._replicas = None
         self._spec = None
         self._status = None
+        self._strategy = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
@@ -99,12 +105,16 @@ class V1Deployment(object):
             self.name = name
         if project_id is not None:
             self.project_id = project_id
+        if release_id is not None:
+            self.release_id = release_id
         if replicas is not None:
             self.replicas = replicas
         if spec is not None:
             self.spec = spec
         if status is not None:
             self.status = status
+        if strategy is not None:
+            self.strategy = strategy
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -258,6 +268,27 @@ class V1Deployment(object):
         self._project_id = project_id
 
     @property
+    def release_id(self) -> 'str':
+        """Gets the release_id of this V1Deployment.  # noqa: E501
+
+
+        :return: The release_id of this V1Deployment.  # noqa: E501
+        :rtype: str
+        """
+        return self._release_id
+
+    @release_id.setter
+    def release_id(self, release_id: 'str'):
+        """Sets the release_id of this V1Deployment.
+
+
+        :param release_id: The release_id of this V1Deployment.  # noqa: E501
+        :type: str
+        """
+
+        self._release_id = release_id
+
+    @property
     def replicas(self) -> 'str':
         """Gets the replicas of this V1Deployment.  # noqa: E501
 
@@ -319,6 +350,27 @@ class V1Deployment(object):
         """
 
         self._status = status
+
+    @property
+    def strategy(self) -> 'V1DeploymentStrategy':
+        """Gets the strategy of this V1Deployment.  # noqa: E501
+
+
+        :return: The strategy of this V1Deployment.  # noqa: E501
+        :rtype: V1DeploymentStrategy
+        """
+        return self._strategy
+
+    @strategy.setter
+    def strategy(self, strategy: 'V1DeploymentStrategy'):
+        """Sets the strategy of this V1Deployment.
+
+
+        :param strategy: The strategy of this V1Deployment.  # noqa: E501
+        :type: V1DeploymentStrategy
+        """
+
+        self._strategy = strategy
 
     @property
     def updated_at(self) -> 'datetime':

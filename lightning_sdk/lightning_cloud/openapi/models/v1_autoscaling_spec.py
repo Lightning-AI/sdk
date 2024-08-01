@@ -42,31 +42,46 @@ class V1AutoscalingSpec(object):
     """
     swagger_types = {
         'enabled': 'bool',
+        'idle_threshold_seconds': 'str',
         'max_replicas': 'str',
         'min_replicas': 'str',
+        'scale_down_cooldown_seconds': 'str',
+        'scale_up_cooldown_seconds': 'str',
         'target_metric': 'V1AutoscalingTargetMetric'
     }
 
     attribute_map = {
         'enabled': 'enabled',
+        'idle_threshold_seconds': 'idleThresholdSeconds',
         'max_replicas': 'maxReplicas',
         'min_replicas': 'minReplicas',
+        'scale_down_cooldown_seconds': 'scaleDownCooldownSeconds',
+        'scale_up_cooldown_seconds': 'scaleUpCooldownSeconds',
         'target_metric': 'targetMetric'
     }
 
-    def __init__(self, enabled: 'bool' =None, max_replicas: 'str' =None, min_replicas: 'str' =None, target_metric: 'V1AutoscalingTargetMetric' =None):  # noqa: E501
+    def __init__(self, enabled: 'bool' =None, idle_threshold_seconds: 'str' =None, max_replicas: 'str' =None, min_replicas: 'str' =None, scale_down_cooldown_seconds: 'str' =None, scale_up_cooldown_seconds: 'str' =None, target_metric: 'V1AutoscalingTargetMetric' =None):  # noqa: E501
         """V1AutoscalingSpec - a model defined in Swagger"""  # noqa: E501
         self._enabled = None
+        self._idle_threshold_seconds = None
         self._max_replicas = None
         self._min_replicas = None
+        self._scale_down_cooldown_seconds = None
+        self._scale_up_cooldown_seconds = None
         self._target_metric = None
         self.discriminator = None
         if enabled is not None:
             self.enabled = enabled
+        if idle_threshold_seconds is not None:
+            self.idle_threshold_seconds = idle_threshold_seconds
         if max_replicas is not None:
             self.max_replicas = max_replicas
         if min_replicas is not None:
             self.min_replicas = min_replicas
+        if scale_down_cooldown_seconds is not None:
+            self.scale_down_cooldown_seconds = scale_down_cooldown_seconds
+        if scale_up_cooldown_seconds is not None:
+            self.scale_up_cooldown_seconds = scale_up_cooldown_seconds
         if target_metric is not None:
             self.target_metric = target_metric
 
@@ -90,6 +105,27 @@ class V1AutoscalingSpec(object):
         """
 
         self._enabled = enabled
+
+    @property
+    def idle_threshold_seconds(self) -> 'str':
+        """Gets the idle_threshold_seconds of this V1AutoscalingSpec.  # noqa: E501
+
+
+        :return: The idle_threshold_seconds of this V1AutoscalingSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._idle_threshold_seconds
+
+    @idle_threshold_seconds.setter
+    def idle_threshold_seconds(self, idle_threshold_seconds: 'str'):
+        """Sets the idle_threshold_seconds of this V1AutoscalingSpec.
+
+
+        :param idle_threshold_seconds: The idle_threshold_seconds of this V1AutoscalingSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._idle_threshold_seconds = idle_threshold_seconds
 
     @property
     def max_replicas(self) -> 'str':
@@ -132,6 +168,48 @@ class V1AutoscalingSpec(object):
         """
 
         self._min_replicas = min_replicas
+
+    @property
+    def scale_down_cooldown_seconds(self) -> 'str':
+        """Gets the scale_down_cooldown_seconds of this V1AutoscalingSpec.  # noqa: E501
+
+
+        :return: The scale_down_cooldown_seconds of this V1AutoscalingSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._scale_down_cooldown_seconds
+
+    @scale_down_cooldown_seconds.setter
+    def scale_down_cooldown_seconds(self, scale_down_cooldown_seconds: 'str'):
+        """Sets the scale_down_cooldown_seconds of this V1AutoscalingSpec.
+
+
+        :param scale_down_cooldown_seconds: The scale_down_cooldown_seconds of this V1AutoscalingSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._scale_down_cooldown_seconds = scale_down_cooldown_seconds
+
+    @property
+    def scale_up_cooldown_seconds(self) -> 'str':
+        """Gets the scale_up_cooldown_seconds of this V1AutoscalingSpec.  # noqa: E501
+
+
+        :return: The scale_up_cooldown_seconds of this V1AutoscalingSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._scale_up_cooldown_seconds
+
+    @scale_up_cooldown_seconds.setter
+    def scale_up_cooldown_seconds(self, scale_up_cooldown_seconds: 'str'):
+        """Sets the scale_up_cooldown_seconds of this V1AutoscalingSpec.
+
+
+        :param scale_up_cooldown_seconds: The scale_up_cooldown_seconds of this V1AutoscalingSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._scale_up_cooldown_seconds = scale_up_cooldown_seconds
 
     @property
     def target_metric(self) -> 'V1AutoscalingTargetMetric':

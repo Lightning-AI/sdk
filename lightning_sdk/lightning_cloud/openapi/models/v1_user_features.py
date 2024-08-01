@@ -58,6 +58,7 @@ class V1UserFeatures(object):
         'custom_instance_types': 'bool',
         'docs_agent': 'bool',
         'enable_crypto_crackdown': 'bool',
+        'enable_storage_limits': 'bool',
         'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
         'gcp': 'bool',
@@ -71,7 +72,6 @@ class V1UserFeatures(object):
         'mmt_app': 'bool',
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
-        'mountpoint_s3': 'bool',
         'new_cpu_instance': 'bool',
         'new_data_prep_cpu_instance': 'bool',
         'oom_killer': 'bool',
@@ -130,6 +130,7 @@ class V1UserFeatures(object):
         'custom_instance_types': 'customInstanceTypes',
         'docs_agent': 'docsAgent',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
+        'enable_storage_limits': 'enableStorageLimits',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
         'gcp': 'gcp',
@@ -143,7 +144,6 @@ class V1UserFeatures(object):
         'mmt_app': 'mmtApp',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
-        'mountpoint_s3': 'mountpointS3',
         'new_cpu_instance': 'newCpuInstance',
         'new_data_prep_cpu_instance': 'newDataPrepCpuInstance',
         'oom_killer': 'oomKiller',
@@ -184,7 +184,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mountpoint_s3: 'bool' =None, new_cpu_instance: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, oom_killer: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, studio_config: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, new_cpu_instance: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, oom_killer: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, studio_config: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._agents_v2 = None
         self._apt_get_v2 = None
@@ -203,6 +203,7 @@ class V1UserFeatures(object):
         self._custom_instance_types = None
         self._docs_agent = None
         self._enable_crypto_crackdown = None
+        self._enable_storage_limits = None
         self._featured_studios_admin = None
         self._filesystem_optimisation = None
         self._gcp = None
@@ -216,7 +217,6 @@ class V1UserFeatures(object):
         self._mmt_app = None
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
-        self._mountpoint_s3 = None
         self._new_cpu_instance = None
         self._new_data_prep_cpu_instance = None
         self._oom_killer = None
@@ -290,6 +290,8 @@ class V1UserFeatures(object):
             self.docs_agent = docs_agent
         if enable_crypto_crackdown is not None:
             self.enable_crypto_crackdown = enable_crypto_crackdown
+        if enable_storage_limits is not None:
+            self.enable_storage_limits = enable_storage_limits
         if featured_studios_admin is not None:
             self.featured_studios_admin = featured_studios_admin
         if filesystem_optimisation is not None:
@@ -316,8 +318,6 @@ class V1UserFeatures(object):
             self.mmt_fault_tolerance = mmt_fault_tolerance
         if mmt_strategy_selector is not None:
             self.mmt_strategy_selector = mmt_strategy_selector
-        if mountpoint_s3 is not None:
-            self.mountpoint_s3 = mountpoint_s3
         if new_cpu_instance is not None:
             self.new_cpu_instance = new_cpu_instance
         if new_data_prep_cpu_instance is not None:
@@ -753,6 +753,27 @@ class V1UserFeatures(object):
         self._enable_crypto_crackdown = enable_crypto_crackdown
 
     @property
+    def enable_storage_limits(self) -> 'bool':
+        """Gets the enable_storage_limits of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The enable_storage_limits of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._enable_storage_limits
+
+    @enable_storage_limits.setter
+    def enable_storage_limits(self, enable_storage_limits: 'bool'):
+        """Sets the enable_storage_limits of this V1UserFeatures.
+
+
+        :param enable_storage_limits: The enable_storage_limits of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._enable_storage_limits = enable_storage_limits
+
+    @property
     def featured_studios_admin(self) -> 'bool':
         """Gets the featured_studios_admin of this V1UserFeatures.  # noqa: E501
 
@@ -1024,27 +1045,6 @@ class V1UserFeatures(object):
         """
 
         self._mmt_strategy_selector = mmt_strategy_selector
-
-    @property
-    def mountpoint_s3(self) -> 'bool':
-        """Gets the mountpoint_s3 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The mountpoint_s3 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._mountpoint_s3
-
-    @mountpoint_s3.setter
-    def mountpoint_s3(self, mountpoint_s3: 'bool'):
-        """Sets the mountpoint_s3 of this V1UserFeatures.
-
-
-        :param mountpoint_s3: The mountpoint_s3 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._mountpoint_s3 = mountpoint_s3
 
     @property
     def new_cpu_instance(self) -> 'bool':

@@ -48,6 +48,7 @@ class V1DataConnection(object):
         'gcp': 'V1GcpDataConnection',
         'id': 'str',
         'index': 'V1Index',
+        'lock_out': 'bool',
         'name': 'str',
         'number_of_files': 'str',
         'project_id': 'str',
@@ -55,6 +56,7 @@ class V1DataConnection(object):
         'snowflake': 'V1SnowflakeDataConnection',
         'total_size_bytes': 'str',
         'type': 'str',
+        'updated_at': 'datetime',
         'writable': 'bool'
     }
 
@@ -66,6 +68,7 @@ class V1DataConnection(object):
         'gcp': 'gcp',
         'id': 'id',
         'index': 'index',
+        'lock_out': 'lockOut',
         'name': 'name',
         'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
@@ -73,10 +76,11 @@ class V1DataConnection(object):
         'snowflake': 'snowflake',
         'total_size_bytes': 'totalSizeBytes',
         'type': 'type',
+        'updated_at': 'updatedAt',
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, total_size_bytes: 'str' =None, type: 'str' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
@@ -85,6 +89,7 @@ class V1DataConnection(object):
         self._gcp = None
         self._id = None
         self._index = None
+        self._lock_out = None
         self._name = None
         self._number_of_files = None
         self._project_id = None
@@ -92,6 +97,7 @@ class V1DataConnection(object):
         self._snowflake = None
         self._total_size_bytes = None
         self._type = None
+        self._updated_at = None
         self._writable = None
         self.discriminator = None
         if access_cluster_ids is not None:
@@ -108,6 +114,8 @@ class V1DataConnection(object):
             self.id = id
         if index is not None:
             self.index = index
+        if lock_out is not None:
+            self.lock_out = lock_out
         if name is not None:
             self.name = name
         if number_of_files is not None:
@@ -122,6 +130,8 @@ class V1DataConnection(object):
             self.total_size_bytes = total_size_bytes
         if type is not None:
             self.type = type
+        if updated_at is not None:
+            self.updated_at = updated_at
         if writable is not None:
             self.writable = writable
 
@@ -273,6 +283,27 @@ class V1DataConnection(object):
         self._index = index
 
     @property
+    def lock_out(self) -> 'bool':
+        """Gets the lock_out of this V1DataConnection.  # noqa: E501
+
+
+        :return: The lock_out of this V1DataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._lock_out
+
+    @lock_out.setter
+    def lock_out(self, lock_out: 'bool'):
+        """Sets the lock_out of this V1DataConnection.
+
+
+        :param lock_out: The lock_out of this V1DataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._lock_out = lock_out
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this V1DataConnection.  # noqa: E501
 
@@ -418,6 +449,27 @@ class V1DataConnection(object):
         """
 
         self._type = type
+
+    @property
+    def updated_at(self) -> 'datetime':
+        """Gets the updated_at of this V1DataConnection.  # noqa: E501
+
+
+        :return: The updated_at of this V1DataConnection.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._updated_at
+
+    @updated_at.setter
+    def updated_at(self, updated_at: 'datetime'):
+        """Sets the updated_at of this V1DataConnection.
+
+
+        :param updated_at: The updated_at of this V1DataConnection.  # noqa: E501
+        :type: datetime
+        """
+
+        self._updated_at = updated_at
 
     @property
     def writable(self) -> 'bool':

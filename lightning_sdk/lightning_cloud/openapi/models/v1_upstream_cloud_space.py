@@ -47,7 +47,8 @@ class V1UpstreamCloudSpace(object):
         'instance_type': 'str',
         'port': 'str',
         'studio_job_id': 'str',
-        'terminal_session_id': 'str'
+        'terminal_session_id': 'str',
+        'type': 'V1EndpointType'
     }
 
     attribute_map = {
@@ -57,10 +58,11 @@ class V1UpstreamCloudSpace(object):
         'instance_type': 'instanceType',
         'port': 'port',
         'studio_job_id': 'studioJobId',
-        'terminal_session_id': 'terminalSessionId'
+        'terminal_session_id': 'terminalSessionId',
+        'type': 'type'
     }
 
-    def __init__(self, auto_start: 'bool' =None, cloudspace_id: 'str' =None, command: 'str' =None, instance_type: 'str' =None, port: 'str' =None, studio_job_id: 'str' =None, terminal_session_id: 'str' =None):  # noqa: E501
+    def __init__(self, auto_start: 'bool' =None, cloudspace_id: 'str' =None, command: 'str' =None, instance_type: 'str' =None, port: 'str' =None, studio_job_id: 'str' =None, terminal_session_id: 'str' =None, type: 'V1EndpointType' =None):  # noqa: E501
         """V1UpstreamCloudSpace - a model defined in Swagger"""  # noqa: E501
         self._auto_start = None
         self._cloudspace_id = None
@@ -69,6 +71,7 @@ class V1UpstreamCloudSpace(object):
         self._port = None
         self._studio_job_id = None
         self._terminal_session_id = None
+        self._type = None
         self.discriminator = None
         if auto_start is not None:
             self.auto_start = auto_start
@@ -84,6 +87,8 @@ class V1UpstreamCloudSpace(object):
             self.studio_job_id = studio_job_id
         if terminal_session_id is not None:
             self.terminal_session_id = terminal_session_id
+        if type is not None:
+            self.type = type
 
     @property
     def auto_start(self) -> 'bool':
@@ -231,6 +236,27 @@ class V1UpstreamCloudSpace(object):
         """
 
         self._terminal_session_id = terminal_session_id
+
+    @property
+    def type(self) -> 'V1EndpointType':
+        """Gets the type of this V1UpstreamCloudSpace.  # noqa: E501
+
+
+        :return: The type of this V1UpstreamCloudSpace.  # noqa: E501
+        :rtype: V1EndpointType
+        """
+        return self._type
+
+    @type.setter
+    def type(self, type: 'V1EndpointType'):
+        """Sets the type of this V1UpstreamCloudSpace.
+
+
+        :param type: The type of this V1UpstreamCloudSpace.  # noqa: E501
+        :type: V1EndpointType
+        """
+
+        self._type = type
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

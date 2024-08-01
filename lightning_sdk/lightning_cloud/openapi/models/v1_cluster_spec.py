@@ -47,9 +47,8 @@ class V1ClusterSpec(object):
         'cluster_type': 'V1ClusterType',
         'deletion_options': 'V1ClusterDeletionOptions',
         'desired_state': 'V1ClusterState',
-        'driver': 'V1ClusterDriver',
         'google_cloud_v1': 'V1GoogleCloudDirectV1',
-        'gridlet_version': 'str',
+        'insurer_disabled': 'bool',
         'overprovisioning': 'list[V1InstanceOverprovisioningSpec]',
         'pause_automation': 'bool',
         'performance_profile': 'V1ClusterPerformanceProfile',
@@ -66,9 +65,8 @@ class V1ClusterSpec(object):
         'cluster_type': 'clusterType',
         'deletion_options': 'deletionOptions',
         'desired_state': 'desiredState',
-        'driver': 'driver',
         'google_cloud_v1': 'googleCloudV1',
-        'gridlet_version': 'gridletVersion',
+        'insurer_disabled': 'insurerDisabled',
         'overprovisioning': 'overprovisioning',
         'pause_automation': 'pauseAutomation',
         'performance_profile': 'performanceProfile',
@@ -78,7 +76,7 @@ class V1ClusterSpec(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, driver: 'V1ClusterDriver' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, gridlet_version: 'str' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_instance_types = None
@@ -86,9 +84,8 @@ class V1ClusterSpec(object):
         self._cluster_type = None
         self._deletion_options = None
         self._desired_state = None
-        self._driver = None
         self._google_cloud_v1 = None
-        self._gridlet_version = None
+        self._insurer_disabled = None
         self._overprovisioning = None
         self._pause_automation = None
         self._performance_profile = None
@@ -109,12 +106,10 @@ class V1ClusterSpec(object):
             self.deletion_options = deletion_options
         if desired_state is not None:
             self.desired_state = desired_state
-        if driver is not None:
-            self.driver = driver
         if google_cloud_v1 is not None:
             self.google_cloud_v1 = google_cloud_v1
-        if gridlet_version is not None:
-            self.gridlet_version = gridlet_version
+        if insurer_disabled is not None:
+            self.insurer_disabled = insurer_disabled
         if overprovisioning is not None:
             self.overprovisioning = overprovisioning
         if pause_automation is not None:
@@ -259,27 +254,6 @@ class V1ClusterSpec(object):
         self._desired_state = desired_state
 
     @property
-    def driver(self) -> 'V1ClusterDriver':
-        """Gets the driver of this V1ClusterSpec.  # noqa: E501
-
-
-        :return: The driver of this V1ClusterSpec.  # noqa: E501
-        :rtype: V1ClusterDriver
-        """
-        return self._driver
-
-    @driver.setter
-    def driver(self, driver: 'V1ClusterDriver'):
-        """Sets the driver of this V1ClusterSpec.
-
-
-        :param driver: The driver of this V1ClusterSpec.  # noqa: E501
-        :type: V1ClusterDriver
-        """
-
-        self._driver = driver
-
-    @property
     def google_cloud_v1(self) -> 'V1GoogleCloudDirectV1':
         """Gets the google_cloud_v1 of this V1ClusterSpec.  # noqa: E501
 
@@ -301,25 +275,25 @@ class V1ClusterSpec(object):
         self._google_cloud_v1 = google_cloud_v1
 
     @property
-    def gridlet_version(self) -> 'str':
-        """Gets the gridlet_version of this V1ClusterSpec.  # noqa: E501
+    def insurer_disabled(self) -> 'bool':
+        """Gets the insurer_disabled of this V1ClusterSpec.  # noqa: E501
 
 
-        :return: The gridlet_version of this V1ClusterSpec.  # noqa: E501
-        :rtype: str
+        :return: The insurer_disabled of this V1ClusterSpec.  # noqa: E501
+        :rtype: bool
         """
-        return self._gridlet_version
+        return self._insurer_disabled
 
-    @gridlet_version.setter
-    def gridlet_version(self, gridlet_version: 'str'):
-        """Sets the gridlet_version of this V1ClusterSpec.
+    @insurer_disabled.setter
+    def insurer_disabled(self, insurer_disabled: 'bool'):
+        """Sets the insurer_disabled of this V1ClusterSpec.
 
 
-        :param gridlet_version: The gridlet_version of this V1ClusterSpec.  # noqa: E501
-        :type: str
+        :param insurer_disabled: The insurer_disabled of this V1ClusterSpec.  # noqa: E501
+        :type: bool
         """
 
-        self._gridlet_version = gridlet_version
+        self._insurer_disabled = insurer_disabled
 
     @property
     def overprovisioning(self) -> 'list[V1InstanceOverprovisioningSpec]':

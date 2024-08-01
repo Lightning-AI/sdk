@@ -48,6 +48,7 @@ class V1Project(object):
         'display_name': 'str',
         'id': 'str',
         'is_default': 'bool',
+        'lock_out_uploads': 'bool',
         'name': 'str',
         'number_of_files_uploads': 'str',
         'owner_id': 'str',
@@ -67,6 +68,7 @@ class V1Project(object):
         'display_name': 'displayName',
         'id': 'id',
         'is_default': 'isDefault',
+        'lock_out_uploads': 'lockOutUploads',
         'name': 'name',
         'number_of_files_uploads': 'numberOfFilesUploads',
         'owner_id': 'ownerId',
@@ -78,7 +80,7 @@ class V1Project(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, is_default: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, is_default: 'bool' =None, lock_out_uploads: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Project - a model defined in Swagger"""  # noqa: E501
         self._abac_enabled = None
         self._created_at = None
@@ -87,6 +89,7 @@ class V1Project(object):
         self._display_name = None
         self._id = None
         self._is_default = None
+        self._lock_out_uploads = None
         self._name = None
         self._number_of_files_uploads = None
         self._owner_id = None
@@ -111,6 +114,8 @@ class V1Project(object):
             self.id = id
         if is_default is not None:
             self.is_default = is_default
+        if lock_out_uploads is not None:
+            self.lock_out_uploads = lock_out_uploads
         if name is not None:
             self.name = name
         if number_of_files_uploads is not None:
@@ -276,6 +281,27 @@ class V1Project(object):
         """
 
         self._is_default = is_default
+
+    @property
+    def lock_out_uploads(self) -> 'bool':
+        """Gets the lock_out_uploads of this V1Project.  # noqa: E501
+
+
+        :return: The lock_out_uploads of this V1Project.  # noqa: E501
+        :rtype: bool
+        """
+        return self._lock_out_uploads
+
+    @lock_out_uploads.setter
+    def lock_out_uploads(self, lock_out_uploads: 'bool'):
+        """Sets the lock_out_uploads of this V1Project.
+
+
+        :param lock_out_uploads: The lock_out_uploads of this V1Project.  # noqa: E501
+        :type: bool
+        """
+
+        self._lock_out_uploads = lock_out_uploads
 
     @property
     def name(self) -> 'str':

@@ -41,6 +41,7 @@ class Externalv1UserStatus(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'acked_storage_violation': 'bool',
         'completed_project_onboarding': 'bool',
         'completed_signup': 'bool',
         'has_received_free_months': 'bool',
@@ -50,6 +51,7 @@ class Externalv1UserStatus(object):
     }
 
     attribute_map = {
+        'acked_storage_violation': 'ackedStorageViolation',
         'completed_project_onboarding': 'completedProjectOnboarding',
         'completed_signup': 'completedSignup',
         'has_received_free_months': 'hasReceivedFreeMonths',
@@ -58,8 +60,9 @@ class Externalv1UserStatus(object):
         'verified_at': 'verifiedAt'
     }
 
-    def __init__(self, completed_project_onboarding: 'bool' =None, completed_signup: 'bool' =None, has_received_free_months: 'bool' =None, installed_grid: 'bool' =None, verified: 'bool' =None, verified_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, acked_storage_violation: 'bool' =None, completed_project_onboarding: 'bool' =None, completed_signup: 'bool' =None, has_received_free_months: 'bool' =None, installed_grid: 'bool' =None, verified: 'bool' =None, verified_at: 'datetime' =None):  # noqa: E501
         """Externalv1UserStatus - a model defined in Swagger"""  # noqa: E501
+        self._acked_storage_violation = None
         self._completed_project_onboarding = None
         self._completed_signup = None
         self._has_received_free_months = None
@@ -67,6 +70,8 @@ class Externalv1UserStatus(object):
         self._verified = None
         self._verified_at = None
         self.discriminator = None
+        if acked_storage_violation is not None:
+            self.acked_storage_violation = acked_storage_violation
         if completed_project_onboarding is not None:
             self.completed_project_onboarding = completed_project_onboarding
         if completed_signup is not None:
@@ -79,6 +84,27 @@ class Externalv1UserStatus(object):
             self.verified = verified
         if verified_at is not None:
             self.verified_at = verified_at
+
+    @property
+    def acked_storage_violation(self) -> 'bool':
+        """Gets the acked_storage_violation of this Externalv1UserStatus.  # noqa: E501
+
+
+        :return: The acked_storage_violation of this Externalv1UserStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._acked_storage_violation
+
+    @acked_storage_violation.setter
+    def acked_storage_violation(self, acked_storage_violation: 'bool'):
+        """Sets the acked_storage_violation of this Externalv1UserStatus.
+
+
+        :param acked_storage_violation: The acked_storage_violation of this Externalv1UserStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._acked_storage_violation = acked_storage_violation
 
     @property
     def completed_project_onboarding(self) -> 'bool':

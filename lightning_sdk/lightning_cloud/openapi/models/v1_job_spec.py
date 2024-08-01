@@ -47,9 +47,11 @@ class V1JobSpec(object):
         'entrypoint': 'str',
         'env': 'list[V1EnvVar]',
         'image': 'str',
+        'image_secret_ref': 'str',
         'instance_name': 'str',
         'instance_type': 'str',
         'modified_volume': 'bool',
+        'readiness_probe': 'V1JobHealthCheckConfig',
         'resources': 'V1Resources',
         'restart_policy': 'str',
         'run_id': 'str',
@@ -65,9 +67,11 @@ class V1JobSpec(object):
         'entrypoint': 'entrypoint',
         'env': 'env',
         'image': 'image',
+        'image_secret_ref': 'imageSecretRef',
         'instance_name': 'instanceName',
         'instance_type': 'instanceType',
         'modified_volume': 'modifiedVolume',
+        'readiness_probe': 'readinessProbe',
         'resources': 'resources',
         'restart_policy': 'restartPolicy',
         'run_id': 'runId',
@@ -76,7 +80,7 @@ class V1JobSpec(object):
         'spot': 'spot'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -84,9 +88,11 @@ class V1JobSpec(object):
         self._entrypoint = None
         self._env = None
         self._image = None
+        self._image_secret_ref = None
         self._instance_name = None
         self._instance_type = None
         self._modified_volume = None
+        self._readiness_probe = None
         self._resources = None
         self._restart_policy = None
         self._run_id = None
@@ -106,12 +112,16 @@ class V1JobSpec(object):
             self.env = env
         if image is not None:
             self.image = image
+        if image_secret_ref is not None:
+            self.image_secret_ref = image_secret_ref
         if instance_name is not None:
             self.instance_name = instance_name
         if instance_type is not None:
             self.instance_type = instance_type
         if modified_volume is not None:
             self.modified_volume = modified_volume
+        if readiness_probe is not None:
+            self.readiness_probe = readiness_probe
         if resources is not None:
             self.resources = resources
         if restart_policy is not None:
@@ -252,6 +262,27 @@ class V1JobSpec(object):
         self._image = image
 
     @property
+    def image_secret_ref(self) -> 'str':
+        """Gets the image_secret_ref of this V1JobSpec.  # noqa: E501
+
+
+        :return: The image_secret_ref of this V1JobSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._image_secret_ref
+
+    @image_secret_ref.setter
+    def image_secret_ref(self, image_secret_ref: 'str'):
+        """Sets the image_secret_ref of this V1JobSpec.
+
+
+        :param image_secret_ref: The image_secret_ref of this V1JobSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._image_secret_ref = image_secret_ref
+
+    @property
     def instance_name(self) -> 'str':
         """Gets the instance_name of this V1JobSpec.  # noqa: E501
 
@@ -313,6 +344,27 @@ class V1JobSpec(object):
         """
 
         self._modified_volume = modified_volume
+
+    @property
+    def readiness_probe(self) -> 'V1JobHealthCheckConfig':
+        """Gets the readiness_probe of this V1JobSpec.  # noqa: E501
+
+
+        :return: The readiness_probe of this V1JobSpec.  # noqa: E501
+        :rtype: V1JobHealthCheckConfig
+        """
+        return self._readiness_probe
+
+    @readiness_probe.setter
+    def readiness_probe(self, readiness_probe: 'V1JobHealthCheckConfig'):
+        """Sets the readiness_probe of this V1JobSpec.
+
+
+        :param readiness_probe: The readiness_probe of this V1JobSpec.  # noqa: E501
+        :type: V1JobHealthCheckConfig
+        """
+
+        self._readiness_probe = readiness_probe
 
     @property
     def resources(self) -> 'V1Resources':

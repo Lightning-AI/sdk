@@ -46,6 +46,7 @@ class V1Secret(object):
         'name': 'str',
         'org_id': 'str',
         'project_id': 'str',
+        'type': 'V1SecretType',
         'updated_at': 'datetime',
         'user_id': 'str'
     }
@@ -56,17 +57,19 @@ class V1Secret(object):
         'name': 'name',
         'org_id': 'orgId',
         'project_id': 'projectId',
+        'type': 'type',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, type: 'V1SecretType' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Secret - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._id = None
         self._name = None
         self._org_id = None
         self._project_id = None
+        self._type = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
@@ -80,6 +83,8 @@ class V1Secret(object):
             self.org_id = org_id
         if project_id is not None:
             self.project_id = project_id
+        if type is not None:
+            self.type = type
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -189,6 +194,27 @@ class V1Secret(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def type(self) -> 'V1SecretType':
+        """Gets the type of this V1Secret.  # noqa: E501
+
+
+        :return: The type of this V1Secret.  # noqa: E501
+        :rtype: V1SecretType
+        """
+        return self._type
+
+    @type.setter
+    def type(self, type: 'V1SecretType'):
+        """Sets the type of this V1Secret.
+
+
+        :param type: The type of this V1Secret.  # noqa: E501
+        :type: V1SecretType
+        """
+
+        self._type = type
 
     @property
     def updated_at(self) -> 'datetime':

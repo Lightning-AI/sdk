@@ -46,6 +46,7 @@ class V1LightningappInstanceStatus(object):
         'image_id': 'str',
         'ip_address': 'str',
         'last_state_status_transition_timestamp': 'datetime',
+        'lock_out': 'bool',
         'message': 'str',
         'modified_volume': 'bool',
         'phase': 'V1LightningappInstanceState',
@@ -63,6 +64,7 @@ class V1LightningappInstanceStatus(object):
         'image_id': 'imageId',
         'ip_address': 'ipAddress',
         'last_state_status_transition_timestamp': 'lastStateStatusTransitionTimestamp',
+        'lock_out': 'lockOut',
         'message': 'message',
         'modified_volume': 'modifiedVolume',
         'phase': 'phase',
@@ -74,13 +76,14 @@ class V1LightningappInstanceStatus(object):
         'url': 'url'
     }
 
-    def __init__(self, code_server_url: 'str' =None, dependency_cache_state: 'V1DependencyCacheState' =None, image_id: 'str' =None, ip_address: 'str' =None, last_state_status_transition_timestamp: 'datetime' =None, message: 'str' =None, modified_volume: 'bool' =None, phase: 'V1LightningappInstanceState' =None, server_id: 'str' =None, source_upload_url: 'str' =None, start_timestamp: 'datetime' =None, stop_timestamp: 'datetime' =None, total_cost: 'float' =None, url: 'str' =None):  # noqa: E501
+    def __init__(self, code_server_url: 'str' =None, dependency_cache_state: 'V1DependencyCacheState' =None, image_id: 'str' =None, ip_address: 'str' =None, last_state_status_transition_timestamp: 'datetime' =None, lock_out: 'bool' =None, message: 'str' =None, modified_volume: 'bool' =None, phase: 'V1LightningappInstanceState' =None, server_id: 'str' =None, source_upload_url: 'str' =None, start_timestamp: 'datetime' =None, stop_timestamp: 'datetime' =None, total_cost: 'float' =None, url: 'str' =None):  # noqa: E501
         """V1LightningappInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._code_server_url = None
         self._dependency_cache_state = None
         self._image_id = None
         self._ip_address = None
         self._last_state_status_transition_timestamp = None
+        self._lock_out = None
         self._message = None
         self._modified_volume = None
         self._phase = None
@@ -101,6 +104,8 @@ class V1LightningappInstanceStatus(object):
             self.ip_address = ip_address
         if last_state_status_transition_timestamp is not None:
             self.last_state_status_transition_timestamp = last_state_status_transition_timestamp
+        if lock_out is not None:
+            self.lock_out = lock_out
         if message is not None:
             self.message = message
         if modified_volume is not None:
@@ -224,6 +229,27 @@ class V1LightningappInstanceStatus(object):
         """
 
         self._last_state_status_transition_timestamp = last_state_status_transition_timestamp
+
+    @property
+    def lock_out(self) -> 'bool':
+        """Gets the lock_out of this V1LightningappInstanceStatus.  # noqa: E501
+
+
+        :return: The lock_out of this V1LightningappInstanceStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._lock_out
+
+    @lock_out.setter
+    def lock_out(self, lock_out: 'bool'):
+        """Sets the lock_out of this V1LightningappInstanceStatus.
+
+
+        :param lock_out: The lock_out of this V1LightningappInstanceStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._lock_out = lock_out
 
     @property
     def message(self) -> 'str':

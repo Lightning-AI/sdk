@@ -42,8 +42,11 @@ class V1DeploymentEvent(object):
     """
     swagger_types = {
         'action': 'str',
+        'deployment_id': 'str',
+        'id': 'str',
         'job_id': 'str',
         'message': 'str',
+        'project_id': 'str',
         'reason': 'str',
         'timestamp': 'datetime',
         'type': 'V1DeploymentEventType'
@@ -51,28 +54,40 @@ class V1DeploymentEvent(object):
 
     attribute_map = {
         'action': 'action',
+        'deployment_id': 'deploymentId',
+        'id': 'id',
         'job_id': 'jobId',
         'message': 'message',
+        'project_id': 'projectId',
         'reason': 'reason',
         'timestamp': 'timestamp',
         'type': 'type'
     }
 
-    def __init__(self, action: 'str' =None, job_id: 'str' =None, message: 'str' =None, reason: 'str' =None, timestamp: 'datetime' =None, type: 'V1DeploymentEventType' =None):  # noqa: E501
+    def __init__(self, action: 'str' =None, deployment_id: 'str' =None, id: 'str' =None, job_id: 'str' =None, message: 'str' =None, project_id: 'str' =None, reason: 'str' =None, timestamp: 'datetime' =None, type: 'V1DeploymentEventType' =None):  # noqa: E501
         """V1DeploymentEvent - a model defined in Swagger"""  # noqa: E501
         self._action = None
+        self._deployment_id = None
+        self._id = None
         self._job_id = None
         self._message = None
+        self._project_id = None
         self._reason = None
         self._timestamp = None
         self._type = None
         self.discriminator = None
         if action is not None:
             self.action = action
+        if deployment_id is not None:
+            self.deployment_id = deployment_id
+        if id is not None:
+            self.id = id
         if job_id is not None:
             self.job_id = job_id
         if message is not None:
             self.message = message
+        if project_id is not None:
+            self.project_id = project_id
         if reason is not None:
             self.reason = reason
         if timestamp is not None:
@@ -100,6 +115,48 @@ class V1DeploymentEvent(object):
         """
 
         self._action = action
+
+    @property
+    def deployment_id(self) -> 'str':
+        """Gets the deployment_id of this V1DeploymentEvent.  # noqa: E501
+
+
+        :return: The deployment_id of this V1DeploymentEvent.  # noqa: E501
+        :rtype: str
+        """
+        return self._deployment_id
+
+    @deployment_id.setter
+    def deployment_id(self, deployment_id: 'str'):
+        """Sets the deployment_id of this V1DeploymentEvent.
+
+
+        :param deployment_id: The deployment_id of this V1DeploymentEvent.  # noqa: E501
+        :type: str
+        """
+
+        self._deployment_id = deployment_id
+
+    @property
+    def id(self) -> 'str':
+        """Gets the id of this V1DeploymentEvent.  # noqa: E501
+
+
+        :return: The id of this V1DeploymentEvent.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: 'str'):
+        """Sets the id of this V1DeploymentEvent.
+
+
+        :param id: The id of this V1DeploymentEvent.  # noqa: E501
+        :type: str
+        """
+
+        self._id = id
 
     @property
     def job_id(self) -> 'str':
@@ -142,6 +199,27 @@ class V1DeploymentEvent(object):
         """
 
         self._message = message
+
+    @property
+    def project_id(self) -> 'str':
+        """Gets the project_id of this V1DeploymentEvent.  # noqa: E501
+
+
+        :return: The project_id of this V1DeploymentEvent.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, project_id: 'str'):
+        """Sets the project_id of this V1DeploymentEvent.
+
+
+        :param project_id: The project_id of this V1DeploymentEvent.  # noqa: E501
+        :type: str
+        """
+
+        self._project_id = project_id
 
     @property
     def reason(self) -> 'str':
