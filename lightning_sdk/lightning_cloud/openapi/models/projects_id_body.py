@@ -46,7 +46,8 @@ class ProjectsIdBody(object):
         'name': 'str',
         'preferred_cluster': 'str',
         'quotas': 'V1Quotas',
-        'same_compute_on_resume': 'bool'
+        'same_compute_on_resume': 'bool',
+        'start_studio_on_spot_instance': 'bool'
     }
 
     attribute_map = {
@@ -55,10 +56,11 @@ class ProjectsIdBody(object):
         'name': 'name',
         'preferred_cluster': 'preferredCluster',
         'quotas': 'quotas',
-        'same_compute_on_resume': 'sameComputeOnResume'
+        'same_compute_on_resume': 'sameComputeOnResume',
+        'start_studio_on_spot_instance': 'startStudioOnSpotInstance'
     }
 
-    def __init__(self, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None):  # noqa: E501
+    def __init__(self, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
         """ProjectsIdBody - a model defined in Swagger"""  # noqa: E501
         self._description = None
         self._display_name = None
@@ -66,6 +68,7 @@ class ProjectsIdBody(object):
         self._preferred_cluster = None
         self._quotas = None
         self._same_compute_on_resume = None
+        self._start_studio_on_spot_instance = None
         self.discriminator = None
         if description is not None:
             self.description = description
@@ -79,6 +82,8 @@ class ProjectsIdBody(object):
             self.quotas = quotas
         if same_compute_on_resume is not None:
             self.same_compute_on_resume = same_compute_on_resume
+        if start_studio_on_spot_instance is not None:
+            self.start_studio_on_spot_instance = start_studio_on_spot_instance
 
     @property
     def description(self) -> 'str':
@@ -205,6 +210,27 @@ class ProjectsIdBody(object):
         """
 
         self._same_compute_on_resume = same_compute_on_resume
+
+    @property
+    def start_studio_on_spot_instance(self) -> 'bool':
+        """Gets the start_studio_on_spot_instance of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The start_studio_on_spot_instance of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._start_studio_on_spot_instance
+
+    @start_studio_on_spot_instance.setter
+    def start_studio_on_spot_instance(self, start_studio_on_spot_instance: 'bool'):
+        """Sets the start_studio_on_spot_instance of this ProjectsIdBody.
+
+
+        :param start_studio_on_spot_instance: The start_studio_on_spot_instance of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._start_studio_on_spot_instance = start_studio_on_spot_instance
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

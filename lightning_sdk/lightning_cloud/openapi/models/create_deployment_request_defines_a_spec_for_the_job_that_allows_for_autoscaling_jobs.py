@@ -46,7 +46,8 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'endpoint': 'V1Endpoint',
         'name': 'str',
         'replicas': 'str',
-        'spec': 'V1JobSpec'
+        'spec': 'V1JobSpec',
+        'strategy': 'V1DeploymentStrategy'
     }
 
     attribute_map = {
@@ -55,10 +56,11 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'endpoint': 'endpoint',
         'name': 'name',
         'replicas': 'replicas',
-        'spec': 'spec'
+        'spec': 'spec',
+        'strategy': 'strategy'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, replicas: 'str' =None, spec: 'V1JobSpec' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, replicas: 'str' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
         self._cluster_id = None
@@ -66,6 +68,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         self._name = None
         self._replicas = None
         self._spec = None
+        self._strategy = None
         self.discriminator = None
         if autoscaling is not None:
             self.autoscaling = autoscaling
@@ -79,6 +82,8 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
             self.replicas = replicas
         if spec is not None:
             self.spec = spec
+        if strategy is not None:
+            self.strategy = strategy
 
     @property
     def autoscaling(self) -> 'V1AutoscalingSpec':
@@ -205,6 +210,27 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         """
 
         self._spec = spec
+
+    @property
+    def strategy(self) -> 'V1DeploymentStrategy':
+        """Gets the strategy of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+
+
+        :return: The strategy of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :rtype: V1DeploymentStrategy
+        """
+        return self._strategy
+
+    @strategy.setter
+    def strategy(self, strategy: 'V1DeploymentStrategy'):
+        """Sets the strategy of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.
+
+
+        :param strategy: The strategy of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :type: V1DeploymentStrategy
+        """
+
+        self._strategy = strategy
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

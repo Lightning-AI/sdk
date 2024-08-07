@@ -43,32 +43,42 @@ class ClusterIdCapacityreservationsBody(object):
     swagger_types = {
         'capacity_reservation_type': 'str',
         'cloud_provider_capacity_reservation_id': 'str',
+        'end_time': 'datetime',
         'instance_type': 'str',
-        'match_pattern': 'str'
+        'match_pattern': 'str',
+        'start_time': 'datetime'
     }
 
     attribute_map = {
         'capacity_reservation_type': 'capacityReservationType',
         'cloud_provider_capacity_reservation_id': 'cloudProviderCapacityReservationId',
+        'end_time': 'endTime',
         'instance_type': 'instanceType',
-        'match_pattern': 'matchPattern'
+        'match_pattern': 'matchPattern',
+        'start_time': 'startTime'
     }
 
-    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, end_time: 'datetime' =None, instance_type: 'str' =None, match_pattern: 'str' =None, start_time: 'datetime' =None):  # noqa: E501
         """ClusterIdCapacityreservationsBody - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_type = None
         self._cloud_provider_capacity_reservation_id = None
+        self._end_time = None
         self._instance_type = None
         self._match_pattern = None
+        self._start_time = None
         self.discriminator = None
         if capacity_reservation_type is not None:
             self.capacity_reservation_type = capacity_reservation_type
         if cloud_provider_capacity_reservation_id is not None:
             self.cloud_provider_capacity_reservation_id = cloud_provider_capacity_reservation_id
+        if end_time is not None:
+            self.end_time = end_time
         if instance_type is not None:
             self.instance_type = instance_type
         if match_pattern is not None:
             self.match_pattern = match_pattern
+        if start_time is not None:
+            self.start_time = start_time
 
     @property
     def capacity_reservation_type(self) -> 'str':
@@ -113,6 +123,27 @@ class ClusterIdCapacityreservationsBody(object):
         self._cloud_provider_capacity_reservation_id = cloud_provider_capacity_reservation_id
 
     @property
+    def end_time(self) -> 'datetime':
+        """Gets the end_time of this ClusterIdCapacityreservationsBody.  # noqa: E501
+
+
+        :return: The end_time of this ClusterIdCapacityreservationsBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._end_time
+
+    @end_time.setter
+    def end_time(self, end_time: 'datetime'):
+        """Sets the end_time of this ClusterIdCapacityreservationsBody.
+
+
+        :param end_time: The end_time of this ClusterIdCapacityreservationsBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._end_time = end_time
+
+    @property
     def instance_type(self) -> 'str':
         """Gets the instance_type of this ClusterIdCapacityreservationsBody.  # noqa: E501
 
@@ -153,6 +184,27 @@ class ClusterIdCapacityreservationsBody(object):
         """
 
         self._match_pattern = match_pattern
+
+    @property
+    def start_time(self) -> 'datetime':
+        """Gets the start_time of this ClusterIdCapacityreservationsBody.  # noqa: E501
+
+
+        :return: The start_time of this ClusterIdCapacityreservationsBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._start_time
+
+    @start_time.setter
+    def start_time(self, start_time: 'datetime'):
+        """Sets the start_time of this ClusterIdCapacityreservationsBody.
+
+
+        :param start_time: The start_time of this ClusterIdCapacityreservationsBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._start_time = start_time
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

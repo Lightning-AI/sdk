@@ -44,6 +44,7 @@ class V1Organization(object):
         'allow_guest': 'bool',
         'allow_member_invitations': 'bool',
         'allow_member_teamspace_creation': 'bool',
+        'auto_invite_by_domain': 'bool',
         'auto_join_domains': 'list[str]',
         'created_at': 'datetime',
         'description': 'str',
@@ -63,6 +64,7 @@ class V1Organization(object):
         'allow_guest': 'allowGuest',
         'allow_member_invitations': 'allowMemberInvitations',
         'allow_member_teamspace_creation': 'allowMemberTeamspaceCreation',
+        'auto_invite_by_domain': 'autoInviteByDomain',
         'auto_join_domains': 'autoJoinDomains',
         'created_at': 'createdAt',
         'description': 'description',
@@ -78,11 +80,12 @@ class V1Organization(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
         self._allow_member_invitations = None
         self._allow_member_teamspace_creation = None
+        self._auto_invite_by_domain = None
         self._auto_join_domains = None
         self._created_at = None
         self._description = None
@@ -103,6 +106,8 @@ class V1Organization(object):
             self.allow_member_invitations = allow_member_invitations
         if allow_member_teamspace_creation is not None:
             self.allow_member_teamspace_creation = allow_member_teamspace_creation
+        if auto_invite_by_domain is not None:
+            self.auto_invite_by_domain = auto_invite_by_domain
         if auto_join_domains is not None:
             self.auto_join_domains = auto_join_domains
         if created_at is not None:
@@ -192,6 +197,27 @@ class V1Organization(object):
         """
 
         self._allow_member_teamspace_creation = allow_member_teamspace_creation
+
+    @property
+    def auto_invite_by_domain(self) -> 'bool':
+        """Gets the auto_invite_by_domain of this V1Organization.  # noqa: E501
+
+
+        :return: The auto_invite_by_domain of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_invite_by_domain
+
+    @auto_invite_by_domain.setter
+    def auto_invite_by_domain(self, auto_invite_by_domain: 'bool'):
+        """Sets the auto_invite_by_domain of this V1Organization.
+
+
+        :param auto_invite_by_domain: The auto_invite_by_domain of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_invite_by_domain = auto_invite_by_domain
 
     @property
     def auto_join_domains(self) -> 'list[str]':

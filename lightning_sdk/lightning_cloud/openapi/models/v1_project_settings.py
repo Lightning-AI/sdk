@@ -42,23 +42,28 @@ class V1ProjectSettings(object):
     """
     swagger_types = {
         'preferred_cluster': 'str',
-        'same_compute_on_resume': 'bool'
+        'same_compute_on_resume': 'bool',
+        'start_studio_on_spot_instance': 'bool'
     }
 
     attribute_map = {
         'preferred_cluster': 'preferredCluster',
-        'same_compute_on_resume': 'sameComputeOnResume'
+        'same_compute_on_resume': 'sameComputeOnResume',
+        'start_studio_on_spot_instance': 'startStudioOnSpotInstance'
     }
 
-    def __init__(self, preferred_cluster: 'str' =None, same_compute_on_resume: 'bool' =None):  # noqa: E501
+    def __init__(self, preferred_cluster: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
         """V1ProjectSettings - a model defined in Swagger"""  # noqa: E501
         self._preferred_cluster = None
         self._same_compute_on_resume = None
+        self._start_studio_on_spot_instance = None
         self.discriminator = None
         if preferred_cluster is not None:
             self.preferred_cluster = preferred_cluster
         if same_compute_on_resume is not None:
             self.same_compute_on_resume = same_compute_on_resume
+        if start_studio_on_spot_instance is not None:
+            self.start_studio_on_spot_instance = start_studio_on_spot_instance
 
     @property
     def preferred_cluster(self) -> 'str':
@@ -101,6 +106,27 @@ class V1ProjectSettings(object):
         """
 
         self._same_compute_on_resume = same_compute_on_resume
+
+    @property
+    def start_studio_on_spot_instance(self) -> 'bool':
+        """Gets the start_studio_on_spot_instance of this V1ProjectSettings.  # noqa: E501
+
+
+        :return: The start_studio_on_spot_instance of this V1ProjectSettings.  # noqa: E501
+        :rtype: bool
+        """
+        return self._start_studio_on_spot_instance
+
+    @start_studio_on_spot_instance.setter
+    def start_studio_on_spot_instance(self, start_studio_on_spot_instance: 'bool'):
+        """Sets the start_studio_on_spot_instance of this V1ProjectSettings.
+
+
+        :param start_studio_on_spot_instance: The start_studio_on_spot_instance of this V1ProjectSettings.  # noqa: E501
+        :type: bool
+        """
+
+        self._start_studio_on_spot_instance = start_studio_on_spot_instance
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

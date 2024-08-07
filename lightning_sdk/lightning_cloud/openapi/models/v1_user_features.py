@@ -44,6 +44,7 @@ class V1UserFeatures(object):
         'agents_v2': 'bool',
         'apt_get_v2': 'bool',
         'auto_fast_load': 'bool',
+        'auto_join_orgs': 'bool',
         'aws_trainium': 'bool',
         'b2c_experience': 'bool',
         'byom': 'bool',
@@ -74,7 +75,6 @@ class V1UserFeatures(object):
         'mmt_strategy_selector': 'bool',
         'new_cpu_instance': 'bool',
         'new_data_prep_cpu_instance': 'bool',
-        'oom_killer': 'bool',
         'org_level_member_permissions': 'bool',
         'plugin_biz_chat': 'bool',
         'plugin_distributed': 'bool',
@@ -91,6 +91,7 @@ class V1UserFeatures(object):
         'plugin_service': 'bool',
         'plugin_sweeps': 'bool',
         'plugin_weviate': 'bool',
+        'port_viewer_v2': 'bool',
         'pricing_updates': 'bool',
         'product_generator': 'bool',
         'project_selector': 'bool',
@@ -116,6 +117,7 @@ class V1UserFeatures(object):
         'agents_v2': 'agentsV2',
         'apt_get_v2': 'aptGetV2',
         'auto_fast_load': 'autoFastLoad',
+        'auto_join_orgs': 'autoJoinOrgs',
         'aws_trainium': 'awsTrainium',
         'b2c_experience': 'b2cExperience',
         'byom': 'byom',
@@ -146,7 +148,6 @@ class V1UserFeatures(object):
         'mmt_strategy_selector': 'mmtStrategySelector',
         'new_cpu_instance': 'newCpuInstance',
         'new_data_prep_cpu_instance': 'newDataPrepCpuInstance',
-        'oom_killer': 'oomKiller',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'plugin_biz_chat': 'pluginBizChat',
         'plugin_distributed': 'pluginDistributed',
@@ -163,6 +164,7 @@ class V1UserFeatures(object):
         'plugin_service': 'pluginService',
         'plugin_sweeps': 'pluginSweeps',
         'plugin_weviate': 'pluginWeviate',
+        'port_viewer_v2': 'portViewerV2',
         'pricing_updates': 'pricingUpdates',
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
@@ -184,11 +186,12 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, new_cpu_instance: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, oom_killer: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, studio_config: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, new_cpu_instance: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, port_viewer_v2: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, studio_config: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._agents_v2 = None
         self._apt_get_v2 = None
         self._auto_fast_load = None
+        self._auto_join_orgs = None
         self._aws_trainium = None
         self._b2c_experience = None
         self._byom = None
@@ -219,7 +222,6 @@ class V1UserFeatures(object):
         self._mmt_strategy_selector = None
         self._new_cpu_instance = None
         self._new_data_prep_cpu_instance = None
-        self._oom_killer = None
         self._org_level_member_permissions = None
         self._plugin_biz_chat = None
         self._plugin_distributed = None
@@ -236,6 +238,7 @@ class V1UserFeatures(object):
         self._plugin_service = None
         self._plugin_sweeps = None
         self._plugin_weviate = None
+        self._port_viewer_v2 = None
         self._pricing_updates = None
         self._product_generator = None
         self._project_selector = None
@@ -262,6 +265,8 @@ class V1UserFeatures(object):
             self.apt_get_v2 = apt_get_v2
         if auto_fast_load is not None:
             self.auto_fast_load = auto_fast_load
+        if auto_join_orgs is not None:
+            self.auto_join_orgs = auto_join_orgs
         if aws_trainium is not None:
             self.aws_trainium = aws_trainium
         if b2c_experience is not None:
@@ -322,8 +327,6 @@ class V1UserFeatures(object):
             self.new_cpu_instance = new_cpu_instance
         if new_data_prep_cpu_instance is not None:
             self.new_data_prep_cpu_instance = new_data_prep_cpu_instance
-        if oom_killer is not None:
-            self.oom_killer = oom_killer
         if org_level_member_permissions is not None:
             self.org_level_member_permissions = org_level_member_permissions
         if plugin_biz_chat is not None:
@@ -356,6 +359,8 @@ class V1UserFeatures(object):
             self.plugin_sweeps = plugin_sweeps
         if plugin_weviate is not None:
             self.plugin_weviate = plugin_weviate
+        if port_viewer_v2 is not None:
+            self.port_viewer_v2 = port_viewer_v2
         if pricing_updates is not None:
             self.pricing_updates = pricing_updates
         if product_generator is not None:
@@ -457,6 +462,27 @@ class V1UserFeatures(object):
         """
 
         self._auto_fast_load = auto_fast_load
+
+    @property
+    def auto_join_orgs(self) -> 'bool':
+        """Gets the auto_join_orgs of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The auto_join_orgs of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_join_orgs
+
+    @auto_join_orgs.setter
+    def auto_join_orgs(self, auto_join_orgs: 'bool'):
+        """Sets the auto_join_orgs of this V1UserFeatures.
+
+
+        :param auto_join_orgs: The auto_join_orgs of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_join_orgs = auto_join_orgs
 
     @property
     def aws_trainium(self) -> 'bool':
@@ -1089,27 +1115,6 @@ class V1UserFeatures(object):
         self._new_data_prep_cpu_instance = new_data_prep_cpu_instance
 
     @property
-    def oom_killer(self) -> 'bool':
-        """Gets the oom_killer of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The oom_killer of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._oom_killer
-
-    @oom_killer.setter
-    def oom_killer(self, oom_killer: 'bool'):
-        """Sets the oom_killer of this V1UserFeatures.
-
-
-        :param oom_killer: The oom_killer of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._oom_killer = oom_killer
-
-    @property
     def org_level_member_permissions(self) -> 'bool':
         """Gets the org_level_member_permissions of this V1UserFeatures.  # noqa: E501
 
@@ -1444,6 +1449,27 @@ class V1UserFeatures(object):
         """
 
         self._plugin_weviate = plugin_weviate
+
+    @property
+    def port_viewer_v2(self) -> 'bool':
+        """Gets the port_viewer_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The port_viewer_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._port_viewer_v2
+
+    @port_viewer_v2.setter
+    def port_viewer_v2(self, port_viewer_v2: 'bool'):
+        """Sets the port_viewer_v2 of this V1UserFeatures.
+
+
+        :param port_viewer_v2: The port_viewer_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._port_viewer_v2 = port_viewer_v2
 
     @property
     def pricing_updates(self) -> 'bool':

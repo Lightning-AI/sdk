@@ -44,31 +44,37 @@ class V1ClusterCapacityReservation(object):
         'capacity_reservation_type': 'str',
         'cloud_provider_capacity_reservation_id': 'str',
         'cluster_id': 'str',
+        'end_time': 'datetime',
         'id': 'str',
         'instance_type': 'str',
         'match_pattern': 'str',
-        'project_id': 'str'
+        'project_id': 'str',
+        'start_time': 'datetime'
     }
 
     attribute_map = {
         'capacity_reservation_type': 'capacityReservationType',
         'cloud_provider_capacity_reservation_id': 'cloudProviderCapacityReservationId',
         'cluster_id': 'clusterId',
+        'end_time': 'endTime',
         'id': 'id',
         'instance_type': 'instanceType',
         'match_pattern': 'matchPattern',
-        'project_id': 'projectId'
+        'project_id': 'projectId',
+        'start_time': 'startTime'
     }
 
-    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, id: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, project_id: 'str' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, project_id: 'str' =None, start_time: 'datetime' =None):  # noqa: E501
         """V1ClusterCapacityReservation - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_type = None
         self._cloud_provider_capacity_reservation_id = None
         self._cluster_id = None
+        self._end_time = None
         self._id = None
         self._instance_type = None
         self._match_pattern = None
         self._project_id = None
+        self._start_time = None
         self.discriminator = None
         if capacity_reservation_type is not None:
             self.capacity_reservation_type = capacity_reservation_type
@@ -76,6 +82,8 @@ class V1ClusterCapacityReservation(object):
             self.cloud_provider_capacity_reservation_id = cloud_provider_capacity_reservation_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if end_time is not None:
+            self.end_time = end_time
         if id is not None:
             self.id = id
         if instance_type is not None:
@@ -84,6 +92,8 @@ class V1ClusterCapacityReservation(object):
             self.match_pattern = match_pattern
         if project_id is not None:
             self.project_id = project_id
+        if start_time is not None:
+            self.start_time = start_time
 
     @property
     def capacity_reservation_type(self) -> 'str':
@@ -147,6 +157,27 @@ class V1ClusterCapacityReservation(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def end_time(self) -> 'datetime':
+        """Gets the end_time of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The end_time of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._end_time
+
+    @end_time.setter
+    def end_time(self, end_time: 'datetime'):
+        """Sets the end_time of this V1ClusterCapacityReservation.
+
+
+        :param end_time: The end_time of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: datetime
+        """
+
+        self._end_time = end_time
 
     @property
     def id(self) -> 'str':
@@ -231,6 +262,27 @@ class V1ClusterCapacityReservation(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def start_time(self) -> 'datetime':
+        """Gets the start_time of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The start_time of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._start_time
+
+    @start_time.setter
+    def start_time(self, start_time: 'datetime'):
+        """Sets the start_time of this V1ClusterCapacityReservation.
+
+
+        :param start_time: The start_time of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: datetime
+        """
+
+        self._start_time = start_time
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

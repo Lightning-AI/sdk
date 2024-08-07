@@ -5190,6 +5190,7 @@ class CloudSpaceServiceApi(object):
         :param str user_id:
         :param bool active_only:
         :param bool is_favorite:
+        :param bool is_locked:
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -5218,12 +5219,13 @@ class CloudSpaceServiceApi(object):
         :param str user_id:
         :param bool active_only:
         :param bool is_favorite:
+        :param bool is_locked:
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'active_only', 'is_favorite']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'active_only', 'is_favorite', 'is_locked']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -5264,6 +5266,8 @@ class CloudSpaceServiceApi(object):
             query_params.append(('activeOnly', params['active_only']))  # noqa: E501
         if 'is_favorite' in params:
             query_params.append(('isFavorite', params['is_favorite']))  # noqa: E501
+        if 'is_locked' in params:
+            query_params.append(('isLocked', params['is_locked']))  # noqa: E501
 
         header_params = {}
 
