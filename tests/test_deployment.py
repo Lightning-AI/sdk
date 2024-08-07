@@ -11,6 +11,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Endpoint,
     V1AutoscalingSpec,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 
 def test_to_autoscaling():
@@ -100,6 +101,10 @@ def test_to_endpoint():
 
 
 def test_deployment_start_first_time(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+
     with pytest.raises(TypeError, match=r"missing 1 required positional argument: 'name'"):
         deployment_module.Deployment()
 
@@ -108,6 +113,11 @@ def test_deployment_start_first_time(monkeypatch):
     monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
 
     client = MagicMock()
+
+    def fn(*_, **__):
+        raise ApiException(status=400, reason="Reason: Not Found")
+
+    client.jobs_service_get_deployment_by_name = fn
     monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
 
     with pytest.raises(ValueError, match="An autoscaling config should be provided."):
@@ -132,18 +142,16 @@ def test_deployment_start_first_time(monkeypatch):
 
 
 def test_deployment_start_already_exist(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+
     teamspace_mock = MagicMock()
     teamspace_mock.id = "project_id"
     monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
 
     client = MagicMock()
-    client.jobs_service_list_deployments.return_value = V1ListDeploymentsResponse(
-        deployments=[
-            V1Deployment(
-                name="ollama",
-            )
-        ]
-    )
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(name="ollama")
     monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
@@ -152,21 +160,22 @@ def test_deployment_start_already_exist(monkeypatch):
 
 
 def test_deployment_update(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+
     teamspace_mock = MagicMock()
     teamspace_mock.id = "project_id"
     monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
 
     client = MagicMock()
-    client.jobs_service_list_deployments.return_value = V1ListDeploymentsResponse(
-        deployments=[
-            V1Deployment(
-                name="ollama",
-                spec=V1JobSpec(),
-                endpoint=V1Endpoint(),
-                strategy=None,
-            )
-        ]
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(
+        name="ollama",
+        spec=V1JobSpec(),
+        endpoint=V1Endpoint(),
+        strategy=None,
     )
+
     monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
@@ -182,6 +191,10 @@ def test_deployment_update(monkeypatch):
 
 
 def test_deployment_stop(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+
     teamspace_mock = MagicMock()
     teamspace_mock.id = "project_id"
     monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
@@ -206,9 +219,9 @@ def test_deployment_stop(monkeypatch):
             deployment_spec.replicas = 0
         else:
             called = True
-        return V1ListDeploymentsResponse(deployments=[deployment_spec])
+        return deployment_spec
 
-    client.jobs_service_list_deployments = fn
+    client.jobs_service_get_deployment_by_name = fn
     monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
 
     def update(*_, body, **__):

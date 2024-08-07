@@ -1,6 +1,7 @@
 import os
 from typing import List, Optional, Union
 
+from lightning_sdk.api import UserApi
 from lightning_sdk.api.deployment_api import (
     Auth,
     AutoScaleConfig,
@@ -22,12 +23,14 @@ from lightning_sdk.api.deployment_api import (
     to_spec,
     to_strategy,
 )
+from lightning_sdk.lightning_cloud import login
 from lightning_sdk.lightning_cloud.openapi import V1Deployment
 from lightning_sdk.machine import Machine
 from lightning_sdk.organization import Organization
+from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils import _resolve_teamspace
+from lightning_sdk.utils import _resolve_teamspace, _resolve_user
 
 
 class Deployment:
@@ -55,11 +58,24 @@ class Deployment:
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
     ) -> None:
+        self._auth = login.Auth()
+
+        try:
+            self._auth.authenticate()
+            if user is None:
+                self._user = User(name=UserApi()._get_user_by_id(self._auth.user_id).username)
+        except ConnectionError as e:
+            raise e
+
         self._name = name
         self._org = org
-        self._user = user
+        self._user = _resolve_user(user)
+        self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=self._user)
+        if self._teamspace is None:
+            raise ValueError("You need to pass a teamspace or an org for your deployment.")
+
         self._deployment_api = DeploymentApi()
-        self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        self._cluster = _get_cluster(client=self._deployment_api._client, project_id=self._teamspace.id)
         self._is_created = False
         deployment = self._deployment_api.get_deployment_by_name(name, self._teamspace.id)
         if deployment:
@@ -114,6 +130,10 @@ class Deployment:
         if self._is_created:
             raise RuntimeError("This deployment has already been started.")
 
+        if cluster is None and self._cluster is not None:
+            print(f"No cluster was provided, defaulting to {self._cluster.cluster_id}")
+            cluster = os.getenv("LIGHTNING_CLUSTER_ID") or self._cluster.cluster_id
+
         self._deployment = self._deployment_api.create_deployment(
             V1Deployment(
                 autoscaling=to_autoscaling(autoscale, replicas),
@@ -122,7 +142,7 @@ class Deployment:
                 project_id=self._teamspace.id,
                 replicas=replicas,
                 spec=to_spec(
-                    cluster_id=cluster or os.getenv("LIGHTNING_CLUSTER_ID"),
+                    cluster_id=cluster,
                     command=command,
                     entrypoint=entrypoint,
                     env=env,
@@ -284,6 +304,19 @@ class Deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return self._deployment.status.deleting_replicas
         return None
+
+    @property
+    def cluster(self) -> Optional[str]:
+        """The cluster of the replicas."""
+        if self._deployment:
+            self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
+            return self._deployment.spec.cluster_id
+        return None
+
+    @property
+    def user(self) -> Optional[User]:
+        """The teamspace of the deployment."""
+        return self._user
 
     @property
     def teamspace(self) -> Optional[Teamspace]:

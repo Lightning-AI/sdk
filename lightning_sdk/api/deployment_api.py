@@ -17,6 +17,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1JobSpec,
     V1RollingUpdateStrategy,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
@@ -184,12 +185,12 @@ class DeploymentApi:
         self._wait_on_stop = wait_on_stop
 
     def get_deployment_by_name(self, name: str, teamspace_id: str) -> Optional[V1Deployment]:
-        # TODO: Move this endpoint to find_by_name
-        deployments = self._client.jobs_service_list_deployments(project_id=teamspace_id)
-        for deployment in deployments.deployments:
-            if deployment.name == name:
-                return deployment
-        return None
+        try:
+            return self._client.jobs_service_get_deployment_by_name(project_id=teamspace_id, name=name)
+        except ApiException as ex:
+            if "Reason: Not Found" in str(ex):
+                return None
+            raise ex
 
     def create_deployment(
         self,
@@ -204,6 +205,7 @@ class DeploymentApi:
                 name=deployment.name,
                 replicas=deployment.replicas,
                 spec=deployment.spec,
+                strategy=deployment.strategy,
             ),
         )
 
@@ -474,7 +476,7 @@ def to_health_check(
             port=health_check.port,
         )
     else:
-        health_check_config.exec = V1HealthCheckExec(command=health_check.command)
+        health_check_config._exec = V1HealthCheckExec(command=health_check.command)
     return health_check_config
 
 

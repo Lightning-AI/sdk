@@ -48,7 +48,9 @@ def _get_cluster(client: LightningClient, project_id: str, cluster_id: Optional[
         )
 
     clusters = sorted(clusters.clusters, key=lambda x: x.created_at)
-    return clusters[0]
+    if len(clusters):
+        return clusters[0]
+    return None
 
 
 def _get_service_url(cloud_space_id: str, file_endpoint_id: str) -> str:
