@@ -59,6 +59,7 @@ class V1UserFeatures(object):
         'custom_instance_types': 'bool',
         'docs_agent': 'bool',
         'enable_crypto_crackdown': 'bool',
+        'enable_efs': 'bool',
         'enable_storage_limits': 'bool',
         'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
@@ -105,6 +106,7 @@ class V1UserFeatures(object):
         'snowflake_connection': 'bool',
         'spot': 'bool',
         'studio_config': 'bool',
+        'studio_on_stop': 'bool',
         'teamspace_storage_tab': 'bool',
         'unified_billing_ux': 'bool',
         'unified_billing_ux_v2': 'bool',
@@ -132,6 +134,7 @@ class V1UserFeatures(object):
         'custom_instance_types': 'customInstanceTypes',
         'docs_agent': 'docsAgent',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
+        'enable_efs': 'enableEfs',
         'enable_storage_limits': 'enableStorageLimits',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
@@ -178,6 +181,7 @@ class V1UserFeatures(object):
         'snowflake_connection': 'snowflakeConnection',
         'spot': 'spot',
         'studio_config': 'studioConfig',
+        'studio_on_stop': 'studioOnStop',
         'teamspace_storage_tab': 'teamspaceStorageTab',
         'unified_billing_ux': 'unifiedBillingUx',
         'unified_billing_ux_v2': 'unifiedBillingUxV2',
@@ -186,7 +190,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, new_cpu_instance: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, port_viewer_v2: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, studio_config: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, new_cpu_instance: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, port_viewer_v2: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._agents_v2 = None
         self._apt_get_v2 = None
@@ -206,6 +210,7 @@ class V1UserFeatures(object):
         self._custom_instance_types = None
         self._docs_agent = None
         self._enable_crypto_crackdown = None
+        self._enable_efs = None
         self._enable_storage_limits = None
         self._featured_studios_admin = None
         self._filesystem_optimisation = None
@@ -252,6 +257,7 @@ class V1UserFeatures(object):
         self._snowflake_connection = None
         self._spot = None
         self._studio_config = None
+        self._studio_on_stop = None
         self._teamspace_storage_tab = None
         self._unified_billing_ux = None
         self._unified_billing_ux_v2 = None
@@ -295,6 +301,8 @@ class V1UserFeatures(object):
             self.docs_agent = docs_agent
         if enable_crypto_crackdown is not None:
             self.enable_crypto_crackdown = enable_crypto_crackdown
+        if enable_efs is not None:
+            self.enable_efs = enable_efs
         if enable_storage_limits is not None:
             self.enable_storage_limits = enable_storage_limits
         if featured_studios_admin is not None:
@@ -387,6 +395,8 @@ class V1UserFeatures(object):
             self.spot = spot
         if studio_config is not None:
             self.studio_config = studio_config
+        if studio_on_stop is not None:
+            self.studio_on_stop = studio_on_stop
         if teamspace_storage_tab is not None:
             self.teamspace_storage_tab = teamspace_storage_tab
         if unified_billing_ux is not None:
@@ -777,6 +787,27 @@ class V1UserFeatures(object):
         """
 
         self._enable_crypto_crackdown = enable_crypto_crackdown
+
+    @property
+    def enable_efs(self) -> 'bool':
+        """Gets the enable_efs of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The enable_efs of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._enable_efs
+
+    @enable_efs.setter
+    def enable_efs(self, enable_efs: 'bool'):
+        """Sets the enable_efs of this V1UserFeatures.
+
+
+        :param enable_efs: The enable_efs of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._enable_efs = enable_efs
 
     @property
     def enable_storage_limits(self) -> 'bool':
@@ -1743,6 +1774,27 @@ class V1UserFeatures(object):
         """
 
         self._studio_config = studio_config
+
+    @property
+    def studio_on_stop(self) -> 'bool':
+        """Gets the studio_on_stop of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The studio_on_stop of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._studio_on_stop
+
+    @studio_on_stop.setter
+    def studio_on_stop(self, studio_on_stop: 'bool'):
+        """Sets the studio_on_stop of this V1UserFeatures.
+
+
+        :param studio_on_stop: The studio_on_stop of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._studio_on_stop = studio_on_stop
 
     @property
     def teamspace_storage_tab(self) -> 'bool':

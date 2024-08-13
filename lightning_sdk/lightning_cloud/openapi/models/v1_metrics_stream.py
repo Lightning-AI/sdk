@@ -61,6 +61,7 @@ class V1MetricsStream(object):
         'tags': 'list[V1MetricsTags]',
         'trackers': 'dict(str, V1MetricsTracker)',
         'user_id': 'str',
+        'version': 'datetime',
         'work_id': 'str'
     }
 
@@ -85,10 +86,11 @@ class V1MetricsStream(object):
         'tags': 'tags',
         'trackers': 'trackers',
         'user_id': 'userId',
+        'version': 'version',
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, version: 'datetime' =None, work_id: 'str' =None):  # noqa: E501
         """V1MetricsStream - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
@@ -110,6 +112,7 @@ class V1MetricsStream(object):
         self._tags = None
         self._trackers = None
         self._user_id = None
+        self._version = None
         self._work_id = None
         self.discriminator = None
         if app_id is not None:
@@ -152,6 +155,8 @@ class V1MetricsStream(object):
             self.trackers = trackers
         if user_id is not None:
             self.user_id = user_id
+        if version is not None:
+            self.version = version
         if work_id is not None:
             self.work_id = work_id
 
@@ -574,6 +579,27 @@ class V1MetricsStream(object):
         """
 
         self._user_id = user_id
+
+    @property
+    def version(self) -> 'datetime':
+        """Gets the version of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The version of this V1MetricsStream.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._version
+
+    @version.setter
+    def version(self, version: 'datetime'):
+        """Sets the version of this V1MetricsStream.
+
+
+        :param version: The version of this V1MetricsStream.  # noqa: E501
+        :type: datetime
+        """
+
+        self._version = version
 
     @property
     def work_id(self) -> 'str':

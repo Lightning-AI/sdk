@@ -42,24 +42,29 @@ class V1UploadModelResponse(object):
     """
     swagger_types = {
         'model_id': 'str',
+        'upload_dir': 'str',
         'upload_url': 'str',
         'version': 'str'
     }
 
     attribute_map = {
         'model_id': 'modelId',
+        'upload_dir': 'uploadDir',
         'upload_url': 'uploadUrl',
         'version': 'version'
     }
 
-    def __init__(self, model_id: 'str' =None, upload_url: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, model_id: 'str' =None, upload_dir: 'str' =None, upload_url: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1UploadModelResponse - a model defined in Swagger"""  # noqa: E501
         self._model_id = None
+        self._upload_dir = None
         self._upload_url = None
         self._version = None
         self.discriminator = None
         if model_id is not None:
             self.model_id = model_id
+        if upload_dir is not None:
+            self.upload_dir = upload_dir
         if upload_url is not None:
             self.upload_url = upload_url
         if version is not None:
@@ -85,6 +90,27 @@ class V1UploadModelResponse(object):
         """
 
         self._model_id = model_id
+
+    @property
+    def upload_dir(self) -> 'str':
+        """Gets the upload_dir of this V1UploadModelResponse.  # noqa: E501
+
+
+        :return: The upload_dir of this V1UploadModelResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._upload_dir
+
+    @upload_dir.setter
+    def upload_dir(self, upload_dir: 'str'):
+        """Sets the upload_dir of this V1UploadModelResponse.
+
+
+        :param upload_dir: The upload_dir of this V1UploadModelResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._upload_dir = upload_dir
 
     @property
     def upload_url(self) -> 'str':

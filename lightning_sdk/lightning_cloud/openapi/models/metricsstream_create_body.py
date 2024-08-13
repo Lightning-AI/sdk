@@ -49,6 +49,7 @@ class MetricsstreamCreateBody(object):
         'store_created_at': 'bool',
         'store_step': 'bool',
         'tags': 'list[V1MetricsTags]',
+        'version': 'datetime',
         'work_id': 'str'
     }
 
@@ -61,10 +62,11 @@ class MetricsstreamCreateBody(object):
         'store_created_at': 'storeCreatedAt',
         'store_step': 'storeStep',
         'tags': 'tags',
+        'version': 'version',
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, tags: 'list[V1MetricsTags]' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, tags: 'list[V1MetricsTags]' =None, version: 'datetime' =None, work_id: 'str' =None):  # noqa: E501
         """MetricsstreamCreateBody - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
@@ -74,6 +76,7 @@ class MetricsstreamCreateBody(object):
         self._store_created_at = None
         self._store_step = None
         self._tags = None
+        self._version = None
         self._work_id = None
         self.discriminator = None
         if app_id is not None:
@@ -92,6 +95,8 @@ class MetricsstreamCreateBody(object):
             self.store_step = store_step
         if tags is not None:
             self.tags = tags
+        if version is not None:
+            self.version = version
         if work_id is not None:
             self.work_id = work_id
 
@@ -262,6 +267,27 @@ class MetricsstreamCreateBody(object):
         """
 
         self._tags = tags
+
+    @property
+    def version(self) -> 'datetime':
+        """Gets the version of this MetricsstreamCreateBody.  # noqa: E501
+
+
+        :return: The version of this MetricsstreamCreateBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._version
+
+    @version.setter
+    def version(self, version: 'datetime'):
+        """Sets the version of this MetricsstreamCreateBody.
+
+
+        :param version: The version of this MetricsstreamCreateBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._version = version
 
     @property
     def work_id(self) -> 'str':
