@@ -163,3 +163,61 @@ def test_create_agent(
         model="test-sdk",
     )
     assert agent._agent.name == "test-sdk"
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "cluster-id"})
+def test_upload_model(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    internal_auth_mocker,
+    internal_teamspace_api_create_agent_mocker,
+    internal_agents_api_get_agent_mocker,
+    tmp_path,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    with pytest.raises(NotImplementedError):
+        ts.upload_model(path=tmp_path, name="user/modelname")
+
+    with pytest.raises(FileNotFoundError):
+        ts.upload_model(path=(tmp_path / "does-not-exist.ckpt"), name="user/modelname")
+
+    file_path = tmp_path / "checkpoint.pt"
+    file_path.touch()
+
+    ts._teamspace_api.request_artifact_upload = mock.Mock(return_value="projects/p_id/models/m_id/version")
+    ts._teamspace_api.upload_artifact_file = mock.Mock()
+
+    ts.upload_model(path=file_path, name="user/modelname")
+    ts._teamspace_api.upload_artifact_file.assert_called_with(
+        local_file_path=file_path,
+        remote_dir="projects/p_id/models/m_id/version",
+        cluster_id=mock.ANY,
+        teamspace_id="ts-abc002",
+        progress_bar=True,
+    )
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.requests")
+def test_download_model(
+    requests_mock,
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    internal_auth_mocker,
+    internal_teamspace_api_create_agent_mocker,
+    internal_agents_api_get_agent_mocker,
+    tmp_path,
+    monkeypatch,
+):
+    monkeypatch.chdir(tmp_path)
+
+    ts = Teamspace("ts-abc", user="user-abc")
+    ts._teamspace_api.request_artifact_download = mock.Mock(return_value=("checkpoint.pt", "test-url"))
+
+    ts.download_model("user/modelname")
+    ts._teamspace_api.request_artifact_download.assert_called_with(name="user/modelname", version="latest")
+    assert (tmp_path / "checkpoint.pt").is_file()
+
+    download_dir = tmp_path / "download_dir"
+    ts.download_model("user/modelname", download_dir=download_dir)
+    assert (download_dir / "checkpoint.pt").is_file()

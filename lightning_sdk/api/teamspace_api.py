@@ -1,7 +1,13 @@
-from typing import List, Optional
+import os
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
+import requests
+
+from lightning_sdk.api.utils import _FileUploader
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
+    ModelsStoreApi,
     ProjectIdAgentsBody,
     V1Assistant,
     V1CloudSpace,
@@ -9,6 +15,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Project,
     V1ProjectClusterBinding,
     V1PromptSuggestion,
+    V1UploadModelRequest,
     V1UpstreamOpenAI,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -88,6 +95,23 @@ class TeamspaceApi:
         auth.authenticate()
         return auth.user_id
 
+    def _try_get_cluster_id(self, teamspace_id: str) -> str:
+        """Attempts to determine the cluster id of the teamspace.
+
+        Raises an error if it's ambiguous.
+
+        """
+        cluster_id = os.getenv("LIGHTNING_CLUSTER_ID")
+        if cluster_id:
+            return cluster_id
+        cluster_ids = [c.cluster_id for c in self.list_clusters(teamspace_id=teamspace_id)]
+        if len(cluster_ids) == 1:
+            return cluster_ids[0]
+        raise ValueError(
+            "Could not determine the current cluster id. Please provide it manually as input."
+            f" Choices are: {', '.join(cluster_ids)}"
+        )
+
     def create_agent(
         self,
         name: str,
@@ -122,3 +146,59 @@ class TeamspaceApi:
         )
 
         return self._client.assistants_service_create_assistant(body=body, project_id=teamspace_id)
+
+    def request_artifact_upload(
+        self,
+        name: str,
+        metadata: Dict[str, str],
+        private: bool,
+        teamspace_id: str,
+        version: Optional[str] = None,
+    ) -> str:
+        api = ModelsStoreApi(self._client.api_client)
+        body = V1UploadModelRequest(
+            metadata=metadata,
+            name=name,
+            private=private,
+            project_id=teamspace_id,
+            version=version,
+        )
+        response = api.models_store_upload_model(body)
+        return response.upload_dir
+
+    def upload_artifact_file(
+        self,
+        local_file_path: Path,
+        remote_dir: str,
+        cluster_id: str,
+        teamspace_id: str,
+        progress_bar: bool = True,
+    ) -> None:
+        remote_path = Path(remote_dir, local_file_path.name)
+        # Strip away the first two parts 'projects/project_id/' because uploader expects path
+        # relative to project folder
+        remote_path = Path("/", *remote_path.parts[2:])
+
+        uploader = _FileUploader(
+            client=self._client,
+            teamspace_id=teamspace_id,
+            cluster_id=cluster_id,
+            file_path=str(local_file_path),
+            remote_path=str(remote_path),
+            progress_bar=progress_bar,
+        )
+        uploader()
+
+    def request_artifact_download(self, name: str, version: str) -> Tuple[str, str]:
+        api = ModelsStoreApi(self._client.api_client)
+        response = api.models_store_download_model(name=name, version=version)
+        # TODO: Support downloading multiple files
+        filename = response.metadata["filenames"].split(",")[0]
+        download_url = response.download_url
+        return filename, download_url
+
+    def download_artifact_file(self, url: str, download_path: Path) -> None:
+        response = requests.get(url, stream=True)
+        with open(download_path, "wb") as file:
+            for chunk in response.iter_content(chunk_size=(4096 * 8)):
+                file.write(chunk)

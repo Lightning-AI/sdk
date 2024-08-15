@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional, Union
 
 from lightning_sdk.agents import Agent
@@ -142,6 +143,76 @@ class Teamspace:
             file_uploads_enabled=file_uploads_enabled,
         )
         return Agent(agent.id)
+
+    def upload_model(
+        self,
+        path: str,
+        name: str,
+        private: bool = True,
+        progress_bar: bool = True,
+        cluster_id: Optional[str] = None,
+    ) -> None:
+        """Upload a local checkpoint file to the model store.
+
+        Args:
+            path: Path to the model file to upload.
+            name: Name tag of the model to upload. Must be in the format 'entity/modelname' where
+                entity is either your user name or the name of an organization you are part of.
+            private: Whether the model is accessible publicly or only by you (or in case of
+                an organization only by the members of this organization).
+            progress_bar: Whether to show a progress bar for the upload.
+            cluster_id: The name of the cluster to use. Only required if it can't be determined
+                automatically.
+
+        """
+        path = Path(path)
+        if path.is_dir():
+            raise NotImplementedError("Uploading directories is not yet supported.")
+        if not path.exists():
+            raise FileNotFoundError(str(path))
+
+        cluster_id = self._teamspace_api._try_get_cluster_id(self.id) if cluster_id is None else cluster_id
+        upload_dir = self._teamspace_api.request_artifact_upload(
+            name=name,
+            metadata={"filenames": path.name},
+            private=private,
+            teamspace_id=self.id,
+            version=None,  # TODO: Support version as input
+        )
+        self._teamspace_api.upload_artifact_file(
+            local_file_path=path,
+            remote_dir=upload_dir,
+            cluster_id=cluster_id,
+            teamspace_id=self.id,
+            progress_bar=progress_bar,
+        )
+
+    def download_model(
+        self,
+        name: str,
+        download_dir: Optional[str] = None,
+    ) -> None:
+        """Download a checkpoint from the model store.
+
+        Args:
+            name: Name tag of the model to download. Must be in the format 'entity/modelname' where
+                entity is either your user name or the name of an organization you are part of.
+            download_dir: A path to directory where the model should be downloaded. Defaults
+                to the current working directory.
+
+        """
+        if download_dir is None:
+            download_dir = Path.cwd()
+        download_dir = Path(download_dir)
+
+        filename, url = self._teamspace_api.request_artifact_download(
+            name=name,
+            version="latest",  # TODO: Support version as input
+        )
+
+        download_dir.mkdir(parents=True, exist_ok=True)
+        download_path = download_dir / filename
+        self._teamspace_api.download_artifact_file(url, download_path)
 
 
 def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name: str) -> ValueError:
