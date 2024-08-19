@@ -42,6 +42,7 @@ class V1UpdateBillingSubscriptionRequest(object):
     """
     swagger_types = {
         'billing_period': 'V1BillingPeriod',
+        'cancellation_metadata': 'V1CancellationMetadata',
         'org_id': 'str',
         'seats': 'int',
         'status': 'str'
@@ -49,20 +50,24 @@ class V1UpdateBillingSubscriptionRequest(object):
 
     attribute_map = {
         'billing_period': 'billingPeriod',
+        'cancellation_metadata': 'cancellationMetadata',
         'org_id': 'orgId',
         'seats': 'seats',
         'status': 'status'
     }
 
-    def __init__(self, billing_period: 'V1BillingPeriod' =None, org_id: 'str' =None, seats: 'int' =None, status: 'str' =None):  # noqa: E501
+    def __init__(self, billing_period: 'V1BillingPeriod' =None, cancellation_metadata: 'V1CancellationMetadata' =None, org_id: 'str' =None, seats: 'int' =None, status: 'str' =None):  # noqa: E501
         """V1UpdateBillingSubscriptionRequest - a model defined in Swagger"""  # noqa: E501
         self._billing_period = None
+        self._cancellation_metadata = None
         self._org_id = None
         self._seats = None
         self._status = None
         self.discriminator = None
         if billing_period is not None:
             self.billing_period = billing_period
+        if cancellation_metadata is not None:
+            self.cancellation_metadata = cancellation_metadata
         if org_id is not None:
             self.org_id = org_id
         if seats is not None:
@@ -90,6 +95,27 @@ class V1UpdateBillingSubscriptionRequest(object):
         """
 
         self._billing_period = billing_period
+
+    @property
+    def cancellation_metadata(self) -> 'V1CancellationMetadata':
+        """Gets the cancellation_metadata of this V1UpdateBillingSubscriptionRequest.  # noqa: E501
+
+
+        :return: The cancellation_metadata of this V1UpdateBillingSubscriptionRequest.  # noqa: E501
+        :rtype: V1CancellationMetadata
+        """
+        return self._cancellation_metadata
+
+    @cancellation_metadata.setter
+    def cancellation_metadata(self, cancellation_metadata: 'V1CancellationMetadata'):
+        """Sets the cancellation_metadata of this V1UpdateBillingSubscriptionRequest.
+
+
+        :param cancellation_metadata: The cancellation_metadata of this V1UpdateBillingSubscriptionRequest.  # noqa: E501
+        :type: V1CancellationMetadata
+        """
+
+        self._cancellation_metadata = cancellation_metadata
 
     @property
     def org_id(self) -> 'str':
