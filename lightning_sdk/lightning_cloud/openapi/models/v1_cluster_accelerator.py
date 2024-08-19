@@ -44,6 +44,7 @@ class V1ClusterAccelerator(object):
         'accelerator_type': 'str',
         'allowed_resources': 'list[str]',
         'available_in_seconds': 'str',
+        'available_in_seconds_measurements': 'list[float]',
         'available_zones': 'list[str]',
         'cluster_id': 'str',
         'cost': 'float',
@@ -72,6 +73,7 @@ class V1ClusterAccelerator(object):
         'accelerator_type': 'acceleratorType',
         'allowed_resources': 'allowedResources',
         'available_in_seconds': 'availableInSeconds',
+        'available_in_seconds_measurements': 'availableInSecondsMeasurements',
         'available_zones': 'availableZones',
         'cluster_id': 'clusterId',
         'cost': 'cost',
@@ -96,11 +98,12 @@ class V1ClusterAccelerator(object):
         'spot_price': 'spotPrice'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_zones: 'list[str]' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_measurements: 'list[float]' =None, available_zones: 'list[str]' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
         self._available_in_seconds = None
+        self._available_in_seconds_measurements = None
         self._available_zones = None
         self._cluster_id = None
         self._cost = None
@@ -130,6 +133,8 @@ class V1ClusterAccelerator(object):
             self.allowed_resources = allowed_resources
         if available_in_seconds is not None:
             self.available_in_seconds = available_in_seconds
+        if available_in_seconds_measurements is not None:
+            self.available_in_seconds_measurements = available_in_seconds_measurements
         if available_zones is not None:
             self.available_zones = available_zones
         if cluster_id is not None:
@@ -237,6 +242,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._available_in_seconds = available_in_seconds
+
+    @property
+    def available_in_seconds_measurements(self) -> 'list[float]':
+        """Gets the available_in_seconds_measurements of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The available_in_seconds_measurements of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: list[float]
+        """
+        return self._available_in_seconds_measurements
+
+    @available_in_seconds_measurements.setter
+    def available_in_seconds_measurements(self, available_in_seconds_measurements: 'list[float]'):
+        """Sets the available_in_seconds_measurements of this V1ClusterAccelerator.
+
+
+        :param available_in_seconds_measurements: The available_in_seconds_measurements of this V1ClusterAccelerator.  # noqa: E501
+        :type: list[float]
+        """
+
+        self._available_in_seconds_measurements = available_in_seconds_measurements
 
     @property
     def available_zones(self) -> 'list[str]':

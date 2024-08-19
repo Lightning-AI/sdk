@@ -41,6 +41,7 @@ class V1UploadModelRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cluster_id': 'str',
         'metadata': 'dict(str, str)',
         'name': 'str',
         'private': 'bool',
@@ -49,6 +50,7 @@ class V1UploadModelRequest(object):
     }
 
     attribute_map = {
+        'cluster_id': 'clusterId',
         'metadata': 'metadata',
         'name': 'name',
         'private': 'private',
@@ -56,14 +58,17 @@ class V1UploadModelRequest(object):
         'version': 'version'
     }
 
-    def __init__(self, metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1UploadModelRequest - a model defined in Swagger"""  # noqa: E501
+        self._cluster_id = None
         self._metadata = None
         self._name = None
         self._private = None
         self._project_id = None
         self._version = None
         self.discriminator = None
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if metadata is not None:
             self.metadata = metadata
         if name is not None:
@@ -74,6 +79,27 @@ class V1UploadModelRequest(object):
             self.project_id = project_id
         if version is not None:
             self.version = version
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1UploadModelRequest.  # noqa: E501
+
+
+        :return: The cluster_id of this V1UploadModelRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1UploadModelRequest.
+
+
+        :param cluster_id: The cluster_id of this V1UploadModelRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def metadata(self) -> 'dict(str, str)':

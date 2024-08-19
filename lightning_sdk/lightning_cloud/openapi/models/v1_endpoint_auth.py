@@ -44,6 +44,7 @@ class V1EndpointAuth(object):
         'enabled': 'bool',
         'password': 'str',
         'token': 'str',
+        'user_api_key': 'bool',
         'username': 'str'
     }
 
@@ -51,14 +52,16 @@ class V1EndpointAuth(object):
         'enabled': 'enabled',
         'password': 'password',
         'token': 'token',
+        'user_api_key': 'userApiKey',
         'username': 'username'
     }
 
-    def __init__(self, enabled: 'bool' =None, password: 'str' =None, token: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, enabled: 'bool' =None, password: 'str' =None, token: 'str' =None, user_api_key: 'bool' =None, username: 'str' =None):  # noqa: E501
         """V1EndpointAuth - a model defined in Swagger"""  # noqa: E501
         self._enabled = None
         self._password = None
         self._token = None
+        self._user_api_key = None
         self._username = None
         self.discriminator = None
         if enabled is not None:
@@ -67,6 +70,8 @@ class V1EndpointAuth(object):
             self.password = password
         if token is not None:
             self.token = token
+        if user_api_key is not None:
+            self.user_api_key = user_api_key
         if username is not None:
             self.username = username
 
@@ -132,6 +137,27 @@ class V1EndpointAuth(object):
         """
 
         self._token = token
+
+    @property
+    def user_api_key(self) -> 'bool':
+        """Gets the user_api_key of this V1EndpointAuth.  # noqa: E501
+
+
+        :return: The user_api_key of this V1EndpointAuth.  # noqa: E501
+        :rtype: bool
+        """
+        return self._user_api_key
+
+    @user_api_key.setter
+    def user_api_key(self, user_api_key: 'bool'):
+        """Sets the user_api_key of this V1EndpointAuth.
+
+
+        :param user_api_key: The user_api_key of this V1EndpointAuth.  # noqa: E501
+        :type: bool
+        """
+
+        self._user_api_key = user_api_key
 
     @property
     def username(self) -> 'str':

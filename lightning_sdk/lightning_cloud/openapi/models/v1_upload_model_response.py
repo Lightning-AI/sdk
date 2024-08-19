@@ -41,6 +41,7 @@ class V1UploadModelResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cluster_id': 'str',
         'model_id': 'str',
         'upload_dir': 'str',
         'upload_url': 'str',
@@ -48,19 +49,23 @@ class V1UploadModelResponse(object):
     }
 
     attribute_map = {
+        'cluster_id': 'clusterId',
         'model_id': 'modelId',
         'upload_dir': 'uploadDir',
         'upload_url': 'uploadUrl',
         'version': 'version'
     }
 
-    def __init__(self, model_id: 'str' =None, upload_dir: 'str' =None, upload_url: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, model_id: 'str' =None, upload_dir: 'str' =None, upload_url: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1UploadModelResponse - a model defined in Swagger"""  # noqa: E501
+        self._cluster_id = None
         self._model_id = None
         self._upload_dir = None
         self._upload_url = None
         self._version = None
         self.discriminator = None
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if model_id is not None:
             self.model_id = model_id
         if upload_dir is not None:
@@ -69,6 +74,27 @@ class V1UploadModelResponse(object):
             self.upload_url = upload_url
         if version is not None:
             self.version = version
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1UploadModelResponse.  # noqa: E501
+
+
+        :return: The cluster_id of this V1UploadModelResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1UploadModelResponse.
+
+
+        :param cluster_id: The cluster_id of this V1UploadModelResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def model_id(self) -> 'str':
