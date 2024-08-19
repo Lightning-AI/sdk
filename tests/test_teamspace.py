@@ -5,6 +5,7 @@ import pytest
 import os
 from unittest import mock
 from contextlib import nullcontext
+from pathlib import Path
 
 
 @pytest.mark.parametrize("user", ["user-abc", None, -1])
@@ -216,10 +217,12 @@ def test_download_model(
     ts = Teamspace("ts-abc", user="user-abc")
     ts._teamspace_api.request_artifact_download = mock.Mock(return_value=("checkpoint.pt", "test-url"))
 
-    ts.download_model("user/modelname")
+    result = ts.download_model("user/modelname")
     ts._teamspace_api.request_artifact_download.assert_called_with(name="user/modelname", version="latest")
     assert (tmp_path / "checkpoint.pt").is_file()
+    assert result == str(tmp_path / "checkpoint.pt")
 
-    download_dir = tmp_path / "download_dir"
-    ts.download_model("user/modelname", download_dir=download_dir)
-    assert (download_dir / "checkpoint.pt").is_file()
+    download_dir = "download_dir"
+    result = ts.download_model("user/modelname", download_dir=download_dir)
+    assert Path(download_dir, "checkpoint.pt").is_file()
+    assert result == str(tmp_path / download_dir / "checkpoint.pt")

@@ -192,7 +192,7 @@ class Teamspace:
         self,
         name: str,
         download_dir: Optional[str] = None,
-    ) -> None:
+    ) -> str:
         """Download a checkpoint from the model store.
 
         Args:
@@ -200,6 +200,9 @@ class Teamspace:
                 entity is either your user name or the name of an organization you are part of.
             download_dir: A path to directory where the model should be downloaded. Defaults
                 to the current working directory.
+
+        Returns:
+            The absolute path to the downloaded model file.
 
         """
         if download_dir is None:
@@ -214,6 +217,7 @@ class Teamspace:
         download_dir.mkdir(parents=True, exist_ok=True)
         download_path = download_dir / filename
         self._teamspace_api.download_artifact_file(url, download_path)
+        return str(download_path.resolve())
 
 
 def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name: str) -> ValueError:
