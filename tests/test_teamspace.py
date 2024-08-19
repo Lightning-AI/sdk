@@ -185,7 +185,9 @@ def test_upload_model(
     file_path = tmp_path / "checkpoint.pt"
     file_path.touch()
 
-    ts._teamspace_api.request_artifact_upload = mock.Mock(return_value="projects/p_id/models/m_id/version")
+    ts._teamspace_api.request_artifact_upload = mock.Mock(
+        return_value=("projects/p_id/models/m_id/version", "cluster-id")
+    )
     ts._teamspace_api.upload_artifact_file = mock.Mock()
 
     ts.upload_model(path=file_path, name="user/modelname")

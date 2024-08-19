@@ -153,18 +153,20 @@ class TeamspaceApi:
         metadata: Dict[str, str],
         private: bool,
         teamspace_id: str,
+        cluster_id: str,
         version: Optional[str] = None,
-    ) -> str:
+    ) -> Tuple[str, str]:
         api = ModelsStoreApi(self._client.api_client)
         body = V1UploadModelRequest(
             metadata=metadata,
             name=name,
             private=private,
             project_id=teamspace_id,
+            cluster_id=cluster_id,
             version=version,
         )
         response = api.models_store_upload_model(body)
-        return response.upload_dir
+        return response.upload_dir, response.cluster_id
 
     def upload_artifact_file(
         self,

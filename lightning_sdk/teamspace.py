@@ -172,12 +172,13 @@ class Teamspace:
             raise FileNotFoundError(str(path))
 
         cluster_id = self._teamspace_api._try_get_cluster_id(self.id) if cluster_id is None else cluster_id
-        upload_dir = self._teamspace_api.request_artifact_upload(
+        upload_dir, cluster_id = self._teamspace_api.request_artifact_upload(
             name=name,
             metadata={"filenames": path.name},
             private=private,
             teamspace_id=self.id,
             version=None,  # TODO: Support version as input
+            cluster_id=cluster_id,
         )
         self._teamspace_api.upload_artifact_file(
             local_file_path=path,
