@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 from typing import Optional
 
@@ -16,8 +17,10 @@ class _Downloads(_StudiosMenu):
           path: The relative path within the Studio you want to download.
             If you leave it empty it will download whole studio and locally creates a new folder
             with the same name as the selected studio.
-          studio: The name of the studio to upload to. Will show a menu for selection if not specified.
-            If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>
+          studio: The name of the studio to upload to. Will show a menu with user's owned studios for selection
+            if not specified. If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names
+            are case-sensitive. The teamspace and studio names can be regular expressions to match, then a menu
+            with filtered studios will be shown for final selection.
           local_path: The path to the directory you want to download files or folders
 
         """
@@ -25,13 +28,30 @@ class _Downloads(_StudiosMenu):
         if not local_path.is_dir():
             raise NotADirectoryError(f"'{local_path}' is not a directory")
         user = _get_authed_user()
-        possible_studios = self._get_possible_studios(user)
+        # if no studio specify suggest/filter only user's studios
+        possible_studios = self._get_possible_studios(user, is_owner=studio is None)
 
         try:
-            if studio is None:
-                selected_studio = self._get_studio_from_interactive_menu(possible_studios)
+            if studio:
+                team_name, studio_name = studio.split("/")
+                options = [st for st in possible_studios if st["teamspace"] == team_name and st["name"] == studio_name]
+                if len(options) == 1:
+                    selected_studio = self._get_studio_from_name(studio, possible_studios)
+                # user can also use the partial studio name as secondary interactive selection
+                else:
+                    # filter matching simple reg expressions or start with the team and studio name
+                    possible_studios = filter(
+                        lambda st: (re.match(team_name, st["teamspace"]) or team_name in st["teamspace"])
+                        and (re.match(studio_name, st["name"]) or studio_name in st["name"]),
+                        possible_studios,
+                    )
+                    if not possible_studios:
+                        raise ValueError(
+                            f"Could not find Studio like '{studio}', please consider update your filtering pattern."
+                        )
+                    selected_studio = self._get_studio_from_interactive_menu(list(possible_studios))
             else:
-                selected_studio = self._get_studio_from_name(studio, possible_studios)
+                selected_studio = self._get_studio_from_interactive_menu(possible_studios)
 
         except KeyboardInterrupt:
             raise KeyboardInterrupt from None

@@ -8,7 +8,7 @@ from lightning_sdk.user import User
 
 class _StudiosMenu:
     def _get_studio_from_interactive_menu(self, possible_studios: List[Dict[str, str]]) -> Dict[str, str]:
-        terminal_menu = self._prepare_terminal_menu_all_studios(possible_studios)
+        terminal_menu = self._prepare_terminal_menu_list_studios(possible_studios)
         terminal_menu.show()
         return possible_studios[terminal_menu.chosen_menu_index]
 
@@ -22,7 +22,7 @@ class _StudiosMenu:
         return self._get_studio_from_interactive_menu(possible_studios)
 
     @staticmethod
-    def _prepare_terminal_menu_all_studios(
+    def _prepare_terminal_menu_list_studios(
         possible_studios: List[Dict[str, str]], title: Optional[str] = None
     ) -> TerminalMenu:
         if title is None:
@@ -33,7 +33,7 @@ class _StudiosMenu:
         )
 
     @staticmethod
-    def _get_possible_studios(user: User) -> List[Dict[str, str]]:
+    def _get_possible_studios(user: User, is_owner: bool = True) -> List[Dict[str, str]]:
         teamspace_api = TeamspaceApi()
         org_api = OrgApi()
         user_api = user._user_api
@@ -47,8 +47,11 @@ class _StudiosMenu:
         for membership in memberships:
             teamspace_id = membership.project_id
 
-            # get all studios for teamspace
-            all_studios = user._user_api._get_cloudspaces_for_user(user.id, teamspace_id)
+            if is_owner:
+                # get all studios for teamspace when user is owner
+                all_studios = user._user_api._get_cloudspaces_for_user(user_id=user.id, project_id=teamspace_id)
+            else:
+                all_studios = user._user_api._get_cloudspaces_for_user(project_id=teamspace_id)
 
             for st in all_studios:
                 # populate teamspace info if necessary
