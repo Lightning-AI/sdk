@@ -12,8 +12,7 @@ __package_name__ = "lightning-sdk"
 def _get_newer_version(curr_version: str) -> Optional[str]:
     """Check PyPI for newer versions of ``lightning-sdk``.
 
-    Returning the newest version if different from the current
-    or ``None`` otherwise.
+    Returning the newest version if different from the current or ``None`` otherwise.
 
     """
     if packaging_version.parse(curr_version).is_prerelease:
@@ -34,7 +33,7 @@ def _get_newer_version(curr_version: str) -> Optional[str]:
 
 
 def _check_version_and_prompt_upgrade(curr_version: str) -> None:
-    """Checks that the current version of ``lightnin-sdkg`` is the latest on PyPI.
+    """Checks that the current version of ``lightning-sdk`` is the latest on PyPI.
 
     If not, warn the user to upgrade ``lightning-sdk``.
 
@@ -43,7 +42,7 @@ def _check_version_and_prompt_upgrade(curr_version: str) -> None:
     if new_version:
         warnings.warn(
             f"A newer version of {__package_name__} is available ({new_version}). "
-            "Please consider upgrading with `pip install -U lightning-sdk`. "
+            f"Please consider upgrading with `pip install -U {__package_name__}`. "
             "Not all functionalities of the platform can be guaranteed to work with the current version.",
             UserWarning,
         )
