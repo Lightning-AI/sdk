@@ -55,6 +55,7 @@ class V1Organization(object):
         'id': 'str',
         'location': 'str',
         'name': 'str',
+        'start_studios_on_spot_instance': 'bool',
         'teamspace_default_credits': 'float',
         'twitter_username': 'str',
         'updated_at': 'datetime'
@@ -75,12 +76,13 @@ class V1Organization(object):
         'id': 'id',
         'location': 'location',
         'name': 'name',
+        'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
         self._allow_member_invitations = None
@@ -96,6 +98,7 @@ class V1Organization(object):
         self._id = None
         self._location = None
         self._name = None
+        self._start_studios_on_spot_instance = None
         self._teamspace_default_credits = None
         self._twitter_username = None
         self._updated_at = None
@@ -128,6 +131,8 @@ class V1Organization(object):
             self.location = location
         if name is not None:
             self.name = name
+        if start_studios_on_spot_instance is not None:
+            self.start_studios_on_spot_instance = start_studios_on_spot_instance
         if teamspace_default_credits is not None:
             self.teamspace_default_credits = teamspace_default_credits
         if twitter_username is not None:
@@ -428,6 +433,27 @@ class V1Organization(object):
         """
 
         self._name = name
+
+    @property
+    def start_studios_on_spot_instance(self) -> 'bool':
+        """Gets the start_studios_on_spot_instance of this V1Organization.  # noqa: E501
+
+
+        :return: The start_studios_on_spot_instance of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._start_studios_on_spot_instance
+
+    @start_studios_on_spot_instance.setter
+    def start_studios_on_spot_instance(self, start_studios_on_spot_instance: 'bool'):
+        """Sets the start_studios_on_spot_instance of this V1Organization.
+
+
+        :param start_studios_on_spot_instance: The start_studios_on_spot_instance of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._start_studios_on_spot_instance = start_studios_on_spot_instance
 
     @property
     def teamspace_default_credits(self) -> 'float':

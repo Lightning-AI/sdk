@@ -43,6 +43,7 @@ class V1ConversationResponseChunk(object):
     swagger_types = {
         'choices': 'list[V1ResponseChoice]',
         'conversation_id': 'str',
+        'executable': 'bool',
         'id': 'str',
         'object': 'str'
     }
@@ -50,14 +51,16 @@ class V1ConversationResponseChunk(object):
     attribute_map = {
         'choices': 'choices',
         'conversation_id': 'conversationId',
+        'executable': 'executable',
         'id': 'id',
         'object': 'object'
     }
 
-    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, id: 'str' =None, object: 'str' =None):  # noqa: E501
+    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, executable: 'bool' =None, id: 'str' =None, object: 'str' =None):  # noqa: E501
         """V1ConversationResponseChunk - a model defined in Swagger"""  # noqa: E501
         self._choices = None
         self._conversation_id = None
+        self._executable = None
         self._id = None
         self._object = None
         self.discriminator = None
@@ -65,6 +68,8 @@ class V1ConversationResponseChunk(object):
             self.choices = choices
         if conversation_id is not None:
             self.conversation_id = conversation_id
+        if executable is not None:
+            self.executable = executable
         if id is not None:
             self.id = id
         if object is not None:
@@ -111,6 +116,27 @@ class V1ConversationResponseChunk(object):
         """
 
         self._conversation_id = conversation_id
+
+    @property
+    def executable(self) -> 'bool':
+        """Gets the executable of this V1ConversationResponseChunk.  # noqa: E501
+
+
+        :return: The executable of this V1ConversationResponseChunk.  # noqa: E501
+        :rtype: bool
+        """
+        return self._executable
+
+    @executable.setter
+    def executable(self, executable: 'bool'):
+        """Sets the executable of this V1ConversationResponseChunk.
+
+
+        :param executable: The executable of this V1ConversationResponseChunk.  # noqa: E501
+        :type: bool
+        """
+
+        self._executable = executable
 
     @property
     def id(self) -> 'str':

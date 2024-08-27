@@ -43,6 +43,482 @@ class ModelsStoreApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
+    def models_store_complete_model_upload(self, body: 'object', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CompleteModelUploadResponse':  # noqa: E501
+        """CompleteModelUpload marks the model upload as complete after all files have been uploaded. This marks the model as visible for list, delete, etc. operations  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_complete_model_upload(body, project_id, model_id, version, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param object body: (required)
+        :param str project_id: (required)
+        :param str model_id: (required)
+        :param str version: (required)
+        :return: V1CompleteModelUploadResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.models_store_complete_model_upload_with_http_info(body, project_id, model_id, version, **kwargs)  # noqa: E501
+        else:
+            (data) = self.models_store_complete_model_upload_with_http_info(body, project_id, model_id, version, **kwargs)  # noqa: E501
+            return data
+
+    def models_store_complete_model_upload_with_http_info(self, body: 'object', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CompleteModelUploadResponse':  # noqa: E501
+        """CompleteModelUpload marks the model upload as complete after all files have been uploaded. This marks the model as visible for list, delete, etc. operations  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_complete_model_upload_with_http_info(body, project_id, model_id, version, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param object body: (required)
+        :param str project_id: (required)
+        :param str model_id: (required)
+        :param str version: (required)
+        :return: V1CompleteModelUploadResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'model_id', 'version']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method models_store_complete_model_upload" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `models_store_complete_model_upload`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `models_store_complete_model_upload`")  # noqa: E501
+        # verify the required parameter 'model_id' is set
+        if ('model_id' not in params or
+                params['model_id'] is None):
+            raise ValueError("Missing the required parameter `model_id` when calling `models_store_complete_model_upload`")  # noqa: E501
+        # verify the required parameter 'version' is set
+        if ('version' not in params or
+                params['version'] is None):
+            raise ValueError("Missing the required parameter `version` when calling `models_store_complete_model_upload`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'model_id' in params:
+            path_params['modelId'] = params['model_id']  # noqa: E501
+        if 'version' in params:
+            path_params['version'] = params['version']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/models/{modelId}/versions/{version}/complete', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CompleteModelUploadResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def models_store_complete_multi_part_upload(self, body: 'UploadIdCompleteBody', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1CompleteMultiPartUploadResponse':  # noqa: E501
+        """CompleteMultiPartUpload marks the given file-parts as completed/uploaded. Once all parts of a file are completed, the file will materialize in S3 storage  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_complete_multi_part_upload(body, project_id, model_id, version, upload_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param UploadIdCompleteBody body: (required)
+        :param str project_id: (required)
+        :param str model_id: (required)
+        :param str version: (required)
+        :param str upload_id: (required)
+        :return: V1CompleteMultiPartUploadResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.models_store_complete_multi_part_upload_with_http_info(body, project_id, model_id, version, upload_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.models_store_complete_multi_part_upload_with_http_info(body, project_id, model_id, version, upload_id, **kwargs)  # noqa: E501
+            return data
+
+    def models_store_complete_multi_part_upload_with_http_info(self, body: 'UploadIdCompleteBody', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1CompleteMultiPartUploadResponse':  # noqa: E501
+        """CompleteMultiPartUpload marks the given file-parts as completed/uploaded. Once all parts of a file are completed, the file will materialize in S3 storage  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_complete_multi_part_upload_with_http_info(body, project_id, model_id, version, upload_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param UploadIdCompleteBody body: (required)
+        :param str project_id: (required)
+        :param str model_id: (required)
+        :param str version: (required)
+        :param str upload_id: (required)
+        :return: V1CompleteMultiPartUploadResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'model_id', 'version', 'upload_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method models_store_complete_multi_part_upload" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `models_store_complete_multi_part_upload`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `models_store_complete_multi_part_upload`")  # noqa: E501
+        # verify the required parameter 'model_id' is set
+        if ('model_id' not in params or
+                params['model_id'] is None):
+            raise ValueError("Missing the required parameter `model_id` when calling `models_store_complete_multi_part_upload`")  # noqa: E501
+        # verify the required parameter 'version' is set
+        if ('version' not in params or
+                params['version'] is None):
+            raise ValueError("Missing the required parameter `version` when calling `models_store_complete_multi_part_upload`")  # noqa: E501
+        # verify the required parameter 'upload_id' is set
+        if ('upload_id' not in params or
+                params['upload_id'] is None):
+            raise ValueError("Missing the required parameter `upload_id` when calling `models_store_complete_multi_part_upload`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'model_id' in params:
+            path_params['modelId'] = params['model_id']  # noqa: E501
+        if 'version' in params:
+            path_params['version'] = params['version']  # noqa: E501
+        if 'upload_id' in params:
+            path_params['uploadId'] = params['upload_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/models/{modelId}/versions/{version}/uploads/{uploadId}/complete', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CompleteMultiPartUploadResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def models_store_create_model(self, body: 'ProjectIdModelsBody', project_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
+        """CreateModel creates a new version of a model and marks the upload as incomplete. Files are expected to be uploaded using the multi-part upload APIs below, followed by a completion request after which the model will be fully visible (can list, delete etc.)  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_create_model(body, project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ProjectIdModelsBody body: (required)
+        :param str project_id: (required)
+        :return: V1Model
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.models_store_create_model_with_http_info(body, project_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.models_store_create_model_with_http_info(body, project_id, **kwargs)  # noqa: E501
+            return data
+
+    def models_store_create_model_with_http_info(self, body: 'ProjectIdModelsBody', project_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
+        """CreateModel creates a new version of a model and marks the upload as incomplete. Files are expected to be uploaded using the multi-part upload APIs below, followed by a completion request after which the model will be fully visible (can list, delete etc.)  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_create_model_with_http_info(body, project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ProjectIdModelsBody body: (required)
+        :param str project_id: (required)
+        :return: V1Model
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method models_store_create_model" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `models_store_create_model`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `models_store_create_model`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/models', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1Model',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def models_store_create_multi_part_upload(self, body: 'VersionUploadsBody', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CreateMultiPartUploadResponse':  # noqa: E501
+        """CreateMultiPartUpload initiates the multi-part upload of a file. Multiple requests can be sent to upload different files.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_create_multi_part_upload(body, project_id, model_id, version, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param VersionUploadsBody body: (required)
+        :param str project_id: (required)
+        :param str model_id: (required)
+        :param str version: (required)
+        :return: V1CreateMultiPartUploadResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.models_store_create_multi_part_upload_with_http_info(body, project_id, model_id, version, **kwargs)  # noqa: E501
+        else:
+            (data) = self.models_store_create_multi_part_upload_with_http_info(body, project_id, model_id, version, **kwargs)  # noqa: E501
+            return data
+
+    def models_store_create_multi_part_upload_with_http_info(self, body: 'VersionUploadsBody', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CreateMultiPartUploadResponse':  # noqa: E501
+        """CreateMultiPartUpload initiates the multi-part upload of a file. Multiple requests can be sent to upload different files.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_create_multi_part_upload_with_http_info(body, project_id, model_id, version, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param VersionUploadsBody body: (required)
+        :param str project_id: (required)
+        :param str model_id: (required)
+        :param str version: (required)
+        :return: V1CreateMultiPartUploadResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'model_id', 'version']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method models_store_create_multi_part_upload" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `models_store_create_multi_part_upload`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `models_store_create_multi_part_upload`")  # noqa: E501
+        # verify the required parameter 'model_id' is set
+        if ('model_id' not in params or
+                params['model_id'] is None):
+            raise ValueError("Missing the required parameter `model_id` when calling `models_store_create_multi_part_upload`")  # noqa: E501
+        # verify the required parameter 'version' is set
+        if ('version' not in params or
+                params['version'] is None):
+            raise ValueError("Missing the required parameter `version` when calling `models_store_create_multi_part_upload`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'model_id' in params:
+            path_params['modelId'] = params['model_id']  # noqa: E501
+        if 'version' in params:
+            path_params['version'] = params['version']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/models/{modelId}/versions/{version}/uploads', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CreateMultiPartUploadResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def models_store_delete_model(self, project_id: 'str', model_id: 'str', **kwargs) -> 'V1DeleteModelResponse':  # noqa: E501
         """DeleteModel is used to delete the model and all uploaded archives  # noqa: E501
 
@@ -331,7 +807,7 @@ class ModelsStoreApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/models', 'GET',
+            '/v1/models-old', 'GET',
             path_params,
             query_params,
             header_params,
@@ -440,6 +916,341 @@ class ModelsStoreApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1Model',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def models_store_get_model_file_upload_urls(self, body: 'UploadIdPartsBody', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1GetModelFileUploadUrlsResponse':  # noqa: E501
+        """GetModelFileUploadUrls requests pre-signed URLs for a given number of file parts.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_get_model_file_upload_urls(body, project_id, model_id, version, upload_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param UploadIdPartsBody body: (required)
+        :param str project_id: (required)
+        :param str model_id: (required)
+        :param str version: (required)
+        :param str upload_id: (required)
+        :return: V1GetModelFileUploadUrlsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.models_store_get_model_file_upload_urls_with_http_info(body, project_id, model_id, version, upload_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.models_store_get_model_file_upload_urls_with_http_info(body, project_id, model_id, version, upload_id, **kwargs)  # noqa: E501
+            return data
+
+    def models_store_get_model_file_upload_urls_with_http_info(self, body: 'UploadIdPartsBody', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1GetModelFileUploadUrlsResponse':  # noqa: E501
+        """GetModelFileUploadUrls requests pre-signed URLs for a given number of file parts.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_get_model_file_upload_urls_with_http_info(body, project_id, model_id, version, upload_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param UploadIdPartsBody body: (required)
+        :param str project_id: (required)
+        :param str model_id: (required)
+        :param str version: (required)
+        :param str upload_id: (required)
+        :return: V1GetModelFileUploadUrlsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'model_id', 'version', 'upload_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method models_store_get_model_file_upload_urls" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `models_store_get_model_file_upload_urls`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `models_store_get_model_file_upload_urls`")  # noqa: E501
+        # verify the required parameter 'model_id' is set
+        if ('model_id' not in params or
+                params['model_id'] is None):
+            raise ValueError("Missing the required parameter `model_id` when calling `models_store_get_model_file_upload_urls`")  # noqa: E501
+        # verify the required parameter 'version' is set
+        if ('version' not in params or
+                params['version'] is None):
+            raise ValueError("Missing the required parameter `version` when calling `models_store_get_model_file_upload_urls`")  # noqa: E501
+        # verify the required parameter 'upload_id' is set
+        if ('upload_id' not in params or
+                params['upload_id'] is None):
+            raise ValueError("Missing the required parameter `upload_id` when calling `models_store_get_model_file_upload_urls`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'model_id' in params:
+            path_params['modelId'] = params['model_id']  # noqa: E501
+        if 'version' in params:
+            path_params['version'] = params['version']  # noqa: E501
+        if 'upload_id' in params:
+            path_params['uploadId'] = params['upload_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/models/{modelId}/versions/{version}/uploads/{uploadId}/parts', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetModelFileUploadUrlsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def models_store_get_model_file_url(self, project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1GetModelFileUrlResponse':  # noqa: E501
+        """GetModelFileUrl responds with a pre-signed url for a given file  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_get_model_file_url(project_id, model_id, version, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str model_id: (required)
+        :param str version: (required)
+        :param str filepath:
+        :return: V1GetModelFileUrlResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.models_store_get_model_file_url_with_http_info(project_id, model_id, version, **kwargs)  # noqa: E501
+        else:
+            (data) = self.models_store_get_model_file_url_with_http_info(project_id, model_id, version, **kwargs)  # noqa: E501
+            return data
+
+    def models_store_get_model_file_url_with_http_info(self, project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1GetModelFileUrlResponse':  # noqa: E501
+        """GetModelFileUrl responds with a pre-signed url for a given file  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_get_model_file_url_with_http_info(project_id, model_id, version, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str model_id: (required)
+        :param str version: (required)
+        :param str filepath:
+        :return: V1GetModelFileUrlResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'model_id', 'version', 'filepath']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method models_store_get_model_file_url" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `models_store_get_model_file_url`")  # noqa: E501
+        # verify the required parameter 'model_id' is set
+        if ('model_id' not in params or
+                params['model_id'] is None):
+            raise ValueError("Missing the required parameter `model_id` when calling `models_store_get_model_file_url`")  # noqa: E501
+        # verify the required parameter 'version' is set
+        if ('version' not in params or
+                params['version'] is None):
+            raise ValueError("Missing the required parameter `version` when calling `models_store_get_model_file_url`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'model_id' in params:
+            path_params['modelId'] = params['model_id']  # noqa: E501
+        if 'version' in params:
+            path_params['version'] = params['version']  # noqa: E501
+
+        query_params = []
+        if 'filepath' in params:
+            query_params.append(('filepath', params['filepath']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/models/{modelId}/versions/{version}/file', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetModelFileUrlResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def models_store_get_model_files(self, **kwargs) -> 'V1GetModelFilesResponse':  # noqa: E501
+        """GetModelFiles returns a list of file paths (relative to model folder) to download, and for each you can request a pre-signed url for download  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_get_model_files(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str name:
+        :param str version:
+        :return: V1GetModelFilesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.models_store_get_model_files_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.models_store_get_model_files_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def models_store_get_model_files_with_http_info(self, **kwargs) -> 'V1GetModelFilesResponse':  # noqa: E501
+        """GetModelFiles returns a list of file paths (relative to model folder) to download, and for each you can request a pre-signed url for download  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.models_store_get_model_files_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str name:
+        :param str version:
+        :return: V1GetModelFilesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['name', 'version']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method models_store_get_model_files" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'name' in params:
+            query_params.append(('name', params['name']))  # noqa: E501
+        if 'version' in params:
+            query_params.append(('version', params['version']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/models', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetModelFilesResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -642,7 +1453,7 @@ class ModelsStoreApi(object):
             collection_formats=collection_formats)
 
     def models_store_upload_model(self, body: 'V1UploadModelRequest', **kwargs) -> 'V1UploadModelResponse':  # noqa: E501
-        """UploadModel used to upload a new model version. It will either create a new top level model entry or reuse existing if an existing model is found. If version is not supplied, it will overwrite 'latest' version entry.  # noqa: E501
+        """Legacy: See new model upload APIs below UploadModel used to upload a new model version. It will either create a new top level model entry or reuse existing if an existing model is found. If version is not supplied, it will overwrite 'latest' version entry.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
@@ -663,7 +1474,7 @@ class ModelsStoreApi(object):
             return data
 
     def models_store_upload_model_with_http_info(self, body: 'V1UploadModelRequest', **kwargs) -> 'V1UploadModelResponse':  # noqa: E501
-        """UploadModel used to upload a new model version. It will either create a new top level model entry or reuse existing if an existing model is found. If version is not supplied, it will overwrite 'latest' version entry.  # noqa: E501
+        """Legacy: See new model upload APIs below UploadModel used to upload a new model version. It will either create a new top level model entry or reuse existing if an existing model is found. If version is not supplied, it will overwrite 'latest' version entry.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
@@ -723,7 +1534,7 @@ class ModelsStoreApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/models', 'POST',
+            '/v1/models-old', 'POST',
             path_params,
             query_params,
             header_params,

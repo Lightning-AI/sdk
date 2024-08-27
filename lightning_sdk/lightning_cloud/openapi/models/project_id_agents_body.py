@@ -48,6 +48,7 @@ class ProjectIdAgentsBody(object):
         'file_uploads_enabled': 'bool',
         'internal_assistant_name': 'str',
         'knowledge': 'str',
+        'knowledge_configuration': 'V1KnowledgeConfiguration',
         'model': 'str',
         'name': 'str',
         'org_id': 'str',
@@ -64,6 +65,7 @@ class ProjectIdAgentsBody(object):
         'file_uploads_enabled': 'fileUploadsEnabled',
         'internal_assistant_name': 'internalAssistantName',
         'knowledge': 'knowledge',
+        'knowledge_configuration': 'knowledgeConfiguration',
         'model': 'model',
         'name': 'name',
         'org_id': 'orgId',
@@ -72,7 +74,7 @@ class ProjectIdAgentsBody(object):
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, description: 'str' =None, endpoint: 'V1Endpoint' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, description: 'str' =None, endpoint: 'V1Endpoint' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """ProjectIdAgentsBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -81,6 +83,7 @@ class ProjectIdAgentsBody(object):
         self._file_uploads_enabled = None
         self._internal_assistant_name = None
         self._knowledge = None
+        self._knowledge_configuration = None
         self._model = None
         self._name = None
         self._org_id = None
@@ -102,6 +105,8 @@ class ProjectIdAgentsBody(object):
             self.internal_assistant_name = internal_assistant_name
         if knowledge is not None:
             self.knowledge = knowledge
+        if knowledge_configuration is not None:
+            self.knowledge_configuration = knowledge_configuration
         if model is not None:
             self.model = model
         if name is not None:
@@ -261,6 +266,27 @@ class ProjectIdAgentsBody(object):
         """
 
         self._knowledge = knowledge
+
+    @property
+    def knowledge_configuration(self) -> 'V1KnowledgeConfiguration':
+        """Gets the knowledge_configuration of this ProjectIdAgentsBody.  # noqa: E501
+
+
+        :return: The knowledge_configuration of this ProjectIdAgentsBody.  # noqa: E501
+        :rtype: V1KnowledgeConfiguration
+        """
+        return self._knowledge_configuration
+
+    @knowledge_configuration.setter
+    def knowledge_configuration(self, knowledge_configuration: 'V1KnowledgeConfiguration'):
+        """Sets the knowledge_configuration of this ProjectIdAgentsBody.
+
+
+        :param knowledge_configuration: The knowledge_configuration of this ProjectIdAgentsBody.  # noqa: E501
+        :type: V1KnowledgeConfiguration
+        """
+
+        self._knowledge_configuration = knowledge_configuration
 
     @property
     def model(self) -> 'str':

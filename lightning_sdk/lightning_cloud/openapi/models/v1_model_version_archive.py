@@ -48,6 +48,7 @@ class V1ModelVersionArchive(object):
         'model_id': 'str',
         'project_id': 'str',
         'updated_at': 'datetime',
+        'upload_complete': 'bool',
         'version': 'str'
     }
 
@@ -59,10 +60,11 @@ class V1ModelVersionArchive(object):
         'model_id': 'modelId',
         'project_id': 'projectId',
         'updated_at': 'updatedAt',
+        'upload_complete': 'uploadComplete',
         'version': 'version'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, metadata: 'dict(str, str)' =None, model_id: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, metadata: 'dict(str, str)' =None, model_id: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None, version: 'str' =None):  # noqa: E501
         """V1ModelVersionArchive - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
@@ -71,6 +73,7 @@ class V1ModelVersionArchive(object):
         self._model_id = None
         self._project_id = None
         self._updated_at = None
+        self._upload_complete = None
         self._version = None
         self.discriminator = None
         if cluster_id is not None:
@@ -87,6 +90,8 @@ class V1ModelVersionArchive(object):
             self.project_id = project_id
         if updated_at is not None:
             self.updated_at = updated_at
+        if upload_complete is not None:
+            self.upload_complete = upload_complete
         if version is not None:
             self.version = version
 
@@ -236,6 +241,27 @@ class V1ModelVersionArchive(object):
         """
 
         self._updated_at = updated_at
+
+    @property
+    def upload_complete(self) -> 'bool':
+        """Gets the upload_complete of this V1ModelVersionArchive.  # noqa: E501
+
+
+        :return: The upload_complete of this V1ModelVersionArchive.  # noqa: E501
+        :rtype: bool
+        """
+        return self._upload_complete
+
+    @upload_complete.setter
+    def upload_complete(self, upload_complete: 'bool'):
+        """Sets the upload_complete of this V1ModelVersionArchive.
+
+
+        :param upload_complete: The upload_complete of this V1ModelVersionArchive.  # noqa: E501
+        :type: bool
+        """
+
+        self._upload_complete = upload_complete
 
     @property
     def version(self) -> 'str':

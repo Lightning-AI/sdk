@@ -52,6 +52,7 @@ class OrgsIdBody(object):
         'email': 'str',
         'featured_gallery': 'bool',
         'location': 'str',
+        'start_studios_on_spot_instance': 'bool',
         'teamspace_default_credits': 'float',
         'twitter_username': 'str'
     }
@@ -68,11 +69,12 @@ class OrgsIdBody(object):
         'email': 'email',
         'featured_gallery': 'featuredGallery',
         'location': 'location',
+        'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
         self._allow_member_invitations = None
@@ -85,6 +87,7 @@ class OrgsIdBody(object):
         self._email = None
         self._featured_gallery = None
         self._location = None
+        self._start_studios_on_spot_instance = None
         self._teamspace_default_credits = None
         self._twitter_username = None
         self.discriminator = None
@@ -110,6 +113,8 @@ class OrgsIdBody(object):
             self.featured_gallery = featured_gallery
         if location is not None:
             self.location = location
+        if start_studios_on_spot_instance is not None:
+            self.start_studios_on_spot_instance = start_studios_on_spot_instance
         if teamspace_default_credits is not None:
             self.teamspace_default_credits = teamspace_default_credits
         if twitter_username is not None:
@@ -345,6 +350,27 @@ class OrgsIdBody(object):
         """
 
         self._location = location
+
+    @property
+    def start_studios_on_spot_instance(self) -> 'bool':
+        """Gets the start_studios_on_spot_instance of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The start_studios_on_spot_instance of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._start_studios_on_spot_instance
+
+    @start_studios_on_spot_instance.setter
+    def start_studios_on_spot_instance(self, start_studios_on_spot_instance: 'bool'):
+        """Sets the start_studios_on_spot_instance of this OrgsIdBody.
+
+
+        :param start_studios_on_spot_instance: The start_studios_on_spot_instance of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._start_studios_on_spot_instance = start_studios_on_spot_instance
 
     @property
     def teamspace_default_credits(self) -> 'float':

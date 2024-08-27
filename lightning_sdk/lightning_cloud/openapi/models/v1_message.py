@@ -47,6 +47,7 @@ class V1Message(object):
         'content': 'V1MessageContent',
         'conversation_id': 'str',
         'created_at': 'datetime',
+        'executable': 'bool',
         'id': 'str',
         'model': 'str',
         'prompt_tokens': 'str'
@@ -59,12 +60,13 @@ class V1Message(object):
         'content': 'content',
         'conversation_id': 'conversationId',
         'created_at': 'createdAt',
+        'executable': 'executable',
         'id': 'id',
         'model': 'model',
         'prompt_tokens': 'promptTokens'
     }
 
-    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'V1MessageContent' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'V1MessageContent' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._assistant_id = None
         self._author = None
@@ -72,6 +74,7 @@ class V1Message(object):
         self._content = None
         self._conversation_id = None
         self._created_at = None
+        self._executable = None
         self._id = None
         self._model = None
         self._prompt_tokens = None
@@ -88,6 +91,8 @@ class V1Message(object):
             self.conversation_id = conversation_id
         if created_at is not None:
             self.created_at = created_at
+        if executable is not None:
+            self.executable = executable
         if id is not None:
             self.id = id
         if model is not None:
@@ -220,6 +225,27 @@ class V1Message(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def executable(self) -> 'bool':
+        """Gets the executable of this V1Message.  # noqa: E501
+
+
+        :return: The executable of this V1Message.  # noqa: E501
+        :rtype: bool
+        """
+        return self._executable
+
+    @executable.setter
+    def executable(self, executable: 'bool'):
+        """Sets the executable of this V1Message.
+
+
+        :param executable: The executable of this V1Message.  # noqa: E501
+        :type: bool
+        """
+
+        self._executable = executable
 
     @property
     def id(self) -> 'str':

@@ -47,6 +47,7 @@ class V1ClusterSpec(object):
         'cluster_type': 'V1ClusterType',
         'deletion_options': 'V1ClusterDeletionOptions',
         'desired_state': 'V1ClusterState',
+        'freeze_accelerators': 'bool',
         'google_cloud_v1': 'V1GoogleCloudDirectV1',
         'insurer_disabled': 'bool',
         'overprovisioning': 'list[V1InstanceOverprovisioningSpec]',
@@ -65,6 +66,7 @@ class V1ClusterSpec(object):
         'cluster_type': 'clusterType',
         'deletion_options': 'deletionOptions',
         'desired_state': 'desiredState',
+        'freeze_accelerators': 'freezeAccelerators',
         'google_cloud_v1': 'googleCloudV1',
         'insurer_disabled': 'insurerDisabled',
         'overprovisioning': 'overprovisioning',
@@ -76,7 +78,7 @@ class V1ClusterSpec(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_instance_types = None
@@ -84,6 +86,7 @@ class V1ClusterSpec(object):
         self._cluster_type = None
         self._deletion_options = None
         self._desired_state = None
+        self._freeze_accelerators = None
         self._google_cloud_v1 = None
         self._insurer_disabled = None
         self._overprovisioning = None
@@ -106,6 +109,8 @@ class V1ClusterSpec(object):
             self.deletion_options = deletion_options
         if desired_state is not None:
             self.desired_state = desired_state
+        if freeze_accelerators is not None:
+            self.freeze_accelerators = freeze_accelerators
         if google_cloud_v1 is not None:
             self.google_cloud_v1 = google_cloud_v1
         if insurer_disabled is not None:
@@ -252,6 +257,27 @@ class V1ClusterSpec(object):
         """
 
         self._desired_state = desired_state
+
+    @property
+    def freeze_accelerators(self) -> 'bool':
+        """Gets the freeze_accelerators of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The freeze_accelerators of this V1ClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._freeze_accelerators
+
+    @freeze_accelerators.setter
+    def freeze_accelerators(self, freeze_accelerators: 'bool'):
+        """Sets the freeze_accelerators of this V1ClusterSpec.
+
+
+        :param freeze_accelerators: The freeze_accelerators of this V1ClusterSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._freeze_accelerators = freeze_accelerators
 
     @property
     def google_cloud_v1(self) -> 'V1GoogleCloudDirectV1':

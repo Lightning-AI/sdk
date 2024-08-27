@@ -44,6 +44,7 @@ class V1ClusterSecurityOptions(object):
         'containers_non_privileged': 'bool',
         'encrypt_instance_volumes': 'bool',
         'kms_key_id': 'str',
+        'private_subnet_mode': 'bool',
         'protect_instance_metadata': 'bool',
         'rootless_docker': 'bool',
         'ssh_disabled': 'bool'
@@ -53,16 +54,18 @@ class V1ClusterSecurityOptions(object):
         'containers_non_privileged': 'containersNonPrivileged',
         'encrypt_instance_volumes': 'encryptInstanceVolumes',
         'kms_key_id': 'kmsKeyId',
+        'private_subnet_mode': 'privateSubnetMode',
         'protect_instance_metadata': 'protectInstanceMetadata',
         'rootless_docker': 'rootlessDocker',
         'ssh_disabled': 'sshDisabled'
     }
 
-    def __init__(self, containers_non_privileged: 'bool' =None, encrypt_instance_volumes: 'bool' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
+    def __init__(self, containers_non_privileged: 'bool' =None, encrypt_instance_volumes: 'bool' =None, kms_key_id: 'str' =None, private_subnet_mode: 'bool' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
         self._containers_non_privileged = None
         self._encrypt_instance_volumes = None
         self._kms_key_id = None
+        self._private_subnet_mode = None
         self._protect_instance_metadata = None
         self._rootless_docker = None
         self._ssh_disabled = None
@@ -73,6 +76,8 @@ class V1ClusterSecurityOptions(object):
             self.encrypt_instance_volumes = encrypt_instance_volumes
         if kms_key_id is not None:
             self.kms_key_id = kms_key_id
+        if private_subnet_mode is not None:
+            self.private_subnet_mode = private_subnet_mode
         if protect_instance_metadata is not None:
             self.protect_instance_metadata = protect_instance_metadata
         if rootless_docker is not None:
@@ -142,6 +147,27 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._kms_key_id = kms_key_id
+
+    @property
+    def private_subnet_mode(self) -> 'bool':
+        """Gets the private_subnet_mode of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The private_subnet_mode of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._private_subnet_mode
+
+    @private_subnet_mode.setter
+    def private_subnet_mode(self, private_subnet_mode: 'bool'):
+        """Sets the private_subnet_mode of this V1ClusterSecurityOptions.
+
+
+        :param private_subnet_mode: The private_subnet_mode of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._private_subnet_mode = private_subnet_mode
 
     @property
     def protect_instance_metadata(self) -> 'bool':

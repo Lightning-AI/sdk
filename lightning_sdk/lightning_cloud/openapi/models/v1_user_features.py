@@ -75,7 +75,6 @@ class V1UserFeatures(object):
         'mmt_app': 'bool',
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
-        'new_cpu_instance': 'bool',
         'new_data_prep_cpu_instance': 'bool',
         'org_level_member_permissions': 'bool',
         'plugin_biz_chat': 'bool',
@@ -150,7 +149,6 @@ class V1UserFeatures(object):
         'mmt_app': 'mmtApp',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
-        'new_cpu_instance': 'newCpuInstance',
         'new_data_prep_cpu_instance': 'newDataPrepCpuInstance',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'plugin_biz_chat': 'pluginBizChat',
@@ -190,7 +188,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, new_cpu_instance: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._agents_v2 = None
         self._apt_get_v2 = None
@@ -226,7 +224,6 @@ class V1UserFeatures(object):
         self._mmt_app = None
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
-        self._new_cpu_instance = None
         self._new_data_prep_cpu_instance = None
         self._org_level_member_permissions = None
         self._plugin_biz_chat = None
@@ -333,8 +330,6 @@ class V1UserFeatures(object):
             self.mmt_fault_tolerance = mmt_fault_tolerance
         if mmt_strategy_selector is not None:
             self.mmt_strategy_selector = mmt_strategy_selector
-        if new_cpu_instance is not None:
-            self.new_cpu_instance = new_cpu_instance
         if new_data_prep_cpu_instance is not None:
             self.new_data_prep_cpu_instance = new_data_prep_cpu_instance
         if org_level_member_permissions is not None:
@@ -1123,27 +1118,6 @@ class V1UserFeatures(object):
         """
 
         self._mmt_strategy_selector = mmt_strategy_selector
-
-    @property
-    def new_cpu_instance(self) -> 'bool':
-        """Gets the new_cpu_instance of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The new_cpu_instance of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._new_cpu_instance
-
-    @new_cpu_instance.setter
-    def new_cpu_instance(self, new_cpu_instance: 'bool'):
-        """Sets the new_cpu_instance of this V1UserFeatures.
-
-
-        :param new_cpu_instance: The new_cpu_instance of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._new_cpu_instance = new_cpu_instance
 
     @property
     def new_data_prep_cpu_instance(self) -> 'bool':

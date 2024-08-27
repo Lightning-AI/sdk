@@ -49,6 +49,7 @@ class V1CreateOrganizationRequest(object):
         'email': 'str',
         'featured_gallery': 'bool',
         'location': 'str',
+        'start_studios_on_spot_instance': 'bool',
         'twitter_username': 'str',
         'type': 'str'
     }
@@ -62,11 +63,12 @@ class V1CreateOrganizationRequest(object):
         'email': 'email',
         'featured_gallery': 'featuredGallery',
         'location': 'location',
+        'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
         'twitter_username': 'twitterUsername',
         'type': 'type'
     }
 
-    def __init__(self, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, start_studios_on_spot_instance: 'bool' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
         """V1CreateOrganizationRequest - a model defined in Swagger"""  # noqa: E501
         self._auto_invite_by_domain = None
         self._auto_join_domains = None
@@ -76,6 +78,7 @@ class V1CreateOrganizationRequest(object):
         self._email = None
         self._featured_gallery = None
         self._location = None
+        self._start_studios_on_spot_instance = None
         self._twitter_username = None
         self._type = None
         self.discriminator = None
@@ -95,6 +98,8 @@ class V1CreateOrganizationRequest(object):
             self.featured_gallery = featured_gallery
         if location is not None:
             self.location = location
+        if start_studios_on_spot_instance is not None:
+            self.start_studios_on_spot_instance = start_studios_on_spot_instance
         if twitter_username is not None:
             self.twitter_username = twitter_username
         if type is not None:
@@ -267,6 +272,27 @@ class V1CreateOrganizationRequest(object):
         """
 
         self._location = location
+
+    @property
+    def start_studios_on_spot_instance(self) -> 'bool':
+        """Gets the start_studios_on_spot_instance of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The start_studios_on_spot_instance of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._start_studios_on_spot_instance
+
+    @start_studios_on_spot_instance.setter
+    def start_studios_on_spot_instance(self, start_studios_on_spot_instance: 'bool'):
+        """Sets the start_studios_on_spot_instance of this V1CreateOrganizationRequest.
+
+
+        :param start_studios_on_spot_instance: The start_studios_on_spot_instance of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._start_studios_on_spot_instance = start_studios_on_spot_instance
 
     @property
     def twitter_username(self) -> 'str':
