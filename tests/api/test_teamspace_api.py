@@ -74,27 +74,32 @@ def test_create_agent(internal_teamspace_api_create_agent_mocker):
     assert agent.model == "test-sdk"
 
 
-@mock.patch("lightning_sdk.api.teamspace_api._FileUploader")
-def test_upload_artifact_file(uploader_mock, internal_teamspace_api_create_agent_mocker):
+@mock.patch("lightning_sdk.api.teamspace_api._ModelFileUploader")
+def test_upload_model_file(uploader_mock):
     teamspace_api = TeamspaceApi()
-    teamspace_api.upload_artifact_file(
-        local_file_path=Path("path/to/checkpoint.pt"),
-        remote_dir="projects/p_id/models/m_id/version",
-        cluster_id="cluster_id",
-        teamspace_id="teamspace_id",
+    teamspace_api.upload_model_file(
+        model_id="test-model-id",
+        version="latest",
+        local_path=Path("path/to/checkpoint.pt"),
+        remote_path="modelpath/on/cluster",
+        cluster_id="test-cluster-id",
+        teamspace_id="test-project-id",
         progress_bar=False,
     )
     uploader_mock.assert_called_with(
         client=mock.ANY,
+        model_id="test-model-id",
+        version="latest",
         file_path="path/to/checkpoint.pt",
-        remote_path="/models/m_id/version/checkpoint.pt",
-        cluster_id="cluster_id",
-        teamspace_id="teamspace_id",
+        remote_path="modelpath/on/cluster",
+        cluster_id="test-cluster-id",
+        teamspace_id="test-project-id",
         progress_bar=False,
     )
+    uploader_mock().assert_called_with()  # .__call__()
 
 
-def test_try_get_cluster_id(internal_teamspace_api_create_agent_mocker):
+def test_try_get_cluster_id():
     # cluster set via env variable
     teamspace_api = TeamspaceApi()
     with mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "cluster-via-env"}):

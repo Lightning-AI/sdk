@@ -155,7 +155,7 @@ class Teamspace:
         """Upload a local checkpoint file to the model store.
 
         Args:
-            path: Path to the model file to upload.
+            path: Path to the model file or folder to upload.
             name: Name tag of the model to upload. Must be in the format 'entity/modelname' where
                 entity is either your user name or the name of an organization you are part of.
             private: Whether the model is accessible publicly or only by you (or in case of
@@ -165,33 +165,50 @@ class Teamspace:
                 automatically.
 
         """
-        path = Path(path)
-        if path.is_dir():
-            raise NotImplementedError("Uploading directories is not yet supported.")
+        path = Path(path).resolve()
         if not path.exists():
             raise FileNotFoundError(str(path))
 
         cluster_id = self._teamspace_api._try_get_cluster_id(self.id) if cluster_id is None else cluster_id
-        upload_dir, cluster_id = self._teamspace_api.request_artifact_upload(
+        root_path = path.parent
+        filepaths = [path] if path.is_file() else [p for p in path.rglob("*") if p.is_file()]
+
+        if not filepaths:
+            raise FileNotFoundError(
+                "The path to upload doesn't contain any files. Make sure it points to a file or"
+                f" non-empty folder: {path}"
+            )
+
+        filenames = ",".join(str(f.relative_to(root_path)) for f in filepaths)
+
+        model = self._teamspace_api.create_model(
             name=name,
-            metadata={"filenames": path.name},
+            metadata={"filenames": filenames},
             private=private,
             teamspace_id=self.id,
-            version=None,  # TODO: Support version as input
             cluster_id=cluster_id,
         )
-        self._teamspace_api.upload_artifact_file(
-            local_file_path=path,
-            remote_dir=upload_dir,
+        version = "latest"  # TODO: create_model does not return version
+        self._teamspace_api.upload_model_files(
+            model_id=model.id,
+            version=version,
+            root_path=root_path,
+            filepaths=filepaths,
             cluster_id=cluster_id,
             teamspace_id=self.id,
             progress_bar=progress_bar,
+        )
+        self._teamspace_api.complete_model_upload(
+            model_id=model.id,
+            version=version,
+            teamspace_id=self.id,
         )
 
     def download_model(
         self,
         name: str,
         download_dir: Optional[str] = None,
+        progress_bar: bool = True,
     ) -> str:
         """Download a checkpoint from the model store.
 
@@ -200,24 +217,28 @@ class Teamspace:
                 entity is either your user name or the name of an organization you are part of.
             download_dir: A path to directory where the model should be downloaded. Defaults
                 to the current working directory.
+            progress_bar: Whether to show a progress bar for the download.
 
         Returns:
-            The absolute path to the downloaded model file.
+            The absolute path to the downloaded model file or folder.
 
         """
         if download_dir is None:
             download_dir = Path.cwd()
         download_dir = Path(download_dir)
 
-        filename, url = self._teamspace_api.request_artifact_download(
+        downloaded_files = self._teamspace_api.download_model_files(
             name=name,
             version="latest",  # TODO: Support version as input
+            download_dir=download_dir,
+            progress_bar=progress_bar,
         )
 
-        download_dir.mkdir(parents=True, exist_ok=True)
-        download_path = download_dir / filename
-        self._teamspace_api.download_artifact_file(url, download_path)
-        return str(download_path.resolve())
+        if not downloaded_files:
+            raise RuntimeError("No files were downloaded. This shouldn't happen, please report a bug.")
+        downloaded_file = Path(downloaded_files[0])
+        downloaded_path = download_dir / downloaded_file.parts[0]
+        return str(downloaded_path.resolve())
 
 
 def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name: str) -> ValueError:

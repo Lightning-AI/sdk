@@ -1,21 +1,20 @@
 import os
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
-import requests
-
-from lightning_sdk.api.utils import _FileUploader
+from lightning_sdk.api.utils import _download_model_files, _DummyBody, _ModelFileUploader
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreApi,
     ProjectIdAgentsBody,
+    ProjectIdModelsBody,
     V1Assistant,
     V1CloudSpace,
     V1Endpoint,
+    V1Model,
     V1Project,
     V1ProjectClusterBinding,
     V1PromptSuggestion,
-    V1UploadModelRequest,
     V1UpstreamOpenAI,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -147,60 +146,81 @@ class TeamspaceApi:
 
         return self._client.assistants_service_create_assistant(body=body, project_id=teamspace_id)
 
-    def request_artifact_upload(
+    def create_model(
         self,
         name: str,
         metadata: Dict[str, str],
         private: bool,
         teamspace_id: str,
         cluster_id: str,
-        version: Optional[str] = None,
-    ) -> Tuple[str, str]:
+    ) -> V1Model:
         api = ModelsStoreApi(self._client.api_client)
-        body = V1UploadModelRequest(
-            metadata=metadata,
-            name=name,
-            private=private,
-            project_id=teamspace_id,
-            cluster_id=cluster_id,
-            version=version,
-        )
-        response = api.models_store_upload_model(body)
-        return response.upload_dir, response.cluster_id
+        body = ProjectIdModelsBody(cluster_id=cluster_id, metadata=metadata, name=name, private=private)
+        return api.models_store_create_model(body, project_id=teamspace_id)
 
-    def upload_artifact_file(
+    def upload_model_file(
         self,
-        local_file_path: Path,
-        remote_dir: str,
+        model_id: str,
+        version: str,
+        local_path: Path,
+        remote_path: str,
         cluster_id: str,
         teamspace_id: str,
         progress_bar: bool = True,
     ) -> None:
-        remote_path = Path(remote_dir, local_file_path.name)
-        # Strip away the first two parts 'projects/project_id/' because uploader expects path
-        # relative to project folder
-        remote_path = Path("/", *remote_path.parts[2:])
-
-        uploader = _FileUploader(
+        uploader = _ModelFileUploader(
             client=self._client,
+            model_id=model_id,
+            version=version,
             teamspace_id=teamspace_id,
             cluster_id=cluster_id,
-            file_path=str(local_file_path),
+            file_path=str(local_path),
             remote_path=str(remote_path),
             progress_bar=progress_bar,
         )
         uploader()
 
-    def request_artifact_download(self, name: str, version: str) -> Tuple[str, str]:
-        api = ModelsStoreApi(self._client.api_client)
-        response = api.models_store_download_model(name=name, version=version)
-        # TODO: Support downloading multiple files
-        filename = response.metadata["filenames"].split(",")[0]
-        download_url = response.download_url
-        return filename, download_url
+    def upload_model_files(
+        self,
+        model_id: str,
+        version: str,
+        root_path: Path,
+        filepaths: List[Path],
+        cluster_id: str,
+        teamspace_id: str,
+        progress_bar: bool = True,
+    ) -> None:
+        for filepath in filepaths:
+            self.upload_model_file(
+                model_id=model_id,
+                version=version,
+                local_path=filepath,
+                remote_path=str(filepath.relative_to(root_path)),
+                cluster_id=cluster_id,
+                teamspace_id=teamspace_id,
+                progress_bar=progress_bar,  # TODO: Global progress bar
+            )
 
-    def download_artifact_file(self, url: str, download_path: Path) -> None:
-        response = requests.get(url, stream=True)
-        with open(download_path, "wb") as file:
-            for chunk in response.iter_content(chunk_size=(4096 * 8)):
-                file.write(chunk)
+    def complete_model_upload(self, model_id: str, version: str, teamspace_id: str) -> None:
+        api = ModelsStoreApi(self._client.api_client)
+        api.models_store_complete_model_upload(
+            body=_DummyBody(),
+            project_id=teamspace_id,
+            model_id=model_id,
+            version=version,
+        )
+
+    def download_model_files(
+        self,
+        name: str,
+        version: str,
+        download_dir: Path,
+        progress_bar: bool = True,
+    ) -> List[str]:
+        return _download_model_files(
+            client=self._client,
+            name=name,
+            version=version,
+            download_dir=download_dir,
+            progress_bar=progress_bar,
+        )

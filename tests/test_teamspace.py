@@ -166,63 +166,122 @@ def test_create_agent(
     assert agent._agent.name == "test-sdk"
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "cluster-id"})
-def test_upload_model(
+@mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
+def test_upload_model_single_file(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
-    internal_auth_mocker,
-    internal_teamspace_api_create_agent_mocker,
-    internal_agents_api_get_agent_mocker,
     tmp_path,
 ):
     ts = Teamspace("ts-abc", user="user-abc")
 
-    with pytest.raises(NotImplementedError):
-        ts.upload_model(path=tmp_path, name="user/modelname")
-
     with pytest.raises(FileNotFoundError):
         ts.upload_model(path=(tmp_path / "does-not-exist.ckpt"), name="user/modelname")
 
+    # Upload single file
     file_path = tmp_path / "checkpoint.pt"
     file_path.touch()
 
-    ts._teamspace_api.request_artifact_upload = mock.Mock(
-        return_value=("projects/p_id/models/m_id/version", "cluster-id")
-    )
-    ts._teamspace_api.upload_artifact_file = mock.Mock()
+    ts._teamspace_api.create_model = mock.Mock(return_value=mock.Mock(id="test-model-id", version="latest"))
+    ts._teamspace_api.upload_model_file = mock.Mock()
+    ts._teamspace_api.complete_model_upload = mock.Mock()
 
     ts.upload_model(path=file_path, name="user/modelname")
-    ts._teamspace_api.upload_artifact_file.assert_called_with(
-        local_file_path=file_path,
-        remote_dir="projects/p_id/models/m_id/version",
-        cluster_id=mock.ANY,
+
+    ts._teamspace_api.create_model.assert_called_once()
+    ts._teamspace_api.upload_model_file.assert_called_with(
+        model_id="test-model-id",
+        version="latest",
+        local_path=file_path,
+        remote_path="checkpoint.pt",
+        cluster_id="test-cluster-id",
         teamspace_id="ts-abc002",
         progress_bar=True,
     )
+    ts._teamspace_api.complete_model_upload.assert_called_once()
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.requests")
-def test_download_model(
-    requests_mock,
+@mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
+def test_upload_model_multiple_files(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
-    internal_auth_mocker,
-    internal_teamspace_api_create_agent_mocker,
-    internal_agents_api_get_agent_mocker,
+    tmp_path,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    # Attempt to upload empty folder raises error
+    root_path = tmp_path / "empty"
+    (tmp_path / "empty" / "folder").mkdir(parents=True)
+    with pytest.raises(FileNotFoundError, match="doesn't contain any files"):
+        ts.upload_model(path=root_path, name="user/modelname")
+
+    # Upload nested folder of files
+    root_path = tmp_path / "checkpoint"
+    root_path.mkdir()
+    (root_path / "file").touch()
+    (root_path / "subfolder").mkdir()
+    (root_path / "subfolder" / "nested-file").touch()
+    (root_path / "empty").mkdir()  # empty folders don't get uploaded
+
+    ts._teamspace_api.create_model = mock.Mock(return_value=mock.Mock(id="test-model-id", version="latest"))
+    ts._teamspace_api.upload_model_file = mock.Mock()
+    ts._teamspace_api.complete_model_upload = mock.Mock()
+
+    ts.upload_model(path=root_path, name="user/modelname")
+
+    ts._teamspace_api.create_model.assert_called_once()
+    assert ts._teamspace_api.upload_model_file.call_count == 2
+    call_args = dict(
+        model_id="test-model-id",
+        version="latest",
+        cluster_id="test-cluster-id",
+        teamspace_id="ts-abc002",
+        progress_bar=True,
+    )
+    ts._teamspace_api.upload_model_file.assert_any_call(
+        local_path=(root_path / "file"),
+        remote_path="checkpoint/file",
+        **call_args,
+    )
+    ts._teamspace_api.upload_model_file.assert_any_call(
+        local_path=(root_path / "subfolder" / "nested-file"),
+        remote_path="checkpoint/subfolder/nested-file",
+        **call_args,
+    )
+    ts._teamspace_api.complete_model_upload.assert_called_once()
+
+
+@mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+def test_download_model(
+    download_model_files_mock,
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
     tmp_path,
     monkeypatch,
 ):
     monkeypatch.chdir(tmp_path)
 
     ts = Teamspace("ts-abc", user="user-abc")
-    ts._teamspace_api.request_artifact_download = mock.Mock(return_value=("checkpoint.pt", "test-url"))
+    download_model_files_mock.return_value = return_value = ["checkpoint/file.pt", "checkpoint/other"]
 
+    # download_dir default (current working directory)
     result = ts.download_model("user/modelname")
-    ts._teamspace_api.request_artifact_download.assert_called_with(name="user/modelname", version="latest")
-    assert (tmp_path / "checkpoint.pt").is_file()
-    assert result == str(tmp_path / "checkpoint.pt")
+    download_model_files_mock.assert_called_with(
+        client=mock.ANY,
+        name="user/modelname",
+        version="latest",
+        download_dir=tmp_path,
+        progress_bar=True,
+    )
+    assert result == str(tmp_path / "checkpoint")
 
+    # download_dir specified
     download_dir = "download_dir"
     result = ts.download_model("user/modelname", download_dir=download_dir)
-    assert Path(download_dir, "checkpoint.pt").is_file()
-    assert result == str(tmp_path / download_dir / "checkpoint.pt")
+    download_model_files_mock.assert_called_with(
+        client=mock.ANY,
+        name="user/modelname",
+        version="latest",
+        download_dir=Path(download_dir),
+        progress_bar=True,
+    )
+    assert result == str(tmp_path / download_dir / "checkpoint")
