@@ -293,7 +293,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_create_model(self, body: 'ProjectIdModelsBody', project_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
+    def models_store_create_model(self, body: 'ProjectIdModelsBody', project_id: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
         """CreateModel creates a new version of a model and marks the upload as incomplete. Files are expected to be uploaded using the multi-part upload APIs below, followed by a completion request after which the model will be fully visible (can list, delete etc.)  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -304,7 +304,7 @@ class ModelsStoreApi(object):
         :param async_req bool
         :param ProjectIdModelsBody body: (required)
         :param str project_id: (required)
-        :return: V1Model
+        :return: V1ModelVersionArchive
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -315,7 +315,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_create_model_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def models_store_create_model_with_http_info(self, body: 'ProjectIdModelsBody', project_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
+    def models_store_create_model_with_http_info(self, body: 'ProjectIdModelsBody', project_id: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
         """CreateModel creates a new version of a model and marks the upload as incomplete. Files are expected to be uploaded using the multi-part upload APIs below, followed by a completion request after which the model will be fully visible (can list, delete etc.)  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -326,7 +326,7 @@ class ModelsStoreApi(object):
         :param async_req bool
         :param ProjectIdModelsBody body: (required)
         :param str project_id: (required)
-        :return: V1Model
+        :return: V1ModelVersionArchive
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -390,7 +390,7 @@ class ModelsStoreApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1Model',  # noqa: E501
+            response_type='V1ModelVersionArchive',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -722,99 +722,6 @@ class ModelsStoreApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1DeleteModelVersionResponse',  # noqa: E501
-            auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
-
-    def models_store_download_model(self, **kwargs) -> 'V1DownloadModelResponse':  # noqa: E501
-        """DownloadModel is a public facing API used by the Python library to get a presigned URL to download the model. Name is a required query parameter  # noqa: E501
-
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.models_store_download_model(async_req=True)
-        >>> result = thread.get()
-
-        :param async_req bool
-        :param str name:
-        :param str version:
-        :return: V1DownloadModelResponse
-                 If the method is called asynchronously,
-                 returns the request thread.
-        """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.models_store_download_model_with_http_info(**kwargs)  # noqa: E501
-        else:
-            (data) = self.models_store_download_model_with_http_info(**kwargs)  # noqa: E501
-            return data
-
-    def models_store_download_model_with_http_info(self, **kwargs) -> 'V1DownloadModelResponse':  # noqa: E501
-        """DownloadModel is a public facing API used by the Python library to get a presigned URL to download the model. Name is a required query parameter  # noqa: E501
-
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.models_store_download_model_with_http_info(async_req=True)
-        >>> result = thread.get()
-
-        :param async_req bool
-        :param str name:
-        :param str version:
-        :return: V1DownloadModelResponse
-                 If the method is called asynchronously,
-                 returns the request thread.
-        """
-
-        all_params = ['name', 'version']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
-
-        params = locals()
-        for key, val in six.iteritems(params['kwargs']):
-            if key not in all_params:
-                raise TypeError(
-                    "Got an unexpected keyword argument '%s'"
-                    " to method models_store_download_model" % key
-                )
-            params[key] = val
-        del params['kwargs']
-
-        collection_formats = {}
-
-        path_params = {}
-
-        query_params = []
-        if 'name' in params:
-            query_params.append(('name', params['name']))  # noqa: E501
-        if 'version' in params:
-            query_params.append(('version', params['version']))  # noqa: E501
-
-        header_params = {}
-
-        form_params = []
-        local_var_files = {}
-
-        body_params = None
-        # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
-
-        # Authentication setting
-        auth_settings = []  # noqa: E501
-
-        return self.api_client.call_api(
-            '/v1/models-old', 'GET',
-            path_params,
-            query_params,
-            header_params,
-            body=body_params,
-            post_params=form_params,
-            files=local_var_files,
-            response_type='V1DownloadModelResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -1445,103 +1352,6 @@ class ModelsStoreApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1ListModelsResponse',  # noqa: E501
-            auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
-
-    def models_store_upload_model(self, body: 'V1UploadModelRequest', **kwargs) -> 'V1UploadModelResponse':  # noqa: E501
-        """Legacy: See new model upload APIs below UploadModel used to upload a new model version. It will either create a new top level model entry or reuse existing if an existing model is found. If version is not supplied, it will overwrite 'latest' version entry.  # noqa: E501
-
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.models_store_upload_model(body, async_req=True)
-        >>> result = thread.get()
-
-        :param async_req bool
-        :param V1UploadModelRequest body: (required)
-        :return: V1UploadModelResponse
-                 If the method is called asynchronously,
-                 returns the request thread.
-        """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.models_store_upload_model_with_http_info(body, **kwargs)  # noqa: E501
-        else:
-            (data) = self.models_store_upload_model_with_http_info(body, **kwargs)  # noqa: E501
-            return data
-
-    def models_store_upload_model_with_http_info(self, body: 'V1UploadModelRequest', **kwargs) -> 'V1UploadModelResponse':  # noqa: E501
-        """Legacy: See new model upload APIs below UploadModel used to upload a new model version. It will either create a new top level model entry or reuse existing if an existing model is found. If version is not supplied, it will overwrite 'latest' version entry.  # noqa: E501
-
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.models_store_upload_model_with_http_info(body, async_req=True)
-        >>> result = thread.get()
-
-        :param async_req bool
-        :param V1UploadModelRequest body: (required)
-        :return: V1UploadModelResponse
-                 If the method is called asynchronously,
-                 returns the request thread.
-        """
-
-        all_params = ['body']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
-
-        params = locals()
-        for key, val in six.iteritems(params['kwargs']):
-            if key not in all_params:
-                raise TypeError(
-                    "Got an unexpected keyword argument '%s'"
-                    " to method models_store_upload_model" % key
-                )
-            params[key] = val
-        del params['kwargs']
-        # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `models_store_upload_model`")  # noqa: E501
-
-        collection_formats = {}
-
-        path_params = {}
-
-        query_params = []
-
-        header_params = {}
-
-        form_params = []
-        local_var_files = {}
-
-        body_params = None
-        if 'body' in params:
-            body_params = params['body']
-        # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
-
-        # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
-
-        # Authentication setting
-        auth_settings = []  # noqa: E501
-
-        return self.api_client.call_api(
-            '/v1/models-old', 'POST',
-            path_params,
-            query_params,
-            header_params,
-            body=body_params,
-            post_params=form_params,
-            files=local_var_files,
-            response_type='V1UploadModelResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

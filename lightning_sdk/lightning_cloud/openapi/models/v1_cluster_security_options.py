@@ -41,49 +41,85 @@ class V1ClusterSecurityOptions(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'bucket_kms_key': 'str',
         'containers_non_privileged': 'bool',
+        'disable_public_ip': 'bool',
+        'encrypt_cluster_bucket': 'bool',
         'encrypt_instance_volumes': 'bool',
         'kms_key_id': 'str',
-        'private_subnet_mode': 'bool',
         'protect_instance_metadata': 'bool',
         'rootless_docker': 'bool',
+        'setup_network_load_balancer': 'bool',
         'ssh_disabled': 'bool'
     }
 
     attribute_map = {
+        'bucket_kms_key': 'bucketKmsKey',
         'containers_non_privileged': 'containersNonPrivileged',
+        'disable_public_ip': 'disablePublicIp',
+        'encrypt_cluster_bucket': 'encryptClusterBucket',
         'encrypt_instance_volumes': 'encryptInstanceVolumes',
         'kms_key_id': 'kmsKeyId',
-        'private_subnet_mode': 'privateSubnetMode',
         'protect_instance_metadata': 'protectInstanceMetadata',
         'rootless_docker': 'rootlessDocker',
+        'setup_network_load_balancer': 'setupNetworkLoadBalancer',
         'ssh_disabled': 'sshDisabled'
     }
 
-    def __init__(self, containers_non_privileged: 'bool' =None, encrypt_instance_volumes: 'bool' =None, kms_key_id: 'str' =None, private_subnet_mode: 'bool' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
+    def __init__(self, bucket_kms_key: 'str' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
+        self._bucket_kms_key = None
         self._containers_non_privileged = None
+        self._disable_public_ip = None
+        self._encrypt_cluster_bucket = None
         self._encrypt_instance_volumes = None
         self._kms_key_id = None
-        self._private_subnet_mode = None
         self._protect_instance_metadata = None
         self._rootless_docker = None
+        self._setup_network_load_balancer = None
         self._ssh_disabled = None
         self.discriminator = None
+        if bucket_kms_key is not None:
+            self.bucket_kms_key = bucket_kms_key
         if containers_non_privileged is not None:
             self.containers_non_privileged = containers_non_privileged
+        if disable_public_ip is not None:
+            self.disable_public_ip = disable_public_ip
+        if encrypt_cluster_bucket is not None:
+            self.encrypt_cluster_bucket = encrypt_cluster_bucket
         if encrypt_instance_volumes is not None:
             self.encrypt_instance_volumes = encrypt_instance_volumes
         if kms_key_id is not None:
             self.kms_key_id = kms_key_id
-        if private_subnet_mode is not None:
-            self.private_subnet_mode = private_subnet_mode
         if protect_instance_metadata is not None:
             self.protect_instance_metadata = protect_instance_metadata
         if rootless_docker is not None:
             self.rootless_docker = rootless_docker
+        if setup_network_load_balancer is not None:
+            self.setup_network_load_balancer = setup_network_load_balancer
         if ssh_disabled is not None:
             self.ssh_disabled = ssh_disabled
+
+    @property
+    def bucket_kms_key(self) -> 'str':
+        """Gets the bucket_kms_key of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The bucket_kms_key of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: str
+        """
+        return self._bucket_kms_key
+
+    @bucket_kms_key.setter
+    def bucket_kms_key(self, bucket_kms_key: 'str'):
+        """Sets the bucket_kms_key of this V1ClusterSecurityOptions.
+
+
+        :param bucket_kms_key: The bucket_kms_key of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: str
+        """
+
+        self._bucket_kms_key = bucket_kms_key
 
     @property
     def containers_non_privileged(self) -> 'bool':
@@ -105,6 +141,48 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._containers_non_privileged = containers_non_privileged
+
+    @property
+    def disable_public_ip(self) -> 'bool':
+        """Gets the disable_public_ip of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The disable_public_ip of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_public_ip
+
+    @disable_public_ip.setter
+    def disable_public_ip(self, disable_public_ip: 'bool'):
+        """Sets the disable_public_ip of this V1ClusterSecurityOptions.
+
+
+        :param disable_public_ip: The disable_public_ip of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_public_ip = disable_public_ip
+
+    @property
+    def encrypt_cluster_bucket(self) -> 'bool':
+        """Gets the encrypt_cluster_bucket of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The encrypt_cluster_bucket of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._encrypt_cluster_bucket
+
+    @encrypt_cluster_bucket.setter
+    def encrypt_cluster_bucket(self, encrypt_cluster_bucket: 'bool'):
+        """Sets the encrypt_cluster_bucket of this V1ClusterSecurityOptions.
+
+
+        :param encrypt_cluster_bucket: The encrypt_cluster_bucket of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._encrypt_cluster_bucket = encrypt_cluster_bucket
 
     @property
     def encrypt_instance_volumes(self) -> 'bool':
@@ -149,27 +227,6 @@ class V1ClusterSecurityOptions(object):
         self._kms_key_id = kms_key_id
 
     @property
-    def private_subnet_mode(self) -> 'bool':
-        """Gets the private_subnet_mode of this V1ClusterSecurityOptions.  # noqa: E501
-
-
-        :return: The private_subnet_mode of this V1ClusterSecurityOptions.  # noqa: E501
-        :rtype: bool
-        """
-        return self._private_subnet_mode
-
-    @private_subnet_mode.setter
-    def private_subnet_mode(self, private_subnet_mode: 'bool'):
-        """Sets the private_subnet_mode of this V1ClusterSecurityOptions.
-
-
-        :param private_subnet_mode: The private_subnet_mode of this V1ClusterSecurityOptions.  # noqa: E501
-        :type: bool
-        """
-
-        self._private_subnet_mode = private_subnet_mode
-
-    @property
     def protect_instance_metadata(self) -> 'bool':
         """Gets the protect_instance_metadata of this V1ClusterSecurityOptions.  # noqa: E501
 
@@ -210,6 +267,27 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._rootless_docker = rootless_docker
+
+    @property
+    def setup_network_load_balancer(self) -> 'bool':
+        """Gets the setup_network_load_balancer of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The setup_network_load_balancer of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._setup_network_load_balancer
+
+    @setup_network_load_balancer.setter
+    def setup_network_load_balancer(self, setup_network_load_balancer: 'bool'):
+        """Sets the setup_network_load_balancer of this V1ClusterSecurityOptions.
+
+
+        :param setup_network_load_balancer: The setup_network_load_balancer of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._setup_network_load_balancer = setup_network_load_balancer
 
     @property
     def ssh_disabled(self) -> 'bool':
