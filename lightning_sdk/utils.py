@@ -2,7 +2,7 @@ import logging
 import os
 import warnings
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Generator, List, Optional, Union
+from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.machine import Machine
@@ -153,3 +153,16 @@ def skip_studio_init() -> Generator[None, None, None]:
     yield
 
     Studio._skip_init = prev_studio_init_state
+
+
+def _parse_model_and_version(name: str) -> Tuple[str, str]:
+    parts = name.split(":")
+    if len(parts) == 1:
+        return parts[0], "latest"
+    if len(parts) == 2:
+        return parts[0], parts[1]
+    # The rest of the validation for name and version happens in the backend
+    raise ValueError(
+        "Model version is expected to be in the format `entity/modelname:version` separated by a"
+        f" single colon, but got: {name}"
+    )

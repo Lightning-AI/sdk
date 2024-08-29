@@ -8,6 +8,7 @@ from lightning_sdk.utils import (
     _resolve_user,
     _resolve_teamspace_name,
     _resolve_teamspace,
+    _parse_model_and_version,
 )
 from lightning_sdk.organization import Organization
 from lightning_sdk.user import User
@@ -190,3 +191,16 @@ def test_resolve_teamspace_combinations(
         assert result == Teamspace(
             teamspace_name, org=_resolve_org(expected_org_name), user=_resolve_user(expected_user_name)
         )
+
+
+def test_parse_model_and_version():
+    # Most of the validation for name and version happens in the backend
+    assert _parse_model_and_version("") == ("", "latest")
+    assert _parse_model_and_version("user/modelname") == ("user/modelname", "latest")
+    assert _parse_model_and_version("user/modelname:") == ("user/modelname", "")
+    assert _parse_model_and_version("user/modelname:v1") == ("user/modelname", "v1")
+    assert _parse_model_and_version("user/modelname: v1") == ("user/modelname", " v1")
+    with pytest.raises(ValueError, match="Model version is expected to be in the format"):
+        _parse_model_and_version("user/modelname:v1:")
+    with pytest.raises(ValueError, match="Model version is expected to be in the format"):
+        _parse_model_and_version("user/modelname:v1:v2")

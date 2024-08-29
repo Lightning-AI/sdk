@@ -6,7 +6,13 @@ from lightning_sdk.api import TeamspaceApi
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
 from lightning_sdk.user import User
-from lightning_sdk.utils import _get_organizations_for_authed_user, _resolve_org, _resolve_teamspace_name, _resolve_user
+from lightning_sdk.utils import (
+    _get_organizations_for_authed_user,
+    _parse_model_and_version,
+    _resolve_org,
+    _resolve_teamspace_name,
+    _resolve_user,
+)
 
 if TYPE_CHECKING:
     from lightning_sdk.studio import Studio
@@ -188,10 +194,9 @@ class Teamspace:
             teamspace_id=self.id,
             cluster_id=cluster_id,
         )
-        version = "latest"  # TODO: create_model does not return version
         self._teamspace_api.upload_model_files(
-            model_id=model.id,
-            version=version,
+            model_id=model.model_id,
+            version=model.version,
             root_path=root_path,
             filepaths=filepaths,
             cluster_id=cluster_id,
@@ -199,8 +204,8 @@ class Teamspace:
             progress_bar=progress_bar,
         )
         self._teamspace_api.complete_model_upload(
-            model_id=model.id,
-            version=version,
+            model_id=model.model_id,
+            version=model.version,
             teamspace_id=self.id,
         )
 
@@ -215,6 +220,8 @@ class Teamspace:
         Args:
             name: Name tag of the model to download. Must be in the format 'entity/modelname' where
                 entity is either your user name or the name of an organization you are part of.
+                Can optionally also contain a version tag separated by a colon, e.g.
+                'entity/modelname:v1'.
             download_dir: A path to directory where the model should be downloaded. Defaults
                 to the current working directory.
             progress_bar: Whether to show a progress bar for the download.
@@ -227,9 +234,10 @@ class Teamspace:
             download_dir = Path.cwd()
         download_dir = Path(download_dir)
 
+        name, version = _parse_model_and_version(name)
         downloaded_files = self._teamspace_api.download_model_files(
             name=name,
-            version="latest",  # TODO: Support version as input
+            version=version,
             download_dir=download_dir,
             progress_bar=progress_bar,
         )

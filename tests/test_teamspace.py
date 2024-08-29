@@ -181,7 +181,7 @@ def test_upload_model_single_file(
     file_path = tmp_path / "checkpoint.pt"
     file_path.touch()
 
-    ts._teamspace_api.create_model = mock.Mock(return_value=mock.Mock(id="test-model-id", version="latest"))
+    ts._teamspace_api.create_model = mock.Mock(return_value=mock.Mock(model_id="test-model-id", version="v3"))
     ts._teamspace_api.upload_model_file = mock.Mock()
     ts._teamspace_api.complete_model_upload = mock.Mock()
 
@@ -190,7 +190,7 @@ def test_upload_model_single_file(
     ts._teamspace_api.create_model.assert_called_once()
     ts._teamspace_api.upload_model_file.assert_called_with(
         model_id="test-model-id",
-        version="latest",
+        version="v3",
         local_path=file_path,
         remote_path="checkpoint.pt",
         cluster_id="test-cluster-id",
@@ -222,7 +222,7 @@ def test_upload_model_multiple_files(
     (root_path / "subfolder" / "nested-file").touch()
     (root_path / "empty").mkdir()  # empty folders don't get uploaded
 
-    ts._teamspace_api.create_model = mock.Mock(return_value=mock.Mock(id="test-model-id", version="latest"))
+    ts._teamspace_api.create_model = mock.Mock(return_value=mock.Mock(model_id="test-model-id", version="v3"))
     ts._teamspace_api.upload_model_file = mock.Mock()
     ts._teamspace_api.complete_model_upload = mock.Mock()
 
@@ -232,7 +232,7 @@ def test_upload_model_multiple_files(
     assert ts._teamspace_api.upload_model_file.call_count == 2
     call_args = dict(
         model_id="test-model-id",
-        version="latest",
+        version="v3",
         cluster_id="test-cluster-id",
         teamspace_id="ts-abc002",
         progress_bar=True,
@@ -261,7 +261,7 @@ def test_download_model(
     monkeypatch.chdir(tmp_path)
 
     ts = Teamspace("ts-abc", user="user-abc")
-    download_model_files_mock.return_value = return_value = ["checkpoint/file.pt", "checkpoint/other"]
+    download_model_files_mock.return_value = ["checkpoint/file.pt", "checkpoint/other"]
 
     # download_dir default (current working directory)
     result = ts.download_model("user/modelname")
@@ -285,3 +285,22 @@ def test_download_model(
         progress_bar=True,
     )
     assert result == str(tmp_path / download_dir / "checkpoint")
+
+
+@mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+def test_download_model_version(
+    download_model_files_mock,
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    tmp_path,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    ts.download_model("user/modelname:v3", download_dir=tmp_path)
+    download_model_files_mock.assert_called_with(
+        client=mock.ANY,
+        name="user/modelname",
+        version="v3",
+        download_dir=tmp_path,
+        progress_bar=True,
+    )

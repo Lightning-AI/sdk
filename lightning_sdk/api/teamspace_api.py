@@ -11,7 +11,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Assistant,
     V1CloudSpace,
     V1Endpoint,
-    V1Model,
+    V1ModelVersionArchive,
     V1Project,
     V1ProjectClusterBinding,
     V1PromptSuggestion,
@@ -153,7 +153,7 @@ class TeamspaceApi:
         private: bool,
         teamspace_id: str,
         cluster_id: str,
-    ) -> V1Model:
+    ) -> V1ModelVersionArchive:
         api = ModelsStoreApi(self._client.api_client)
         body = ProjectIdModelsBody(cluster_id=cluster_id, metadata=metadata, name=name, private=private)
         return api.models_store_create_model(body, project_id=teamspace_id)
