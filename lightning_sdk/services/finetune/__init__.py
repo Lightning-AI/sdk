@@ -11,7 +11,7 @@ class LLMFinetune(Client):
     """
 
     def __init__(self, teamspace: str) -> None:
-        super().__init__(name="lightning-al/llm-finetune", teamspace=teamspace)
+        super().__init__(name="lightning-al/llm-finetunes", teamspace=teamspace)
 
     def run(
         self,
