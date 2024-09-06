@@ -154,7 +154,6 @@ class Teamspace:
         self,
         path: str,
         name: str,
-        private: bool = True,
         progress_bar: bool = True,
         cluster_id: Optional[str] = None,
     ) -> None:
@@ -164,8 +163,6 @@ class Teamspace:
             path: Path to the model file or folder to upload.
             name: Name tag of the model to upload. Must be in the format 'entity/modelname' where
                 entity is either your user name or the name of an organization you are part of.
-            private: Whether the model is accessible publicly or only by you (or in case of
-                an organization only by the members of this organization).
             progress_bar: Whether to show a progress bar for the upload.
             cluster_id: The name of the cluster to use. Only required if it can't be determined
                 automatically.
@@ -190,7 +187,7 @@ class Teamspace:
         model = self._teamspace_api.create_model(
             name=name,
             metadata={"filenames": filenames},
-            private=private,
+            private=True,
             teamspace_id=self.id,
             cluster_id=cluster_id,
         )
