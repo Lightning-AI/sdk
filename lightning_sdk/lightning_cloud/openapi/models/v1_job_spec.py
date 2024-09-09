@@ -47,6 +47,7 @@ class V1JobSpec(object):
         'entrypoint': 'str',
         'env': 'list[V1EnvVar]',
         'image': 'str',
+        'image_cluster_credentials': 'bool',
         'image_secret_ref': 'str',
         'instance_name': 'str',
         'instance_type': 'str',
@@ -67,6 +68,7 @@ class V1JobSpec(object):
         'entrypoint': 'entrypoint',
         'env': 'env',
         'image': 'image',
+        'image_cluster_credentials': 'imageClusterCredentials',
         'image_secret_ref': 'imageSecretRef',
         'instance_name': 'instanceName',
         'instance_type': 'instanceType',
@@ -80,7 +82,7 @@ class V1JobSpec(object):
         'spot': 'spot'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -88,6 +90,7 @@ class V1JobSpec(object):
         self._entrypoint = None
         self._env = None
         self._image = None
+        self._image_cluster_credentials = None
         self._image_secret_ref = None
         self._instance_name = None
         self._instance_type = None
@@ -112,6 +115,8 @@ class V1JobSpec(object):
             self.env = env
         if image is not None:
             self.image = image
+        if image_cluster_credentials is not None:
+            self.image_cluster_credentials = image_cluster_credentials
         if image_secret_ref is not None:
             self.image_secret_ref = image_secret_ref
         if instance_name is not None:
@@ -260,6 +265,27 @@ class V1JobSpec(object):
         """
 
         self._image = image
+
+    @property
+    def image_cluster_credentials(self) -> 'bool':
+        """Gets the image_cluster_credentials of this V1JobSpec.  # noqa: E501
+
+
+        :return: The image_cluster_credentials of this V1JobSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._image_cluster_credentials
+
+    @image_cluster_credentials.setter
+    def image_cluster_credentials(self, image_cluster_credentials: 'bool'):
+        """Sets the image_cluster_credentials of this V1JobSpec.
+
+
+        :param image_cluster_credentials: The image_cluster_credentials of this V1JobSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._image_cluster_credentials = image_cluster_credentials
 
     @property
     def image_secret_ref(self) -> 'str':

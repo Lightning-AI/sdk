@@ -376,6 +376,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_job import V1Job
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_action import V1JobAction
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_file import V1JobFile
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_health_check_config import V1JobHealthCheckConfig
+from lightning_sdk.lightning_cloud.openapi.models.v1_job_log_entry import V1JobLogEntry
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_logs_page import V1JobLogsPage
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_logs_response import V1JobLogsResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_spec import V1JobSpec
@@ -554,6 +555,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_rule_resource import V1Rule
 from lightning_sdk.lightning_cloud.openapi.models.v1_slurm_job import V1SLURMJob
 from lightning_sdk.lightning_cloud.openapi.models.v1_ssh_key_pair import V1SSHKeyPair
 from lightning_sdk.lightning_cloud.openapi.models.v1_ssh_public_key import V1SSHPublicKey
+from lightning_sdk.lightning_cloud.openapi.models.v1_search_job_logs_response import V1SearchJobLogsResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_search_user import V1SearchUser
 from lightning_sdk.lightning_cloud.openapi.models.v1_search_users_response import V1SearchUsersResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_secret import V1Secret
@@ -620,6 +622,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_user_features import V1User
 from lightning_sdk.lightning_cloud.openapi.models.v1_user_requested_compute_config import V1UserRequestedComputeConfig
 from lightning_sdk.lightning_cloud.openapi.models.v1_user_requested_flow_compute_config import V1UserRequestedFlowComputeConfig
 from lightning_sdk.lightning_cloud.openapi.models.v1_user_slurm_job_action_response import V1UserSLURMJobActionResponse
+from lightning_sdk.lightning_cloud.openapi.models.v1_validate_assistant_status_response import V1ValidateAssistantStatusResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_validate_auto_join_domain_response import V1ValidateAutoJoinDomainResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_validate_data_connection_response import V1ValidateDataConnectionResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_validate_managed_endpoint_request import V1ValidateManagedEndpointRequest

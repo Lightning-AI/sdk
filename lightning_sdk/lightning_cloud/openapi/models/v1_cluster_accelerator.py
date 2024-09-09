@@ -67,6 +67,7 @@ class V1ClusterAccelerator(object):
         'quota_utilization': 'str',
         'quota_value': 'str',
         'reservable': 'bool',
+        'reservation_available_zones': 'list[str]',
         'resources': 'V1Resources',
         'slug': 'str',
         'spot_price': 'float'
@@ -99,12 +100,13 @@ class V1ClusterAccelerator(object):
         'quota_utilization': 'quotaUtilization',
         'quota_value': 'quotaValue',
         'reservable': 'reservable',
+        'reservation_available_zones': 'reservationAvailableZones',
         'resources': 'resources',
         'slug': 'slug',
         'spot_price': 'spotPrice'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_measurements: 'list[float]' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_measurements: 'list[float]' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -132,6 +134,7 @@ class V1ClusterAccelerator(object):
         self._quota_utilization = None
         self._quota_value = None
         self._reservable = None
+        self._reservation_available_zones = None
         self._resources = None
         self._slug = None
         self._spot_price = None
@@ -188,6 +191,8 @@ class V1ClusterAccelerator(object):
             self.quota_value = quota_value
         if reservable is not None:
             self.reservable = reservable
+        if reservation_available_zones is not None:
+            self.reservation_available_zones = reservation_available_zones
         if resources is not None:
             self.resources = resources
         if slug is not None:
@@ -740,6 +745,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._reservable = reservable
+
+    @property
+    def reservation_available_zones(self) -> 'list[str]':
+        """Gets the reservation_available_zones of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The reservation_available_zones of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._reservation_available_zones
+
+    @reservation_available_zones.setter
+    def reservation_available_zones(self, reservation_available_zones: 'list[str]'):
+        """Sets the reservation_available_zones of this V1ClusterAccelerator.
+
+
+        :param reservation_available_zones: The reservation_available_zones of this V1ClusterAccelerator.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._reservation_available_zones = reservation_available_zones
 
     @property
     def resources(self) -> 'V1Resources':

@@ -51,6 +51,7 @@ class V1Job(object):
         'project_id': 'str',
         'ready_at': 'datetime',
         'release_id': 'str',
+        'server_error': 'str',
         'spec': 'V1JobSpec',
         'started_at': 'datetime',
         'state': 'str',
@@ -71,6 +72,7 @@ class V1Job(object):
         'project_id': 'projectId',
         'ready_at': 'readyAt',
         'release_id': 'releaseId',
+        'server_error': 'serverError',
         'spec': 'spec',
         'started_at': 'startedAt',
         'state': 'state',
@@ -80,7 +82,7 @@ class V1Job(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deployment_id = None
@@ -92,6 +94,7 @@ class V1Job(object):
         self._project_id = None
         self._ready_at = None
         self._release_id = None
+        self._server_error = None
         self._spec = None
         self._started_at = None
         self._state = None
@@ -120,6 +123,8 @@ class V1Job(object):
             self.ready_at = ready_at
         if release_id is not None:
             self.release_id = release_id
+        if server_error is not None:
+            self.server_error = server_error
         if spec is not None:
             self.spec = spec
         if started_at is not None:
@@ -344,6 +349,27 @@ class V1Job(object):
         """
 
         self._release_id = release_id
+
+    @property
+    def server_error(self) -> 'str':
+        """Gets the server_error of this V1Job.  # noqa: E501
+
+
+        :return: The server_error of this V1Job.  # noqa: E501
+        :rtype: str
+        """
+        return self._server_error
+
+    @server_error.setter
+    def server_error(self, server_error: 'str'):
+        """Sets the server_error of this V1Job.
+
+
+        :param server_error: The server_error of this V1Job.  # noqa: E501
+        :type: str
+        """
+
+        self._server_error = server_error
 
     @property
     def spec(self) -> 'V1JobSpec':

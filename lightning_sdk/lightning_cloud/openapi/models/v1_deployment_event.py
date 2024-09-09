@@ -48,6 +48,7 @@ class V1DeploymentEvent(object):
         'message': 'str',
         'project_id': 'str',
         'reason': 'str',
+        'release_id': 'str',
         'timestamp': 'datetime',
         'type': 'V1DeploymentEventType'
     }
@@ -60,11 +61,12 @@ class V1DeploymentEvent(object):
         'message': 'message',
         'project_id': 'projectId',
         'reason': 'reason',
+        'release_id': 'releaseId',
         'timestamp': 'timestamp',
         'type': 'type'
     }
 
-    def __init__(self, action: 'str' =None, deployment_id: 'str' =None, id: 'str' =None, job_id: 'str' =None, message: 'str' =None, project_id: 'str' =None, reason: 'str' =None, timestamp: 'datetime' =None, type: 'V1DeploymentEventType' =None):  # noqa: E501
+    def __init__(self, action: 'str' =None, deployment_id: 'str' =None, id: 'str' =None, job_id: 'str' =None, message: 'str' =None, project_id: 'str' =None, reason: 'str' =None, release_id: 'str' =None, timestamp: 'datetime' =None, type: 'V1DeploymentEventType' =None):  # noqa: E501
         """V1DeploymentEvent - a model defined in Swagger"""  # noqa: E501
         self._action = None
         self._deployment_id = None
@@ -73,6 +75,7 @@ class V1DeploymentEvent(object):
         self._message = None
         self._project_id = None
         self._reason = None
+        self._release_id = None
         self._timestamp = None
         self._type = None
         self.discriminator = None
@@ -90,6 +93,8 @@ class V1DeploymentEvent(object):
             self.project_id = project_id
         if reason is not None:
             self.reason = reason
+        if release_id is not None:
+            self.release_id = release_id
         if timestamp is not None:
             self.timestamp = timestamp
         if type is not None:
@@ -241,6 +246,27 @@ class V1DeploymentEvent(object):
         """
 
         self._reason = reason
+
+    @property
+    def release_id(self) -> 'str':
+        """Gets the release_id of this V1DeploymentEvent.  # noqa: E501
+
+
+        :return: The release_id of this V1DeploymentEvent.  # noqa: E501
+        :rtype: str
+        """
+        return self._release_id
+
+    @release_id.setter
+    def release_id(self, release_id: 'str'):
+        """Sets the release_id of this V1DeploymentEvent.
+
+
+        :param release_id: The release_id of this V1DeploymentEvent.  # noqa: E501
+        :type: str
+        """
+
+        self._release_id = release_id
 
     @property
     def timestamp(self) -> 'datetime':

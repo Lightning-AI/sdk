@@ -42,6 +42,7 @@ class V1AutoscalingSpec(object):
     """
     swagger_types = {
         'enabled': 'bool',
+        'expected_cold_start_time': 'str',
         'idle_threshold_seconds': 'str',
         'max_replicas': 'str',
         'min_replicas': 'str',
@@ -52,6 +53,7 @@ class V1AutoscalingSpec(object):
 
     attribute_map = {
         'enabled': 'enabled',
+        'expected_cold_start_time': 'expectedColdStartTime',
         'idle_threshold_seconds': 'idleThresholdSeconds',
         'max_replicas': 'maxReplicas',
         'min_replicas': 'minReplicas',
@@ -60,9 +62,10 @@ class V1AutoscalingSpec(object):
         'target_metric': 'targetMetric'
     }
 
-    def __init__(self, enabled: 'bool' =None, idle_threshold_seconds: 'str' =None, max_replicas: 'str' =None, min_replicas: 'str' =None, scale_down_cooldown_seconds: 'str' =None, scale_up_cooldown_seconds: 'str' =None, target_metric: 'V1AutoscalingTargetMetric' =None):  # noqa: E501
+    def __init__(self, enabled: 'bool' =None, expected_cold_start_time: 'str' =None, idle_threshold_seconds: 'str' =None, max_replicas: 'str' =None, min_replicas: 'str' =None, scale_down_cooldown_seconds: 'str' =None, scale_up_cooldown_seconds: 'str' =None, target_metric: 'V1AutoscalingTargetMetric' =None):  # noqa: E501
         """V1AutoscalingSpec - a model defined in Swagger"""  # noqa: E501
         self._enabled = None
+        self._expected_cold_start_time = None
         self._idle_threshold_seconds = None
         self._max_replicas = None
         self._min_replicas = None
@@ -72,6 +75,8 @@ class V1AutoscalingSpec(object):
         self.discriminator = None
         if enabled is not None:
             self.enabled = enabled
+        if expected_cold_start_time is not None:
+            self.expected_cold_start_time = expected_cold_start_time
         if idle_threshold_seconds is not None:
             self.idle_threshold_seconds = idle_threshold_seconds
         if max_replicas is not None:
@@ -105,6 +110,27 @@ class V1AutoscalingSpec(object):
         """
 
         self._enabled = enabled
+
+    @property
+    def expected_cold_start_time(self) -> 'str':
+        """Gets the expected_cold_start_time of this V1AutoscalingSpec.  # noqa: E501
+
+
+        :return: The expected_cold_start_time of this V1AutoscalingSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._expected_cold_start_time
+
+    @expected_cold_start_time.setter
+    def expected_cold_start_time(self, expected_cold_start_time: 'str'):
+        """Sets the expected_cold_start_time of this V1AutoscalingSpec.
+
+
+        :param expected_cold_start_time: The expected_cold_start_time of this V1AutoscalingSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._expected_cold_start_time = expected_cold_start_time
 
     @property
     def idle_threshold_seconds(self) -> 'str':
