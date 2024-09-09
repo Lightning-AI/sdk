@@ -354,8 +354,13 @@ _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
     Machine.T4_X_4: "g4dn.12xlarge",
     Machine.L4: "g6.4xlarge",
     Machine.L4_X_4: "g6.12xlarge",
+    Machine.L4_X_8: "g6.48xlarge",
     Machine.A10G: "g5.8xlarge",
     Machine.A10G_X_4: "g5.12xlarge",
+    Machine.A10G_X_8: "g5.48xlarge",
+    Machine.L40: "6e.4xlarge",
+    Machine.L40_X_4: "g6e.12xlarge",
+    Machine.L40_X_8: "g6e.48xlarge",
     Machine.A100_X_8: "p4d.24xlarge",
     Machine.H100_X_8: "p5.48xlarge",
 }
