@@ -45,8 +45,10 @@ class V1CapacityBlockOffering(object):
         'capacity_block_offering_id': 'str',
         'currency_code': 'str',
         'end_date': 'datetime',
+        'fee': 'float',
         'instance_count': 'int',
         'instance_type': 'str',
+        'region': 'str',
         'start_date': 'datetime',
         'upfront_fee': 'float'
     }
@@ -56,20 +58,24 @@ class V1CapacityBlockOffering(object):
         'capacity_block_offering_id': 'capacityBlockOfferingId',
         'currency_code': 'currencyCode',
         'end_date': 'endDate',
+        'fee': 'fee',
         'instance_count': 'instanceCount',
         'instance_type': 'instanceType',
+        'region': 'region',
         'start_date': 'startDate',
         'upfront_fee': 'upfrontFee'
     }
 
-    def __init__(self, capacity_block_duration_hours: 'int' =None, capacity_block_offering_id: 'str' =None, currency_code: 'str' =None, end_date: 'datetime' =None, instance_count: 'int' =None, instance_type: 'str' =None, start_date: 'datetime' =None, upfront_fee: 'float' =None):  # noqa: E501
+    def __init__(self, capacity_block_duration_hours: 'int' =None, capacity_block_offering_id: 'str' =None, currency_code: 'str' =None, end_date: 'datetime' =None, fee: 'float' =None, instance_count: 'int' =None, instance_type: 'str' =None, region: 'str' =None, start_date: 'datetime' =None, upfront_fee: 'float' =None):  # noqa: E501
         """V1CapacityBlockOffering - a model defined in Swagger"""  # noqa: E501
         self._capacity_block_duration_hours = None
         self._capacity_block_offering_id = None
         self._currency_code = None
         self._end_date = None
+        self._fee = None
         self._instance_count = None
         self._instance_type = None
+        self._region = None
         self._start_date = None
         self._upfront_fee = None
         self.discriminator = None
@@ -81,10 +87,14 @@ class V1CapacityBlockOffering(object):
             self.currency_code = currency_code
         if end_date is not None:
             self.end_date = end_date
+        if fee is not None:
+            self.fee = fee
         if instance_count is not None:
             self.instance_count = instance_count
         if instance_type is not None:
             self.instance_type = instance_type
+        if region is not None:
+            self.region = region
         if start_date is not None:
             self.start_date = start_date
         if upfront_fee is not None:
@@ -175,6 +185,27 @@ class V1CapacityBlockOffering(object):
         self._end_date = end_date
 
     @property
+    def fee(self) -> 'float':
+        """Gets the fee of this V1CapacityBlockOffering.  # noqa: E501
+
+
+        :return: The fee of this V1CapacityBlockOffering.  # noqa: E501
+        :rtype: float
+        """
+        return self._fee
+
+    @fee.setter
+    def fee(self, fee: 'float'):
+        """Sets the fee of this V1CapacityBlockOffering.
+
+
+        :param fee: The fee of this V1CapacityBlockOffering.  # noqa: E501
+        :type: float
+        """
+
+        self._fee = fee
+
+    @property
     def instance_count(self) -> 'int':
         """Gets the instance_count of this V1CapacityBlockOffering.  # noqa: E501
 
@@ -215,6 +246,27 @@ class V1CapacityBlockOffering(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def region(self) -> 'str':
+        """Gets the region of this V1CapacityBlockOffering.  # noqa: E501
+
+
+        :return: The region of this V1CapacityBlockOffering.  # noqa: E501
+        :rtype: str
+        """
+        return self._region
+
+    @region.setter
+    def region(self, region: 'str'):
+        """Sets the region of this V1CapacityBlockOffering.
+
+
+        :param region: The region of this V1CapacityBlockOffering.  # noqa: E501
+        :type: str
+        """
+
+        self._region = region
 
     @property
     def start_date(self) -> 'datetime':
