@@ -35,6 +35,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1SearchUser,
     V1SearchUsersResponse,
     V1UploadProjectArtifactResponse,
+    V1UploadProjectArtifactPartsResponse,
     V1UserRequestedComputeConfig,
     V1LoginResponse,
     V1ListProjectClusterBindingsResponse,
@@ -1410,50 +1411,6 @@ def internal_inference_run_mocker(mocker):
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
         autospec=True,
         side_effect=side_effect,
-    )
-
-    yield [mocker]
-
-    mocker.resetall()
-
-
-@pytest.fixture
-def internal_studio_api_single_part_upload(mocker):
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_upload_project_artifact",
-        autospec=True,
-        return_value=V1UploadProjectArtifactResponse(
-            urls=[
-                V1PresignedUrl(part_number=1, url=f"https://my-dummy-s3-url.com"),
-            ],
-        ),
-    )
-
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_complete_upload_project_artifact",
-        autospec=True,
-    )
-
-    yield [mocker]
-
-    mocker.resetall()
-
-
-@pytest.fixture
-def internal_studio_api_multi_part_upload(mocker):
-    num_parts = 2
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_upload_project_artifact",
-        autospec=True,
-        return_value=V1UploadProjectArtifactResponse(
-            upload_id="my-fancy-upload",
-            urls=[V1PresignedUrl(part_number=i, url=f"https://my-dummy-s3-url.com&part={i}") for i in range(num_parts)],
-        ),
-    )
-
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_complete_upload_project_artifact",
-        autospec=True,
     )
 
     yield [mocker]

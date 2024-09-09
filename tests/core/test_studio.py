@@ -16,6 +16,8 @@ from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.api.utils import _BYTES_PER_MB
+from unittest import mock
+from unittest.mock import Mock
 
 
 @pytest.mark.parametrize("create_ok", [True, False])
@@ -367,7 +369,7 @@ def test_run_data_prep(
 @pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
 def test_run_inference(
     internal_studio_init_mocker,
-    internal_studio_status_mocker,
+    internal_user_api_mocker,
     internal_inference_run_mocker,
     internal_job_api_mocker_all_jobs_valid,
     cloud_compute,
@@ -407,27 +409,28 @@ def test_run_inference(
     )
 
 
-def test_upload_file_single_part(
-    tmpdir, internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_api_single_part_upload
+@pytest.mark.parametrize("progress_bar", [True, False])
+def test_upload_file(
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_studio_api_login,
+    tmp_path,
+    progress_bar,
 ):
     studio = Studio("st-abc", "ts-abc", "org-abc")
 
-    filepath = os.path.join(tmpdir, "file1")
-    subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
+    with pytest.raises(FileNotFoundError):
+        studio.upload_file(file_path=str(tmp_path / "does-not-exist.ckpt"), progress_bar=progress_bar)
 
-    studio.upload_file(filepath, "file1")
+    # Upload single file
+    file_path = tmp_path / "checkpoint.pt"
+    file_path.touch()
 
+    studio._studio_api.upload_file = mock.Mock()
 
-def test_upload_file_multi_part(
-    tmpdir, internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_api_multi_part_upload
-):
-    studio = Studio("st-abc", "ts-abc", "org-abc")
+    studio.upload_file(file_path=str(file_path), progress_bar=progress_bar)
 
-    filepath = os.path.join(tmpdir, "file1")
-    subprocess.run(f"truncate -s 40MB {filepath}".split(" "))
-
-    os.environ["LIGHTNING_MULTIPART_THRESHOLD"] = str(20 * _BYTES_PER_MB)
-    studio.upload_file(filepath, "file1")
+    studio._studio_api.upload_file.assert_called_once()
 
 
 def test_download_file(

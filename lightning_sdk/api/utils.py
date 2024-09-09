@@ -8,7 +8,6 @@ from typing import Dict, List
 import backoff
 import requests
 from tqdm import tqdm
-from tqdm.utils import CallbackIOWrapper
 
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreApi,
@@ -93,44 +92,11 @@ class _FileUploader:
         """
         count = 1 if self.filesize <= self.multipart_threshold else math.ceil(self.filesize / self.chunk_size)
 
-        if count == 1:
-            return self._singlepart_upload()
-
         return self._multipart_upload(count=count)
-
-    @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
-    def _singlepart_upload(self) -> None:
-        """Does a single part upload."""
-        body = ProjectIdStorageBody(cluster_id=self.cluster_id, count=1, filename=self.remote_path)
-        resp: V1UploadProjectArtifactResponse = self.client.lightningapp_instance_service_upload_project_artifact(
-            body=body, project_id=self.teamspace_id
-        )
-
-        with open(self.local_path, "rb") as fd:
-            reader_wrapper = CallbackIOWrapper(
-                self.progress_bar.update if self.progress_bar is not None else lambda x: None, fd, "read"
-            )
-
-            response = requests.put(resp.urls[0].url, data=reader_wrapper)
-        response.raise_for_status()
-
-        etag = response.headers.get("ETag")
-        completed = [V1CompleteUpload(etag=etag, part_number=resp.urls[0].part_number)]
-
-        completed_body = StorageCompleteBody(
-            cluster_id=self.cluster_id, filename=self.remote_path, parts=completed, upload_id=resp.upload_id
-        )
-        self.client.lightningapp_instance_service_complete_upload_project_artifact(
-            body=completed_body, project_id=self.teamspace_id
-        )
-
-        # clean the progress bar
-        if self.progress_bar:
-            self.progress_bar.close()
 
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload."""
-        body = ProjectIdStorageBody(cluster_id=self.cluster_id, count=count, filename=self.remote_path)
+        body = ProjectIdStorageBody(cluster_id=self.cluster_id, filename=self.remote_path)
         resp: V1UploadProjectArtifactResponse = self.client.lightningapp_instance_service_upload_project_artifact(
             body=body, project_id=self.teamspace_id
         )
@@ -164,6 +130,7 @@ class _FileUploader:
         resp: V1UploadProjectArtifactPartsResponse = (
             self.client.lightningapp_instance_service_upload_project_artifact_parts(body, self.teamspace_id, upload_id)
         )
+        print(resp.urls)
         return resp.urls
 
     def _handle_uploading_single_part(self, presigned_url: V1PresignedUrl, upload_id: str) -> V1CompleteUpload:

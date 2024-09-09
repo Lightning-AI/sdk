@@ -311,20 +311,11 @@ def test_create_inference_run(internal_studio_api_create_app_mocker):
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
-def test_upload_file_single_part(
-    tmpdir, internal_studio_api_single_part_upload, internal_studio_api_requests_put_mocker, progress_bar
-):
-    studio_api = StudioApi()
-
-    filepath = os.path.join(tmpdir, "file1")
-    subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
-
-    studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar)
-
-
-@pytest.mark.parametrize("progress_bar", [True, False])
-def test_upload_file_multi_part(
-    tmpdir, internal_studio_api_multi_part_upload, internal_studio_api_requests_put_mocker, progress_bar
+@mock.patch("lightning_sdk.api.studio_api._FileUploader")
+def test_upload_file(
+    uploader_mock,
+    tmpdir,
+    progress_bar,
 ):
     studio_api = StudioApi()
 
@@ -333,6 +324,16 @@ def test_upload_file_multi_part(
 
     os.environ["LIGHTNING_MULTIPART_THRESHOLD"] = str(20 * _BYTES_PER_MB)
     studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar)
+
+    uploader_mock.assert_called_with(
+        client=mock.ANY,
+        file_path=filepath,
+        remote_path="/cloudspaces/st-abc/code/content/file1",
+        cluster_id="cluster-abc",
+        teamspace_id="ts-abc",
+        progress_bar=progress_bar,
+    )
+    uploader_mock().assert_called_with()  # .__call__()
 
 
 def test_download_file(tmpdir, internal_studio_api_login, internal_studio_api_requests_get_mocker):
