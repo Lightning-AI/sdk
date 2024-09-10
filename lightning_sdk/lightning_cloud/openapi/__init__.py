@@ -23,6 +23,7 @@ from __future__ import absolute_import
 
 # import apis into sdk package
 from lightning_sdk.lightning_cloud.openapi.api.agent_service_api import AgentServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.analytics_service_api import AnalyticsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.assistants_service_api import AssistantsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.auth_service_api import AuthServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.billing_service_api import BillingServiceApi
@@ -531,6 +532,8 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_network_config import V1Net
 from lightning_sdk.lightning_cloud.openapi.models.v1_notification_preference import V1NotificationPreference
 from lightning_sdk.lightning_cloud.openapi.models.v1_notification_preferences_request import V1NotificationPreferencesRequest
 from lightning_sdk.lightning_cloud.openapi.models.v1_notification_type import V1NotificationType
+from lightning_sdk.lightning_cloud.openapi.models.v1_onboarding_event_request import V1OnboardingEventRequest
+from lightning_sdk.lightning_cloud.openapi.models.v1_onboarding_event_response import V1OnboardingEventResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_org_member import V1OrgMember
 from lightning_sdk.lightning_cloud.openapi.models.v1_org_membership import V1OrgMembership
 from lightning_sdk.lightning_cloud.openapi.models.v1_org_membership_role_binding import V1OrgMembershipRoleBinding
