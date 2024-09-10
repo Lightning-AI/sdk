@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, List, Optional, Union
 
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import TeamspaceApi
+from lightning_sdk.api.teamspace_api import UploadedModelInfo
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
 from lightning_sdk.user import User
@@ -156,7 +157,7 @@ class Teamspace:
         name: str,
         progress_bar: bool = True,
         cluster_id: Optional[str] = None,
-    ) -> None:
+    ) -> UploadedModelInfo:
         """Upload a local checkpoint file to the model store.
 
         Args:
@@ -204,6 +205,12 @@ class Teamspace:
             model_id=model.model_id,
             version=model.version,
             teamspace_id=self.id,
+        )
+        return UploadedModelInfo(
+            name=name,
+            version=model.version,
+            teamspace=self.name,
+            cluster=cluster_id,
         )
 
     def download_model(

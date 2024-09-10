@@ -1,4 +1,5 @@
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -224,3 +225,11 @@ class TeamspaceApi:
             download_dir=download_dir,
             progress_bar=progress_bar,
         )
+
+
+@dataclass
+class UploadedModelInfo:
+    name: str
+    version: str
+    teamspace: str
+    cluster: str

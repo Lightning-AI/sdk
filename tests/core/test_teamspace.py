@@ -185,7 +185,7 @@ def test_upload_model_single_file(
     ts._teamspace_api.upload_model_file = mock.Mock()
     ts._teamspace_api.complete_model_upload = mock.Mock()
 
-    ts.upload_model(path=file_path, name="user/modelname")
+    result = ts.upload_model(path=file_path, name="user/modelname")
 
     ts._teamspace_api.create_model.assert_called_once()
     ts._teamspace_api.upload_model_file.assert_called_with(
@@ -198,6 +198,11 @@ def test_upload_model_single_file(
         progress_bar=True,
     )
     ts._teamspace_api.complete_model_upload.assert_called_once()
+
+    assert result.name == "user/modelname"
+    assert result.version == "v3"
+    assert result.teamspace == "ts-abc"
+    assert result.cluster == "test-cluster-id"
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
