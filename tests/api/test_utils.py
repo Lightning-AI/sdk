@@ -43,6 +43,8 @@ def test_file_uploader(_, tmp_path, monkeypatch):
     file_path.touch()
     uploader = _make_mocked_file_uploader(monkeypatch, file_path=file_path, remote_path="path/to/file/on/remote")
 
+    uploader.progress_bar = Mock()
+
     uploader.client.lightningapp_instance_service_upload_project_artifact.return_value = Mock(
         upload_id="test-upload-id"
     )
@@ -69,6 +71,9 @@ def test_file_uploader(_, tmp_path, monkeypatch):
         "test-upload-id",
     )
     uploader.client.lightningapp_instance_service_complete_upload_project_artifact.assert_called_once()
+
+    # 0 because mocked data has length 0
+    uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
 
 
 def _make_mocked_model_uploader(monkeypatch, file_path, remote_path):
@@ -101,6 +106,7 @@ def test_model_file_uploader(_, tmp_path, monkeypatch):
     file_path.touch()
     uploader = _make_mocked_model_uploader(monkeypatch, file_path=file_path, remote_path="path/to/file/on/remote")
 
+    uploader.progress_bar = Mock()
     uploader.api.models_store_create_multi_part_upload.return_value = Mock(upload_id="test-upload-id")
     uploader.api.models_store_get_model_file_upload_urls.return_value = Mock(
         urls=[
@@ -126,6 +132,9 @@ def test_model_file_uploader(_, tmp_path, monkeypatch):
         upload_id="test-upload-id",
     )
     uploader.api.models_store_complete_multi_part_upload.assert_called_once()
+
+    # 0 because mocked data has length 0
+    uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
 
 
 @mock.patch("lightning_sdk.api.utils.requests")

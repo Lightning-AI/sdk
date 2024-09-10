@@ -151,7 +151,7 @@ class _FileUploader:
         response = requests.put(presigned_url.url, data=data)
         response.raise_for_status()
         if self.progress_bar is not None:
-            self.progress_bar.update(self.chunk_size)
+            self.progress_bar.update(len(data))
 
         etag = response.headers.get("ETag")
         return V1CompleteUpload(etag=etag, part_number=presigned_url.part_number)
@@ -285,7 +285,7 @@ class _ModelFileUploader:
         response = requests.put(presigned_url.url, data=data)
         response.raise_for_status()
         if self.progress_bar is not None:
-            self.progress_bar.update(self.chunk_size)
+            self.progress_bar.update(len(data))
 
         etag = response.headers.get("ETag")
         return V1CompletedPart(etag=etag, part_number=presigned_url.part_number)
