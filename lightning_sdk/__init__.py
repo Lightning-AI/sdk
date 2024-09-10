@@ -25,5 +25,5 @@ __all__ = [
     "Agent",
 ]
 
-__version__ = "0.1.15"
+__version__ = "0.1.16"
 _check_version_and_prompt_upgrade(__version__)
