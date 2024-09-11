@@ -8,6 +8,10 @@ on:
   pull_request:
     types: [opened, reopened, ready_for_review, synchronize]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   cpu-unittests:
     runs-on: "ubuntu-22.04"
@@ -26,12 +30,15 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip' # caching pip dependencies
 
+    - name: Install Torch
+      if: matrix.extra-installs != ''
+      run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
     - name: Install dependencies
       run: |
         pip install -r tests/requirements.txt ${{ matrix.extra-installs }}
         pip install . --upgrade
         pip list
-      shell: bash
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
