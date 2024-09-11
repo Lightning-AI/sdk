@@ -1,6 +1,10 @@
+import os
 import json
-from unittest import mock
 import pytest
+import time
+from unittest import mock
+
+from exceptiongroup import suppress
 
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.openapi import (
@@ -18,15 +22,12 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ExecuteCloudSpaceCommandResponse,
     V1GetCloudSpaceInstanceStatusResponse,
     V1LightningRun,
-    V1LightningappInstanceState,
-    V1LightningappInstanceStatus,
     V1ListCloudSpacesResponse,
     V1ListMembershipsResponse,
     V1LightningappInstanceStatus,
     V1LightningappInstanceState,
     V1ListOrganizationsResponse,
     V1Membership,
-    V1PresignedUrl,
     V1Organization,
     V1Plugin,
     V1PluginsListResponse,
@@ -34,8 +35,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Project,
     V1SearchUser,
     V1SearchUsersResponse,
-    V1UploadProjectArtifactResponse,
-    V1UploadProjectArtifactPartsResponse,
     V1UserRequestedComputeConfig,
     V1LoginResponse,
     V1ListProjectClusterBindingsResponse,
@@ -1973,3 +1972,23 @@ def internal_agents_api_get_agent_endpoint_mocker(mocker):
     yield [mocker]
 
     mocker.resetall()
+
+
+@pytest.fixture(scope="session")
+def available_aws_instance_types():
+    import boto3
+
+    # Initialize empty list to store instance types
+    instance_types = []
+    for region in ["us-east-1", "us-east-2", "us-west-1", "us-west-2"]:
+        # supress exceptions
+        with suppress(Exception):
+            # Create EC2 client
+            ec2_client = boto3.client("ec2", region_name=region)
+            # Paginator to handle large result sets
+            paginator = ec2_client.get_paginator("describe_instance_types")
+            # Iterate through each page of instance types
+            for page in paginator.paginate():
+                instance_types += [it["InstanceType"] for it in page["InstanceTypes"]]
+
+    return set(instance_types)

@@ -1,8 +1,5 @@
 from lightning_sdk.api.agents_api import AgentApi
 
-from click.exceptions import ClickException
-import pytest
-
 
 def test_get_agent(internal_agents_api_get_agent_mocker):
     agent_api = AgentApi()

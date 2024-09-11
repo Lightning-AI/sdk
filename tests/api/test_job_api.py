@@ -1,7 +1,6 @@
 from lightning_sdk.api.job_api import JobApi
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
-    V1LightningappInstanceState,
     Externalv1Lightningwork,
 )
 from click.exceptions import ClickException

@@ -10,8 +10,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     UploadIdPartsBody,
     V1UploadProjectArtifactPartsResponse,
     UploadsUploadIdBody,
-    UploadIdCompleteBody,
-    StorageCompleteBody,
     VersionUploadsBody,
 )
 

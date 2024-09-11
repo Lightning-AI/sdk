@@ -4,7 +4,6 @@ import subprocess
 
 import pytest
 from unittest import mock
-from unittest.mock import ANY
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api import studio_api as studio_api_module
 from lightning_sdk.api.utils import _BYTES_PER_MB
