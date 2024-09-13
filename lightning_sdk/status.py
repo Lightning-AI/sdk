@@ -9,4 +9,5 @@ class Status(Enum):
     Running = 3
     Stopping = 4
     Stopped = 5
-    Failed = 6
+    Completed = 6
+    Failed = 7

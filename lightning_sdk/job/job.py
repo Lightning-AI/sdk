@@ -73,5 +73,5 @@ def _internal_status_to_external_status(internal_status: str) -> Status:
         "LIGHTNINGAPP_INSTANCE_STATE_RUNNING": Status.Running,
         "LIGHTNINGAPP_INSTANCE_STATE_FAILED": Status.Failed,
         "LIGHTNINGAPP_INSTANCE_STATE_STOPPED": Status.Stopped,
-        "LIGHTNINGAPP_INSTANCE_STATE_COMPLETED": Status.Stopped,
+        "LIGHTNINGAPP_INSTANCE_STATE_COMPLETED": Status.Completed,
     }[internal_status]

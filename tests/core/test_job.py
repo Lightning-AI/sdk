@@ -44,7 +44,7 @@ def test_job_init_error(
         ("j-pqr", Status.Running),  # "LIGHTNINGAPP_INSTANCE_STATE_RUNNING"
         ("j-stu", Status.Failed),  # "LIGHTNINGAPP_INSTANCE_STATE_FAILED"
         ("j-vwx", Status.Stopped),  # "LIGHTNINGAPP_INSTANCE_STATE_STOPPED"
-        ("j-yz", Status.Stopped),  # "LIGHTNINGAPP_INSTANCE_STATE_COMPLETED"
+        ("j-yz", Status.Completed),  # "LIGHTNINGAPP_INSTANCE_STATE_COMPLETED"
     ],
 )
 def test_job_status(
