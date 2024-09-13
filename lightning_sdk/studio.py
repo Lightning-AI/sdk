@@ -132,7 +132,15 @@ class Studio:
             return None
         return self._studio_api.get_machine(self._studio.id, self._teamspace.id)
 
-    def start(self, machine: Machine = Machine.CPU) -> None:
+    @property
+    def spot(self) -> bool:
+        """Returns whether the Studio is running on a spot instance."""
+        if self.status != Status.Running:
+            return None
+
+        return self._studio_api.get_spot(self._studio.id, self._teamspace.id)
+
+    def start(self, machine: Machine = Machine.CPU, spot: bool = False) -> None:
         """Starts a Studio on the specified machine type (default: CPU-4)."""
         status = self.status
         if status == Status.Running:
@@ -147,7 +155,7 @@ class Studio:
 
         if status != Status.Stopped:
             raise RuntimeError(f"Cannot start a studio that is not stopped. Studio {self.name} is {status}.")
-        self._studio_api.start_studio(self._studio.id, self._teamspace.id, machine)
+        self._studio_api.start_studio(self._studio.id, self._teamspace.id, machine, spot=spot)
 
         self._setup()
 
@@ -167,11 +175,12 @@ class Studio:
         kwargs = self._studio_api.duplicate_studio(self._studio.id, self._teamspace.id, self._teamspace.id)
         return Studio(**kwargs)
 
-    def switch_machine(self, machine: Machine) -> None:
+    def switch_machine(self, machine: Machine, spot: bool = False) -> None:
         """Switches machine to the provided machine type/.
 
         Args:
             machine: the new machine type to switch to
+            spot: determines whether to switch to an interruptible instance
 
         Note:
             this call is blocking until the new machine is provisioned
@@ -182,7 +191,7 @@ class Studio:
             raise RuntimeError(
                 f"Cannot switch machine on a studio that is not running. Studio {self.name} is {status}."
             )
-        self._studio_api.switch_studio_machine(self._studio.id, self._teamspace.id, machine)
+        self._studio_api.switch_studio_machine(self._studio.id, self._teamspace.id, machine, spot=spot)
 
     def run_with_exit_code(self, *commands: str) -> Tuple[str, int]:
         """Runs given commands on the Studio while returning output and exit code.

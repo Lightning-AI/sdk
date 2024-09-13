@@ -72,19 +72,19 @@ def test_get_studio_status(internal_studio_api_mocker_studio_status):
 )
 def test_switch_studio_machine(internal_studio_api_mocker_switch_machine, machine):
     studio_api = StudioApi()
-    studio_api.switch_studio_machine("st-abc", "ts-abc", machine)
+    studio_api.switch_studio_machine("st-abc", "ts-abc", machine, False)
 
 
 def test_switch_studio_machine_wrong_machine(internal_studio_api_mocker_switch_machine):
     studio_api = StudioApi()
 
     with pytest.raises(KeyError, match="foo"):
-        studio_api.switch_studio_machine("st-abc", "ts-abc", "foo")
+        studio_api.switch_studio_machine("st-abc", "ts-abc", "foo", False)
 
 
 def test_start_studio(internal_studio_api_mocker_start_studio):
     studio_api = StudioApi()
-    studio_api.start_studio("st-abc", "ts-abc", Machine.CPU)
+    studio_api.start_studio("st-abc", "ts-abc", Machine.CPU, False)
 
 
 def test_stop_studio(internal_studio_api_mocker_stop_studio, internal_studio_api_mocker_studio_status):
@@ -261,7 +261,9 @@ def test_list_installed_plugins(internal_studio_api_list_installed_plugins_mocke
 def test_create_job(internal_studio_api_create_app_mocker):
     studio_api = StudioApi()
 
-    resp = studio_api.create_job("my-entry-point", "fancy-job-name", Machine.A10G, "st-abc", "ts-abc", "cluster-abc")
+    resp = studio_api.create_job(
+        "my-entry-point", "fancy-job-name", Machine.A10G, "st-abc", "ts-abc", "cluster-abc", False
+    )
     assert resp.name == "fancy-job-name"
 
 
@@ -272,7 +274,7 @@ def test_create_job_with_service_id(monkeypatch):
     monkeypatch.setattr(studio_api_module, "LightningClient", mock.MagicMock(return_value=mock_client))
     studio_api = StudioApi()
 
-    studio_api.create_job("my-entry-point", "fancy-job-name", Machine.A10G, "st-abc", "ts-abc", "cluster-abc")
+    studio_api.create_job("my-entry-point", "fancy-job-name", Machine.A10G, "st-abc", "ts-abc", "cluster-abc", False)
     assert (
         mock_client.cloud_space_service_create_cloud_space_app_instance._mock_mock_calls[0].kwargs["body"].service_id
         == "service_id"
@@ -283,7 +285,7 @@ def test_create_mmt(internal_studio_api_create_app_mocker):
     studio_api = StudioApi()
 
     resp = studio_api.create_multi_machine_job(
-        "my-entry-point", "fancy-mmt-name", 4, Machine.A10G, "parallel", "st-abc", "ts-abc", "cluster-abc"
+        "my-entry-point", "fancy-mmt-name", 4, Machine.A10G, "parallel", "st-abc", "ts-abc", "cluster-abc", False
     )
     assert resp.name == "fancy-mmt-name"
 
@@ -305,6 +307,7 @@ def test_create_inference_run(internal_studio_api_create_app_mocker):
         studio_id="st-abc",
         teamspace_id="ts-abc",
         cluster_id="cluster-abc",
+        spot=False,
     )
     assert resp.name == "fancy-inference-name"
 
