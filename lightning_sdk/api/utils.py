@@ -130,7 +130,6 @@ class _FileUploader:
         resp: V1UploadProjectArtifactPartsResponse = (
             self.client.lightningapp_instance_service_upload_project_artifact_parts(body, self.teamspace_id, upload_id)
         )
-        print(resp.urls)
         return resp.urls
 
     def _handle_uploading_single_part(self, presigned_url: V1PresignedUrl, upload_id: str) -> V1CompleteUpload:
