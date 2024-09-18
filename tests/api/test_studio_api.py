@@ -68,6 +68,7 @@ def test_get_studio_status(internal_studio_api_mocker_studio_status):
         Machine.A10G_X_4,
         Machine.A100_X_8,
         Machine.H100_X_8,
+        Machine.H200_X_8,
     ),
 )
 def test_switch_studio_machine(internal_studio_api_mocker_switch_machine, machine):
@@ -128,6 +129,7 @@ def test_delete_studio(internal_studio_api_mocker_delete):
         ("st-vwx", Machine.A10G_X_4),
         ("st-yza", Machine.A100_X_8),
         ("st-bcd", Machine.H100_X_8),
+        ("st-efg", Machine.H200_X_8),
     ],
 )
 def test_get_machine(internal_studio_api_mocker_get_machine, name, expected_machine):

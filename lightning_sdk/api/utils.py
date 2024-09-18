@@ -329,6 +329,7 @@ _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
     Machine.L40_X_8: "g6e.48xlarge",
     Machine.A100_X_8: "p4d.24xlarge",
     Machine.H100_X_8: "p5.48xlarge",
+    Machine.H200_X_8: "p5e.48xlarge",
 }
 
 _COMPUTE_NAME_TO_MACHINE: Dict[str, Machine] = {v: k for k, v in _MACHINE_TO_COMPUTE_NAME.items()}

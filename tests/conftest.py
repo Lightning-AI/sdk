@@ -444,6 +444,8 @@ def internal_studio_api_mocker_get_machine(mocker):
             instance = "p4d.24xlarge"
         elif id == "st-bcd":
             instance = "p5.48xlarge"
+        elif id == "st-efg":
+            instance = "p5e.48xlarge"
 
         assert instance is not None
         return V1CloudSpaceInstanceConfig(compute_config=V1UserRequestedComputeConfig(name=instance))
