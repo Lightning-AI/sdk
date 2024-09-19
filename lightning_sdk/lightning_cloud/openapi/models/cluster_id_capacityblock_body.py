@@ -41,92 +41,118 @@ class ClusterIdCapacityblockBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'capacity_block_offering_id': 'str',
-        'region': 'str',
-        'upfront_fee': 'float'
+        'capacity_block_duration_hours': 'int',
+        'instance_count': 'int',
+        'instance_type': 'str',
+        'start_date': 'datetime'
     }
 
     attribute_map = {
-        'capacity_block_offering_id': 'capacityBlockOfferingId',
-        'region': 'region',
-        'upfront_fee': 'upfrontFee'
+        'capacity_block_duration_hours': 'capacityBlockDurationHours',
+        'instance_count': 'instanceCount',
+        'instance_type': 'instanceType',
+        'start_date': 'startDate'
     }
 
-    def __init__(self, capacity_block_offering_id: 'str' =None, region: 'str' =None, upfront_fee: 'float' =None):  # noqa: E501
+    def __init__(self, capacity_block_duration_hours: 'int' =None, instance_count: 'int' =None, instance_type: 'str' =None, start_date: 'datetime' =None):  # noqa: E501
         """ClusterIdCapacityblockBody - a model defined in Swagger"""  # noqa: E501
-        self._capacity_block_offering_id = None
-        self._region = None
-        self._upfront_fee = None
+        self._capacity_block_duration_hours = None
+        self._instance_count = None
+        self._instance_type = None
+        self._start_date = None
         self.discriminator = None
-        if capacity_block_offering_id is not None:
-            self.capacity_block_offering_id = capacity_block_offering_id
-        if region is not None:
-            self.region = region
-        if upfront_fee is not None:
-            self.upfront_fee = upfront_fee
+        if capacity_block_duration_hours is not None:
+            self.capacity_block_duration_hours = capacity_block_duration_hours
+        if instance_count is not None:
+            self.instance_count = instance_count
+        if instance_type is not None:
+            self.instance_type = instance_type
+        if start_date is not None:
+            self.start_date = start_date
 
     @property
-    def capacity_block_offering_id(self) -> 'str':
-        """Gets the capacity_block_offering_id of this ClusterIdCapacityblockBody.  # noqa: E501
+    def capacity_block_duration_hours(self) -> 'int':
+        """Gets the capacity_block_duration_hours of this ClusterIdCapacityblockBody.  # noqa: E501
 
 
-        :return: The capacity_block_offering_id of this ClusterIdCapacityblockBody.  # noqa: E501
+        :return: The capacity_block_duration_hours of this ClusterIdCapacityblockBody.  # noqa: E501
+        :rtype: int
+        """
+        return self._capacity_block_duration_hours
+
+    @capacity_block_duration_hours.setter
+    def capacity_block_duration_hours(self, capacity_block_duration_hours: 'int'):
+        """Sets the capacity_block_duration_hours of this ClusterIdCapacityblockBody.
+
+
+        :param capacity_block_duration_hours: The capacity_block_duration_hours of this ClusterIdCapacityblockBody.  # noqa: E501
+        :type: int
+        """
+
+        self._capacity_block_duration_hours = capacity_block_duration_hours
+
+    @property
+    def instance_count(self) -> 'int':
+        """Gets the instance_count of this ClusterIdCapacityblockBody.  # noqa: E501
+
+
+        :return: The instance_count of this ClusterIdCapacityblockBody.  # noqa: E501
+        :rtype: int
+        """
+        return self._instance_count
+
+    @instance_count.setter
+    def instance_count(self, instance_count: 'int'):
+        """Sets the instance_count of this ClusterIdCapacityblockBody.
+
+
+        :param instance_count: The instance_count of this ClusterIdCapacityblockBody.  # noqa: E501
+        :type: int
+        """
+
+        self._instance_count = instance_count
+
+    @property
+    def instance_type(self) -> 'str':
+        """Gets the instance_type of this ClusterIdCapacityblockBody.  # noqa: E501
+
+
+        :return: The instance_type of this ClusterIdCapacityblockBody.  # noqa: E501
         :rtype: str
         """
-        return self._capacity_block_offering_id
+        return self._instance_type
 
-    @capacity_block_offering_id.setter
-    def capacity_block_offering_id(self, capacity_block_offering_id: 'str'):
-        """Sets the capacity_block_offering_id of this ClusterIdCapacityblockBody.
+    @instance_type.setter
+    def instance_type(self, instance_type: 'str'):
+        """Sets the instance_type of this ClusterIdCapacityblockBody.
 
 
-        :param capacity_block_offering_id: The capacity_block_offering_id of this ClusterIdCapacityblockBody.  # noqa: E501
+        :param instance_type: The instance_type of this ClusterIdCapacityblockBody.  # noqa: E501
         :type: str
         """
 
-        self._capacity_block_offering_id = capacity_block_offering_id
+        self._instance_type = instance_type
 
     @property
-    def region(self) -> 'str':
-        """Gets the region of this ClusterIdCapacityblockBody.  # noqa: E501
+    def start_date(self) -> 'datetime':
+        """Gets the start_date of this ClusterIdCapacityblockBody.  # noqa: E501
 
 
-        :return: The region of this ClusterIdCapacityblockBody.  # noqa: E501
-        :rtype: str
+        :return: The start_date of this ClusterIdCapacityblockBody.  # noqa: E501
+        :rtype: datetime
         """
-        return self._region
+        return self._start_date
 
-    @region.setter
-    def region(self, region: 'str'):
-        """Sets the region of this ClusterIdCapacityblockBody.
-
-
-        :param region: The region of this ClusterIdCapacityblockBody.  # noqa: E501
-        :type: str
-        """
-
-        self._region = region
-
-    @property
-    def upfront_fee(self) -> 'float':
-        """Gets the upfront_fee of this ClusterIdCapacityblockBody.  # noqa: E501
+    @start_date.setter
+    def start_date(self, start_date: 'datetime'):
+        """Sets the start_date of this ClusterIdCapacityblockBody.
 
 
-        :return: The upfront_fee of this ClusterIdCapacityblockBody.  # noqa: E501
-        :rtype: float
-        """
-        return self._upfront_fee
-
-    @upfront_fee.setter
-    def upfront_fee(self, upfront_fee: 'float'):
-        """Sets the upfront_fee of this ClusterIdCapacityblockBody.
-
-
-        :param upfront_fee: The upfront_fee of this ClusterIdCapacityblockBody.  # noqa: E501
-        :type: float
+        :param start_date: The start_date of this ClusterIdCapacityblockBody.  # noqa: E501
+        :type: datetime
         """
 
-        self._upfront_fee = upfront_fee
+        self._start_date = start_date
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

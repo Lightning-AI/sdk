@@ -2001,7 +2001,6 @@ class JobsServiceApi(object):
         :param datetime since:
         :param datetime until:
         :param str query:
-        :param str limit:
         :param str page_size:
         :param str page_token:
         :return: V1SearchJobLogsResponse
@@ -2030,7 +2029,6 @@ class JobsServiceApi(object):
         :param datetime since:
         :param datetime until:
         :param str query:
-        :param str limit:
         :param str page_size:
         :param str page_token:
         :return: V1SearchJobLogsResponse
@@ -2038,7 +2036,7 @@ class JobsServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'deployment_id', 'since', 'until', 'query', 'limit', 'page_size', 'page_token']  # noqa: E501
+        all_params = ['project_id', 'id', 'deployment_id', 'since', 'until', 'query', 'page_size', 'page_token']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2075,8 +2073,6 @@ class JobsServiceApi(object):
             query_params.append(('until', params['until']))  # noqa: E501
         if 'query' in params:
             query_params.append(('query', params['query']))  # noqa: E501
-        if 'limit' in params:
-            query_params.append(('limit', params['limit']))  # noqa: E501
         if 'page_size' in params:
             query_params.append(('pageSize', params['page_size']))  # noqa: E501
         if 'page_token' in params:

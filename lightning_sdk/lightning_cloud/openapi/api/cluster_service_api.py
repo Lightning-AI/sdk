@@ -894,7 +894,6 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id: (required)
-        :param str region:
         :param str instance_type:
         :param int instance_count:
         :param int capacity_block_duration_hours:
@@ -921,7 +920,6 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id: (required)
-        :param str region:
         :param str instance_type:
         :param int instance_count:
         :param int capacity_block_duration_hours:
@@ -931,7 +929,7 @@ class ClusterServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'region', 'instance_type', 'instance_count', 'capacity_block_duration_hours', 'start_date']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'instance_type', 'instance_count', 'capacity_block_duration_hours', 'start_date']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -964,8 +962,6 @@ class ClusterServiceApi(object):
             path_params['clusterId'] = params['cluster_id']  # noqa: E501
 
         query_params = []
-        if 'region' in params:
-            query_params.append(('region', params['region']))  # noqa: E501
         if 'instance_type' in params:
             query_params.append(('instanceType', params['instance_type']))  # noqa: E501
         if 'instance_count' in params:

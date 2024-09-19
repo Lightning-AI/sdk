@@ -45,6 +45,7 @@ class V1DataConnection(object):
         'accessible': 'bool',
         'aws': 'V1AwsDataConnection',
         'cluster_id': 'str',
+        'created_at': 'datetime',
         'gcp': 'V1GcpDataConnection',
         'id': 'str',
         'index': 'V1Index',
@@ -65,6 +66,7 @@ class V1DataConnection(object):
         'accessible': 'accessible',
         'aws': 'aws',
         'cluster_id': 'clusterId',
+        'created_at': 'createdAt',
         'gcp': 'gcp',
         'id': 'id',
         'index': 'index',
@@ -80,12 +82,13 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
         self._aws = None
         self._cluster_id = None
+        self._created_at = None
         self._gcp = None
         self._id = None
         self._index = None
@@ -108,6 +111,8 @@ class V1DataConnection(object):
             self.aws = aws
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if created_at is not None:
+            self.created_at = created_at
         if gcp is not None:
             self.gcp = gcp
         if id is not None:
@@ -218,6 +223,27 @@ class V1DataConnection(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def created_at(self) -> 'datetime':
+        """Gets the created_at of this V1DataConnection.  # noqa: E501
+
+
+        :return: The created_at of this V1DataConnection.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._created_at
+
+    @created_at.setter
+    def created_at(self, created_at: 'datetime'):
+        """Sets the created_at of this V1DataConnection.
+
+
+        :param created_at: The created_at of this V1DataConnection.  # noqa: E501
+        :type: datetime
+        """
+
+        self._created_at = created_at
 
     @property
     def gcp(self) -> 'V1GcpDataConnection':

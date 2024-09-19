@@ -1416,6 +1416,7 @@ class EndpointServiceApi(object):
         :param str project_id: (required)
         :param str cloudspace_id:
         :param bool auto_start:
+        :param str cluster_id:
         :return: V1ListEndpointsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1439,12 +1440,13 @@ class EndpointServiceApi(object):
         :param str project_id: (required)
         :param str cloudspace_id:
         :param bool auto_start:
+        :param str cluster_id:
         :return: V1ListEndpointsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'auto_start']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'auto_start', 'cluster_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1475,6 +1477,8 @@ class EndpointServiceApi(object):
             query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
         if 'auto_start' in params:
             query_params.append(('autoStart', params['auto_start']))  # noqa: E501
+        if 'cluster_id' in params:
+            query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
 
         header_params = {}
 

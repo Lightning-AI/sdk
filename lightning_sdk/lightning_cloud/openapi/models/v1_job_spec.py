@@ -58,7 +58,8 @@ class V1JobSpec(object):
         'run_id': 'str',
         'skip_data_connections_setup': 'bool',
         'skip_filesystem_setup': 'bool',
-        'spot': 'bool'
+        'spot': 'bool',
+        'volumes': 'list[V1Volume]'
     }
 
     attribute_map = {
@@ -79,10 +80,11 @@ class V1JobSpec(object):
         'run_id': 'runId',
         'skip_data_connections_setup': 'skipDataConnectionsSetup',
         'skip_filesystem_setup': 'skipFilesystemSetup',
-        'spot': 'spot'
+        'spot': 'spot',
+        'volumes': 'volumes'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -102,6 +104,7 @@ class V1JobSpec(object):
         self._skip_data_connections_setup = None
         self._skip_filesystem_setup = None
         self._spot = None
+        self._volumes = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
@@ -139,6 +142,8 @@ class V1JobSpec(object):
             self.skip_filesystem_setup = skip_filesystem_setup
         if spot is not None:
             self.spot = spot
+        if volumes is not None:
+            self.volumes = volumes
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -517,6 +522,27 @@ class V1JobSpec(object):
         """
 
         self._spot = spot
+
+    @property
+    def volumes(self) -> 'list[V1Volume]':
+        """Gets the volumes of this V1JobSpec.  # noqa: E501
+
+
+        :return: The volumes of this V1JobSpec.  # noqa: E501
+        :rtype: list[V1Volume]
+        """
+        return self._volumes
+
+    @volumes.setter
+    def volumes(self, volumes: 'list[V1Volume]'):
+        """Sets the volumes of this V1JobSpec.
+
+
+        :param volumes: The volumes of this V1JobSpec.  # noqa: E501
+        :type: list[V1Volume]
+        """
+
+        self._volumes = volumes
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

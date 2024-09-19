@@ -41,6 +41,7 @@ class V1UserFeatures(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'advanced_deployment_autoscaling': 'bool',
         'agents_v2': 'bool',
         'apt_get_v2': 'bool',
         'auto_fast_load': 'bool',
@@ -59,6 +60,7 @@ class V1UserFeatures(object):
         'crypto_monitoring': 'bool',
         'custom_app_domain': 'bool',
         'custom_instance_types': 'bool',
+        'deployment_persistent_disk': 'bool',
         'docs_agent': 'bool',
         'enable_crypto_crackdown': 'bool',
         'enable_efs': 'bool',
@@ -66,14 +68,13 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
         'gcp': 'bool',
+        'has_new_release_modal': 'bool',
         'inference_job_deployment_plugin': 'bool',
-        'interruptible_instances': 'bool',
         'jobs_init': 'bool',
         'jobs_v2': 'bool',
         'landing_studios': 'bool',
         'lit_logger': 'bool',
         'lit_logger_storage_v2': 'bool',
-        'mmt_app': 'bool',
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
         'model_store': 'bool',
@@ -95,9 +96,9 @@ class V1UserFeatures(object):
         'plugin_sweeps': 'bool',
         'plugin_weviate': 'bool',
         'pricing_updates': 'bool',
+        'private_ip_over_efa_interface': 'bool',
         'product_generator': 'bool',
         'project_selector': 'bool',
-        'publish_ai_app': 'bool',
         'restart_ide_on_hang': 'bool',
         'restartable_jobs': 'bool',
         'runnable_public_studio_page': 'bool',
@@ -105,18 +106,16 @@ class V1UserFeatures(object):
         'slurm': 'bool',
         'slurm_machine_selector': 'bool',
         'snowflake_connection': 'bool',
-        'spot': 'bool',
         'studio_config': 'bool',
         'studio_on_stop': 'bool',
         'teamspace_storage_tab': 'bool',
-        'unified_billing_ux': 'bool',
-        'unified_billing_ux_v2': 'bool',
         'use_local_disk': 'bool',
         'use_rclone_mounts_only': 'bool',
         'writable_data_connections': 'bool'
     }
 
     attribute_map = {
+        'advanced_deployment_autoscaling': 'advancedDeploymentAutoscaling',
         'agents_v2': 'agentsV2',
         'apt_get_v2': 'aptGetV2',
         'auto_fast_load': 'autoFastLoad',
@@ -135,6 +134,7 @@ class V1UserFeatures(object):
         'crypto_monitoring': 'cryptoMonitoring',
         'custom_app_domain': 'customAppDomain',
         'custom_instance_types': 'customInstanceTypes',
+        'deployment_persistent_disk': 'deploymentPersistentDisk',
         'docs_agent': 'docsAgent',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'enable_efs': 'enableEfs',
@@ -142,14 +142,13 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
         'gcp': 'gcp',
+        'has_new_release_modal': 'hasNewReleaseModal',
         'inference_job_deployment_plugin': 'inferenceJobDeploymentPlugin',
-        'interruptible_instances': 'interruptibleInstances',
         'jobs_init': 'jobsInit',
         'jobs_v2': 'jobsV2',
         'landing_studios': 'landingStudios',
         'lit_logger': 'litLogger',
         'lit_logger_storage_v2': 'litLoggerStorageV2',
-        'mmt_app': 'mmtApp',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'model_store': 'modelStore',
@@ -171,9 +170,9 @@ class V1UserFeatures(object):
         'plugin_sweeps': 'pluginSweeps',
         'plugin_weviate': 'pluginWeviate',
         'pricing_updates': 'pricingUpdates',
+        'private_ip_over_efa_interface': 'privateIpOverEfaInterface',
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
-        'publish_ai_app': 'publishAiApp',
         'restart_ide_on_hang': 'restartIdeOnHang',
         'restartable_jobs': 'restartableJobs',
         'runnable_public_studio_page': 'runnablePublicStudioPage',
@@ -181,19 +180,17 @@ class V1UserFeatures(object):
         'slurm': 'slurm',
         'slurm_machine_selector': 'slurmMachineSelector',
         'snowflake_connection': 'snowflakeConnection',
-        'spot': 'spot',
         'studio_config': 'studioConfig',
         'studio_on_stop': 'studioOnStop',
         'teamspace_storage_tab': 'teamspaceStorageTab',
-        'unified_billing_ux': 'unifiedBillingUx',
-        'unified_billing_ux_v2': 'unifiedBillingUxV2',
         'use_local_disk': 'useLocalDisk',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, interruptible_instances: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_app: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_ai_app: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, unified_billing_ux: 'bool' =None, unified_billing_ux_v2: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, has_new_release_modal: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, private_ip_over_efa_interface: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
+        self._advanced_deployment_autoscaling = None
         self._agents_v2 = None
         self._apt_get_v2 = None
         self._auto_fast_load = None
@@ -212,6 +209,7 @@ class V1UserFeatures(object):
         self._crypto_monitoring = None
         self._custom_app_domain = None
         self._custom_instance_types = None
+        self._deployment_persistent_disk = None
         self._docs_agent = None
         self._enable_crypto_crackdown = None
         self._enable_efs = None
@@ -219,14 +217,13 @@ class V1UserFeatures(object):
         self._featured_studios_admin = None
         self._filesystem_optimisation = None
         self._gcp = None
+        self._has_new_release_modal = None
         self._inference_job_deployment_plugin = None
-        self._interruptible_instances = None
         self._jobs_init = None
         self._jobs_v2 = None
         self._landing_studios = None
         self._lit_logger = None
         self._lit_logger_storage_v2 = None
-        self._mmt_app = None
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
         self._model_store = None
@@ -248,9 +245,9 @@ class V1UserFeatures(object):
         self._plugin_sweeps = None
         self._plugin_weviate = None
         self._pricing_updates = None
+        self._private_ip_over_efa_interface = None
         self._product_generator = None
         self._project_selector = None
-        self._publish_ai_app = None
         self._restart_ide_on_hang = None
         self._restartable_jobs = None
         self._runnable_public_studio_page = None
@@ -258,16 +255,15 @@ class V1UserFeatures(object):
         self._slurm = None
         self._slurm_machine_selector = None
         self._snowflake_connection = None
-        self._spot = None
         self._studio_config = None
         self._studio_on_stop = None
         self._teamspace_storage_tab = None
-        self._unified_billing_ux = None
-        self._unified_billing_ux_v2 = None
         self._use_local_disk = None
         self._use_rclone_mounts_only = None
         self._writable_data_connections = None
         self.discriminator = None
+        if advanced_deployment_autoscaling is not None:
+            self.advanced_deployment_autoscaling = advanced_deployment_autoscaling
         if agents_v2 is not None:
             self.agents_v2 = agents_v2
         if apt_get_v2 is not None:
@@ -304,6 +300,8 @@ class V1UserFeatures(object):
             self.custom_app_domain = custom_app_domain
         if custom_instance_types is not None:
             self.custom_instance_types = custom_instance_types
+        if deployment_persistent_disk is not None:
+            self.deployment_persistent_disk = deployment_persistent_disk
         if docs_agent is not None:
             self.docs_agent = docs_agent
         if enable_crypto_crackdown is not None:
@@ -318,10 +316,10 @@ class V1UserFeatures(object):
             self.filesystem_optimisation = filesystem_optimisation
         if gcp is not None:
             self.gcp = gcp
+        if has_new_release_modal is not None:
+            self.has_new_release_modal = has_new_release_modal
         if inference_job_deployment_plugin is not None:
             self.inference_job_deployment_plugin = inference_job_deployment_plugin
-        if interruptible_instances is not None:
-            self.interruptible_instances = interruptible_instances
         if jobs_init is not None:
             self.jobs_init = jobs_init
         if jobs_v2 is not None:
@@ -332,8 +330,6 @@ class V1UserFeatures(object):
             self.lit_logger = lit_logger
         if lit_logger_storage_v2 is not None:
             self.lit_logger_storage_v2 = lit_logger_storage_v2
-        if mmt_app is not None:
-            self.mmt_app = mmt_app
         if mmt_fault_tolerance is not None:
             self.mmt_fault_tolerance = mmt_fault_tolerance
         if mmt_strategy_selector is not None:
@@ -376,12 +372,12 @@ class V1UserFeatures(object):
             self.plugin_weviate = plugin_weviate
         if pricing_updates is not None:
             self.pricing_updates = pricing_updates
+        if private_ip_over_efa_interface is not None:
+            self.private_ip_over_efa_interface = private_ip_over_efa_interface
         if product_generator is not None:
             self.product_generator = product_generator
         if project_selector is not None:
             self.project_selector = project_selector
-        if publish_ai_app is not None:
-            self.publish_ai_app = publish_ai_app
         if restart_ide_on_hang is not None:
             self.restart_ide_on_hang = restart_ide_on_hang
         if restartable_jobs is not None:
@@ -396,24 +392,39 @@ class V1UserFeatures(object):
             self.slurm_machine_selector = slurm_machine_selector
         if snowflake_connection is not None:
             self.snowflake_connection = snowflake_connection
-        if spot is not None:
-            self.spot = spot
         if studio_config is not None:
             self.studio_config = studio_config
         if studio_on_stop is not None:
             self.studio_on_stop = studio_on_stop
         if teamspace_storage_tab is not None:
             self.teamspace_storage_tab = teamspace_storage_tab
-        if unified_billing_ux is not None:
-            self.unified_billing_ux = unified_billing_ux
-        if unified_billing_ux_v2 is not None:
-            self.unified_billing_ux_v2 = unified_billing_ux_v2
         if use_local_disk is not None:
             self.use_local_disk = use_local_disk
         if use_rclone_mounts_only is not None:
             self.use_rclone_mounts_only = use_rclone_mounts_only
         if writable_data_connections is not None:
             self.writable_data_connections = writable_data_connections
+
+    @property
+    def advanced_deployment_autoscaling(self) -> 'bool':
+        """Gets the advanced_deployment_autoscaling of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The advanced_deployment_autoscaling of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._advanced_deployment_autoscaling
+
+    @advanced_deployment_autoscaling.setter
+    def advanced_deployment_autoscaling(self, advanced_deployment_autoscaling: 'bool'):
+        """Sets the advanced_deployment_autoscaling of this V1UserFeatures.
+
+
+        :param advanced_deployment_autoscaling: The advanced_deployment_autoscaling of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._advanced_deployment_autoscaling = advanced_deployment_autoscaling
 
     @property
     def agents_v2(self) -> 'bool':
@@ -794,6 +805,27 @@ class V1UserFeatures(object):
         self._custom_instance_types = custom_instance_types
 
     @property
+    def deployment_persistent_disk(self) -> 'bool':
+        """Gets the deployment_persistent_disk of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The deployment_persistent_disk of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._deployment_persistent_disk
+
+    @deployment_persistent_disk.setter
+    def deployment_persistent_disk(self, deployment_persistent_disk: 'bool'):
+        """Sets the deployment_persistent_disk of this V1UserFeatures.
+
+
+        :param deployment_persistent_disk: The deployment_persistent_disk of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._deployment_persistent_disk = deployment_persistent_disk
+
+    @property
     def docs_agent(self) -> 'bool':
         """Gets the docs_agent of this V1UserFeatures.  # noqa: E501
 
@@ -941,6 +973,27 @@ class V1UserFeatures(object):
         self._gcp = gcp
 
     @property
+    def has_new_release_modal(self) -> 'bool':
+        """Gets the has_new_release_modal of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The has_new_release_modal of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._has_new_release_modal
+
+    @has_new_release_modal.setter
+    def has_new_release_modal(self, has_new_release_modal: 'bool'):
+        """Sets the has_new_release_modal of this V1UserFeatures.
+
+
+        :param has_new_release_modal: The has_new_release_modal of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._has_new_release_modal = has_new_release_modal
+
+    @property
     def inference_job_deployment_plugin(self) -> 'bool':
         """Gets the inference_job_deployment_plugin of this V1UserFeatures.  # noqa: E501
 
@@ -960,27 +1013,6 @@ class V1UserFeatures(object):
         """
 
         self._inference_job_deployment_plugin = inference_job_deployment_plugin
-
-    @property
-    def interruptible_instances(self) -> 'bool':
-        """Gets the interruptible_instances of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The interruptible_instances of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._interruptible_instances
-
-    @interruptible_instances.setter
-    def interruptible_instances(self, interruptible_instances: 'bool'):
-        """Sets the interruptible_instances of this V1UserFeatures.
-
-
-        :param interruptible_instances: The interruptible_instances of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._interruptible_instances = interruptible_instances
 
     @property
     def jobs_init(self) -> 'bool':
@@ -1086,27 +1118,6 @@ class V1UserFeatures(object):
         """
 
         self._lit_logger_storage_v2 = lit_logger_storage_v2
-
-    @property
-    def mmt_app(self) -> 'bool':
-        """Gets the mmt_app of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The mmt_app of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._mmt_app
-
-    @mmt_app.setter
-    def mmt_app(self, mmt_app: 'bool'):
-        """Sets the mmt_app of this V1UserFeatures.
-
-
-        :param mmt_app: The mmt_app of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._mmt_app = mmt_app
 
     @property
     def mmt_fault_tolerance(self) -> 'bool':
@@ -1550,6 +1561,27 @@ class V1UserFeatures(object):
         self._pricing_updates = pricing_updates
 
     @property
+    def private_ip_over_efa_interface(self) -> 'bool':
+        """Gets the private_ip_over_efa_interface of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The private_ip_over_efa_interface of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._private_ip_over_efa_interface
+
+    @private_ip_over_efa_interface.setter
+    def private_ip_over_efa_interface(self, private_ip_over_efa_interface: 'bool'):
+        """Sets the private_ip_over_efa_interface of this V1UserFeatures.
+
+
+        :param private_ip_over_efa_interface: The private_ip_over_efa_interface of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._private_ip_over_efa_interface = private_ip_over_efa_interface
+
+    @property
     def product_generator(self) -> 'bool':
         """Gets the product_generator of this V1UserFeatures.  # noqa: E501
 
@@ -1590,27 +1622,6 @@ class V1UserFeatures(object):
         """
 
         self._project_selector = project_selector
-
-    @property
-    def publish_ai_app(self) -> 'bool':
-        """Gets the publish_ai_app of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The publish_ai_app of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._publish_ai_app
-
-    @publish_ai_app.setter
-    def publish_ai_app(self, publish_ai_app: 'bool'):
-        """Sets the publish_ai_app of this V1UserFeatures.
-
-
-        :param publish_ai_app: The publish_ai_app of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._publish_ai_app = publish_ai_app
 
     @property
     def restart_ide_on_hang(self) -> 'bool':
@@ -1760,27 +1771,6 @@ class V1UserFeatures(object):
         self._snowflake_connection = snowflake_connection
 
     @property
-    def spot(self) -> 'bool':
-        """Gets the spot of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The spot of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._spot
-
-    @spot.setter
-    def spot(self, spot: 'bool'):
-        """Sets the spot of this V1UserFeatures.
-
-
-        :param spot: The spot of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._spot = spot
-
-    @property
     def studio_config(self) -> 'bool':
         """Gets the studio_config of this V1UserFeatures.  # noqa: E501
 
@@ -1842,48 +1832,6 @@ class V1UserFeatures(object):
         """
 
         self._teamspace_storage_tab = teamspace_storage_tab
-
-    @property
-    def unified_billing_ux(self) -> 'bool':
-        """Gets the unified_billing_ux of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The unified_billing_ux of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._unified_billing_ux
-
-    @unified_billing_ux.setter
-    def unified_billing_ux(self, unified_billing_ux: 'bool'):
-        """Sets the unified_billing_ux of this V1UserFeatures.
-
-
-        :param unified_billing_ux: The unified_billing_ux of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._unified_billing_ux = unified_billing_ux
-
-    @property
-    def unified_billing_ux_v2(self) -> 'bool':
-        """Gets the unified_billing_ux_v2 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The unified_billing_ux_v2 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._unified_billing_ux_v2
-
-    @unified_billing_ux_v2.setter
-    def unified_billing_ux_v2(self, unified_billing_ux_v2: 'bool'):
-        """Sets the unified_billing_ux_v2 of this V1UserFeatures.
-
-
-        :param unified_billing_ux_v2: The unified_billing_ux_v2 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._unified_billing_ux_v2 = unified_billing_ux_v2
 
     @property
     def use_local_disk(self) -> 'bool':
