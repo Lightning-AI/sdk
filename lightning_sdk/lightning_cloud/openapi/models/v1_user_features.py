@@ -62,6 +62,7 @@ class V1UserFeatures(object):
         'custom_instance_types': 'bool',
         'deployment_persistent_disk': 'bool',
         'docs_agent': 'bool',
+        'drive_v2': 'bool',
         'enable_crypto_crackdown': 'bool',
         'enable_efs': 'bool',
         'enable_storage_limits': 'bool',
@@ -136,6 +137,7 @@ class V1UserFeatures(object):
         'custom_instance_types': 'customInstanceTypes',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
         'docs_agent': 'docsAgent',
+        'drive_v2': 'driveV2',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'enable_efs': 'enableEfs',
         'enable_storage_limits': 'enableStorageLimits',
@@ -188,7 +190,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, has_new_release_modal: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, private_ip_over_efa_interface: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, has_new_release_modal: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, private_ip_over_efa_interface: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._advanced_deployment_autoscaling = None
         self._agents_v2 = None
@@ -211,6 +213,7 @@ class V1UserFeatures(object):
         self._custom_instance_types = None
         self._deployment_persistent_disk = None
         self._docs_agent = None
+        self._drive_v2 = None
         self._enable_crypto_crackdown = None
         self._enable_efs = None
         self._enable_storage_limits = None
@@ -304,6 +307,8 @@ class V1UserFeatures(object):
             self.deployment_persistent_disk = deployment_persistent_disk
         if docs_agent is not None:
             self.docs_agent = docs_agent
+        if drive_v2 is not None:
+            self.drive_v2 = drive_v2
         if enable_crypto_crackdown is not None:
             self.enable_crypto_crackdown = enable_crypto_crackdown
         if enable_efs is not None:
@@ -845,6 +850,27 @@ class V1UserFeatures(object):
         """
 
         self._docs_agent = docs_agent
+
+    @property
+    def drive_v2(self) -> 'bool':
+        """Gets the drive_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The drive_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._drive_v2
+
+    @drive_v2.setter
+    def drive_v2(self, drive_v2: 'bool'):
+        """Sets the drive_v2 of this V1UserFeatures.
+
+
+        :param drive_v2: The drive_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._drive_v2 = drive_v2
 
     @property
     def enable_crypto_crackdown(self) -> 'bool':

@@ -41,6 +41,7 @@ class V1GetProjectStorageMetadataResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'account_limit_bytes': 'str',
         'cloudspace_storage_bytes': 'str',
         'cloudspaces': 'list[V1StorageAsset]',
         'data_connection_storage_bytes': 'str',
@@ -54,6 +55,7 @@ class V1GetProjectStorageMetadataResponse(object):
     }
 
     attribute_map = {
+        'account_limit_bytes': 'accountLimitBytes',
         'cloudspace_storage_bytes': 'cloudspaceStorageBytes',
         'cloudspaces': 'cloudspaces',
         'data_connection_storage_bytes': 'dataConnectionStorageBytes',
@@ -66,8 +68,9 @@ class V1GetProjectStorageMetadataResponse(object):
         'upload_storage_bytes': 'uploadStorageBytes'
     }
 
-    def __init__(self, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, account_limit_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1GetProjectStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
+        self._account_limit_bytes = None
         self._cloudspace_storage_bytes = None
         self._cloudspaces = None
         self._data_connection_storage_bytes = None
@@ -79,6 +82,8 @@ class V1GetProjectStorageMetadataResponse(object):
         self._total_storage_bytes = None
         self._upload_storage_bytes = None
         self.discriminator = None
+        if account_limit_bytes is not None:
+            self.account_limit_bytes = account_limit_bytes
         if cloudspace_storage_bytes is not None:
             self.cloudspace_storage_bytes = cloudspace_storage_bytes
         if cloudspaces is not None:
@@ -99,6 +104,27 @@ class V1GetProjectStorageMetadataResponse(object):
             self.total_storage_bytes = total_storage_bytes
         if upload_storage_bytes is not None:
             self.upload_storage_bytes = upload_storage_bytes
+
+    @property
+    def account_limit_bytes(self) -> 'str':
+        """Gets the account_limit_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The account_limit_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._account_limit_bytes
+
+    @account_limit_bytes.setter
+    def account_limit_bytes(self, account_limit_bytes: 'str'):
+        """Sets the account_limit_bytes of this V1GetProjectStorageMetadataResponse.
+
+
+        :param account_limit_bytes: The account_limit_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._account_limit_bytes = account_limit_bytes
 
     @property
     def cloudspace_storage_bytes(self) -> 'str':

@@ -15,7 +15,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
     Externalv1LightningappInstance,
     IdCodeconfigBody,
-    IdExecuteBody,
+    IdExecuteBody1,
     IdForkBody1,
     IdStartBody,
     ProjectIdCloudspacesBody,
@@ -293,7 +293,7 @@ class StudioApi:
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Tuple[str, int]:
         """Run given commands in a given Studio."""
         response_submit = self._client.cloud_space_service_execute_command_in_cloud_space(
-            IdExecuteBody("; ".join(commands), detached=True),
+            IdExecuteBody1("; ".join(commands), detached=True),
             project_id=teamspace_id,
             id=studio_id,
         )

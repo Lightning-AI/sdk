@@ -42,6 +42,7 @@ class V1Metadata(object):
     """
     swagger_types = {
         'annotations': 'dict(str, str)',
+        'cluster_id': 'str',
         'creation_timestamp': 'datetime',
         'deletion_timestamp': 'datetime',
         'deployment_id': 'str',
@@ -61,6 +62,7 @@ class V1Metadata(object):
 
     attribute_map = {
         'annotations': 'annotations',
+        'cluster_id': 'clusterId',
         'creation_timestamp': 'creationTimestamp',
         'deletion_timestamp': 'deletionTimestamp',
         'deployment_id': 'deploymentId',
@@ -78,9 +80,10 @@ class V1Metadata(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, annotations: 'dict(str, str)' =None, creation_timestamp: 'datetime' =None, deletion_timestamp: 'datetime' =None, deployment_id: 'str' =None, display_name: 'str' =None, finalizers: 'list[str]' =None, id: 'str' =None, labels: 'dict(str, str)' =None, last_updated_by_user_at: 'datetime' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, resource_version: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, annotations: 'dict(str, str)' =None, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, deletion_timestamp: 'datetime' =None, deployment_id: 'str' =None, display_name: 'str' =None, finalizers: 'list[str]' =None, id: 'str' =None, labels: 'dict(str, str)' =None, last_updated_by_user_at: 'datetime' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, resource_version: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Metadata - a model defined in Swagger"""  # noqa: E501
         self._annotations = None
+        self._cluster_id = None
         self._creation_timestamp = None
         self._deletion_timestamp = None
         self._deployment_id = None
@@ -99,6 +102,8 @@ class V1Metadata(object):
         self.discriminator = None
         if annotations is not None:
             self.annotations = annotations
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if creation_timestamp is not None:
             self.creation_timestamp = creation_timestamp
         if deletion_timestamp is not None:
@@ -150,6 +155,27 @@ class V1Metadata(object):
         """
 
         self._annotations = annotations
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1Metadata.  # noqa: E501
+
+
+        :return: The cluster_id of this V1Metadata.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1Metadata.
+
+
+        :param cluster_id: The cluster_id of this V1Metadata.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def creation_timestamp(self) -> 'datetime':
