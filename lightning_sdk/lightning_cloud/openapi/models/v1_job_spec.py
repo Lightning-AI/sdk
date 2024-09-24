@@ -49,6 +49,7 @@ class V1JobSpec(object):
         'image': 'str',
         'image_cluster_credentials': 'bool',
         'image_secret_ref': 'str',
+        'include_credentials': 'bool',
         'instance_name': 'str',
         'instance_type': 'str',
         'modified_volume': 'bool',
@@ -71,6 +72,7 @@ class V1JobSpec(object):
         'image': 'image',
         'image_cluster_credentials': 'imageClusterCredentials',
         'image_secret_ref': 'imageSecretRef',
+        'include_credentials': 'includeCredentials',
         'instance_name': 'instanceName',
         'instance_type': 'instanceType',
         'modified_volume': 'modifiedVolume',
@@ -84,7 +86,7 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -94,6 +96,7 @@ class V1JobSpec(object):
         self._image = None
         self._image_cluster_credentials = None
         self._image_secret_ref = None
+        self._include_credentials = None
         self._instance_name = None
         self._instance_type = None
         self._modified_volume = None
@@ -122,6 +125,8 @@ class V1JobSpec(object):
             self.image_cluster_credentials = image_cluster_credentials
         if image_secret_ref is not None:
             self.image_secret_ref = image_secret_ref
+        if include_credentials is not None:
+            self.include_credentials = include_credentials
         if instance_name is not None:
             self.instance_name = instance_name
         if instance_type is not None:
@@ -312,6 +317,27 @@ class V1JobSpec(object):
         """
 
         self._image_secret_ref = image_secret_ref
+
+    @property
+    def include_credentials(self) -> 'bool':
+        """Gets the include_credentials of this V1JobSpec.  # noqa: E501
+
+
+        :return: The include_credentials of this V1JobSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._include_credentials
+
+    @include_credentials.setter
+    def include_credentials(self, include_credentials: 'bool'):
+        """Sets the include_credentials of this V1JobSpec.
+
+
+        :param include_credentials: The include_credentials of this V1JobSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._include_credentials = include_credentials
 
     @property
     def instance_name(self) -> 'str':

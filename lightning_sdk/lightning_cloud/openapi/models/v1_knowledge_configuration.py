@@ -44,6 +44,7 @@ class V1KnowledgeConfiguration(object):
         'enabled': 'bool',
         'owner_file_uploads_enabled': 'bool',
         'status_url': 'str',
+        'token': 'str',
         'uploads_url': 'str',
         'user_file_uploads_enabled': 'bool'
     }
@@ -52,15 +53,17 @@ class V1KnowledgeConfiguration(object):
         'enabled': 'enabled',
         'owner_file_uploads_enabled': 'ownerFileUploadsEnabled',
         'status_url': 'statusUrl',
+        'token': 'token',
         'uploads_url': 'uploadsUrl',
         'user_file_uploads_enabled': 'userFileUploadsEnabled'
     }
 
-    def __init__(self, enabled: 'bool' =None, owner_file_uploads_enabled: 'bool' =None, status_url: 'str' =None, uploads_url: 'str' =None, user_file_uploads_enabled: 'bool' =None):  # noqa: E501
+    def __init__(self, enabled: 'bool' =None, owner_file_uploads_enabled: 'bool' =None, status_url: 'str' =None, token: 'str' =None, uploads_url: 'str' =None, user_file_uploads_enabled: 'bool' =None):  # noqa: E501
         """V1KnowledgeConfiguration - a model defined in Swagger"""  # noqa: E501
         self._enabled = None
         self._owner_file_uploads_enabled = None
         self._status_url = None
+        self._token = None
         self._uploads_url = None
         self._user_file_uploads_enabled = None
         self.discriminator = None
@@ -70,6 +73,8 @@ class V1KnowledgeConfiguration(object):
             self.owner_file_uploads_enabled = owner_file_uploads_enabled
         if status_url is not None:
             self.status_url = status_url
+        if token is not None:
+            self.token = token
         if uploads_url is not None:
             self.uploads_url = uploads_url
         if user_file_uploads_enabled is not None:
@@ -137,6 +142,27 @@ class V1KnowledgeConfiguration(object):
         """
 
         self._status_url = status_url
+
+    @property
+    def token(self) -> 'str':
+        """Gets the token of this V1KnowledgeConfiguration.  # noqa: E501
+
+
+        :return: The token of this V1KnowledgeConfiguration.  # noqa: E501
+        :rtype: str
+        """
+        return self._token
+
+    @token.setter
+    def token(self, token: 'str'):
+        """Sets the token of this V1KnowledgeConfiguration.
+
+
+        :param token: The token of this V1KnowledgeConfiguration.  # noqa: E501
+        :type: str
+        """
+
+        self._token = token
 
     @property
     def uploads_url(self) -> 'str':

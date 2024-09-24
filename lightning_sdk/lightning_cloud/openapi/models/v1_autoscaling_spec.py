@@ -48,7 +48,7 @@ class V1AutoscalingSpec(object):
         'min_replicas': 'str',
         'scale_down_cooldown_seconds': 'str',
         'scale_up_cooldown_seconds': 'str',
-        'target_metric': 'V1AutoscalingTargetMetric'
+        'target_metric': 'list[V1AutoscalingTargetMetric]'
     }
 
     attribute_map = {
@@ -62,7 +62,7 @@ class V1AutoscalingSpec(object):
         'target_metric': 'targetMetric'
     }
 
-    def __init__(self, enabled: 'bool' =None, expected_cold_start_time: 'str' =None, idle_threshold_seconds: 'str' =None, max_replicas: 'str' =None, min_replicas: 'str' =None, scale_down_cooldown_seconds: 'str' =None, scale_up_cooldown_seconds: 'str' =None, target_metric: 'V1AutoscalingTargetMetric' =None):  # noqa: E501
+    def __init__(self, enabled: 'bool' =None, expected_cold_start_time: 'str' =None, idle_threshold_seconds: 'str' =None, max_replicas: 'str' =None, min_replicas: 'str' =None, scale_down_cooldown_seconds: 'str' =None, scale_up_cooldown_seconds: 'str' =None, target_metric: 'list[V1AutoscalingTargetMetric]' =None):  # noqa: E501
         """V1AutoscalingSpec - a model defined in Swagger"""  # noqa: E501
         self._enabled = None
         self._expected_cold_start_time = None
@@ -238,22 +238,22 @@ class V1AutoscalingSpec(object):
         self._scale_up_cooldown_seconds = scale_up_cooldown_seconds
 
     @property
-    def target_metric(self) -> 'V1AutoscalingTargetMetric':
+    def target_metric(self) -> 'list[V1AutoscalingTargetMetric]':
         """Gets the target_metric of this V1AutoscalingSpec.  # noqa: E501
 
 
         :return: The target_metric of this V1AutoscalingSpec.  # noqa: E501
-        :rtype: V1AutoscalingTargetMetric
+        :rtype: list[V1AutoscalingTargetMetric]
         """
         return self._target_metric
 
     @target_metric.setter
-    def target_metric(self, target_metric: 'V1AutoscalingTargetMetric'):
+    def target_metric(self, target_metric: 'list[V1AutoscalingTargetMetric]'):
         """Sets the target_metric of this V1AutoscalingSpec.
 
 
         :param target_metric: The target_metric of this V1AutoscalingSpec.  # noqa: E501
-        :type: V1AutoscalingTargetMetric
+        :type: list[V1AutoscalingTargetMetric]
         """
 
         self._target_metric = target_metric
