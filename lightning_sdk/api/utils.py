@@ -97,7 +97,7 @@ class _FileUploader:
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload."""
         body = ProjectIdStorageBody(cluster_id=self.cluster_id, filename=self.remote_path)
-        resp: V1UploadProjectArtifactResponse = self.client.lightningapp_instance_service_upload_project_artifact(
+        resp: V1UploadProjectArtifactResponse = self.client.storage_service_upload_project_artifact(
             body=body, project_id=self.teamspace_id
         )
 
@@ -114,9 +114,7 @@ class _FileUploader:
         completed_body = StorageCompleteBody(
             cluster_id=self.cluster_id, filename=self.remote_path, parts=completed, upload_id=resp.upload_id
         )
-        self.client.lightningapp_instance_service_complete_upload_project_artifact(
-            body=completed_body, project_id=self.teamspace_id
-        )
+        self.client.storage_service_complete_upload_project_artifact(body=completed_body, project_id=self.teamspace_id)
 
     def _process_upload_batch(self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str) -> None:
         """Uploads a single batch of chunks in parallel."""
@@ -127,8 +125,8 @@ class _FileUploader:
     def _request_urls(self, parts: List[int], upload_id: str) -> List[V1PresignedUrl]:
         """Requests urls for a batch of parts."""
         body = UploadsUploadIdBody(cluster_id=self.cluster_id, filename=self.remote_path, parts=parts)
-        resp: V1UploadProjectArtifactPartsResponse = (
-            self.client.lightningapp_instance_service_upload_project_artifact_parts(body, self.teamspace_id, upload_id)
+        resp: V1UploadProjectArtifactPartsResponse = self.client.storage_service_upload_project_artifact_parts(
+            body, self.teamspace_id, upload_id
         )
         return resp.urls
 

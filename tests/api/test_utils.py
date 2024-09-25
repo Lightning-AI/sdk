@@ -43,32 +43,28 @@ def test_file_uploader(_, tmp_path, monkeypatch):
 
     uploader.progress_bar = Mock()
 
-    uploader.client.lightningapp_instance_service_upload_project_artifact.return_value = Mock(
-        upload_id="test-upload-id"
-    )
-    uploader.client.lightningapp_instance_service_upload_project_artifact_parts.return_value = (
-        V1UploadProjectArtifactPartsResponse(
-            urls=[
-                V1PresignedUrl(url="test-url-1", part_number=1),
-                V1PresignedUrl(url="test-url-2", part_number=2),
-            ]
-        )
+    uploader.client.storage_service_upload_project_artifact.return_value = Mock(upload_id="test-upload-id")
+    uploader.client.storage_service_upload_project_artifact_parts.return_value = V1UploadProjectArtifactPartsResponse(
+        urls=[
+            V1PresignedUrl(url="test-url-1", part_number=1),
+            V1PresignedUrl(url="test-url-2", part_number=2),
+        ]
     )
 
-    uploader.client.lightningapp_instance_service_complete_upload_project_artifact = Mock()
+    uploader.client.storage_service_complete_upload_project_artifact = Mock()
 
     uploader()
 
-    uploader.client.lightningapp_instance_service_upload_project_artifact.assert_called_once_with(
+    uploader.client.storage_service_upload_project_artifact.assert_called_once_with(
         body=ProjectIdStorageBody(filename="path/to/file/on/remote", cluster_id="test-cluster-id"),
         project_id="test-project-id",
     )
-    uploader.client.lightningapp_instance_service_upload_project_artifact_parts.assert_called_once_with(
+    uploader.client.storage_service_upload_project_artifact_parts.assert_called_once_with(
         UploadsUploadIdBody(filename="path/to/file/on/remote", parts=[1], cluster_id="test-cluster-id"),
         "test-project-id",
         "test-upload-id",
     )
-    uploader.client.lightningapp_instance_service_complete_upload_project_artifact.assert_called_once()
+    uploader.client.storage_service_complete_upload_project_artifact.assert_called_once()
 
     # 0 because mocked data has length 0
     uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
