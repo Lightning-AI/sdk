@@ -144,6 +144,24 @@ class HttpHealthCheck(HealthCheck):
         self.interval_seconds = interval_seconds
 
 
+class AutoScalingMetric:
+    """The AutoScalingMetric determines the metric used to decide whether we should autoscale.
+
+    Args:
+        name: The name of the metric used to decide whether we should autoscale.
+        target: The metric threshold  to decide whether we should autoscale.
+
+    """
+
+    def __init__(
+        self,
+        name: Literal["GPU", "CPU", "RPM"],
+        target: float,
+    ) -> None:
+        self.name = name
+        self.target = target
+
+
 class AutoScaleConfig:
     """The AutoScaleConfig determines how to autoscale your deployment.
 
@@ -153,6 +171,7 @@ class AutoScaleConfig:
         max_replicas: The maximum number of replicas.
         metric: The metric used to decide whether we should autoscale.
         threshold: The metric threshold  to decide whether we should autoscale.
+        target_metrics: Multiple target metrics to autoscale the deployment.
         idle_threshold_seconds: The amount of time to wait before stopping a replica
             after the latest seen request.
 
@@ -164,6 +183,7 @@ class AutoScaleConfig:
         max_replicas: Optional[int] = None,
         metric: Optional[Literal["GPU", "CPU", "RPM"]] = None,
         threshold: Optional[float] = None,
+        target_metrics: Optional[List[AutoScalingMetric]] = None,
         idle_threshold_seconds: Optional[str] = None,
         scale_down_cooldown_seconds: Optional[str] = None,
         scale_up_cooldown_seconds: Optional[str] = None,
@@ -172,6 +192,7 @@ class AutoScaleConfig:
         self.max_replicas = max_replicas
         self.metric = metric
         self.threshold = threshold
+        self.target_metrics = target_metrics
         self.idle_threshold_seconds = idle_threshold_seconds
         self.scale_down_cooldown_seconds = scale_down_cooldown_seconds
         self.scale_up_cooldown_seconds = scale_up_cooldown_seconds
@@ -340,8 +361,7 @@ def restore_autoscale(autoscaling: V1AutoscalingSpec) -> AutoScaleConfig:
         AutoScaleConfig(
             min_replicas=autoscaling.min_replicas,
             max_replicas=autoscaling.max_replicas,
-            metric=autoscaling.target_metric.name,
-            threshold=autoscaling.target_metric.target,
+            target_metrics=autoscaling.target_metric,
             idle_threshold_seconds=autoscaling.idle_threshold_seconds,
             scale_down_cooldown_seconds=autoscaling.scale_down_cooldown_seconds,
             scale_up_cooldown_seconds=autoscaling.scale_up_cooldown_seconds,
@@ -373,6 +393,7 @@ def to_autoscaling(
     max_replicas = autoscale_config.max_replicas
     metric = autoscale_config.metric
     threshold = autoscale_config.threshold
+    target_metrics = autoscale_config.target_metrics
 
     if isinstance(replicas, int) and replicas < 0:
         raise ValueError("The number of replicas should be positive.")
@@ -403,23 +424,42 @@ def to_autoscaling(
     if min_replicas > max_replicas:
         raise ValueError("The minimum number of replicas should be smaller or equal to the maximum number of replicas.")
 
-    if metric is None or (isinstance(metric, str) and metric not in _METRICS):
+    if (metric is not None or threshold is not None) and target_metrics is not None:
+        raise ValueError("Either metric and threshold, or target_metrics (for multiple) can be provided.")
+
+    if target_metrics is None and (metric is None or (isinstance(metric, str) and metric not in _METRICS)):
         raise ValueError(f"The autoscaling metric is required. Currently supported metrics are {_METRICS}")
 
-    if threshold is None:
+    if target_metrics is None and threshold is None:
         raise ValueError("The autoscaling threshold should be defined between 0 and 100.")
 
-    if threshold < 0 or threshold > 100:
+    if target_metrics is None and (threshold < 0 or threshold > 100):
         raise ValueError("The autoscaling threshold should be defined between 0 and 100.")
+
+    if target_metrics is not None and len(target_metrics) == 0:
+        raise ValueError("The target_metrics must be provided.")
+
+    if target_metrics is not None:
+        for target_metric in target_metrics:
+            if target_metric.name is None or target_metric.name not in _METRICS:
+                raise ValueError(f"The autoscaling metric is required. Currently supported metrics are {_METRICS}")
+            if target_metric.target is None or target_metric.target < 0 or target_metric.target > 100:
+                raise ValueError("The autoscaling threshold should be defined between 0 and 100.")
+
+            # convert to string after validation
+            target_metric.target = str(target_metric.target)
+
+    metrics = (
+        target_metrics
+        if target_metrics is not None
+        else [V1AutoscalingTargetMetric(name=metric, target=str(threshold))]
+    )
 
     return V1AutoscalingSpec(
         enabled=True,
         min_replicas=min_replicas,
         max_replicas=max_replicas,
-        target_metric=V1AutoscalingTargetMetric(
-            name=metric,
-            target=str(threshold),
-        ),
+        target_metric=metrics,
         idle_threshold_seconds=autoscale_config.idle_threshold_seconds,
         scale_down_cooldown_seconds=autoscale_config.scale_down_cooldown_seconds,
         scale_up_cooldown_seconds=autoscale_config.scale_up_cooldown_seconds,

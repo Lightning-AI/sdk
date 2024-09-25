@@ -1,6 +1,7 @@
 from lightning_sdk.deployment import deployment as deployment_module
 from lightning_sdk.deployment.deployment import AutoScaleConfig
 from lightning_sdk.api import deployment_api as deployment_api_module
+import re
 import pytest
 from unittest.mock import MagicMock
 from lightning_sdk.machine import Machine
@@ -53,14 +54,134 @@ def test_to_autoscaling():
             replicas=1,
         )
 
+    with pytest.raises(
+        ValueError, match=r"Either metric and threshold, or target_metrics \(for multiple\) can be provided\."
+    ):
+        deployment_api_module.to_autoscaling(
+            AutoScaleConfig(
+                max_replicas=2,
+                min_replicas=2,
+                metric="CPU",
+                threshold=80,
+                target_metrics=[deployment_api_module.AutoScalingMetric(name="GPU", target=70)],
+            ),
+            replicas=1,
+        )
+
+    with pytest.raises(
+        ValueError, match=r"Either metric and threshold, or target_metrics \(for multiple\) can be provided\."
+    ):
+        deployment_api_module.to_autoscaling(
+            AutoScaleConfig(
+                max_replicas=2,
+                min_replicas=2,
+                metric="CPU",
+                target_metrics=[deployment_api_module.AutoScalingMetric(name="GPU", target=70)],
+            ),
+            replicas=1,
+        )
+
+    with pytest.raises(
+        ValueError, match=r"Either metric and threshold, or target_metrics \(for multiple\) can be provided\."
+    ):
+        deployment_api_module.to_autoscaling(
+            AutoScaleConfig(
+                max_replicas=2,
+                min_replicas=2,
+                threshold=80,
+                target_metrics=[deployment_api_module.AutoScalingMetric(name="GPU", target=70)],
+            ),
+            replicas=1,
+        )
+
+    with pytest.raises(ValueError, match="The target_metrics must be provided."):
+        deployment_api_module.to_autoscaling(
+            AutoScaleConfig(max_replicas=2, min_replicas=2, target_metrics=[]),
+            replicas=1,
+        )
+
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            f"The autoscaling metric is required. Currently supported metrics are {deployment_api_module._METRICS}"
+        ),
+    ):
+        deployment_api_module.to_autoscaling(
+            AutoScaleConfig(
+                max_replicas=2,
+                min_replicas=2,
+                target_metrics=[deployment_api_module.AutoScalingMetric(name=None, target=70)],
+            ),
+            replicas=1,
+        )
+
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            f"The autoscaling metric is required. Currently supported metrics are {deployment_api_module._METRICS}"
+        ),
+    ):
+        deployment_api_module.to_autoscaling(
+            AutoScaleConfig(
+                max_replicas=2,
+                min_replicas=2,
+                target_metrics=[deployment_api_module.AutoScalingMetric(name="DoesNotExist", target=70)],
+            ),
+            replicas=1,
+        )
+
+    with pytest.raises(ValueError, match="The autoscaling threshold should be defined between 0 and 100."):
+        deployment_api_module.to_autoscaling(
+            AutoScaleConfig(
+                max_replicas=2,
+                min_replicas=2,
+                target_metrics=[deployment_api_module.AutoScalingMetric(name="GPU", target=-1)],
+            ),
+            replicas=1,
+        )
+
+    with pytest.raises(ValueError, match="The autoscaling threshold should be defined between 0 and 100."):
+        deployment_api_module.to_autoscaling(
+            AutoScaleConfig(
+                max_replicas=2,
+                min_replicas=2,
+                target_metrics=[deployment_api_module.AutoScalingMetric(name="GPU", target=101)],
+            ),
+            replicas=1,
+        )
+
     autoscaling = deployment_api_module.to_autoscaling(
         AutoScaleConfig(max_replicas=2, min_replicas=2, metric="CPU", threshold=100),
         replicas=1,
     )
     assert autoscaling.min_replicas == 2
     assert autoscaling.max_replicas == 2
-    assert autoscaling.target_metric.name == "CPU"
-    assert autoscaling.target_metric.target == "100"
+    assert len(autoscaling.target_metric) == 1
+    metric = autoscaling.target_metric[0]
+    assert metric.name == "CPU"
+    assert metric.target == "100"
+
+    autoscaling_with_multiple_metrics = deployment_api_module.to_autoscaling(
+        AutoScaleConfig(
+            max_replicas=2,
+            min_replicas=2,
+            target_metrics=[
+                deployment_api_module.AutoScalingMetric(name="CPU", target=80),
+                deployment_api_module.AutoScalingMetric(name="GPU", target=75),
+            ],
+        ),
+        replicas=1,
+    )
+
+    assert autoscaling_with_multiple_metrics.min_replicas == 2
+    assert autoscaling_with_multiple_metrics.max_replicas == 2
+    assert len(autoscaling_with_multiple_metrics.target_metric) == 2
+    first_metric = autoscaling_with_multiple_metrics.target_metric[0]
+    assert first_metric.name == "CPU"
+    assert first_metric.target == "80"
+    second_metric = autoscaling_with_multiple_metrics.target_metric[1]
+    assert second_metric.name == "GPU"
+    assert second_metric.target == "75"
 
 
 def test_to_endpoint():
