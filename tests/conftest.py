@@ -1115,7 +1115,7 @@ def internal_studio_api_create_app_mocker(mocker):
                 "entrypoint": "my-entry-point",
                 "name": "fancy-job-name",
                 "compute": "g5.8xlarge",
-                "spot": "false",
+                "interruptible": "false",
             }
         elif id == "distributed_plugin":
             assert body.plugin_arguments == {
@@ -1124,7 +1124,7 @@ def internal_studio_api_create_app_mocker(mocker):
                 "distributedArguments": json.dumps(
                     {"cloud_compute": "g5.8xlarge", "num_instances": 4, "strategy": "parallel"}
                 ),
-                "spot": "false",
+                "interruptible": "false",
             }
 
         elif id == "inference_plugin":
@@ -1139,7 +1139,7 @@ def internal_studio_api_create_app_mocker(mocker):
                 "scale_in_interval": "11",
                 "scale_out_interval": "12",
                 "endpoint": "/fancy-predict",
-                "spot": "false",
+                "interruptible": "false",
             }
 
         return V1CreateCloudSpaceAppInstanceResponse(

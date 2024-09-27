@@ -155,7 +155,7 @@ class StudioApi:
         """Retries checking the sync_in_progress value of the code status when there's an AttributeError."""
         return self.get_studio_status(studio_id, teamspace_id).in_use.sync_in_progress
 
-    def start_studio(self, studio_id: str, teamspace_id: str, machine: Machine, spot: False) -> None:
+    def start_studio(self, studio_id: str, teamspace_id: str, machine: Machine, interruptible: False) -> None:
         """Start an existing Studio."""
         if machine == Machine.CPU_SMALL:
             warnings.warn(
@@ -166,7 +166,9 @@ class StudioApi:
             machine = Machine.CPU
 
         self._client.cloud_space_service_start_cloud_space_instance(
-            IdStartBody(compute_config=V1UserRequestedComputeConfig(name=_MACHINE_TO_COMPUTE_NAME[machine], spot=spot)),
+            IdStartBody(
+                compute_config=V1UserRequestedComputeConfig(name=_MACHINE_TO_COMPUTE_NAME[machine], spot=interruptible)
+            ),
             teamspace_id,
             studio_id,
         )
@@ -211,7 +213,7 @@ class StudioApi:
     def _get_studio_instance_status_from_object(self, studio: V1CloudSpace) -> Optional[str]:
         return getattr(getattr(studio.code_status, "in_use", None), "phase", None)
 
-    def _request_switch(self, studio_id: str, teamspace_id: str, machine: Machine, spot: bool) -> None:
+    def _request_switch(self, studio_id: str, teamspace_id: str, machine: Machine, interruptible: bool) -> None:
         """Switches given Studio to a new machine type."""
         if machine == Machine.CPU_SMALL:
             warnings.warn(
@@ -223,16 +225,18 @@ class StudioApi:
 
         compute_name = _MACHINE_TO_COMPUTE_NAME[machine]
         # TODO: UI sends disk size here, maybe we need to also?
-        body = IdCodeconfigBody(compute_config=V1UserRequestedComputeConfig(name=compute_name, spot=spot))
+        body = IdCodeconfigBody(compute_config=V1UserRequestedComputeConfig(name=compute_name, spot=interruptible))
         self._client.cloud_space_service_update_cloud_space_instance_config(
             id=studio_id,
             project_id=teamspace_id,
             body=body,
         )
 
-    def switch_studio_machine(self, studio_id: str, teamspace_id: str, machine: Machine, spot: bool) -> None:
+    def switch_studio_machine(self, studio_id: str, teamspace_id: str, machine: Machine, interruptible: bool) -> None:
         """Switches given Studio to a new machine type."""
-        self._request_switch(studio_id=studio_id, teamspace_id=teamspace_id, machine=machine, spot=spot)
+        self._request_switch(
+            studio_id=studio_id, teamspace_id=teamspace_id, machine=machine, interruptible=interruptible
+        )
 
         # Wait until it's time to switch
         while True:
@@ -257,8 +261,8 @@ class StudioApi:
         )
         return _COMPUTE_NAME_TO_MACHINE[_temporary_machine_patching(response.compute_config.name)]
 
-    def get_spot(self, studio_id: str, teamspace_id: str) -> bool:
-        """Get whether the Studio is running on a spot instance."""
+    def get_interruptible(self, studio_id: str, teamspace_id: str) -> bool:
+        """Get whether the Studio is running on a interruptible instance."""
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
             project_id=teamspace_id, id=studio_id
         )
@@ -553,7 +557,7 @@ class StudioApi:
         studio_id: str,
         teamspace_id: str,
         cluster_id: str,
-        spot: bool,
+        interruptible: bool,
     ) -> Externalv1LightningappInstance:
         """Creates a job with given commands."""
         return self._create_app(
@@ -564,7 +568,7 @@ class StudioApi:
             entrypoint=entrypoint,
             name=name,
             compute=_MACHINE_TO_COMPUTE_NAME[machine],
-            spot=spot,
+            interruptible=interruptible,
         )
 
     def create_multi_machine_job(
@@ -577,7 +581,7 @@ class StudioApi:
         studio_id: str,
         teamspace_id: str,
         cluster_id: str,
-        spot: bool,
+        interruptible: bool,
     ) -> Externalv1LightningappInstance:
         """Creates a multi-machine job with given commands."""
         distributed_args = {
@@ -593,7 +597,7 @@ class StudioApi:
             entrypoint=entrypoint,
             name=name,
             distributedArguments=json.dumps(distributed_args),
-            spot=spot,
+            interruptible=interruptible,
         )
 
     def create_data_prep_machine_job(
@@ -605,7 +609,7 @@ class StudioApi:
         studio_id: str,
         teamspace_id: str,
         cluster_id: str,
-        spot: bool,
+        interruptible: bool,
     ) -> Externalv1LightningappInstance:
         """Creates a multi-machine job with given commands."""
         data_prep_args = {
@@ -620,7 +624,7 @@ class StudioApi:
             entrypoint=entrypoint,
             name=name,
             dataPrepArguments=json.dumps(data_prep_args),
-            spot=spot,
+            interruptible=interruptible,
         )
 
     def create_inference_job(
@@ -638,7 +642,7 @@ class StudioApi:
         studio_id: str,
         teamspace_id: str,
         cluster_id: str,
-        spot: bool,
+        interruptible: bool,
     ) -> Externalv1LightningappInstance:
         """Creates an inference job for given endpoint."""
         return self._create_app(
@@ -656,7 +660,7 @@ class StudioApi:
             scale_in_interval=scale_in_interval,
             scale_out_interval=scale_out_interval,
             endpoint=endpoint,
-            spot=spot,
+            interruptible=interruptible,
         )
 
     def _create_app(
@@ -665,9 +669,9 @@ class StudioApi:
         """Creates an arbitrary app."""
         from lightning_sdk.utils import _LIGHTNING_SERVICE_EXECUTION_ID_KEY
 
-        # Check if 'spot' is in the arguments and convert it to a string
-        if isinstance(other_arguments, dict) and "spot" in other_arguments:
-            other_arguments["spot"] = str(other_arguments["spot"]).lower()
+        # Check if 'interruptible' is in the arguments and convert it to a string
+        if isinstance(other_arguments, dict) and "interruptible" in other_arguments:
+            other_arguments["interruptible"] = str(other_arguments["interruptible"]).lower()
 
         body = AppsIdBody(
             cluster_id=cluster_id,

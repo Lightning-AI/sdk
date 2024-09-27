@@ -309,7 +309,7 @@ def test_create_inference_run(internal_studio_api_create_app_mocker):
         studio_id="st-abc",
         teamspace_id="ts-abc",
         cluster_id="cluster-abc",
-        spot=False,
+        interruptible=False,
     )
     assert resp.name == "fancy-inference-name"
 

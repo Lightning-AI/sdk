@@ -121,7 +121,7 @@ class JobsPlugin(_Plugin):
         name: Optional[str] = None,
         machine: Machine = Machine.CPU,
         cloud_compute: Optional[Machine] = None,
-        spot: bool = False,
+        interruptible: bool = False,
     ) -> "Externalv1LightningappInstance":
         """Launches an asynchronous job."""
         if name is None:
@@ -136,7 +136,7 @@ class JobsPlugin(_Plugin):
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
             cluster_id=self._studio._studio.cluster_id,
-            spot=spot,
+            interruptible=interruptible,
         )
 
         _logger.info(_success_message(resp, self))
@@ -158,7 +158,7 @@ class MultiMachineTrainingPlugin(_Plugin):
         cloud_compute: Optional[Machine] = None,
         num_instances: int = 2,
         strategy: str = "parallel",
-        spot: bool = False,
+        interruptible: bool = False,
     ) -> "Externalv1LightningappInstance":
         """Launches an asynchronous multi-machine-training."""
         if name is None:
@@ -176,7 +176,7 @@ class MultiMachineTrainingPlugin(_Plugin):
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
             cluster_id=self._studio._studio.cluster_id,
-            spot=spot,
+            interruptible=interruptible,
         )
 
         return Job(resp.name, self._studio.teamspace)
@@ -195,7 +195,7 @@ class MultiMachineDataPrepPlugin(_Plugin):
         machine: Machine = Machine.CPU,
         cloud_compute: Optional[Machine] = None,
         num_instances: int = 2,
-        spot: bool = False,
+        interruptible: bool = False,
     ) -> "Externalv1LightningappInstance":
         """Launches an asynchronous multi-machine-processing-job."""
         if name is None:
@@ -211,7 +211,7 @@ class MultiMachineDataPrepPlugin(_Plugin):
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
             cluster_id=self._studio._studio.cluster_id,
-            spot=spot,
+            interruptible=interruptible,
         )
 
         return Job(resp.name, self._studio.teamspace)
@@ -236,7 +236,7 @@ class InferenceServerPlugin(_Plugin):
         max_batch_size: int = 4,
         timeout_batching: float = 0.3,
         endpoint: str = "/predict",
-        spot: bool = False,
+        interruptible: bool = False,
     ) -> "Externalv1LightningappInstance":
         """Launches an asynchronous inference server."""
         if name is None:
@@ -258,7 +258,7 @@ class InferenceServerPlugin(_Plugin):
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
             cluster_id=self._studio._studio.cluster_id,
-            spot=spot,
+            interruptible=interruptible,
         )
 
         _logger.info(_success_message(resp, self))
