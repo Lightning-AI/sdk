@@ -41,19 +41,29 @@ class V1Volume(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'ebs': 'V1Ebs'
+        'ebs': 'V1Ebs',
+        'id': 'str',
+        'spec_id': 'str'
     }
 
     attribute_map = {
-        'ebs': 'ebs'
+        'ebs': 'ebs',
+        'id': 'id',
+        'spec_id': 'specId'
     }
 
-    def __init__(self, ebs: 'V1Ebs' =None):  # noqa: E501
+    def __init__(self, ebs: 'V1Ebs' =None, id: 'str' =None, spec_id: 'str' =None):  # noqa: E501
         """V1Volume - a model defined in Swagger"""  # noqa: E501
         self._ebs = None
+        self._id = None
+        self._spec_id = None
         self.discriminator = None
         if ebs is not None:
             self.ebs = ebs
+        if id is not None:
+            self.id = id
+        if spec_id is not None:
+            self.spec_id = spec_id
 
     @property
     def ebs(self) -> 'V1Ebs':
@@ -75,6 +85,48 @@ class V1Volume(object):
         """
 
         self._ebs = ebs
+
+    @property
+    def id(self) -> 'str':
+        """Gets the id of this V1Volume.  # noqa: E501
+
+
+        :return: The id of this V1Volume.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: 'str'):
+        """Sets the id of this V1Volume.
+
+
+        :param id: The id of this V1Volume.  # noqa: E501
+        :type: str
+        """
+
+        self._id = id
+
+    @property
+    def spec_id(self) -> 'str':
+        """Gets the spec_id of this V1Volume.  # noqa: E501
+
+
+        :return: The spec_id of this V1Volume.  # noqa: E501
+        :rtype: str
+        """
+        return self._spec_id
+
+    @spec_id.setter
+    def spec_id(self, spec_id: 'str'):
+        """Sets the spec_id of this V1Volume.
+
+
+        :param spec_id: The spec_id of this V1Volume.  # noqa: E501
+        :type: str
+        """
+
+        self._spec_id = spec_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

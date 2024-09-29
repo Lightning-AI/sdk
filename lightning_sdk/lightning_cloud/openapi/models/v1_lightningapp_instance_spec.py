@@ -46,7 +46,6 @@ class V1LightningappInstanceSpec(object):
         'auth': 'V1LightningAuth',
         'can_download_source_code': 'bool',
         'cloud_space_id': 'str',
-        'cluster_driver': 'V1LightningappClusterDriver',
         'cluster_id': 'str',
         'compute_config': 'V1ComputeConfig',
         'dependency_cache_key': 'str',
@@ -83,7 +82,6 @@ class V1LightningappInstanceSpec(object):
         'auth': 'auth',
         'can_download_source_code': 'canDownloadSourceCode',
         'cloud_space_id': 'cloudSpaceId',
-        'cluster_driver': 'clusterDriver',
         'cluster_id': 'clusterId',
         'compute_config': 'computeConfig',
         'dependency_cache_key': 'dependencyCacheKey',
@@ -114,14 +112,13 @@ class V1LightningappInstanceSpec(object):
         'version': 'version'
     }
 
-    def __init__(self, app_entrypoint_file: 'str' =None, artifact_storage_uri: 'str' =None, auth: 'V1LightningAuth' =None, can_download_source_code: 'bool' =None, cloud_space_id: 'str' =None, cluster_driver: 'V1LightningappClusterDriver' =None, cluster_id: 'str' =None, compute_config: 'V1ComputeConfig' =None, dependency_cache_key: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, domain: 'str' =None, enable_app_server: 'bool' =None, env: 'list[V1EnvVar]' =None, flow_servers: 'list[V1Flowserver]' =None, image_spec: 'V1ImageSpec' =None, is_app_private: 'bool' =None, is_code_private: 'bool' =None, is_headless: 'bool' =None, keep_machines_after_stop: 'bool' =None, machines_reservation_time_minutes: 'str' =None, network_config: 'list[V1NetworkConfig]' =None, pause_automation: 'bool' =None, ports: 'list[str]' =None, queue_server_type: 'V1QueueServerType' =None, redis_token: 'str' =None, release_id: 'str' =None, restart_policy: 'V1LightningappRestartPolicy' =None, service_id: 'str' =None, should_mount_cloudspace_content: 'bool' =None, source_app: 'str' =None, source_code_url: 'str' =None, user_id: 'str' =None, user_requested_flow_compute_config: 'V1UserRequestedFlowComputeConfig' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, app_entrypoint_file: 'str' =None, artifact_storage_uri: 'str' =None, auth: 'V1LightningAuth' =None, can_download_source_code: 'bool' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, compute_config: 'V1ComputeConfig' =None, dependency_cache_key: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, domain: 'str' =None, enable_app_server: 'bool' =None, env: 'list[V1EnvVar]' =None, flow_servers: 'list[V1Flowserver]' =None, image_spec: 'V1ImageSpec' =None, is_app_private: 'bool' =None, is_code_private: 'bool' =None, is_headless: 'bool' =None, keep_machines_after_stop: 'bool' =None, machines_reservation_time_minutes: 'str' =None, network_config: 'list[V1NetworkConfig]' =None, pause_automation: 'bool' =None, ports: 'list[str]' =None, queue_server_type: 'V1QueueServerType' =None, redis_token: 'str' =None, release_id: 'str' =None, restart_policy: 'V1LightningappRestartPolicy' =None, service_id: 'str' =None, should_mount_cloudspace_content: 'bool' =None, source_app: 'str' =None, source_code_url: 'str' =None, user_id: 'str' =None, user_requested_flow_compute_config: 'V1UserRequestedFlowComputeConfig' =None, version: 'str' =None):  # noqa: E501
         """V1LightningappInstanceSpec - a model defined in Swagger"""  # noqa: E501
         self._app_entrypoint_file = None
         self._artifact_storage_uri = None
         self._auth = None
         self._can_download_source_code = None
         self._cloud_space_id = None
-        self._cluster_driver = None
         self._cluster_id = None
         self._compute_config = None
         self._dependency_cache_key = None
@@ -161,8 +158,6 @@ class V1LightningappInstanceSpec(object):
             self.can_download_source_code = can_download_source_code
         if cloud_space_id is not None:
             self.cloud_space_id = cloud_space_id
-        if cluster_driver is not None:
-            self.cluster_driver = cluster_driver
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if compute_config is not None:
@@ -324,27 +319,6 @@ class V1LightningappInstanceSpec(object):
         """
 
         self._cloud_space_id = cloud_space_id
-
-    @property
-    def cluster_driver(self) -> 'V1LightningappClusterDriver':
-        """Gets the cluster_driver of this V1LightningappInstanceSpec.  # noqa: E501
-
-
-        :return: The cluster_driver of this V1LightningappInstanceSpec.  # noqa: E501
-        :rtype: V1LightningappClusterDriver
-        """
-        return self._cluster_driver
-
-    @cluster_driver.setter
-    def cluster_driver(self, cluster_driver: 'V1LightningappClusterDriver'):
-        """Sets the cluster_driver of this V1LightningappInstanceSpec.
-
-
-        :param cluster_driver: The cluster_driver of this V1LightningappInstanceSpec.  # noqa: E501
-        :type: V1LightningappClusterDriver
-        """
-
-        self._cluster_driver = cluster_driver
 
     @property
     def cluster_id(self) -> 'str':

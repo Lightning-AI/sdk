@@ -1670,7 +1670,7 @@ class JobsServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cloudspace_id:
-        :param str user_id:
+        :param list[str] user_ids:
         :return: V1ListDeploymentsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1693,13 +1693,13 @@ class JobsServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cloudspace_id:
-        :param str user_id:
+        :param list[str] user_ids:
         :return: V1ListDeploymentsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'user_id']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'user_ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1728,8 +1728,9 @@ class JobsServiceApi(object):
         query_params = []
         if 'cloudspace_id' in params:
             query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
-        if 'user_id' in params:
-            query_params.append(('userId', params['user_id']))  # noqa: E501
+        if 'user_ids' in params:
+            query_params.append(('userIds', params['user_ids']))  # noqa: E501
+            collection_formats['userIds'] = 'multi'  # noqa: E501
 
         header_params = {}
 

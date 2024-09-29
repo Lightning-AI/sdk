@@ -49,6 +49,7 @@ class V1ClusterAccelerator(object):
         'byoc_only': 'bool',
         'capacity_block_only': 'bool',
         'capacity_block_price': 'float',
+        'capacity_blocks_available': 'list[V1ClusterCapacityReservation]',
         'cluster_id': 'str',
         'cost': 'float',
         'device_card': 'str',
@@ -85,6 +86,7 @@ class V1ClusterAccelerator(object):
         'byoc_only': 'byocOnly',
         'capacity_block_only': 'capacityBlockOnly',
         'capacity_block_price': 'capacityBlockPrice',
+        'capacity_blocks_available': 'capacityBlocksAvailable',
         'cluster_id': 'clusterId',
         'cost': 'cost',
         'device_card': 'deviceCard',
@@ -112,7 +114,7 @@ class V1ClusterAccelerator(object):
         'spot_price': 'spotPrice'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_measurements: 'list[float]' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, non_spot: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_measurements: 'list[float]' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, non_spot: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -122,6 +124,7 @@ class V1ClusterAccelerator(object):
         self._byoc_only = None
         self._capacity_block_only = None
         self._capacity_block_price = None
+        self._capacity_blocks_available = None
         self._cluster_id = None
         self._cost = None
         self._device_card = None
@@ -164,6 +167,8 @@ class V1ClusterAccelerator(object):
             self.capacity_block_only = capacity_block_only
         if capacity_block_price is not None:
             self.capacity_block_price = capacity_block_price
+        if capacity_blocks_available is not None:
+            self.capacity_blocks_available = capacity_blocks_available
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if cost is not None:
@@ -382,6 +387,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._capacity_block_price = capacity_block_price
+
+    @property
+    def capacity_blocks_available(self) -> 'list[V1ClusterCapacityReservation]':
+        """Gets the capacity_blocks_available of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The capacity_blocks_available of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: list[V1ClusterCapacityReservation]
+        """
+        return self._capacity_blocks_available
+
+    @capacity_blocks_available.setter
+    def capacity_blocks_available(self, capacity_blocks_available: 'list[V1ClusterCapacityReservation]'):
+        """Sets the capacity_blocks_available of this V1ClusterAccelerator.
+
+
+        :param capacity_blocks_available: The capacity_blocks_available of this V1ClusterAccelerator.  # noqa: E501
+        :type: list[V1ClusterCapacityReservation]
+        """
+
+        self._capacity_blocks_available = capacity_blocks_available
 
     @property
     def cluster_id(self) -> 'str':

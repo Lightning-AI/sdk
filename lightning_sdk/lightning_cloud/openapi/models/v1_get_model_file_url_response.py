@@ -41,19 +41,45 @@ class V1GetModelFileUrlResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'size': 'str',
         'url': 'str'
     }
 
     attribute_map = {
+        'size': 'size',
         'url': 'url'
     }
 
-    def __init__(self, url: 'str' =None):  # noqa: E501
+    def __init__(self, size: 'str' =None, url: 'str' =None):  # noqa: E501
         """V1GetModelFileUrlResponse - a model defined in Swagger"""  # noqa: E501
+        self._size = None
         self._url = None
         self.discriminator = None
+        if size is not None:
+            self.size = size
         if url is not None:
             self.url = url
+
+    @property
+    def size(self) -> 'str':
+        """Gets the size of this V1GetModelFileUrlResponse.  # noqa: E501
+
+
+        :return: The size of this V1GetModelFileUrlResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._size
+
+    @size.setter
+    def size(self, size: 'str'):
+        """Sets the size of this V1GetModelFileUrlResponse.
+
+
+        :param size: The size of this V1GetModelFileUrlResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._size = size
 
     @property
     def url(self) -> 'str':

@@ -42,9 +42,9 @@ class V1Ebs(object):
     """
     swagger_types = {
         'encrypted': 'bool',
-        'id': 'str',
         'iops': 'str',
         'path': 'str',
+        'provider_id': 'str',
         'size': 'str',
         'throughput': 'str',
         'type': 'str'
@@ -52,32 +52,32 @@ class V1Ebs(object):
 
     attribute_map = {
         'encrypted': 'encrypted',
-        'id': 'id',
         'iops': 'iops',
         'path': 'path',
+        'provider_id': 'providerId',
         'size': 'size',
         'throughput': 'throughput',
         'type': 'type'
     }
 
-    def __init__(self, encrypted: 'bool' =None, id: 'str' =None, iops: 'str' =None, path: 'str' =None, size: 'str' =None, throughput: 'str' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, encrypted: 'bool' =None, iops: 'str' =None, path: 'str' =None, provider_id: 'str' =None, size: 'str' =None, throughput: 'str' =None, type: 'str' =None):  # noqa: E501
         """V1Ebs - a model defined in Swagger"""  # noqa: E501
         self._encrypted = None
-        self._id = None
         self._iops = None
         self._path = None
+        self._provider_id = None
         self._size = None
         self._throughput = None
         self._type = None
         self.discriminator = None
         if encrypted is not None:
             self.encrypted = encrypted
-        if id is not None:
-            self.id = id
         if iops is not None:
             self.iops = iops
         if path is not None:
             self.path = path
+        if provider_id is not None:
+            self.provider_id = provider_id
         if size is not None:
             self.size = size
         if throughput is not None:
@@ -105,27 +105,6 @@ class V1Ebs(object):
         """
 
         self._encrypted = encrypted
-
-    @property
-    def id(self) -> 'str':
-        """Gets the id of this V1Ebs.  # noqa: E501
-
-
-        :return: The id of this V1Ebs.  # noqa: E501
-        :rtype: str
-        """
-        return self._id
-
-    @id.setter
-    def id(self, id: 'str'):
-        """Sets the id of this V1Ebs.
-
-
-        :param id: The id of this V1Ebs.  # noqa: E501
-        :type: str
-        """
-
-        self._id = id
 
     @property
     def iops(self) -> 'str':
@@ -168,6 +147,27 @@ class V1Ebs(object):
         """
 
         self._path = path
+
+    @property
+    def provider_id(self) -> 'str':
+        """Gets the provider_id of this V1Ebs.  # noqa: E501
+
+
+        :return: The provider_id of this V1Ebs.  # noqa: E501
+        :rtype: str
+        """
+        return self._provider_id
+
+    @provider_id.setter
+    def provider_id(self, provider_id: 'str'):
+        """Sets the provider_id of this V1Ebs.
+
+
+        :param provider_id: The provider_id of this V1Ebs.  # noqa: E501
+        :type: str
+        """
+
+        self._provider_id = provider_id
 
     @property
     def size(self) -> 'str':
