@@ -667,7 +667,7 @@ class StudioApi:
         self, studio_id: str, teamspace_id: str, cluster_id: str, plugin_type: str, **other_arguments: Any
     ) -> Externalv1LightningappInstance:
         """Creates an arbitrary app."""
-        from lightning_sdk.utils import _LIGHTNING_SERVICE_EXECUTION_ID_KEY
+        from lightning_sdk.utils.resolve import _LIGHTNING_SERVICE_EXECUTION_ID_KEY
 
         # Check if 'interruptible' is in the arguments and convert it to a string
         if isinstance(other_arguments, dict) and "interruptible" in other_arguments:

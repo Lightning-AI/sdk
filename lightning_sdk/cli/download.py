@@ -6,7 +6,7 @@ from typing import Optional
 from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.cli.studios_menu import _StudiosMenu
 from lightning_sdk.studio import Studio
-from lightning_sdk.utils import _get_authed_user, skip_studio_init
+from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 
 
 class _Downloads(_StudiosMenu):

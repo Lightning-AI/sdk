@@ -2,7 +2,7 @@ from typing import Optional
 
 from lightning_sdk.api import UserApi
 from lightning_sdk.owner import Owner
-from lightning_sdk.utils import _resolve_user_name
+from lightning_sdk.utils.resolve import _resolve_user_name
 
 
 class User(Owner):

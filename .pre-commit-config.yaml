@@ -85,7 +85,7 @@ repos:
         exclude: |
           (?x)^(
             lightning_sdk/lightning_cloud/.* |
-            lightning_sdk/utils.py |
+            lightning_sdk/utils/enum.py |
           )$
 
   - repo: https://github.com/pre-commit/pygrep-hooks

@@ -30,7 +30,7 @@ from lightning_sdk.organization import Organization
 from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils import _resolve_teamspace, _resolve_user
+from lightning_sdk.utils.resolve import _resolve_teamspace, _resolve_user
 
 
 class Deployment:

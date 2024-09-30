@@ -7,7 +7,7 @@ from lightning_sdk.api.teamspace_api import UploadedModelInfo
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
 from lightning_sdk.user import User
-from lightning_sdk.utils import (
+from lightning_sdk.utils.resolve import (
     _get_organizations_for_authed_user,
     _parse_model_and_version,
     _resolve_org,

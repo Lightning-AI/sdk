@@ -8,7 +8,11 @@ from typing import TYPE_CHECKING, Any, Optional, Protocol, runtime_checkable
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
-from lightning_sdk.utils import _LIGHTNING_SERVICE_EXECUTION_ID_KEY, _resolve_deprecated_cloud_compute, _setup_logger
+from lightning_sdk.utils.resolve import (
+    _LIGHTNING_SERVICE_EXECUTION_ID_KEY,
+    _resolve_deprecated_cloud_compute,
+    _setup_logger,
+)
 
 if TYPE_CHECKING:
     from lightning_sdk.lightning_cloud.openapi import Externalv1LightningappInstance

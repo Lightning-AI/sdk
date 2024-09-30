@@ -8,7 +8,7 @@ from lightning_sdk.organization import Organization
 from lightning_sdk.status import Status
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils import _resolve_teamspace
+from lightning_sdk.utils.resolve import _resolve_teamspace
 
 
 class Job:
