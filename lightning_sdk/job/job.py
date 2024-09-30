@@ -1,22 +1,34 @@
 from functools import cached_property
+from typing import Optional, Union
 
 from lightning_sdk.api.job_api import JobApi
 from lightning_sdk.job.work import Work
 from lightning_sdk.machine import Machine
+from lightning_sdk.organization import Organization
 from lightning_sdk.status import Status
 from lightning_sdk.teamspace import Teamspace
+from lightning_sdk.user import User
+from lightning_sdk.utils import _resolve_teamspace
 
 
 class Job:
-    def __init__(self, job_name: str, teamspace: Teamspace) -> None:
-        self.job_name = job_name
-        self.teamspace = teamspace
+    def __init__(
+        self,
+        name: str,
+        teamspace: Optional[Union[str, Teamspace]] = None,
+        org: Optional[Union[str, Organization]] = None,
+        user: Optional[Union[str, User]] = None,
+    ) -> None:
+        self._name = name
+
+        self.teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+
         self._job_api = JobApi()
 
         try:
-            self._job = self._job_api.get_job(job_name, self.teamspace.id)
+            self._job = self._job_api.get_job(name, self.teamspace.id)
         except ValueError as e:
-            raise ValueError(f"Job {job_name} does not exist in Teamspace {self.teamspace.name}") from e
+            raise ValueError(f"Job {name} does not exist in Teamspace {self.teamspace.name}") from e
 
     @property
     def status(self) -> Status:
@@ -25,7 +37,7 @@ class Job:
             return _internal_status_to_external_status(status)
         except Exception:
             raise RuntimeError(
-                f"Job {self.job_name} does not exist in Teamspace {self.teamspace.name}. Did you delete it?"
+                f"Job {self._name} does not exist in Teamspace {self.teamspace.name}. Did you delete it?"
             ) from None
 
     def stop(self) -> None:

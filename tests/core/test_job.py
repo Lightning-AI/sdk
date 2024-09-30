@@ -1,5 +1,6 @@
 from lightning_sdk.studio import Studio
 from lightning_sdk.job import Job
+from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.job.work import Work
 from lightning_sdk.status import Status
 from lightning_sdk.lightning_cloud.openapi import Externalv1LightningappInstance
@@ -15,9 +16,11 @@ def test_job_init(
     internal_studio_status_mocker,
     internal_job_api_mocker_get_job,
 ):
-    studio = Studio("st-abc", "ts-abc", org="org-abc")
-    job = Job("j-abc", studio.teamspace)
+    job = Job("j-abc", "ts-abc", org="org-abc")
     assert isinstance(job._job, Externalv1LightningappInstance)
+
+    assert isinstance(job.teamspace, Teamspace)
+    assert job.teamspace.name == "ts-abc"
 
 
 @mock.patch.dict(os.environ, clear=True)

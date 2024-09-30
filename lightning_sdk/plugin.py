@@ -122,7 +122,7 @@ class JobsPlugin(_Plugin):
         machine: Machine = Machine.CPU,
         cloud_compute: Optional[Machine] = None,
         interruptible: bool = False,
-    ) -> "Externalv1LightningappInstance":
+    ) -> Job:
         """Launches an asynchronous job."""
         if name is None:
             name = _run_name("job")
