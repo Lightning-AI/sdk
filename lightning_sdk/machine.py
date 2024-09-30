@@ -13,7 +13,7 @@ class Machine(Enum):
     T4_X_4 = "T4_X_4"
     L4 = "L4"
     L4_X_4 = "L4_X_4"
-    L4_X_8 = "L4_x_8"
+    L4_X_8 = "L4_X_8"
     A10G = "A10G"
     A10G_X_4 = "A10G_X_4"
     A10G_X_8 = "A10G_X_8"
