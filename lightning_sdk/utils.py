@@ -2,7 +2,8 @@ import logging
 import os
 import warnings
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Union
+from enum import Enum, EnumMeta
+from typing import TYPE_CHECKING, Any, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.machine import Machine
@@ -166,3 +167,57 @@ def _parse_model_and_version(name: str) -> Tuple[str, str]:
         "Model version is expected to be in the format `entity/modelname:version` separated by a"
         f" single colon, but got: {name}"
     )
+
+
+# We silence annotation errors as the function signatures are exactly the same in python core enum.py
+# taken from https://stackoverflow.com/a/62309159
+class OnAccess(EnumMeta):
+    """Runs a user-specified function whenever member is accessed."""
+
+    def __getattribute__(cls, name: str) -> Any:  # noqa: N805
+        """Called when an attribute is accessed."""
+        obj = super().__getattribute__(name)
+        if isinstance(obj, Enum) and obj._on_access:
+            obj._on_access()
+        return obj
+
+    def __getitem__(cls, name: str) -> Any:  # noqa: N805
+        """Called when an item is accessed."""
+        member = super().__getitem__(name)
+        if isinstance(member, Enum) and member._on_access:
+            member._on_access()
+        return member
+
+    def __call__(
+        cls,  # noqa: N805
+        value,  # noqa: ANN001
+        names=None,  # noqa: ANN001
+        *,
+        module=None,  # noqa: ANN001
+        qualname=None,  # noqa: ANN001
+        type=None,  # noqa: A002, ANN001
+        start=1,  # noqa: ANN001
+    ) -> Any:
+        obj = super().__call__(value, names, module=module, qualname=qualname, type=type, start=start)
+        if isinstance(obj, Enum) and obj._on_access:
+            obj._on_access()
+        return obj
+
+
+class DeprecationEnum(Enum, metaclass=OnAccess):
+    def __new__(cls, value, *args) -> Any:  # noqa: ANN001, ANN002
+        member = object.__new__(cls)
+        member._value_ = value
+        member._args = args
+        member._on_access = member.deprecate if args else None
+        return member
+
+    def deprecate(self) -> None:
+        args = (self.name, *self._args)
+        import warnings
+
+        warnings.warn(
+            f"{self.name} is deprecated; use {args} instead!",
+            DeprecationWarning,
+            stacklevel=3,
+        )

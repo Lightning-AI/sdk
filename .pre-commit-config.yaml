@@ -82,6 +82,12 @@ repos:
           - flake8-builtins
           - flake8-bugbear
 
+        exclude: |
+          (?x)^(
+            lightning_sdk/lightning_cloud/.* |
+            lightning_sdk/utils.py |
+          )$
+
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
