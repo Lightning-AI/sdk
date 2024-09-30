@@ -1,8 +1,10 @@
 import pytest
+import asyncio
+import aiohttp
 from unittest import mock
-from unittest.mock import Mock
+from unittest.mock import Mock, AsyncMock, mock_open, MagicMock, ANY, PropertyMock
 import lightning_sdk.api.utils
-from lightning_sdk.api.utils import _download_model_files, _ModelFileUploader, _FileUploader
+from lightning_sdk.api.utils import _download_model_files, _ModelFileUploader, _FileUploader, _FileDownloader
 from lightning_sdk.lightning_cloud.openapi import (
     ProjectIdStorageBody,
     V1SignedUrl,
@@ -131,32 +133,114 @@ def test_model_file_uploader(_, tmp_path, monkeypatch):
     uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
 
 
-@mock.patch("lightning_sdk.api.utils.requests")
 @mock.patch("lightning_sdk.api.utils.ModelsStoreApi")
-def test_download_model_files(api_mock, requests_mock, tmp_path):
-    api_mock().models_store_get_model_files.return_value = Mock(
+@mock.patch("lightning_sdk.api.utils._FileDownloader.download")
+def test_download_model_files(download_mock, api_mock, tmp_path):
+    api_mock.return_value.models_store_get_model_files.return_value = Mock(
         model_id="test-model-id",
         project_id="test-project-id",
         version="latest",
         filepaths=["path/to/file1", "path/to/file2"],
     )
-    requests_mock.get.return_value = Mock(iter_content=Mock(return_value=[b"chunk1", b"chunk2"]))
+
+    api_mock.return_value.models_store_get_model_file_url.side_effect = [
+        Mock(url="http://example.com/file1", size=10),
+        Mock(url="http://example.com/file2", size=10),
+    ]
+
+    delay = 0.01
 
     _download_model_files(
-        client=Mock(),
-        name="user/modelname",
-        version="latest",
-        download_dir=tmp_path,
-        progress_bar=False,
+        client=Mock(), name="user/modelname", version="latest", download_dir=tmp_path, progress_bar=False
     )
 
-    assert api_mock().models_store_get_model_file_url.call_count == 2
-    api_mock().models_store_get_model_file_url.assert_called_with(
-        filepath="path/to/file2",
-        model_id="test-model-id",
-        project_id="test-project-id",
-        version="latest",
+    assert api_mock.return_value.models_store_get_model_file_url.call_count == 2
+    api_mock.return_value.models_store_get_model_file_url.assert_any_call(
+        project_id="test-project-id", model_id="test-model-id", version="latest", filepath="path/to/file1"
+    )
+    api_mock.return_value.models_store_get_model_file_url.assert_any_call(
+        project_id="test-project-id", model_id="test-model-id", version="latest", filepath="path/to/file2"
     )
 
-    assert (tmp_path / "path/to/file1").exists()
-    assert (tmp_path / "path/to/file2").exists()
+    assert download_mock.call_count == 2
+
+
+async def mock_iter_chunked(size):
+    chunks = [b"test_data"]
+    for chunk in chunks:
+        yield chunk
+
+
+@pytest.mark.asyncio
+async def test_download_chunk_success():
+    url = "http://example.com"
+    start = 0
+    end = 100
+    filename = "test_file"
+
+    mock_response = AsyncMock()
+    mock_response.status = 206
+    mock_response.content.iter_chunked = mock_iter_chunked
+
+    mock_session = MagicMock()
+    mock_session.get.return_value.__aenter__.return_value = mock_response
+    mock_session.get.return_value.__aexit__.return_value = AsyncMock()
+
+    mock_client = MagicMock()
+    mock_client.api_client.call_api.return_value.url = url
+
+    file_downloader = _FileDownloader(
+        client=mock_client,
+        model_id="foo",
+        version="1",
+        teamspace_id="bar",
+        remote_path="some",
+        file_path=filename,
+    )
+
+    with mock.patch("builtins.open", mock_open()) as mock_file:
+        await file_downloader._download_chunk(mock_session, start, end, filename)
+
+        mock_session.get.assert_called_once_with(url, headers={"Range": "bytes=0-100"})
+
+        mock_file.assert_called_once_with(filename, "r+b")
+        mock_file().seek.assert_called_once_with(start)
+        mock_file().write.assert_called_once_with(b"test_data")
+
+
+@pytest.mark.asyncio
+@mock.patch.object(lightning_sdk.api.utils._FileDownloader, "url", new_callable=PropertyMock)
+@mock.patch("lightning_sdk.api.utils._FileDownloader.refresh")
+async def test_download_chunk_failure(refresh_mock, url_mock):
+    url = "http://example.com"
+    start = 0
+    end = 100
+    filename = "test_file"
+
+    mock_response = AsyncMock()
+    mock_response.status = 403
+
+    mock_session = MagicMock()
+    mock_session.get.return_value.__aenter__.return_value = mock_response
+    mock_session.get.return_value.__aexit__.return_value = AsyncMock()
+
+    mock_client = MagicMock()
+    mock_client.api_client.call_api.return_value.url = url
+
+    url_mock.return_value = url
+
+    file_downloader = _FileDownloader(
+        client=mock_client,
+        model_id="foo",
+        version="1",
+        teamspace_id="bar",
+        remote_path="some",
+        file_path=filename,
+    )
+
+    await file_downloader._download_chunk(mock_session, start, end, filename)
+
+    mock_session.get.assert_called_once_with(url, headers={"Range": "bytes=0-100"})
+    assert mock_response.raise_for_status.call_count == 1
+
+    assert refresh_mock.call_count == 2

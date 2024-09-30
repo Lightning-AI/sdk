@@ -1,4 +1,5 @@
 pytest
+pytest-asyncio
 pytest-sugar
 pytest-mock
 pytest-timeout

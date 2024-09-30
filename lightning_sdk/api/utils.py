@@ -1,10 +1,13 @@
+import asyncio
+import errno
 import math
 import os
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Coroutine, Dict, List, Optional
 
+import aiohttp
 import backoff
 import requests
 from tqdm import tqdm
@@ -24,6 +27,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UploadProjectArtifactResponse,
     VersionUploadsBody,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
@@ -345,16 +349,167 @@ def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:
     return f"/cloudspaces/{studio_id}/code/content/{path.replace('/teamspace/studios/this_studio/', '')}"
 
 
+class _FileDownloader:
+    def __init__(
+        self,
+        client: LightningClient,
+        model_id: str,
+        version: str,
+        teamspace_id: str,
+        remote_path: str,
+        file_path: str,
+        num_workers: int = 20,
+        progress_bar: Optional[tqdm] = None,
+    ) -> None:
+        self.api = ModelsStoreApi(client.api_client)
+        self.model_id = model_id
+        self.version = version
+        self.teamspace_id = teamspace_id
+        self.local_path = file_path
+        self.remote_path = remote_path
+        self.progress_bar = progress_bar
+        self.num_workers = num_workers
+        self._url = ""
+        self._size = 0
+        self.refresh()
+
+    @backoff.on_exception(backoff.expo, ApiException, max_tries=10)
+    def refresh(self) -> None:
+        response = self.api.models_store_get_model_file_url(
+            project_id=self.teamspace_id, model_id=self.model_id, version=self.version, filepath=self.remote_path
+        )
+        self._url = response.url
+        self._size = int(response.size)
+
+    @property
+    def url(self) -> str:
+        return self._url
+
+    @property
+    def size(self) -> int:
+        return self._size
+
+    def update_progress(self, n: int) -> None:
+        if self.progress_bar is None:
+            return
+        self.progress_bar.update(n)
+
+    @backoff.on_exception(backoff.expo, aiohttp.ClientResponseError, max_tries=10)
+    async def _download_chunk(
+        self,
+        session: aiohttp.ClientSession,
+        start: int,
+        end: int,
+        filename: str,
+    ) -> None:
+        headers = {"Range": f"bytes={start}-{end}"}
+
+        async with session.get(self.url, headers=headers) as response:
+            # Here we include 200 in the event range is unsatisfiable and we are returned the full content
+            # Note that this shouldn't happen (the range should be accurate at this point) but we can't
+            # exclude 200 is returned in corner cases.
+            if response.status in [200, 206]:  # Partial content (successful range request)
+                with open(filename, "r+b") as f:
+                    f.seek(start)
+                    async for chunk in response.content.iter_chunked(4096 * 8):
+                        f.write(chunk)
+                        self.update_progress(len(chunk))
+                return
+            if response.status == 403:  # Expired
+                self.refresh()
+            response.raise_for_status()
+
+    async def _gather_with_concurrency(self, n: int, coros: List[Coroutine]) -> Any:
+        semaphore = asyncio.Semaphore(n)
+
+        async def sem_coro(coro: Coroutine) -> Any:
+            async with semaphore:
+                return await coro
+
+        return await asyncio.gather(*(sem_coro(c) for c in coros))
+
+    def _create_empty_file(self, filename: str, file_size: int) -> None:
+        if hasattr(os, "posix_fallocate"):
+            fd = os.open(filename, os.O_RDWR | os.O_CREAT)
+            os.posix_fallocate(fd, 0, file_size)
+            os.close(fd)
+        else:
+            with open(filename, "wb") as f:
+                block_size = 1024 * 1024
+                for _ in range(file_size // block_size):
+                    f.write(b"\x00" * block_size)
+
+                remaining_size = file_size % block_size
+
+                if remaining_size > 0:
+                    f.write(b"\x00" * remaining_size)
+
+    async def _multipart_download(self, filename: str, max_workers: int) -> None:
+        min_chunk_size = 100 * 1024
+
+        # Create an async session
+        async with aiohttp.ClientSession() as session:
+            num_chunks = max_workers
+            chunk_size = math.ceil(self.size / num_chunks)
+
+            if chunk_size < min_chunk_size:
+                num_chunks = math.ceil(self.size / min_chunk_size)
+                chunk_size = min_chunk_size
+
+            num_workers = min(max_workers, num_chunks)
+
+            tasks = []
+
+            for part_number in range(num_chunks):
+                start = part_number * chunk_size
+                end = min(start + chunk_size - 1, self.size - 1)
+
+                tasks.append(self._download_chunk(session, start, end, filename))
+
+            try:
+                await self._gather_with_concurrency(num_workers, tasks)
+            except aiohttp.ClientResponseError as e:
+                if os.path.exists(filename):
+                    os.remove(filename)
+                raise aiohttp.ClientResponseError(
+                    request_info=e.request_info,
+                    history=e.history,
+                    status=e.status,
+                    message=f"Failed to download {self.remote_path}.",
+                    headers=e.headers,
+                ) from e
+
+    def download(self) -> None:
+        tmp_filename = f"{self.local_path}.download"
+
+        try:
+            self._create_empty_file(tmp_filename, self.size)
+        except OSError as e:
+            if e.errno == errno.ENOSPC:
+                print(f"Tried to create {self.local_path} of size {self.size}, but no space left on device.")
+            else:
+                print(f"An error occurred while creating file {self.local_path}: {e}.")
+
+            os.remove(tmp_filename)
+            raise
+
+        asyncio.run(self._multipart_download(tmp_filename, self.num_workers))
+
+        os.rename(tmp_filename, self.local_path)
+
+
 def _download_model_files(
     client: LightningClient,
     name: str,
     version: str,
     download_dir: Path,
     progress_bar: bool,
+    num_workers: int = 20,
 ) -> List[str]:
     api = ModelsStoreApi(client.api_client)
     response = api.models_store_get_model_files(name=name, version=version)
 
+    pbar = None
     if progress_bar:
         pbar = tqdm(
             desc=f"Downloading {version}",
@@ -363,23 +518,21 @@ def _download_model_files(
             unit_divisor=1000,
         )
 
-        pbar_update = pbar.update
-    else:
-        pbar_update = lambda x: None
-
     for filepath in response.filepaths:
-        url_response = api.models_store_get_model_file_url(
-            project_id=response.project_id,
-            model_id=response.model_id,
-            version=response.version,
-            filepath=filepath,
-        )
-        r = requests.get(url_response.url, stream=True)
         local_file = download_dir / filepath
         local_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(local_file, "wb") as file:
-            for chunk in r.iter_content(chunk_size=(4096 * 8)):
-                file.write(chunk)
-                pbar_update(len(chunk))
+
+        file_downloader = _FileDownloader(
+            client=client,
+            model_id=response.model_id,
+            version=response.version,
+            teamspace_id=response.project_id,
+            remote_path=filepath,
+            file_path=str(local_file),
+            num_workers=num_workers,
+            progress_bar=pbar,
+        )
+
+        file_downloader.download()
 
     return response.filepaths
