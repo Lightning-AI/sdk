@@ -51,7 +51,7 @@ def test_run_job_plugins(
     assert calls[2].kwargs["body"].unique_id == __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__["st-ghi-2"]
 
 
-@pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
+@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
 def test_run_job(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -70,7 +70,7 @@ def test_run_job(
     plugin.run(command="python my-file.py", name="my-fancy-job-name", machine=cloud_compute)
 
 
-@pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
+@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
 def test_run_mmt(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -89,7 +89,7 @@ def test_run_mmt(
     plugin.run(command="python my-file.py", name="my-fancy-mmt-name", num_instances=42, machine=cloud_compute)
 
 
-@pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
+@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
 def test_run_inference(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -140,7 +140,7 @@ def test_run_name():
     assert start_time == time_stamp == datetime.now().replace(second=0, microsecond=0)
 
 
-@pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
+@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
 def test_run_data_prep(
     internal_studio_init_mocker,
     internal_studio_status_mocker,

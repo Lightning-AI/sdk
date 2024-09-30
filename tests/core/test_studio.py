@@ -128,9 +128,9 @@ def test_studio_delete(internal_studio_delete_mocker, internal_studio_status_moc
         Machine.A10G,
         Machine.A10G_X_4,
         Machine.A10G_X_8,
-        Machine.L40,
-        Machine.L40_X_4,
-        Machine.L40_X_8,
+        Machine.L40S,
+        Machine.L40S_X_4,
+        Machine.L40S_X_8,
         Machine.A100_X_8,
         Machine.H100_X_8,
         Machine.H200_X_8,
@@ -280,7 +280,7 @@ def test_run_plugin(internal_studio_init_mocker, internal_studio_status_mocker, 
     studio.run_plugin("my-fancy-dummy-plugin")
 
 
-@pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
+@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
 def test_run_job(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -301,7 +301,7 @@ def test_run_job(
     studio.run_plugin("jobs", command="python my-file.py", name="my-fancy-job-name", machine=cloud_compute)
 
 
-@pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
+@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
 def test_run_mmt(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -334,7 +334,7 @@ def test_run_mmt(
     )
 
 
-@pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
+@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
 def test_run_data_prep(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -367,7 +367,7 @@ def test_run_data_prep(
     )
 
 
-@pytest.mark.parametrize("cloud_compute", Machine._member_map_.values())
+@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
 def test_run_inference(
     internal_studio_init_mocker,
     internal_user_api_mocker,
