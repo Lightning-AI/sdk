@@ -427,7 +427,7 @@ def internal_studio_api_mocker_get_machine(mocker):
         if id == "st-abc":
             instance = "cpu-4"
         elif id == "st-def":
-            instance = "data-large-3000"
+            instance = "data-large"
         elif id == "st-ghi":
             instance = "g4dn.2xlarge"
         elif id == "st-jkl":
@@ -446,6 +446,22 @@ def internal_studio_api_mocker_get_machine(mocker):
             instance = "p5.48xlarge"
         elif id == "st-efg":
             instance = "p5e.48xlarge"
+        elif id == "st-hij":
+            instance = "data-max"
+        elif id == "st-klm":
+            instance = "data-ultra"
+        elif id == "st-nop":
+            instance = "m3.medium"
+        elif id == "st-qrs":
+            instance = "g5.48xlarge"
+        elif id == "st-tuv":
+            instance = "g6e.4xlarge"
+        elif id == "st-wxy":
+            instance = "g6e.12xlarge"
+        elif id == "st-zab":
+            instance = "g6e.48xlarge"
+        elif id == "st-cde":
+            instance = "g6.48xlarge"
 
         assert instance is not None
         return V1CloudSpaceInstanceConfig(compute_config=V1UserRequestedComputeConfig(name=instance))

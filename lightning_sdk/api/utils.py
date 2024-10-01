@@ -315,9 +315,9 @@ class _DummyResponse:
 _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
     Machine.CPU_SMALL: "m3.medium",
     Machine.CPU: "cpu-4",
-    Machine.DATA_PREP: "data-large-3000",
-    Machine.DATA_PREP_MAX: "data-max-3000",
-    Machine.DATA_PREP_ULTRA: "data-ultra-3000",
+    Machine.DATA_PREP: "data-large",
+    Machine.DATA_PREP_MAX: "data-max",
+    Machine.DATA_PREP_ULTRA: "data-ultra",
     Machine.T4: "g4dn.2xlarge",
     Machine.T4_X_4: "g4dn.12xlarge",
     Machine.L4: "g6.4xlarge",
