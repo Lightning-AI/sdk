@@ -43,6 +43,7 @@ class V1GoogleCloudDirectV1(object):
     swagger_types = {
         'bucket_name': 'str',
         'credentials_secret_id': 'str',
+        'credentials_service_account_email': 'str',
         'primary_region': 'str',
         'project_id': 'str',
         'regions': 'list[str]',
@@ -53,6 +54,7 @@ class V1GoogleCloudDirectV1(object):
     attribute_map = {
         'bucket_name': 'bucketName',
         'credentials_secret_id': 'credentialsSecretId',
+        'credentials_service_account_email': 'credentialsServiceAccountEmail',
         'primary_region': 'primaryRegion',
         'project_id': 'projectId',
         'regions': 'regions',
@@ -60,10 +62,11 @@ class V1GoogleCloudDirectV1(object):
         'source_cidr_ips': 'sourceCidrIps'
     }
 
-    def __init__(self, bucket_name: 'str' =None, credentials_secret_id: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._credentials_secret_id = None
+        self._credentials_service_account_email = None
         self._primary_region = None
         self._project_id = None
         self._regions = None
@@ -74,6 +77,8 @@ class V1GoogleCloudDirectV1(object):
             self.bucket_name = bucket_name
         if credentials_secret_id is not None:
             self.credentials_secret_id = credentials_secret_id
+        if credentials_service_account_email is not None:
+            self.credentials_service_account_email = credentials_service_account_email
         if primary_region is not None:
             self.primary_region = primary_region
         if project_id is not None:
@@ -128,6 +133,27 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._credentials_secret_id = credentials_secret_id
+
+    @property
+    def credentials_service_account_email(self) -> 'str':
+        """Gets the credentials_service_account_email of this V1GoogleCloudDirectV1.  # noqa: E501
+
+
+        :return: The credentials_service_account_email of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._credentials_service_account_email
+
+    @credentials_service_account_email.setter
+    def credentials_service_account_email(self, credentials_service_account_email: 'str'):
+        """Sets the credentials_service_account_email of this V1GoogleCloudDirectV1.
+
+
+        :param credentials_service_account_email: The credentials_service_account_email of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._credentials_service_account_email = credentials_service_account_email
 
     @property
     def primary_region(self) -> 'str':

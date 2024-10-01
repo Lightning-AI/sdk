@@ -246,6 +246,7 @@ class DeploymentTemplatesServiceApi(object):
         :param str org_id:
         :param str user_id:
         :param str page_token:
+        :param str deployment_id:
         :return: V1ListDeploymentTemplatesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -270,12 +271,13 @@ class DeploymentTemplatesServiceApi(object):
         :param str org_id:
         :param str user_id:
         :param str page_token:
+        :param str deployment_id:
         :return: V1ListDeploymentTemplatesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'org_id', 'user_id', 'page_token']  # noqa: E501
+        all_params = ['project_id', 'org_id', 'user_id', 'page_token', 'deployment_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -304,6 +306,8 @@ class DeploymentTemplatesServiceApi(object):
             query_params.append(('userId', params['user_id']))  # noqa: E501
         if 'page_token' in params:
             query_params.append(('pageToken', params['page_token']))  # noqa: E501
+        if 'deployment_id' in params:
+            query_params.append(('deploymentId', params['deployment_id']))  # noqa: E501
 
         header_params = {}
 
