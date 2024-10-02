@@ -52,6 +52,7 @@ class V1ClusterAccelerator(object):
         'capacity_blocks_available': 'list[V1ClusterCapacityReservation]',
         'cluster_id': 'str',
         'cost': 'float',
+        'detailed_quotas_info': 'list[V1AcceleratorQuotaInfo]',
         'device_card': 'str',
         'device_info': 'str',
         'display_name': 'str',
@@ -89,6 +90,7 @@ class V1ClusterAccelerator(object):
         'capacity_blocks_available': 'capacityBlocksAvailable',
         'cluster_id': 'clusterId',
         'cost': 'cost',
+        'detailed_quotas_info': 'detailedQuotasInfo',
         'device_card': 'deviceCard',
         'device_info': 'deviceInfo',
         'display_name': 'displayName',
@@ -114,7 +116,7 @@ class V1ClusterAccelerator(object):
         'spot_price': 'spotPrice'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, non_spot: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, non_spot: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -127,6 +129,7 @@ class V1ClusterAccelerator(object):
         self._capacity_blocks_available = None
         self._cluster_id = None
         self._cost = None
+        self._detailed_quotas_info = None
         self._device_card = None
         self._device_info = None
         self._display_name = None
@@ -173,6 +176,8 @@ class V1ClusterAccelerator(object):
             self.cluster_id = cluster_id
         if cost is not None:
             self.cost = cost
+        if detailed_quotas_info is not None:
+            self.detailed_quotas_info = detailed_quotas_info
         if device_card is not None:
             self.device_card = device_card
         if device_info is not None:
@@ -450,6 +455,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._cost = cost
+
+    @property
+    def detailed_quotas_info(self) -> 'list[V1AcceleratorQuotaInfo]':
+        """Gets the detailed_quotas_info of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The detailed_quotas_info of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: list[V1AcceleratorQuotaInfo]
+        """
+        return self._detailed_quotas_info
+
+    @detailed_quotas_info.setter
+    def detailed_quotas_info(self, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]'):
+        """Sets the detailed_quotas_info of this V1ClusterAccelerator.
+
+
+        :param detailed_quotas_info: The detailed_quotas_info of this V1ClusterAccelerator.  # noqa: E501
+        :type: list[V1AcceleratorQuotaInfo]
+        """
+
+        self._detailed_quotas_info = detailed_quotas_info
 
     @property
     def device_card(self) -> 'str':
