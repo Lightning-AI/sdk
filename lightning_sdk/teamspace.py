@@ -169,6 +169,15 @@ class Teamspace:
                 automatically.
 
         """
+        if not path:
+            raise ValueError("No path provided to upload")
+        if not name:
+            raise ValueError("No name provided for the model")
+        if "/" not in name:
+            raise ValueError(
+                "Name must be in the format 'entity/modelname' where entity is either your user name"
+                " or the name of an organization you are part of."
+            )
         path = Path(path).resolve()
         if not path.exists():
             raise FileNotFoundError(str(path))
@@ -234,6 +243,8 @@ class Teamspace:
             The absolute path to the downloaded model file or folder.
 
         """
+        if not name:
+            raise ValueError("No name provided for the model")
         if download_dir is None:
             download_dir = Path.cwd()
         download_dir = Path(download_dir)

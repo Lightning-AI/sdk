@@ -15,8 +15,6 @@ class UserApi:
     """Internal API Client for user requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        super().__init__()
-
         self._client = LightningClient(max_tries=7)
 
     def get_user(self, name: str) -> V1SearchUser:
@@ -24,13 +22,15 @@ class UserApi:
         response = self._client.user_service_search_users(query=name)
 
         users = [u for u in response.users if u.username == name]
-        if not len(users):
+        if not users:
             raise ValueError(f"User {name} does not exist.")
         return users[0]
 
     def _get_user_by_id(self, user_id: str) -> V1SearchUser:
         response = self._client.user_service_search_users(query=user_id)
         users = [u for u in response.users if u.id == user_id]
+        if not users:
+            raise ValueError(f"User {user_id} does not exist.")
         return users[0]
 
     def _get_organizations_for_authed_user(
@@ -49,7 +49,7 @@ class UserApi:
         return self._client.projects_service_list_memberships(filter_by_user_id=True).memberships
 
     def _get_authed_user_name(self) -> str:
-        """Gets the currently logged in user."""
+        """Gets the currently logged-in user."""
         auth = Auth()
         auth.authenticate()
         user = self._get_user_by_id(auth.user_id)

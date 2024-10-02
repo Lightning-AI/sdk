@@ -8,8 +8,6 @@ class OrgApi:
     """Internal API client for org requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        super().__init__()
-
         self._client = LightningClient(max_tries=7)
 
     def get_org(self, name: str) -> V1Organization:

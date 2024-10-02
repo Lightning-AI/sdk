@@ -59,8 +59,6 @@ class StudioApi:
     """Internal API client for Studio requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        super().__init__()
-
         self._cloud_url = _cloud_url()
         self._client = LightningClient(max_tries=7)
         self._keep_alive_threads: Mapping[str, Thread] = {}
@@ -317,15 +315,14 @@ class StudioApi:
                 teamspace_id=teamspace_id,
                 session_id=response_submit.session_name,
             ):
-                if resp.exit_code != -1:
-                    if exit_code is None:
-                        exit_code = resp.exit_code
-                    elif exit_code != resp.exit_code:
-                        raise RuntimeError("Cannot determine exit code")
-
-                    output += resp.output
-                else:
+                if resp.exit_code == -1:
                     break
+                if exit_code is None:
+                    exit_code = resp.exit_code
+                elif exit_code != resp.exit_code:
+                    raise RuntimeError("Cannot determine exit code")
+
+                output += resp.output
 
             if exit_code is not None:
                 return output, exit_code

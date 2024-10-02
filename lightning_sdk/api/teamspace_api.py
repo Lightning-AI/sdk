@@ -33,7 +33,7 @@ class TeamspaceApi:
         """Get the current teamspace from the owner."""
         teamspaces = self.list_teamspaces(name=name, owner_id=owner_id)
 
-        if len(teamspaces) == 0:
+        if not teamspaces:
             raise ValueError(f"Teamspace {name} does not exist")
 
         if len(teamspaces) > 1:
@@ -90,7 +90,7 @@ class TeamspaceApi:
         return self._client.projects_service_list_project_cluster_bindings(project_id=teamspace_id).clusters
 
     def _get_authed_user_id(self) -> str:
-        """Gets the currently logged in user."""
+        """Gets the currently logged-in user."""
         auth = Auth()
         auth.authenticate()
         return auth.user_id
