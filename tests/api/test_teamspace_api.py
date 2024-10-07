@@ -103,13 +103,13 @@ def test_try_get_cluster_id():
     # cluster set via env variable
     teamspace_api = TeamspaceApi()
     with mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "cluster-via-env"}):
-        cluster_id = teamspace_api._try_get_cluster_id("teamspace-id")
+        cluster_id = teamspace_api._determine_cluster_id("teamspace-id")
     assert cluster_id == "cluster-via-env"
 
     # teamspace has single cluster
     teamspace_api.list_clusters = mock.Mock(return_value=[mock.Mock(cluster_id="test-cluster")])
     with mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": ""}):
-        cluster_id = teamspace_api._try_get_cluster_id("teamspace-id")
+        cluster_id = teamspace_api._determine_cluster_id("teamspace-id")
     assert cluster_id == "test-cluster"
 
     # ambiguous, can't determine which cluster to use
@@ -120,6 +120,6 @@ def test_try_get_cluster_id():
         ]
     )
     with mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": ""}), pytest.raises(
-        ValueError, match="Could not determine the current cluster id"
+        RuntimeError, match="Could not determine the current cluster id"
     ):
-        _ = teamspace_api._try_get_cluster_id("teamspace-id")
+        _ = teamspace_api._determine_cluster_id("teamspace-id")

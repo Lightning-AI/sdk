@@ -182,7 +182,7 @@ class Teamspace:
         if not path.exists():
             raise FileNotFoundError(str(path))
 
-        cluster_id = self._teamspace_api._try_get_cluster_id(self.id) if cluster_id is None else cluster_id
+        cluster_id = self._teamspace_api._determine_cluster_id(self.id) if cluster_id is None else cluster_id
         root_path = path.parent
         filepaths = [path] if path.is_file() else [p for p in path.rglob("*") if p.is_file()]
 

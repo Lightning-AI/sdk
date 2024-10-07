@@ -94,19 +94,20 @@ class TeamspaceApi:
         auth.authenticate()
         return auth.user_id
 
-    def _try_get_cluster_id(self, teamspace_id: str) -> str:
+    def _determine_cluster_id(self, teamspace_id: str) -> str:
         """Attempts to determine the cluster id of the teamspace.
 
         Raises an error if it's ambiguous.
 
         """
+        # when you run  from studio, the cluster is with env. vars
         cluster_id = os.getenv("LIGHTNING_CLUSTER_ID")
         if cluster_id:
             return cluster_id
         cluster_ids = [c.cluster_id for c in self.list_clusters(teamspace_id=teamspace_id)]
         if len(cluster_ids) == 1:
             return cluster_ids[0]
-        raise ValueError(
+        raise RuntimeError(
             "Could not determine the current cluster id. Please provide it manually as input."
             f" Choices are: {', '.join(cluster_ids)}"
         )

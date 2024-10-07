@@ -57,7 +57,6 @@ def _resolve_org(org: Optional[Union[str, "Organization"]]) -> Optional["Organiz
 
     if isinstance(org, Organization):
         return org
-
     org = _resolve_org_name(org)
 
     if org is None:
@@ -71,7 +70,6 @@ def _resolve_org(org: Optional[Union[str, "Organization"]]) -> Optional["Organiz
 def _resolve_user_name(name: Optional[str]) -> Optional[str]:
     if name is None:
         name = os.environ.get("LIGHTNING_USERNAME", "") or None
-
     return name
 
 
@@ -82,7 +80,6 @@ def _resolve_user(user: Optional[Union[str, "User"]]) -> Optional["User"]:
         return user
 
     user = _resolve_user_name(user)
-
     if user is None:
         return None
 
@@ -132,6 +129,12 @@ def _get_organizations_for_authed_user() -> List["Organization"]:
 
     _orgs = UserApi()._get_organizations_for_authed_user()
     return [Organization(_org.name) for _org in _orgs]
+
+
+def _get_teamspace_names_for_authed_user() -> List[str]:
+    """Returns Teamspace's names the current Authed user is a member of."""
+    teamspaces = UserApi()._get_all_teamspace_memberships("")
+    return sorted([ts.name for ts in teamspaces])
 
 
 def _get_authed_user() -> "User":
