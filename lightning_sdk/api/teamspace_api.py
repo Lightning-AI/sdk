@@ -44,7 +44,7 @@ class TeamspaceApi:
     def _get_teamspace_by_id(self, teamspace_id: str) -> V1Project:
         return self._client.projects_service_get_project(teamspace_id)
 
-    def list_teamspaces(self, owner_id: str, name: Optional[str]) -> Optional[V1Project]:
+    def list_teamspaces(self, owner_id: str, name: Optional[str] = None) -> Optional[V1Project]:
         """Lists teamspaces from owner.
 
         If name is passed only teamspaces matching that name will be returned
@@ -54,15 +54,14 @@ class TeamspaceApi:
         # -> list projects authed users are members of + filter later on
         res = self._client.projects_service_list_memberships(filter_by_user_id=True)
 
-        return [
-            self._get_teamspace_by_id(m.project_id)
-            for m in filter(
-                # only return teamspaces actually owned by the id
-                lambda x: x.owner_id == owner_id,
-                # if name is provided, filter for teamspaces matching that name
-                filter(lambda x: name is None or x.name == name or x.display_name == name, res.memberships),
-            )
-        ]
+        teamspaces = []
+        for teamspace in res.memberships:
+            # if name is provided, filter for teamspaces matching that name
+            match_name = name is None or teamspace.name == name or teamspace.display_name == name
+            # and only return teamspaces actually owned by the id
+            if match_name and teamspace.owner_id == owner_id:
+                teamspaces.append(self._get_teamspace_by_id(teamspace.project_id))
+        return teamspaces
 
     def list_studios(self, teamspace_id: str, cluster_id: str = "") -> List[V1CloudSpace]:
         """List studios in teamspace."""
