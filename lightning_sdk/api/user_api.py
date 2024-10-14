@@ -46,7 +46,8 @@ class UserApi:
         return resp.cloudspaces
 
     def _get_all_teamspace_memberships(
-        self, user_id: str  # todo: this is unused, but still required
+        self,
+        user_id: str,  # todo: this is unused, but still required
     ) -> List[V1Membership]:
         return self._client.projects_service_list_memberships(filter_by_user_id=True).memberships
 

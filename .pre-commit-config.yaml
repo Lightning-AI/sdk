@@ -42,19 +42,6 @@ repos:
         args: ["--maxkb=100", "--enforce-all"]
       - id: detect-private-key
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.13.0
-    hooks:
-      - id: pyupgrade
-        args: ["--py38-plus"]
-        name: Upgrade code
-
-  - repo: https://github.com/psf/black
-    rev: 23.9.1
-    hooks:
-      - id: black
-        name: Format code
-
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.17
     hooks:
@@ -63,23 +50,6 @@ repos:
           - mdformat-gfm
           #- mdformat-black
           - mdformat_frontmatter
-
-  - repo: https://github.com/asottile/yesqa
-    rev: v1.5.0
-    hooks:
-      - id: yesqa
-        additional_dependencies:
-          - pep8-naming
-          - flake8-pytest-style
-          - flake8-bandit
-          - flake8-builtins
-          - flake8-bugbear
-
-        exclude: |
-          (?x)^(
-            lightning_sdk/lightning_cloud/.* |
-            lightning_sdk/utils/enum.py |
-          )$
 
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
@@ -110,3 +80,4 @@ repos:
     hooks:
       - id: ruff
         args: ["--fix"]
+      - id: ruff-format

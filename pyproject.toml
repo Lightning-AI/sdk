@@ -59,6 +59,7 @@ blank = true
 
 [tool.ruff]
 line-length = 120
+target-version = "py38"
 # Enable Pyflakes `E` and `F` codes by default.
 select = [
     "E",
@@ -67,6 +68,7 @@ select = [
     "I", #see: https://pypi.org/project/isort/
     "D", # see: https://pypi.org/project/pydocstyle
     "N", # see: https://pypi.org/project/pep8-naming
+    "UP", # see: pyupgrade
 ]
 extend-select = [
     "A",    # see: https://pypi.org/project/flake8-builtins
