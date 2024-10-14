@@ -173,11 +173,6 @@ class Teamspace:
             raise ValueError("No path provided to upload")
         if not name:
             raise ValueError("No name provided for the model")
-        if "/" not in name:
-            raise ValueError(
-                "Name must be in the format 'entity/modelname' where entity is either your user name"
-                " or the name of an organization you are part of."
-            )
         path = Path(path).resolve()
         if not path.exists():
             raise FileNotFoundError(str(path))
