@@ -40,7 +40,6 @@ class V1ClusterType(object):
     UNSPECIFIED = "CLUSTER_TYPE_UNSPECIFIED"
     GLOBAL = "CLUSTER_TYPE_GLOBAL"
     BYOC = "CLUSTER_TYPE_BYOC"
-    BYOM = "CLUSTER_TYPE_BYOM"
     SLURM = "CLUSTER_TYPE_SLURM"
     """
     Attributes:

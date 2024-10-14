@@ -52,6 +52,7 @@ class OrgsIdBody(object):
         'email': 'str',
         'featured_gallery': 'bool',
         'location': 'str',
+        'preferred_cluster': 'str',
         'start_studios_on_spot_instance': 'bool',
         'teamspace_default_credits': 'float',
         'twitter_username': 'str'
@@ -69,12 +70,13 @@ class OrgsIdBody(object):
         'email': 'email',
         'featured_gallery': 'featuredGallery',
         'location': 'location',
+        'preferred_cluster': 'preferredCluster',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
         self._allow_member_invitations = None
@@ -87,6 +89,7 @@ class OrgsIdBody(object):
         self._email = None
         self._featured_gallery = None
         self._location = None
+        self._preferred_cluster = None
         self._start_studios_on_spot_instance = None
         self._teamspace_default_credits = None
         self._twitter_username = None
@@ -113,6 +116,8 @@ class OrgsIdBody(object):
             self.featured_gallery = featured_gallery
         if location is not None:
             self.location = location
+        if preferred_cluster is not None:
+            self.preferred_cluster = preferred_cluster
         if start_studios_on_spot_instance is not None:
             self.start_studios_on_spot_instance = start_studios_on_spot_instance
         if teamspace_default_credits is not None:
@@ -350,6 +355,27 @@ class OrgsIdBody(object):
         """
 
         self._location = location
+
+    @property
+    def preferred_cluster(self) -> 'str':
+        """Gets the preferred_cluster of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The preferred_cluster of this OrgsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._preferred_cluster
+
+    @preferred_cluster.setter
+    def preferred_cluster(self, preferred_cluster: 'str'):
+        """Sets the preferred_cluster of this OrgsIdBody.
+
+
+        :param preferred_cluster: The preferred_cluster of this OrgsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._preferred_cluster = preferred_cluster
 
     @property
     def start_studios_on_spot_instance(self) -> 'bool':

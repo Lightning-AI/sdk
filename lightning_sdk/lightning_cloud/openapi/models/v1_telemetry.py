@@ -48,7 +48,8 @@ class V1Telemetry(object):
         'duration90': 'float',
         'duration95': 'float',
         'duration99': 'float',
-        'duration999': 'float'
+        'duration999': 'float',
+        'success_count': 'int'
     }
 
     attribute_map = {
@@ -59,10 +60,11 @@ class V1Telemetry(object):
         'duration90': 'duration90',
         'duration95': 'duration95',
         'duration99': 'duration99',
-        'duration999': 'duration999'
+        'duration999': 'duration999',
+        'success_count': 'successCount'
     }
 
-    def __init__(self, count: 'int' =None, duration25: 'float' =None, duration50: 'float' =None, duration75: 'float' =None, duration90: 'float' =None, duration95: 'float' =None, duration99: 'float' =None, duration999: 'float' =None):  # noqa: E501
+    def __init__(self, count: 'int' =None, duration25: 'float' =None, duration50: 'float' =None, duration75: 'float' =None, duration90: 'float' =None, duration95: 'float' =None, duration99: 'float' =None, duration999: 'float' =None, success_count: 'int' =None):  # noqa: E501
         """V1Telemetry - a model defined in Swagger"""  # noqa: E501
         self._count = None
         self._duration25 = None
@@ -72,6 +74,7 @@ class V1Telemetry(object):
         self._duration95 = None
         self._duration99 = None
         self._duration999 = None
+        self._success_count = None
         self.discriminator = None
         if count is not None:
             self.count = count
@@ -89,6 +92,8 @@ class V1Telemetry(object):
             self.duration99 = duration99
         if duration999 is not None:
             self.duration999 = duration999
+        if success_count is not None:
+            self.success_count = success_count
 
     @property
     def count(self) -> 'int':
@@ -257,6 +262,27 @@ class V1Telemetry(object):
         """
 
         self._duration999 = duration999
+
+    @property
+    def success_count(self) -> 'int':
+        """Gets the success_count of this V1Telemetry.  # noqa: E501
+
+
+        :return: The success_count of this V1Telemetry.  # noqa: E501
+        :rtype: int
+        """
+        return self._success_count
+
+    @success_count.setter
+    def success_count(self, success_count: 'int'):
+        """Sets the success_count of this V1Telemetry.
+
+
+        :param success_count: The success_count of this V1Telemetry.  # noqa: E501
+        :type: int
+        """
+
+        self._success_count = success_count
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

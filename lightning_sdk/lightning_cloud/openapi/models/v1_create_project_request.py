@@ -45,6 +45,7 @@ class V1CreateProjectRequest(object):
         'display_name': 'str',
         'name': 'str',
         'organization_id': 'str',
+        'preferred_cluster': 'str',
         'quotas': 'V1Quotas'
     }
 
@@ -53,15 +54,17 @@ class V1CreateProjectRequest(object):
         'display_name': 'displayName',
         'name': 'name',
         'organization_id': 'organizationId',
+        'preferred_cluster': 'preferredCluster',
         'quotas': 'quotas'
     }
 
-    def __init__(self, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, organization_id: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
+    def __init__(self, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
         """V1CreateProjectRequest - a model defined in Swagger"""  # noqa: E501
         self._description = None
         self._display_name = None
         self._name = None
         self._organization_id = None
+        self._preferred_cluster = None
         self._quotas = None
         self.discriminator = None
         if description is not None:
@@ -72,6 +75,8 @@ class V1CreateProjectRequest(object):
             self.name = name
         if organization_id is not None:
             self.organization_id = organization_id
+        if preferred_cluster is not None:
+            self.preferred_cluster = preferred_cluster
         if quotas is not None:
             self.quotas = quotas
 
@@ -158,6 +163,27 @@ class V1CreateProjectRequest(object):
         """
 
         self._organization_id = organization_id
+
+    @property
+    def preferred_cluster(self) -> 'str':
+        """Gets the preferred_cluster of this V1CreateProjectRequest.  # noqa: E501
+
+
+        :return: The preferred_cluster of this V1CreateProjectRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._preferred_cluster
+
+    @preferred_cluster.setter
+    def preferred_cluster(self, preferred_cluster: 'str'):
+        """Sets the preferred_cluster of this V1CreateProjectRequest.
+
+
+        :param preferred_cluster: The preferred_cluster of this V1CreateProjectRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._preferred_cluster = preferred_cluster
 
     @property
     def quotas(self) -> 'V1Quotas':

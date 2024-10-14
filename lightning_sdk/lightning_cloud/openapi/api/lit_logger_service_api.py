@@ -491,7 +491,6 @@ class LitLoggerServiceApi(object):
         :param str project_id: (required)
         :param str metrics_stream_id: (required)
         :param str id: (required)
-        :param str cluster_id:
         :return: V1DeleteLoggerArtifactResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -515,13 +514,12 @@ class LitLoggerServiceApi(object):
         :param str project_id: (required)
         :param str metrics_stream_id: (required)
         :param str id: (required)
-        :param str cluster_id:
         :return: V1DeleteLoggerArtifactResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'metrics_stream_id', 'id', 'cluster_id']  # noqa: E501
+        all_params = ['project_id', 'metrics_stream_id', 'id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -560,8 +558,6 @@ class LitLoggerServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
-        if 'cluster_id' in params:
-            query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
 
         header_params = {}
 
@@ -834,7 +830,6 @@ class LitLoggerServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str metrics_stream_id: (required)
-        :param str cluster_id:
         :return: V1ListLoggerArtifactResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -857,13 +852,12 @@ class LitLoggerServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str metrics_stream_id: (required)
-        :param str cluster_id:
         :return: V1ListLoggerArtifactResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'metrics_stream_id', 'cluster_id']  # noqa: E501
+        all_params = ['project_id', 'metrics_stream_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -896,8 +890,6 @@ class LitLoggerServiceApi(object):
             path_params['metricsStreamId'] = params['metrics_stream_id']  # noqa: E501
 
         query_params = []
-        if 'cluster_id' in params:
-            query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
 
         header_params = {}
 

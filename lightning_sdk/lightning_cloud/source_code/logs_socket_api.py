@@ -17,7 +17,7 @@ class LightningLogsSocketAPI:
 
     def _get_api_token(self):
         token_resp = self._auth_service.auth_service_login(body=V1LoginRequest(
-            username=self._auth.username,
+            username=self._auth.user_id,
             api_key=self._auth.api_key,
         ))
         return token_resp.token

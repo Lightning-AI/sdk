@@ -52,7 +52,6 @@ class V1ClusterSpec(object):
         'insurer_disabled': 'bool',
         'overprovisioning': 'list[V1InstanceOverprovisioningSpec]',
         'pause_automation': 'bool',
-        'performance_profile': 'V1ClusterPerformanceProfile',
         'security_options': 'V1ClusterSecurityOptions',
         'slurm_v1': 'V1SlurmV1',
         'tagging_options': 'V1ClusterTaggingOptions',
@@ -71,14 +70,13 @@ class V1ClusterSpec(object):
         'insurer_disabled': 'insurerDisabled',
         'overprovisioning': 'overprovisioning',
         'pause_automation': 'pauseAutomation',
-        'performance_profile': 'performanceProfile',
         'security_options': 'securityOptions',
         'slurm_v1': 'slurmV1',
         'tagging_options': 'taggingOptions',
         'user_id': 'userId'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, performance_profile: 'V1ClusterPerformanceProfile' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_instance_types = None
@@ -91,7 +89,6 @@ class V1ClusterSpec(object):
         self._insurer_disabled = None
         self._overprovisioning = None
         self._pause_automation = None
-        self._performance_profile = None
         self._security_options = None
         self._slurm_v1 = None
         self._tagging_options = None
@@ -119,8 +116,6 @@ class V1ClusterSpec(object):
             self.overprovisioning = overprovisioning
         if pause_automation is not None:
             self.pause_automation = pause_automation
-        if performance_profile is not None:
-            self.performance_profile = performance_profile
         if security_options is not None:
             self.security_options = security_options
         if slurm_v1 is not None:
@@ -362,27 +357,6 @@ class V1ClusterSpec(object):
         """
 
         self._pause_automation = pause_automation
-
-    @property
-    def performance_profile(self) -> 'V1ClusterPerformanceProfile':
-        """Gets the performance_profile of this V1ClusterSpec.  # noqa: E501
-
-
-        :return: The performance_profile of this V1ClusterSpec.  # noqa: E501
-        :rtype: V1ClusterPerformanceProfile
-        """
-        return self._performance_profile
-
-    @performance_profile.setter
-    def performance_profile(self, performance_profile: 'V1ClusterPerformanceProfile'):
-        """Sets the performance_profile of this V1ClusterSpec.
-
-
-        :param performance_profile: The performance_profile of this V1ClusterSpec.  # noqa: E501
-        :type: V1ClusterPerformanceProfile
-        """
-
-        self._performance_profile = performance_profile
 
     @property
     def security_options(self) -> 'V1ClusterSecurityOptions':

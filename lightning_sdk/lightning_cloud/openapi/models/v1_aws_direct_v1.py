@@ -41,44 +41,80 @@ class V1AWSDirectV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'bucket_endpoint': 'str',
         'bucket_name': 'str',
         'external_id': 'str',
         'primary_region': 'str',
+        'regional_load_balancers': 'list[V1RegionalLoadBalancer]',
         'regions': 'list[str]',
         'role_arn': 'str',
-        'source_cidr_ips': 'list[str]'
+        'source_cidr_ips': 'list[str]',
+        'use_launch_templates': 'bool'
     }
 
     attribute_map = {
+        'bucket_endpoint': 'bucketEndpoint',
         'bucket_name': 'bucketName',
         'external_id': 'externalId',
         'primary_region': 'primaryRegion',
+        'regional_load_balancers': 'regionalLoadBalancers',
         'regions': 'regions',
         'role_arn': 'roleArn',
-        'source_cidr_ips': 'sourceCidrIps'
+        'source_cidr_ips': 'sourceCidrIps',
+        'use_launch_templates': 'useLaunchTemplates'
     }
 
-    def __init__(self, bucket_name: 'str' =None, external_id: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, role_arn: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
+    def __init__(self, bucket_endpoint: 'str' =None, bucket_name: 'str' =None, external_id: 'str' =None, primary_region: 'str' =None, regional_load_balancers: 'list[V1RegionalLoadBalancer]' =None, regions: 'list[str]' =None, role_arn: 'str' =None, source_cidr_ips: 'list[str]' =None, use_launch_templates: 'bool' =None):  # noqa: E501
         """V1AWSDirectV1 - a model defined in Swagger"""  # noqa: E501
+        self._bucket_endpoint = None
         self._bucket_name = None
         self._external_id = None
         self._primary_region = None
+        self._regional_load_balancers = None
         self._regions = None
         self._role_arn = None
         self._source_cidr_ips = None
+        self._use_launch_templates = None
         self.discriminator = None
+        if bucket_endpoint is not None:
+            self.bucket_endpoint = bucket_endpoint
         if bucket_name is not None:
             self.bucket_name = bucket_name
         if external_id is not None:
             self.external_id = external_id
         if primary_region is not None:
             self.primary_region = primary_region
+        if regional_load_balancers is not None:
+            self.regional_load_balancers = regional_load_balancers
         if regions is not None:
             self.regions = regions
         if role_arn is not None:
             self.role_arn = role_arn
         if source_cidr_ips is not None:
             self.source_cidr_ips = source_cidr_ips
+        if use_launch_templates is not None:
+            self.use_launch_templates = use_launch_templates
+
+    @property
+    def bucket_endpoint(self) -> 'str':
+        """Gets the bucket_endpoint of this V1AWSDirectV1.  # noqa: E501
+
+
+        :return: The bucket_endpoint of this V1AWSDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._bucket_endpoint
+
+    @bucket_endpoint.setter
+    def bucket_endpoint(self, bucket_endpoint: 'str'):
+        """Sets the bucket_endpoint of this V1AWSDirectV1.
+
+
+        :param bucket_endpoint: The bucket_endpoint of this V1AWSDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._bucket_endpoint = bucket_endpoint
 
     @property
     def bucket_name(self) -> 'str':
@@ -144,6 +180,27 @@ class V1AWSDirectV1(object):
         self._primary_region = primary_region
 
     @property
+    def regional_load_balancers(self) -> 'list[V1RegionalLoadBalancer]':
+        """Gets the regional_load_balancers of this V1AWSDirectV1.  # noqa: E501
+
+
+        :return: The regional_load_balancers of this V1AWSDirectV1.  # noqa: E501
+        :rtype: list[V1RegionalLoadBalancer]
+        """
+        return self._regional_load_balancers
+
+    @regional_load_balancers.setter
+    def regional_load_balancers(self, regional_load_balancers: 'list[V1RegionalLoadBalancer]'):
+        """Sets the regional_load_balancers of this V1AWSDirectV1.
+
+
+        :param regional_load_balancers: The regional_load_balancers of this V1AWSDirectV1.  # noqa: E501
+        :type: list[V1RegionalLoadBalancer]
+        """
+
+        self._regional_load_balancers = regional_load_balancers
+
+    @property
     def regions(self) -> 'list[str]':
         """Gets the regions of this V1AWSDirectV1.  # noqa: E501
 
@@ -207,6 +264,27 @@ class V1AWSDirectV1(object):
         """
 
         self._source_cidr_ips = source_cidr_ips
+
+    @property
+    def use_launch_templates(self) -> 'bool':
+        """Gets the use_launch_templates of this V1AWSDirectV1.  # noqa: E501
+
+
+        :return: The use_launch_templates of this V1AWSDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._use_launch_templates
+
+    @use_launch_templates.setter
+    def use_launch_templates(self, use_launch_templates: 'bool'):
+        """Sets the use_launch_templates of this V1AWSDirectV1.
+
+
+        :param use_launch_templates: The use_launch_templates of this V1AWSDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._use_launch_templates = use_launch_templates
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

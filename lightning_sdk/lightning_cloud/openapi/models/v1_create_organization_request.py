@@ -49,6 +49,7 @@ class V1CreateOrganizationRequest(object):
         'email': 'str',
         'featured_gallery': 'bool',
         'location': 'str',
+        'preferred_cluster': 'str',
         'start_studios_on_spot_instance': 'bool',
         'twitter_username': 'str',
         'type': 'str'
@@ -63,12 +64,13 @@ class V1CreateOrganizationRequest(object):
         'email': 'email',
         'featured_gallery': 'featuredGallery',
         'location': 'location',
+        'preferred_cluster': 'preferredCluster',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
         'twitter_username': 'twitterUsername',
         'type': 'type'
     }
 
-    def __init__(self, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, start_studios_on_spot_instance: 'bool' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
         """V1CreateOrganizationRequest - a model defined in Swagger"""  # noqa: E501
         self._auto_invite_by_domain = None
         self._auto_join_domains = None
@@ -78,6 +80,7 @@ class V1CreateOrganizationRequest(object):
         self._email = None
         self._featured_gallery = None
         self._location = None
+        self._preferred_cluster = None
         self._start_studios_on_spot_instance = None
         self._twitter_username = None
         self._type = None
@@ -98,6 +101,8 @@ class V1CreateOrganizationRequest(object):
             self.featured_gallery = featured_gallery
         if location is not None:
             self.location = location
+        if preferred_cluster is not None:
+            self.preferred_cluster = preferred_cluster
         if start_studios_on_spot_instance is not None:
             self.start_studios_on_spot_instance = start_studios_on_spot_instance
         if twitter_username is not None:
@@ -272,6 +277,27 @@ class V1CreateOrganizationRequest(object):
         """
 
         self._location = location
+
+    @property
+    def preferred_cluster(self) -> 'str':
+        """Gets the preferred_cluster of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The preferred_cluster of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._preferred_cluster
+
+    @preferred_cluster.setter
+    def preferred_cluster(self, preferred_cluster: 'str'):
+        """Sets the preferred_cluster of this V1CreateOrganizationRequest.
+
+
+        :param preferred_cluster: The preferred_cluster of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._preferred_cluster = preferred_cluster
 
     @property
     def start_studios_on_spot_instance(self) -> 'bool':

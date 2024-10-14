@@ -43,23 +43,21 @@ class V1UserFeatures(object):
     swagger_types = {
         'advanced_deployment_autoscaling': 'bool',
         'agents_v2': 'bool',
-        'apt_get_v2': 'bool',
         'auto_fast_load': 'bool',
         'auto_join_orgs': 'bool',
         'aws_trainium': 'bool',
         'b2c_experience': 'bool',
-        'byom': 'bool',
         'cap_add': 'list[str]',
         'cap_drop': 'list[str]',
         'capacity_reservation': 'bool',
         'capacity_reservation_dry_run': 'bool',
-        'cluster_running_notification': 'bool',
         'code_tab': 'bool',
         'collab_screen_sharing': 'bool',
         'cost_attribution_settings': 'bool',
         'crypto_monitoring': 'bool',
         'custom_app_domain': 'bool',
         'custom_instance_types': 'bool',
+        'default_one_cluster': 'bool',
         'deployment_gallery': 'bool',
         'deployment_persistent_disk': 'bool',
         'docs_agent': 'bool',
@@ -79,7 +77,6 @@ class V1UserFeatures(object):
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
         'model_store': 'bool',
-        'new_data_prep_cpu_instance': 'bool',
         'org_level_member_permissions': 'bool',
         'plugin_biz_chat': 'bool',
         'plugin_distributed': 'bool',
@@ -111,7 +108,6 @@ class V1UserFeatures(object):
         'studio_config': 'bool',
         'studio_on_stop': 'bool',
         'teamspace_storage_tab': 'bool',
-        'use_local_disk': 'bool',
         'use_rclone_mounts_only': 'bool',
         'writable_data_connections': 'bool'
     }
@@ -119,23 +115,21 @@ class V1UserFeatures(object):
     attribute_map = {
         'advanced_deployment_autoscaling': 'advancedDeploymentAutoscaling',
         'agents_v2': 'agentsV2',
-        'apt_get_v2': 'aptGetV2',
         'auto_fast_load': 'autoFastLoad',
         'auto_join_orgs': 'autoJoinOrgs',
         'aws_trainium': 'awsTrainium',
         'b2c_experience': 'b2cExperience',
-        'byom': 'byom',
         'cap_add': 'capAdd',
         'cap_drop': 'capDrop',
         'capacity_reservation': 'capacityReservation',
         'capacity_reservation_dry_run': 'capacityReservationDryRun',
-        'cluster_running_notification': 'clusterRunningNotification',
         'code_tab': 'codeTab',
         'collab_screen_sharing': 'collabScreenSharing',
         'cost_attribution_settings': 'costAttributionSettings',
         'crypto_monitoring': 'cryptoMonitoring',
         'custom_app_domain': 'customAppDomain',
         'custom_instance_types': 'customInstanceTypes',
+        'default_one_cluster': 'defaultOneCluster',
         'deployment_gallery': 'deploymentGallery',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
         'docs_agent': 'docsAgent',
@@ -155,7 +149,6 @@ class V1UserFeatures(object):
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'model_store': 'modelStore',
-        'new_data_prep_cpu_instance': 'newDataPrepCpuInstance',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'plugin_biz_chat': 'pluginBizChat',
         'plugin_distributed': 'pluginDistributed',
@@ -187,32 +180,29 @@ class V1UserFeatures(object):
         'studio_config': 'studioConfig',
         'studio_on_stop': 'studioOnStop',
         'teamspace_storage_tab': 'teamspaceStorageTab',
-        'use_local_disk': 'useLocalDisk',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, agents_v2: 'bool' =None, apt_get_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, byom: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_running_notification: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, new_data_prep_cpu_instance: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, private_ip_over_efa_interface: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_local_disk: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, agents_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, private_ip_over_efa_interface: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._advanced_deployment_autoscaling = None
         self._agents_v2 = None
-        self._apt_get_v2 = None
         self._auto_fast_load = None
         self._auto_join_orgs = None
         self._aws_trainium = None
         self._b2c_experience = None
-        self._byom = None
         self._cap_add = None
         self._cap_drop = None
         self._capacity_reservation = None
         self._capacity_reservation_dry_run = None
-        self._cluster_running_notification = None
         self._code_tab = None
         self._collab_screen_sharing = None
         self._cost_attribution_settings = None
         self._crypto_monitoring = None
         self._custom_app_domain = None
         self._custom_instance_types = None
+        self._default_one_cluster = None
         self._deployment_gallery = None
         self._deployment_persistent_disk = None
         self._docs_agent = None
@@ -232,7 +222,6 @@ class V1UserFeatures(object):
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
         self._model_store = None
-        self._new_data_prep_cpu_instance = None
         self._org_level_member_permissions = None
         self._plugin_biz_chat = None
         self._plugin_distributed = None
@@ -264,7 +253,6 @@ class V1UserFeatures(object):
         self._studio_config = None
         self._studio_on_stop = None
         self._teamspace_storage_tab = None
-        self._use_local_disk = None
         self._use_rclone_mounts_only = None
         self._writable_data_connections = None
         self.discriminator = None
@@ -272,8 +260,6 @@ class V1UserFeatures(object):
             self.advanced_deployment_autoscaling = advanced_deployment_autoscaling
         if agents_v2 is not None:
             self.agents_v2 = agents_v2
-        if apt_get_v2 is not None:
-            self.apt_get_v2 = apt_get_v2
         if auto_fast_load is not None:
             self.auto_fast_load = auto_fast_load
         if auto_join_orgs is not None:
@@ -282,8 +268,6 @@ class V1UserFeatures(object):
             self.aws_trainium = aws_trainium
         if b2c_experience is not None:
             self.b2c_experience = b2c_experience
-        if byom is not None:
-            self.byom = byom
         if cap_add is not None:
             self.cap_add = cap_add
         if cap_drop is not None:
@@ -292,8 +276,6 @@ class V1UserFeatures(object):
             self.capacity_reservation = capacity_reservation
         if capacity_reservation_dry_run is not None:
             self.capacity_reservation_dry_run = capacity_reservation_dry_run
-        if cluster_running_notification is not None:
-            self.cluster_running_notification = cluster_running_notification
         if code_tab is not None:
             self.code_tab = code_tab
         if collab_screen_sharing is not None:
@@ -306,6 +288,8 @@ class V1UserFeatures(object):
             self.custom_app_domain = custom_app_domain
         if custom_instance_types is not None:
             self.custom_instance_types = custom_instance_types
+        if default_one_cluster is not None:
+            self.default_one_cluster = default_one_cluster
         if deployment_gallery is not None:
             self.deployment_gallery = deployment_gallery
         if deployment_persistent_disk is not None:
@@ -344,8 +328,6 @@ class V1UserFeatures(object):
             self.mmt_strategy_selector = mmt_strategy_selector
         if model_store is not None:
             self.model_store = model_store
-        if new_data_prep_cpu_instance is not None:
-            self.new_data_prep_cpu_instance = new_data_prep_cpu_instance
         if org_level_member_permissions is not None:
             self.org_level_member_permissions = org_level_member_permissions
         if plugin_biz_chat is not None:
@@ -408,8 +390,6 @@ class V1UserFeatures(object):
             self.studio_on_stop = studio_on_stop
         if teamspace_storage_tab is not None:
             self.teamspace_storage_tab = teamspace_storage_tab
-        if use_local_disk is not None:
-            self.use_local_disk = use_local_disk
         if use_rclone_mounts_only is not None:
             self.use_rclone_mounts_only = use_rclone_mounts_only
         if writable_data_connections is not None:
@@ -456,27 +436,6 @@ class V1UserFeatures(object):
         """
 
         self._agents_v2 = agents_v2
-
-    @property
-    def apt_get_v2(self) -> 'bool':
-        """Gets the apt_get_v2 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The apt_get_v2 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._apt_get_v2
-
-    @apt_get_v2.setter
-    def apt_get_v2(self, apt_get_v2: 'bool'):
-        """Sets the apt_get_v2 of this V1UserFeatures.
-
-
-        :param apt_get_v2: The apt_get_v2 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._apt_get_v2 = apt_get_v2
 
     @property
     def auto_fast_load(self) -> 'bool':
@@ -563,27 +522,6 @@ class V1UserFeatures(object):
         self._b2c_experience = b2c_experience
 
     @property
-    def byom(self) -> 'bool':
-        """Gets the byom of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The byom of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._byom
-
-    @byom.setter
-    def byom(self, byom: 'bool'):
-        """Sets the byom of this V1UserFeatures.
-
-
-        :param byom: The byom of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._byom = byom
-
-    @property
     def cap_add(self) -> 'list[str]':
         """Gets the cap_add of this V1UserFeatures.  # noqa: E501
 
@@ -666,27 +604,6 @@ class V1UserFeatures(object):
         """
 
         self._capacity_reservation_dry_run = capacity_reservation_dry_run
-
-    @property
-    def cluster_running_notification(self) -> 'bool':
-        """Gets the cluster_running_notification of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The cluster_running_notification of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._cluster_running_notification
-
-    @cluster_running_notification.setter
-    def cluster_running_notification(self, cluster_running_notification: 'bool'):
-        """Sets the cluster_running_notification of this V1UserFeatures.
-
-
-        :param cluster_running_notification: The cluster_running_notification of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._cluster_running_notification = cluster_running_notification
 
     @property
     def code_tab(self) -> 'bool':
@@ -813,6 +730,27 @@ class V1UserFeatures(object):
         """
 
         self._custom_instance_types = custom_instance_types
+
+    @property
+    def default_one_cluster(self) -> 'bool':
+        """Gets the default_one_cluster of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The default_one_cluster of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._default_one_cluster
+
+    @default_one_cluster.setter
+    def default_one_cluster(self, default_one_cluster: 'bool'):
+        """Sets the default_one_cluster of this V1UserFeatures.
+
+
+        :param default_one_cluster: The default_one_cluster of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._default_one_cluster = default_one_cluster
 
     @property
     def deployment_gallery(self) -> 'bool':
@@ -1212,27 +1150,6 @@ class V1UserFeatures(object):
         """
 
         self._model_store = model_store
-
-    @property
-    def new_data_prep_cpu_instance(self) -> 'bool':
-        """Gets the new_data_prep_cpu_instance of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The new_data_prep_cpu_instance of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._new_data_prep_cpu_instance
-
-    @new_data_prep_cpu_instance.setter
-    def new_data_prep_cpu_instance(self, new_data_prep_cpu_instance: 'bool'):
-        """Sets the new_data_prep_cpu_instance of this V1UserFeatures.
-
-
-        :param new_data_prep_cpu_instance: The new_data_prep_cpu_instance of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._new_data_prep_cpu_instance = new_data_prep_cpu_instance
 
     @property
     def org_level_member_permissions(self) -> 'bool':
@@ -1884,27 +1801,6 @@ class V1UserFeatures(object):
         """
 
         self._teamspace_storage_tab = teamspace_storage_tab
-
-    @property
-    def use_local_disk(self) -> 'bool':
-        """Gets the use_local_disk of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The use_local_disk of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._use_local_disk
-
-    @use_local_disk.setter
-    def use_local_disk(self, use_local_disk: 'bool'):
-        """Sets the use_local_disk of this V1UserFeatures.
-
-
-        :param use_local_disk: The use_local_disk of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._use_local_disk = use_local_disk
 
     @property
     def use_rclone_mounts_only(self) -> 'bool':

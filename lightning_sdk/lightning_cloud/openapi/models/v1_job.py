@@ -56,6 +56,7 @@ class V1Job(object):
         'started_at': 'datetime',
         'state': 'str',
         'stopped_at': 'datetime',
+        'total_cost': 'float',
         'updated_at': 'datetime',
         'urls': 'list[str]',
         'user_id': 'str'
@@ -77,12 +78,13 @@ class V1Job(object):
         'started_at': 'startedAt',
         'state': 'state',
         'stopped_at': 'stoppedAt',
+        'total_cost': 'totalCost',
         'updated_at': 'updatedAt',
         'urls': 'urls',
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deployment_id = None
@@ -99,6 +101,7 @@ class V1Job(object):
         self._started_at = None
         self._state = None
         self._stopped_at = None
+        self._total_cost = None
         self._updated_at = None
         self._urls = None
         self._user_id = None
@@ -133,6 +136,8 @@ class V1Job(object):
             self.state = state
         if stopped_at is not None:
             self.stopped_at = stopped_at
+        if total_cost is not None:
+            self.total_cost = total_cost
         if updated_at is not None:
             self.updated_at = updated_at
         if urls is not None:
@@ -454,6 +459,27 @@ class V1Job(object):
         """
 
         self._stopped_at = stopped_at
+
+    @property
+    def total_cost(self) -> 'float':
+        """Gets the total_cost of this V1Job.  # noqa: E501
+
+
+        :return: The total_cost of this V1Job.  # noqa: E501
+        :rtype: float
+        """
+        return self._total_cost
+
+    @total_cost.setter
+    def total_cost(self, total_cost: 'float'):
+        """Sets the total_cost of this V1Job.
+
+
+        :param total_cost: The total_cost of this V1Job.  # noqa: E501
+        :type: float
+        """
+
+        self._total_cost = total_cost
 
     @property
     def updated_at(self) -> 'datetime':

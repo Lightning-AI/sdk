@@ -56,6 +56,7 @@ class V1Organization(object):
         'id': 'str',
         'location': 'str',
         'name': 'str',
+        'preferred_cluster': 'str',
         'start_studios_on_spot_instance': 'bool',
         'teamspace_default_credits': 'float',
         'twitter_username': 'str',
@@ -78,13 +79,14 @@ class V1Organization(object):
         'id': 'id',
         'location': 'location',
         'name': 'name',
+        'preferred_cluster': 'preferredCluster',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._allow_guest = None
         self._allow_member_invitations = None
@@ -101,6 +103,7 @@ class V1Organization(object):
         self._id = None
         self._location = None
         self._name = None
+        self._preferred_cluster = None
         self._start_studios_on_spot_instance = None
         self._teamspace_default_credits = None
         self._twitter_username = None
@@ -136,6 +139,8 @@ class V1Organization(object):
             self.location = location
         if name is not None:
             self.name = name
+        if preferred_cluster is not None:
+            self.preferred_cluster = preferred_cluster
         if start_studios_on_spot_instance is not None:
             self.start_studios_on_spot_instance = start_studios_on_spot_instance
         if teamspace_default_credits is not None:
@@ -459,6 +464,27 @@ class V1Organization(object):
         """
 
         self._name = name
+
+    @property
+    def preferred_cluster(self) -> 'str':
+        """Gets the preferred_cluster of this V1Organization.  # noqa: E501
+
+
+        :return: The preferred_cluster of this V1Organization.  # noqa: E501
+        :rtype: str
+        """
+        return self._preferred_cluster
+
+    @preferred_cluster.setter
+    def preferred_cluster(self, preferred_cluster: 'str'):
+        """Sets the preferred_cluster of this V1Organization.
+
+
+        :param preferred_cluster: The preferred_cluster of this V1Organization.  # noqa: E501
+        :type: str
+        """
+
+        self._preferred_cluster = preferred_cluster
 
     @property
     def start_studios_on_spot_instance(self) -> 'bool':

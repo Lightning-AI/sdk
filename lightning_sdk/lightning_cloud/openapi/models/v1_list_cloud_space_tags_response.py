@@ -41,14 +41,14 @@ class V1ListCloudSpaceTagsResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'tags': 'list[V1CloudSpaceTag]'
+        'tags': 'list[V1ResourceTag]'
     }
 
     attribute_map = {
         'tags': 'tags'
     }
 
-    def __init__(self, tags: 'list[V1CloudSpaceTag]' =None):  # noqa: E501
+    def __init__(self, tags: 'list[V1ResourceTag]' =None):  # noqa: E501
         """V1ListCloudSpaceTagsResponse - a model defined in Swagger"""  # noqa: E501
         self._tags = None
         self.discriminator = None
@@ -56,22 +56,22 @@ class V1ListCloudSpaceTagsResponse(object):
             self.tags = tags
 
     @property
-    def tags(self) -> 'list[V1CloudSpaceTag]':
+    def tags(self) -> 'list[V1ResourceTag]':
         """Gets the tags of this V1ListCloudSpaceTagsResponse.  # noqa: E501
 
 
         :return: The tags of this V1ListCloudSpaceTagsResponse.  # noqa: E501
-        :rtype: list[V1CloudSpaceTag]
+        :rtype: list[V1ResourceTag]
         """
         return self._tags
 
     @tags.setter
-    def tags(self, tags: 'list[V1CloudSpaceTag]'):
+    def tags(self, tags: 'list[V1ResourceTag]'):
         """Sets the tags of this V1ListCloudSpaceTagsResponse.
 
 
         :param tags: The tags of this V1ListCloudSpaceTagsResponse.  # noqa: E501
-        :type: list[V1CloudSpaceTag]
+        :type: list[V1ResourceTag]
         """
 
         self._tags = tags

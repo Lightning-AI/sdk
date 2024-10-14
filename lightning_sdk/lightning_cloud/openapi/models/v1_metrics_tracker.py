@@ -41,6 +41,8 @@ class V1MetricsTracker(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'last_index': 'int',
+        'last_value': 'float',
         'max_index': 'int',
         'max_user_step': 'str',
         'max_value': 'float',
@@ -53,6 +55,8 @@ class V1MetricsTracker(object):
     }
 
     attribute_map = {
+        'last_index': 'lastIndex',
+        'last_value': 'lastValue',
         'max_index': 'maxIndex',
         'max_user_step': 'maxUserStep',
         'max_value': 'maxValue',
@@ -64,8 +68,10 @@ class V1MetricsTracker(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, max_index: 'int' =None, max_user_step: 'str' =None, max_value: 'float' =None, min_index: 'int' =None, min_value: 'float' =None, name: 'str' =None, num_rows: 'int' =None, started_at: 'datetime' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, last_index: 'int' =None, last_value: 'float' =None, max_index: 'int' =None, max_user_step: 'str' =None, max_value: 'float' =None, min_index: 'int' =None, min_value: 'float' =None, name: 'str' =None, num_rows: 'int' =None, started_at: 'datetime' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1MetricsTracker - a model defined in Swagger"""  # noqa: E501
+        self._last_index = None
+        self._last_value = None
         self._max_index = None
         self._max_user_step = None
         self._max_value = None
@@ -76,6 +82,10 @@ class V1MetricsTracker(object):
         self._started_at = None
         self._updated_at = None
         self.discriminator = None
+        if last_index is not None:
+            self.last_index = last_index
+        if last_value is not None:
+            self.last_value = last_value
         if max_index is not None:
             self.max_index = max_index
         if max_user_step is not None:
@@ -94,6 +104,48 @@ class V1MetricsTracker(object):
             self.started_at = started_at
         if updated_at is not None:
             self.updated_at = updated_at
+
+    @property
+    def last_index(self) -> 'int':
+        """Gets the last_index of this V1MetricsTracker.  # noqa: E501
+
+
+        :return: The last_index of this V1MetricsTracker.  # noqa: E501
+        :rtype: int
+        """
+        return self._last_index
+
+    @last_index.setter
+    def last_index(self, last_index: 'int'):
+        """Sets the last_index of this V1MetricsTracker.
+
+
+        :param last_index: The last_index of this V1MetricsTracker.  # noqa: E501
+        :type: int
+        """
+
+        self._last_index = last_index
+
+    @property
+    def last_value(self) -> 'float':
+        """Gets the last_value of this V1MetricsTracker.  # noqa: E501
+
+
+        :return: The last_value of this V1MetricsTracker.  # noqa: E501
+        :rtype: float
+        """
+        return self._last_value
+
+    @last_value.setter
+    def last_value(self, last_value: 'float'):
+        """Sets the last_value of this V1MetricsTracker.
+
+
+        :param last_value: The last_value of this V1MetricsTracker.  # noqa: E501
+        :type: float
+        """
+
+        self._last_value = last_value
 
     @property
     def max_index(self) -> 'int':

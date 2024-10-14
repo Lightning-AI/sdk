@@ -54,6 +54,7 @@ class CloudspacesIdBody(object):
         'is_published': 'bool',
         'license': 'str',
         'license_url': 'str',
+        'message': 'str',
         'multi_user_edit': 'bool',
         'operating_cost': 'str',
         'paper_authors': 'str',
@@ -61,7 +62,7 @@ class CloudspacesIdBody(object):
         'paper_org_avatar_url': 'str',
         'paper_url': 'str',
         'publish_with_compute_name': 'str',
-        'tags': 'list[V1CloudSpaceTag]',
+        'tags': 'list[V1ResourceTag]',
         'thumbnail': 'str',
         'thumbnail_file_type': 'str',
         'user_metadata': 'str'
@@ -81,6 +82,7 @@ class CloudspacesIdBody(object):
         'is_published': 'isPublished',
         'license': 'license',
         'license_url': 'licenseUrl',
+        'message': 'message',
         'multi_user_edit': 'multiUserEdit',
         'operating_cost': 'operatingCost',
         'paper_authors': 'paperAuthors',
@@ -94,7 +96,7 @@ class CloudspacesIdBody(object):
         'user_metadata': 'userMetadata'
     }
 
-    def __init__(self, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, multi_user_edit: 'bool' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
+    def __init__(self, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
         """CloudspacesIdBody - a model defined in Swagger"""  # noqa: E501
         self._code_url = None
         self._data_connection_mounts = None
@@ -109,6 +111,7 @@ class CloudspacesIdBody(object):
         self._is_published = None
         self._license = None
         self._license_url = None
+        self._message = None
         self._multi_user_edit = None
         self._operating_cost = None
         self._paper_authors = None
@@ -147,6 +150,8 @@ class CloudspacesIdBody(object):
             self.license = license
         if license_url is not None:
             self.license_url = license_url
+        if message is not None:
+            self.message = message
         if multi_user_edit is not None:
             self.multi_user_edit = multi_user_edit
         if operating_cost is not None:
@@ -444,6 +449,27 @@ class CloudspacesIdBody(object):
         self._license_url = license_url
 
     @property
+    def message(self) -> 'str':
+        """Gets the message of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The message of this CloudspacesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._message
+
+    @message.setter
+    def message(self, message: 'str'):
+        """Sets the message of this CloudspacesIdBody.
+
+
+        :param message: The message of this CloudspacesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._message = message
+
+    @property
     def multi_user_edit(self) -> 'bool':
         """Gets the multi_user_edit of this CloudspacesIdBody.  # noqa: E501
 
@@ -591,22 +617,22 @@ class CloudspacesIdBody(object):
         self._publish_with_compute_name = publish_with_compute_name
 
     @property
-    def tags(self) -> 'list[V1CloudSpaceTag]':
+    def tags(self) -> 'list[V1ResourceTag]':
         """Gets the tags of this CloudspacesIdBody.  # noqa: E501
 
 
         :return: The tags of this CloudspacesIdBody.  # noqa: E501
-        :rtype: list[V1CloudSpaceTag]
+        :rtype: list[V1ResourceTag]
         """
         return self._tags
 
     @tags.setter
-    def tags(self, tags: 'list[V1CloudSpaceTag]'):
+    def tags(self, tags: 'list[V1ResourceTag]'):
         """Sets the tags of this CloudspacesIdBody.
 
 
         :param tags: The tags of this CloudspacesIdBody.  # noqa: E501
-        :type: list[V1CloudSpaceTag]
+        :type: list[V1ResourceTag]
         """
 
         self._tags = tags

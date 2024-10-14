@@ -1590,6 +1590,95 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def cluster_service_list_cluster_availabilities(self, **kwargs) -> 'V1ListClusterAvailabilitiesResponse':  # noqa: E501
+        """cluster_service_list_cluster_availabilities  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_list_cluster_availabilities(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :return: V1ListClusterAvailabilitiesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_list_cluster_availabilities_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_list_cluster_availabilities_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_list_cluster_availabilities_with_http_info(self, **kwargs) -> 'V1ListClusterAvailabilitiesResponse':  # noqa: E501
+        """cluster_service_list_cluster_availabilities  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_list_cluster_availabilities_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :return: V1ListClusterAvailabilitiesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_list_cluster_availabilities" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/cluster-availabilities', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListClusterAvailabilitiesResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def cluster_service_list_cluster_capacity_reservations(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListClusterCapacityReservationsResponse':  # noqa: E501
         """cluster_service_list_cluster_capacity_reservations  # noqa: E501
 

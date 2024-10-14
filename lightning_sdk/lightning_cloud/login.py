@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class Keys(Enum):
-    USERNAME = "LIGHTNING_USERNAME"
+    # USERNAME = "LIGHTNING_USERNAME"
     USER_ID = "LIGHTNING_USER_ID"
     API_KEY = "LIGHTNING_API_KEY"
 
@@ -33,7 +33,7 @@ class Keys(Enum):
 
 @dataclass
 class Auth:
-    username: Optional[str] = None
+    # username: Optional[str] = None
     user_id: Optional[str] = None
     api_key: Optional[str] = None
 
@@ -72,20 +72,21 @@ class Auth:
              token: str = "",
              user_id: str = "",
              api_key: str = "",
-             username: str = "") -> None:
+             # username: str = "",
+        ) -> None:
         """save credentials to disk."""
         self.secrets_file.parent.mkdir(exist_ok=True, parents=True)
         with self.secrets_file.open("w") as f:
             json.dump(
                 {
-                    f"{Keys.USERNAME.suffix}": username,
+                    # f"{Keys.USERNAME.suffix}": username,
                     f"{Keys.USER_ID.suffix}": user_id,
                     f"{Keys.API_KEY.suffix}": api_key,
                 },
                 f,
             )
 
-        self.username = username
+        # self.username = username
         self.user_id = user_id
         self.api_key = api_key
         logger.debug("credentials saved successfully")
@@ -173,7 +174,7 @@ class AuthServer:
                              user_id: str = Query("", alias="userID")):
             if token:
                 auth.save(token=token,
-                          username=user_id,
+                          # username=user_id,
                           user_id=user_id,
                           api_key=key)
                 logger.info("Authentication Successful")

@@ -46,11 +46,13 @@ class V1DeploymentTemplateSummary(object):
         'deployment_id': 'str',
         'description': 'str',
         'featured': 'bool',
+        'globally_visible': 'bool',
         'id': 'str',
         'image_url': 'str',
         'name': 'str',
         'org_id': 'str',
         'project_id': 'str',
+        'unpublished': 'bool',
         'updated_at': 'datetime',
         'user_id': 'str'
     }
@@ -61,27 +63,31 @@ class V1DeploymentTemplateSummary(object):
         'deployment_id': 'deploymentId',
         'description': 'description',
         'featured': 'featured',
+        'globally_visible': 'globallyVisible',
         'id': 'id',
         'image_url': 'imageUrl',
         'name': 'name',
         'org_id': 'orgId',
         'project_id': 'projectId',
+        'unpublished': 'unpublished',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1DeploymentTemplateSummary - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
         self._deployment_id = None
         self._description = None
         self._featured = None
+        self._globally_visible = None
         self._id = None
         self._image_url = None
         self._name = None
         self._org_id = None
         self._project_id = None
+        self._unpublished = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
@@ -95,6 +101,8 @@ class V1DeploymentTemplateSummary(object):
             self.description = description
         if featured is not None:
             self.featured = featured
+        if globally_visible is not None:
+            self.globally_visible = globally_visible
         if id is not None:
             self.id = id
         if image_url is not None:
@@ -105,6 +113,8 @@ class V1DeploymentTemplateSummary(object):
             self.org_id = org_id
         if project_id is not None:
             self.project_id = project_id
+        if unpublished is not None:
+            self.unpublished = unpublished
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -216,6 +226,27 @@ class V1DeploymentTemplateSummary(object):
         self._featured = featured
 
     @property
+    def globally_visible(self) -> 'bool':
+        """Gets the globally_visible of this V1DeploymentTemplateSummary.  # noqa: E501
+
+
+        :return: The globally_visible of this V1DeploymentTemplateSummary.  # noqa: E501
+        :rtype: bool
+        """
+        return self._globally_visible
+
+    @globally_visible.setter
+    def globally_visible(self, globally_visible: 'bool'):
+        """Sets the globally_visible of this V1DeploymentTemplateSummary.
+
+
+        :param globally_visible: The globally_visible of this V1DeploymentTemplateSummary.  # noqa: E501
+        :type: bool
+        """
+
+        self._globally_visible = globally_visible
+
+    @property
     def id(self) -> 'str':
         """Gets the id of this V1DeploymentTemplateSummary.  # noqa: E501
 
@@ -319,6 +350,27 @@ class V1DeploymentTemplateSummary(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def unpublished(self) -> 'bool':
+        """Gets the unpublished of this V1DeploymentTemplateSummary.  # noqa: E501
+
+
+        :return: The unpublished of this V1DeploymentTemplateSummary.  # noqa: E501
+        :rtype: bool
+        """
+        return self._unpublished
+
+    @unpublished.setter
+    def unpublished(self, unpublished: 'bool'):
+        """Sets the unpublished of this V1DeploymentTemplateSummary.
+
+
+        :param unpublished: The unpublished of this V1DeploymentTemplateSummary.  # noqa: E501
+        :type: bool
+        """
+
+        self._unpublished = unpublished
 
     @property
     def updated_at(self) -> 'datetime':

@@ -46,6 +46,7 @@ class V1DeploymentTemplate(object):
         'deployment_id': 'str',
         'description': 'str',
         'featured': 'bool',
+        'globally_visible': 'bool',
         'id': 'str',
         'image_url': 'str',
         'name': 'str',
@@ -53,6 +54,8 @@ class V1DeploymentTemplate(object):
         'parameters': 'list[V1DeploymentTemplateParameter]',
         'project_id': 'str',
         'spec': 'V1JobSpec',
+        'tags': 'list[V1ResourceTag]',
+        'unpublished': 'bool',
         'updated_at': 'datetime',
         'user_id': 'str'
     }
@@ -63,6 +66,7 @@ class V1DeploymentTemplate(object):
         'deployment_id': 'deploymentId',
         'description': 'description',
         'featured': 'featured',
+        'globally_visible': 'globallyVisible',
         'id': 'id',
         'image_url': 'imageUrl',
         'name': 'name',
@@ -70,17 +74,20 @@ class V1DeploymentTemplate(object):
         'parameters': 'parameters',
         'project_id': 'projectId',
         'spec': 'spec',
+        'tags': 'tags',
+        'unpublished': 'unpublished',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, tags: 'list[V1ResourceTag]' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1DeploymentTemplate - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
         self._deployment_id = None
         self._description = None
         self._featured = None
+        self._globally_visible = None
         self._id = None
         self._image_url = None
         self._name = None
@@ -88,6 +95,8 @@ class V1DeploymentTemplate(object):
         self._parameters = None
         self._project_id = None
         self._spec = None
+        self._tags = None
+        self._unpublished = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
@@ -101,6 +110,8 @@ class V1DeploymentTemplate(object):
             self.description = description
         if featured is not None:
             self.featured = featured
+        if globally_visible is not None:
+            self.globally_visible = globally_visible
         if id is not None:
             self.id = id
         if image_url is not None:
@@ -115,6 +126,10 @@ class V1DeploymentTemplate(object):
             self.project_id = project_id
         if spec is not None:
             self.spec = spec
+        if tags is not None:
+            self.tags = tags
+        if unpublished is not None:
+            self.unpublished = unpublished
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -224,6 +239,27 @@ class V1DeploymentTemplate(object):
         """
 
         self._featured = featured
+
+    @property
+    def globally_visible(self) -> 'bool':
+        """Gets the globally_visible of this V1DeploymentTemplate.  # noqa: E501
+
+
+        :return: The globally_visible of this V1DeploymentTemplate.  # noqa: E501
+        :rtype: bool
+        """
+        return self._globally_visible
+
+    @globally_visible.setter
+    def globally_visible(self, globally_visible: 'bool'):
+        """Sets the globally_visible of this V1DeploymentTemplate.
+
+
+        :param globally_visible: The globally_visible of this V1DeploymentTemplate.  # noqa: E501
+        :type: bool
+        """
+
+        self._globally_visible = globally_visible
 
     @property
     def id(self) -> 'str':
@@ -371,6 +407,48 @@ class V1DeploymentTemplate(object):
         """
 
         self._spec = spec
+
+    @property
+    def tags(self) -> 'list[V1ResourceTag]':
+        """Gets the tags of this V1DeploymentTemplate.  # noqa: E501
+
+
+        :return: The tags of this V1DeploymentTemplate.  # noqa: E501
+        :rtype: list[V1ResourceTag]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[V1ResourceTag]'):
+        """Sets the tags of this V1DeploymentTemplate.
+
+
+        :param tags: The tags of this V1DeploymentTemplate.  # noqa: E501
+        :type: list[V1ResourceTag]
+        """
+
+        self._tags = tags
+
+    @property
+    def unpublished(self) -> 'bool':
+        """Gets the unpublished of this V1DeploymentTemplate.  # noqa: E501
+
+
+        :return: The unpublished of this V1DeploymentTemplate.  # noqa: E501
+        :rtype: bool
+        """
+        return self._unpublished
+
+    @unpublished.setter
+    def unpublished(self, unpublished: 'bool'):
+        """Sets the unpublished of this V1DeploymentTemplate.
+
+
+        :param unpublished: The unpublished of this V1DeploymentTemplate.  # noqa: E501
+        :type: bool
+        """
+
+        self._unpublished = unpublished
 
     @property
     def updated_at(self) -> 'datetime':

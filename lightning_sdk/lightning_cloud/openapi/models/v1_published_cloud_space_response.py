@@ -61,7 +61,7 @@ class V1PublishedCloudSpaceResponse(object):
         'studio_creator_id': 'str',
         'studio_creator_last_name': 'str',
         'studio_creator_username': 'str',
-        'tags': 'list[V1CloudSpaceTag]',
+        'tags': 'list[V1ResourceTag]',
         'thumbnail_url': 'str'
     }
 
@@ -90,7 +90,7 @@ class V1PublishedCloudSpaceResponse(object):
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, about_page_has_content: 'bool' =None, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, featured: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_id: 'str' =None, project_owner_name: 'str' =None, project_owner_type: 'V1OwnerType' =None, published_at: 'datetime' =None, studio_creator_avatar_url: 'str' =None, studio_creator_first_name: 'str' =None, studio_creator_id: 'str' =None, studio_creator_last_name: 'str' =None, studio_creator_username: 'str' =None, tags: 'list[V1CloudSpaceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, about_page_has_content: 'bool' =None, cluster_id: 'str' =None, creation_timestamp: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, featured: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, project_name: 'str' =None, project_owner_id: 'str' =None, project_owner_name: 'str' =None, project_owner_type: 'V1OwnerType' =None, published_at: 'datetime' =None, studio_creator_avatar_url: 'str' =None, studio_creator_first_name: 'str' =None, studio_creator_id: 'str' =None, studio_creator_last_name: 'str' =None, studio_creator_username: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """V1PublishedCloudSpaceResponse - a model defined in Swagger"""  # noqa: E501
         self._about_page_has_content = None
         self._cluster_id = None
@@ -581,22 +581,22 @@ class V1PublishedCloudSpaceResponse(object):
         self._studio_creator_username = studio_creator_username
 
     @property
-    def tags(self) -> 'list[V1CloudSpaceTag]':
+    def tags(self) -> 'list[V1ResourceTag]':
         """Gets the tags of this V1PublishedCloudSpaceResponse.  # noqa: E501
 
 
         :return: The tags of this V1PublishedCloudSpaceResponse.  # noqa: E501
-        :rtype: list[V1CloudSpaceTag]
+        :rtype: list[V1ResourceTag]
         """
         return self._tags
 
     @tags.setter
-    def tags(self, tags: 'list[V1CloudSpaceTag]'):
+    def tags(self, tags: 'list[V1ResourceTag]'):
         """Sets the tags of this V1PublishedCloudSpaceResponse.
 
 
         :param tags: The tags of this V1PublishedCloudSpaceResponse.  # noqa: E501
-        :type: list[V1CloudSpaceTag]
+        :type: list[V1ResourceTag]
         """
 
         self._tags = tags
