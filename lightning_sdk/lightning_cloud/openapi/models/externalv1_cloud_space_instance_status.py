@@ -63,6 +63,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'startup_phase': 'str',
         'startup_status': 'V1CloudSpaceInstanceStartupStatus',
         'status_message': 'str',
+        'switched_at': 'datetime',
         'sync_eta_seconds': 'str',
         'sync_in_progress': 'bool',
         'sync_percentage': 'str',
@@ -92,13 +93,14 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'startup_phase': 'startupPhase',
         'startup_status': 'startupStatus',
         'status_message': 'statusMessage',
+        'switched_at': 'switchedAt',
         'sync_eta_seconds': 'syncEtaSeconds',
         'sync_in_progress': 'syncInProgress',
         'sync_percentage': 'syncPercentage',
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, app_url: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, app_url: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._app_url = None
         self._cloud_space_id = None
@@ -122,6 +124,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self._startup_phase = None
         self._startup_status = None
         self._status_message = None
+        self._switched_at = None
         self._sync_eta_seconds = None
         self._sync_in_progress = None
         self._sync_percentage = None
@@ -171,6 +174,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.startup_status = startup_status
         if status_message is not None:
             self.status_message = status_message
+        if switched_at is not None:
+            self.switched_at = switched_at
         if sync_eta_seconds is not None:
             self.sync_eta_seconds = sync_eta_seconds
         if sync_in_progress is not None:
@@ -641,6 +646,29 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._status_message = status_message
+
+    @property
+    def switched_at(self) -> 'datetime':
+        """Gets the switched_at of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+        Timestamp when this CloudSpaceInstance became InUse after a switch. If this CloudSpaceInstance was not switched to then this value will be empty.  # noqa: E501
+
+        :return: The switched_at of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._switched_at
+
+    @switched_at.setter
+    def switched_at(self, switched_at: 'datetime'):
+        """Sets the switched_at of this Externalv1CloudSpaceInstanceStatus.
+
+        Timestamp when this CloudSpaceInstance became InUse after a switch. If this CloudSpaceInstance was not switched to then this value will be empty.  # noqa: E501
+
+        :param switched_at: The switched_at of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: datetime
+        """
+
+        self._switched_at = switched_at
 
     @property
     def sync_eta_seconds(self) -> 'str':
