@@ -1,7 +1,8 @@
-from typing import Callable, Tuple
+from abc import ABCMeta
+from typing import Any, Callable, Tuple, Union
 
 
-class ConditionBaseMeta(type):
+class ConditionBaseMeta(ABCMeta):
     """Metaclass that allows for conditional inheritance.
 
     This metaclass is used to conditionally inherit from two base classes
@@ -44,5 +45,28 @@ class ConditionBaseMeta(type):
         base_true: type,
         base_false: type,
     ) -> type:
-        base = base_true if condition_func() else base_false
-        return super().__new__(cls, name, (base, *bases), attrs)
+        # Store the condition function and potential base classes as class attributes
+        attrs["_condition_func"] = staticmethod(condition_func)
+        attrs["_base_true"] = base_true
+        attrs["_base_false"] = base_false
+
+        # Helper function to determine the base class
+        def get_base() -> type:
+            return base_true if condition_func() else base_false
+
+        # Create a new class that inherits from the determined base
+        new_class = super().__new__(cls, name, (get_base(),), attrs)
+
+        # Override __class_getitem__ to handle class method lookups
+        def __class_getitem(cls: Union[base_true, base_false], name: str) -> Any:
+            return getattr(get_base(), name)
+
+        new_class.__class_getitem__ = classmethod(__class_getitem)
+
+        return new_class
+
+    def __getattr__(cls, name: str) -> Any:
+        """Get an attribute from the appropriate base class."""
+        # Delegate attribute lookup to the appropriate base class
+        base = cls._base_true if cls._condition_func() else cls._base_false
+        return getattr(base, name)

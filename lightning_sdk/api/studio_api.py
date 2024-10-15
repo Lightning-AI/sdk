@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 import time
@@ -8,8 +9,21 @@ from typing import Any, Dict, Mapping, Optional, Tuple
 
 import backoff
 import requests
+from tqdm import tqdm
 
-from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__, _LIGHTNING_DEBUG
+from lightning_sdk.api.utils import (
+    _COMPUTE_NAME_TO_MACHINE,
+    _MACHINE_TO_COMPUTE_NAME,
+    _create_app,
+    _DummyBody,
+    _DummyResponse,
+    _FileUploader,
+    _sanitize_studio_remote_path,
+)
+from lightning_sdk.api.utils import (
+    _get_cloud_url as _cloud_url,
+)
+from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
@@ -29,27 +43,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Plugin,
     V1PluginsListResponse,
     V1UserRequestedComputeConfig,
-)
-
-try:
-    from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
-except ImportError:
-    from lightning_sdk.lightning_cloud.openapi import AppsIdBody
-
-import json
-
-from tqdm import tqdm
-
-from lightning_sdk.api.utils import (
-    _COMPUTE_NAME_TO_MACHINE,
-    _MACHINE_TO_COMPUTE_NAME,
-    _DummyBody,
-    _DummyResponse,
-    _FileUploader,
-    _sanitize_studio_remote_path,
-)
-from lightning_sdk.api.utils import (
-    _get_cloud_url as _cloud_url,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
@@ -664,24 +657,11 @@ class StudioApi:
         self, studio_id: str, teamspace_id: str, cluster_id: str, plugin_type: str, **other_arguments: Any
     ) -> Externalv1LightningappInstance:
         """Creates an arbitrary app."""
-        from lightning_sdk.utils.resolve import _LIGHTNING_SERVICE_EXECUTION_ID_KEY
-
-        # Check if 'interruptible' is in the arguments and convert it to a string
-        if isinstance(other_arguments, dict) and "interruptible" in other_arguments:
-            other_arguments["interruptible"] = str(other_arguments["interruptible"]).lower()
-
-        body = AppsIdBody(
+        return _create_app(
+            self._client,
+            studio_id=studio_id,
+            teamspace_id=teamspace_id,
             cluster_id=cluster_id,
-            plugin_arguments=other_arguments,
-            service_id=os.getenv(_LIGHTNING_SERVICE_EXECUTION_ID_KEY),
-            unique_id=__GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id],
+            plugin_type=plugin_type,
+            **other_arguments,
         )
-
-        resp = self._client.cloud_space_service_create_cloud_space_app_instance(
-            body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
-        ).lightningappinstance
-
-        if _LIGHTNING_DEBUG:
-            print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {cluster_id=}")
-
-        return resp

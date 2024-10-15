@@ -12,7 +12,10 @@ import backoff
 import requests
 from tqdm import tqdm
 
+from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__, _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.openapi import (
+    CloudSpaceServiceApi,
+    Externalv1LightningappInstance,
     ModelsStoreApi,
     ProjectIdStorageBody,
     StorageCompleteBody,
@@ -27,6 +30,11 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UploadProjectArtifactResponse,
     VersionUploadsBody,
 )
+
+try:
+    from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
+except ImportError:
+    from lightning_sdk.lightning_cloud.openapi import AppsIdBody
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
@@ -536,3 +544,35 @@ def _download_model_files(
         file_downloader.download()
 
     return response.filepaths
+
+
+def _create_app(
+    client: CloudSpaceServiceApi,
+    studio_id: str,
+    teamspace_id: str,
+    cluster_id: str,
+    plugin_type: str,
+    **other_arguments: Any,
+) -> Externalv1LightningappInstance:
+    """Creates an arbitrary app."""
+    from lightning_sdk.utils.resolve import _LIGHTNING_SERVICE_EXECUTION_ID_KEY
+
+    # Check if 'interruptible' is in the arguments and convert it to a string
+    if isinstance(other_arguments, dict) and "interruptible" in other_arguments:
+        other_arguments["interruptible"] = str(other_arguments["interruptible"]).lower()
+
+    body = AppsIdBody(
+        cluster_id=cluster_id,
+        plugin_arguments=other_arguments,
+        service_id=os.getenv(_LIGHTNING_SERVICE_EXECUTION_ID_KEY),
+        unique_id=__GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id],
+    )
+
+    resp = client.cloud_space_service_create_cloud_space_app_instance(
+        body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
+    ).lightningappinstance
+
+    if _LIGHTNING_DEBUG:
+        print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {cluster_id=}")
+
+    return resp

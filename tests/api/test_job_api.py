@@ -1,4 +1,4 @@
-from lightning_sdk.api.job_api import JobApi
+from lightning_sdk.api.job_api import JobApiV1
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
     Externalv1Lightningwork,
@@ -9,13 +9,13 @@ import pytest
 
 
 def test_get_job(internal_job_api_mocker_get_job):
-    job_api = JobApi()
+    job_api = JobApiV1()
     job = job_api.get_job("j-abc", "ts-abc")
     assert isinstance(job, Externalv1LightningappInstance)
 
 
 def test_get_job_error(internal_job_api_mocker_get_job):
-    job_api = JobApi()
+    job_api = JobApiV1()
     with pytest.raises(ValueError, match="Job xyz does not exist"):
         job_api.get_job("xyz", "ts-abc")
 
@@ -35,7 +35,7 @@ def test_get_job_error(internal_job_api_mocker_get_job):
     ],
 )
 def test_job_status(internal_job_api_mocker_get_job_status, name, expected_status):
-    job_api = JobApi()
+    job_api = JobApiV1()
     status = job_api.get_job_status(name, "ts-abc")
     if expected_status is None:
         assert status is None
@@ -45,7 +45,7 @@ def test_job_status(internal_job_api_mocker_get_job_status, name, expected_statu
 
 
 def test_stop_job(internal_job_api_mocker_stop_job):
-    job_api = JobApi()
+    job_api = JobApiV1()
     status = job_api.get_job_status("j-abc", "ts-abc")
 
     assert status == "LIGHTNINGAPP_INSTANCE_STATE_RUNNING"
@@ -55,7 +55,7 @@ def test_stop_job(internal_job_api_mocker_stop_job):
 
 
 def test_delete_job(internal_job_api_mocker_delete_job):
-    job_api = JobApi()
+    job_api = JobApiV1()
     job_api.delete_job("j-abc", "ts-abc")
 
     with pytest.raises((ApiException, ClickException)):
@@ -66,7 +66,7 @@ def test_delete_job(internal_job_api_mocker_delete_job):
 
 
 def test_get_work(internal_job_api_mocker_get_work):
-    job_api = JobApi()
+    job_api = JobApiV1()
     works = job_api.list_works("j-abc", "ts-abc")
     assert isinstance(works, list)
     for w in works:

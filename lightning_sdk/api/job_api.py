@@ -1,7 +1,11 @@
 import time
 from typing import List
 
-from lightning_sdk.api.utils import _COMPUTE_NAME_TO_MACHINE
+from lightning_sdk.api.utils import (
+    _COMPUTE_NAME_TO_MACHINE,
+    _MACHINE_TO_COMPUTE_NAME,
+    _create_app,
+)
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
 )
@@ -21,7 +25,7 @@ from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
 
-class JobApi:
+class JobApiV1:
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
         self._client = LightningClient(max_tries=7)
@@ -87,3 +91,26 @@ class JobApi:
         compute_config: V1ComputeConfig = spec.compute_config
         compute: str = compute_config.instance_type
         return _COMPUTE_NAME_TO_MACHINE[compute]
+
+    def submit_job(
+        self,
+        name: str,
+        command: str,
+        studio_id: str,
+        teamspace_id: str,
+        cluster_id: str,
+        machine: Machine,
+        interruptible: bool,
+    ) -> Externalv1LightningappInstance:
+        """Creates an arbitrary app."""
+        return _create_app(
+            self._client,
+            studio_id=studio_id,
+            teamspace_id=teamspace_id,
+            cluster_id=cluster_id,
+            plugin_type="job",
+            compute=_MACHINE_TO_COMPUTE_NAME[machine],
+            name=name,
+            entrypoint=command,
+            interruptible=interruptible,
+        )

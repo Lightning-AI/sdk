@@ -19,15 +19,20 @@ jobs:
 
   check-package:
     if: github.event.pull_request.draft == false
-    uses: Lightning-AI/utilities/.github/workflows/check-package.yml@v0.11.7
+    uses: Lightning-AI/utilities/.github/workflows/check-package.yml@main
     with:
-      actions-ref: v0.11.7
+      actions-ref: main
       artifact-name: dist-packages-${{ github.sha }}
       import-name: "lightning_sdk"
       testing-matrix: |
         {
           "os": ["ubuntu-20.04", "macos-latest"],
           "python-version": ["3.8", "3.9", "3.10", "3.11"]
+        }
+      env-vars: |
+        {
+          "LIGHTNING_USER_ID": "dummy-user-id",
+          "LIGHTNING_API_KEY": "dummy-api-key"
         }
 
   pre-commit:
