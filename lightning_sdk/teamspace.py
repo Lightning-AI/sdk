@@ -162,8 +162,7 @@ class Teamspace:
 
         Args:
             path: Path to the model file or folder to upload.
-            name: Name tag of the model to upload. Must be in the format 'entity/modelname' where
-                entity is either your user name or the name of an organization you are part of.
+            name: Name tag of the model to upload.
             progress_bar: Whether to show a progress bar for the upload.
             cluster_id: The name of the cluster to use. Only required if it can't be determined
                 automatically.
@@ -226,10 +225,8 @@ class Teamspace:
         """Download a checkpoint from the model store.
 
         Args:
-            name: Name tag of the model to download. Must be in the format 'entity/modelname' where
-                entity is either your user name or the name of an organization you are part of.
-                Can optionally also contain a version tag separated by a colon, e.g.
-                'entity/modelname:v1'.
+            name: Name tag of the model to download. Can optionally also contain a version tag separated by a colon,
+                 e.g. 'modelname:v1'.
             download_dir: A path to directory where the model should be downloaded. Defaults
                 to the current working directory.
             progress_bar: Whether to show a progress bar for the download.

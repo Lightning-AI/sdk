@@ -108,9 +108,13 @@ def test_try_get_cluster_id():
 
     # teamspace has single cluster
     teamspace_api.list_clusters = mock.Mock(return_value=[mock.Mock(cluster_id="test-cluster")])
+    teamspace_api.get_default_cluster_id = mock.Mock(return_value="test-cluster")
     with mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": ""}):
         cluster_id = teamspace_api._determine_cluster_id("teamspace-id")
     assert cluster_id == "test-cluster"
+
+    # disabled cluster default
+    teamspace_api.get_default_cluster_id = mock.Mock(return_value="")
 
     # ambiguous, can't determine which cluster to use
     teamspace_api.list_clusters = mock.Mock(

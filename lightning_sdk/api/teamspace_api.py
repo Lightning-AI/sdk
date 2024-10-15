@@ -94,6 +94,10 @@ class TeamspaceApi:
         auth.authenticate()
         return auth.user_id
 
+    def get_default_cluster_id(self, teamspace_id: str) -> str:
+        """Get the default cluster id of the teamspace."""
+        return self._client.projects_service_get_project(teamspace_id).project_settings.preferred_cluster
+
     def _determine_cluster_id(self, teamspace_id: str) -> str:
         """Attempts to determine the cluster id of the teamspace.
 
@@ -104,9 +108,15 @@ class TeamspaceApi:
         cluster_id = os.getenv("LIGHTNING_CLUSTER_ID")
         if cluster_id:
             return cluster_id
+
+        # if there is only one cluster, use that and ignore default setting :D
         cluster_ids = [c.cluster_id for c in self.list_clusters(teamspace_id=teamspace_id)]
         if len(cluster_ids) == 1:
             return cluster_ids[0]
+        # otherwise, try to determine the default cluster, another API call but we do not care :(
+        default_cluster_id = self.get_default_cluster_id(teamspace_id=teamspace_id)
+        if default_cluster_id:
+            return default_cluster_id
         raise RuntimeError(
             "Could not determine the current cluster id. Please provide it manually as input."
             f" Choices are: {', '.join(cluster_ids)}"
