@@ -3,10 +3,12 @@ from typing import List
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
+    V1GetUserResponse,
     V1ListCloudSpacesResponse,
     V1Membership,
     V1Organization,
     V1SearchUser,
+    V1UserFeatures,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
@@ -57,3 +59,7 @@ class UserApi:
         auth.authenticate()
         user = self._get_user_by_id(auth.user_id)
         return user.username
+
+    def _get_feature_flags(self) -> V1UserFeatures:
+        resp: V1GetUserResponse = self._client.auth_service_get_user()
+        return resp.features
