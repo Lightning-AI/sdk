@@ -27,8 +27,6 @@ class _BaseJob(ABC):
         self._cluster = cluster
         self._name = name
 
-        print("_fetch_job_base", _fetch_job)
-
         if _fetch_job:
             self._update_internal_job()
 

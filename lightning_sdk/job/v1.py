@@ -28,7 +28,6 @@ class _JobV1(_BaseJob):
         _fetch_job: bool = True,
     ) -> None:
         self._job_api = JobApiV1()
-        print("_fetch_job_v1", _fetch_job)
         super().__init__(name=name, teamspace=teamspace, org=org, user=user, cluster=cluster, _fetch_job=_fetch_job)
 
     @classmethod
@@ -93,7 +92,6 @@ class _JobV1(_BaseJob):
         self._name = _submitted.name
 
     def _update_internal_job(self) -> None:
-        print("update_internal_job")
         try:
             self._job = self._job_api.get_job(self._name, self.teamspace.id)
         except ValueError as e:
