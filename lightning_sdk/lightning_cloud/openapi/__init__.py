@@ -116,6 +116,7 @@ from lightning_sdk.lightning_cloud.openapi.models.id_output_body import IdOutput
 from lightning_sdk.lightning_cloud.openapi.models.id_publications_body import IdPublicationsBody
 from lightning_sdk.lightning_cloud.openapi.models.id_publications_body1 import IdPublicationsBody1
 from lightning_sdk.lightning_cloud.openapi.models.id_release_body import IdReleaseBody
+from lightning_sdk.lightning_cloud.openapi.models.id_reportlogsactivity_body import IdReportlogsactivityBody
 from lightning_sdk.lightning_cloud.openapi.models.id_start_body import IdStartBody
 from lightning_sdk.lightning_cloud.openapi.models.id_storage_body import IdStorageBody
 from lightning_sdk.lightning_cloud.openapi.models.id_uploads_body import IdUploadsBody
@@ -604,6 +605,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_refresh_request import V1Re
 from lightning_sdk.lightning_cloud.openapi.models.v1_refresh_response import V1RefreshResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_region_state import V1RegionState
 from lightning_sdk.lightning_cloud.openapi.models.v1_regional_load_balancer import V1RegionalLoadBalancer
+from lightning_sdk.lightning_cloud.openapi.models.v1_report_logs_activity_response import V1ReportLogsActivityResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_request_cluster_access_request import V1RequestClusterAccessRequest
 from lightning_sdk.lightning_cloud.openapi.models.v1_request_cluster_access_response import V1RequestClusterAccessResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_request_verification_code_response import V1RequestVerificationCodeResponse

@@ -59,7 +59,8 @@ class V1Job(object):
         'total_cost': 'float',
         'updated_at': 'datetime',
         'urls': 'list[str]',
-        'user_id': 'str'
+        'user_id': 'str',
+        'user_logs_started_at': 'datetime'
     }
 
     attribute_map = {
@@ -81,10 +82,11 @@ class V1Job(object):
         'total_cost': 'totalCost',
         'updated_at': 'updatedAt',
         'urls': 'urls',
-        'user_id': 'userId'
+        'user_id': 'userId',
+        'user_logs_started_at': 'userLogsStartedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deployment_id = None
@@ -105,6 +107,7 @@ class V1Job(object):
         self._updated_at = None
         self._urls = None
         self._user_id = None
+        self._user_logs_started_at = None
         self.discriminator = None
         if created_at is not None:
             self.created_at = created_at
@@ -144,6 +147,8 @@ class V1Job(object):
             self.urls = urls
         if user_id is not None:
             self.user_id = user_id
+        if user_logs_started_at is not None:
+            self.user_logs_started_at = user_logs_started_at
 
     @property
     def created_at(self) -> 'datetime':
@@ -543,6 +548,27 @@ class V1Job(object):
         """
 
         self._user_id = user_id
+
+    @property
+    def user_logs_started_at(self) -> 'datetime':
+        """Gets the user_logs_started_at of this V1Job.  # noqa: E501
+
+
+        :return: The user_logs_started_at of this V1Job.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._user_logs_started_at
+
+    @user_logs_started_at.setter
+    def user_logs_started_at(self, user_logs_started_at: 'datetime'):
+        """Sets the user_logs_started_at of this V1Job.
+
+
+        :param user_logs_started_at: The user_logs_started_at of this V1Job.  # noqa: E501
+        :type: datetime
+        """
+
+        self._user_logs_started_at = user_logs_started_at
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
