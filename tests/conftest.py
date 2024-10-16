@@ -590,7 +590,7 @@ def internal_studio_init_mocker(mocker, internal_get_org_api_mocker, internal_te
         # V1CloudSpace(name="st-abc", display_name="st-abc", cluster_id=None, project_id="ts-abc", id="st-abc"),
         # V1CloudSpace(name="st-def", display_name="st-def", cluster_id="c-abc", project_id="ts-abc", id="st-def"),
         "st-def": V1CloudSpace(
-            name="st-def", display_name="st-def", cluster_id="c-abc", project_id="ts-abc", id="st-def"
+            name="st-def", display_name="st-def", cluster_id="c-def", project_id="ts-abc", id="st-def"
         ),
     }
 

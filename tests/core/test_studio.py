@@ -505,3 +505,8 @@ def studio_autoshutdown(internal_studio_init_mocker, internal_studio_status_mock
     studio.auto_shutdown = False
     studio.auto_sleep_time = 42
     studio.auto_shutdown_time = 42
+
+@pytest.mark.parametrize("name", ["abc", "def"])
+def test_cluster(internal_studio_init_mocker, internal_studio_status_mocker, name):
+    studio = Studio(name=f"st-{name}", teamspace="ts-abc", org="org-abc")
+    assert studio.cluster == f"c-{name}"

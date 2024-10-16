@@ -140,6 +140,11 @@ class Studio:
 
         return self._studio_api.get_interruptible(self._studio.id, self._teamspace.id)
 
+    @property
+    def cluster(self) -> str:
+        """Returns the cluster the Studio is running on."""
+        return self._studio.cluster_id
+
     def start(self, machine: Machine = Machine.CPU, interruptible: bool = False) -> None:
         """Starts a Studio on the specified machine type (default: CPU-4)."""
         status = self.status
