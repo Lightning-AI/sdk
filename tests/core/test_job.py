@@ -13,9 +13,7 @@ import pytest
 from lightning_sdk.machine import Machine
 from lightning_sdk.lightning_cloud.openapi import V1GetUserResponse
 from lightning_sdk.lightning_cloud.openapi import V1UserFeatures
-from lightning_sdk.lightning_cloud.openapi import V1Job
-
-
+from lightning_sdk.lightning_cloud.openapi import V1Job, V1JobSpec
 
 
 @mock.patch.dict(os.environ, clear=True)
@@ -257,3 +255,46 @@ def test_get_job_by_name_on_init(job_api_get_job_by_name_mocker, internal_studio
     assert job._job is not None
 
     assert job._job.id == "test-job-id"
+
+
+@pytest.mark.parametrize("internal_status, external_status", [
+    ("pending", Status.Pending),
+    ("running", Status.Running),
+    ("completed", Status.Completed),
+    ("failed", Status.Failed),
+    ("stopped", Status.Stopped),
+])
+def test_jobv2_status(job_api_get_job_by_name_mocker, internal_studio_init_mocker, internal_status, external_status):
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+
+    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster)
+
+    get_job_mock = mock.MagicMock()
+    get_job_mock.return_value = V1Job(id="test-job-id", state=internal_status)
+    job._job_api.get_job = get_job_mock
+
+    assert job.status == external_status
+    get_job_mock.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    "internal_instance_name, internal_instance_type, expected_machine",
+    [
+        ("g4dn.12xlarge", None, Machine.T4_X_4),
+        ("p4d.24xlarge", "p4d.24xlarge", Machine.A100_X_8),
+        ("unknown", "p4d.24xlarge", Machine.A100_X_8),
+        ("unknown", None, "unknown"),
+        ("", "unknown", "unknown"),
+    ],
+)
+def test_jobv2_machine(internal_studio_init_mocker, internal_instance_name, internal_instance_type, expected_machine):
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+
+    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+
+    get_job_mock = mock.MagicMock()
+    get_job_mock.return_value = V1Job(id="test-job-id", spec=V1JobSpec(instance_name=internal_instance_name, instance_type=internal_instance_type))
+    job._job_api.get_job_by_name = get_job_mock
+
+    assert job.machine == expected_machine
+    get_job_mock.assert_called_once()

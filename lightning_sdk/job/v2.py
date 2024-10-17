@@ -73,7 +73,15 @@ class _JobV2(_BaseJob):
 
     @property
     def status(self) -> "Status":
-        raise NotImplementedError("Not implemented yet")
+        self._update_internal_job()
+        return self._job_api._job_state_to_external(self._job.state)
+
+    @property
+    def machine(self) -> "Machine":
+        # only fetch the job it it hasn't been fetched yet as machine cannot change over time
+        if getattr(self, "_job", None) is None:
+            self._update_internal_job()
+        return self._job_api._get_job_machine_from_spec(self._job.spec)
 
     @property
     def artifact_path(self) -> Optional[str]:

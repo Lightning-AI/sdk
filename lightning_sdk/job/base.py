@@ -83,6 +83,11 @@ class _BaseJob(ABC):
 
     @property
     @abstractmethod
+    def machine(self) -> "Machine":
+        pass
+
+    @property
+    @abstractmethod
     def artifact_path(self) -> Optional[str]:
         pass
 

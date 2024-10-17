@@ -1,5 +1,5 @@
 import time
-from typing import Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from lightning_sdk.api.utils import (
     _COMPUTE_NAME_TO_MACHINE,
@@ -28,6 +28,9 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
+
+if TYPE_CHECKING:
+    from lightning_sdk.status import Status
 
 
 class JobApiV1:
@@ -122,6 +125,12 @@ class JobApiV1:
 
 
 class JobApiV2:
+    v2_job_state_pending = "pending"
+    v2_job_state_running = "running"
+    v2_job_state_stopped = "stopped"
+    v2_job_state_completed = "completed"
+    v2_job_state_failed = "failed"
+
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
         self._client = LightningClient(max_tries=7)
@@ -169,3 +178,26 @@ class JobApiV2:
     def get_job(self, job_id: str, teamspace_id: str) -> V1Job:
         job: V1Job = self._client.jobs_service_get_job(project_id=teamspace_id, id=job_id)
         return job
+
+    def _job_state_to_external(self, state: str) -> "Status":
+        from lightning_sdk.status import Status
+
+        if state == self.v2_job_state_pending:
+            return Status.Pending
+        if state == self.v2_job_state_running:
+            return Status.Running
+        if state == self.v2_job_state_stopped:
+            return Status.Stopped
+        if state == self.v2_job_state_completed:
+            return Status.Completed
+        if state == self.v2_job_state_failed:
+            return Status.Failed
+        return Status.Pending
+
+    def _get_job_machine_from_spec(self, spec: V1JobSpec) -> "Machine":
+        instance_name = spec.instance_name
+        instance_type = spec.instance_type
+
+        return _COMPUTE_NAME_TO_MACHINE.get(
+            instance_type, _COMPUTE_NAME_TO_MACHINE.get(instance_name, instance_type or instance_name)
+        )

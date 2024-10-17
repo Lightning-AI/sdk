@@ -2,13 +2,14 @@ from lightning_sdk.api.job_api import JobApiV1
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
     Externalv1Lightningwork,
+    V1JobSpec,
 )
 from click.exceptions import ClickException
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 import pytest
 from unittest import mock
 from lightning_sdk.job.v2 import JobApiV2
-
+from lightning_sdk.status import Status
 from lightning_sdk.machine import Machine
 
 
@@ -143,3 +144,38 @@ def test_get_job():
 
     job_api.get_job("test-job-id", "ts-abc")
     get_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc")
+
+@pytest.mark.parametrize(
+    "internal_state, expected_state",
+    [
+        ("pending", Status.Pending),
+        ("running", Status.Running),
+        ("stopped", Status.Stopped),
+        ("completed", Status.Completed),
+        ("failed", Status.Failed),
+        ("unknown", Status.Pending),
+    ],
+)
+def test_translate_state(internal_state, expected_state):
+    job_api = JobApiV2()
+    assert job_api._job_state_to_external(internal_state) == expected_state
+
+@pytest.mark.parametrize(
+    "instance_name, instance_type,expected_machine",
+    [
+        ("g4dn.12xlarge", None, Machine.T4_X_4),
+        ("p4d.24xlarge", "p4d.24xlarge", Machine.A100_X_8),
+        ("unknown", "p4d.24xlarge", Machine.A100_X_8),
+        ("unknown", None, "unknown"),
+        ("", "unknown", "unknown"),
+    ],
+)
+def test_machine_translate(instance_name, instance_type, expected_machine):
+    job_api = JobApiV2()
+
+    spec = V1JobSpec(
+        instance_name=instance_name,
+        instance_type=instance_type,
+    )
+
+    assert job_api._get_job_machine_from_spec(spec) == expected_machine
