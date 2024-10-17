@@ -54,6 +54,7 @@ class V1DeploymentTemplate(object):
         'parameters': 'list[V1DeploymentTemplateParameter]',
         'project_id': 'str',
         'spec': 'V1JobSpec',
+        'spec_v2': 'V1DeploymentSpec',
         'tags': 'list[V1ResourceTag]',
         'unpublished': 'bool',
         'updated_at': 'datetime',
@@ -74,13 +75,14 @@ class V1DeploymentTemplate(object):
         'parameters': 'parameters',
         'project_id': 'projectId',
         'spec': 'spec',
+        'spec_v2': 'specV2',
         'tags': 'tags',
         'unpublished': 'unpublished',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, tags: 'list[V1ResourceTag]' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, spec_v2: 'V1DeploymentSpec' =None, tags: 'list[V1ResourceTag]' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1DeploymentTemplate - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
@@ -95,6 +97,7 @@ class V1DeploymentTemplate(object):
         self._parameters = None
         self._project_id = None
         self._spec = None
+        self._spec_v2 = None
         self._tags = None
         self._unpublished = None
         self._updated_at = None
@@ -126,6 +129,8 @@ class V1DeploymentTemplate(object):
             self.project_id = project_id
         if spec is not None:
             self.spec = spec
+        if spec_v2 is not None:
+            self.spec_v2 = spec_v2
         if tags is not None:
             self.tags = tags
         if unpublished is not None:
@@ -407,6 +412,27 @@ class V1DeploymentTemplate(object):
         """
 
         self._spec = spec
+
+    @property
+    def spec_v2(self) -> 'V1DeploymentSpec':
+        """Gets the spec_v2 of this V1DeploymentTemplate.  # noqa: E501
+
+
+        :return: The spec_v2 of this V1DeploymentTemplate.  # noqa: E501
+        :rtype: V1DeploymentSpec
+        """
+        return self._spec_v2
+
+    @spec_v2.setter
+    def spec_v2(self, spec_v2: 'V1DeploymentSpec'):
+        """Sets the spec_v2 of this V1DeploymentTemplate.
+
+
+        :param spec_v2: The spec_v2 of this V1DeploymentTemplate.  # noqa: E501
+        :type: V1DeploymentSpec
+        """
+
+        self._spec_v2 = spec_v2
 
     @property
     def tags(self) -> 'list[V1ResourceTag]':

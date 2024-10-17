@@ -56,6 +56,7 @@ class V1Job(object):
         'started_at': 'datetime',
         'state': 'str',
         'stopped_at': 'datetime',
+        'timings': 'dict(str, V1JobTiming)',
         'total_cost': 'float',
         'updated_at': 'datetime',
         'urls': 'list[str]',
@@ -79,6 +80,7 @@ class V1Job(object):
         'started_at': 'startedAt',
         'state': 'state',
         'stopped_at': 'stoppedAt',
+        'timings': 'timings',
         'total_cost': 'totalCost',
         'updated_at': 'updatedAt',
         'urls': 'urls',
@@ -86,7 +88,7 @@ class V1Job(object):
         'user_logs_started_at': 'userLogsStartedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deployment_id = None
@@ -103,6 +105,7 @@ class V1Job(object):
         self._started_at = None
         self._state = None
         self._stopped_at = None
+        self._timings = None
         self._total_cost = None
         self._updated_at = None
         self._urls = None
@@ -139,6 +142,8 @@ class V1Job(object):
             self.state = state
         if stopped_at is not None:
             self.stopped_at = stopped_at
+        if timings is not None:
+            self.timings = timings
         if total_cost is not None:
             self.total_cost = total_cost
         if updated_at is not None:
@@ -464,6 +469,27 @@ class V1Job(object):
         """
 
         self._stopped_at = stopped_at
+
+    @property
+    def timings(self) -> 'dict(str, V1JobTiming)':
+        """Gets the timings of this V1Job.  # noqa: E501
+
+
+        :return: The timings of this V1Job.  # noqa: E501
+        :rtype: dict(str, V1JobTiming)
+        """
+        return self._timings
+
+    @timings.setter
+    def timings(self, timings: 'dict(str, V1JobTiming)'):
+        """Sets the timings of this V1Job.
+
+
+        :param timings: The timings of this V1Job.  # noqa: E501
+        :type: dict(str, V1JobTiming)
+        """
+
+        self._timings = timings
 
     @property
     def total_cost(self) -> 'float':

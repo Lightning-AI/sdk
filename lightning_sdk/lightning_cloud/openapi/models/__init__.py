@@ -150,6 +150,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_aws_direct_v1 import V1AWSD
 from lightning_sdk.lightning_cloud.openapi.models.v1_aws_direct_v1_status import V1AWSDirectV1Status
 from lightning_sdk.lightning_cloud.openapi.models.v1_accelerator_quota_info import V1AcceleratorQuotaInfo
 from lightning_sdk.lightning_cloud.openapi.models.v1_ack_user_storage_violation_response import V1AckUserStorageViolationResponse
+from lightning_sdk.lightning_cloud.openapi.models.v1_add_job_timing_response import V1AddJobTimingResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_agent_complete_part_response import V1AgentCompletePartResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_agent_job import V1AgentJob
 from lightning_sdk.lightning_cloud.openapi.models.v1_agent_job_artifact import V1AgentJobArtifact
@@ -309,6 +310,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_deployment import V1Deploym
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_event import V1DeploymentEvent
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_event_type import V1DeploymentEventType
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_release import V1DeploymentRelease
+from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_spec import V1DeploymentSpec
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_state import V1DeploymentState
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_status import V1DeploymentStatus
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_strategy import V1DeploymentStrategy
@@ -401,6 +403,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_job_log_entry import V1JobL
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_logs_page import V1JobLogsPage
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_logs_response import V1JobLogsResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_spec import V1JobSpec
+from lightning_sdk.lightning_cloud.openapi.models.v1_job_timing import V1JobTiming
 from lightning_sdk.lightning_cloud.openapi.models.v1_joinable_organization import V1JoinableOrganization
 from lightning_sdk.lightning_cloud.openapi.models.v1_keep_alive_cloud_space_instance_response import V1KeepAliveCloudSpaceInstanceResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_knowledge_configuration import V1KnowledgeConfiguration

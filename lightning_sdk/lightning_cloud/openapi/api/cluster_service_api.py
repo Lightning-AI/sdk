@@ -898,6 +898,8 @@ class ClusterServiceApi(object):
         :param int instance_count:
         :param int capacity_block_duration_hours:
         :param datetime start_date:
+        :param str timezone:
+        :param str org_id:
         :return: V1FindCapacityBlockOfferingResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -924,12 +926,14 @@ class ClusterServiceApi(object):
         :param int instance_count:
         :param int capacity_block_duration_hours:
         :param datetime start_date:
+        :param str timezone:
+        :param str org_id:
         :return: V1FindCapacityBlockOfferingResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'instance_type', 'instance_count', 'capacity_block_duration_hours', 'start_date']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'instance_type', 'instance_count', 'capacity_block_duration_hours', 'start_date', 'timezone', 'org_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -970,6 +974,10 @@ class ClusterServiceApi(object):
             query_params.append(('capacityBlockDurationHours', params['capacity_block_duration_hours']))  # noqa: E501
         if 'start_date' in params:
             query_params.append(('startDate', params['start_date']))  # noqa: E501
+        if 'timezone' in params:
+            query_params.append(('timezone', params['timezone']))  # noqa: E501
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 

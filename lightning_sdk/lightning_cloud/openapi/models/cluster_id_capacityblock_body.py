@@ -44,22 +44,28 @@ class ClusterIdCapacityblockBody(object):
         'capacity_block_duration_hours': 'int',
         'instance_count': 'int',
         'instance_type': 'str',
-        'start_date': 'datetime'
+        'org_id': 'str',
+        'start_date': 'datetime',
+        'timezone': 'str'
     }
 
     attribute_map = {
         'capacity_block_duration_hours': 'capacityBlockDurationHours',
         'instance_count': 'instanceCount',
         'instance_type': 'instanceType',
-        'start_date': 'startDate'
+        'org_id': 'orgId',
+        'start_date': 'startDate',
+        'timezone': 'timezone'
     }
 
-    def __init__(self, capacity_block_duration_hours: 'int' =None, instance_count: 'int' =None, instance_type: 'str' =None, start_date: 'datetime' =None):  # noqa: E501
+    def __init__(self, capacity_block_duration_hours: 'int' =None, instance_count: 'int' =None, instance_type: 'str' =None, org_id: 'str' =None, start_date: 'datetime' =None, timezone: 'str' =None):  # noqa: E501
         """ClusterIdCapacityblockBody - a model defined in Swagger"""  # noqa: E501
         self._capacity_block_duration_hours = None
         self._instance_count = None
         self._instance_type = None
+        self._org_id = None
         self._start_date = None
+        self._timezone = None
         self.discriminator = None
         if capacity_block_duration_hours is not None:
             self.capacity_block_duration_hours = capacity_block_duration_hours
@@ -67,8 +73,12 @@ class ClusterIdCapacityblockBody(object):
             self.instance_count = instance_count
         if instance_type is not None:
             self.instance_type = instance_type
+        if org_id is not None:
+            self.org_id = org_id
         if start_date is not None:
             self.start_date = start_date
+        if timezone is not None:
+            self.timezone = timezone
 
     @property
     def capacity_block_duration_hours(self) -> 'int':
@@ -134,6 +144,27 @@ class ClusterIdCapacityblockBody(object):
         self._instance_type = instance_type
 
     @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this ClusterIdCapacityblockBody.  # noqa: E501
+
+
+        :return: The org_id of this ClusterIdCapacityblockBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this ClusterIdCapacityblockBody.
+
+
+        :param org_id: The org_id of this ClusterIdCapacityblockBody.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
+
+    @property
     def start_date(self) -> 'datetime':
         """Gets the start_date of this ClusterIdCapacityblockBody.  # noqa: E501
 
@@ -153,6 +184,27 @@ class ClusterIdCapacityblockBody(object):
         """
 
         self._start_date = start_date
+
+    @property
+    def timezone(self) -> 'str':
+        """Gets the timezone of this ClusterIdCapacityblockBody.  # noqa: E501
+
+
+        :return: The timezone of this ClusterIdCapacityblockBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._timezone
+
+    @timezone.setter
+    def timezone(self, timezone: 'str'):
+        """Sets the timezone of this ClusterIdCapacityblockBody.
+
+
+        :param timezone: The timezone of this ClusterIdCapacityblockBody.  # noqa: E501
+        :type: str
+        """
+
+        self._timezone = timezone
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
