@@ -58,6 +58,7 @@ class V1MetricsStream(object):
         'stopped_at': 'datetime',
         'store_created_at': 'bool',
         'store_step': 'bool',
+        'system_info': 'V1SystemInfo',
         'tags': 'list[V1MetricsTags]',
         'trackers': 'dict(str, V1MetricsTracker)',
         'user_id': 'str',
@@ -84,6 +85,7 @@ class V1MetricsStream(object):
         'stopped_at': 'stoppedAt',
         'store_created_at': 'storeCreatedAt',
         'store_step': 'storeStep',
+        'system_info': 'systemInfo',
         'tags': 'tags',
         'trackers': 'trackers',
         'user_id': 'userId',
@@ -92,7 +94,7 @@ class V1MetricsStream(object):
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, version: 'datetime' =None, version_number: 'int' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, version: 'datetime' =None, version_number: 'int' =None, work_id: 'str' =None):  # noqa: E501
         """V1MetricsStream - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
@@ -111,6 +113,7 @@ class V1MetricsStream(object):
         self._stopped_at = None
         self._store_created_at = None
         self._store_step = None
+        self._system_info = None
         self._tags = None
         self._trackers = None
         self._user_id = None
@@ -152,6 +155,8 @@ class V1MetricsStream(object):
             self.store_created_at = store_created_at
         if store_step is not None:
             self.store_step = store_step
+        if system_info is not None:
+            self.system_info = system_info
         if tags is not None:
             self.tags = tags
         if trackers is not None:
@@ -521,6 +526,27 @@ class V1MetricsStream(object):
         """
 
         self._store_step = store_step
+
+    @property
+    def system_info(self) -> 'V1SystemInfo':
+        """Gets the system_info of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The system_info of this V1MetricsStream.  # noqa: E501
+        :rtype: V1SystemInfo
+        """
+        return self._system_info
+
+    @system_info.setter
+    def system_info(self, system_info: 'V1SystemInfo'):
+        """Sets the system_info of this V1MetricsStream.
+
+
+        :param system_info: The system_info of this V1MetricsStream.  # noqa: E501
+        :type: V1SystemInfo
+        """
+
+        self._system_info = system_info
 
     @property
     def tags(self) -> 'list[V1MetricsTags]':

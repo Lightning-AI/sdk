@@ -48,6 +48,7 @@ class MetricsstreamCreateBody(object):
         'name': 'str',
         'store_created_at': 'bool',
         'store_step': 'bool',
+        'system_info': 'V1SystemInfo',
         'tags': 'list[V1MetricsTags]',
         'version': 'datetime',
         'work_id': 'str'
@@ -61,12 +62,13 @@ class MetricsstreamCreateBody(object):
         'name': 'name',
         'store_created_at': 'storeCreatedAt',
         'store_step': 'storeStep',
+        'system_info': 'systemInfo',
         'tags': 'tags',
         'version': 'version',
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, tags: 'list[V1MetricsTags]' =None, version: 'datetime' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, version: 'datetime' =None, work_id: 'str' =None):  # noqa: E501
         """MetricsstreamCreateBody - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
@@ -75,6 +77,7 @@ class MetricsstreamCreateBody(object):
         self._name = None
         self._store_created_at = None
         self._store_step = None
+        self._system_info = None
         self._tags = None
         self._version = None
         self._work_id = None
@@ -93,6 +96,8 @@ class MetricsstreamCreateBody(object):
             self.store_created_at = store_created_at
         if store_step is not None:
             self.store_step = store_step
+        if system_info is not None:
+            self.system_info = system_info
         if tags is not None:
             self.tags = tags
         if version is not None:
@@ -246,6 +251,27 @@ class MetricsstreamCreateBody(object):
         """
 
         self._store_step = store_step
+
+    @property
+    def system_info(self) -> 'V1SystemInfo':
+        """Gets the system_info of this MetricsstreamCreateBody.  # noqa: E501
+
+
+        :return: The system_info of this MetricsstreamCreateBody.  # noqa: E501
+        :rtype: V1SystemInfo
+        """
+        return self._system_info
+
+    @system_info.setter
+    def system_info(self, system_info: 'V1SystemInfo'):
+        """Sets the system_info of this MetricsstreamCreateBody.
+
+
+        :param system_info: The system_info of this MetricsstreamCreateBody.  # noqa: E501
+        :type: V1SystemInfo
+        """
+
+        self._system_info = system_info
 
     @property
     def tags(self) -> 'list[V1MetricsTags]':

@@ -655,6 +655,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_storage_system_metrics impo
 from lightning_sdk.lightning_cloud.openapi.models.v1_studio_job import V1StudioJob
 from lightning_sdk.lightning_cloud.openapi.models.v1_studio_job_app import V1StudioJobApp
 from lightning_sdk.lightning_cloud.openapi.models.v1_switch_cloud_space_instance_response import V1SwitchCloudSpaceInstanceResponse
+from lightning_sdk.lightning_cloud.openapi.models.v1_system_info import V1SystemInfo
 from lightning_sdk.lightning_cloud.openapi.models.v1_system_metrics import V1SystemMetrics
 from lightning_sdk.lightning_cloud.openapi.models.v1_system_metrics_list import V1SystemMetricsList
 from lightning_sdk.lightning_cloud.openapi.models.v1_telemetry import V1Telemetry
