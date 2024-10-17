@@ -114,3 +114,9 @@ class JobApiV1:
             entrypoint=command,
             interruptible=interruptible,
         )
+
+
+class JobApiV2:
+    def __init__(self) -> None:
+        self._cloud_url = _cloud_url()
+        self._client = LightningClient(max_tries=7)

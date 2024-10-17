@@ -1,3 +1,4 @@
+import importlib
 import os
 import json
 import pytest
@@ -49,6 +50,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Assistant,
     V1Endpoint,
     V1UpstreamOpenAI,
+    V1GetUserResponse,
+    V1UserFeatures,
 )
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -2013,3 +2016,26 @@ def available_aws_instance_types():
                 instance_types += [it["InstanceType"] for it in page["InstanceTypes"]]
 
     return set(instance_types)
+
+@pytest.fixture(autouse=True, scope="function")
+def clear_job_v2_cache():
+    import lightning_sdk
+    importlib.reload(lightning_sdk.job.job)
+    from lightning_sdk.job.job import _has_jobs_v2
+    _has_jobs_v2.cache_clear()
+    yield
+    _has_jobs_v2.cache_clear()
+
+@pytest.fixture(scope="function")
+def job_backend_selector_mocker_v2(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
+    mocker.patch("lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
+                 autospec=True, return_value=V1GetUserResponse(features=V1UserFeatures(jobs_v2=True)))
+    yield [mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker]
+    mocker.resetall()
+
+@pytest.fixture(scope="function")
+def job_backend_selector_mocker_v1(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
+    mocker.patch("lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
+                 autospec=True, return_value=V1GetUserResponse(features=V1UserFeatures(jobs_v2=False)))
+    yield [mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker]
+    mocker.resetall()

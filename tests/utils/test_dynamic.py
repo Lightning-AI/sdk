@@ -20,6 +20,12 @@ def test_condition_base_meta(condition_result: bool, expected_method_name: Liter
 
     myclass = MyNewClass()
 
+    assert issubclass(MyNewClass, A) == condition_result
+    assert issubclass(MyNewClass, B) != condition_result
+
+    assert isinstance(myclass, A) == condition_result
+    assert isinstance(myclass, B) != condition_result
+
     assert hasattr(myclass, expected_method_name)
     assert not hasattr(myclass, nonexpected_method_name)
 

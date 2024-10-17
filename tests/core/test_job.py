@@ -1,3 +1,5 @@
+import importlib
+
 from lightning_sdk.studio import Studio
 from lightning_sdk.job import Job
 from lightning_sdk.teamspace import Teamspace
@@ -8,6 +10,7 @@ from unittest import mock
 import os
 import pytest
 from lightning_sdk.machine import Machine
+
 
 
 @mock.patch.dict(os.environ, clear=True)
@@ -114,3 +117,42 @@ def test_get_work(
 
     assert job.work.machine == Machine.T4_X_4
     assert job.machine == Machine.T4_X_4
+
+def test_select_job_backend_correctly_v1(job_backend_selector_mocker_v1):
+    from lightning_sdk.job.job import _has_jobs_v2
+    from lightning_sdk.job.v1 import _JobV1
+    from lightning_sdk.job.v2 import _JobV2
+    from lightning_sdk.api.job_api import JobApiV1
+    from lightning_sdk.job.base import _BaseJob
+
+    assert _has_jobs_v2() is False
+    j = Job("test-job", "ts-abc", org="org-abc", _fetch_job=False)
+
+    assert isinstance(j, _BaseJob)
+    assert issubclass(Job, _BaseJob)
+    assert isinstance(j, _JobV1)
+    assert not isinstance(j, _JobV2)
+    assert issubclass(Job, _JobV1)
+    assert not issubclass(Job, _JobV2)
+
+
+def test_select_job_backend_correctly_v2(job_backend_selector_mocker_v2):
+    from lightning_sdk.job.job import _has_jobs_v2
+    from lightning_sdk.job.v2 import _JobV2
+    from lightning_sdk.job.v1 import _JobV1
+    from lightning_sdk.api.job_api import JobApiV2
+    from lightning_sdk.job.base import _BaseJob
+
+    import lightning_sdk
+    importlib.reload(lightning_sdk.job.job)
+    from lightning_sdk.job.job import Job
+
+    assert _has_jobs_v2() is True
+    j = Job("test-job", "ts-abc", org="org-abc", _fetch_job=False)
+
+    assert isinstance(j, _BaseJob)
+    assert issubclass(Job, _BaseJob)
+    assert isinstance(j, _JobV2)
+    assert not isinstance(j, _JobV1)
+    assert issubclass(Job, _JobV2)
+    assert not issubclass(Job, _JobV1)

@@ -1,5 +1,5 @@
 from abc import ABCMeta
-from typing import Any, Callable, Tuple, Union
+from typing import Any, Callable, Tuple, Type
 
 
 class ConditionBaseMeta(ABCMeta):
@@ -42,31 +42,20 @@ class ConditionBaseMeta(ABCMeta):
         bases: Tuple[type, ...],
         attrs: dict,
         condition_func: Callable[[], bool],
-        base_true: type,
-        base_false: type,
-    ) -> type:
-        # Store the condition function and potential base classes as class attributes
-        attrs["_condition_func"] = staticmethod(condition_func)
-        attrs["_base_true"] = base_true
-        attrs["_base_false"] = base_false
-
+        base_true: Type,
+        base_false: Type,
+    ) -> Type:
         # Helper function to determine the base class
         def get_base() -> type:
             return base_true if condition_func() else base_false
 
-        # Create a new class that inherits from the determined base
-        new_class = super().__new__(cls, name, (get_base(),), attrs)
+        base = get_base()
+        attrs["_base"] = base
 
-        # Override __class_getitem__ to handle class method lookups
-        def __class_getitem(cls: Union[base_true, base_false], name: str) -> Any:
-            return getattr(get_base(), name)
-
-        new_class.__class_getitem__ = classmethod(__class_getitem)
-
-        return new_class
+        # Create the final class, inheriting from both the intermediate base and the original bases
+        return super().__new__(cls, name, (base, *bases), attrs)
 
     def __getattr__(cls, name: str) -> Any:
         """Get an attribute from the appropriate base class."""
         # Delegate attribute lookup to the appropriate base class
-        base = cls._base_true if cls._condition_func() else cls._base_false
-        return getattr(base, name)
+        return getattr(cls._base, name)

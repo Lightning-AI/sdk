@@ -87,7 +87,7 @@ class V1Job(object):
         'user_id': 'userId',
         'user_logs_started_at': 'userLogsStartedAt'
     }
-
+    
     def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None

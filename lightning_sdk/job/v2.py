@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Dict, Optional, Union
 
+from lightning_sdk.api.job_api import JobApiV2
 from lightning_sdk.job.base import _BaseJob
 
 if TYPE_CHECKING:
@@ -22,8 +23,7 @@ class _JobV2(_BaseJob):
         *,
         _fetch_job: bool = True,
     ) -> None:
-        raise NotImplementedError
-        # TODO: Instantiate _JobV2Api
+        self._job_api = JobApiV2()
         super().__init__(name=name, teamspace=teamspace, org=org, user=user, cluster=cluster, _fetch_job=_fetch_job)
 
     def _submit(
