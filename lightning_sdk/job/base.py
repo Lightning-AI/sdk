@@ -49,6 +49,7 @@ class _BaseJob(ABC):
         # TODO: resolve studio and support string studios
         # TODO: check if job already exists, then alter name
         # TODO: assertions for studio to be in teamspace and on cluster
+        # TODO: if cluster is not provided use studio cluster if provided, otherwise use default cluster from teamspace
         inst = cls(name=name, teamspace=teamspace, org=org, user=user, cluster=cluster, _fetch_job=False)
         inst._submit(machine=machine, command=command, studio=studio, image=image, env=env, interruptible=interruptible)
         inst._update_internal_job()

@@ -35,7 +35,35 @@ class _JobV2(_BaseJob):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
     ) -> None:
-        raise NotImplementedError("Not implemented yet")
+        # Command is required if Studio is provided to know what to run
+        # Image is mutually exclusive with Studio
+        # Command is optional for Image
+        # Either image or studio must be provided
+        if studio is not None:
+            studio_id = studio._studio.id
+            if image is not None:
+                raise ValueError(
+                    "image and studio are mutually exclusive as both define the environment to run the job in"
+                )
+            if command is None:
+                raise ValueError("command is required when using a studio")
+        else:
+            studio_id = None
+            if image is None:
+                raise ValueError("either image or studio must be provided")
+
+        submitted = self._job_api.submit_job(
+            name=self.name,
+            command=command,
+            cluster_id=self._cluster,
+            teamspace_id=self._teamspace.id,
+            studio_id=studio_id,
+            image=image,
+            machine=machine,
+            interruptible=interruptible,
+            env=env,
+        )
+        self._name = submitted.name
 
     def stop(self) -> None:
         raise NotImplementedError("Not implemented yet")

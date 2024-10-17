@@ -2,6 +2,7 @@ import importlib
 
 from lightning_sdk.studio import Studio
 from lightning_sdk.job import Job
+from lightning_sdk.job.v2 import _JobV2
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.job.work import Work
 from lightning_sdk.status import Status
@@ -10,6 +11,9 @@ from unittest import mock
 import os
 import pytest
 from lightning_sdk.machine import Machine
+from lightning_sdk.lightning_cloud.openapi import V1GetUserResponse
+from lightning_sdk.lightning_cloud.openapi import V1UserFeatures
+
 
 
 
@@ -156,3 +160,50 @@ def test_select_job_backend_correctly_v2(job_backend_selector_mocker_v2):
     assert not isinstance(j, _JobV1)
     assert issubclass(Job, _JobV2)
     assert not issubclass(Job, _JobV1)
+
+
+@pytest.mark.parametrize("machine", [Machine.CPU, Machine.T4_X_4])
+@pytest.mark.parametrize("command", [None, "echo hello"])
+@pytest.mark.parametrize("env", [None, {"key": "value"}])
+@pytest.mark.parametrize("interruptible", [True, False])
+def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env, interruptible):
+
+        teamspace = Teamspace("ts-abc", org="org-abc")
+        job = _JobV2("test-job", teamspace, cluster="c-abc", _fetch_job=False)
+
+        submit_mock = mock.MagicMock()
+        job._job_api.submit_job = submit_mock
+
+        job._submit(machine=machine, image="image-abc", command=command, env=env, interruptible=interruptible)
+
+        # test that everything was passed along correctly to the api layer and that class values and function params are mixed correctly
+        submit_mock.assert_called_once_with(name="test-job", command=command, cluster_id="c-abc", teamspace_id="ts-abc001", studio_id=None, image="image-abc", machine=machine, interruptible=interruptible, env=env)
+
+
+@pytest.mark.parametrize("machine", [Machine.A10G, Machine.DATA_PREP_MAX])
+@pytest.mark.parametrize("env", [None, {"key": "value"}])
+@pytest.mark.parametrize("interruptible", [True, False])
+def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interruptible):
+
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+
+    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+    submit_mock = mock.MagicMock()
+    job._job_api.submit_job = submit_mock
+    job._submit(machine=machine, studio=studio, env=env, interruptible=interruptible, command="echo hello")
+
+    submit_mock.assert_called_once_with(name="test-job", command="echo hello", cluster_id="c-abc", teamspace_id="ts-abc001", studio_id="st-abc", image=None, machine=machine, interruptible=interruptible, env=env)
+
+def test_submit_jobv2_error_cases(internal_studio_init_mocker):
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+
+    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+
+    with pytest.raises(ValueError, match="image and studio are mutually exclusive as both define the environment to run the job in"):
+        job._submit(machine=Machine.T4_X_4, studio=studio, image="image-abc", command="echo hello", env={"key": "value"}, interruptible=False)
+
+    with pytest.raises(ValueError, match="command is required when using a studio"):
+        job._submit(machine=Machine.T4_X_4, studio=studio, image=None, command=None, env={"key": "value"}, interruptible=False)
+
+    with pytest.raises(ValueError, match="either image or studio must be provided"):
+        job._submit(machine=Machine.T4_X_4, studio=None, image=None, command="echo hello", env={"key": "value"}, interruptible=False)

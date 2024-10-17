@@ -1,5 +1,5 @@
 import time
-from typing import List
+from typing import Dict, List, Optional
 
 from lightning_sdk.api.utils import (
     _COMPUTE_NAME_TO_MACHINE,
@@ -9,11 +9,16 @@ from lightning_sdk.api.utils import (
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
 )
+from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
 from lightning_sdk.lightning_cloud.openapi import (
     AppinstancesIdBody,
     Externalv1LightningappInstance,
     Externalv1Lightningwork,
+    ProjectIdJobsBody,
     V1ComputeConfig,
+    V1EnvVar,
+    V1Job,
+    V1JobSpec,
     V1LightningappInstanceSpec,
     V1LightningappInstanceState,
     V1LightningappInstanceStatus,
@@ -120,3 +125,39 @@ class JobApiV2:
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
         self._client = LightningClient(max_tries=7)
+
+    def submit_job(
+        self,
+        name: str,
+        command: Optional[str],
+        cluster_id: str,
+        teamspace_id: str,
+        studio_id: Optional[str],
+        image: Optional[str],
+        machine: Machine,
+        interruptible: bool,
+        env: Optional[Dict[str, str]],
+    ) -> V1Job:
+        env_vars = []
+        if env is not None:
+            for k, v in env.items():
+                env_vars.append(V1EnvVar(name=k, value=v))
+
+        instance_name = _MACHINE_TO_COMPUTE_NAME[machine]
+
+        run_id = __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id] if studio_id is not None else ""
+
+        spec = V1JobSpec(
+            cloudspace_id=studio_id or "",
+            cluster_id=cluster_id,
+            command=command or "",
+            env=env_vars,
+            image=image or "",
+            instance_name=instance_name,
+            run_id=run_id,
+            spot=interruptible,
+        )
+        body = ProjectIdJobsBody(name=name, spec=spec)
+
+        job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
+        return job

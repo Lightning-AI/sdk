@@ -6,6 +6,10 @@ from lightning_sdk.lightning_cloud.openapi import (
 from click.exceptions import ClickException
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 import pytest
+from unittest import mock
+from lightning_sdk.job.v2 import JobApiV2
+
+from lightning_sdk.machine import Machine
 
 
 def test_get_job(internal_job_api_mocker_get_job):
@@ -80,3 +84,44 @@ def test_get_work(internal_job_api_mocker_get_work):
     assert w.id == "w-abc"
     assert w.name == "root.w-abc"
     assert w.display_name == "work abc"
+
+def test_job_v2_submit_job(internal_studio_init_mocker):
+    from lightning_sdk.lightning_cloud.openapi import V1JobSpec, ProjectIdJobsBody, V1EnvVar
+    job_api = JobApiV2()
+
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_job = create_job_mock
+
+
+    job_api.submit_job(name="test-job", cluster_id="c-abc", teamspace_id="ts-abc", image="", studio_id="st-abc", machine=Machine.T4_X_4, interruptible=False, env={"key": "value"}, command="echo hello")
+
+    spec = V1JobSpec(
+            cloudspace_id="st-abc",
+            cluster_id="c-abc",
+            command="echo hello",
+            env=[V1EnvVar(name="key", value="value")],
+            image="",
+            instance_name="g4dn.12xlarge",
+            run_id=mock.ANY,
+            spot=False,
+        )
+    body = ProjectIdJobsBody(name="test-job", spec=spec)
+    create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
+
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_job = create_job_mock
+    job_api.submit_job(name="test-job", cluster_id="c-abc", teamspace_id="ts-abc", studio_id="", image="image-abc", machine=Machine.T4_X_4, interruptible=True, env=None, command=None)
+
+    spec = V1JobSpec(
+            cloudspace_id="",
+            cluster_id="c-abc",
+            command="",
+            env=[],
+            image="image-abc",
+            instance_name="g4dn.12xlarge",
+            run_id=mock.ANY,
+            spot=True,
+        )
+    body = ProjectIdJobsBody(name="test-job", spec=spec)
+    create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
+    create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
