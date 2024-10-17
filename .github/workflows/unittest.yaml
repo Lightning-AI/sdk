@@ -50,13 +50,12 @@ jobs:
     - name: Tests
       run: |
         # NOTE: do not include coverage report here, see: https://github.com/nedbat/coveragepy/issues/1003
-        coverage run --source lightning_sdk -m pytest api/ core/ services/ -vv -s
+        coverage run -m pytest tests/ -vv -s
       env: # the following values are just dummies since the actual http calls are mocked out
         LIGHTNING_USER_ID: ${{ secrets.LIGHTNING_USER_ID }}
         LIGHTNING_API_KEY: ${{ secrets.LIGHTNING_API_KEY }}
-      working-directory: tests
+
     - name: Statistics
-      working-directory: tests
       continue-on-error: true
       run: |
         coverage report

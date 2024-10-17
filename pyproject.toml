@@ -166,6 +166,15 @@ xfail_strict = true
 junit_duration_report = "call"
 
 [tool.coverage.run]
+source = ["lightning_sdk"]
 omit = [
     "lightning_sdk/lightning_cloud/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "pass",
+    "typing.overload",
 ]
