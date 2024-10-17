@@ -26,6 +26,7 @@ class _BaseJob(ABC):
         self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         self._cluster = cluster
         self._name = name
+        self._job = None
 
         if _fetch_job:
             self._update_internal_job()

@@ -88,4 +88,8 @@ class _JobV2(_BaseJob):
         raise NotImplementedError("Not implemented yet")
 
     def _update_internal_job(self) -> None:
-        raise NotImplementedError("Not implemented yet")
+        if getattr(self, "_job", None) is None:
+            self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+            return
+
+        self._job = self._job_api.get_job(job_id=self._job.id, teamspace_id=self._teamspace.id)

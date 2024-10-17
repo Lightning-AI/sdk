@@ -13,6 +13,7 @@ import pytest
 from lightning_sdk.machine import Machine
 from lightning_sdk.lightning_cloud.openapi import V1GetUserResponse
 from lightning_sdk.lightning_cloud.openapi import V1UserFeatures
+from lightning_sdk.lightning_cloud.openapi import V1Job
 
 
 
@@ -207,3 +208,52 @@ def test_submit_jobv2_error_cases(internal_studio_init_mocker):
 
     with pytest.raises(ValueError, match="either image or studio must be provided"):
         job._submit(machine=Machine.T4_X_4, studio=None, image=None, command="echo hello", env={"key": "value"}, interruptible=False)
+
+def test_get_job_by_name(internal_studio_init_mocker):
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+
+    job._job_api.get_job_by_name = mock.MagicMock()
+    job._update_internal_job()
+
+    # test that everything was passed along correctly to the api layer and that class values and function params are mixed correctly
+    job._job_api.get_job_by_name.assert_called_once_with(name="test-job", teamspace_id="ts-abc001")
+
+def test_get_job_by_id(internal_studio_init_mocker):
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+
+    # simulate updating internal job
+    job._job = V1Job(id="test-job-id")
+
+    job._job_api.get_job = mock.MagicMock()
+    job._update_internal_job()
+
+    # test that everything was passed along correctly to the api layer and that class values and function params are mixed correctly
+    job._job_api.get_job.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
+
+def test_get_job_by_name_first_and_then_by_id(internal_studio_init_mocker):
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+    job._job_api.get_job_by_name = mock.MagicMock()
+
+    job._job_api.get_job = mock.MagicMock()
+
+    job._update_internal_job()
+    job._job_api.get_job_by_name.assert_called_once_with(name="test-job", teamspace_id="ts-abc001")
+
+    # simulate updating internal job
+    job._job = V1Job(id="test-job-id")
+
+    job._update_internal_job()
+    job._job_api.get_job.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
+
+
+def test_get_job_by_name_on_init(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster)
+
+    assert hasattr(job, "_job")
+    assert job._job is not None
+
+    assert job._job.id == "test-job-id"

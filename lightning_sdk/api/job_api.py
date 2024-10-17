@@ -161,3 +161,11 @@ class JobApiV2:
 
         job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
         return job
+
+    def get_job_by_name(self, name: str, teamspace_id: str) -> V1Job:
+        job: V1Job = self._client.jobs_service_find_job(project_id=teamspace_id, name=name)
+        return job
+
+    def get_job(self, job_id: str, teamspace_id: str) -> V1Job:
+        job: V1Job = self._client.jobs_service_get_job(project_id=teamspace_id, id=job_id)
+        return job

@@ -85,7 +85,7 @@ def test_get_work(internal_job_api_mocker_get_work):
     assert w.name == "root.w-abc"
     assert w.display_name == "work abc"
 
-def test_job_v2_submit_job(internal_studio_init_mocker):
+def test_job_v2_submit_job():
     from lightning_sdk.lightning_cloud.openapi import V1JobSpec, ProjectIdJobsBody, V1EnvVar
     job_api = JobApiV2()
 
@@ -125,3 +125,21 @@ def test_job_v2_submit_job(internal_studio_init_mocker):
     body = ProjectIdJobsBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
+
+def test_get_job_by_name():
+    job_api = JobApiV2()
+
+    get_job_by_name_mock = mock.MagicMock()
+    job_api._client.jobs_service_find_job = get_job_by_name_mock
+
+    job_api.get_job_by_name("test-job", "ts-abc")
+    get_job_by_name_mock.assert_called_once_with(name="test-job", project_id="ts-abc")
+
+def test_get_job():
+    job_api = JobApiV2()
+
+    get_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_get_job = get_job_mock
+
+    job_api.get_job("test-job-id", "ts-abc")
+    get_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc")
