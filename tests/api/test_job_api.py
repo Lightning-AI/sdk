@@ -3,6 +3,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
     Externalv1Lightningwork,
     V1JobSpec,
+    V1Job,
+    JobsIdBody1,
 )
 from click.exceptions import ClickException
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -11,6 +13,7 @@ from unittest import mock
 from lightning_sdk.job.v2 import JobApiV2
 from lightning_sdk.status import Status
 from lightning_sdk.machine import Machine
+from typing import List
 
 
 def test_get_job(internal_job_api_mocker_get_job):
@@ -179,3 +182,41 @@ def test_machine_translate(instance_name, instance_type, expected_machine):
     )
 
     assert job_api._get_job_machine_from_spec(spec) == expected_machine
+
+@pytest.mark.parametrize("job_states, total_calls_get_job, called_update_job",
+                         [
+                             (["running", "stopped"], 2, True),
+                             (["running", "completed"], 2, True),
+                             (["stopped"], 1, False),
+                             (["completed"], 1, False),
+                             (["failed"], 1, False),
+                             (["pending", "stopped"], 2, True),
+                             (["pending", "running", "stopped"], 3, True),
+                             (["stopping", "stopping", "stopping", "stopped"], 4, False),
+                         ])
+def test_jobv2_stop(job_states: List[str], total_calls_get_job: int, called_update_job: bool):
+
+    job_api = JobApiV2()
+
+    def get_job_side_effect(*args, **kwargs):
+
+        while job_states:
+            return V1Job(id="test-job-id", state=job_states.pop(0), spec=V1JobSpec(cloudspace_id="cloudspace-id"))
+
+        return V1Job(id="test-job-id", state="stopped", spec=V1JobSpec(cloudspace_id="cloudspace-id"))
+
+    get_job_mock = mock.MagicMock()
+    get_job_mock.side_effect = get_job_side_effect
+    job_api._client.jobs_service_get_job = get_job_mock
+
+    update_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_update_job = update_job_mock
+
+    job_api.stop_job("test-job-id", "ts-abc")
+
+    assert get_job_mock.call_count == total_calls_get_job
+
+    if called_update_job:
+        update_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc", body=JobsIdBody1(cloudspace_id="cloudspace-id", state="stopped"))
+    else:
+        update_job_mock.assert_not_called()

@@ -14,6 +14,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     AppinstancesIdBody,
     Externalv1LightningappInstance,
     Externalv1Lightningwork,
+    JobsIdBody1,
     ProjectIdJobsBody,
     V1ComputeConfig,
     V1EnvVar,
@@ -130,6 +131,7 @@ class JobApiV2:
     v2_job_state_stopped = "stopped"
     v2_job_state_completed = "completed"
     v2_job_state_failed = "failed"
+    v2_job_state_stopping = "stopping"
 
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
@@ -179,6 +181,35 @@ class JobApiV2:
         job: V1Job = self._client.jobs_service_get_job(project_id=teamspace_id, id=job_id)
         return job
 
+    def stop_job(self, job_id: str, teamspace_id: str) -> None:
+        from lightning_sdk.status import Status
+
+        current_job = self.get_job(job_id=job_id, teamspace_id=teamspace_id)
+
+        current_state = self._job_state_to_external(current_job.state)
+
+        if current_state in (
+            Status.Stopped,
+            Status.Completed,
+            Status.Failed,
+        ):
+            return
+
+        if current_state != Status.Stopping:
+            update_body = JobsIdBody1(cloudspace_id=current_job.spec.cloudspace_id, state=self.v2_job_state_stopped)
+            self._client.jobs_service_update_job(body=update_body, project_id=teamspace_id, id=job_id)
+
+        while True:
+            current_job = self.get_job(job_id=job_id, teamspace_id=teamspace_id)
+            if self._job_state_to_external(current_job.state) in (
+                Status.Stopped,
+                Status.Completed,
+                Status.Stopped,
+                Status.Failed,
+            ):
+                break
+            time.sleep(1)
+
     def _job_state_to_external(self, state: str) -> "Status":
         from lightning_sdk.status import Status
 
@@ -192,6 +223,8 @@ class JobApiV2:
             return Status.Completed
         if state == self.v2_job_state_failed:
             return Status.Failed
+        if state == self.v2_job_state_stopping:
+            return Status.Stopping
         return Status.Pending
 
     def _get_job_machine_from_spec(self, spec: V1JobSpec) -> "Machine":

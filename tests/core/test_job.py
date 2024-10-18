@@ -13,7 +13,7 @@ import pytest
 from lightning_sdk.machine import Machine
 from lightning_sdk.lightning_cloud.openapi import V1GetUserResponse
 from lightning_sdk.lightning_cloud.openapi import V1UserFeatures
-from lightning_sdk.lightning_cloud.openapi import V1Job, V1JobSpec
+from lightning_sdk.lightning_cloud.openapi import V1Job, V1JobSpec, JobsIdBody1
 
 
 @mock.patch.dict(os.environ, clear=True)
@@ -298,3 +298,30 @@ def test_jobv2_machine(internal_studio_init_mocker, internal_instance_name, inte
 
     assert job.machine == expected_machine
     get_job_mock.assert_called_once()
+
+
+def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+
+    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster)
+
+    i = 0
+    def get_job_side_effect(*args, **kwargs):
+        nonlocal i
+        if i < 5:
+            i += 1
+            return V1Job(id="test-job-id", state="running", spec=V1JobSpec(cloudspace_id="cloudspace-id"))
+
+        return V1Job(id="test-job-id", state="stopped", spec=V1JobSpec(cloudspace_id="cloudspace-id"))
+
+    get_job_mock = mock.MagicMock()
+    get_job_mock.side_effect = get_job_side_effect
+    job._job_api.get_job = get_job_mock
+
+    update_job_mock = mock.MagicMock()
+    job._job_api._client.jobs_service_update_job = update_job_mock
+
+    job.stop()
+
+    assert get_job_mock.call_count == 6
+    update_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc001", body=JobsIdBody1(cloudspace_id="cloudspace-id", state="stopped"))
