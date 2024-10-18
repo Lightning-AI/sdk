@@ -53,6 +53,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1GetUserResponse,
     V1UserFeatures,
     V1Job,
+    V1JobSpec,
 )
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -2046,6 +2047,6 @@ def job_backend_selector_mocker_v1(mocker, internal_get_org_api_mocker, internal
 
 @pytest.fixture
 def job_api_get_job_by_name_mocker(mocker):
-    mocker.patch("lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_find_job", autospec=True, return_value=V1Job(id="test-job-id"))
+    mocker.patch("lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_find_job", autospec=True, return_value=V1Job(id="test-job-id", spec=V1JobSpec(cloudspace_id=None)))
     yield [mocker]
     mocker.resetall()

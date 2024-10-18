@@ -210,6 +210,9 @@ class JobApiV2:
                 break
             time.sleep(1)
 
+    def delete_job(self, job_id: str, teamspace_id: str, cloudspace_id: Optional[str]) -> None:
+        self._client.jobs_service_delete_job(project_id=teamspace_id, id=job_id, cloudspace_id=cloudspace_id or "")
+
     def _job_state_to_external(self, state: str) -> "Status":
         from lightning_sdk.status import Status
 

@@ -220,3 +220,14 @@ def test_jobv2_stop(job_states: List[str], total_calls_get_job: int, called_upda
         update_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc", body=JobsIdBody1(cloudspace_id="cloudspace-id", state="stopped"))
     else:
         update_job_mock.assert_not_called()
+
+@pytest.mark.parametrize("cloudspace_id, expected_cloudspace_id", [(None, ""), ("cloudspace-id", "cloudspace-id"), ("", "")])
+def test_jobv2_delete(cloudspace_id, expected_cloudspace_id):
+    job_api = JobApiV2()
+
+    delete_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_delete_job = delete_job_mock
+
+    job_api.delete_job("test-job-id", "ts-abc", cloudspace_id)
+
+    delete_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc", cloudspace_id=expected_cloudspace_id)

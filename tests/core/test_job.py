@@ -325,3 +325,16 @@ def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker)
 
     assert get_job_mock.call_count == 6
     update_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc001", body=JobsIdBody1(cloudspace_id="cloudspace-id", state="stopped"))
+
+
+def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+
+    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster)
+
+    delete_job_mock = mock.MagicMock()
+    job._job_api.delete_job = delete_job_mock
+
+    job.delete()
+
+    delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001", cloudspace_id=None)

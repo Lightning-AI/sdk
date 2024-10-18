@@ -72,7 +72,12 @@ class _JobV2(_BaseJob):
         self._job_api.stop_job(job_id=self._job.id, teamspace_id=self._teamspace.id)
 
     def delete(self) -> None:
-        raise NotImplementedError("Not implemented yet")
+        if self._job is None:
+            self._update_internal_job()
+
+        self._job_api.delete_job(
+            job_id=self._job.id, teamspace_id=self._teamspace.id, cloudspace_id=self._job.spec.cloudspace_id
+        )
 
     @property
     def status(self) -> "Status":
