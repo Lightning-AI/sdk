@@ -17,7 +17,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
-    "aiohttp",
     "backoff",
     "click",
     "fastapi",

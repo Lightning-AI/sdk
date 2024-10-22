@@ -1,6 +1,4 @@
 import pytest
-import asyncio
-import aiohttp
 from unittest import mock
 from unittest.mock import Mock, AsyncMock, mock_open, MagicMock, ANY, PropertyMock
 import lightning_sdk.api.utils
@@ -165,26 +163,24 @@ def test_download_model_files(download_mock, api_mock, tmp_path):
     assert download_mock.call_count == 2
 
 
-async def mock_iter_chunked(size):
+def mock_iter_content(chunk_size):
     chunks = [b"test_data"]
     for chunk in chunks:
         yield chunk
 
 
-@pytest.mark.asyncio
-async def test_download_chunk_success():
+@mock.patch('requests.get')
+def test_download_chunk_success(mock_get):
     url = "http://example.com"
     start = 0
     end = 100
     filename = "test_file"
 
-    mock_response = AsyncMock()
-    mock_response.status = 206
-    mock_response.content.iter_chunked = mock_iter_chunked
+    mock_response = Mock()
+    mock_response.status_code = 206
+    mock_response.iter_content = mock_iter_content
 
-    mock_session = MagicMock()
-    mock_session.get.return_value.__aenter__.return_value = mock_response
-    mock_session.get.return_value.__aexit__.return_value = AsyncMock()
+    mock_get.return_value.__enter__.return_value = mock_response
 
     mock_client = MagicMock()
     mock_client.api_client.call_api.return_value.url = url
@@ -199,35 +195,33 @@ async def test_download_chunk_success():
     )
 
     with mock.patch("builtins.open", mock_open()) as mock_file:
-        await file_downloader._download_chunk(mock_session, start, end, filename)
+        file_downloader._download_chunk(filename, (start, end))
 
-        mock_session.get.assert_called_once_with(url, headers={"Range": "bytes=0-100"})
+        mock_get.assert_called_once_with(url, headers={"Range": "bytes=0-100"}, stream=True)
 
         mock_file.assert_called_once_with(filename, "r+b")
         mock_file().seek.assert_called_once_with(start)
         mock_file().write.assert_called_once_with(b"test_data")
 
 
-@pytest.mark.asyncio
+@mock.patch('requests.get')
 @mock.patch.object(lightning_sdk.api.utils._FileDownloader, "url", new_callable=PropertyMock)
 @mock.patch("lightning_sdk.api.utils._FileDownloader.refresh")
-async def test_download_chunk_failure(refresh_mock, url_mock):
+def test_download_chunk_failure(mock_refresh, mock_url, mock_get):
     url = "http://example.com"
     start = 0
     end = 100
     filename = "test_file"
 
-    mock_response = AsyncMock()
-    mock_response.status = 403
+    mock_response = Mock()
+    mock_response.status_code = 403
 
-    mock_session = MagicMock()
-    mock_session.get.return_value.__aenter__.return_value = mock_response
-    mock_session.get.return_value.__aexit__.return_value = AsyncMock()
+    mock_get.return_value.__enter__.return_value = mock_response
 
     mock_client = MagicMock()
     mock_client.api_client.call_api.return_value.url = url
 
-    url_mock.return_value = url
+    mock_url.return_value = url
 
     file_downloader = _FileDownloader(
         client=mock_client,
@@ -238,9 +232,9 @@ async def test_download_chunk_failure(refresh_mock, url_mock):
         file_path=filename,
     )
 
-    await file_downloader._download_chunk(mock_session, start, end, filename)
+    file_downloader._download_chunk(filename, (start, end))
 
-    mock_session.get.assert_called_once_with(url, headers={"Range": "bytes=0-100"})
+    mock_get.assert_called_once_with(url, headers={"Range": "bytes=0-100"}, stream=True)
     assert mock_response.raise_for_status.call_count == 1
 
-    assert refresh_mock.call_count == 2
+    assert mock_refresh.call_count == 2

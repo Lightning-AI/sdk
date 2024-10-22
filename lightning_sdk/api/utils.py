@@ -1,13 +1,11 @@
-import asyncio
 import errno
 import math
 import os
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pathlib import Path
-from typing import Any, Coroutine, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-import aiohttp
 import backoff
 import requests
 from tqdm import tqdm
@@ -357,6 +355,10 @@ def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:
     return f"/cloudspaces/{studio_id}/code/content/{path.replace('/teamspace/studios/this_studio/', '')}"
 
 
+_DOWNLOAD_REQUEST_CHUNK_SIZE = 10 * _BYTES_PER_MB
+_DOWNLOAD_MIN_CHUNK_SIZE = 100 * _BYTES_PER_KB
+
+
 class _FileDownloader:
     def __init__(
         self,
@@ -402,39 +404,21 @@ class _FileDownloader:
             return
         self.progress_bar.update(n)
 
-    @backoff.on_exception(backoff.expo, aiohttp.ClientResponseError, max_tries=10)
-    async def _download_chunk(
-        self,
-        session: aiohttp.ClientSession,
-        start: int,
-        end: int,
-        filename: str,
-    ) -> None:
+    @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
+    def _download_chunk(self, filename: str, start_end: Tuple[int]) -> None:
+        start, end = start_end
         headers = {"Range": f"bytes={start}-{end}"}
 
-        async with session.get(self.url, headers=headers) as response:
-            # Here we include 200 in the event range is unsatisfiable and we are returned the full content
-            # Note that this shouldn't happen (the range should be accurate at this point) but we can't
-            # exclude 200 is returned in corner cases.
-            if response.status in [200, 206]:  # Partial content (successful range request)
+        with requests.get(self.url, headers=headers, stream=True) as response:
+            if response.status_code in [200, 206]:
                 with open(filename, "r+b") as f:
                     f.seek(start)
-                    async for chunk in response.content.iter_chunked(4096 * 8):
+                    for chunk in response.iter_content(chunk_size=_DOWNLOAD_REQUEST_CHUNK_SIZE):
                         f.write(chunk)
-                        self.update_progress(len(chunk))
-                return
-            if response.status == 403:  # Expired
+                        self.update_progress(len(chunk))  # tqdm write is thread-safe
+            if response.status_code == 403:  # Expired
                 self.refresh()
             response.raise_for_status()
-
-    async def _gather_with_concurrency(self, n: int, coros: List[Coroutine]) -> Any:
-        semaphore = asyncio.Semaphore(n)
-
-        async def sem_coro(coro: Coroutine) -> Any:
-            async with semaphore:
-                return await coro
-
-        return await asyncio.gather(*(sem_coro(c) for c in coros))
 
     def _create_empty_file(self, filename: str, file_size: int) -> None:
         if hasattr(os, "posix_fallocate"):
@@ -452,40 +436,24 @@ class _FileDownloader:
                 if remaining_size > 0:
                     f.write(b"\x00" * remaining_size)
 
-    async def _multipart_download(self, filename: str, max_workers: int) -> None:
-        min_chunk_size = 100 * 1024
+    def _multipart_download(self, filename: str, max_workers: int) -> None:
+        num_chunks = max_workers
+        chunk_size = math.ceil(self.size / num_chunks)
 
-        # Create an async session
-        async with aiohttp.ClientSession() as session:
-            num_chunks = max_workers
-            chunk_size = math.ceil(self.size / num_chunks)
+        if chunk_size < _DOWNLOAD_MIN_CHUNK_SIZE:
+            num_chunks = math.ceil(self.size / _DOWNLOAD_MIN_CHUNK_SIZE)
+            chunk_size = _DOWNLOAD_MIN_CHUNK_SIZE
 
-            if chunk_size < min_chunk_size:
-                num_chunks = math.ceil(self.size / min_chunk_size)
-                chunk_size = min_chunk_size
+        num_workers = min(max_workers, num_chunks)
 
-            num_workers = min(max_workers, num_chunks)
+        ranges = []
+        for part_number in range(num_chunks):
+            start = part_number * chunk_size
+            end = min(start + chunk_size - 1, self.size - 1)
+            ranges.append((start, end))
 
-            tasks = []
-
-            for part_number in range(num_chunks):
-                start = part_number * chunk_size
-                end = min(start + chunk_size - 1, self.size - 1)
-
-                tasks.append(self._download_chunk(session, start, end, filename))
-
-            try:
-                await self._gather_with_concurrency(num_workers, tasks)
-            except aiohttp.ClientResponseError as e:
-                if os.path.exists(filename):
-                    os.remove(filename)
-                raise aiohttp.ClientResponseError(
-                    request_info=e.request_info,
-                    history=e.history,
-                    status=e.status,
-                    message=f"Failed to download {self.remote_path}.",
-                    headers=e.headers,
-                ) from e
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            executor.map(partial(self._download_chunk, filename), ranges)
 
     def download(self) -> None:
         tmp_filename = f"{self.local_path}.download"
@@ -501,7 +469,13 @@ class _FileDownloader:
             os.remove(tmp_filename)
             raise
 
-        asyncio.run(self._multipart_download(tmp_filename, self.num_workers))
+        try:
+            self._multipart_download(tmp_filename, self.num_workers)
+        except Exception as e:
+            print(f"An error occurred while downloading file {self.remote_path}: {e}.")
+
+            os.remove(tmp_filename)
+            raise
 
         os.rename(tmp_filename, self.local_path)
 
