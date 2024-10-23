@@ -51,6 +51,7 @@ class V1UserFeatures(object):
         'cap_drop': 'list[str]',
         'capacity_reservation': 'bool',
         'capacity_reservation_dry_run': 'bool',
+        'cluster_proxy': 'bool',
         'code_tab': 'bool',
         'collab_screen_sharing': 'bool',
         'cost_attribution_settings': 'bool',
@@ -104,6 +105,7 @@ class V1UserFeatures(object):
         'slurm': 'bool',
         'slurm_machine_selector': 'bool',
         'snowflake_connection': 'bool',
+        'soci_snapshotter': 'bool',
         'spot_v2': 'bool',
         'studio_config': 'bool',
         'studio_on_stop': 'bool',
@@ -123,6 +125,7 @@ class V1UserFeatures(object):
         'cap_drop': 'capDrop',
         'capacity_reservation': 'capacityReservation',
         'capacity_reservation_dry_run': 'capacityReservationDryRun',
+        'cluster_proxy': 'clusterProxy',
         'code_tab': 'codeTab',
         'collab_screen_sharing': 'collabScreenSharing',
         'cost_attribution_settings': 'costAttributionSettings',
@@ -176,6 +179,7 @@ class V1UserFeatures(object):
         'slurm': 'slurm',
         'slurm_machine_selector': 'slurmMachineSelector',
         'snowflake_connection': 'snowflakeConnection',
+        'soci_snapshotter': 'sociSnapshotter',
         'spot_v2': 'spotV2',
         'studio_config': 'studioConfig',
         'studio_on_stop': 'studioOnStop',
@@ -184,7 +188,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, agents_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, private_ip_over_efa_interface: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, agents_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, private_ip_over_efa_interface: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, soci_snapshotter: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._advanced_deployment_autoscaling = None
         self._agents_v2 = None
@@ -196,6 +200,7 @@ class V1UserFeatures(object):
         self._cap_drop = None
         self._capacity_reservation = None
         self._capacity_reservation_dry_run = None
+        self._cluster_proxy = None
         self._code_tab = None
         self._collab_screen_sharing = None
         self._cost_attribution_settings = None
@@ -249,6 +254,7 @@ class V1UserFeatures(object):
         self._slurm = None
         self._slurm_machine_selector = None
         self._snowflake_connection = None
+        self._soci_snapshotter = None
         self._spot_v2 = None
         self._studio_config = None
         self._studio_on_stop = None
@@ -276,6 +282,8 @@ class V1UserFeatures(object):
             self.capacity_reservation = capacity_reservation
         if capacity_reservation_dry_run is not None:
             self.capacity_reservation_dry_run = capacity_reservation_dry_run
+        if cluster_proxy is not None:
+            self.cluster_proxy = cluster_proxy
         if code_tab is not None:
             self.code_tab = code_tab
         if collab_screen_sharing is not None:
@@ -382,6 +390,8 @@ class V1UserFeatures(object):
             self.slurm_machine_selector = slurm_machine_selector
         if snowflake_connection is not None:
             self.snowflake_connection = snowflake_connection
+        if soci_snapshotter is not None:
+            self.soci_snapshotter = soci_snapshotter
         if spot_v2 is not None:
             self.spot_v2 = spot_v2
         if studio_config is not None:
@@ -604,6 +614,27 @@ class V1UserFeatures(object):
         """
 
         self._capacity_reservation_dry_run = capacity_reservation_dry_run
+
+    @property
+    def cluster_proxy(self) -> 'bool':
+        """Gets the cluster_proxy of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The cluster_proxy of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._cluster_proxy
+
+    @cluster_proxy.setter
+    def cluster_proxy(self, cluster_proxy: 'bool'):
+        """Sets the cluster_proxy of this V1UserFeatures.
+
+
+        :param cluster_proxy: The cluster_proxy of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._cluster_proxy = cluster_proxy
 
     @property
     def code_tab(self) -> 'bool':
@@ -1717,6 +1748,27 @@ class V1UserFeatures(object):
         """
 
         self._snowflake_connection = snowflake_connection
+
+    @property
+    def soci_snapshotter(self) -> 'bool':
+        """Gets the soci_snapshotter of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The soci_snapshotter of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._soci_snapshotter
+
+    @soci_snapshotter.setter
+    def soci_snapshotter(self, soci_snapshotter: 'bool'):
+        """Sets the soci_snapshotter of this V1UserFeatures.
+
+
+        :param soci_snapshotter: The soci_snapshotter of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._soci_snapshotter = soci_snapshotter
 
     @property
     def spot_v2(self) -> 'bool':

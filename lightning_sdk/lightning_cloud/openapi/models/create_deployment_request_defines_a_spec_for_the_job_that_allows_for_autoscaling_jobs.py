@@ -45,7 +45,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'cluster_id': 'str',
         'endpoint': 'V1Endpoint',
         'name': 'str',
-        'replicas': 'str',
+        'replicas': 'int',
         'spec': 'V1JobSpec',
         'strategy': 'V1DeploymentStrategy'
     }
@@ -60,7 +60,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'strategy': 'strategy'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, replicas: 'str' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
         self._cluster_id = None
@@ -170,22 +170,22 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         self._name = name
 
     @property
-    def replicas(self) -> 'str':
+    def replicas(self) -> 'int':
         """Gets the replicas of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
 
 
         :return: The replicas of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
-        :rtype: str
+        :rtype: int
         """
         return self._replicas
 
     @replicas.setter
-    def replicas(self, replicas: 'str'):
+    def replicas(self, replicas: 'int'):
         """Sets the replicas of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.
 
 
         :param replicas: The replicas of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
-        :type: str
+        :type: int
         """
 
         self._replicas = replicas

@@ -45,7 +45,6 @@ class V1Endpoint(object):
         'cloudspace': 'V1UpstreamCloudSpace',
         'created_at': 'datetime',
         'custom_domain': 'str',
-        'domains': 'list[str]',
         'id': 'str',
         'job': 'V1UpstreamJob',
         'managed': 'V1UpstreamManaged',
@@ -55,6 +54,7 @@ class V1Endpoint(object):
         'prewarm': 'V1EndpointPrewarm',
         'project_id': 'str',
         'updated_at': 'datetime',
+        'urls': 'list[str]',
         'user_id': 'str'
     }
 
@@ -63,7 +63,6 @@ class V1Endpoint(object):
         'cloudspace': 'cloudspace',
         'created_at': 'createdAt',
         'custom_domain': 'customDomain',
-        'domains': 'domains',
         'id': 'id',
         'job': 'job',
         'managed': 'managed',
@@ -73,16 +72,16 @@ class V1Endpoint(object):
         'prewarm': 'prewarm',
         'project_id': 'projectId',
         'updated_at': 'updatedAt',
+        'urls': 'urls',
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, domains: 'list[str]' =None, id: 'str' =None, job: 'V1UpstreamJob' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, id: 'str' =None, job: 'V1UpstreamJob' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """V1Endpoint - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
         self._created_at = None
         self._custom_domain = None
-        self._domains = None
         self._id = None
         self._job = None
         self._managed = None
@@ -92,6 +91,7 @@ class V1Endpoint(object):
         self._prewarm = None
         self._project_id = None
         self._updated_at = None
+        self._urls = None
         self._user_id = None
         self.discriminator = None
         if auth is not None:
@@ -102,8 +102,6 @@ class V1Endpoint(object):
             self.created_at = created_at
         if custom_domain is not None:
             self.custom_domain = custom_domain
-        if domains is not None:
-            self.domains = domains
         if id is not None:
             self.id = id
         if job is not None:
@@ -122,6 +120,8 @@ class V1Endpoint(object):
             self.project_id = project_id
         if updated_at is not None:
             self.updated_at = updated_at
+        if urls is not None:
+            self.urls = urls
         if user_id is not None:
             self.user_id = user_id
 
@@ -208,27 +208,6 @@ class V1Endpoint(object):
         """
 
         self._custom_domain = custom_domain
-
-    @property
-    def domains(self) -> 'list[str]':
-        """Gets the domains of this V1Endpoint.  # noqa: E501
-
-
-        :return: The domains of this V1Endpoint.  # noqa: E501
-        :rtype: list[str]
-        """
-        return self._domains
-
-    @domains.setter
-    def domains(self, domains: 'list[str]'):
-        """Sets the domains of this V1Endpoint.
-
-
-        :param domains: The domains of this V1Endpoint.  # noqa: E501
-        :type: list[str]
-        """
-
-        self._domains = domains
 
     @property
     def id(self) -> 'str':
@@ -418,6 +397,27 @@ class V1Endpoint(object):
         """
 
         self._updated_at = updated_at
+
+    @property
+    def urls(self) -> 'list[str]':
+        """Gets the urls of this V1Endpoint.  # noqa: E501
+
+
+        :return: The urls of this V1Endpoint.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._urls
+
+    @urls.setter
+    def urls(self, urls: 'list[str]'):
+        """Sets the urls of this V1Endpoint.
+
+
+        :param urls: The urls of this V1Endpoint.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._urls = urls
 
     @property
     def user_id(self) -> 'str':

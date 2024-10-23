@@ -42,6 +42,7 @@ class V1KnowledgeConfiguration(object):
     """
     swagger_types = {
         'enabled': 'bool',
+        'files': 'list[str]',
         'owner_file_uploads_enabled': 'bool',
         'status_url': 'str',
         'token': 'str',
@@ -51,6 +52,7 @@ class V1KnowledgeConfiguration(object):
 
     attribute_map = {
         'enabled': 'enabled',
+        'files': 'files',
         'owner_file_uploads_enabled': 'ownerFileUploadsEnabled',
         'status_url': 'statusUrl',
         'token': 'token',
@@ -58,9 +60,10 @@ class V1KnowledgeConfiguration(object):
         'user_file_uploads_enabled': 'userFileUploadsEnabled'
     }
 
-    def __init__(self, enabled: 'bool' =None, owner_file_uploads_enabled: 'bool' =None, status_url: 'str' =None, token: 'str' =None, uploads_url: 'str' =None, user_file_uploads_enabled: 'bool' =None):  # noqa: E501
+    def __init__(self, enabled: 'bool' =None, files: 'list[str]' =None, owner_file_uploads_enabled: 'bool' =None, status_url: 'str' =None, token: 'str' =None, uploads_url: 'str' =None, user_file_uploads_enabled: 'bool' =None):  # noqa: E501
         """V1KnowledgeConfiguration - a model defined in Swagger"""  # noqa: E501
         self._enabled = None
+        self._files = None
         self._owner_file_uploads_enabled = None
         self._status_url = None
         self._token = None
@@ -69,6 +72,8 @@ class V1KnowledgeConfiguration(object):
         self.discriminator = None
         if enabled is not None:
             self.enabled = enabled
+        if files is not None:
+            self.files = files
         if owner_file_uploads_enabled is not None:
             self.owner_file_uploads_enabled = owner_file_uploads_enabled
         if status_url is not None:
@@ -100,6 +105,27 @@ class V1KnowledgeConfiguration(object):
         """
 
         self._enabled = enabled
+
+    @property
+    def files(self) -> 'list[str]':
+        """Gets the files of this V1KnowledgeConfiguration.  # noqa: E501
+
+
+        :return: The files of this V1KnowledgeConfiguration.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._files
+
+    @files.setter
+    def files(self, files: 'list[str]'):
+        """Sets the files of this V1KnowledgeConfiguration.
+
+
+        :param files: The files of this V1KnowledgeConfiguration.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._files = files
 
     @property
     def owner_file_uploads_enabled(self) -> 'bool':

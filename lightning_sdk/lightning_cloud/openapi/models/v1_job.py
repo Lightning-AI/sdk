@@ -48,6 +48,7 @@ class V1Job(object):
         'is_healthy': 'bool',
         'message': 'str',
         'name': 'str',
+        'overprovisioned': 'bool',
         'project_id': 'str',
         'ready_at': 'datetime',
         'release_id': 'str',
@@ -72,6 +73,7 @@ class V1Job(object):
         'is_healthy': 'isHealthy',
         'message': 'message',
         'name': 'name',
+        'overprovisioned': 'overprovisioned',
         'project_id': 'projectId',
         'ready_at': 'readyAt',
         'release_id': 'releaseId',
@@ -88,7 +90,7 @@ class V1Job(object):
         'user_logs_started_at': 'userLogsStartedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deployment_id = None
@@ -97,6 +99,7 @@ class V1Job(object):
         self._is_healthy = None
         self._message = None
         self._name = None
+        self._overprovisioned = None
         self._project_id = None
         self._ready_at = None
         self._release_id = None
@@ -126,6 +129,8 @@ class V1Job(object):
             self.message = message
         if name is not None:
             self.name = name
+        if overprovisioned is not None:
+            self.overprovisioned = overprovisioned
         if project_id is not None:
             self.project_id = project_id
         if ready_at is not None:
@@ -301,6 +306,29 @@ class V1Job(object):
         """
 
         self._name = name
+
+    @property
+    def overprovisioned(self) -> 'bool':
+        """Gets the overprovisioned of this V1Job.  # noqa: E501
+
+        Whether the job started from an overprovisioned machine.  # noqa: E501
+
+        :return: The overprovisioned of this V1Job.  # noqa: E501
+        :rtype: bool
+        """
+        return self._overprovisioned
+
+    @overprovisioned.setter
+    def overprovisioned(self, overprovisioned: 'bool'):
+        """Sets the overprovisioned of this V1Job.
+
+        Whether the job started from an overprovisioned machine.  # noqa: E501
+
+        :param overprovisioned: The overprovisioned of this V1Job.  # noqa: E501
+        :type: bool
+        """
+
+        self._overprovisioned = overprovisioned
 
     @property
     def project_id(self) -> 'str':

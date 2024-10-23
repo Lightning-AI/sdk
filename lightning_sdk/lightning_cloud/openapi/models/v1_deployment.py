@@ -49,7 +49,7 @@ class V1Deployment(object):
         'name': 'str',
         'project_id': 'str',
         'release_id': 'str',
-        'replicas': 'str',
+        'replicas': 'int',
         'spec': 'V1JobSpec',
         'status': 'V1DeploymentStatus',
         'strategy': 'V1DeploymentStrategy',
@@ -74,7 +74,7 @@ class V1Deployment(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'str' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
         self._created_at = None
@@ -289,22 +289,22 @@ class V1Deployment(object):
         self._release_id = release_id
 
     @property
-    def replicas(self) -> 'str':
+    def replicas(self) -> 'int':
         """Gets the replicas of this V1Deployment.  # noqa: E501
 
 
         :return: The replicas of this V1Deployment.  # noqa: E501
-        :rtype: str
+        :rtype: int
         """
         return self._replicas
 
     @replicas.setter
-    def replicas(self, replicas: 'str'):
+    def replicas(self, replicas: 'int'):
         """Sets the replicas of this V1Deployment.
 
 
         :param replicas: The replicas of this V1Deployment.  # noqa: E501
-        :type: str
+        :type: int
         """
 
         self._replicas = replicas

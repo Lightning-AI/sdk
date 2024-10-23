@@ -45,7 +45,7 @@ class V1DeploymentRelease(object):
         'created_at': 'datetime',
         'id': 'str',
         'project_id': 'str',
-        'replicas': 'str',
+        'replicas': 'int',
         'spec': 'V1JobSpec',
         'user_id': 'str',
         'version': 'int'
@@ -62,7 +62,7 @@ class V1DeploymentRelease(object):
         'version': 'version'
     }
 
-    def __init__(self, archived: 'bool' =None, created_at: 'datetime' =None, id: 'str' =None, project_id: 'str' =None, replicas: 'str' =None, spec: 'V1JobSpec' =None, user_id: 'str' =None, version: 'int' =None):  # noqa: E501
+    def __init__(self, archived: 'bool' =None, created_at: 'datetime' =None, id: 'str' =None, project_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, user_id: 'str' =None, version: 'int' =None):  # noqa: E501
         """V1DeploymentRelease - a model defined in Swagger"""  # noqa: E501
         self._archived = None
         self._created_at = None
@@ -175,22 +175,22 @@ class V1DeploymentRelease(object):
         self._project_id = project_id
 
     @property
-    def replicas(self) -> 'str':
+    def replicas(self) -> 'int':
         """Gets the replicas of this V1DeploymentRelease.  # noqa: E501
 
 
         :return: The replicas of this V1DeploymentRelease.  # noqa: E501
-        :rtype: str
+        :rtype: int
         """
         return self._replicas
 
     @replicas.setter
-    def replicas(self, replicas: 'str'):
+    def replicas(self, replicas: 'int'):
         """Sets the replicas of this V1DeploymentRelease.
 
 
         :param replicas: The replicas of this V1DeploymentRelease.  # noqa: E501
-        :type: str
+        :type: int
         """
 
         self._replicas = replicas

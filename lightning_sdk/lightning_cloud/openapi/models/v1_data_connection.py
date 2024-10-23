@@ -46,15 +46,18 @@ class V1DataConnection(object):
         'aws': 'V1AwsDataConnection',
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'efs': 'V1EfsDataConnection',
         'gcp': 'V1GcpDataConnection',
         'id': 'str',
         'index': 'V1Index',
+        'is_managed': 'bool',
         'lock_out': 'bool',
         'name': 'str',
         'number_of_files': 'str',
         'project_id': 'str',
         'run_cmds': 'list[str]',
         'snowflake': 'V1SnowflakeDataConnection',
+        'state': 'V1DataConnectionState',
         'total_size_bytes': 'str',
         'type': 'str',
         'updated_at': 'datetime',
@@ -67,37 +70,43 @@ class V1DataConnection(object):
         'aws': 'aws',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'efs': 'efs',
         'gcp': 'gcp',
         'id': 'id',
         'index': 'index',
+        'is_managed': 'isManaged',
         'lock_out': 'lockOut',
         'name': 'name',
         'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
         'run_cmds': 'runCmds',
         'snowflake': 'snowflake',
+        'state': 'state',
         'total_size_bytes': 'totalSizeBytes',
         'type': 'type',
         'updated_at': 'updatedAt',
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsDataConnection' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
         self._aws = None
         self._cluster_id = None
         self._created_at = None
+        self._efs = None
         self._gcp = None
         self._id = None
         self._index = None
+        self._is_managed = None
         self._lock_out = None
         self._name = None
         self._number_of_files = None
         self._project_id = None
         self._run_cmds = None
         self._snowflake = None
+        self._state = None
         self._total_size_bytes = None
         self._type = None
         self._updated_at = None
@@ -113,12 +122,16 @@ class V1DataConnection(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if efs is not None:
+            self.efs = efs
         if gcp is not None:
             self.gcp = gcp
         if id is not None:
             self.id = id
         if index is not None:
             self.index = index
+        if is_managed is not None:
+            self.is_managed = is_managed
         if lock_out is not None:
             self.lock_out = lock_out
         if name is not None:
@@ -131,6 +144,8 @@ class V1DataConnection(object):
             self.run_cmds = run_cmds
         if snowflake is not None:
             self.snowflake = snowflake
+        if state is not None:
+            self.state = state
         if total_size_bytes is not None:
             self.total_size_bytes = total_size_bytes
         if type is not None:
@@ -246,6 +261,27 @@ class V1DataConnection(object):
         self._created_at = created_at
 
     @property
+    def efs(self) -> 'V1EfsDataConnection':
+        """Gets the efs of this V1DataConnection.  # noqa: E501
+
+
+        :return: The efs of this V1DataConnection.  # noqa: E501
+        :rtype: V1EfsDataConnection
+        """
+        return self._efs
+
+    @efs.setter
+    def efs(self, efs: 'V1EfsDataConnection'):
+        """Sets the efs of this V1DataConnection.
+
+
+        :param efs: The efs of this V1DataConnection.  # noqa: E501
+        :type: V1EfsDataConnection
+        """
+
+        self._efs = efs
+
+    @property
     def gcp(self) -> 'V1GcpDataConnection':
         """Gets the gcp of this V1DataConnection.  # noqa: E501
 
@@ -307,6 +343,27 @@ class V1DataConnection(object):
         """
 
         self._index = index
+
+    @property
+    def is_managed(self) -> 'bool':
+        """Gets the is_managed of this V1DataConnection.  # noqa: E501
+
+
+        :return: The is_managed of this V1DataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_managed
+
+    @is_managed.setter
+    def is_managed(self, is_managed: 'bool'):
+        """Sets the is_managed of this V1DataConnection.
+
+
+        :param is_managed: The is_managed of this V1DataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_managed = is_managed
 
     @property
     def lock_out(self) -> 'bool':
@@ -433,6 +490,27 @@ class V1DataConnection(object):
         """
 
         self._snowflake = snowflake
+
+    @property
+    def state(self) -> 'V1DataConnectionState':
+        """Gets the state of this V1DataConnection.  # noqa: E501
+
+
+        :return: The state of this V1DataConnection.  # noqa: E501
+        :rtype: V1DataConnectionState
+        """
+        return self._state
+
+    @state.setter
+    def state(self, state: 'V1DataConnectionState'):
+        """Sets the state of this V1DataConnection.
+
+
+        :param state: The state of this V1DataConnection.  # noqa: E501
+        :type: V1DataConnectionState
+        """
+
+        self._state = state
 
     @property
     def total_size_bytes(self) -> 'str':

@@ -45,6 +45,8 @@ class Create(object):
         'aws': 'V1AwsDataConnection',
         'cluster_id': 'str',
         'create_index': 'bool',
+        'create_resources': 'bool',
+        'efs': 'V1EfsDataConnection',
         'force': 'bool',
         'gcp': 'V1GcpDataConnection',
         'id': 'str',
@@ -59,6 +61,8 @@ class Create(object):
         'aws': 'aws',
         'cluster_id': 'clusterId',
         'create_index': 'createIndex',
+        'create_resources': 'createResources',
+        'efs': 'efs',
         'force': 'force',
         'gcp': 'gcp',
         'id': 'id',
@@ -68,12 +72,14 @@ class Create(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, name: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsDataConnection' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, name: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Create - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._aws = None
         self._cluster_id = None
         self._create_index = None
+        self._create_resources = None
+        self._efs = None
         self._force = None
         self._gcp = None
         self._id = None
@@ -90,6 +96,10 @@ class Create(object):
             self.cluster_id = cluster_id
         if create_index is not None:
             self.create_index = create_index
+        if create_resources is not None:
+            self.create_resources = create_resources
+        if efs is not None:
+            self.efs = efs
         if force is not None:
             self.force = force
         if gcp is not None:
@@ -188,6 +198,48 @@ class Create(object):
         """
 
         self._create_index = create_index
+
+    @property
+    def create_resources(self) -> 'bool':
+        """Gets the create_resources of this Create.  # noqa: E501
+
+
+        :return: The create_resources of this Create.  # noqa: E501
+        :rtype: bool
+        """
+        return self._create_resources
+
+    @create_resources.setter
+    def create_resources(self, create_resources: 'bool'):
+        """Sets the create_resources of this Create.
+
+
+        :param create_resources: The create_resources of this Create.  # noqa: E501
+        :type: bool
+        """
+
+        self._create_resources = create_resources
+
+    @property
+    def efs(self) -> 'V1EfsDataConnection':
+        """Gets the efs of this Create.  # noqa: E501
+
+
+        :return: The efs of this Create.  # noqa: E501
+        :rtype: V1EfsDataConnection
+        """
+        return self._efs
+
+    @efs.setter
+    def efs(self, efs: 'V1EfsDataConnection'):
+        """Sets the efs of this Create.
+
+
+        :param efs: The efs of this Create.  # noqa: E501
+        :type: V1EfsDataConnection
+        """
+
+        self._efs = efs
 
     @property
     def force(self) -> 'bool':

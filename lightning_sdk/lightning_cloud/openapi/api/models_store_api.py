@@ -1083,6 +1083,7 @@ class ModelsStoreApi(object):
         :param async_req bool
         :param str name:
         :param str version:
+        :param str project_id:
         :return: V1GetModelFilesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1105,12 +1106,13 @@ class ModelsStoreApi(object):
         :param async_req bool
         :param str name:
         :param str version:
+        :param str project_id:
         :return: V1GetModelFilesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['name', 'version']  # noqa: E501
+        all_params = ['name', 'version', 'project_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1135,6 +1137,8 @@ class ModelsStoreApi(object):
             query_params.append(('name', params['name']))  # noqa: E501
         if 'version' in params:
             query_params.append(('version', params['version']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
 
         header_params = {}
 

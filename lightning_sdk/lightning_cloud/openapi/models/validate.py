@@ -44,6 +44,7 @@ class Validate(object):
         'aws': 'V1AwsDataConnection',
         'check_is_public': 'bool',
         'cluster_ids': 'list[str]',
+        'efs': 'V1EfsDataConnection',
         'gcp': 'V1GcpDataConnection'
     }
 
@@ -51,14 +52,16 @@ class Validate(object):
         'aws': 'aws',
         'check_is_public': 'checkIsPublic',
         'cluster_ids': 'clusterIds',
+        'efs': 'efs',
         'gcp': 'gcp'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, check_is_public: 'bool' =None, cluster_ids: 'list[str]' =None, gcp: 'V1GcpDataConnection' =None):  # noqa: E501
+    def __init__(self, aws: 'V1AwsDataConnection' =None, check_is_public: 'bool' =None, cluster_ids: 'list[str]' =None, efs: 'V1EfsDataConnection' =None, gcp: 'V1GcpDataConnection' =None):  # noqa: E501
         """Validate - a model defined in Swagger"""  # noqa: E501
         self._aws = None
         self._check_is_public = None
         self._cluster_ids = None
+        self._efs = None
         self._gcp = None
         self.discriminator = None
         if aws is not None:
@@ -67,6 +70,8 @@ class Validate(object):
             self.check_is_public = check_is_public
         if cluster_ids is not None:
             self.cluster_ids = cluster_ids
+        if efs is not None:
+            self.efs = efs
         if gcp is not None:
             self.gcp = gcp
 
@@ -132,6 +137,27 @@ class Validate(object):
         """
 
         self._cluster_ids = cluster_ids
+
+    @property
+    def efs(self) -> 'V1EfsDataConnection':
+        """Gets the efs of this Validate.  # noqa: E501
+
+
+        :return: The efs of this Validate.  # noqa: E501
+        :rtype: V1EfsDataConnection
+        """
+        return self._efs
+
+    @efs.setter
+    def efs(self, efs: 'V1EfsDataConnection'):
+        """Sets the efs of this Validate.
+
+
+        :param efs: The efs of this Validate.  # noqa: E501
+        :type: V1EfsDataConnection
+        """
+
+        self._efs = efs
 
     @property
     def gcp(self) -> 'V1GcpDataConnection':

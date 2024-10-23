@@ -47,7 +47,7 @@ class V1Model(object):
         'downloads': 'str',
         'id': 'str',
         'license': 'str',
-        'metadata': 'dict(str, str)',
+        'model_metadata': 'dict(str, str)',
         'name': 'str',
         'private': 'bool',
         'project_id': 'str',
@@ -62,7 +62,7 @@ class V1Model(object):
         'downloads': 'downloads',
         'id': 'id',
         'license': 'license',
-        'metadata': 'metadata',
+        'model_metadata': 'modelMetadata',
         'name': 'name',
         'private': 'private',
         'project_id': 'projectId',
@@ -70,7 +70,7 @@ class V1Model(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, license: 'str' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Model - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
@@ -78,7 +78,7 @@ class V1Model(object):
         self._downloads = None
         self._id = None
         self._license = None
-        self._metadata = None
+        self._model_metadata = None
         self._name = None
         self._private = None
         self._project_id = None
@@ -97,8 +97,8 @@ class V1Model(object):
             self.id = id
         if license is not None:
             self.license = license
-        if metadata is not None:
-            self.metadata = metadata
+        if model_metadata is not None:
+            self.model_metadata = model_metadata
         if name is not None:
             self.name = name
         if private is not None:
@@ -237,25 +237,25 @@ class V1Model(object):
         self._license = license
 
     @property
-    def metadata(self) -> 'dict(str, str)':
-        """Gets the metadata of this V1Model.  # noqa: E501
+    def model_metadata(self) -> 'dict(str, str)':
+        """Gets the model_metadata of this V1Model.  # noqa: E501
 
 
-        :return: The metadata of this V1Model.  # noqa: E501
+        :return: The model_metadata of this V1Model.  # noqa: E501
         :rtype: dict(str, str)
         """
-        return self._metadata
+        return self._model_metadata
 
-    @metadata.setter
-    def metadata(self, metadata: 'dict(str, str)'):
-        """Sets the metadata of this V1Model.
+    @model_metadata.setter
+    def model_metadata(self, model_metadata: 'dict(str, str)'):
+        """Sets the model_metadata of this V1Model.
 
 
-        :param metadata: The metadata of this V1Model.  # noqa: E501
+        :param model_metadata: The model_metadata of this V1Model.  # noqa: E501
         :type: dict(str, str)
         """
 
-        self._metadata = metadata
+        self._model_metadata = model_metadata
 
     @property
     def name(self) -> 'str':

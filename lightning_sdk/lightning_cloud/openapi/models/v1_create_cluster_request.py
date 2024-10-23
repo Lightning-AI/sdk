@@ -41,6 +41,7 @@ class V1CreateClusterRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'deploy_proxy': 'bool',
         'name': 'str',
         'org_id': 'str',
         'phase': 'V1ClusterState',
@@ -48,19 +49,23 @@ class V1CreateClusterRequest(object):
     }
 
     attribute_map = {
+        'deploy_proxy': 'deployProxy',
         'name': 'name',
         'org_id': 'orgId',
         'phase': 'phase',
         'spec': 'spec'
     }
 
-    def __init__(self, name: 'str' =None, org_id: 'str' =None, phase: 'V1ClusterState' =None, spec: 'V1ClusterSpec' =None):  # noqa: E501
+    def __init__(self, deploy_proxy: 'bool' =None, name: 'str' =None, org_id: 'str' =None, phase: 'V1ClusterState' =None, spec: 'V1ClusterSpec' =None):  # noqa: E501
         """V1CreateClusterRequest - a model defined in Swagger"""  # noqa: E501
+        self._deploy_proxy = None
         self._name = None
         self._org_id = None
         self._phase = None
         self._spec = None
         self.discriminator = None
+        if deploy_proxy is not None:
+            self.deploy_proxy = deploy_proxy
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -69,6 +74,27 @@ class V1CreateClusterRequest(object):
             self.phase = phase
         if spec is not None:
             self.spec = spec
+
+    @property
+    def deploy_proxy(self) -> 'bool':
+        """Gets the deploy_proxy of this V1CreateClusterRequest.  # noqa: E501
+
+
+        :return: The deploy_proxy of this V1CreateClusterRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._deploy_proxy
+
+    @deploy_proxy.setter
+    def deploy_proxy(self, deploy_proxy: 'bool'):
+        """Sets the deploy_proxy of this V1CreateClusterRequest.
+
+
+        :param deploy_proxy: The deploy_proxy of this V1CreateClusterRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._deploy_proxy = deploy_proxy
 
     @property
     def name(self) -> 'str':
