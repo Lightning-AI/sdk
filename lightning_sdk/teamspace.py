@@ -246,6 +246,7 @@ class Teamspace:
             name=name,
             version=version,
             download_dir=download_dir,
+            teamspace_id=self.id,
             progress_bar=progress_bar,
         )
 

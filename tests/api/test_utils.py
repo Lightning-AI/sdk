@@ -149,8 +149,10 @@ def test_download_model_files(download_mock, api_mock, tmp_path):
     delay = 0.01
 
     _download_model_files(
-        client=Mock(), name="user/modelname", version="latest", download_dir=tmp_path, progress_bar=False
+        client=Mock(), teamspace_id="test-project-id", name="modelname", version="latest", download_dir=tmp_path, progress_bar=False
     )
+
+    api_mock.return_value.models_store_get_model_files.assert_called_once_with(project_id="test-project-id", name="modelname", version="latest")
 
     assert api_mock.return_value.models_store_get_model_file_url.call_count == 2
     api_mock.return_value.models_store_get_model_file_url.assert_any_call(

@@ -272,6 +272,7 @@ def test_download_model(
     result = ts.download_model("user/modelname")
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
+        teamspace_id="ts-abc002",
         name="user/modelname",
         version="latest",
         download_dir=tmp_path,
@@ -284,6 +285,7 @@ def test_download_model(
     result = ts.download_model("user/modelname", download_dir=download_dir)
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
+        teamspace_id="ts-abc002",
         name="user/modelname",
         version="latest",
         download_dir=Path(download_dir),
@@ -304,6 +306,7 @@ def test_download_model_version(
     ts.download_model("user/modelname:v3", download_dir=tmp_path)
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
+        teamspace_id="ts-abc002",
         name="user/modelname",
         version="v3",
         download_dir=tmp_path,
