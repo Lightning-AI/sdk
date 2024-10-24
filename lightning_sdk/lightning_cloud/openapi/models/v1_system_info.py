@@ -44,6 +44,7 @@ class V1SystemInfo(object):
         'cli_args': 'str',
         'cpu_count_logical': 'int',
         'cpu_count_physical': 'int',
+        'cpu_name': 'int',
         'execution_command': 'str',
         'git_branch': 'str',
         'git_commit_hash': 'str',
@@ -63,6 +64,7 @@ class V1SystemInfo(object):
         'cli_args': 'cliArgs',
         'cpu_count_logical': 'cpuCountLogical',
         'cpu_count_physical': 'cpuCountPhysical',
+        'cpu_name': 'cpuName',
         'execution_command': 'executionCommand',
         'git_branch': 'gitBranch',
         'git_commit_hash': 'gitCommitHash',
@@ -78,11 +80,12 @@ class V1SystemInfo(object):
         'system_memory_gb': 'systemMemoryGb'
     }
 
-    def __init__(self, cli_args: 'str' =None, cpu_count_logical: 'int' =None, cpu_count_physical: 'int' =None, execution_command: 'str' =None, git_branch: 'str' =None, git_commit_hash: 'str' =None, git_repo_name: 'str' =None, gpu_count: 'int' =None, gpu_memory_gb: 'int' =None, gpu_name: 'str' =None, hyperparameters: 'str' =None, installed_packages: 'str' =None, litlogger_version: 'str' =None, os_name: 'str' =None, python_version: 'str' =None, system_memory_gb: 'int' =None):  # noqa: E501
+    def __init__(self, cli_args: 'str' =None, cpu_count_logical: 'int' =None, cpu_count_physical: 'int' =None, cpu_name: 'int' =None, execution_command: 'str' =None, git_branch: 'str' =None, git_commit_hash: 'str' =None, git_repo_name: 'str' =None, gpu_count: 'int' =None, gpu_memory_gb: 'int' =None, gpu_name: 'str' =None, hyperparameters: 'str' =None, installed_packages: 'str' =None, litlogger_version: 'str' =None, os_name: 'str' =None, python_version: 'str' =None, system_memory_gb: 'int' =None):  # noqa: E501
         """V1SystemInfo - a model defined in Swagger"""  # noqa: E501
         self._cli_args = None
         self._cpu_count_logical = None
         self._cpu_count_physical = None
+        self._cpu_name = None
         self._execution_command = None
         self._git_branch = None
         self._git_commit_hash = None
@@ -103,6 +106,8 @@ class V1SystemInfo(object):
             self.cpu_count_logical = cpu_count_logical
         if cpu_count_physical is not None:
             self.cpu_count_physical = cpu_count_physical
+        if cpu_name is not None:
+            self.cpu_name = cpu_name
         if execution_command is not None:
             self.execution_command = execution_command
         if git_branch is not None:
@@ -192,6 +197,27 @@ class V1SystemInfo(object):
         """
 
         self._cpu_count_physical = cpu_count_physical
+
+    @property
+    def cpu_name(self) -> 'int':
+        """Gets the cpu_name of this V1SystemInfo.  # noqa: E501
+
+
+        :return: The cpu_name of this V1SystemInfo.  # noqa: E501
+        :rtype: int
+        """
+        return self._cpu_name
+
+    @cpu_name.setter
+    def cpu_name(self, cpu_name: 'int'):
+        """Sets the cpu_name of this V1SystemInfo.
+
+
+        :param cpu_name: The cpu_name of this V1SystemInfo.  # noqa: E501
+        :type: int
+        """
+
+        self._cpu_name = cpu_name
 
     @property
     def execution_command(self) -> 'str':

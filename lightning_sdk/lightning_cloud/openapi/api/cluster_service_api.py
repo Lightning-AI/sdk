@@ -350,7 +350,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_create_cluster_proxy(self, body: 'object', cluster_id: 'str', **kwargs) -> 'V1ClusterProxy':  # noqa: E501
+    def cluster_service_create_cluster_proxy(self, body: 'ClusterIdProxiesBody', cluster_id: 'str', **kwargs) -> 'V1ClusterProxy':  # noqa: E501
         """cluster_service_create_cluster_proxy  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -359,7 +359,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param ClusterIdProxiesBody body: (required)
         :param str cluster_id: (required)
         :return: V1ClusterProxy
                  If the method is called asynchronously,
@@ -372,7 +372,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_create_cluster_proxy_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_create_cluster_proxy_with_http_info(self, body: 'object', cluster_id: 'str', **kwargs) -> 'V1ClusterProxy':  # noqa: E501
+    def cluster_service_create_cluster_proxy_with_http_info(self, body: 'ClusterIdProxiesBody', cluster_id: 'str', **kwargs) -> 'V1ClusterProxy':  # noqa: E501
         """cluster_service_create_cluster_proxy  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -381,7 +381,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param ClusterIdProxiesBody body: (required)
         :param str cluster_id: (required)
         :return: V1ClusterProxy
                  If the method is called asynchronously,
@@ -886,6 +886,7 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str proxy_id: (required)
+        :param str org_id:
         :return: V1DeleteClusterProxyResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -908,12 +909,13 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str proxy_id: (required)
+        :param str org_id:
         :return: V1DeleteClusterProxyResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['cluster_id', 'proxy_id']  # noqa: E501
+        all_params = ['cluster_id', 'proxy_id', 'org_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -946,6 +948,8 @@ class ClusterServiceApi(object):
             path_params['proxyId'] = params['proxy_id']  # noqa: E501
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 
@@ -2004,6 +2008,7 @@ class ClusterServiceApi(object):
 
         :param async_req bool
         :param str cluster_id: (required)
+        :param str org_id:
         :return: V1ClusterProxy
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2025,12 +2030,13 @@ class ClusterServiceApi(object):
 
         :param async_req bool
         :param str cluster_id: (required)
+        :param str org_id:
         :return: V1ClusterProxy
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['cluster_id']  # noqa: E501
+        all_params = ['cluster_id', 'org_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2057,6 +2063,8 @@ class ClusterServiceApi(object):
             path_params['clusterId'] = params['cluster_id']  # noqa: E501
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 

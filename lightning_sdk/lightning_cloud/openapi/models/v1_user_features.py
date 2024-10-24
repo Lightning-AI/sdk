@@ -95,7 +95,6 @@ class V1UserFeatures(object):
         'plugin_sweeps': 'bool',
         'plugin_weviate': 'bool',
         'pricing_updates': 'bool',
-        'private_ip_over_efa_interface': 'bool',
         'product_generator': 'bool',
         'project_selector': 'bool',
         'restart_ide_on_hang': 'bool',
@@ -169,7 +168,6 @@ class V1UserFeatures(object):
         'plugin_sweeps': 'pluginSweeps',
         'plugin_weviate': 'pluginWeviate',
         'pricing_updates': 'pricingUpdates',
-        'private_ip_over_efa_interface': 'privateIpOverEfaInterface',
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
         'restart_ide_on_hang': 'restartIdeOnHang',
@@ -188,7 +186,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, agents_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, private_ip_over_efa_interface: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, soci_snapshotter: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, agents_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, soci_snapshotter: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._advanced_deployment_autoscaling = None
         self._agents_v2 = None
@@ -244,7 +242,6 @@ class V1UserFeatures(object):
         self._plugin_sweeps = None
         self._plugin_weviate = None
         self._pricing_updates = None
-        self._private_ip_over_efa_interface = None
         self._product_generator = None
         self._project_selector = None
         self._restart_ide_on_hang = None
@@ -370,8 +367,6 @@ class V1UserFeatures(object):
             self.plugin_weviate = plugin_weviate
         if pricing_updates is not None:
             self.pricing_updates = pricing_updates
-        if private_ip_over_efa_interface is not None:
-            self.private_ip_over_efa_interface = private_ip_over_efa_interface
         if product_generator is not None:
             self.product_generator = product_generator
         if project_selector is not None:
@@ -1538,27 +1533,6 @@ class V1UserFeatures(object):
         """
 
         self._pricing_updates = pricing_updates
-
-    @property
-    def private_ip_over_efa_interface(self) -> 'bool':
-        """Gets the private_ip_over_efa_interface of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The private_ip_over_efa_interface of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._private_ip_over_efa_interface
-
-    @private_ip_over_efa_interface.setter
-    def private_ip_over_efa_interface(self, private_ip_over_efa_interface: 'bool'):
-        """Sets the private_ip_over_efa_interface of this V1UserFeatures.
-
-
-        :param private_ip_over_efa_interface: The private_ip_over_efa_interface of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._private_ip_over_efa_interface = private_ip_over_efa_interface
 
     @property
     def product_generator(self) -> 'bool':

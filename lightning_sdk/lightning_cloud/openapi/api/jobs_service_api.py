@@ -2095,6 +2095,7 @@ class JobsServiceApi(object):
         :param str cloudspace_id:
         :param str user_id:
         :param str deployment_id:
+        :param bool standalone: Whether to list standalone jobs, not part of a deployment.
         :return: V1ListJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2119,12 +2120,13 @@ class JobsServiceApi(object):
         :param str cloudspace_id:
         :param str user_id:
         :param str deployment_id:
+        :param bool standalone: Whether to list standalone jobs, not part of a deployment.
         :return: V1ListJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'user_id', 'deployment_id']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'user_id', 'deployment_id', 'standalone']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2157,6 +2159,8 @@ class JobsServiceApi(object):
             query_params.append(('userId', params['user_id']))  # noqa: E501
         if 'deployment_id' in params:
             query_params.append(('deploymentId', params['deployment_id']))  # noqa: E501
+        if 'standalone' in params:
+            query_params.append(('standalone', params['standalone']))  # noqa: E501
 
         header_params = {}
 
