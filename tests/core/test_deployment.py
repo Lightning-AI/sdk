@@ -232,6 +232,10 @@ def test_deployment_start_first_time(monkeypatch):
     teamspace_mock = MagicMock()
     teamspace_mock.id = "project_id"
     monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+    resolve_user_mock = MagicMock()
+    monkeypatch.setattr(deployment_module, "_resolve_user", resolve_user_mock)
+    resolve_org = MagicMock()
+    monkeypatch.setattr(deployment_module, "_resolve_org", resolve_org)
 
     client = MagicMock()
 
@@ -246,6 +250,10 @@ def test_deployment_start_first_time(monkeypatch):
         deployment.start()
 
     deployment = deployment_module.Deployment(name="ollama")
+
+    resolve_user_mock.assert_called()
+    resolve_org.assert_called()
+
     deployment.start(
         autoscale=AutoScaleConfig(
             metric="GPU",
