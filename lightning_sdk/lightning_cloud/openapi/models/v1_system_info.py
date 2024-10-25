@@ -44,7 +44,9 @@ class V1SystemInfo(object):
         'cli_args': 'str',
         'cpu_count_logical': 'int',
         'cpu_count_physical': 'int',
-        'cpu_name': 'int',
+        'cpu_name': 'str',
+        'cuda_version': 'str',
+        'cudnn_version': 'str',
         'execution_command': 'str',
         'git_branch': 'str',
         'git_commit_hash': 'str',
@@ -65,6 +67,8 @@ class V1SystemInfo(object):
         'cpu_count_logical': 'cpuCountLogical',
         'cpu_count_physical': 'cpuCountPhysical',
         'cpu_name': 'cpuName',
+        'cuda_version': 'cudaVersion',
+        'cudnn_version': 'cudnnVersion',
         'execution_command': 'executionCommand',
         'git_branch': 'gitBranch',
         'git_commit_hash': 'gitCommitHash',
@@ -80,12 +84,14 @@ class V1SystemInfo(object):
         'system_memory_gb': 'systemMemoryGb'
     }
 
-    def __init__(self, cli_args: 'str' =None, cpu_count_logical: 'int' =None, cpu_count_physical: 'int' =None, cpu_name: 'int' =None, execution_command: 'str' =None, git_branch: 'str' =None, git_commit_hash: 'str' =None, git_repo_name: 'str' =None, gpu_count: 'int' =None, gpu_memory_gb: 'int' =None, gpu_name: 'str' =None, hyperparameters: 'str' =None, installed_packages: 'str' =None, litlogger_version: 'str' =None, os_name: 'str' =None, python_version: 'str' =None, system_memory_gb: 'int' =None):  # noqa: E501
+    def __init__(self, cli_args: 'str' =None, cpu_count_logical: 'int' =None, cpu_count_physical: 'int' =None, cpu_name: 'str' =None, cuda_version: 'str' =None, cudnn_version: 'str' =None, execution_command: 'str' =None, git_branch: 'str' =None, git_commit_hash: 'str' =None, git_repo_name: 'str' =None, gpu_count: 'int' =None, gpu_memory_gb: 'int' =None, gpu_name: 'str' =None, hyperparameters: 'str' =None, installed_packages: 'str' =None, litlogger_version: 'str' =None, os_name: 'str' =None, python_version: 'str' =None, system_memory_gb: 'int' =None):  # noqa: E501
         """V1SystemInfo - a model defined in Swagger"""  # noqa: E501
         self._cli_args = None
         self._cpu_count_logical = None
         self._cpu_count_physical = None
         self._cpu_name = None
+        self._cuda_version = None
+        self._cudnn_version = None
         self._execution_command = None
         self._git_branch = None
         self._git_commit_hash = None
@@ -108,6 +114,10 @@ class V1SystemInfo(object):
             self.cpu_count_physical = cpu_count_physical
         if cpu_name is not None:
             self.cpu_name = cpu_name
+        if cuda_version is not None:
+            self.cuda_version = cuda_version
+        if cudnn_version is not None:
+            self.cudnn_version = cudnn_version
         if execution_command is not None:
             self.execution_command = execution_command
         if git_branch is not None:
@@ -199,25 +209,67 @@ class V1SystemInfo(object):
         self._cpu_count_physical = cpu_count_physical
 
     @property
-    def cpu_name(self) -> 'int':
+    def cpu_name(self) -> 'str':
         """Gets the cpu_name of this V1SystemInfo.  # noqa: E501
 
 
         :return: The cpu_name of this V1SystemInfo.  # noqa: E501
-        :rtype: int
+        :rtype: str
         """
         return self._cpu_name
 
     @cpu_name.setter
-    def cpu_name(self, cpu_name: 'int'):
+    def cpu_name(self, cpu_name: 'str'):
         """Sets the cpu_name of this V1SystemInfo.
 
 
         :param cpu_name: The cpu_name of this V1SystemInfo.  # noqa: E501
-        :type: int
+        :type: str
         """
 
         self._cpu_name = cpu_name
+
+    @property
+    def cuda_version(self) -> 'str':
+        """Gets the cuda_version of this V1SystemInfo.  # noqa: E501
+
+
+        :return: The cuda_version of this V1SystemInfo.  # noqa: E501
+        :rtype: str
+        """
+        return self._cuda_version
+
+    @cuda_version.setter
+    def cuda_version(self, cuda_version: 'str'):
+        """Sets the cuda_version of this V1SystemInfo.
+
+
+        :param cuda_version: The cuda_version of this V1SystemInfo.  # noqa: E501
+        :type: str
+        """
+
+        self._cuda_version = cuda_version
+
+    @property
+    def cudnn_version(self) -> 'str':
+        """Gets the cudnn_version of this V1SystemInfo.  # noqa: E501
+
+
+        :return: The cudnn_version of this V1SystemInfo.  # noqa: E501
+        :rtype: str
+        """
+        return self._cudnn_version
+
+    @cudnn_version.setter
+    def cudnn_version(self, cudnn_version: 'str'):
+        """Sets the cudnn_version of this V1SystemInfo.
+
+
+        :param cudnn_version: The cudnn_version of this V1SystemInfo.  # noqa: E501
+        :type: str
+        """
+
+        self._cudnn_version = cudnn_version
 
     @property
     def execution_command(self) -> 'str':
