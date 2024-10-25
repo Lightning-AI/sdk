@@ -41,86 +41,101 @@ class V1DeploymentTemplateParameter(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'default_value': 'str',
-        'description': 'str',
+        'input': 'V1Input',
+        'long_description': 'str',
         'name': 'str',
+        'placement': 'V1DeploymentTemplateParameterPlacement',
         'readonly': 'bool',
         'required': 'bool',
-        'type': 'str'
+        'select': 'V1Select',
+        'short_description': 'str',
+        'type': 'V1DeploymentTemplateParameterType'
     }
 
     attribute_map = {
-        'default_value': 'defaultValue',
-        'description': 'description',
+        'input': 'input',
+        'long_description': 'longDescription',
         'name': 'name',
+        'placement': 'placement',
         'readonly': 'readonly',
         'required': 'required',
+        'select': 'select',
+        'short_description': 'shortDescription',
         'type': 'type'
     }
 
-    def __init__(self, default_value: 'str' =None, description: 'str' =None, name: 'str' =None, readonly: 'bool' =None, required: 'bool' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, input: 'V1Input' =None, long_description: 'str' =None, name: 'str' =None, placement: 'V1DeploymentTemplateParameterPlacement' =None, readonly: 'bool' =None, required: 'bool' =None, select: 'V1Select' =None, short_description: 'str' =None, type: 'V1DeploymentTemplateParameterType' =None):  # noqa: E501
         """V1DeploymentTemplateParameter - a model defined in Swagger"""  # noqa: E501
-        self._default_value = None
-        self._description = None
+        self._input = None
+        self._long_description = None
         self._name = None
+        self._placement = None
         self._readonly = None
         self._required = None
+        self._select = None
+        self._short_description = None
         self._type = None
         self.discriminator = None
-        if default_value is not None:
-            self.default_value = default_value
-        if description is not None:
-            self.description = description
+        if input is not None:
+            self.input = input
+        if long_description is not None:
+            self.long_description = long_description
         if name is not None:
             self.name = name
+        if placement is not None:
+            self.placement = placement
         if readonly is not None:
             self.readonly = readonly
         if required is not None:
             self.required = required
+        if select is not None:
+            self.select = select
+        if short_description is not None:
+            self.short_description = short_description
         if type is not None:
             self.type = type
 
     @property
-    def default_value(self) -> 'str':
-        """Gets the default_value of this V1DeploymentTemplateParameter.  # noqa: E501
+    def input(self) -> 'V1Input':
+        """Gets the input of this V1DeploymentTemplateParameter.  # noqa: E501
 
 
-        :return: The default_value of this V1DeploymentTemplateParameter.  # noqa: E501
-        :rtype: str
+        :return: The input of this V1DeploymentTemplateParameter.  # noqa: E501
+        :rtype: V1Input
         """
-        return self._default_value
+        return self._input
 
-    @default_value.setter
-    def default_value(self, default_value: 'str'):
-        """Sets the default_value of this V1DeploymentTemplateParameter.
+    @input.setter
+    def input(self, input: 'V1Input'):
+        """Sets the input of this V1DeploymentTemplateParameter.
 
 
-        :param default_value: The default_value of this V1DeploymentTemplateParameter.  # noqa: E501
-        :type: str
+        :param input: The input of this V1DeploymentTemplateParameter.  # noqa: E501
+        :type: V1Input
         """
 
-        self._default_value = default_value
+        self._input = input
 
     @property
-    def description(self) -> 'str':
-        """Gets the description of this V1DeploymentTemplateParameter.  # noqa: E501
+    def long_description(self) -> 'str':
+        """Gets the long_description of this V1DeploymentTemplateParameter.  # noqa: E501
 
 
-        :return: The description of this V1DeploymentTemplateParameter.  # noqa: E501
+        :return: The long_description of this V1DeploymentTemplateParameter.  # noqa: E501
         :rtype: str
         """
-        return self._description
+        return self._long_description
 
-    @description.setter
-    def description(self, description: 'str'):
-        """Sets the description of this V1DeploymentTemplateParameter.
+    @long_description.setter
+    def long_description(self, long_description: 'str'):
+        """Sets the long_description of this V1DeploymentTemplateParameter.
 
 
-        :param description: The description of this V1DeploymentTemplateParameter.  # noqa: E501
+        :param long_description: The long_description of this V1DeploymentTemplateParameter.  # noqa: E501
         :type: str
         """
 
-        self._description = description
+        self._long_description = long_description
 
     @property
     def name(self) -> 'str':
@@ -142,6 +157,27 @@ class V1DeploymentTemplateParameter(object):
         """
 
         self._name = name
+
+    @property
+    def placement(self) -> 'V1DeploymentTemplateParameterPlacement':
+        """Gets the placement of this V1DeploymentTemplateParameter.  # noqa: E501
+
+
+        :return: The placement of this V1DeploymentTemplateParameter.  # noqa: E501
+        :rtype: V1DeploymentTemplateParameterPlacement
+        """
+        return self._placement
+
+    @placement.setter
+    def placement(self, placement: 'V1DeploymentTemplateParameterPlacement'):
+        """Sets the placement of this V1DeploymentTemplateParameter.
+
+
+        :param placement: The placement of this V1DeploymentTemplateParameter.  # noqa: E501
+        :type: V1DeploymentTemplateParameterPlacement
+        """
+
+        self._placement = placement
 
     @property
     def readonly(self) -> 'bool':
@@ -186,22 +222,64 @@ class V1DeploymentTemplateParameter(object):
         self._required = required
 
     @property
-    def type(self) -> 'str':
+    def select(self) -> 'V1Select':
+        """Gets the select of this V1DeploymentTemplateParameter.  # noqa: E501
+
+
+        :return: The select of this V1DeploymentTemplateParameter.  # noqa: E501
+        :rtype: V1Select
+        """
+        return self._select
+
+    @select.setter
+    def select(self, select: 'V1Select'):
+        """Sets the select of this V1DeploymentTemplateParameter.
+
+
+        :param select: The select of this V1DeploymentTemplateParameter.  # noqa: E501
+        :type: V1Select
+        """
+
+        self._select = select
+
+    @property
+    def short_description(self) -> 'str':
+        """Gets the short_description of this V1DeploymentTemplateParameter.  # noqa: E501
+
+
+        :return: The short_description of this V1DeploymentTemplateParameter.  # noqa: E501
+        :rtype: str
+        """
+        return self._short_description
+
+    @short_description.setter
+    def short_description(self, short_description: 'str'):
+        """Sets the short_description of this V1DeploymentTemplateParameter.
+
+
+        :param short_description: The short_description of this V1DeploymentTemplateParameter.  # noqa: E501
+        :type: str
+        """
+
+        self._short_description = short_description
+
+    @property
+    def type(self) -> 'V1DeploymentTemplateParameterType':
         """Gets the type of this V1DeploymentTemplateParameter.  # noqa: E501
 
 
         :return: The type of this V1DeploymentTemplateParameter.  # noqa: E501
-        :rtype: str
+        :rtype: V1DeploymentTemplateParameterType
         """
         return self._type
 
     @type.setter
-    def type(self, type: 'str'):
+    def type(self, type: 'V1DeploymentTemplateParameterType'):
         """Sets the type of this V1DeploymentTemplateParameter.
 
 
         :param type: The type of this V1DeploymentTemplateParameter.  # noqa: E501
-        :type: str
+        :type: V1DeploymentTemplateParameterType
         """
 
         self._type = type

@@ -51,6 +51,7 @@ class V1CreateDeploymentTemplateRequest(object):
         'project_id': 'str',
         'spec': 'str',
         'tags': 'list[V1ResourceTag]',
+        'version': 'str',
         'visibility': 'V1DeploymentTemplateType'
     }
 
@@ -65,10 +66,11 @@ class V1CreateDeploymentTemplateRequest(object):
         'project_id': 'projectId',
         'spec': 'spec',
         'tags': 'tags',
+        'version': 'version',
         'visibility': 'visibility'
     }
 
-    def __init__(self, categories: 'list[str]' =None, deployment_id: 'str' =None, description: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, project_id: 'str' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, deployment_id: 'str' =None, description: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, project_id: 'str' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, version: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """V1CreateDeploymentTemplateRequest - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._deployment_id = None
@@ -80,6 +82,7 @@ class V1CreateDeploymentTemplateRequest(object):
         self._project_id = None
         self._spec = None
         self._tags = None
+        self._version = None
         self._visibility = None
         self.discriminator = None
         if categories is not None:
@@ -102,6 +105,8 @@ class V1CreateDeploymentTemplateRequest(object):
             self.spec = spec
         if tags is not None:
             self.tags = tags
+        if version is not None:
+            self.version = version
         if visibility is not None:
             self.visibility = visibility
 
@@ -314,6 +319,27 @@ class V1CreateDeploymentTemplateRequest(object):
         """
 
         self._tags = tags
+
+    @property
+    def version(self) -> 'str':
+        """Gets the version of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+
+
+        :return: The version of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._version
+
+    @version.setter
+    def version(self, version: 'str'):
+        """Sets the version of this V1CreateDeploymentTemplateRequest.
+
+
+        :param version: The version of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._version = version
 
     @property
     def visibility(self) -> 'V1DeploymentTemplateType':

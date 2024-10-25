@@ -46,6 +46,7 @@ class V1Model(object):
         'description': 'str',
         'downloads': 'str',
         'id': 'str',
+        'latest_version': 'str',
         'license': 'str',
         'model_metadata': 'dict(str, str)',
         'name': 'str',
@@ -61,6 +62,7 @@ class V1Model(object):
         'description': 'description',
         'downloads': 'downloads',
         'id': 'id',
+        'latest_version': 'latestVersion',
         'license': 'license',
         'model_metadata': 'modelMetadata',
         'name': 'name',
@@ -70,13 +72,14 @@ class V1Model(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'str' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Model - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
         self._description = None
         self._downloads = None
         self._id = None
+        self._latest_version = None
         self._license = None
         self._model_metadata = None
         self._name = None
@@ -95,6 +98,8 @@ class V1Model(object):
             self.downloads = downloads
         if id is not None:
             self.id = id
+        if latest_version is not None:
+            self.latest_version = latest_version
         if license is not None:
             self.license = license
         if model_metadata is not None:
@@ -214,6 +219,27 @@ class V1Model(object):
         """
 
         self._id = id
+
+    @property
+    def latest_version(self) -> 'str':
+        """Gets the latest_version of this V1Model.  # noqa: E501
+
+
+        :return: The latest_version of this V1Model.  # noqa: E501
+        :rtype: str
+        """
+        return self._latest_version
+
+    @latest_version.setter
+    def latest_version(self, latest_version: 'str'):
+        """Sets the latest_version of this V1Model.
+
+
+        :param latest_version: The latest_version of this V1Model.  # noqa: E501
+        :type: str
+        """
+
+        self._latest_version = latest_version
 
     @property
     def license(self) -> 'str':

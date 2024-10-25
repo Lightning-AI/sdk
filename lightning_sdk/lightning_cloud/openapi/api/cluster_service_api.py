@@ -1998,7 +1998,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_list_cluster_proxies(self, cluster_id: 'str', **kwargs) -> 'V1ClusterProxy':  # noqa: E501
+    def cluster_service_list_cluster_proxies(self, cluster_id: 'str', **kwargs) -> 'V1ListClusterProxiesResponse':  # noqa: E501
         """cluster_service_list_cluster_proxies  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2009,7 +2009,7 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str org_id:
-        :return: V1ClusterProxy
+        :return: V1ListClusterProxiesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -2020,7 +2020,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_list_cluster_proxies_with_http_info(cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_list_cluster_proxies_with_http_info(self, cluster_id: 'str', **kwargs) -> 'V1ClusterProxy':  # noqa: E501
+    def cluster_service_list_cluster_proxies_with_http_info(self, cluster_id: 'str', **kwargs) -> 'V1ListClusterProxiesResponse':  # noqa: E501
         """cluster_service_list_cluster_proxies  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2031,7 +2031,7 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str org_id:
-        :return: V1ClusterProxy
+        :return: V1ListClusterProxiesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -2087,7 +2087,7 @@ class ClusterServiceApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1ClusterProxy',  # noqa: E501
+            response_type='V1ListClusterProxiesResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
