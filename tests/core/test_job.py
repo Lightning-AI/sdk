@@ -133,10 +133,8 @@ def test_select_job_backend_correctly_v1(job_backend_selector_mocker_v1):
 
     assert isinstance(j, _BaseJob)
     assert issubclass(Job, _BaseJob)
-    assert isinstance(j, _JobV1)
-    assert not isinstance(j, _JobV2)
-    assert issubclass(Job, _JobV1)
-    assert not issubclass(Job, _JobV2)
+    assert isinstance(j._internal_job, _JobV1)
+    assert not isinstance(j._internal_job, _JobV2)
 
 
 def test_select_job_backend_correctly_v2(job_backend_selector_mocker_v2):
@@ -155,10 +153,8 @@ def test_select_job_backend_correctly_v2(job_backend_selector_mocker_v2):
 
     assert isinstance(j, _BaseJob)
     assert issubclass(Job, _BaseJob)
-    assert isinstance(j, _JobV2)
-    assert not isinstance(j, _JobV1)
-    assert issubclass(Job, _JobV2)
-    assert not issubclass(Job, _JobV1)
+    assert isinstance(j._internal_job, _JobV2)
+    assert not isinstance(j._internal_job, _JobV1)
 
 
 @pytest.mark.parametrize("machine", [Machine.CPU, Machine.T4_X_4])
