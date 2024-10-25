@@ -6,11 +6,12 @@ import pytest
 from unittest.mock import MagicMock
 from lightning_sdk.machine import Machine
 from lightning_sdk.lightning_cloud.openapi import (
-    V1ListDeploymentsResponse,
     V1Deployment,
     V1JobSpec,
     V1Endpoint,
     V1AutoscalingSpec,
+    V1EndpointAuth,
+    V1DeploymentStatus,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
@@ -362,3 +363,150 @@ def test_deployment_stop(monkeypatch):
     deployment._deployment_api._wait_on_stop = 0
     deployment.stop()
     assert deployment_spec.replicas == 0
+
+def test_deployment_get(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+    requests_mock = MagicMock()
+    monkeypatch.setattr(deployment_module, "requests", requests_mock)
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+
+    client = MagicMock()
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(
+        name="ollama",
+        spec=V1JobSpec(),
+        endpoint=V1Endpoint(
+            auth=V1EndpointAuth(
+                user_api_key=True,
+            )
+        ),
+        status=V1DeploymentStatus(
+            urls=["http://11434-dep-01jb23cf67pj9yt20jfcxds8nj-d.cloudspaces.local.litng.ai:8118"]
+        ),
+        strategy=None,
+    )
+
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="ollama")
+
+    deployment.get("/")
+
+    requests_mock.Session().get.assert_called()
+
+def test_deployment_post(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+    requests_mock = MagicMock()
+    monkeypatch.setattr(deployment_module, "requests", requests_mock)
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+
+    client = MagicMock()
+    url = "http://11434-dep-01jb23cf67pj9yt20jfcxds8nj-d.cloudspaces.local.litng.ai:8118"
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(
+        name="ollama",
+        spec=V1JobSpec(),
+        endpoint=V1Endpoint(
+            auth=V1EndpointAuth(
+                user_api_key=True,
+            )
+        ),
+        status=V1DeploymentStatus(
+            urls=[url]
+        ),
+        strategy=None,
+    )
+
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="ollama")
+
+    json = {
+            "model": "llama3.1",
+            "messages": [{
+                "role": "user",
+                "content": "why is the sky blue?"
+            }],
+            "stream": True
+        }
+    deployment.post("/api/chat", json=json)
+
+    requests_mock.Session().post.assert_called_with(f"{url}/api/chat", json=json, verify=False)
+
+def test_deployment_put(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+    requests_mock = MagicMock()
+    monkeypatch.setattr(deployment_module, "requests", requests_mock)
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+
+    client = MagicMock()
+    url = "http://11434-dep-01jb23cf67pj9yt20jfcxds8nj-d.cloudspaces.local.litng.ai:8118"
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(
+        name="ollama",
+        spec=V1JobSpec(),
+        endpoint=V1Endpoint(
+            auth=V1EndpointAuth(
+                user_api_key=True,
+            )
+        ),
+        status=V1DeploymentStatus(
+            urls=[url]
+        ),
+        strategy=None,
+    )
+
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="ollama")
+
+    deployment.put("")
+
+    requests_mock.Session().put.assert_called_with(f"{url}/", verify=False)
+
+def test_deployment_delete(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+    requests_mock = MagicMock()
+    monkeypatch.setattr(deployment_module, "requests", requests_mock)
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+
+    client = MagicMock()
+    url = "http://11434-dep-01jb23cf67pj9yt20jfcxds8nj-d.cloudspaces.local.litng.ai:8118"
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(
+        name="ollama",
+        spec=V1JobSpec(),
+        endpoint=V1Endpoint(
+            auth=V1EndpointAuth(
+                user_api_key=True,
+            )
+        ),
+        status=V1DeploymentStatus(
+            urls=[url]
+        ),
+        strategy=None,
+    )
+
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="ollama")
+
+    deployment.delete("/")
+
+    requests_mock.Session().delete.assert_called_with(f"{url}/", verify=False)

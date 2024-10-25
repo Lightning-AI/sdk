@@ -1,5 +1,7 @@
 import os
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
+
+import requests
 
 from lightning_sdk.api import UserApi
 from lightning_sdk.api.deployment_api import (
@@ -58,6 +60,8 @@ class Deployment:
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
     ) -> None:
+        self._request_session = None
+
         self._auth = login.Auth()
 
         try:
@@ -328,3 +332,52 @@ class Deployment:
     @property
     def is_started(self) -> bool:
         return self._is_created
+
+    @property
+    def _session(self) -> Any:
+        if self._request_session is None:
+            self._request_session = requests.Session()
+            self._request_session.headers.update(**self._get_auth_headers())
+        return self._request_session
+
+    def _get_auth_headers(self) -> Dict:
+        if self._deployment:
+            self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
+
+        if self._deployment.endpoint.auth.user_api_key:
+            return {"Authorization": f"Bearer {self._auth.api_key}"}
+
+        # TODO: Add support for all auth
+        return {}
+
+    def _get_url(self, port: Optional[int] = None) -> Any:
+        urls = self.urls
+        if urls is None:
+            return None
+
+        if port is None:
+            return urls[0]
+
+        return None
+
+    def _prepare_url(self, path: str = "", port: Optional[int] = None) -> str:
+        url = self._get_url(port)
+        if url is None:
+            raise ValueError("The url wasn't properly defined")
+
+        if path.startswith("/"):
+            path = path[1:]
+
+        return f"{url}/{path}"
+
+    def get(self, path: str = "", port: Optional[int] = None, **kwargs: Any) -> Any:
+        return self._session.get(self._prepare_url(path, port), verify=False, **kwargs)
+
+    def post(self, path: str = "", port: Optional[int] = None, **kwargs: Any) -> Any:
+        return self._session.post(self._prepare_url(path, port), verify=False, **kwargs)
+
+    def put(self, path: str = "", port: Optional[int] = None, **kwargs: Any) -> Any:
+        return self._session.put(self._prepare_url(path, port), verify=False, **kwargs)
+
+    def delete(self, path: str = "", port: Optional[int] = None, **kwargs: Any) -> Any:
+        return self._session.delete(self._prepare_url(path, port), verify=False, **kwargs)
