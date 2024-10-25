@@ -532,6 +532,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_metrics_tags import V1Metri
 from lightning_sdk.lightning_cloud.openapi.models.v1_metrics_tracker import V1MetricsTracker
 from lightning_sdk.lightning_cloud.openapi.models.v1_model import V1Model
 from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive import V1ModelVersionArchive
+from lightning_sdk.lightning_cloud.openapi.models.v1_mount_target import V1MountTarget
 from lightning_sdk.lightning_cloud.openapi.models.v1_named_get_logger_metrics import V1NamedGetLoggerMetrics
 from lightning_sdk.lightning_cloud.openapi.models.v1_network_config import V1NetworkConfig
 from lightning_sdk.lightning_cloud.openapi.models.v1_new_feature import V1NewFeature

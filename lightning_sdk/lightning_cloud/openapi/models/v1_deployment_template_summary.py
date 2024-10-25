@@ -54,7 +54,8 @@ class V1DeploymentTemplateSummary(object):
         'project_id': 'str',
         'unpublished': 'bool',
         'updated_at': 'datetime',
-        'user_id': 'str'
+        'user_id': 'str',
+        'version': 'str'
     }
 
     attribute_map = {
@@ -71,10 +72,11 @@ class V1DeploymentTemplateSummary(object):
         'project_id': 'projectId',
         'unpublished': 'unpublished',
         'updated_at': 'updatedAt',
-        'user_id': 'userId'
+        'user_id': 'userId',
+        'version': 'version'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1DeploymentTemplateSummary - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
@@ -90,6 +92,7 @@ class V1DeploymentTemplateSummary(object):
         self._unpublished = None
         self._updated_at = None
         self._user_id = None
+        self._version = None
         self.discriminator = None
         if categories is not None:
             self.categories = categories
@@ -119,6 +122,8 @@ class V1DeploymentTemplateSummary(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+        if version is not None:
+            self.version = version
 
     @property
     def categories(self) -> 'list[str]':
@@ -413,6 +418,27 @@ class V1DeploymentTemplateSummary(object):
         """
 
         self._user_id = user_id
+
+    @property
+    def version(self) -> 'str':
+        """Gets the version of this V1DeploymentTemplateSummary.  # noqa: E501
+
+
+        :return: The version of this V1DeploymentTemplateSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._version
+
+    @version.setter
+    def version(self, version: 'str'):
+        """Sets the version of this V1DeploymentTemplateSummary.
+
+
+        :param version: The version of this V1DeploymentTemplateSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._version = version
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -42,24 +42,29 @@ class V1EfsDataConnection(object):
     """
     swagger_types = {
         'file_system_id': 'str',
+        'mount_targets': 'list[V1MountTarget]',
         'region': 'str',
         'source': 'str'
     }
 
     attribute_map = {
         'file_system_id': 'fileSystemId',
+        'mount_targets': 'mountTargets',
         'region': 'region',
         'source': 'source'
     }
 
-    def __init__(self, file_system_id: 'str' =None, region: 'str' =None, source: 'str' =None):  # noqa: E501
+    def __init__(self, file_system_id: 'str' =None, mount_targets: 'list[V1MountTarget]' =None, region: 'str' =None, source: 'str' =None):  # noqa: E501
         """V1EfsDataConnection - a model defined in Swagger"""  # noqa: E501
         self._file_system_id = None
+        self._mount_targets = None
         self._region = None
         self._source = None
         self.discriminator = None
         if file_system_id is not None:
             self.file_system_id = file_system_id
+        if mount_targets is not None:
+            self.mount_targets = mount_targets
         if region is not None:
             self.region = region
         if source is not None:
@@ -85,6 +90,27 @@ class V1EfsDataConnection(object):
         """
 
         self._file_system_id = file_system_id
+
+    @property
+    def mount_targets(self) -> 'list[V1MountTarget]':
+        """Gets the mount_targets of this V1EfsDataConnection.  # noqa: E501
+
+
+        :return: The mount_targets of this V1EfsDataConnection.  # noqa: E501
+        :rtype: list[V1MountTarget]
+        """
+        return self._mount_targets
+
+    @mount_targets.setter
+    def mount_targets(self, mount_targets: 'list[V1MountTarget]'):
+        """Sets the mount_targets of this V1EfsDataConnection.
+
+
+        :param mount_targets: The mount_targets of this V1EfsDataConnection.  # noqa: E501
+        :type: list[V1MountTarget]
+        """
+
+        self._mount_targets = mount_targets
 
     @property
     def region(self) -> 'str':
