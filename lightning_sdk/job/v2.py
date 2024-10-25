@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from lightning_sdk.api.job_api import JobApiV2
 from lightning_sdk.job.base import _BaseJob
@@ -81,24 +81,38 @@ class _JobV2(_BaseJob):
         )
 
     @property
-    def status(self) -> "Status":
+    def _latest_job(self) -> Any:
+        """Guarantees to fetch the latest version of a job before returning it."""
         self._update_internal_job()
-        return self._job_api._job_state_to_external(self._job.state)
+        return self._job
+
+    @property
+    def _guaranteed_job(self) -> Any:
+        """Guarantees that the job was fetched at some point before returning it.
+
+        Doesn't guarantee to have the lastest version of the job. Use _latest_job for that.
+        """
+        if getattr(self, "_job", None) is None:
+            self._update_internal_job()
+
+        return self._job
+
+    @property
+    def status(self) -> "Status":
+        return self._job_api._job_state_to_external(self._latest_job.state)
 
     @property
     def machine(self) -> "Machine":
         # only fetch the job it it hasn't been fetched yet as machine cannot change over time
-        if getattr(self, "_job", None) is None:
-            self._update_internal_job()
-        return self._job_api._get_job_machine_from_spec(self._job.spec)
+        return self._job_api._get_job_machine_from_spec(self._guaranteed_job.spec)
 
     @property
     def artifact_path(self) -> Optional[str]:
-        raise NotImplementedError("Not implemented yet")
+        return f"/teamspace/jobs/{self._guaranteed_job.name}/artifacts"
 
     @property
     def snapshot_path(self) -> Optional[str]:
-        raise NotImplementedError("Not implemented yet")
+        return f"/teamspace/jobs/{self._guaranteed_job.name}/snapshot"
 
     @property
     def share_path(self) -> Optional[str]:
