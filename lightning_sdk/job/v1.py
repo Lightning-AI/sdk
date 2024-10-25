@@ -90,6 +90,7 @@ class _JobV1(_BaseJob):
             interruptible=interruptible,
         )
         self._name = _submitted.name
+        self._job = _submitted
 
     def _update_internal_job(self) -> None:
         try:

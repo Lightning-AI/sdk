@@ -53,7 +53,6 @@ class _BaseJob(ABC):
         # TODO: if cluster is not provided use studio cluster if provided, otherwise use default cluster from teamspace
         inst = cls(name=name, teamspace=teamspace, org=org, user=user, cluster=cluster, _fetch_job=False)
         inst._submit(machine=machine, command=command, studio=studio, image=image, env=env, interruptible=interruptible)
-        inst._update_internal_job()
         return inst
 
     @abstractmethod
@@ -66,7 +65,7 @@ class _BaseJob(ABC):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
     ) -> None:
-        pass
+        """Submits a job and updates the internal _job attribute as well as the _name attribute."""
 
     @abstractmethod
     def stop(self) -> None:

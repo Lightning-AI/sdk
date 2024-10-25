@@ -63,6 +63,7 @@ class _JobV2(_BaseJob):
             interruptible=interruptible,
             env=env,
         )
+        self._job = submitted
         self._name = submitted.name
 
     def stop(self) -> None:
