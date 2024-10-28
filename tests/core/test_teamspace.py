@@ -278,7 +278,7 @@ def test_download_model(
         download_dir=tmp_path,
         progress_bar=True,
     )
-    assert result == str(tmp_path / "checkpoint")
+    assert result == str(tmp_path)
 
     # download_dir specified
     download_dir = "download_dir"
@@ -291,7 +291,7 @@ def test_download_model(
         download_dir=Path(download_dir),
         progress_bar=True,
     )
-    assert result == str(tmp_path / download_dir / "checkpoint")
+    assert result == str(tmp_path / download_dir)
 
 
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")

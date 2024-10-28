@@ -251,9 +251,12 @@ class Teamspace:
 
         if not downloaded_files:
             raise RuntimeError("No files were downloaded. This shouldn't happen, please report a bug.")
-        downloaded_file = Path(downloaded_files[0])
-        downloaded_path = download_dir / downloaded_file.parts[0]
-        return str(downloaded_path.resolve())
+
+        if len(downloaded_files) == 1:
+            downloaded_file = Path(downloaded_files[0])
+            downloaded_path = download_dir / downloaded_file.parts[0]
+            return str(downloaded_path.resolve())
+        return str(Path(download_dir).resolve())
 
 
 def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name: str) -> ValueError:
