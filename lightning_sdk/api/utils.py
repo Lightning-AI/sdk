@@ -471,6 +471,7 @@ class _FileDownloader:
             raise
 
         if self.size == 0:
+            os.rename(tmp_filename, self.local_path)
             return
 
         try:

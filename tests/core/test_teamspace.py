@@ -185,21 +185,27 @@ def test_upload_model_single_file(
     ts._teamspace_api.upload_model_file = mock.Mock()
     ts._teamspace_api.complete_model_upload = mock.Mock()
 
-    result = ts.upload_model(path=file_path, name="user/modelname")
+    result = ts.upload_model(path=file_path, name="modelname")
 
-    ts._teamspace_api.create_model.assert_called_once()
+    ts._teamspace_api.create_model.assert_called_once_with(
+        name="modelname",
+        metadata={"filenames": "checkpoint.pt"},
+        private=True,
+        teamspace_id="ts-abc002",
+        cluster_id="test-cluster-id",
+    )
     ts._teamspace_api.upload_model_file.assert_called_with(
         model_id="test-model-id",
         version="v3",
         local_path=file_path,
-        remote_path=".",
+        remote_path="checkpoint.pt",
         cluster_id="test-cluster-id",
         teamspace_id="ts-abc002",
         progress_bar=True,
     )
     ts._teamspace_api.complete_model_upload.assert_called_once()
 
-    assert result.name == "user/modelname"
+    assert result.name == "modelname"
     assert result.version == "v3"
     assert result.teamspace == "ts-abc"
     assert result.cluster == "test-cluster-id"

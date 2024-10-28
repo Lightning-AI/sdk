@@ -185,7 +185,11 @@ class Teamspace:
                 f" non-empty folder: {path}"
             )
 
-        filenames = ",".join(str(f.relative_to(path)) for f in filepaths)
+        root_path = path
+        if len(filepaths) == 1:
+            root_path = path.parent
+
+        filenames = ",".join(str(f.relative_to(root_path)) for f in filepaths)
 
         model = self._teamspace_api.create_model(
             name=name,
@@ -197,7 +201,7 @@ class Teamspace:
         self._teamspace_api.upload_model_files(
             model_id=model.model_id,
             version=model.version,
-            root_path=path,
+            root_path=root_path,
             filepaths=filepaths,
             cluster_id=cluster_id,
             teamspace_id=self.id,
