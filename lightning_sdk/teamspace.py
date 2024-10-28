@@ -177,7 +177,6 @@ class Teamspace:
             raise FileNotFoundError(str(path))
 
         cluster_id = self._teamspace_api._determine_cluster_id(self.id) if cluster_id is None else cluster_id
-        root_path = path.parent
         filepaths = [path] if path.is_file() else [p for p in path.rglob("*") if p.is_file()]
 
         if not filepaths:
@@ -186,7 +185,7 @@ class Teamspace:
                 f" non-empty folder: {path}"
             )
 
-        filenames = ",".join(str(f.relative_to(root_path)) for f in filepaths)
+        filenames = ",".join(str(f.relative_to(path)) for f in filepaths)
 
         model = self._teamspace_api.create_model(
             name=name,
@@ -198,7 +197,7 @@ class Teamspace:
         self._teamspace_api.upload_model_files(
             model_id=model.model_id,
             version=model.version,
-            root_path=root_path,
+            root_path=path,
             filepaths=filepaths,
             cluster_id=cluster_id,
             teamspace_id=self.id,

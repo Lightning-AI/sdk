@@ -192,7 +192,7 @@ def test_upload_model_single_file(
         model_id="test-model-id",
         version="v3",
         local_path=file_path,
-        remote_path="checkpoint.pt",
+        remote_path=".",
         cluster_id="test-cluster-id",
         teamspace_id="ts-abc002",
         progress_bar=True,
@@ -244,12 +244,12 @@ def test_upload_model_multiple_files(
     )
     ts._teamspace_api.upload_model_file.assert_any_call(
         local_path=(root_path / "file"),
-        remote_path="checkpoint/file",
+        remote_path="file",
         **call_args,
     )
     ts._teamspace_api.upload_model_file.assert_any_call(
         local_path=(root_path / "subfolder" / "nested-file"),
-        remote_path="checkpoint/subfolder/nested-file",
+        remote_path="subfolder/nested-file",
         **call_args,
     )
     ts._teamspace_api.complete_model_upload.assert_called_once()
