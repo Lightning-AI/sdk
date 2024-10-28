@@ -423,7 +423,8 @@ class _FileDownloader:
     def _create_empty_file(self, filename: str, file_size: int) -> None:
         if hasattr(os, "posix_fallocate"):
             fd = os.open(filename, os.O_RDWR | os.O_CREAT)
-            os.posix_fallocate(fd, 0, file_size)
+            if file_size > 0:
+                os.posix_fallocate(fd, 0, file_size)
             os.close(fd)
         else:
             with open(filename, "wb") as f:
@@ -468,6 +469,9 @@ class _FileDownloader:
 
             os.remove(tmp_filename)
             raise
+
+        if self.size == 0:
+            return
 
         try:
             self._multipart_download(tmp_filename, self.num_workers)
