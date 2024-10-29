@@ -41,6 +41,38 @@ class Job(_BaseJob):
             name=name, teamspace=teamspace, org=org, user=user, cluster=cluster, _fetch_job=_fetch_job
         )
 
+    @classmethod
+    def run(
+        cls,
+        name: str,
+        machine: "Machine",
+        command: Optional[str] = None,
+        studio: Optional["Studio"] = None,
+        image: Optional[str] = None,
+        teamspace: Union[str, "Teamspace"] = None,
+        org: Union[str, "Organization"] = None,
+        user: Union[str, "User"] = None,
+        cluster: Optional[str] = None,
+        env: Optional[Dict[str, str]] = None,
+        interruptible: bool = False,
+    ) -> "Job":
+        ret_val = super().run(
+            name=name,
+            machine=machine,
+            command=command,
+            studio=studio,
+            image=image,
+            teamspace=teamspace,
+            org=org,
+            user=user,
+            cluster=cluster,
+            env=env,
+            interruptible=interruptible,
+        )
+        # required for typing with "Job"
+        assert isinstance(ret_val, cls)
+        return ret_val
+
     def _submit(
         self,
         machine: "Machine",
