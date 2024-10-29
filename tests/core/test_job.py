@@ -189,6 +189,15 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
 
     submit_mock.assert_called_once_with(name="test-job", command="echo hello", cluster_id="c-abc", teamspace_id="ts-abc001", studio_id="st-abc", image=None, machine=machine, interruptible=interruptible, env=env)
 
+
+def test_jobv2_run_arg_validation(internal_studio_init_mocker):
+    studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
+
+    with pytest.raises(ValueError, match="Studio teamspace does not match provided teamspace. Can only run jobs with Studio envs in the teamspace of that Studio."):
+        job = _JobV2.run("some name", Machine.CPU, command="some command", studio=studio, teamspace='other teamspace')
+
+
+
 def test_submit_jobv2_error_cases(internal_studio_init_mocker):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
 

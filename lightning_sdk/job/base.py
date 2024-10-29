@@ -46,7 +46,18 @@ class _BaseJob(ABC):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
     ) -> "_BaseJob":
-        # TODO: overwrite teamspace with studio teamspace if provided
+        if studio is not None:
+            if teamspace is None:
+                teamspace = studio.teamspace
+            else:
+                teamspace_name = teamspace if isinstance(teamspace, str) else teamspace.name
+
+                if studio.teamspace.name != teamspace_name:
+                    raise ValueError(
+                        "Studio teamspace does not match provided teamspace. "
+                        "Can only run jobs with Studio envs in the teamspace of that Studio."
+                    )
+
         # TODO: resolve studio and support string studios
         # TODO: check if job already exists, then alter name
         # TODO: assertions for studio to be in teamspace and on cluster
