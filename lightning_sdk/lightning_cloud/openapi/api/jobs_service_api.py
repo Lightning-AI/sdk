@@ -2191,6 +2191,7 @@ class JobsServiceApi(object):
         :param bool standalone: Whether to list standalone jobs, not part of a deployment.
         :param str page_token:
         :param int limit:
+        :param str state:
         :return: V1ListJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2218,12 +2219,13 @@ class JobsServiceApi(object):
         :param bool standalone: Whether to list standalone jobs, not part of a deployment.
         :param str page_token:
         :param int limit:
+        :param str state:
         :return: V1ListJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'user_id', 'deployment_id', 'standalone', 'page_token', 'limit']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'user_id', 'deployment_id', 'standalone', 'page_token', 'limit', 'state']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2262,6 +2264,8 @@ class JobsServiceApi(object):
             query_params.append(('pageToken', params['page_token']))  # noqa: E501
         if 'limit' in params:
             query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'state' in params:
+            query_params.append(('state', params['state']))  # noqa: E501
 
         header_params = {}
 
