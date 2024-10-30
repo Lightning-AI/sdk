@@ -443,7 +443,7 @@ class DeploymentTemplatesServiceApi(object):
         :param str sort_by:
         :param str org_id:
         :param list[str] tags:
-        :param bool only_globally_visible:
+        :param bool show_globally_visible:
         :return: V1ListPublishedDeploymentTemplatesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -471,13 +471,13 @@ class DeploymentTemplatesServiceApi(object):
         :param str sort_by:
         :param str org_id:
         :param list[str] tags:
-        :param bool only_globally_visible:
+        :param bool show_globally_visible:
         :return: V1ListPublishedDeploymentTemplatesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['username', 'search_query', 'page_token', 'limit', 'sort_by', 'org_id', 'tags', 'only_globally_visible']  # noqa: E501
+        all_params = ['username', 'search_query', 'page_token', 'limit', 'sort_by', 'org_id', 'tags', 'show_globally_visible']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -513,8 +513,8 @@ class DeploymentTemplatesServiceApi(object):
         if 'tags' in params:
             query_params.append(('tags', params['tags']))  # noqa: E501
             collection_formats['tags'] = 'multi'  # noqa: E501
-        if 'only_globally_visible' in params:
-            query_params.append(('onlyGloballyVisible', params['only_globally_visible']))  # noqa: E501
+        if 'show_globally_visible' in params:
+            query_params.append(('showGloballyVisible', params['show_globally_visible']))  # noqa: E501
 
         header_params = {}
 

@@ -1418,6 +1418,8 @@ class EndpointServiceApi(object):
         :param bool auto_start:
         :param str cluster_id:
         :param list[str] ids:
+        :param bool active_cloudspaces:
+        :param bool active_jobs:
         :return: V1ListEndpointsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1443,12 +1445,14 @@ class EndpointServiceApi(object):
         :param bool auto_start:
         :param str cluster_id:
         :param list[str] ids:
+        :param bool active_cloudspaces:
+        :param bool active_jobs:
         :return: V1ListEndpointsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'auto_start', 'cluster_id', 'ids']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'auto_start', 'cluster_id', 'ids', 'active_cloudspaces', 'active_jobs']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1484,6 +1488,10 @@ class EndpointServiceApi(object):
         if 'ids' in params:
             query_params.append(('ids', params['ids']))  # noqa: E501
             collection_formats['ids'] = 'multi'  # noqa: E501
+        if 'active_cloudspaces' in params:
+            query_params.append(('activeCloudspaces', params['active_cloudspaces']))  # noqa: E501
+        if 'active_jobs' in params:
+            query_params.append(('activeJobs', params['active_jobs']))  # noqa: E501
 
         header_params = {}
 

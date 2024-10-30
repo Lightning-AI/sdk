@@ -41,6 +41,8 @@ class V1DeploymentTemplateSummary(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'about_page_content': 'str',
+        'about_page_id': 'str',
         'categories': 'list[str]',
         'created_at': 'datetime',
         'deployment_id': 'str',
@@ -59,6 +61,8 @@ class V1DeploymentTemplateSummary(object):
     }
 
     attribute_map = {
+        'about_page_content': 'aboutPageContent',
+        'about_page_id': 'aboutPageId',
         'categories': 'categories',
         'created_at': 'createdAt',
         'deployment_id': 'deploymentId',
@@ -76,8 +80,10 @@ class V1DeploymentTemplateSummary(object):
         'version': 'version'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1DeploymentTemplateSummary - a model defined in Swagger"""  # noqa: E501
+        self._about_page_content = None
+        self._about_page_id = None
         self._categories = None
         self._created_at = None
         self._deployment_id = None
@@ -94,6 +100,10 @@ class V1DeploymentTemplateSummary(object):
         self._user_id = None
         self._version = None
         self.discriminator = None
+        if about_page_content is not None:
+            self.about_page_content = about_page_content
+        if about_page_id is not None:
+            self.about_page_id = about_page_id
         if categories is not None:
             self.categories = categories
         if created_at is not None:
@@ -124,6 +134,48 @@ class V1DeploymentTemplateSummary(object):
             self.user_id = user_id
         if version is not None:
             self.version = version
+
+    @property
+    def about_page_content(self) -> 'str':
+        """Gets the about_page_content of this V1DeploymentTemplateSummary.  # noqa: E501
+
+
+        :return: The about_page_content of this V1DeploymentTemplateSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._about_page_content
+
+    @about_page_content.setter
+    def about_page_content(self, about_page_content: 'str'):
+        """Sets the about_page_content of this V1DeploymentTemplateSummary.
+
+
+        :param about_page_content: The about_page_content of this V1DeploymentTemplateSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._about_page_content = about_page_content
+
+    @property
+    def about_page_id(self) -> 'str':
+        """Gets the about_page_id of this V1DeploymentTemplateSummary.  # noqa: E501
+
+
+        :return: The about_page_id of this V1DeploymentTemplateSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._about_page_id
+
+    @about_page_id.setter
+    def about_page_id(self, about_page_id: 'str'):
+        """Sets the about_page_id of this V1DeploymentTemplateSummary.
+
+
+        :param about_page_id: The about_page_id of this V1DeploymentTemplateSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._about_page_id = about_page_id
 
     @property
     def categories(self) -> 'list[str]':

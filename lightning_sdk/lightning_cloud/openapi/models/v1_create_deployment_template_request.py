@@ -41,6 +41,7 @@ class V1CreateDeploymentTemplateRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'about_page_content': 'str',
         'categories': 'list[str]',
         'deployment_id': 'str',
         'description': 'str',
@@ -56,6 +57,7 @@ class V1CreateDeploymentTemplateRequest(object):
     }
 
     attribute_map = {
+        'about_page_content': 'aboutPageContent',
         'categories': 'categories',
         'deployment_id': 'deploymentId',
         'description': 'description',
@@ -70,8 +72,9 @@ class V1CreateDeploymentTemplateRequest(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, categories: 'list[str]' =None, deployment_id: 'str' =None, description: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, project_id: 'str' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, version: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, deployment_id: 'str' =None, description: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, project_id: 'str' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, version: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """V1CreateDeploymentTemplateRequest - a model defined in Swagger"""  # noqa: E501
+        self._about_page_content = None
         self._categories = None
         self._deployment_id = None
         self._description = None
@@ -85,6 +88,8 @@ class V1CreateDeploymentTemplateRequest(object):
         self._version = None
         self._visibility = None
         self.discriminator = None
+        if about_page_content is not None:
+            self.about_page_content = about_page_content
         if categories is not None:
             self.categories = categories
         if deployment_id is not None:
@@ -109,6 +114,27 @@ class V1CreateDeploymentTemplateRequest(object):
             self.version = version
         if visibility is not None:
             self.visibility = visibility
+
+    @property
+    def about_page_content(self) -> 'str':
+        """Gets the about_page_content of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+
+
+        :return: The about_page_content of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._about_page_content
+
+    @about_page_content.setter
+    def about_page_content(self, about_page_content: 'str'):
+        """Sets the about_page_content of this V1CreateDeploymentTemplateRequest.
+
+
+        :param about_page_content: The about_page_content of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._about_page_content = about_page_content
 
     @property
     def categories(self) -> 'list[str]':

@@ -41,6 +41,7 @@ class DeploymenttemplatesIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'about_page_content': 'str',
         'categories': 'list[str]',
         'description': 'str',
         'image_url': 'str',
@@ -53,6 +54,7 @@ class DeploymenttemplatesIdBody(object):
     }
 
     attribute_map = {
+        'about_page_content': 'aboutPageContent',
         'categories': 'categories',
         'description': 'description',
         'image_url': 'imageUrl',
@@ -64,8 +66,9 @@ class DeploymenttemplatesIdBody(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, categories: 'list[str]' =None, description: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, description: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """DeploymenttemplatesIdBody - a model defined in Swagger"""  # noqa: E501
+        self._about_page_content = None
         self._categories = None
         self._description = None
         self._image_url = None
@@ -76,6 +79,8 @@ class DeploymenttemplatesIdBody(object):
         self._tags = None
         self._visibility = None
         self.discriminator = None
+        if about_page_content is not None:
+            self.about_page_content = about_page_content
         if categories is not None:
             self.categories = categories
         if description is not None:
@@ -94,6 +99,27 @@ class DeploymenttemplatesIdBody(object):
             self.tags = tags
         if visibility is not None:
             self.visibility = visibility
+
+    @property
+    def about_page_content(self) -> 'str':
+        """Gets the about_page_content of this DeploymenttemplatesIdBody.  # noqa: E501
+
+
+        :return: The about_page_content of this DeploymenttemplatesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._about_page_content
+
+    @about_page_content.setter
+    def about_page_content(self, about_page_content: 'str'):
+        """Sets the about_page_content of this DeploymenttemplatesIdBody.
+
+
+        :param about_page_content: The about_page_content of this DeploymenttemplatesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._about_page_content = about_page_content
 
     @property
     def categories(self) -> 'list[str]':
