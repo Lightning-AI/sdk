@@ -43,6 +43,7 @@ class V1MagicLinkLoginRequest(object):
     swagger_types = {
         'collab_session_id': 'str',
         'email': 'str',
+        'invite_code': 'str',
         'redirect_url': 'str',
         'referrer_params': 'str'
     }
@@ -50,14 +51,16 @@ class V1MagicLinkLoginRequest(object):
     attribute_map = {
         'collab_session_id': 'collabSessionId',
         'email': 'email',
+        'invite_code': 'inviteCode',
         'redirect_url': 'redirectUrl',
         'referrer_params': 'referrerParams'
     }
 
-    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None):  # noqa: E501
+    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, invite_code: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None):  # noqa: E501
         """V1MagicLinkLoginRequest - a model defined in Swagger"""  # noqa: E501
         self._collab_session_id = None
         self._email = None
+        self._invite_code = None
         self._redirect_url = None
         self._referrer_params = None
         self.discriminator = None
@@ -65,6 +68,8 @@ class V1MagicLinkLoginRequest(object):
             self.collab_session_id = collab_session_id
         if email is not None:
             self.email = email
+        if invite_code is not None:
+            self.invite_code = invite_code
         if redirect_url is not None:
             self.redirect_url = redirect_url
         if referrer_params is not None:
@@ -111,6 +116,27 @@ class V1MagicLinkLoginRequest(object):
         """
 
         self._email = email
+
+    @property
+    def invite_code(self) -> 'str':
+        """Gets the invite_code of this V1MagicLinkLoginRequest.  # noqa: E501
+
+
+        :return: The invite_code of this V1MagicLinkLoginRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._invite_code
+
+    @invite_code.setter
+    def invite_code(self, invite_code: 'str'):
+        """Sets the invite_code of this V1MagicLinkLoginRequest.
+
+
+        :param invite_code: The invite_code of this V1MagicLinkLoginRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._invite_code = invite_code
 
     @property
     def redirect_url(self) -> 'str':

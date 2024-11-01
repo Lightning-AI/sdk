@@ -53,7 +53,8 @@ class V1Model(object):
         'private': 'bool',
         'project_id': 'str',
         'tags': 'list[str]',
-        'updated_at': 'datetime'
+        'updated_at': 'datetime',
+        'user_id': 'str'
     }
 
     attribute_map = {
@@ -69,10 +70,11 @@ class V1Model(object):
         'private': 'private',
         'project_id': 'projectId',
         'tags': 'tags',
-        'updated_at': 'updatedAt'
+        'updated_at': 'updatedAt',
+        'user_id': 'userId'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'str' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'str' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Model - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
@@ -87,6 +89,7 @@ class V1Model(object):
         self._project_id = None
         self._tags = None
         self._updated_at = None
+        self._user_id = None
         self.discriminator = None
         if categories is not None:
             self.categories = categories
@@ -114,6 +117,8 @@ class V1Model(object):
             self.tags = tags
         if updated_at is not None:
             self.updated_at = updated_at
+        if user_id is not None:
+            self.user_id = user_id
 
     @property
     def categories(self) -> 'list[str]':
@@ -387,6 +392,27 @@ class V1Model(object):
         """
 
         self._updated_at = updated_at
+
+    @property
+    def user_id(self) -> 'str':
+        """Gets the user_id of this V1Model.  # noqa: E501
+
+
+        :return: The user_id of this V1Model.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id: 'str'):
+        """Sets the user_id of this V1Model.
+
+
+        :param user_id: The user_id of this V1Model.  # noqa: E501
+        :type: str
+        """
+
+        self._user_id = user_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

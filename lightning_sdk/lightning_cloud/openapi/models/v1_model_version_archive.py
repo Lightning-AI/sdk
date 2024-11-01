@@ -49,6 +49,7 @@ class V1ModelVersionArchive(object):
         'project_id': 'str',
         'updated_at': 'datetime',
         'upload_complete': 'bool',
+        'user_id': 'str',
         'version': 'str'
     }
 
@@ -61,10 +62,11 @@ class V1ModelVersionArchive(object):
         'project_id': 'projectId',
         'updated_at': 'updatedAt',
         'upload_complete': 'uploadComplete',
+        'user_id': 'userId',
         'version': 'version'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, metadata: 'dict(str, str)' =None, model_id: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, metadata: 'dict(str, str)' =None, model_id: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1ModelVersionArchive - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
@@ -74,6 +76,7 @@ class V1ModelVersionArchive(object):
         self._project_id = None
         self._updated_at = None
         self._upload_complete = None
+        self._user_id = None
         self._version = None
         self.discriminator = None
         if cluster_id is not None:
@@ -92,6 +95,8 @@ class V1ModelVersionArchive(object):
             self.updated_at = updated_at
         if upload_complete is not None:
             self.upload_complete = upload_complete
+        if user_id is not None:
+            self.user_id = user_id
         if version is not None:
             self.version = version
 
@@ -262,6 +267,27 @@ class V1ModelVersionArchive(object):
         """
 
         self._upload_complete = upload_complete
+
+    @property
+    def user_id(self) -> 'str':
+        """Gets the user_id of this V1ModelVersionArchive.  # noqa: E501
+
+
+        :return: The user_id of this V1ModelVersionArchive.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id: 'str'):
+        """Sets the user_id of this V1ModelVersionArchive.
+
+
+        :param user_id: The user_id of this V1ModelVersionArchive.  # noqa: E501
+        :type: str
+        """
+
+        self._user_id = user_id
 
     @property
     def version(self) -> 'str':
