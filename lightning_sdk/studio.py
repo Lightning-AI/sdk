@@ -243,7 +243,7 @@ class Studio:
             teamspace_id=self._teamspace.id,
             cluster_id=self._studio.cluster_id,
             file_path=file_path,
-            remote_path=remote_path,
+            remote_path=os.path.normpath(remote_path),
             progress_bar=progress_bar,
         )
 

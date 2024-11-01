@@ -1,6 +1,7 @@
 import concurrent.futures
 import json
 import os
+from pathlib import Path
 from typing import Dict, List, Optional
 
 from simple_term_menu import TerminalMenu
@@ -14,24 +15,11 @@ from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 
 
 class _Uploads(_StudiosMenu):
+    """Upload files and folders to Lightning AI."""
+
     _studio_upload_status_path = "~/.lightning/studios/uploads"
 
-    def upload(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
-        """Upload a file or folder to a studio.
-
-        Args:
-          path: The path to the file or directory you want to upload
-          studio: The name of the studio to upload to. Will show a menu for selection if not specified.
-            If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>
-          remote_path: The path where the uploaded file should appear on your Studio.
-            Has to be within your Studio's home directory and will be relative to that.
-            If not specified, will use the file or directory name of the path you want to upload
-            and place it in your home directory.
-
-        """
-        if remote_path is None:
-            remote_path = os.path.basename(path)
-
+    def _resolve_studio(self, studio: Optional[str]) -> Studio:
         user = _get_authed_user()
         possible_studios = self._get_possible_studios(user)
 
@@ -51,19 +39,37 @@ class _Uploads(_StudiosMenu):
                 "Please contact Lightning AI directly to resolve this issue."
             ) from e
 
-        print(f"Uploading to {selected_studio['teamspace']}/{selected_studio['name']}")
-        pairs = {}
-        if os.path.isdir(path):
-            for root, _, files in os.walk(path):
-                rel_root = os.path.relpath(root, path)
-                for f in files:
-                    pairs[os.path.join(root, f)] = os.path.join(remote_path, rel_root, f)
-
-        else:
-            pairs[path] = remote_path
-
         with skip_studio_init():
-            selected_studio = Studio(**selected_studio)
+            return Studio(**selected_studio)
+
+    def folder(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
+        """Upload a file or folder to a studio.
+
+        Args:
+          path: The path to the file or directory you want to upload
+          studio: The name of the studio to upload to. Will show a menu for selection if not specified.
+            If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>
+          remote_path: The path where the uploaded file should appear on your Studio.
+            Has to be within your Studio's home directory and will be relative to that.
+            If not specified, will use the file or directory name of the path you want to upload
+            and place it in your home directory.
+        """
+        if remote_path is None:
+            remote_path = os.path.basename(path)
+
+        selected_studio = self._resolve_studio(studio)
+
+        print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
+        if not Path(path).exists:
+            raise FileNotFoundError(f"The provided path does not exist: {path}.")
+        if not Path(path).is_dir:
+            raise StudioCliError(f"The provided path is not a folder: {path}. Use `lightning upload file` instead.")
+
+        pairs = {}
+        for root, _, files in os.walk(path):
+            rel_root = os.path.relpath(root, path)
+            for f in files:
+                pairs[os.path.join(root, f)] = os.path.join(remote_path, rel_root, f)
 
         upload_state = self._resolve_previous_upload_state(selected_studio, remote_path, pairs)
 
@@ -89,6 +95,40 @@ class _Uploads(_StudiosMenu):
             + selected_studio.name
         )
         print(f"See your files at {studio_url}")
+
+    def file(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
+        """Upload a file to a studio.
+
+        Args:
+          path: The path to the file you want to upload
+          studio: The name of the studio to upload to. Will show a menu for selection if not specified.
+            If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>
+          remote_path: The path where the uploaded file should appear on your Studio.
+            Has to be within your Studio's home directory and will be relative to that.
+            If not specified, will use the name of the file you want to upload
+            and place it in your home directory.
+        """
+        if remote_path is None:
+            remote_path = os.path.basename(path)
+
+        selected_studio = self._resolve_studio(studio)
+
+        print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
+        if Path(path).is_dir:
+            raise StudioCliError(f"The provided path is a folder: {path}. Use `lightning upload folder` instead.")
+
+        self._single_file_upload(selected_studio, path, remote_path, True)
+
+        studio_url = (
+            _get_cloud_url().replace(":443", "")
+            + "/"
+            + selected_studio.owner.name
+            + "/"
+            + selected_studio.teamspace.name
+            + "/studios/"
+            + selected_studio.name
+        )
+        print(f"See your file at {studio_url}")
 
     def _start_parallel_upload(
         self, executor: concurrent.futures.ThreadPoolExecutor, studio: Studio, upload_state: Dict[str, str]

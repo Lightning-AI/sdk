@@ -10,10 +10,13 @@ from lightning_sdk.lightning_cloud.login import Auth
 _LIGHTNING_AVAILABLE = RequirementCache("lightning")
 
 
-class StudioCLI(_Uploads, _Downloads):
+class StudioCLI:
     """Command line interface (CLI) to interact with/manage Lightning AI Studios."""
 
     def __init__(self) -> None:
+        self.download = _Downloads()
+        self.upload = _Uploads()
+
         if _LIGHTNING_AVAILABLE:
             self.run = _LegacyLightningCLI()
 

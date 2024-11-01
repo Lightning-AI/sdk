@@ -21,23 +21,23 @@ DESCRIPTION
 GROUPS
     GROUP is one of the following:
 
+     download
+       Download files and folders from Lightning AI.
+
      run
        Legacy CLI for `fabric run model` and `lightning run app`.
 
+     upload
+       Upload files and folders to Lightning AI.
+
 COMMANDS
     COMMAND is one of the following:
-
-     download
-       Download a file or folder from a studio.
 
      login
        Login to Lightning AI Studios.
 
      logout
-       Logout from Lightning AI Studios.
-
-     upload
-       Upload a file or folder to a studio."""
+       Logout from Lightning AI Studios."""
     result = subprocess.run("lightning", shell=True, capture_output=True, text=True)
     assert message in result.stdout or message in result.stderr
 
@@ -48,31 +48,34 @@ def test_root_message_lightning_unavailable():
     lightning - Command line interface (CLI) to interact with/manage Lightning AI Studios.
 
 SYNOPSIS
-    lightning COMMAND
+    lightning GROUP | COMMAND
 
 DESCRIPTION
     Command line interface (CLI) to interact with/manage Lightning AI Studios.
 
-COMMANDS
-    COMMAND is one of the following:
+GROUPS
+    GROUP is one of the following:
 
      download
-       Download a file or folder from a studio.
+       Download files and folders from Lightning AI.
+
+     upload
+       Upload files and folders to Lightning AI.
+
+COMMANDS
+    COMMAND is one of the following:
 
      login
        Login to Lightning AI Studios.
 
      logout
-       Logout from Lightning AI Studios.
-
-     upload
-       Upload a file or folder to a studio."""
+       Logout from Lightning AI Studios."""
     result = subprocess.run("lightning", shell=True, capture_output=True, text=True)
     assert message in result.stdout or message in result.stderr
 
 
 def test_upload():
-    result = subprocess.run("lightning upload", shell=True, capture_output=True, text=True)
+    result = subprocess.run("lightning upload file", shell=True, capture_output=True, text=True)
 
     message = "The function received no value for the required argument: path"
     assert message in result.stderr or message in result.stdout

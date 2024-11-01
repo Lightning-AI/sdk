@@ -10,23 +10,9 @@ from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 
 
 class _Downloads(_StudiosMenu):
-    def download(self, path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
-        """Download a file or folder from a studio.
+    """Download files and folders from Lightning AI."""
 
-        Args:
-          path: The relative path within the Studio you want to download.
-            If you leave it empty it will download whole studio and locally creates a new folder
-            with the same name as the selected studio.
-          studio: The name of the studio to upload to. Will show a menu with user's owned studios for selection
-            if not specified. If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names
-            are case-sensitive. The teamspace and studio names can be regular expressions to match, then a menu
-            with filtered studios will be shown for final selection.
-          local_path: The path to the directory you want to download files or folders
-
-        """
-        local_path = Path(local_path)
-        if not local_path.is_dir():
-            raise NotADirectoryError(f"'{local_path}' is not a directory")
+    def _resolve_studio(self, studio: Optional[str]) -> Studio:
         user = _get_authed_user()
         # if no studio specify suggest/filter only user's studios
         possible_studios = self._get_possible_studios(user, is_owner=studio is None)
@@ -64,19 +50,68 @@ class _Downloads(_StudiosMenu):
             ) from e
 
         with skip_studio_init():
-            studio = Studio(**selected_studio)
+            return Studio(**selected_studio)
+
+    def folder(self, path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
+        """Download a folder from a studio.
+
+        Args:
+          path: The relative path within the Studio you want to download.
+            If you leave it empty it will download whole studio and locally creates a new folder
+            with the same name as the selected studio.
+          studio: The name of the studio to upload to. Will show a menu with user's owned studios for selection
+            if not specified. If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names
+            are case-sensitive. The teamspace and studio names can be regular expressions to match, then a menu
+            with filtered studios will be shown for final selection.
+          local_path: The path to the directory you want to download the folder to.
+        """
+        local_path = Path(local_path)
+        if not local_path.is_dir():
+            raise NotADirectoryError(f"'{local_path}' is not a directory")
+
+        resolved_studio = self._resolve_studio(studio)
+
         if not path:
-            local_path /= studio.name
+            local_path /= resolved_studio.name
             path = ""
+
         try:
             if not path:
                 raise FileNotFoundError()
-            studio.download_file(remote_path=path, file_path=str(local_path / os.path.basename(path)))
-        except Exception:
-            try:
-                studio.download_folder(remote_path=path, target_path=str(local_path))
-            except Exception as e:
-                raise StudioCliError(
-                    f"Could not download files/folders from the given Studio {studio}. "
-                    "Please contact Lightning AI directly to resolve this issue."
-                ) from e
+            resolved_studio.download_folder(remote_path=path, target_path=str(local_path))
+        except Exception as e:
+            raise StudioCliError(
+                f"Could not download the folder from the given Studio {studio}. "
+                "Please contact Lightning AI directly to resolve this issue."
+            ) from e
+
+    def file(self, path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
+        """Download a file from a studio.
+
+        Args:
+          path: The relative path within the Studio you want to download.
+          studio: The name of the studio to upload to. Will show a menu with user's owned studios for selection
+            if not specified. If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names
+            are case-sensitive. The teamspace and studio names can be regular expressions to match, then a menu
+            with filtered studios will be shown for final selection.
+          local_path: The path to the directory you want to download the file to.
+        """
+        local_path = Path(local_path)
+        if not local_path.is_dir():
+            raise NotADirectoryError(f"'{local_path}' is not a directory")
+
+        resolved_studio = self._resolve_studio(studio)
+
+        if not path:
+            local_path /= resolved_studio.name
+            path = ""
+
+        try:
+            if not path:
+                raise FileNotFoundError()
+            resolved_studio.download_file(remote_path=path, file_path=str(local_path / os.path.basename(path)))
+        except Exception as e:
+            raise StudioCliError(
+                f"Could not download the file from the given Studio {studio}. "
+                "Please contact Lightning AI directly to resolve this issue."
+            ) from e
