@@ -3,7 +3,7 @@ import logging
 import os
 import warnings
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Optional, Protocol, Union, runtime_checkable
 
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
@@ -133,19 +133,19 @@ class JobsPlugin(_Plugin):
 
         machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
 
-        resp = self._studio._studio_api.create_job(
-            entrypoint=command,
+        job = Job.run(
             name=name,
             machine=machine,
-            studio_id=self._studio._studio.id,
-            teamspace_id=self._studio._teamspace.id,
-            cluster_id=self._studio._studio.cluster_id,
+            command=command,
+            studio=self._studio,
+            teamspace=self._studio.teamspace,
+            cluster=self._studio._cluster,
             interruptible=interruptible,
         )
 
-        _logger.info(_success_message(resp, self))
+        _logger.info(_success_message(job, self))
 
-        return Job(resp.name, self._studio.teamspace)
+        return job
 
 
 class MultiMachineTrainingPlugin(_Plugin):
@@ -163,7 +163,7 @@ class MultiMachineTrainingPlugin(_Plugin):
         num_instances: int = 2,
         strategy: str = "parallel",
         interruptible: bool = False,
-    ) -> "Externalv1LightningappInstance":
+    ) -> Job:
         """Launches an asynchronous multi-machine-training."""
         if name is None:
             name = _run_name("dist-run")
@@ -200,7 +200,7 @@ class MultiMachineDataPrepPlugin(_Plugin):
         cloud_compute: Optional[Machine] = None,
         num_instances: int = 2,
         interruptible: bool = False,
-    ) -> "Externalv1LightningappInstance":
+    ) -> Job:
         """Launches an asynchronous multi-machine-processing-job."""
         if name is None:
             name = _run_name("data-prep")
@@ -391,7 +391,7 @@ class _RunnablePlugin(Protocol):
         machine: Machine = Machine.CPU,
         cloud_compute: Optional[Machine] = None,
         **kwargs: Any,
-    ) -> "Externalv1LightningappInstance":
+    ) -> Union["Externalv1LightningappInstance", Job]:
         ...
 
 
@@ -400,6 +400,6 @@ def _run_name(plugin_type: str) -> str:
     return f"{plugin_type}-{datetime.datetime.now().strftime('%b-%d-%H_%M')}"
 
 
-def _success_message(resp: "Externalv1LightningappInstance", plugin_instance: _RunnablePlugin) -> str:
+def _success_message(resp: Union["Externalv1LightningappInstance", Job], plugin_instance: _RunnablePlugin) -> str:
     """Compiles the success message for a given runnable plugin."""
     return f"{plugin_instance._plugin_run_name} {resp.name} was successfully launched. View it at https://lightning.ai/{plugin_instance._studio.owner.name}/{plugin_instance._studio.teamspace.name}/studios/{plugin_instance.studio}/app?app_id={plugin_instance._slug_name}&job_name={resp.name}"
