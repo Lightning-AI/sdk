@@ -69,6 +69,15 @@ def test_run_job(
 
     plugin.run(command="python my-file.py", name="my-fancy-job-name", machine=cloud_compute)
 
+    # name implicit None
+    job = plugin.run(command="python my-file.py", machine=cloud_compute)
+    assert job.name != ""
+
+    # set name explicitly to empty string
+    job = plugin.run(command="python my-file.py", name="", machine=cloud_compute)
+    assert job.name != ""
+
+
 
 @pytest.mark.parametrize("cloud_compute", [m for m in Machine])
 def test_run_mmt(

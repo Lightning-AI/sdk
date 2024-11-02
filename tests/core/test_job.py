@@ -196,7 +196,11 @@ def test_jobv2_run_arg_validation(internal_studio_init_mocker):
     with pytest.raises(ValueError, match="Studio teamspace does not match provided teamspace. Can only run jobs with Studio envs in the teamspace of that Studio."):
         job = _JobV2.run("some name", Machine.CPU, command="some command", studio=studio, teamspace='other teamspace')
 
+    with pytest.raises(ValueError, match="A job needs to have a name!"):
+        _JobV2.run("", Machine.CPU)
 
+    with pytest.raises(ValueError, match="A job needs to have a name!"):
+        _JobV2.run(None, Machine.CPU)
 
 def test_submit_jobv2_error_cases(internal_studio_init_mocker):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")

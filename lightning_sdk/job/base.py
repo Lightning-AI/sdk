@@ -46,6 +46,8 @@ class _BaseJob(ABC):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
     ) -> "_BaseJob":
+        if not name:
+            raise ValueError("A job needs to have a name!")
         if studio is not None:
             if teamspace is None:
                 teamspace = studio.teamspace
@@ -59,8 +61,7 @@ class _BaseJob(ABC):
                     )
 
         # TODO: resolve studio and support string studios
-        # TODO: check if job already exists, then alter name
-        # TODO: assertions for studio to be in teamspace and on cluster
+        # TODO: assertions for studio to be on cluster
         # TODO: if cluster is not provided use studio cluster if provided, otherwise use default cluster from teamspace
         inst = cls(name=name, teamspace=teamspace, org=org, user=user, cluster=cluster, _fetch_job=False)
         inst._submit(machine=machine, command=command, studio=studio, image=image, env=env, interruptible=interruptible)

@@ -1367,7 +1367,7 @@ def internal_job_run_mocker(mocker):
         from lightning_sdk.api.studio_api import _MACHINE_TO_COMPUTE_NAME
 
         assert body.plugin_arguments["entrypoint"] == "python my-file.py"
-        assert body.plugin_arguments["name"] == "my-fancy-job-name"
+        assert body.plugin_arguments["name"] != ""
         assert body.plugin_arguments["compute"] in _MACHINE_TO_COMPUTE_NAME.values()
 
         return V1CreateCloudSpaceAppInstanceResponse(

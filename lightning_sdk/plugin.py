@@ -128,7 +128,7 @@ class JobsPlugin(_Plugin):
         interruptible: bool = False,
     ) -> Job:
         """Launches an asynchronous job."""
-        if name is None:
+        if not name:
             name = _run_name("job")
 
         machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
@@ -165,7 +165,7 @@ class MultiMachineTrainingPlugin(_Plugin):
         interruptible: bool = False,
     ) -> Job:
         """Launches an asynchronous multi-machine-training."""
-        if name is None:
+        if not name:
             name = _run_name("dist-run")
 
         machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
@@ -202,7 +202,7 @@ class MultiMachineDataPrepPlugin(_Plugin):
         interruptible: bool = False,
     ) -> Job:
         """Launches an asynchronous multi-machine-processing-job."""
-        if name is None:
+        if not name:
             name = _run_name("data-prep")
 
         machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
