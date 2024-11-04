@@ -6,3 +6,4 @@ pytest-timeout
 coverage
 mock
 boto3
+exceptiongroup #necessary for >= 3.11
