@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.exceptions import StudioCliError
+from lightning_sdk.cli.models import _get_teamspace, _parse_model_name
 from lightning_sdk.cli.studios_menu import _StudiosMenu
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
@@ -18,6 +19,24 @@ class _Uploads(_StudiosMenu):
     """Upload files and folders to Lightning AI."""
 
     _studio_upload_status_path = "~/.lightning/studios/uploads"
+
+    def model(self, name: str, path: Optional[str] = None, cloud_account: Optional[str] = None) -> None:
+        """Upload a Model.
+
+        Args:
+          name: The name of the Model you want to upload.
+            This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
+          path: The path to the file or directory you want to upload. Defaults to the current directory.
+          cloud_account: The name of the cloud account to store the Model in.
+        """
+        org_name, teamspace_name, model_name = _parse_model_name(name)
+        teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
+        teamspace.upload_model(
+            path=path or ".",
+            name=model_name,
+            progress_bar=True,
+            cluster_id=cloud_account,
+        )
 
     def _resolve_studio(self, studio: Optional[str]) -> Studio:
         user = _get_authed_user()
@@ -43,7 +62,7 @@ class _Uploads(_StudiosMenu):
             return Studio(**selected_studio)
 
     def folder(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
-        """Upload a file or folder to a studio.
+        """Upload a file or folder to a Studio.
 
         Args:
           path: The path to the file or directory you want to upload
@@ -97,7 +116,7 @@ class _Uploads(_StudiosMenu):
         print(f"See your files at {studio_url}")
 
     def file(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
-        """Upload a file to a studio.
+        """Upload a file to a Studio.
 
         Args:
           path: The path to the file you want to upload

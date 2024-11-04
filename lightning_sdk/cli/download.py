@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional
 
 from lightning_sdk.cli.exceptions import StudioCliError
+from lightning_sdk.cli.models import _get_teamspace, _parse_model_name
 from lightning_sdk.cli.studios_menu import _StudiosMenu
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
@@ -11,6 +12,22 @@ from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 
 class _Downloads(_StudiosMenu):
     """Download files and folders from Lightning AI."""
+
+    def model(self, name: str, path: Optional[str] = None) -> None:
+        """Download a Model.
+
+        Args:
+          name: The name of the Model you want to download.
+            This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
+          path: The path to the directory where the Model should be downloaded.
+        """
+        org_name, teamspace_name, model_name = _parse_model_name(name)
+        teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
+        teamspace.download_model(
+            name=model_name,
+            download_dir=path or ".",
+            progress_bar=True,
+        )
 
     def _resolve_studio(self, studio: Optional[str]) -> Studio:
         user = _get_authed_user()
@@ -53,7 +70,7 @@ class _Downloads(_StudiosMenu):
             return Studio(**selected_studio)
 
     def folder(self, path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
-        """Download a folder from a studio.
+        """Download a folder from a Studio.
 
         Args:
           path: The relative path within the Studio you want to download.
@@ -86,7 +103,7 @@ class _Downloads(_StudiosMenu):
             ) from e
 
     def file(self, path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
-        """Download a file from a studio.
+        """Download a file from a Studio.
 
         Args:
           path: The relative path within the Studio you want to download.
