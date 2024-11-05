@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 from lightning_sdk.api.utils import _download_model_files, _DummyBody, _ModelFileUploader
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
+    ModelIdVersionsBody,
     ModelsStoreApi,
     ProjectIdAgentsBody,
     ProjectIdModelsBody,
@@ -166,8 +167,19 @@ class TeamspaceApi:
         cluster_id: str,
     ) -> V1ModelVersionArchive:
         api = ModelsStoreApi(self._client.api_client)
-        body = ProjectIdModelsBody(cluster_id=cluster_id, metadata=metadata, name=name, private=private)
-        return api.models_store_create_model(body, project_id=teamspace_id)
+        # ask if such model already exists by listing models with specific name
+        list_models = api.models_store_list_models(project_id=teamspace_id, name=name)
+        if not list_models.models:
+            return api.models_store_create_model(
+                body=ProjectIdModelsBody(cluster_id=cluster_id, metadata=metadata, name=name, private=private),
+                project_id=teamspace_id,
+            )
+        assert len(list_models.models) == 1, "Multiple models with the same name found"
+        return api.models_store_create_model_version(
+            body=ModelIdVersionsBody(cluster_id=cluster_id),
+            project_id=teamspace_id,
+            model_id=list_models.models[0].model_id,
+        )
 
     def upload_model_file(
         self,
