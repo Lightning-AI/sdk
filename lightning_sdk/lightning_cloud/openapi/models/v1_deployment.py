@@ -46,6 +46,7 @@ class V1Deployment(object):
         'desired_state': 'V1DeploymentState',
         'endpoint': 'V1Endpoint',
         'id': 'str',
+        'is_published': 'bool',
         'name': 'str',
         'project_id': 'str',
         'release_id': 'str',
@@ -63,6 +64,7 @@ class V1Deployment(object):
         'desired_state': 'desiredState',
         'endpoint': 'endpoint',
         'id': 'id',
+        'is_published': 'isPublished',
         'name': 'name',
         'project_id': 'projectId',
         'release_id': 'releaseId',
@@ -74,13 +76,14 @@ class V1Deployment(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, name: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
         self._created_at = None
         self._desired_state = None
         self._endpoint = None
         self._id = None
+        self._is_published = None
         self._name = None
         self._project_id = None
         self._release_id = None
@@ -101,6 +104,8 @@ class V1Deployment(object):
             self.endpoint = endpoint
         if id is not None:
             self.id = id
+        if is_published is not None:
+            self.is_published = is_published
         if name is not None:
             self.name = name
         if project_id is not None:
@@ -224,6 +229,27 @@ class V1Deployment(object):
         """
 
         self._id = id
+
+    @property
+    def is_published(self) -> 'bool':
+        """Gets the is_published of this V1Deployment.  # noqa: E501
+
+
+        :return: The is_published of this V1Deployment.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_published
+
+    @is_published.setter
+    def is_published(self, is_published: 'bool'):
+        """Sets the is_published of this V1Deployment.
+
+
+        :param is_published: The is_published of this V1Deployment.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_published = is_published
 
     @property
     def name(self) -> 'str':

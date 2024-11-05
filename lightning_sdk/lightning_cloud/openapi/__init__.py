@@ -104,6 +104,7 @@ from lightning_sdk.lightning_cloud.openapi.models.id_codeconfig_body import IdCo
 from lightning_sdk.lightning_cloud.openapi.models.id_collaborate_body import IdCollaborateBody
 from lightning_sdk.lightning_cloud.openapi.models.id_complete_body import IdCompleteBody
 from lightning_sdk.lightning_cloud.openapi.models.id_engage_body import IdEngageBody
+from lightning_sdk.lightning_cloud.openapi.models.id_engage_body1 import IdEngageBody1
 from lightning_sdk.lightning_cloud.openapi.models.id_execute_body import IdExecuteBody
 from lightning_sdk.lightning_cloud.openapi.models.id_execute_body1 import IdExecuteBody1
 from lightning_sdk.lightning_cloud.openapi.models.id_fork_body import IdForkBody
@@ -133,6 +134,7 @@ from lightning_sdk.lightning_cloud.openapi.models.metrics_stream_id_loggerartifa
 from lightning_sdk.lightning_cloud.openapi.models.metricsstream_create_body import MetricsstreamCreateBody
 from lightning_sdk.lightning_cloud.openapi.models.metricsstream_delete_body import MetricsstreamDeleteBody
 from lightning_sdk.lightning_cloud.openapi.models.metricsstream_id_body import MetricsstreamIdBody
+from lightning_sdk.lightning_cloud.openapi.models.model_id_versions_body import ModelIdVersionsBody
 from lightning_sdk.lightning_cloud.openapi.models.models_model_id_body import ModelsModelIdBody
 from lightning_sdk.lightning_cloud.openapi.models.multipartuploads_upload_id_body import MultipartuploadsUploadIdBody
 from lightning_sdk.lightning_cloud.openapi.models.org_id_memberships_body import OrgIdMembershipsBody
@@ -359,6 +361,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_state import V1D
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_status import V1DeploymentStatus
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_strategy import V1DeploymentStrategy
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_template import V1DeploymentTemplate
+from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_template_engagement_response import V1DeploymentTemplateEngagementResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_template_gallery_response import V1DeploymentTemplateGalleryResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_template_parameter import V1DeploymentTemplateParameter
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_template_parameter_placement import V1DeploymentTemplateParameterPlacement
@@ -591,6 +594,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_org_role import V1OrgRole
 from lightning_sdk.lightning_cloud.openapi.models.v1_organization import V1Organization
 from lightning_sdk.lightning_cloud.openapi.models.v1_owner_type import V1OwnerType
 from lightning_sdk.lightning_cloud.openapi.models.v1_package_manager import V1PackageManager
+from lightning_sdk.lightning_cloud.openapi.models.v1_parameterization_spec import V1ParameterizationSpec
 from lightning_sdk.lightning_cloud.openapi.models.v1_path_telemetry import V1PathTelemetry
 from lightning_sdk.lightning_cloud.openapi.models.v1_phase_type import V1PhaseType
 from lightning_sdk.lightning_cloud.openapi.models.v1_plugin import V1Plugin

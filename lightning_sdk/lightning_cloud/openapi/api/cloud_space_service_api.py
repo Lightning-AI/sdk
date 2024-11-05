@@ -1955,7 +1955,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_engage_cloud_space(self, body: 'IdEngageBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceEngagementResponse':  # noqa: E501
+    def cloud_space_service_engage_cloud_space(self, body: 'IdEngageBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceEngagementResponse':  # noqa: E501
         """cloud_space_service_engage_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1964,7 +1964,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdEngageBody body: (required)
+        :param IdEngageBody1 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1CloudSpaceEngagementResponse
@@ -1978,7 +1978,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_engage_cloud_space_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_engage_cloud_space_with_http_info(self, body: 'IdEngageBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceEngagementResponse':  # noqa: E501
+    def cloud_space_service_engage_cloud_space_with_http_info(self, body: 'IdEngageBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceEngagementResponse':  # noqa: E501
         """cloud_space_service_engage_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1987,7 +1987,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdEngageBody body: (required)
+        :param IdEngageBody1 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1CloudSpaceEngagementResponse

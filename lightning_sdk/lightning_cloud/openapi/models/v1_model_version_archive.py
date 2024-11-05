@@ -44,6 +44,7 @@ class V1ModelVersionArchive(object):
         'cluster_id': 'str',
         'created_at': 'datetime',
         'downloads': 'str',
+        'index': 'int',
         'metadata': 'dict(str, str)',
         'model_id': 'str',
         'project_id': 'str',
@@ -57,6 +58,7 @@ class V1ModelVersionArchive(object):
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'downloads': 'downloads',
+        'index': 'index',
         'metadata': 'metadata',
         'model_id': 'modelId',
         'project_id': 'projectId',
@@ -66,11 +68,12 @@ class V1ModelVersionArchive(object):
         'version': 'version'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, metadata: 'dict(str, str)' =None, model_id: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, index: 'int' =None, metadata: 'dict(str, str)' =None, model_id: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1ModelVersionArchive - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
         self._downloads = None
+        self._index = None
         self._metadata = None
         self._model_id = None
         self._project_id = None
@@ -85,6 +88,8 @@ class V1ModelVersionArchive(object):
             self.created_at = created_at
         if downloads is not None:
             self.downloads = downloads
+        if index is not None:
+            self.index = index
         if metadata is not None:
             self.metadata = metadata
         if model_id is not None:
@@ -162,6 +167,27 @@ class V1ModelVersionArchive(object):
         """
 
         self._downloads = downloads
+
+    @property
+    def index(self) -> 'int':
+        """Gets the index of this V1ModelVersionArchive.  # noqa: E501
+
+
+        :return: The index of this V1ModelVersionArchive.  # noqa: E501
+        :rtype: int
+        """
+        return self._index
+
+    @index.setter
+    def index(self, index: 'int'):
+        """Sets the index of this V1ModelVersionArchive.
+
+
+        :param index: The index of this V1ModelVersionArchive.  # noqa: E501
+        :type: int
+        """
+
+        self._index = index
 
     @property
     def metadata(self) -> 'dict(str, str)':

@@ -37,9 +37,11 @@ class V1DeploymentTemplateParameterPlacement(object):
     """
     allowed enum values
     """
+    UNSPECIFIED = "DEPLOYMENT_TEMPLATE_UNSPECIFIED"
     COMMAND = "DEPLOYMENT_TEMPLATE_COMMAND"
     ENV = "DEPLOYMENT_TEMPLATE_ENV"
     ENTRYPOINT = "DEPLOYMENT_TEMPLATE_ENTRYPOINT"
+    IMAGE = "DEPLOYMENT_TEMPLATE_IMAGE"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

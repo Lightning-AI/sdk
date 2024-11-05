@@ -41,6 +41,7 @@ class ProjectIdModelsBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'always_create': 'bool',
         'cluster_id': 'str',
         'metadata': 'dict(str, str)',
         'name': 'str',
@@ -48,19 +49,23 @@ class ProjectIdModelsBody(object):
     }
 
     attribute_map = {
+        'always_create': 'alwaysCreate',
         'cluster_id': 'clusterId',
         'metadata': 'metadata',
         'name': 'name',
         'private': 'private'
     }
 
-    def __init__(self, cluster_id: 'str' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None):  # noqa: E501
+    def __init__(self, always_create: 'bool' =None, cluster_id: 'str' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None):  # noqa: E501
         """ProjectIdModelsBody - a model defined in Swagger"""  # noqa: E501
+        self._always_create = None
         self._cluster_id = None
         self._metadata = None
         self._name = None
         self._private = None
         self.discriminator = None
+        if always_create is not None:
+            self.always_create = always_create
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if metadata is not None:
@@ -69,6 +74,27 @@ class ProjectIdModelsBody(object):
             self.name = name
         if private is not None:
             self.private = private
+
+    @property
+    def always_create(self) -> 'bool':
+        """Gets the always_create of this ProjectIdModelsBody.  # noqa: E501
+
+
+        :return: The always_create of this ProjectIdModelsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._always_create
+
+    @always_create.setter
+    def always_create(self, always_create: 'bool'):
+        """Sets the always_create of this ProjectIdModelsBody.
+
+
+        :param always_create: The always_create of this ProjectIdModelsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._always_create = always_create
 
     @property
     def cluster_id(self) -> 'str':

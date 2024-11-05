@@ -48,7 +48,7 @@ class V1CreateDeploymentTemplateRequest(object):
         'image_url': 'str',
         'name': 'str',
         'org_id': 'str',
-        'parameters': 'list[V1DeploymentTemplateParameter]',
+        'parameter_spec': 'V1ParameterizationSpec',
         'project_id': 'str',
         'spec': 'str',
         'tags': 'list[V1ResourceTag]',
@@ -64,7 +64,7 @@ class V1CreateDeploymentTemplateRequest(object):
         'image_url': 'imageUrl',
         'name': 'name',
         'org_id': 'orgId',
-        'parameters': 'parameters',
+        'parameter_spec': 'parameterSpec',
         'project_id': 'projectId',
         'spec': 'spec',
         'tags': 'tags',
@@ -72,7 +72,7 @@ class V1CreateDeploymentTemplateRequest(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, deployment_id: 'str' =None, description: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameters: 'list[V1DeploymentTemplateParameter]' =None, project_id: 'str' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, version: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, deployment_id: 'str' =None, description: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, version: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """V1CreateDeploymentTemplateRequest - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._categories = None
@@ -81,7 +81,7 @@ class V1CreateDeploymentTemplateRequest(object):
         self._image_url = None
         self._name = None
         self._org_id = None
-        self._parameters = None
+        self._parameter_spec = None
         self._project_id = None
         self._spec = None
         self._tags = None
@@ -102,8 +102,8 @@ class V1CreateDeploymentTemplateRequest(object):
             self.name = name
         if org_id is not None:
             self.org_id = org_id
-        if parameters is not None:
-            self.parameters = parameters
+        if parameter_spec is not None:
+            self.parameter_spec = parameter_spec
         if project_id is not None:
             self.project_id = project_id
         if spec is not None:
@@ -263,25 +263,25 @@ class V1CreateDeploymentTemplateRequest(object):
         self._org_id = org_id
 
     @property
-    def parameters(self) -> 'list[V1DeploymentTemplateParameter]':
-        """Gets the parameters of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+    def parameter_spec(self) -> 'V1ParameterizationSpec':
+        """Gets the parameter_spec of this V1CreateDeploymentTemplateRequest.  # noqa: E501
 
 
-        :return: The parameters of this V1CreateDeploymentTemplateRequest.  # noqa: E501
-        :rtype: list[V1DeploymentTemplateParameter]
+        :return: The parameter_spec of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :rtype: V1ParameterizationSpec
         """
-        return self._parameters
+        return self._parameter_spec
 
-    @parameters.setter
-    def parameters(self, parameters: 'list[V1DeploymentTemplateParameter]'):
-        """Sets the parameters of this V1CreateDeploymentTemplateRequest.
+    @parameter_spec.setter
+    def parameter_spec(self, parameter_spec: 'V1ParameterizationSpec'):
+        """Sets the parameter_spec of this V1CreateDeploymentTemplateRequest.
 
 
-        :param parameters: The parameters of this V1CreateDeploymentTemplateRequest.  # noqa: E501
-        :type: list[V1DeploymentTemplateParameter]
+        :param parameter_spec: The parameter_spec of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :type: V1ParameterizationSpec
         """
 
-        self._parameters = parameters
+        self._parameter_spec = parameter_spec
 
     @property
     def project_id(self) -> 'str':

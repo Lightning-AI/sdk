@@ -45,6 +45,7 @@ class DeploymentsIdBody(object):
         'created_at': 'datetime',
         'desired_state': 'V1DeploymentState',
         'endpoint': 'V1Endpoint',
+        'is_published': 'bool',
         'name': 'str',
         'release_id': 'str',
         'replicas': 'int',
@@ -60,6 +61,7 @@ class DeploymentsIdBody(object):
         'created_at': 'createdAt',
         'desired_state': 'desiredState',
         'endpoint': 'endpoint',
+        'is_published': 'isPublished',
         'name': 'name',
         'release_id': 'releaseId',
         'replicas': 'replicas',
@@ -70,12 +72,13 @@ class DeploymentsIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, name: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """DeploymentsIdBody - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
         self._created_at = None
         self._desired_state = None
         self._endpoint = None
+        self._is_published = None
         self._name = None
         self._release_id = None
         self._replicas = None
@@ -93,6 +96,8 @@ class DeploymentsIdBody(object):
             self.desired_state = desired_state
         if endpoint is not None:
             self.endpoint = endpoint
+        if is_published is not None:
+            self.is_published = is_published
         if name is not None:
             self.name = name
         if release_id is not None:
@@ -193,6 +198,27 @@ class DeploymentsIdBody(object):
         """
 
         self._endpoint = endpoint
+
+    @property
+    def is_published(self) -> 'bool':
+        """Gets the is_published of this DeploymentsIdBody.  # noqa: E501
+
+
+        :return: The is_published of this DeploymentsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_published
+
+    @is_published.setter
+    def is_published(self, is_published: 'bool'):
+        """Sets the is_published of this DeploymentsIdBody.
+
+
+        :param is_published: The is_published of this DeploymentsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_published = is_published
 
     @property
     def name(self) -> 'str':

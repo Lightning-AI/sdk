@@ -365,6 +365,7 @@ class JobsServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param bool delete_templates:
         :return: V1DeleteDeploymentResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -387,12 +388,13 @@ class JobsServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param bool delete_templates:
         :return: V1DeleteDeploymentResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id']  # noqa: E501
+        all_params = ['project_id', 'id', 'delete_templates']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -425,6 +427,8 @@ class JobsServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'delete_templates' in params:
+            query_params.append(('deleteTemplates', params['delete_templates']))  # noqa: E501
 
         header_params = {}
 
