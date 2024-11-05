@@ -44,6 +44,7 @@ class DeploymenttemplatesIdBody(object):
         'about_page_content': 'str',
         'categories': 'list[str]',
         'description': 'str',
+        'featured': 'bool',
         'image_url': 'str',
         'name': 'str',
         'org_id': 'str',
@@ -57,6 +58,7 @@ class DeploymenttemplatesIdBody(object):
         'about_page_content': 'aboutPageContent',
         'categories': 'categories',
         'description': 'description',
+        'featured': 'featured',
         'image_url': 'imageUrl',
         'name': 'name',
         'org_id': 'orgId',
@@ -66,11 +68,12 @@ class DeploymenttemplatesIdBody(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, description: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, description: 'str' =None, featured: 'bool' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """DeploymenttemplatesIdBody - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._categories = None
         self._description = None
+        self._featured = None
         self._image_url = None
         self._name = None
         self._org_id = None
@@ -85,6 +88,8 @@ class DeploymenttemplatesIdBody(object):
             self.categories = categories
         if description is not None:
             self.description = description
+        if featured is not None:
+            self.featured = featured
         if image_url is not None:
             self.image_url = image_url
         if name is not None:
@@ -162,6 +167,27 @@ class DeploymenttemplatesIdBody(object):
         """
 
         self._description = description
+
+    @property
+    def featured(self) -> 'bool':
+        """Gets the featured of this DeploymenttemplatesIdBody.  # noqa: E501
+
+
+        :return: The featured of this DeploymenttemplatesIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._featured
+
+    @featured.setter
+    def featured(self, featured: 'bool'):
+        """Sets the featured of this DeploymenttemplatesIdBody.
+
+
+        :param featured: The featured of this DeploymenttemplatesIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._featured = featured
 
     @property
     def image_url(self) -> 'str':
