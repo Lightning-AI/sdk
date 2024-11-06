@@ -262,6 +262,17 @@ class Teamspace:
             return str(downloaded_path.resolve())
         return str(Path(download_dir).resolve())
 
+    def delete_model(self, name: str) -> None:
+        """Delete a model from the model store.
+
+        Args:
+            name: Name tag of the model to delete. Can optionally also contain a version tag separated by a colon,
+                 e.g. 'entity/modelname:v1'.
+
+        """
+        name, version = _parse_model_and_version(name)
+        self._teamspace_api.delete_model(name=name, version=version, teamspace_id=self.id)
+
 
 def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name: str) -> ValueError:
     """Resolves the ValueError Message and replaces it with a nicer message."""

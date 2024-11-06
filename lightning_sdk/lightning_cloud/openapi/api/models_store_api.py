@@ -28,7 +28,6 @@ import six
 from lightning_sdk.lightning_cloud.openapi.api_client import ApiClient
 
 if TYPE_CHECKING:
-    from datetime import datetime
     from lightning_sdk.lightning_cloud.openapi.models import *
 
 class ModelsStoreApi(object):

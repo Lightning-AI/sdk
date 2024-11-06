@@ -185,7 +185,7 @@ def test_upload_model_single_file(
     ts._teamspace_api.upload_model_file = mock.Mock()
     ts._teamspace_api.complete_model_upload = mock.Mock()
 
-    result = ts.upload_model(path=file_path, name="modelname")
+    result = ts.upload_model(path=str(file_path), name="modelname")
 
     ts._teamspace_api.create_model.assert_called_once_with(
         name="modelname",
@@ -210,6 +210,14 @@ def test_upload_model_single_file(
     assert result.teamspace == "ts-abc"
     assert result.cluster == "test-cluster-id"
 
+    ts._teamspace_api.delete_model = mock.Mock()
+    ts.delete_model("user/modelname")
+    ts._teamspace_api.delete_model.assert_called_once_with(
+        teamspace_id="ts-abc002",
+        name="user/modelname",
+        version="latest",
+    )
+
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
 def test_upload_model_multiple_files(
@@ -220,24 +228,24 @@ def test_upload_model_multiple_files(
     ts = Teamspace("ts-abc", user="user-abc")
 
     # Attempt to upload empty folder raises error
-    root_path = tmp_path / "empty"
+    upload_path = tmp_path / "empty"
     (tmp_path / "empty" / "folder").mkdir(parents=True)
     with pytest.raises(FileNotFoundError, match="doesn't contain any files"):
-        ts.upload_model(path=root_path, name="user/modelname")
+        ts.upload_model(path=str(upload_path), name="user/modelname")
 
     # Upload nested folder of files
-    root_path = tmp_path / "checkpoint"
-    root_path.mkdir()
-    (root_path / "file").touch()
-    (root_path / "subfolder").mkdir()
-    (root_path / "subfolder" / "nested-file").touch()
-    (root_path / "empty").mkdir()  # empty folders don't get uploaded
+    upload_path = tmp_path / "checkpoint"
+    upload_path.mkdir()
+    (upload_path / "file").touch()
+    (upload_path / "subfolder").mkdir()
+    (upload_path / "subfolder" / "nested-file").touch()
+    (upload_path / "empty").mkdir()  # empty folders don't get uploaded
 
     ts._teamspace_api.create_model = mock.Mock(return_value=mock.Mock(model_id="test-model-id", version="v3"))
     ts._teamspace_api.upload_model_file = mock.Mock()
     ts._teamspace_api.complete_model_upload = mock.Mock()
 
-    ts.upload_model(path=root_path, name="user/modelname")
+    ts.upload_model(path=str(upload_path), name="user/modelname")
 
     ts._teamspace_api.create_model.assert_called_once()
     assert ts._teamspace_api.upload_model_file.call_count == 2
@@ -249,16 +257,24 @@ def test_upload_model_multiple_files(
         progress_bar=True,
     )
     ts._teamspace_api.upload_model_file.assert_any_call(
-        local_path=(root_path / "file"),
+        local_path=(upload_path / "file"),
         remote_path="file",
         **call_args,
     )
     ts._teamspace_api.upload_model_file.assert_any_call(
-        local_path=(root_path / "subfolder" / "nested-file"),
+        local_path=(upload_path / "subfolder" / "nested-file"),
         remote_path="subfolder/nested-file",
         **call_args,
     )
     ts._teamspace_api.complete_model_upload.assert_called_once()
+
+    ts._teamspace_api.delete_model = mock.Mock()
+    ts.delete_model("user/modelname:v3")
+    ts._teamspace_api.delete_model.assert_called_once_with(
+        teamspace_id="ts-abc002",
+        name="user/modelname",
+        version="v3",
+    )
 
 
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")

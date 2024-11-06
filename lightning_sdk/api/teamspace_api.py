@@ -29,6 +29,7 @@ class TeamspaceApi:
 
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=7)
+        self._models: Optional[ModelsStoreApi] = None
 
     def get_teamspace(self, name: str, owner_id: str) -> V1Project:
         """Get the current teamspace from the owner."""
@@ -166,20 +167,36 @@ class TeamspaceApi:
         teamspace_id: str,
         cluster_id: str,
     ) -> V1ModelVersionArchive:
-        api = ModelsStoreApi(self._client.api_client)
+        if not self._models:
+            self._models = ModelsStoreApi(self._client.api_client)
         # ask if such model already exists by listing models with specific name
-        list_models = api.models_store_list_models(project_id=teamspace_id, name=name)
-        if not list_models.models:
-            return api.models_store_create_model(
+        models = self._models.models_store_list_models(project_id=teamspace_id, name=name).models
+        if len(models) == 0:
+            return self._models.models_store_create_model(
                 body=ProjectIdModelsBody(cluster_id=cluster_id, metadata=metadata, name=name, private=private),
                 project_id=teamspace_id,
             )
-        assert len(list_models.models) == 1, "Multiple models with the same name found"
-        return api.models_store_create_model_version(
+        assert len(models) == 1, "Multiple models with the same name found"
+        return self._models.models_store_create_model_version(
             body=ModelIdVersionsBody(cluster_id=cluster_id),
             project_id=teamspace_id,
-            model_id=list_models.models[0].model_id,
+            model_id=models[0].id,
         )
+
+    def delete_model(self, name: str, version: Optional[str], teamspace_id: str) -> None:
+        """Delete a model or a version from the model store."""
+        if not self._models:
+            self._models = ModelsStoreApi(self._client.api_client)
+        models = self._models.models_store_list_models(project_id=teamspace_id, name=name).models
+        assert len(models) == 1, "Multiple models with the same name found"
+        model_id = models[0].id
+        # decide if delete only version of whole model
+        if version:
+            if version == "latest":
+                version = models[0].latest_version
+            self._models.models_store_delete_model_version(project_id=teamspace_id, model_id=model_id, version=version)
+        else:
+            self._models.models_store_delete_model(project_id=teamspace_id, model_id=model_id)
 
     def upload_model_file(
         self,
@@ -225,8 +242,9 @@ class TeamspaceApi:
             )
 
     def complete_model_upload(self, model_id: str, version: str, teamspace_id: str) -> None:
-        api = ModelsStoreApi(self._client.api_client)
-        api.models_store_complete_model_upload(
+        if not self._models:
+            self._models = ModelsStoreApi(self._client.api_client)
+        self._models.models_store_complete_model_upload(
             body=_DummyBody(),
             project_id=teamspace_id,
             model_id=model_id,
