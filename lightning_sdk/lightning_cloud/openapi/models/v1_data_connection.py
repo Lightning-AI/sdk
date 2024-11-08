@@ -47,7 +47,9 @@ class V1DataConnection(object):
         'cluster_id': 'str',
         'created_at': 'datetime',
         'efs': 'V1EfsDataConnection',
+        'efs_folder': 'V1EFSFolderDataConnection',
         'gcp': 'V1GcpDataConnection',
+        'gs_folder': 'V1GSFolderDataConnection',
         'id': 'str',
         'index': 'V1Index',
         'is_managed': 'bool',
@@ -56,6 +58,7 @@ class V1DataConnection(object):
         'number_of_files': 'str',
         'project_id': 'str',
         'run_cmds': 'list[str]',
+        's3_folder': 'V1S3FolderDataConnection',
         'snowflake': 'V1SnowflakeDataConnection',
         'state': 'V1DataConnectionState',
         'total_size_bytes': 'str',
@@ -71,7 +74,9 @@ class V1DataConnection(object):
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'efs': 'efs',
+        'efs_folder': 'efsFolder',
         'gcp': 'gcp',
+        'gs_folder': 'gsFolder',
         'id': 'id',
         'index': 'index',
         'is_managed': 'isManaged',
@@ -80,6 +85,7 @@ class V1DataConnection(object):
         'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
         'run_cmds': 'runCmds',
+        's3_folder': 's3Folder',
         'snowflake': 'snowflake',
         'state': 'state',
         'total_size_bytes': 'totalSizeBytes',
@@ -88,7 +94,7 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsDataConnection' =None, gcp: 'V1GcpDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsDataConnection' =None, efs_folder: 'V1EFSFolderDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gs_folder: 'V1GSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
@@ -96,7 +102,9 @@ class V1DataConnection(object):
         self._cluster_id = None
         self._created_at = None
         self._efs = None
+        self._efs_folder = None
         self._gcp = None
+        self._gs_folder = None
         self._id = None
         self._index = None
         self._is_managed = None
@@ -105,6 +113,7 @@ class V1DataConnection(object):
         self._number_of_files = None
         self._project_id = None
         self._run_cmds = None
+        self._s3_folder = None
         self._snowflake = None
         self._state = None
         self._total_size_bytes = None
@@ -124,8 +133,12 @@ class V1DataConnection(object):
             self.created_at = created_at
         if efs is not None:
             self.efs = efs
+        if efs_folder is not None:
+            self.efs_folder = efs_folder
         if gcp is not None:
             self.gcp = gcp
+        if gs_folder is not None:
+            self.gs_folder = gs_folder
         if id is not None:
             self.id = id
         if index is not None:
@@ -142,6 +155,8 @@ class V1DataConnection(object):
             self.project_id = project_id
         if run_cmds is not None:
             self.run_cmds = run_cmds
+        if s3_folder is not None:
+            self.s3_folder = s3_folder
         if snowflake is not None:
             self.snowflake = snowflake
         if state is not None:
@@ -282,6 +297,27 @@ class V1DataConnection(object):
         self._efs = efs
 
     @property
+    def efs_folder(self) -> 'V1EFSFolderDataConnection':
+        """Gets the efs_folder of this V1DataConnection.  # noqa: E501
+
+
+        :return: The efs_folder of this V1DataConnection.  # noqa: E501
+        :rtype: V1EFSFolderDataConnection
+        """
+        return self._efs_folder
+
+    @efs_folder.setter
+    def efs_folder(self, efs_folder: 'V1EFSFolderDataConnection'):
+        """Sets the efs_folder of this V1DataConnection.
+
+
+        :param efs_folder: The efs_folder of this V1DataConnection.  # noqa: E501
+        :type: V1EFSFolderDataConnection
+        """
+
+        self._efs_folder = efs_folder
+
+    @property
     def gcp(self) -> 'V1GcpDataConnection':
         """Gets the gcp of this V1DataConnection.  # noqa: E501
 
@@ -301,6 +337,27 @@ class V1DataConnection(object):
         """
 
         self._gcp = gcp
+
+    @property
+    def gs_folder(self) -> 'V1GSFolderDataConnection':
+        """Gets the gs_folder of this V1DataConnection.  # noqa: E501
+
+
+        :return: The gs_folder of this V1DataConnection.  # noqa: E501
+        :rtype: V1GSFolderDataConnection
+        """
+        return self._gs_folder
+
+    @gs_folder.setter
+    def gs_folder(self, gs_folder: 'V1GSFolderDataConnection'):
+        """Sets the gs_folder of this V1DataConnection.
+
+
+        :param gs_folder: The gs_folder of this V1DataConnection.  # noqa: E501
+        :type: V1GSFolderDataConnection
+        """
+
+        self._gs_folder = gs_folder
 
     @property
     def id(self) -> 'str':
@@ -469,6 +526,27 @@ class V1DataConnection(object):
         """
 
         self._run_cmds = run_cmds
+
+    @property
+    def s3_folder(self) -> 'V1S3FolderDataConnection':
+        """Gets the s3_folder of this V1DataConnection.  # noqa: E501
+
+
+        :return: The s3_folder of this V1DataConnection.  # noqa: E501
+        :rtype: V1S3FolderDataConnection
+        """
+        return self._s3_folder
+
+    @s3_folder.setter
+    def s3_folder(self, s3_folder: 'V1S3FolderDataConnection'):
+        """Sets the s3_folder of this V1DataConnection.
+
+
+        :param s3_folder: The s3_folder of this V1DataConnection.  # noqa: E501
+        :type: V1S3FolderDataConnection
+        """
+
+        self._s3_folder = s3_folder
 
     @property
     def snowflake(self) -> 'V1SnowflakeDataConnection':

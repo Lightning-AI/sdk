@@ -42,39 +42,59 @@ class Update(object):
     """
     swagger_types = {
         'aws': 'V1AwsDataConnection',
+        'efs': 'V1EfsDataConnection',
+        'efs_folder': 'V1EFSFolderDataConnection',
         'gcp': 'V1GcpDataConnection',
+        'gs_folder': 'V1GSFolderDataConnection',
         'name': 'str',
         'run_cmds': 'list[str]',
+        's3_folder': 'V1S3FolderDataConnection',
         'snowflake': 'V1SnowflakeDataConnection',
         'writable': 'bool'
     }
 
     attribute_map = {
         'aws': 'aws',
+        'efs': 'efs',
+        'efs_folder': 'efsFolder',
         'gcp': 'gcp',
+        'gs_folder': 'gsFolder',
         'name': 'name',
         'run_cmds': 'runCmds',
+        's3_folder': 's3Folder',
         'snowflake': 'snowflake',
         'writable': 'writable'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, gcp: 'V1GcpDataConnection' =None, name: 'str' =None, run_cmds: 'list[str]' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsDataConnection' =None, efs_folder: 'V1EFSFolderDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gs_folder: 'V1GSFolderDataConnection' =None, name: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Update - a model defined in Swagger"""  # noqa: E501
         self._aws = None
+        self._efs = None
+        self._efs_folder = None
         self._gcp = None
+        self._gs_folder = None
         self._name = None
         self._run_cmds = None
+        self._s3_folder = None
         self._snowflake = None
         self._writable = None
         self.discriminator = None
         if aws is not None:
             self.aws = aws
+        if efs is not None:
+            self.efs = efs
+        if efs_folder is not None:
+            self.efs_folder = efs_folder
         if gcp is not None:
             self.gcp = gcp
+        if gs_folder is not None:
+            self.gs_folder = gs_folder
         if name is not None:
             self.name = name
         if run_cmds is not None:
             self.run_cmds = run_cmds
+        if s3_folder is not None:
+            self.s3_folder = s3_folder
         if snowflake is not None:
             self.snowflake = snowflake
         if writable is not None:
@@ -102,6 +122,48 @@ class Update(object):
         self._aws = aws
 
     @property
+    def efs(self) -> 'V1EfsDataConnection':
+        """Gets the efs of this Update.  # noqa: E501
+
+
+        :return: The efs of this Update.  # noqa: E501
+        :rtype: V1EfsDataConnection
+        """
+        return self._efs
+
+    @efs.setter
+    def efs(self, efs: 'V1EfsDataConnection'):
+        """Sets the efs of this Update.
+
+
+        :param efs: The efs of this Update.  # noqa: E501
+        :type: V1EfsDataConnection
+        """
+
+        self._efs = efs
+
+    @property
+    def efs_folder(self) -> 'V1EFSFolderDataConnection':
+        """Gets the efs_folder of this Update.  # noqa: E501
+
+
+        :return: The efs_folder of this Update.  # noqa: E501
+        :rtype: V1EFSFolderDataConnection
+        """
+        return self._efs_folder
+
+    @efs_folder.setter
+    def efs_folder(self, efs_folder: 'V1EFSFolderDataConnection'):
+        """Sets the efs_folder of this Update.
+
+
+        :param efs_folder: The efs_folder of this Update.  # noqa: E501
+        :type: V1EFSFolderDataConnection
+        """
+
+        self._efs_folder = efs_folder
+
+    @property
     def gcp(self) -> 'V1GcpDataConnection':
         """Gets the gcp of this Update.  # noqa: E501
 
@@ -121,6 +183,27 @@ class Update(object):
         """
 
         self._gcp = gcp
+
+    @property
+    def gs_folder(self) -> 'V1GSFolderDataConnection':
+        """Gets the gs_folder of this Update.  # noqa: E501
+
+
+        :return: The gs_folder of this Update.  # noqa: E501
+        :rtype: V1GSFolderDataConnection
+        """
+        return self._gs_folder
+
+    @gs_folder.setter
+    def gs_folder(self, gs_folder: 'V1GSFolderDataConnection'):
+        """Sets the gs_folder of this Update.
+
+
+        :param gs_folder: The gs_folder of this Update.  # noqa: E501
+        :type: V1GSFolderDataConnection
+        """
+
+        self._gs_folder = gs_folder
 
     @property
     def name(self) -> 'str':
@@ -163,6 +246,27 @@ class Update(object):
         """
 
         self._run_cmds = run_cmds
+
+    @property
+    def s3_folder(self) -> 'V1S3FolderDataConnection':
+        """Gets the s3_folder of this Update.  # noqa: E501
+
+
+        :return: The s3_folder of this Update.  # noqa: E501
+        :rtype: V1S3FolderDataConnection
+        """
+        return self._s3_folder
+
+    @s3_folder.setter
+    def s3_folder(self, s3_folder: 'V1S3FolderDataConnection'):
+        """Sets the s3_folder of this Update.
+
+
+        :param s3_folder: The s3_folder of this Update.  # noqa: E501
+        :type: V1S3FolderDataConnection
+        """
+
+        self._s3_folder = s3_folder
 
     @property
     def snowflake(self) -> 'V1SnowflakeDataConnection':

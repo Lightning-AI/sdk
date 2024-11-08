@@ -43,27 +43,42 @@ class V1ValidateDataConnectionResponse(object):
     swagger_types = {
         'aws': 'V1AwsDataConnection',
         'efs': 'V1EfsDataConnection',
-        'gcp': 'V1GcpDataConnection'
+        'efs_folder': 'V1EFSFolderDataConnection',
+        'gcp': 'V1GcpDataConnection',
+        'gs_folder': 'V1GSFolderDataConnection',
+        's3_folder': 'V1S3FolderDataConnection'
     }
 
     attribute_map = {
         'aws': 'aws',
         'efs': 'efs',
-        'gcp': 'gcp'
+        'efs_folder': 'efsFolder',
+        'gcp': 'gcp',
+        'gs_folder': 'gsFolder',
+        's3_folder': 's3Folder'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsDataConnection' =None, gcp: 'V1GcpDataConnection' =None):  # noqa: E501
+    def __init__(self, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsDataConnection' =None, efs_folder: 'V1EFSFolderDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gs_folder: 'V1GSFolderDataConnection' =None, s3_folder: 'V1S3FolderDataConnection' =None):  # noqa: E501
         """V1ValidateDataConnectionResponse - a model defined in Swagger"""  # noqa: E501
         self._aws = None
         self._efs = None
+        self._efs_folder = None
         self._gcp = None
+        self._gs_folder = None
+        self._s3_folder = None
         self.discriminator = None
         if aws is not None:
             self.aws = aws
         if efs is not None:
             self.efs = efs
+        if efs_folder is not None:
+            self.efs_folder = efs_folder
         if gcp is not None:
             self.gcp = gcp
+        if gs_folder is not None:
+            self.gs_folder = gs_folder
+        if s3_folder is not None:
+            self.s3_folder = s3_folder
 
     @property
     def aws(self) -> 'V1AwsDataConnection':
@@ -108,6 +123,27 @@ class V1ValidateDataConnectionResponse(object):
         self._efs = efs
 
     @property
+    def efs_folder(self) -> 'V1EFSFolderDataConnection':
+        """Gets the efs_folder of this V1ValidateDataConnectionResponse.  # noqa: E501
+
+
+        :return: The efs_folder of this V1ValidateDataConnectionResponse.  # noqa: E501
+        :rtype: V1EFSFolderDataConnection
+        """
+        return self._efs_folder
+
+    @efs_folder.setter
+    def efs_folder(self, efs_folder: 'V1EFSFolderDataConnection'):
+        """Sets the efs_folder of this V1ValidateDataConnectionResponse.
+
+
+        :param efs_folder: The efs_folder of this V1ValidateDataConnectionResponse.  # noqa: E501
+        :type: V1EFSFolderDataConnection
+        """
+
+        self._efs_folder = efs_folder
+
+    @property
     def gcp(self) -> 'V1GcpDataConnection':
         """Gets the gcp of this V1ValidateDataConnectionResponse.  # noqa: E501
 
@@ -127,6 +163,48 @@ class V1ValidateDataConnectionResponse(object):
         """
 
         self._gcp = gcp
+
+    @property
+    def gs_folder(self) -> 'V1GSFolderDataConnection':
+        """Gets the gs_folder of this V1ValidateDataConnectionResponse.  # noqa: E501
+
+
+        :return: The gs_folder of this V1ValidateDataConnectionResponse.  # noqa: E501
+        :rtype: V1GSFolderDataConnection
+        """
+        return self._gs_folder
+
+    @gs_folder.setter
+    def gs_folder(self, gs_folder: 'V1GSFolderDataConnection'):
+        """Sets the gs_folder of this V1ValidateDataConnectionResponse.
+
+
+        :param gs_folder: The gs_folder of this V1ValidateDataConnectionResponse.  # noqa: E501
+        :type: V1GSFolderDataConnection
+        """
+
+        self._gs_folder = gs_folder
+
+    @property
+    def s3_folder(self) -> 'V1S3FolderDataConnection':
+        """Gets the s3_folder of this V1ValidateDataConnectionResponse.  # noqa: E501
+
+
+        :return: The s3_folder of this V1ValidateDataConnectionResponse.  # noqa: E501
+        :rtype: V1S3FolderDataConnection
+        """
+        return self._s3_folder
+
+    @s3_folder.setter
+    def s3_folder(self, s3_folder: 'V1S3FolderDataConnection'):
+        """Sets the s3_folder of this V1ValidateDataConnectionResponse.
+
+
+        :param s3_folder: The s3_folder of this V1ValidateDataConnectionResponse.  # noqa: E501
+        :type: V1S3FolderDataConnection
+        """
+
+        self._s3_folder = s3_folder
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

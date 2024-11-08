@@ -15,6 +15,7 @@ from lightning_sdk.lightning_cloud.openapi.api.dataset_service_api import Datase
 from lightning_sdk.lightning_cloud.openapi.api.deployment_templates_service_api import DeploymentTemplatesServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api import EndpointServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.experiments_service_api import ExperimentsServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.file_system_service_api import FileSystemServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.jobs_service_api import JobsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api import LightningappInstanceServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_v2_service_api import LightningappV2ServiceApi

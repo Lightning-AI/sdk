@@ -47,7 +47,9 @@ class V1ModelVersionArchive(object):
         'index': 'int',
         'metadata': 'dict(str, str)',
         'model_id': 'str',
+        'number_of_files': 'str',
         'project_id': 'str',
+        'size_bytes': 'str',
         'updated_at': 'datetime',
         'upload_complete': 'bool',
         'user_id': 'str',
@@ -61,14 +63,16 @@ class V1ModelVersionArchive(object):
         'index': 'index',
         'metadata': 'metadata',
         'model_id': 'modelId',
+        'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
+        'size_bytes': 'sizeBytes',
         'updated_at': 'updatedAt',
         'upload_complete': 'uploadComplete',
         'user_id': 'userId',
         'version': 'version'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, index: 'int' =None, metadata: 'dict(str, str)' =None, model_id: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, index: 'int' =None, metadata: 'dict(str, str)' =None, model_id: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, size_bytes: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1ModelVersionArchive - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
@@ -76,7 +80,9 @@ class V1ModelVersionArchive(object):
         self._index = None
         self._metadata = None
         self._model_id = None
+        self._number_of_files = None
         self._project_id = None
+        self._size_bytes = None
         self._updated_at = None
         self._upload_complete = None
         self._user_id = None
@@ -94,8 +100,12 @@ class V1ModelVersionArchive(object):
             self.metadata = metadata
         if model_id is not None:
             self.model_id = model_id
+        if number_of_files is not None:
+            self.number_of_files = number_of_files
         if project_id is not None:
             self.project_id = project_id
+        if size_bytes is not None:
+            self.size_bytes = size_bytes
         if updated_at is not None:
             self.updated_at = updated_at
         if upload_complete is not None:
@@ -232,6 +242,27 @@ class V1ModelVersionArchive(object):
         self._model_id = model_id
 
     @property
+    def number_of_files(self) -> 'str':
+        """Gets the number_of_files of this V1ModelVersionArchive.  # noqa: E501
+
+
+        :return: The number_of_files of this V1ModelVersionArchive.  # noqa: E501
+        :rtype: str
+        """
+        return self._number_of_files
+
+    @number_of_files.setter
+    def number_of_files(self, number_of_files: 'str'):
+        """Sets the number_of_files of this V1ModelVersionArchive.
+
+
+        :param number_of_files: The number_of_files of this V1ModelVersionArchive.  # noqa: E501
+        :type: str
+        """
+
+        self._number_of_files = number_of_files
+
+    @property
     def project_id(self) -> 'str':
         """Gets the project_id of this V1ModelVersionArchive.  # noqa: E501
 
@@ -251,6 +282,27 @@ class V1ModelVersionArchive(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def size_bytes(self) -> 'str':
+        """Gets the size_bytes of this V1ModelVersionArchive.  # noqa: E501
+
+
+        :return: The size_bytes of this V1ModelVersionArchive.  # noqa: E501
+        :rtype: str
+        """
+        return self._size_bytes
+
+    @size_bytes.setter
+    def size_bytes(self, size_bytes: 'str'):
+        """Sets the size_bytes of this V1ModelVersionArchive.
+
+
+        :param size_bytes: The size_bytes of this V1ModelVersionArchive.  # noqa: E501
+        :type: str
+        """
+
+        self._size_bytes = size_bytes
 
     @property
     def updated_at(self) -> 'datetime':

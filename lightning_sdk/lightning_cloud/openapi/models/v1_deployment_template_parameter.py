@@ -44,7 +44,7 @@ class V1DeploymentTemplateParameter(object):
         'input': 'V1Input',
         'long_description': 'str',
         'name': 'str',
-        'placement': 'V1DeploymentTemplateParameterPlacement',
+        'placements': 'list[V1DeploymentTemplateParameterPlacement]',
         'readonly': 'bool',
         'required': 'bool',
         'select': 'V1Select',
@@ -56,7 +56,7 @@ class V1DeploymentTemplateParameter(object):
         'input': 'input',
         'long_description': 'longDescription',
         'name': 'name',
-        'placement': 'placement',
+        'placements': 'placements',
         'readonly': 'readonly',
         'required': 'required',
         'select': 'select',
@@ -64,12 +64,12 @@ class V1DeploymentTemplateParameter(object):
         'type': 'type'
     }
 
-    def __init__(self, input: 'V1Input' =None, long_description: 'str' =None, name: 'str' =None, placement: 'V1DeploymentTemplateParameterPlacement' =None, readonly: 'bool' =None, required: 'bool' =None, select: 'V1Select' =None, short_description: 'str' =None, type: 'V1DeploymentTemplateParameterType' =None):  # noqa: E501
+    def __init__(self, input: 'V1Input' =None, long_description: 'str' =None, name: 'str' =None, placements: 'list[V1DeploymentTemplateParameterPlacement]' =None, readonly: 'bool' =None, required: 'bool' =None, select: 'V1Select' =None, short_description: 'str' =None, type: 'V1DeploymentTemplateParameterType' =None):  # noqa: E501
         """V1DeploymentTemplateParameter - a model defined in Swagger"""  # noqa: E501
         self._input = None
         self._long_description = None
         self._name = None
-        self._placement = None
+        self._placements = None
         self._readonly = None
         self._required = None
         self._select = None
@@ -82,8 +82,8 @@ class V1DeploymentTemplateParameter(object):
             self.long_description = long_description
         if name is not None:
             self.name = name
-        if placement is not None:
-            self.placement = placement
+        if placements is not None:
+            self.placements = placements
         if readonly is not None:
             self.readonly = readonly
         if required is not None:
@@ -159,25 +159,25 @@ class V1DeploymentTemplateParameter(object):
         self._name = name
 
     @property
-    def placement(self) -> 'V1DeploymentTemplateParameterPlacement':
-        """Gets the placement of this V1DeploymentTemplateParameter.  # noqa: E501
+    def placements(self) -> 'list[V1DeploymentTemplateParameterPlacement]':
+        """Gets the placements of this V1DeploymentTemplateParameter.  # noqa: E501
 
 
-        :return: The placement of this V1DeploymentTemplateParameter.  # noqa: E501
-        :rtype: V1DeploymentTemplateParameterPlacement
+        :return: The placements of this V1DeploymentTemplateParameter.  # noqa: E501
+        :rtype: list[V1DeploymentTemplateParameterPlacement]
         """
-        return self._placement
+        return self._placements
 
-    @placement.setter
-    def placement(self, placement: 'V1DeploymentTemplateParameterPlacement'):
-        """Sets the placement of this V1DeploymentTemplateParameter.
+    @placements.setter
+    def placements(self, placements: 'list[V1DeploymentTemplateParameterPlacement]'):
+        """Sets the placements of this V1DeploymentTemplateParameter.
 
 
-        :param placement: The placement of this V1DeploymentTemplateParameter.  # noqa: E501
-        :type: V1DeploymentTemplateParameterPlacement
+        :param placements: The placements of this V1DeploymentTemplateParameter.  # noqa: E501
+        :type: list[V1DeploymentTemplateParameterPlacement]
         """
 
-        self._placement = placement
+        self._placements = placements
 
     @property
     def readonly(self) -> 'bool':

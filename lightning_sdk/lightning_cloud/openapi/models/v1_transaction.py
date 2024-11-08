@@ -43,25 +43,30 @@ class V1Transaction(object):
     swagger_types = {
         'amount': 'float',
         'created_at': 'datetime',
+        'display_name': 'str',
         'type': 'str'
     }
 
     attribute_map = {
         'amount': 'amount',
         'created_at': 'createdAt',
+        'display_name': 'displayName',
         'type': 'type'
     }
 
-    def __init__(self, amount: 'float' =None, created_at: 'datetime' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, amount: 'float' =None, created_at: 'datetime' =None, display_name: 'str' =None, type: 'str' =None):  # noqa: E501
         """V1Transaction - a model defined in Swagger"""  # noqa: E501
         self._amount = None
         self._created_at = None
+        self._display_name = None
         self._type = None
         self.discriminator = None
         if amount is not None:
             self.amount = amount
         if created_at is not None:
             self.created_at = created_at
+        if display_name is not None:
+            self.display_name = display_name
         if type is not None:
             self.type = type
 
@@ -106,6 +111,27 @@ class V1Transaction(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def display_name(self) -> 'str':
+        """Gets the display_name of this V1Transaction.  # noqa: E501
+
+
+        :return: The display_name of this V1Transaction.  # noqa: E501
+        :rtype: str
+        """
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, display_name: 'str'):
+        """Sets the display_name of this V1Transaction.
+
+
+        :param display_name: The display_name of this V1Transaction.  # noqa: E501
+        :type: str
+        """
+
+        self._display_name = display_name
 
     @property
     def type(self) -> 'str':

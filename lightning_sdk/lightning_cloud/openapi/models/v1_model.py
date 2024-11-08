@@ -46,7 +46,7 @@ class V1Model(object):
         'description': 'str',
         'downloads': 'str',
         'id': 'str',
-        'latest_version': 'str',
+        'latest_version': 'V1ModelVersionArchive',
         'license': 'str',
         'model_metadata': 'dict(str, str)',
         'name': 'str',
@@ -74,7 +74,7 @@ class V1Model(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'str' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'V1ModelVersionArchive' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Model - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
@@ -226,22 +226,22 @@ class V1Model(object):
         self._id = id
 
     @property
-    def latest_version(self) -> 'str':
+    def latest_version(self) -> 'V1ModelVersionArchive':
         """Gets the latest_version of this V1Model.  # noqa: E501
 
 
         :return: The latest_version of this V1Model.  # noqa: E501
-        :rtype: str
+        :rtype: V1ModelVersionArchive
         """
         return self._latest_version
 
     @latest_version.setter
-    def latest_version(self, latest_version: 'str'):
+    def latest_version(self, latest_version: 'V1ModelVersionArchive'):
         """Sets the latest_version of this V1Model.
 
 
         :param latest_version: The latest_version of this V1Model.  # noqa: E501
-        :type: str
+        :type: V1ModelVersionArchive
         """
 
         self._latest_version = latest_version
