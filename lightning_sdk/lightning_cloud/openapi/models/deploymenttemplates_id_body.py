@@ -46,11 +46,14 @@ class DeploymenttemplatesIdBody(object):
         'description': 'str',
         'featured': 'bool',
         'image_url': 'str',
+        'metrics': 'list[V1DeploymentMetrics]',
         'name': 'str',
         'org_id': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
         'spec': 'str',
         'tags': 'list[V1ResourceTag]',
+        'thumbnail': 'str',
+        'thumbnail_file_type': 'str',
         'visibility': 'V1DeploymentTemplateType'
     }
 
@@ -60,26 +63,32 @@ class DeploymenttemplatesIdBody(object):
         'description': 'description',
         'featured': 'featured',
         'image_url': 'imageUrl',
+        'metrics': 'metrics',
         'name': 'name',
         'org_id': 'orgId',
         'parameter_spec': 'parameterSpec',
         'spec': 'spec',
         'tags': 'tags',
+        'thumbnail': 'thumbnail',
+        'thumbnail_file_type': 'thumbnailFileType',
         'visibility': 'visibility'
     }
 
-    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, description: 'str' =None, featured: 'bool' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, description: 'str' =None, featured: 'bool' =None, image_url: 'str' =None, metrics: 'list[V1DeploymentMetrics]' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """DeploymenttemplatesIdBody - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._categories = None
         self._description = None
         self._featured = None
         self._image_url = None
+        self._metrics = None
         self._name = None
         self._org_id = None
         self._parameter_spec = None
         self._spec = None
         self._tags = None
+        self._thumbnail = None
+        self._thumbnail_file_type = None
         self._visibility = None
         self.discriminator = None
         if about_page_content is not None:
@@ -92,6 +101,8 @@ class DeploymenttemplatesIdBody(object):
             self.featured = featured
         if image_url is not None:
             self.image_url = image_url
+        if metrics is not None:
+            self.metrics = metrics
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -102,6 +113,10 @@ class DeploymenttemplatesIdBody(object):
             self.spec = spec
         if tags is not None:
             self.tags = tags
+        if thumbnail is not None:
+            self.thumbnail = thumbnail
+        if thumbnail_file_type is not None:
+            self.thumbnail_file_type = thumbnail_file_type
         if visibility is not None:
             self.visibility = visibility
 
@@ -211,6 +226,27 @@ class DeploymenttemplatesIdBody(object):
         self._image_url = image_url
 
     @property
+    def metrics(self) -> 'list[V1DeploymentMetrics]':
+        """Gets the metrics of this DeploymenttemplatesIdBody.  # noqa: E501
+
+
+        :return: The metrics of this DeploymenttemplatesIdBody.  # noqa: E501
+        :rtype: list[V1DeploymentMetrics]
+        """
+        return self._metrics
+
+    @metrics.setter
+    def metrics(self, metrics: 'list[V1DeploymentMetrics]'):
+        """Sets the metrics of this DeploymenttemplatesIdBody.
+
+
+        :param metrics: The metrics of this DeploymenttemplatesIdBody.  # noqa: E501
+        :type: list[V1DeploymentMetrics]
+        """
+
+        self._metrics = metrics
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this DeploymenttemplatesIdBody.  # noqa: E501
 
@@ -314,6 +350,48 @@ class DeploymenttemplatesIdBody(object):
         """
 
         self._tags = tags
+
+    @property
+    def thumbnail(self) -> 'str':
+        """Gets the thumbnail of this DeploymenttemplatesIdBody.  # noqa: E501
+
+
+        :return: The thumbnail of this DeploymenttemplatesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._thumbnail
+
+    @thumbnail.setter
+    def thumbnail(self, thumbnail: 'str'):
+        """Sets the thumbnail of this DeploymenttemplatesIdBody.
+
+
+        :param thumbnail: The thumbnail of this DeploymenttemplatesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._thumbnail = thumbnail
+
+    @property
+    def thumbnail_file_type(self) -> 'str':
+        """Gets the thumbnail_file_type of this DeploymenttemplatesIdBody.  # noqa: E501
+
+
+        :return: The thumbnail_file_type of this DeploymenttemplatesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._thumbnail_file_type
+
+    @thumbnail_file_type.setter
+    def thumbnail_file_type(self, thumbnail_file_type: 'str'):
+        """Sets the thumbnail_file_type of this DeploymenttemplatesIdBody.
+
+
+        :param thumbnail_file_type: The thumbnail_file_type of this DeploymenttemplatesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._thumbnail_file_type = thumbnail_file_type
 
     @property
     def visibility(self) -> 'V1DeploymentTemplateType':

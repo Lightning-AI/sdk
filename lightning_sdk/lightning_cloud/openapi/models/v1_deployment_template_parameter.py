@@ -41,6 +41,8 @@ class V1DeploymentTemplateParameter(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'data_path': 'V1DataPath',
+        'display_name': 'str',
         'input': 'V1Input',
         'long_description': 'str',
         'name': 'str',
@@ -53,6 +55,8 @@ class V1DeploymentTemplateParameter(object):
     }
 
     attribute_map = {
+        'data_path': 'dataPath',
+        'display_name': 'displayName',
         'input': 'input',
         'long_description': 'longDescription',
         'name': 'name',
@@ -64,8 +68,10 @@ class V1DeploymentTemplateParameter(object):
         'type': 'type'
     }
 
-    def __init__(self, input: 'V1Input' =None, long_description: 'str' =None, name: 'str' =None, placements: 'list[V1DeploymentTemplateParameterPlacement]' =None, readonly: 'bool' =None, required: 'bool' =None, select: 'V1Select' =None, short_description: 'str' =None, type: 'V1DeploymentTemplateParameterType' =None):  # noqa: E501
+    def __init__(self, data_path: 'V1DataPath' =None, display_name: 'str' =None, input: 'V1Input' =None, long_description: 'str' =None, name: 'str' =None, placements: 'list[V1DeploymentTemplateParameterPlacement]' =None, readonly: 'bool' =None, required: 'bool' =None, select: 'V1Select' =None, short_description: 'str' =None, type: 'V1DeploymentTemplateParameterType' =None):  # noqa: E501
         """V1DeploymentTemplateParameter - a model defined in Swagger"""  # noqa: E501
+        self._data_path = None
+        self._display_name = None
         self._input = None
         self._long_description = None
         self._name = None
@@ -76,6 +82,10 @@ class V1DeploymentTemplateParameter(object):
         self._short_description = None
         self._type = None
         self.discriminator = None
+        if data_path is not None:
+            self.data_path = data_path
+        if display_name is not None:
+            self.display_name = display_name
         if input is not None:
             self.input = input
         if long_description is not None:
@@ -94,6 +104,48 @@ class V1DeploymentTemplateParameter(object):
             self.short_description = short_description
         if type is not None:
             self.type = type
+
+    @property
+    def data_path(self) -> 'V1DataPath':
+        """Gets the data_path of this V1DeploymentTemplateParameter.  # noqa: E501
+
+
+        :return: The data_path of this V1DeploymentTemplateParameter.  # noqa: E501
+        :rtype: V1DataPath
+        """
+        return self._data_path
+
+    @data_path.setter
+    def data_path(self, data_path: 'V1DataPath'):
+        """Sets the data_path of this V1DeploymentTemplateParameter.
+
+
+        :param data_path: The data_path of this V1DeploymentTemplateParameter.  # noqa: E501
+        :type: V1DataPath
+        """
+
+        self._data_path = data_path
+
+    @property
+    def display_name(self) -> 'str':
+        """Gets the display_name of this V1DeploymentTemplateParameter.  # noqa: E501
+
+
+        :return: The display_name of this V1DeploymentTemplateParameter.  # noqa: E501
+        :rtype: str
+        """
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, display_name: 'str'):
+        """Sets the display_name of this V1DeploymentTemplateParameter.
+
+
+        :param display_name: The display_name of this V1DeploymentTemplateParameter.  # noqa: E501
+        :type: str
+        """
+
+        self._display_name = display_name
 
     @property
     def input(self) -> 'V1Input':

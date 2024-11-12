@@ -54,6 +54,7 @@ class V1DeploymentTemplateSummary(object):
         'name': 'str',
         'org_id': 'str',
         'project_id': 'str',
+        'thumbnail_url': 'str',
         'unpublished': 'bool',
         'updated_at': 'datetime',
         'user_id': 'str',
@@ -74,13 +75,14 @@ class V1DeploymentTemplateSummary(object):
         'name': 'name',
         'org_id': 'orgId',
         'project_id': 'projectId',
+        'thumbnail_url': 'thumbnailUrl',
         'unpublished': 'unpublished',
         'updated_at': 'updatedAt',
         'user_id': 'userId',
         'version': 'version'
     }
 
-    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, thumbnail_url: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1DeploymentTemplateSummary - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._about_page_id = None
@@ -95,6 +97,7 @@ class V1DeploymentTemplateSummary(object):
         self._name = None
         self._org_id = None
         self._project_id = None
+        self._thumbnail_url = None
         self._unpublished = None
         self._updated_at = None
         self._user_id = None
@@ -126,6 +129,8 @@ class V1DeploymentTemplateSummary(object):
             self.org_id = org_id
         if project_id is not None:
             self.project_id = project_id
+        if thumbnail_url is not None:
+            self.thumbnail_url = thumbnail_url
         if unpublished is not None:
             self.unpublished = unpublished
         if updated_at is not None:
@@ -407,6 +412,27 @@ class V1DeploymentTemplateSummary(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def thumbnail_url(self) -> 'str':
+        """Gets the thumbnail_url of this V1DeploymentTemplateSummary.  # noqa: E501
+
+
+        :return: The thumbnail_url of this V1DeploymentTemplateSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._thumbnail_url
+
+    @thumbnail_url.setter
+    def thumbnail_url(self, thumbnail_url: 'str'):
+        """Sets the thumbnail_url of this V1DeploymentTemplateSummary.
+
+
+        :param thumbnail_url: The thumbnail_url of this V1DeploymentTemplateSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._thumbnail_url = thumbnail_url
 
     @property
     def unpublished(self) -> 'bool':

@@ -63,6 +63,7 @@ class V1ClusterAccelerator(object):
         'is_tier_restricted': 'bool',
         'local_disk_size': 'str',
         'local_disk_supported': 'bool',
+        'max_available_quota': 'str',
         'non_spot': 'bool',
         'quota_checked_at': 'datetime',
         'quota_code': 'str',
@@ -101,6 +102,7 @@ class V1ClusterAccelerator(object):
         'is_tier_restricted': 'isTierRestricted',
         'local_disk_size': 'localDiskSize',
         'local_disk_supported': 'localDiskSupported',
+        'max_available_quota': 'maxAvailableQuota',
         'non_spot': 'nonSpot',
         'quota_checked_at': 'quotaCheckedAt',
         'quota_code': 'quotaCode',
@@ -116,7 +118,7 @@ class V1ClusterAccelerator(object):
         'spot_price': 'spotPrice'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, non_spot: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, max_available_quota: 'str' =None, non_spot: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -140,6 +142,7 @@ class V1ClusterAccelerator(object):
         self._is_tier_restricted = None
         self._local_disk_size = None
         self._local_disk_supported = None
+        self._max_available_quota = None
         self._non_spot = None
         self._quota_checked_at = None
         self._quota_code = None
@@ -198,6 +201,8 @@ class V1ClusterAccelerator(object):
             self.local_disk_size = local_disk_size
         if local_disk_supported is not None:
             self.local_disk_supported = local_disk_supported
+        if max_available_quota is not None:
+            self.max_available_quota = max_available_quota
         if non_spot is not None:
             self.non_spot = non_spot
         if quota_checked_at is not None:
@@ -686,6 +691,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._local_disk_supported = local_disk_supported
+
+    @property
+    def max_available_quota(self) -> 'str':
+        """Gets the max_available_quota of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The max_available_quota of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: str
+        """
+        return self._max_available_quota
+
+    @max_available_quota.setter
+    def max_available_quota(self, max_available_quota: 'str'):
+        """Sets the max_available_quota of this V1ClusterAccelerator.
+
+
+        :param max_available_quota: The max_available_quota of this V1ClusterAccelerator.  # noqa: E501
+        :type: str
+        """
+
+        self._max_available_quota = max_available_quota
 
     @property
     def non_spot(self) -> 'bool':

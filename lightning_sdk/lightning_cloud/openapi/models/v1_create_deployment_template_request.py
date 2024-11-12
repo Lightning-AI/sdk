@@ -46,12 +46,15 @@ class V1CreateDeploymentTemplateRequest(object):
         'deployment_id': 'str',
         'description': 'str',
         'image_url': 'str',
+        'metrics': 'list[V1DeploymentMetrics]',
         'name': 'str',
         'org_id': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
         'project_id': 'str',
         'spec': 'str',
         'tags': 'list[V1ResourceTag]',
+        'thumbnail': 'str',
+        'thumbnail_file_type': 'str',
         'version': 'str',
         'visibility': 'V1DeploymentTemplateType'
     }
@@ -62,29 +65,35 @@ class V1CreateDeploymentTemplateRequest(object):
         'deployment_id': 'deploymentId',
         'description': 'description',
         'image_url': 'imageUrl',
+        'metrics': 'metrics',
         'name': 'name',
         'org_id': 'orgId',
         'parameter_spec': 'parameterSpec',
         'project_id': 'projectId',
         'spec': 'spec',
         'tags': 'tags',
+        'thumbnail': 'thumbnail',
+        'thumbnail_file_type': 'thumbnailFileType',
         'version': 'version',
         'visibility': 'visibility'
     }
 
-    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, deployment_id: 'str' =None, description: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, version: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, deployment_id: 'str' =None, description: 'str' =None, image_url: 'str' =None, metrics: 'list[V1DeploymentMetrics]' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, version: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """V1CreateDeploymentTemplateRequest - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._categories = None
         self._deployment_id = None
         self._description = None
         self._image_url = None
+        self._metrics = None
         self._name = None
         self._org_id = None
         self._parameter_spec = None
         self._project_id = None
         self._spec = None
         self._tags = None
+        self._thumbnail = None
+        self._thumbnail_file_type = None
         self._version = None
         self._visibility = None
         self.discriminator = None
@@ -98,6 +107,8 @@ class V1CreateDeploymentTemplateRequest(object):
             self.description = description
         if image_url is not None:
             self.image_url = image_url
+        if metrics is not None:
+            self.metrics = metrics
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -110,6 +121,10 @@ class V1CreateDeploymentTemplateRequest(object):
             self.spec = spec
         if tags is not None:
             self.tags = tags
+        if thumbnail is not None:
+            self.thumbnail = thumbnail
+        if thumbnail_file_type is not None:
+            self.thumbnail_file_type = thumbnail_file_type
         if version is not None:
             self.version = version
         if visibility is not None:
@@ -219,6 +234,27 @@ class V1CreateDeploymentTemplateRequest(object):
         """
 
         self._image_url = image_url
+
+    @property
+    def metrics(self) -> 'list[V1DeploymentMetrics]':
+        """Gets the metrics of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+
+
+        :return: The metrics of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :rtype: list[V1DeploymentMetrics]
+        """
+        return self._metrics
+
+    @metrics.setter
+    def metrics(self, metrics: 'list[V1DeploymentMetrics]'):
+        """Sets the metrics of this V1CreateDeploymentTemplateRequest.
+
+
+        :param metrics: The metrics of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :type: list[V1DeploymentMetrics]
+        """
+
+        self._metrics = metrics
 
     @property
     def name(self) -> 'str':
@@ -345,6 +381,48 @@ class V1CreateDeploymentTemplateRequest(object):
         """
 
         self._tags = tags
+
+    @property
+    def thumbnail(self) -> 'str':
+        """Gets the thumbnail of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+
+
+        :return: The thumbnail of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._thumbnail
+
+    @thumbnail.setter
+    def thumbnail(self, thumbnail: 'str'):
+        """Sets the thumbnail of this V1CreateDeploymentTemplateRequest.
+
+
+        :param thumbnail: The thumbnail of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._thumbnail = thumbnail
+
+    @property
+    def thumbnail_file_type(self) -> 'str':
+        """Gets the thumbnail_file_type of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+
+
+        :return: The thumbnail_file_type of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._thumbnail_file_type
+
+    @thumbnail_file_type.setter
+    def thumbnail_file_type(self, thumbnail_file_type: 'str'):
+        """Sets the thumbnail_file_type of this V1CreateDeploymentTemplateRequest.
+
+
+        :param thumbnail_file_type: The thumbnail_file_type of this V1CreateDeploymentTemplateRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._thumbnail_file_type = thumbnail_file_type
 
     @property
     def version(self) -> 'str':

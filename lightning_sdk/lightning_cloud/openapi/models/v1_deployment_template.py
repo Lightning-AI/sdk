@@ -51,6 +51,7 @@ class V1DeploymentTemplate(object):
         'globally_visible': 'bool',
         'id': 'str',
         'image_url': 'str',
+        'metrics': 'list[V1DeploymentMetrics]',
         'name': 'str',
         'org_id': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
@@ -58,6 +59,8 @@ class V1DeploymentTemplate(object):
         'spec': 'V1JobSpec',
         'spec_v2': 'V1DeploymentSpec',
         'tags': 'list[V1ResourceTag]',
+        'thumbnail_updated_at': 'datetime',
+        'thumbnail_url': 'str',
         'unpublished': 'bool',
         'updated_at': 'datetime',
         'user_id': 'str'
@@ -74,6 +77,7 @@ class V1DeploymentTemplate(object):
         'globally_visible': 'globallyVisible',
         'id': 'id',
         'image_url': 'imageUrl',
+        'metrics': 'metrics',
         'name': 'name',
         'org_id': 'orgId',
         'parameter_spec': 'parameterSpec',
@@ -81,12 +85,14 @@ class V1DeploymentTemplate(object):
         'spec': 'spec',
         'spec_v2': 'specV2',
         'tags': 'tags',
+        'thumbnail_updated_at': 'thumbnailUpdatedAt',
+        'thumbnail_url': 'thumbnailUrl',
         'unpublished': 'unpublished',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, spec_v2: 'V1DeploymentSpec' =None, tags: 'list[V1ResourceTag]' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, metrics: 'list[V1DeploymentMetrics]' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, spec_v2: 'V1DeploymentSpec' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1DeploymentTemplate - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._about_page_id = None
@@ -98,6 +104,7 @@ class V1DeploymentTemplate(object):
         self._globally_visible = None
         self._id = None
         self._image_url = None
+        self._metrics = None
         self._name = None
         self._org_id = None
         self._parameter_spec = None
@@ -105,6 +112,8 @@ class V1DeploymentTemplate(object):
         self._spec = None
         self._spec_v2 = None
         self._tags = None
+        self._thumbnail_updated_at = None
+        self._thumbnail_url = None
         self._unpublished = None
         self._updated_at = None
         self._user_id = None
@@ -129,6 +138,8 @@ class V1DeploymentTemplate(object):
             self.id = id
         if image_url is not None:
             self.image_url = image_url
+        if metrics is not None:
+            self.metrics = metrics
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -143,6 +154,10 @@ class V1DeploymentTemplate(object):
             self.spec_v2 = spec_v2
         if tags is not None:
             self.tags = tags
+        if thumbnail_updated_at is not None:
+            self.thumbnail_updated_at = thumbnail_updated_at
+        if thumbnail_url is not None:
+            self.thumbnail_url = thumbnail_url
         if unpublished is not None:
             self.unpublished = unpublished
         if updated_at is not None:
@@ -361,6 +376,27 @@ class V1DeploymentTemplate(object):
         self._image_url = image_url
 
     @property
+    def metrics(self) -> 'list[V1DeploymentMetrics]':
+        """Gets the metrics of this V1DeploymentTemplate.  # noqa: E501
+
+
+        :return: The metrics of this V1DeploymentTemplate.  # noqa: E501
+        :rtype: list[V1DeploymentMetrics]
+        """
+        return self._metrics
+
+    @metrics.setter
+    def metrics(self, metrics: 'list[V1DeploymentMetrics]'):
+        """Sets the metrics of this V1DeploymentTemplate.
+
+
+        :param metrics: The metrics of this V1DeploymentTemplate.  # noqa: E501
+        :type: list[V1DeploymentMetrics]
+        """
+
+        self._metrics = metrics
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this V1DeploymentTemplate.  # noqa: E501
 
@@ -506,6 +542,48 @@ class V1DeploymentTemplate(object):
         """
 
         self._tags = tags
+
+    @property
+    def thumbnail_updated_at(self) -> 'datetime':
+        """Gets the thumbnail_updated_at of this V1DeploymentTemplate.  # noqa: E501
+
+
+        :return: The thumbnail_updated_at of this V1DeploymentTemplate.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._thumbnail_updated_at
+
+    @thumbnail_updated_at.setter
+    def thumbnail_updated_at(self, thumbnail_updated_at: 'datetime'):
+        """Sets the thumbnail_updated_at of this V1DeploymentTemplate.
+
+
+        :param thumbnail_updated_at: The thumbnail_updated_at of this V1DeploymentTemplate.  # noqa: E501
+        :type: datetime
+        """
+
+        self._thumbnail_updated_at = thumbnail_updated_at
+
+    @property
+    def thumbnail_url(self) -> 'str':
+        """Gets the thumbnail_url of this V1DeploymentTemplate.  # noqa: E501
+
+
+        :return: The thumbnail_url of this V1DeploymentTemplate.  # noqa: E501
+        :rtype: str
+        """
+        return self._thumbnail_url
+
+    @thumbnail_url.setter
+    def thumbnail_url(self, thumbnail_url: 'str'):
+        """Sets the thumbnail_url of this V1DeploymentTemplate.
+
+
+        :param thumbnail_url: The thumbnail_url of this V1DeploymentTemplate.  # noqa: E501
+        :type: str
+        """
+
+        self._thumbnail_url = thumbnail_url
 
     @property
     def unpublished(self) -> 'bool':
