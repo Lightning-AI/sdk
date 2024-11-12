@@ -32,6 +32,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceApi,
     AssistantsServiceApi,
     StorageServiceApi,
+    DeploymentTemplatesServiceApi
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.source_code.logs_socket_api import LightningLogsSocketAPI
@@ -89,6 +90,7 @@ class GridRestClient(
         JobsServiceApi,
         AssistantsServiceApi,
         StorageServiceApi,
+        DeploymentTemplatesServiceApi,
 ):
 
     def __init__(self, api_client: Optional[ApiClient] = None):
