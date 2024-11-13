@@ -1,4 +1,5 @@
 from lightning_sdk.agents import Agent
+from lightning_sdk.ai_hub import AIHub
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noqa: F401
 from lightning_sdk.helpers import _check_version_and_prompt_upgrade
 from lightning_sdk.job import Job
@@ -23,6 +24,7 @@ __all__ = [
     "Teamspace",
     "User",
     "Agent",
+    "AIHub",
 ]
 
 __version__ = "0.1.31"
