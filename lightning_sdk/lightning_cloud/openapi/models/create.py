@@ -50,7 +50,7 @@ class Create(object):
         'efs_folder': 'V1EFSFolderDataConnection',
         'force': 'bool',
         'gcp': 'V1GcpDataConnection',
-        'gs_folder': 'V1GSFolderDataConnection',
+        'gcs_folder': 'V1GCSFolderDataConnection',
         'id': 'str',
         'name': 'str',
         'run_cmds': 'list[str]',
@@ -69,7 +69,7 @@ class Create(object):
         'efs_folder': 'efsFolder',
         'force': 'force',
         'gcp': 'gcp',
-        'gs_folder': 'gsFolder',
+        'gcs_folder': 'gcsFolder',
         'id': 'id',
         'name': 'name',
         'run_cmds': 'runCmds',
@@ -78,7 +78,7 @@ class Create(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsDataConnection' =None, efs_folder: 'V1EFSFolderDataConnection' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, gs_folder: 'V1GSFolderDataConnection' =None, id: 'str' =None, name: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsDataConnection' =None, efs_folder: 'V1EFSFolderDataConnection' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, name: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Create - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._aws = None
@@ -89,7 +89,7 @@ class Create(object):
         self._efs_folder = None
         self._force = None
         self._gcp = None
-        self._gs_folder = None
+        self._gcs_folder = None
         self._id = None
         self._name = None
         self._run_cmds = None
@@ -115,8 +115,8 @@ class Create(object):
             self.force = force
         if gcp is not None:
             self.gcp = gcp
-        if gs_folder is not None:
-            self.gs_folder = gs_folder
+        if gcs_folder is not None:
+            self.gcs_folder = gcs_folder
         if id is not None:
             self.id = id
         if name is not None:
@@ -320,25 +320,25 @@ class Create(object):
         self._gcp = gcp
 
     @property
-    def gs_folder(self) -> 'V1GSFolderDataConnection':
-        """Gets the gs_folder of this Create.  # noqa: E501
+    def gcs_folder(self) -> 'V1GCSFolderDataConnection':
+        """Gets the gcs_folder of this Create.  # noqa: E501
 
 
-        :return: The gs_folder of this Create.  # noqa: E501
-        :rtype: V1GSFolderDataConnection
+        :return: The gcs_folder of this Create.  # noqa: E501
+        :rtype: V1GCSFolderDataConnection
         """
-        return self._gs_folder
+        return self._gcs_folder
 
-    @gs_folder.setter
-    def gs_folder(self, gs_folder: 'V1GSFolderDataConnection'):
-        """Sets the gs_folder of this Create.
+    @gcs_folder.setter
+    def gcs_folder(self, gcs_folder: 'V1GCSFolderDataConnection'):
+        """Sets the gcs_folder of this Create.
 
 
-        :param gs_folder: The gs_folder of this Create.  # noqa: E501
-        :type: V1GSFolderDataConnection
+        :param gcs_folder: The gcs_folder of this Create.  # noqa: E501
+        :type: V1GCSFolderDataConnection
         """
 
-        self._gs_folder = gs_folder
+        self._gcs_folder = gcs_folder
 
     @property
     def id(self) -> 'str':

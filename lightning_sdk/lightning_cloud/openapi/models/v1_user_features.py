@@ -60,6 +60,7 @@ class V1UserFeatures(object):
         'custom_app_domain': 'bool',
         'custom_instance_types': 'bool',
         'default_one_cluster': 'bool',
+        'deployment_data_path': 'bool',
         'deployment_gallery': 'bool',
         'deployment_persistent_disk': 'bool',
         'docs_agent': 'bool',
@@ -79,6 +80,7 @@ class V1UserFeatures(object):
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
         'model_store': 'bool',
+        'multiple_deployment_versions': 'bool',
         'org_level_member_permissions': 'bool',
         'plugin_biz_chat': 'bool',
         'plugin_distributed': 'bool',
@@ -134,6 +136,7 @@ class V1UserFeatures(object):
         'custom_app_domain': 'customAppDomain',
         'custom_instance_types': 'customInstanceTypes',
         'default_one_cluster': 'defaultOneCluster',
+        'deployment_data_path': 'deploymentDataPath',
         'deployment_gallery': 'deploymentGallery',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
         'docs_agent': 'docsAgent',
@@ -153,6 +156,7 @@ class V1UserFeatures(object):
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'model_store': 'modelStore',
+        'multiple_deployment_versions': 'multipleDeploymentVersions',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'plugin_biz_chat': 'pluginBizChat',
         'plugin_distributed': 'pluginDistributed',
@@ -188,7 +192,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, s3_folders: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_data_path: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, multiple_deployment_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, s3_folders: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._advanced_deployment_autoscaling = None
         self._affiliate_links = None
@@ -209,6 +213,7 @@ class V1UserFeatures(object):
         self._custom_app_domain = None
         self._custom_instance_types = None
         self._default_one_cluster = None
+        self._deployment_data_path = None
         self._deployment_gallery = None
         self._deployment_persistent_disk = None
         self._docs_agent = None
@@ -228,6 +233,7 @@ class V1UserFeatures(object):
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
         self._model_store = None
+        self._multiple_deployment_versions = None
         self._org_level_member_permissions = None
         self._plugin_biz_chat = None
         self._plugin_distributed = None
@@ -300,6 +306,8 @@ class V1UserFeatures(object):
             self.custom_instance_types = custom_instance_types
         if default_one_cluster is not None:
             self.default_one_cluster = default_one_cluster
+        if deployment_data_path is not None:
+            self.deployment_data_path = deployment_data_path
         if deployment_gallery is not None:
             self.deployment_gallery = deployment_gallery
         if deployment_persistent_disk is not None:
@@ -338,6 +346,8 @@ class V1UserFeatures(object):
             self.mmt_strategy_selector = mmt_strategy_selector
         if model_store is not None:
             self.model_store = model_store
+        if multiple_deployment_versions is not None:
+            self.multiple_deployment_versions = multiple_deployment_versions
         if org_level_member_permissions is not None:
             self.org_level_member_permissions = org_level_member_permissions
         if plugin_biz_chat is not None:
@@ -805,6 +815,27 @@ class V1UserFeatures(object):
         self._default_one_cluster = default_one_cluster
 
     @property
+    def deployment_data_path(self) -> 'bool':
+        """Gets the deployment_data_path of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The deployment_data_path of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._deployment_data_path
+
+    @deployment_data_path.setter
+    def deployment_data_path(self, deployment_data_path: 'bool'):
+        """Sets the deployment_data_path of this V1UserFeatures.
+
+
+        :param deployment_data_path: The deployment_data_path of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._deployment_data_path = deployment_data_path
+
+    @property
     def deployment_gallery(self) -> 'bool':
         """Gets the deployment_gallery of this V1UserFeatures.  # noqa: E501
 
@@ -1202,6 +1233,27 @@ class V1UserFeatures(object):
         """
 
         self._model_store = model_store
+
+    @property
+    def multiple_deployment_versions(self) -> 'bool':
+        """Gets the multiple_deployment_versions of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The multiple_deployment_versions of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._multiple_deployment_versions
+
+    @multiple_deployment_versions.setter
+    def multiple_deployment_versions(self, multiple_deployment_versions: 'bool'):
+        """Sets the multiple_deployment_versions of this V1UserFeatures.
+
+
+        :param multiple_deployment_versions: The multiple_deployment_versions of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._multiple_deployment_versions = multiple_deployment_versions
 
     @property
     def org_level_member_permissions(self) -> 'bool':

@@ -45,7 +45,7 @@ class Update(object):
         'efs': 'V1EfsDataConnection',
         'efs_folder': 'V1EFSFolderDataConnection',
         'gcp': 'V1GcpDataConnection',
-        'gs_folder': 'V1GSFolderDataConnection',
+        'gcs_folder': 'V1GCSFolderDataConnection',
         'name': 'str',
         'run_cmds': 'list[str]',
         's3_folder': 'V1S3FolderDataConnection',
@@ -58,7 +58,7 @@ class Update(object):
         'efs': 'efs',
         'efs_folder': 'efsFolder',
         'gcp': 'gcp',
-        'gs_folder': 'gsFolder',
+        'gcs_folder': 'gcsFolder',
         'name': 'name',
         'run_cmds': 'runCmds',
         's3_folder': 's3Folder',
@@ -66,13 +66,13 @@ class Update(object):
         'writable': 'writable'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsDataConnection' =None, efs_folder: 'V1EFSFolderDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gs_folder: 'V1GSFolderDataConnection' =None, name: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsDataConnection' =None, efs_folder: 'V1EFSFolderDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Update - a model defined in Swagger"""  # noqa: E501
         self._aws = None
         self._efs = None
         self._efs_folder = None
         self._gcp = None
-        self._gs_folder = None
+        self._gcs_folder = None
         self._name = None
         self._run_cmds = None
         self._s3_folder = None
@@ -87,8 +87,8 @@ class Update(object):
             self.efs_folder = efs_folder
         if gcp is not None:
             self.gcp = gcp
-        if gs_folder is not None:
-            self.gs_folder = gs_folder
+        if gcs_folder is not None:
+            self.gcs_folder = gcs_folder
         if name is not None:
             self.name = name
         if run_cmds is not None:
@@ -185,25 +185,25 @@ class Update(object):
         self._gcp = gcp
 
     @property
-    def gs_folder(self) -> 'V1GSFolderDataConnection':
-        """Gets the gs_folder of this Update.  # noqa: E501
+    def gcs_folder(self) -> 'V1GCSFolderDataConnection':
+        """Gets the gcs_folder of this Update.  # noqa: E501
 
 
-        :return: The gs_folder of this Update.  # noqa: E501
-        :rtype: V1GSFolderDataConnection
+        :return: The gcs_folder of this Update.  # noqa: E501
+        :rtype: V1GCSFolderDataConnection
         """
-        return self._gs_folder
+        return self._gcs_folder
 
-    @gs_folder.setter
-    def gs_folder(self, gs_folder: 'V1GSFolderDataConnection'):
-        """Sets the gs_folder of this Update.
+    @gcs_folder.setter
+    def gcs_folder(self, gcs_folder: 'V1GCSFolderDataConnection'):
+        """Sets the gcs_folder of this Update.
 
 
-        :param gs_folder: The gs_folder of this Update.  # noqa: E501
-        :type: V1GSFolderDataConnection
+        :param gcs_folder: The gcs_folder of this Update.  # noqa: E501
+        :type: V1GCSFolderDataConnection
         """
 
-        self._gs_folder = gs_folder
+        self._gcs_folder = gcs_folder
 
     @property
     def name(self) -> 'str':

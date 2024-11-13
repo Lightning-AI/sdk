@@ -47,7 +47,7 @@ class Validate(object):
         'efs': 'V1EfsDataConnection',
         'efs_folder': 'V1EFSFolderDataConnection',
         'gcp': 'V1GcpDataConnection',
-        'gs_folder': 'V1GSFolderDataConnection',
+        'gcs_folder': 'V1GCSFolderDataConnection',
         's3_folder': 'V1S3FolderDataConnection'
     }
 
@@ -58,11 +58,11 @@ class Validate(object):
         'efs': 'efs',
         'efs_folder': 'efsFolder',
         'gcp': 'gcp',
-        'gs_folder': 'gsFolder',
+        'gcs_folder': 'gcsFolder',
         's3_folder': 's3Folder'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, check_is_public: 'bool' =None, cluster_ids: 'list[str]' =None, efs: 'V1EfsDataConnection' =None, efs_folder: 'V1EFSFolderDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gs_folder: 'V1GSFolderDataConnection' =None, s3_folder: 'V1S3FolderDataConnection' =None):  # noqa: E501
+    def __init__(self, aws: 'V1AwsDataConnection' =None, check_is_public: 'bool' =None, cluster_ids: 'list[str]' =None, efs: 'V1EfsDataConnection' =None, efs_folder: 'V1EFSFolderDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, s3_folder: 'V1S3FolderDataConnection' =None):  # noqa: E501
         """Validate - a model defined in Swagger"""  # noqa: E501
         self._aws = None
         self._check_is_public = None
@@ -70,7 +70,7 @@ class Validate(object):
         self._efs = None
         self._efs_folder = None
         self._gcp = None
-        self._gs_folder = None
+        self._gcs_folder = None
         self._s3_folder = None
         self.discriminator = None
         if aws is not None:
@@ -85,8 +85,8 @@ class Validate(object):
             self.efs_folder = efs_folder
         if gcp is not None:
             self.gcp = gcp
-        if gs_folder is not None:
-            self.gs_folder = gs_folder
+        if gcs_folder is not None:
+            self.gcs_folder = gcs_folder
         if s3_folder is not None:
             self.s3_folder = s3_folder
 
@@ -217,25 +217,25 @@ class Validate(object):
         self._gcp = gcp
 
     @property
-    def gs_folder(self) -> 'V1GSFolderDataConnection':
-        """Gets the gs_folder of this Validate.  # noqa: E501
+    def gcs_folder(self) -> 'V1GCSFolderDataConnection':
+        """Gets the gcs_folder of this Validate.  # noqa: E501
 
 
-        :return: The gs_folder of this Validate.  # noqa: E501
-        :rtype: V1GSFolderDataConnection
+        :return: The gcs_folder of this Validate.  # noqa: E501
+        :rtype: V1GCSFolderDataConnection
         """
-        return self._gs_folder
+        return self._gcs_folder
 
-    @gs_folder.setter
-    def gs_folder(self, gs_folder: 'V1GSFolderDataConnection'):
-        """Sets the gs_folder of this Validate.
+    @gcs_folder.setter
+    def gcs_folder(self, gcs_folder: 'V1GCSFolderDataConnection'):
+        """Sets the gcs_folder of this Validate.
 
 
-        :param gs_folder: The gs_folder of this Validate.  # noqa: E501
-        :type: V1GSFolderDataConnection
+        :param gcs_folder: The gcs_folder of this Validate.  # noqa: E501
+        :type: V1GCSFolderDataConnection
         """
 
-        self._gs_folder = gs_folder
+        self._gcs_folder = gcs_folder
 
     @property
     def s3_folder(self) -> 'V1S3FolderDataConnection':

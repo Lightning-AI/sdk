@@ -61,6 +61,7 @@ class V1JobSpec(object):
         'skip_data_connections_setup': 'bool',
         'skip_filesystem_setup': 'bool',
         'spot': 'bool',
+        'uploaded_data': 'list[V1UploadData]',
         'volumes': 'list[V1Volume]'
     }
 
@@ -85,10 +86,11 @@ class V1JobSpec(object):
         'skip_data_connections_setup': 'skipDataConnectionsSetup',
         'skip_filesystem_setup': 'skipFilesystemSetup',
         'spot': 'spot',
+        'uploaded_data': 'uploadedData',
         'volumes': 'volumes'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_symlinks: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_symlinks: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, uploaded_data: 'list[V1UploadData]' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -110,6 +112,7 @@ class V1JobSpec(object):
         self._skip_data_connections_setup = None
         self._skip_filesystem_setup = None
         self._spot = None
+        self._uploaded_data = None
         self._volumes = None
         self.discriminator = None
         if cloudspace_id is not None:
@@ -152,6 +155,8 @@ class V1JobSpec(object):
             self.skip_filesystem_setup = skip_filesystem_setup
         if spot is not None:
             self.spot = spot
+        if uploaded_data is not None:
+            self.uploaded_data = uploaded_data
         if volumes is not None:
             self.volumes = volumes
 
@@ -574,6 +579,27 @@ class V1JobSpec(object):
         """
 
         self._spot = spot
+
+    @property
+    def uploaded_data(self) -> 'list[V1UploadData]':
+        """Gets the uploaded_data of this V1JobSpec.  # noqa: E501
+
+
+        :return: The uploaded_data of this V1JobSpec.  # noqa: E501
+        :rtype: list[V1UploadData]
+        """
+        return self._uploaded_data
+
+    @uploaded_data.setter
+    def uploaded_data(self, uploaded_data: 'list[V1UploadData]'):
+        """Sets the uploaded_data of this V1JobSpec.
+
+
+        :param uploaded_data: The uploaded_data of this V1JobSpec.  # noqa: E501
+        :type: list[V1UploadData]
+        """
+
+        self._uploaded_data = uploaded_data
 
     @property
     def volumes(self) -> 'list[V1Volume]':
