@@ -76,13 +76,14 @@ class _Uploads(_StudiosMenu):
         if remote_path is None:
             remote_path = os.path.basename(path)
 
+        if not Path(path).exists():
+            raise FileNotFoundError(f"The provided path does not exist: {path}.")
+        if not Path(path).is_dir():
+            raise StudioCliError(f"The provided path is not a folder: {path}. Use `lightning upload file` instead.")
+
         selected_studio = self._resolve_studio(studio)
 
         print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
-        if not Path(path).exists:
-            raise FileNotFoundError(f"The provided path does not exist: {path}.")
-        if not Path(path).is_dir:
-            raise StudioCliError(f"The provided path is not a folder: {path}. Use `lightning upload file` instead.")
 
         pairs = {}
         for root, _, files in os.walk(path):
@@ -130,11 +131,14 @@ class _Uploads(_StudiosMenu):
         if remote_path is None:
             remote_path = os.path.basename(path)
 
+        if Path(path).is_dir():
+            raise StudioCliError(f"The provided path is a folder: {path}. Use `lightning upload folder` instead.")
+        if not Path(path).exists():
+            raise FileNotFoundError(f"The provided path does not exist: {path}.")
+
         selected_studio = self._resolve_studio(studio)
 
         print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
-        if Path(path).is_dir:
-            raise StudioCliError(f"The provided path is a folder: {path}. Use `lightning upload folder` instead.")
 
         self._single_file_upload(selected_studio, path, remote_path, True)
 
