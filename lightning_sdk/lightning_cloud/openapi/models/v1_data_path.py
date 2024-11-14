@@ -42,21 +42,26 @@ class V1DataPath(object):
     """
     swagger_types = {
         'single_file': 'bool',
+        'stored_path': 'str',
         'target_path': 'str'
     }
 
     attribute_map = {
         'single_file': 'singleFile',
+        'stored_path': 'storedPath',
         'target_path': 'targetPath'
     }
 
-    def __init__(self, single_file: 'bool' =None, target_path: 'str' =None):  # noqa: E501
+    def __init__(self, single_file: 'bool' =None, stored_path: 'str' =None, target_path: 'str' =None):  # noqa: E501
         """V1DataPath - a model defined in Swagger"""  # noqa: E501
         self._single_file = None
+        self._stored_path = None
         self._target_path = None
         self.discriminator = None
         if single_file is not None:
             self.single_file = single_file
+        if stored_path is not None:
+            self.stored_path = stored_path
         if target_path is not None:
             self.target_path = target_path
 
@@ -80,6 +85,27 @@ class V1DataPath(object):
         """
 
         self._single_file = single_file
+
+    @property
+    def stored_path(self) -> 'str':
+        """Gets the stored_path of this V1DataPath.  # noqa: E501
+
+
+        :return: The stored_path of this V1DataPath.  # noqa: E501
+        :rtype: str
+        """
+        return self._stored_path
+
+    @stored_path.setter
+    def stored_path(self, stored_path: 'str'):
+        """Sets the stored_path of this V1DataPath.
+
+
+        :param stored_path: The stored_path of this V1DataPath.  # noqa: E501
+        :type: str
+        """
+
+        self._stored_path = stored_path
 
     @property
     def target_path(self) -> 'str':

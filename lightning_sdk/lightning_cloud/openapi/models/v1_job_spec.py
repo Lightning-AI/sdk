@@ -45,6 +45,7 @@ class V1JobSpec(object):
         'cluster_id': 'str',
         'command': 'str',
         'created_symlinks': 'bool',
+        'data_paths': 'list[V1DataPath]',
         'entrypoint': 'str',
         'env': 'list[V1EnvVar]',
         'image': 'str',
@@ -61,7 +62,6 @@ class V1JobSpec(object):
         'skip_data_connections_setup': 'bool',
         'skip_filesystem_setup': 'bool',
         'spot': 'bool',
-        'uploaded_data': 'list[V1UploadData]',
         'volumes': 'list[V1Volume]'
     }
 
@@ -70,6 +70,7 @@ class V1JobSpec(object):
         'cluster_id': 'clusterId',
         'command': 'command',
         'created_symlinks': 'createdSymlinks',
+        'data_paths': 'dataPaths',
         'entrypoint': 'entrypoint',
         'env': 'env',
         'image': 'image',
@@ -86,16 +87,16 @@ class V1JobSpec(object):
         'skip_data_connections_setup': 'skipDataConnectionsSetup',
         'skip_filesystem_setup': 'skipFilesystemSetup',
         'spot': 'spot',
-        'uploaded_data': 'uploadedData',
         'volumes': 'volumes'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_symlinks: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, uploaded_data: 'list[V1UploadData]' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_symlinks: 'bool' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
         self._created_symlinks = None
+        self._data_paths = None
         self._entrypoint = None
         self._env = None
         self._image = None
@@ -112,7 +113,6 @@ class V1JobSpec(object):
         self._skip_data_connections_setup = None
         self._skip_filesystem_setup = None
         self._spot = None
-        self._uploaded_data = None
         self._volumes = None
         self.discriminator = None
         if cloudspace_id is not None:
@@ -123,6 +123,8 @@ class V1JobSpec(object):
             self.command = command
         if created_symlinks is not None:
             self.created_symlinks = created_symlinks
+        if data_paths is not None:
+            self.data_paths = data_paths
         if entrypoint is not None:
             self.entrypoint = entrypoint
         if env is not None:
@@ -155,8 +157,6 @@ class V1JobSpec(object):
             self.skip_filesystem_setup = skip_filesystem_setup
         if spot is not None:
             self.spot = spot
-        if uploaded_data is not None:
-            self.uploaded_data = uploaded_data
         if volumes is not None:
             self.volumes = volumes
 
@@ -243,6 +243,27 @@ class V1JobSpec(object):
         """
 
         self._created_symlinks = created_symlinks
+
+    @property
+    def data_paths(self) -> 'list[V1DataPath]':
+        """Gets the data_paths of this V1JobSpec.  # noqa: E501
+
+
+        :return: The data_paths of this V1JobSpec.  # noqa: E501
+        :rtype: list[V1DataPath]
+        """
+        return self._data_paths
+
+    @data_paths.setter
+    def data_paths(self, data_paths: 'list[V1DataPath]'):
+        """Sets the data_paths of this V1JobSpec.
+
+
+        :param data_paths: The data_paths of this V1JobSpec.  # noqa: E501
+        :type: list[V1DataPath]
+        """
+
+        self._data_paths = data_paths
 
     @property
     def entrypoint(self) -> 'str':
@@ -579,27 +600,6 @@ class V1JobSpec(object):
         """
 
         self._spot = spot
-
-    @property
-    def uploaded_data(self) -> 'list[V1UploadData]':
-        """Gets the uploaded_data of this V1JobSpec.  # noqa: E501
-
-
-        :return: The uploaded_data of this V1JobSpec.  # noqa: E501
-        :rtype: list[V1UploadData]
-        """
-        return self._uploaded_data
-
-    @uploaded_data.setter
-    def uploaded_data(self, uploaded_data: 'list[V1UploadData]'):
-        """Sets the uploaded_data of this V1JobSpec.
-
-
-        :param uploaded_data: The uploaded_data of this V1JobSpec.  # noqa: E501
-        :type: list[V1UploadData]
-        """
-
-        self._uploaded_data = uploaded_data
 
     @property
     def volumes(self) -> 'list[V1Volume]':
