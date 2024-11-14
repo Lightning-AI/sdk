@@ -9,7 +9,7 @@ def test_user_api(internal_user_api_mocker, monkeypatch):
     user_api = UserApi()
 
     user = user_api.get_user("user-abc")
-    assert isinstance(user, V1SearchUser)
+    assert isinstance(user, V1GetUserResponse)
 
 
 def test_user_api_valueerror(internal_user_api_mocker, monkeypatch):

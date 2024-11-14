@@ -82,6 +82,12 @@ def internal_user_api_mocker(mocker, internal_auth_mocker):
         autospec=True,
     )
 
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
+        return_value=V1GetUserResponse(id="user-abc", username="user-abc"),
+        autospec=True,
+    )
+
     yield [mocker, internal_auth_mocker]
 
     mocker.resetall()
@@ -494,6 +500,11 @@ def internal_studio_api_mocker_duplicate_user(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users",
         return_value=V1SearchUsersResponse(users=[V1SearchUser(id="user-abc", username="user-abc")]),
+        autospec=True,
+    )
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
+        return_value=V1GetUserResponse(id="user-abc", username="user-abc"),
         autospec=True,
     )
     mocker.patch(

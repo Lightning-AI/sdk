@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
@@ -19,8 +19,14 @@ class UserApi:
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=7)
 
-    def get_user(self, name: str) -> V1SearchUser:
+    def get_user(self, name: str) -> Union[V1SearchUser, V1GetUserResponse]:
         """Gets user by name."""
+        authed_user = self._client.auth_service_get_user()
+        if authed_user.username == name:
+            return authed_user
+
+        # if it's not the authed user, lookup by name
+        # TODO: This API won't necesarily return the correct thing
         response = self._client.user_service_search_users(query=name)
 
         users = [u for u in response.users if u.username == name]
