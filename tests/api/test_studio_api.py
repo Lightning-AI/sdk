@@ -69,18 +69,12 @@ def test_get_studio_status(internal_studio_api_mocker_studio_status):
         Machine.A100_X_8,
         Machine.H100_X_8,
         Machine.H200_X_8,
+        "trn1.2xlarge",
     ),
 )
 def test_switch_studio_machine(internal_studio_api_mocker_switch_machine, machine):
     studio_api = StudioApi()
     studio_api.switch_studio_machine("st-abc", "ts-abc", machine, False)
-
-
-def test_switch_studio_machine_wrong_machine(internal_studio_api_mocker_switch_machine):
-    studio_api = StudioApi()
-
-    with pytest.raises(KeyError, match="foo"):
-        studio_api.switch_studio_machine("st-abc", "ts-abc", "foo", False)
 
 
 def test_start_studio(internal_studio_api_mocker_start_studio):

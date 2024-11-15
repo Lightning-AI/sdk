@@ -2,7 +2,8 @@ import pytest
 from unittest import mock
 from unittest.mock import Mock, AsyncMock, mock_open, MagicMock, ANY, PropertyMock
 import lightning_sdk.api.utils
-from lightning_sdk.api.utils import _download_model_files, _ModelFileUploader, _FileUploader, _FileDownloader
+from lightning_sdk.machine import Machine
+from lightning_sdk.api.utils import _machine_to_compute_name, _download_model_files, _ModelFileUploader, _FileUploader, _FileDownloader
 from lightning_sdk.lightning_cloud.openapi import (
     ProjectIdStorageBody,
     V1SignedUrl,
@@ -31,6 +32,19 @@ def _make_mocked_file_uploader(monkeypatch, file_path, remote_path):
 def test_file_uploader_path_exists(monkeypatch):
     with pytest.raises(FileNotFoundError):
         _make_mocked_file_uploader(monkeypatch, file_path="not-exist", remote_path="any")
+
+
+@pytest.mark.parametrize(
+    "machine,compute_name",
+    [
+        (Machine.CPU, "cpu-4"),
+        (Machine.L40S_X_8, "g6e.48xlarge"),
+        ("trn1.2xlarge", "trn1.2xlarge"),
+    ],
+)
+def test_machine_to_compute_name(machine, compute_name):
+    assert _machine_to_compute_name(machine) == compute_name
+
 
 
 @mock.patch("lightning_sdk.api.utils.requests")

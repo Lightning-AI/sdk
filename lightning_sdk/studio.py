@@ -3,6 +3,7 @@ import warnings
 from typing import TYPE_CHECKING, Any, Mapping, Optional, Tuple, Union
 
 from lightning_sdk.api.studio_api import StudioApi
+from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.machine import Machine
 from lightning_sdk.organization import Organization
@@ -145,14 +146,14 @@ class Studio:
         """Returns the cluster the Studio is running on."""
         return self._studio.cluster_id
 
-    def start(self, machine: Machine = Machine.CPU, interruptible: bool = False) -> None:
+    def start(self, machine: Union[Machine, str] = Machine.CPU, interruptible: bool = False) -> None:
         """Starts a Studio on the specified machine type (default: CPU-4)."""
         status = self.status
         if status == Status.Running:
-            curr_machine = self.machine
-            if curr_machine != machine:
+            curr_machine = _machine_to_compute_name(self.machine) if self.machine is not None else None
+            if curr_machine != _machine_to_compute_name(machine):
                 raise RuntimeError(
-                    f"Requested to start studio on {machine}, but studio is already running on {curr_machine}."
+                    f"Requested to start studio on {machine}, but studio is already running on {self.machine}."
                     " Consider switching instead!"
                 )
             _logger.info(f"Studio {self.name} is already running")
@@ -180,7 +181,7 @@ class Studio:
         kwargs = self._studio_api.duplicate_studio(self._studio.id, self._teamspace.id, self._teamspace.id)
         return Studio(**kwargs)
 
-    def switch_machine(self, machine: Machine, interruptible: bool = False) -> None:
+    def switch_machine(self, machine: Union[Machine, str], interruptible: bool = False) -> None:
         """Switches machine to the provided machine type/.
 
         Args:

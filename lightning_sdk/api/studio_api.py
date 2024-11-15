@@ -5,7 +5,7 @@ import time
 import warnings
 import zipfile
 from threading import Event, Thread
-from typing import Any, Dict, Mapping, Optional, Tuple
+from typing import Any, Dict, Mapping, Optional, Tuple, Union
 
 import backoff
 import requests
@@ -18,6 +18,7 @@ from lightning_sdk.api.utils import (
     _DummyBody,
     _DummyResponse,
     _FileUploader,
+    _machine_to_compute_name,
     _sanitize_studio_remote_path,
 )
 from lightning_sdk.api.utils import (
@@ -146,9 +147,11 @@ class StudioApi:
         """Retries checking the sync_in_progress value of the code status when there's an AttributeError."""
         return self.get_studio_status(studio_id, teamspace_id).in_use.sync_in_progress
 
-    def start_studio(self, studio_id: str, teamspace_id: str, machine: Machine, interruptible: False) -> None:
+    def start_studio(
+        self, studio_id: str, teamspace_id: str, machine: Union[Machine, str], interruptible: False
+    ) -> None:
         """Start an existing Studio."""
-        if machine == Machine.CPU_SMALL:
+        if _machine_to_compute_name(machine) == _machine_to_compute_name(Machine.CPU_SMALL):
             warnings.warn(
                 f"{Machine.CPU_SMALL} is not a valid machine for starting a Studio. "
                 "It is reserved for running jobs only. "
@@ -158,7 +161,7 @@ class StudioApi:
 
         self._client.cloud_space_service_start_cloud_space_instance(
             IdStartBody(
-                compute_config=V1UserRequestedComputeConfig(name=_MACHINE_TO_COMPUTE_NAME[machine], spot=interruptible)
+                compute_config=V1UserRequestedComputeConfig(name=_machine_to_compute_name(machine), spot=interruptible)
             ),
             teamspace_id,
             studio_id,
@@ -204,9 +207,11 @@ class StudioApi:
     def _get_studio_instance_status_from_object(self, studio: V1CloudSpace) -> Optional[str]:
         return getattr(getattr(studio.code_status, "in_use", None), "phase", None)
 
-    def _request_switch(self, studio_id: str, teamspace_id: str, machine: Machine, interruptible: bool) -> None:
+    def _request_switch(
+        self, studio_id: str, teamspace_id: str, machine: Union[Machine, str], interruptible: bool
+    ) -> None:
         """Switches given Studio to a new machine type."""
-        if machine == Machine.CPU_SMALL:
+        if _machine_to_compute_name(machine) == _machine_to_compute_name(Machine.CPU_SMALL):
             warnings.warn(
                 f"{Machine.CPU_SMALL} is not a valid machine for switching a Studio. "
                 "It is reserved for running jobs only. "
@@ -214,7 +219,7 @@ class StudioApi:
             )
             machine = Machine.CPU
 
-        compute_name = _MACHINE_TO_COMPUTE_NAME[machine]
+        compute_name = _machine_to_compute_name(machine)
         # TODO: UI sends disk size here, maybe we need to also?
         body = IdCodeconfigBody(compute_config=V1UserRequestedComputeConfig(name=compute_name, spot=interruptible))
         self._client.cloud_space_service_update_cloud_space_instance_config(
@@ -223,7 +228,9 @@ class StudioApi:
             body=body,
         )
 
-    def switch_studio_machine(self, studio_id: str, teamspace_id: str, machine: Machine, interruptible: bool) -> None:
+    def switch_studio_machine(
+        self, studio_id: str, teamspace_id: str, machine: Union[Machine, str], interruptible: bool
+    ) -> None:
         """Switches given Studio to a new machine type."""
         self._request_switch(
             studio_id=studio_id, teamspace_id=teamspace_id, machine=machine, interruptible=interruptible

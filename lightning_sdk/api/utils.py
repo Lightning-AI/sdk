@@ -4,7 +4,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import backoff
 import requests
@@ -339,6 +339,13 @@ _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
     Machine.H100_X_8: "p5.48xlarge",
     Machine.H200_X_8: "p5e.48xlarge",
 }
+
+
+def _machine_to_compute_name(machine: Union[Machine, str]) -> str:
+    if isinstance(machine, Machine):
+        return _MACHINE_TO_COMPUTE_NAME[machine]
+    return machine
+
 
 _COMPUTE_NAME_TO_MACHINE: Dict[str, Machine] = {v: k for k, v in _MACHINE_TO_COMPUTE_NAME.items()}
 
