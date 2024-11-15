@@ -1,6 +1,12 @@
-from typing import Dict, List
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
-from lightning_sdk.api.ai_hub_api import AIHubApi
+from lightning_sdk.api import AIHubApi, UserApi
+from lightning_sdk.lightning_cloud import login
+from lightning_sdk.user import User
+from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace
+
+if TYPE_CHECKING:
+    from lightning_sdk import Organization, Teamspace
 
 
 class AIHub:
@@ -13,6 +19,7 @@ class AIHub:
 
     def __init__(self) -> None:
         self._api = AIHubApi()
+        self._auth = None
 
     def list_apis(self) -> List[Dict[str, str]]:
         """Get a list of AI Hub API templates."""
@@ -24,6 +31,65 @@ class AIHub:
                 "name": template.name,
                 "description": template.description,
                 "creator_username": template.creator_username,
+                "created_on": template.creation_timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                if template.creation_timestamp
+                else None,
             }
             results.append(result)
         return results
+
+    def _authenticate(
+        self,
+        teamspace: Optional[Union[str, "Teamspace"]] = None,
+        org: Optional[Union[str, "Organization"]] = None,
+        user: Optional[Union[str, "User"]] = None,
+    ) -> "Teamspace":
+        if self._auth is None:
+            self._auth = login.Auth()
+        try:
+            self._auth.authenticate()
+            user = User(name=UserApi()._get_user_by_id(self._auth.user_id).username)
+        except ConnectionError as e:
+            raise e
+
+        org = _resolve_org(org)
+        teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user if org is None else None)
+        if teamspace is None:
+            raise ValueError("You need to pass a teamspace or an org for your deployment.")
+        return teamspace
+
+    def deploy(
+        self,
+        api_id: str,
+        cluster_id: str,
+        name: Optional[str] = None,
+        teamspace: Optional[Union[str, "Teamspace"]] = None,
+        org: Optional[Union[str, "Organization"]] = None,
+    ) -> Dict[str, Union[str, bool]]:
+        """Deploy an API from the AI Hub.
+
+        Args:
+            api_id: The ID of the API you want to deploy.
+            cluster_id: The ID of the cluster where you want to deploy the API. Such as "lightning-public-prod"
+            name: Name for the deployed API. Defaults to None.
+            teamspace: The team or group for deployment. Defaults to None.
+            org: The organization for deployment. Defaults to None.
+
+        Returns:
+            A dictionary containing the name of the deployed API,
+            the URL to access it, and whether it is interruptible.
+
+        Raises:
+            ValueError: If a teamspace or organization is not provided.
+            ConnectionError: If there is an issue with logging in.
+        """
+        teamspace = self._authenticate(teamspace, org)
+        teamspace_id = teamspace.id
+
+        deployment = self._api.deploy_api(template_id=api_id, cluster_id=cluster_id, project_id=teamspace_id, name=name)
+        return {
+            "id": deployment.id,
+            "name": deployment.name,
+            "base_url": deployment.status.urls[0],
+            "interruptible": deployment.spec.spot,
+        }

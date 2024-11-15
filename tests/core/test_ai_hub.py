@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 from lightning_sdk import AIHub
 
 
-def test_ai_hub_list_apis():
+def test_list_apis():
     hub = AIHub()
     hub._api._client = MagicMock()
     hub._api._client.deployment_templates_service_list_published_deployment_templates = MagicMock(
@@ -16,3 +16,22 @@ def test_ai_hub_list_apis():
     assert len(templates) == 3, "service api returns 3 API templates"
     assert isinstance(templates[0], dict), "AIHub.list_model returns a list of dict"
     assert templates[0].get("description") == "Description1", f"First item {templates[0]} should have description=Description1"
+
+def test_deploy():
+    class FakeResponse:
+        id = "dep_xxxxx"
+        name = "New API"
+        status = MagicMock(urls=["http://lightning.ai/example"])
+        spec=MagicMock(spot=True)
+    template_id = "temp_01jxxxxxxxxx"
+    hub = AIHub()
+    hub._authenticate = MagicMock(return_value=MagicMock(id=template_id))
+    hub._api._client = MagicMock()
+    hub._api._client.deployment_templates_service_get_deployment_template = MagicMock(return_value=MagicMock(name="My API"))
+    hub._api._client.jobs_service_create_deployment = MagicMock(
+        return_value=FakeResponse()
+    )
+
+    deployment = hub.deploy(template_id, cluster_id="public-prod", name="New API")
+    assert deployment["name"] == "New API"
+    assert deployment["base_url"] == "http://lightning.ai/example"
