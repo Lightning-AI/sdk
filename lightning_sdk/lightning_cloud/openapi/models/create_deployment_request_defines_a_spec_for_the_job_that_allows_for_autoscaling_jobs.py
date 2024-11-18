@@ -45,6 +45,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'cluster_id': 'str',
         'endpoint': 'V1Endpoint',
         'name': 'str',
+        'parameter_spec': 'V1ParameterizationSpec',
         'replicas': 'int',
         'spec': 'V1JobSpec',
         'strategy': 'V1DeploymentStrategy'
@@ -55,17 +56,19 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'cluster_id': 'clusterId',
         'endpoint': 'endpoint',
         'name': 'name',
+        'parameter_spec': 'parameterSpec',
         'replicas': 'replicas',
         'spec': 'spec',
         'strategy': 'strategy'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
         self._cluster_id = None
         self._endpoint = None
         self._name = None
+        self._parameter_spec = None
         self._replicas = None
         self._spec = None
         self._strategy = None
@@ -78,6 +81,8 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
             self.endpoint = endpoint
         if name is not None:
             self.name = name
+        if parameter_spec is not None:
+            self.parameter_spec = parameter_spec
         if replicas is not None:
             self.replicas = replicas
         if spec is not None:
@@ -168,6 +173,27 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         """
 
         self._name = name
+
+    @property
+    def parameter_spec(self) -> 'V1ParameterizationSpec':
+        """Gets the parameter_spec of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+
+
+        :return: The parameter_spec of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :rtype: V1ParameterizationSpec
+        """
+        return self._parameter_spec
+
+    @parameter_spec.setter
+    def parameter_spec(self, parameter_spec: 'V1ParameterizationSpec'):
+        """Sets the parameter_spec of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.
+
+
+        :param parameter_spec: The parameter_spec of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :type: V1ParameterizationSpec
+        """
+
+        self._parameter_spec = parameter_spec
 
     @property
     def replicas(self) -> 'int':

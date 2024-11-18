@@ -48,6 +48,7 @@ class V1Deployment(object):
         'id': 'str',
         'is_published': 'bool',
         'name': 'str',
+        'parameter_spec': 'V1ParameterizationSpec',
         'project_id': 'str',
         'release_id': 'str',
         'replicas': 'int',
@@ -66,6 +67,7 @@ class V1Deployment(object):
         'id': 'id',
         'is_published': 'isPublished',
         'name': 'name',
+        'parameter_spec': 'parameterSpec',
         'project_id': 'projectId',
         'release_id': 'releaseId',
         'replicas': 'replicas',
@@ -76,7 +78,7 @@ class V1Deployment(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, name: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
         self._created_at = None
@@ -85,6 +87,7 @@ class V1Deployment(object):
         self._id = None
         self._is_published = None
         self._name = None
+        self._parameter_spec = None
         self._project_id = None
         self._release_id = None
         self._replicas = None
@@ -108,6 +111,8 @@ class V1Deployment(object):
             self.is_published = is_published
         if name is not None:
             self.name = name
+        if parameter_spec is not None:
+            self.parameter_spec = parameter_spec
         if project_id is not None:
             self.project_id = project_id
         if release_id is not None:
@@ -271,6 +276,27 @@ class V1Deployment(object):
         """
 
         self._name = name
+
+    @property
+    def parameter_spec(self) -> 'V1ParameterizationSpec':
+        """Gets the parameter_spec of this V1Deployment.  # noqa: E501
+
+
+        :return: The parameter_spec of this V1Deployment.  # noqa: E501
+        :rtype: V1ParameterizationSpec
+        """
+        return self._parameter_spec
+
+    @parameter_spec.setter
+    def parameter_spec(self, parameter_spec: 'V1ParameterizationSpec'):
+        """Sets the parameter_spec of this V1Deployment.
+
+
+        :param parameter_spec: The parameter_spec of this V1Deployment.  # noqa: E501
+        :type: V1ParameterizationSpec
+        """
+
+        self._parameter_spec = parameter_spec
 
     @property
     def project_id(self) -> 'str':
