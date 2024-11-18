@@ -17,6 +17,14 @@ def test_list_apis():
     assert isinstance(templates[0], dict), "AIHub.list_model returns a list of dict"
     assert templates[0].get("description") == "Description1", f"First item {templates[0]} should have description=Description1"
 
+
+class FakeDeploymentTemplate:
+    class ParameterSpec:
+        command = ""
+    name = "My API"
+    spec_v2 = MagicMock()
+    parameter_spec = ParameterSpec()
+
 def test_deploy():
     class FakeResponse:
         id = "dep_xxxxx"
@@ -27,11 +35,11 @@ def test_deploy():
     hub = AIHub()
     hub._authenticate = MagicMock(return_value=MagicMock(id=template_id))
     hub._api._client = MagicMock()
-    hub._api._client.deployment_templates_service_get_deployment_template = MagicMock(return_value=MagicMock(name="My API"))
+    hub._api._client.deployment_templates_service_get_deployment_template = MagicMock(return_value=FakeDeploymentTemplate())
     hub._api._client.jobs_service_create_deployment = MagicMock(
         return_value=FakeResponse()
     )
 
     deployment = hub.deploy(template_id, cluster_id="public-prod", name="New API")
-    assert deployment["name"] == "New API"
-    assert deployment["base_url"] == "http://lightning.ai/example"
+    assert deployment["name"] == "New API", "Deployment name is New API"
+    assert deployment["base_url"] == "http://lightning.ai/example", f"base_url is decoded from the server response"

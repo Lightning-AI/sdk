@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from lightning_sdk.api import AIHubApi, UserApi
 from lightning_sdk.lightning_cloud import login
@@ -65,8 +65,14 @@ class AIHub:
         name: Optional[str] = None,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         org: Optional[Union[str, "Organization"]] = None,
+        **kwargs: Dict[str, Any],
     ) -> Dict[str, Union[str, bool]]:
         """Deploy an API from the AI Hub.
+
+        Example:
+            from lightning_sdk import AIHub
+            ai_hub = AIHub()
+            deployment = ai_hub.deploy("temp_01jc37n6qpqkdptjpyep0z06hy", batch_size=10)
 
         Args:
             api_id: The ID of the API you want to deploy.
@@ -74,6 +80,7 @@ class AIHub:
             name: Name for the deployed API. Defaults to None.
             teamspace: The team or group for deployment. Defaults to None.
             org: The organization for deployment. Defaults to None.
+            **kwargs: Additional keyword arguments for deployment.
 
         Returns:
             A dictionary containing the name of the deployed API,
@@ -86,7 +93,9 @@ class AIHub:
         teamspace = self._authenticate(teamspace, org)
         teamspace_id = teamspace.id
 
-        deployment = self._api.deploy_api(template_id=api_id, cluster_id=cluster_id, project_id=teamspace_id, name=name)
+        deployment = self._api.deploy_api(
+            template_id=api_id, cluster_id=cluster_id, project_id=teamspace_id, name=name, **kwargs
+        )
         return {
             "id": deployment.id,
             "name": deployment.name,
