@@ -21,9 +21,15 @@ class AIHub:
         self._api = AIHubApi()
         self._auth = None
 
-    def list_apis(self) -> List[Dict[str, str]]:
-        """Get a list of AI Hub API templates."""
-        api_templates = self._api.list_apis()
+    def list_apis(self, search: Optional[str] = None) -> List[Dict[str, str]]:
+        """Get a list of AI Hub API templates.
+
+        Example:
+            api_hub = AIHub()
+            api_list = api_hub.list_apis(search="Llama")
+        """
+        search_query = search or ""
+        api_templates = self._api.list_apis(search_query=search_query)
         results = []
         for template in api_templates:
             result = {

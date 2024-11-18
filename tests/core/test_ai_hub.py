@@ -18,6 +18,17 @@ def test_list_apis():
     assert templates[0].get("description") == "Description1", f"First item {templates[0]} should have description=Description1"
 
 
+
+
+def test_list_api_search():
+    hub = AIHub()
+    hub._api = MagicMock()
+    hub._api.list_apis = MagicMock(return_value=[
+            MagicMock(id="1", name="cool-api", description="This is cool-api", creator_username="user1"),
+        ])
+    apis = hub.list_apis(search="cool-api")
+    assert apis[0]["description"] == "This is cool-api"
+
 class FakeDeploymentTemplate:
     class ParameterSpec:
         command = ""

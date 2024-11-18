@@ -16,9 +16,11 @@ class AIHubApi:
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=3)
 
-    def list_apis(self) -> List[V1DeploymentTemplateGalleryResponse]:
+    def list_apis(self, search_query: str) -> List[V1DeploymentTemplateGalleryResponse]:
         kwargs = {"show_globally_visible": True}
-        return self._client.deployment_templates_service_list_published_deployment_templates(**kwargs).templates
+        return self._client.deployment_templates_service_list_published_deployment_templates(
+            search_query=search_query, **kwargs
+        ).templates
 
     @staticmethod
     def _parse_and_update_args(cmd: str, **kwargs: dict) -> list:
