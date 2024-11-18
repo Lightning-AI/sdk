@@ -40,6 +40,6 @@ def test_deploy():
         return_value=FakeResponse()
     )
 
-    deployment = hub.deploy(template_id, cluster_id="public-prod", name="New API")
+    deployment = hub.deploy(template_id, cluster="public-prod", name="New API")
     assert deployment["name"] == "New API", "Deployment name is New API"
     assert deployment["base_url"] == "http://lightning.ai/example", f"base_url is decoded from the server response"

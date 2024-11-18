@@ -61,7 +61,7 @@ class AIHub:
     def deploy(
         self,
         api_id: str,
-        cluster_id: str,
+        cluster: Optional[str] = None,
         name: Optional[str] = None,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         org: Optional[Union[str, "Organization"]] = None,
@@ -76,7 +76,7 @@ class AIHub:
 
         Args:
             api_id: The ID of the API you want to deploy.
-            cluster_id: The ID of the cluster where you want to deploy the API. Such as "lightning-public-prod"
+            cluster: The cluster where you want to deploy the API, such as "lightning-public-prod".
             name: Name for the deployed API. Defaults to None.
             teamspace: The team or group for deployment. Defaults to None.
             org: The organization for deployment. Defaults to None.
@@ -94,7 +94,7 @@ class AIHub:
         teamspace_id = teamspace.id
 
         deployment = self._api.deploy_api(
-            template_id=api_id, cluster_id=cluster_id, project_id=teamspace_id, name=name, **kwargs
+            template_id=api_id, cluster_id=cluster, project_id=teamspace_id, name=name, **kwargs
         )
         return {
             "id": deployment.id,
