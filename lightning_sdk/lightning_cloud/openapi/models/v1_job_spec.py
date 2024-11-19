@@ -44,7 +44,6 @@ class V1JobSpec(object):
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'command': 'str',
-        'created_symlinks': 'bool',
         'data_paths': 'list[V1DataPath]',
         'entrypoint': 'str',
         'env': 'list[V1EnvVar]',
@@ -69,7 +68,6 @@ class V1JobSpec(object):
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'command': 'command',
-        'created_symlinks': 'createdSymlinks',
         'data_paths': 'dataPaths',
         'entrypoint': 'entrypoint',
         'env': 'env',
@@ -90,12 +88,11 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_symlinks: 'bool' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
-        self._created_symlinks = None
         self._data_paths = None
         self._entrypoint = None
         self._env = None
@@ -121,8 +118,6 @@ class V1JobSpec(object):
             self.cluster_id = cluster_id
         if command is not None:
             self.command = command
-        if created_symlinks is not None:
-            self.created_symlinks = created_symlinks
         if data_paths is not None:
             self.data_paths = data_paths
         if entrypoint is not None:
@@ -222,27 +217,6 @@ class V1JobSpec(object):
         """
 
         self._command = command
-
-    @property
-    def created_symlinks(self) -> 'bool':
-        """Gets the created_symlinks of this V1JobSpec.  # noqa: E501
-
-
-        :return: The created_symlinks of this V1JobSpec.  # noqa: E501
-        :rtype: bool
-        """
-        return self._created_symlinks
-
-    @created_symlinks.setter
-    def created_symlinks(self, created_symlinks: 'bool'):
-        """Sets the created_symlinks of this V1JobSpec.
-
-
-        :param created_symlinks: The created_symlinks of this V1JobSpec.  # noqa: E501
-        :type: bool
-        """
-
-        self._created_symlinks = created_symlinks
 
     @property
     def data_paths(self) -> 'list[V1DataPath]':

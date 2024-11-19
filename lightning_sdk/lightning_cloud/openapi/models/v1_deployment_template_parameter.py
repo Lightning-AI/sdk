@@ -41,6 +41,7 @@ class V1DeploymentTemplateParameter(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'checkbox': 'V1Checkbox',
         'data_path': 'V1DataPath',
         'display_name': 'str',
         'input': 'V1Input',
@@ -55,6 +56,7 @@ class V1DeploymentTemplateParameter(object):
     }
 
     attribute_map = {
+        'checkbox': 'checkbox',
         'data_path': 'dataPath',
         'display_name': 'displayName',
         'input': 'input',
@@ -68,8 +70,9 @@ class V1DeploymentTemplateParameter(object):
         'type': 'type'
     }
 
-    def __init__(self, data_path: 'V1DataPath' =None, display_name: 'str' =None, input: 'V1Input' =None, long_description: 'str' =None, name: 'str' =None, placements: 'list[V1DeploymentTemplateParameterPlacement]' =None, readonly: 'bool' =None, required: 'bool' =None, select: 'V1Select' =None, short_description: 'str' =None, type: 'V1DeploymentTemplateParameterType' =None):  # noqa: E501
+    def __init__(self, checkbox: 'V1Checkbox' =None, data_path: 'V1DataPath' =None, display_name: 'str' =None, input: 'V1Input' =None, long_description: 'str' =None, name: 'str' =None, placements: 'list[V1DeploymentTemplateParameterPlacement]' =None, readonly: 'bool' =None, required: 'bool' =None, select: 'V1Select' =None, short_description: 'str' =None, type: 'V1DeploymentTemplateParameterType' =None):  # noqa: E501
         """V1DeploymentTemplateParameter - a model defined in Swagger"""  # noqa: E501
+        self._checkbox = None
         self._data_path = None
         self._display_name = None
         self._input = None
@@ -82,6 +85,8 @@ class V1DeploymentTemplateParameter(object):
         self._short_description = None
         self._type = None
         self.discriminator = None
+        if checkbox is not None:
+            self.checkbox = checkbox
         if data_path is not None:
             self.data_path = data_path
         if display_name is not None:
@@ -104,6 +109,27 @@ class V1DeploymentTemplateParameter(object):
             self.short_description = short_description
         if type is not None:
             self.type = type
+
+    @property
+    def checkbox(self) -> 'V1Checkbox':
+        """Gets the checkbox of this V1DeploymentTemplateParameter.  # noqa: E501
+
+
+        :return: The checkbox of this V1DeploymentTemplateParameter.  # noqa: E501
+        :rtype: V1Checkbox
+        """
+        return self._checkbox
+
+    @checkbox.setter
+    def checkbox(self, checkbox: 'V1Checkbox'):
+        """Sets the checkbox of this V1DeploymentTemplateParameter.
+
+
+        :param checkbox: The checkbox of this V1DeploymentTemplateParameter.  # noqa: E501
+        :type: V1Checkbox
+        """
+
+        self._checkbox = checkbox
 
     @property
     def data_path(self) -> 'V1DataPath':

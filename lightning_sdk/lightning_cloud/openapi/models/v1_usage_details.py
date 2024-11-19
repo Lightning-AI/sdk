@@ -49,11 +49,13 @@ class V1UsageDetails(object):
         'hourly_price': 'float',
         'instance_count': 'str',
         'instance_type': 'str',
+        'read_bytes': 'str',
         'resource_name': 'str',
         'saved_cost': 'float',
         'spot': 'bool',
         'started_at': 'datetime',
-        'user_id': 'str'
+        'user_id': 'str',
+        'written_bytes': 'str'
     }
 
     attribute_map = {
@@ -65,14 +67,16 @@ class V1UsageDetails(object):
         'hourly_price': 'hourlyPrice',
         'instance_count': 'instanceCount',
         'instance_type': 'instanceType',
+        'read_bytes': 'readBytes',
         'resource_name': 'resourceName',
         'saved_cost': 'savedCost',
         'spot': 'spot',
         'started_at': 'startedAt',
-        'user_id': 'userId'
+        'user_id': 'userId',
+        'written_bytes': 'writtenBytes'
     }
 
-    def __init__(self, billed_bytes: 'str' =None, billed_time_seconds: 'str' =None, cost: 'float' =None, ended_at: 'datetime' =None, free: 'bool' =None, hourly_price: 'float' =None, instance_count: 'str' =None, instance_type: 'str' =None, resource_name: 'str' =None, saved_cost: 'float' =None, spot: 'bool' =None, started_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, billed_bytes: 'str' =None, billed_time_seconds: 'str' =None, cost: 'float' =None, ended_at: 'datetime' =None, free: 'bool' =None, hourly_price: 'float' =None, instance_count: 'str' =None, instance_type: 'str' =None, read_bytes: 'str' =None, resource_name: 'str' =None, saved_cost: 'float' =None, spot: 'bool' =None, started_at: 'datetime' =None, user_id: 'str' =None, written_bytes: 'str' =None):  # noqa: E501
         """V1UsageDetails - a model defined in Swagger"""  # noqa: E501
         self._billed_bytes = None
         self._billed_time_seconds = None
@@ -82,11 +86,13 @@ class V1UsageDetails(object):
         self._hourly_price = None
         self._instance_count = None
         self._instance_type = None
+        self._read_bytes = None
         self._resource_name = None
         self._saved_cost = None
         self._spot = None
         self._started_at = None
         self._user_id = None
+        self._written_bytes = None
         self.discriminator = None
         if billed_bytes is not None:
             self.billed_bytes = billed_bytes
@@ -104,6 +110,8 @@ class V1UsageDetails(object):
             self.instance_count = instance_count
         if instance_type is not None:
             self.instance_type = instance_type
+        if read_bytes is not None:
+            self.read_bytes = read_bytes
         if resource_name is not None:
             self.resource_name = resource_name
         if saved_cost is not None:
@@ -114,6 +122,8 @@ class V1UsageDetails(object):
             self.started_at = started_at
         if user_id is not None:
             self.user_id = user_id
+        if written_bytes is not None:
+            self.written_bytes = written_bytes
 
     @property
     def billed_bytes(self) -> 'str':
@@ -284,6 +294,27 @@ class V1UsageDetails(object):
         self._instance_type = instance_type
 
     @property
+    def read_bytes(self) -> 'str':
+        """Gets the read_bytes of this V1UsageDetails.  # noqa: E501
+
+
+        :return: The read_bytes of this V1UsageDetails.  # noqa: E501
+        :rtype: str
+        """
+        return self._read_bytes
+
+    @read_bytes.setter
+    def read_bytes(self, read_bytes: 'str'):
+        """Sets the read_bytes of this V1UsageDetails.
+
+
+        :param read_bytes: The read_bytes of this V1UsageDetails.  # noqa: E501
+        :type: str
+        """
+
+        self._read_bytes = read_bytes
+
+    @property
     def resource_name(self) -> 'str':
         """Gets the resource_name of this V1UsageDetails.  # noqa: E501
 
@@ -387,6 +418,27 @@ class V1UsageDetails(object):
         """
 
         self._user_id = user_id
+
+    @property
+    def written_bytes(self) -> 'str':
+        """Gets the written_bytes of this V1UsageDetails.  # noqa: E501
+
+
+        :return: The written_bytes of this V1UsageDetails.  # noqa: E501
+        :rtype: str
+        """
+        return self._written_bytes
+
+    @written_bytes.setter
+    def written_bytes(self, written_bytes: 'str'):
+        """Sets the written_bytes of this V1UsageDetails.
+
+
+        :param written_bytes: The written_bytes of this V1UsageDetails.  # noqa: E501
+        :type: str
+        """
+
+        self._written_bytes = written_bytes
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
