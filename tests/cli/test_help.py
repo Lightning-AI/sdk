@@ -21,6 +21,9 @@ DESCRIPTION
 GROUPS
     GROUP is one of the following:
 
+     aihub
+       Interact with Lightning Studio - AI Hub.
+
      download
        Download files and folders from Lightning AI.
 
@@ -55,6 +58,9 @@ DESCRIPTION
 
 GROUPS
     GROUP is one of the following:
+
+     aihub
+       Interact with Lightning Studio - AI Hub.
 
      download
        Download files and folders from Lightning AI.

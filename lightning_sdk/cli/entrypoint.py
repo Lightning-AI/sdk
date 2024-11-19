@@ -2,6 +2,7 @@ from fire import Fire
 from lightning_utilities.core.imports import RequirementCache
 
 from lightning_sdk.api.studio_api import _cloud_url
+from lightning_sdk.cli.ai_hub import _AIHub
 from lightning_sdk.cli.download import _Downloads
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
 from lightning_sdk.cli.upload import _Uploads
@@ -16,6 +17,7 @@ class StudioCLI:
     def __init__(self) -> None:
         self.download = _Downloads()
         self.upload = _Uploads()
+        self.aihub = _AIHub()
 
         if _LIGHTNING_AVAILABLE:
             self.run = _LegacyLightningCLI()
