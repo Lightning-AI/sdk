@@ -1,7 +1,9 @@
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from urllib.parse import quote
 
 from lightning_sdk.api import AIHubApi, UserApi
 from lightning_sdk.lightning_cloud import login
+from lightning_sdk.lightning_cloud.env import LIGHTNING_CLOUD_URL
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace
 
@@ -102,6 +104,8 @@ class AIHub:
         deployment = self._api.deploy_api(
             template_id=api_id, cluster_id=cluster, project_id=teamspace_id, name=name, **kwargs
         )
+        url = quote(f"{LIGHTNING_CLOUD_URL}/{teamspace._org.name}/{teamspace.name}/jobs/{deployment.name}", safe=":/()")
+        print("Deployment available at:", url)
         return {
             "id": deployment.id,
             "name": deployment.name,
