@@ -13,19 +13,19 @@ from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 class _Downloads(_StudiosMenu):
     """Download files and folders from Lightning AI."""
 
-    def model(self, name: str, path: Optional[str] = None) -> None:
+    def model(self, name: str, download_dir: str = ".") -> None:
         """Download a Model.
 
         Args:
           name: The name of the Model you want to download.
             This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
-          path: The path to the directory where the Model should be downloaded.
+          download_dir: The directory where the Model should be downloaded.
         """
         org_name, teamspace_name, model_name = _parse_model_name(name)
         teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
         teamspace.download_model(
             name=model_name,
-            download_dir=path or ".",
+            download_dir=download_dir,
             progress_bar=True,
         )
 
