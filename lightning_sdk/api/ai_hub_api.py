@@ -1,6 +1,8 @@
 import re
 from typing import List, Optional
 
+import backoff
+
 from lightning_sdk.lightning_cloud.openapi.models import (
     CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs,
     V1Deployment,
@@ -16,6 +18,7 @@ class AIHubApi:
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=3)
 
+    @backoff.on_predicate(backoff.expo, lambda x: not x, max_tries=5)
     def list_apis(self, search_query: str) -> List[V1DeploymentTemplateGalleryResponse]:
         kwargs = {"show_globally_visible": True}
         return self._client.deployment_templates_service_list_published_deployment_templates(
