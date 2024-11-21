@@ -44,6 +44,7 @@ class V1SnowflakeDataConnection(object):
         'bucket_name': 'str',
         'compress': 'bool',
         'format': 'str',
+        'include_header': 'bool',
         'query': 'str',
         'secret_account': 'str',
         'secret_password': 'str',
@@ -54,17 +55,19 @@ class V1SnowflakeDataConnection(object):
         'bucket_name': 'bucketName',
         'compress': 'compress',
         'format': 'format',
+        'include_header': 'includeHeader',
         'query': 'query',
         'secret_account': 'secretAccount',
         'secret_password': 'secretPassword',
         'secret_username': 'secretUsername'
     }
 
-    def __init__(self, bucket_name: 'str' =None, compress: 'bool' =None, format: 'str' =None, query: 'str' =None, secret_account: 'str' =None, secret_password: 'str' =None, secret_username: 'str' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, compress: 'bool' =None, format: 'str' =None, include_header: 'bool' =None, query: 'str' =None, secret_account: 'str' =None, secret_password: 'str' =None, secret_username: 'str' =None):  # noqa: E501
         """V1SnowflakeDataConnection - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._compress = None
         self._format = None
+        self._include_header = None
         self._query = None
         self._secret_account = None
         self._secret_password = None
@@ -76,6 +79,8 @@ class V1SnowflakeDataConnection(object):
             self.compress = compress
         if format is not None:
             self.format = format
+        if include_header is not None:
+            self.include_header = include_header
         if query is not None:
             self.query = query
         if secret_account is not None:
@@ -147,6 +152,27 @@ class V1SnowflakeDataConnection(object):
         """
 
         self._format = format
+
+    @property
+    def include_header(self) -> 'bool':
+        """Gets the include_header of this V1SnowflakeDataConnection.  # noqa: E501
+
+
+        :return: The include_header of this V1SnowflakeDataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._include_header
+
+    @include_header.setter
+    def include_header(self, include_header: 'bool'):
+        """Sets the include_header of this V1SnowflakeDataConnection.
+
+
+        :param include_header: The include_header of this V1SnowflakeDataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._include_header = include_header
 
     @property
     def query(self) -> 'str':

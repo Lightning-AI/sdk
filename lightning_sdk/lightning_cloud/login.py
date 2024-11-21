@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Optional
 from urllib.parse import urlencode
 
-import click
+import webbrowser
 
 import requests
 import uvicorn
@@ -165,7 +165,10 @@ class AuthServer:
             )
 
         logger.info(f"login started for lightning.ai, opening {url}")
-        click.launch(url)
+        ok = webbrowser.open(url)
+        if not ok:
+            # can't open a browser, authentication failed
+            raise RuntimeError("Failed to authenticate to Lightning. When running without access to a browser, `LIGHTNING_USER_ID` and `LIGHTNING_API_KEY` should be exported.")
 
         @app.get("/login-complete")
         async def save_token(request: Request,

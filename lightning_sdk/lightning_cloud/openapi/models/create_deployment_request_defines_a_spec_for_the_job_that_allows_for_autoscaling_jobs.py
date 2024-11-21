@@ -42,6 +42,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
     """
     swagger_types = {
         'autoscaling': 'V1AutoscalingSpec',
+        'cloudspace_id': 'str',
         'cluster_id': 'str',
         'endpoint': 'V1Endpoint',
         'name': 'str',
@@ -53,6 +54,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
 
     attribute_map = {
         'autoscaling': 'autoscaling',
+        'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'endpoint': 'endpoint',
         'name': 'name',
@@ -62,9 +64,10 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'strategy': 'strategy'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
+        self._cloudspace_id = None
         self._cluster_id = None
         self._endpoint = None
         self._name = None
@@ -75,6 +78,8 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         self.discriminator = None
         if autoscaling is not None:
             self.autoscaling = autoscaling
+        if cloudspace_id is not None:
+            self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if endpoint is not None:
@@ -110,6 +115,27 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         """
 
         self._autoscaling = autoscaling
+
+    @property
+    def cloudspace_id(self) -> 'str':
+        """Gets the cloudspace_id of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+
+
+        :return: The cloudspace_id of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloudspace_id
+
+    @cloudspace_id.setter
+    def cloudspace_id(self, cloudspace_id: 'str'):
+        """Sets the cloudspace_id of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.
+
+
+        :param cloudspace_id: The cloudspace_id of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :type: str
+        """
+
+        self._cloudspace_id = cloudspace_id
 
     @property
     def cluster_id(self) -> 'str':

@@ -42,6 +42,7 @@ class V1Deployment(object):
     """
     swagger_types = {
         'autoscaling': 'V1AutoscalingSpec',
+        'cloudspace_id': 'str',
         'created_at': 'datetime',
         'desired_state': 'V1DeploymentState',
         'endpoint': 'V1Endpoint',
@@ -61,6 +62,7 @@ class V1Deployment(object):
 
     attribute_map = {
         'autoscaling': 'autoscaling',
+        'cloudspace_id': 'cloudspaceId',
         'created_at': 'createdAt',
         'desired_state': 'desiredState',
         'endpoint': 'endpoint',
@@ -78,9 +80,10 @@ class V1Deployment(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
+        self._cloudspace_id = None
         self._created_at = None
         self._desired_state = None
         self._endpoint = None
@@ -99,6 +102,8 @@ class V1Deployment(object):
         self.discriminator = None
         if autoscaling is not None:
             self.autoscaling = autoscaling
+        if cloudspace_id is not None:
+            self.cloudspace_id = cloudspace_id
         if created_at is not None:
             self.created_at = created_at
         if desired_state is not None:
@@ -150,6 +155,27 @@ class V1Deployment(object):
         """
 
         self._autoscaling = autoscaling
+
+    @property
+    def cloudspace_id(self) -> 'str':
+        """Gets the cloudspace_id of this V1Deployment.  # noqa: E501
+
+
+        :return: The cloudspace_id of this V1Deployment.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloudspace_id
+
+    @cloudspace_id.setter
+    def cloudspace_id(self, cloudspace_id: 'str'):
+        """Sets the cloudspace_id of this V1Deployment.
+
+
+        :param cloudspace_id: The cloudspace_id of this V1Deployment.  # noqa: E501
+        :type: str
+        """
+
+        self._cloudspace_id = cloudspace_id
 
     @property
     def created_at(self) -> 'datetime':

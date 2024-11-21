@@ -5610,6 +5610,7 @@ class CloudSpaceServiceApi(object):
         :param str cloud_space_id: (required)
         :param bool draft:
         :param str limit:
+        :param bool include_publications:
         :return: V1ListCloudSpaceVersionsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -5634,12 +5635,13 @@ class CloudSpaceServiceApi(object):
         :param str cloud_space_id: (required)
         :param bool draft:
         :param str limit:
+        :param bool include_publications:
         :return: V1ListCloudSpaceVersionsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloud_space_id', 'draft', 'limit']  # noqa: E501
+        all_params = ['project_id', 'cloud_space_id', 'draft', 'limit', 'include_publications']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -5676,6 +5678,8 @@ class CloudSpaceServiceApi(object):
             query_params.append(('draft', params['draft']))  # noqa: E501
         if 'limit' in params:
             query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'include_publications' in params:
+            query_params.append(('includePublications', params['include_publications']))  # noqa: E501
 
         header_params = {}
 

@@ -46,6 +46,7 @@ class SnowflakeExportBody(object):
         'compress': 'bool',
         'connection_id': 'str',
         'format': 'str',
+        'include_header': 'bool',
         'password': 'str',
         'query': 'str',
         'query_name': 'str',
@@ -58,19 +59,21 @@ class SnowflakeExportBody(object):
         'compress': 'compress',
         'connection_id': 'connectionId',
         'format': 'format',
+        'include_header': 'includeHeader',
         'password': 'password',
         'query': 'query',
         'query_name': 'queryName',
         'username': 'username'
     }
 
-    def __init__(self, account: 'str' =None, cluster_id: 'str' =None, compress: 'bool' =None, connection_id: 'str' =None, format: 'str' =None, password: 'str' =None, query: 'str' =None, query_name: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, account: 'str' =None, cluster_id: 'str' =None, compress: 'bool' =None, connection_id: 'str' =None, format: 'str' =None, include_header: 'bool' =None, password: 'str' =None, query: 'str' =None, query_name: 'str' =None, username: 'str' =None):  # noqa: E501
         """SnowflakeExportBody - a model defined in Swagger"""  # noqa: E501
         self._account = None
         self._cluster_id = None
         self._compress = None
         self._connection_id = None
         self._format = None
+        self._include_header = None
         self._password = None
         self._query = None
         self._query_name = None
@@ -86,6 +89,8 @@ class SnowflakeExportBody(object):
             self.connection_id = connection_id
         if format is not None:
             self.format = format
+        if include_header is not None:
+            self.include_header = include_header
         if password is not None:
             self.password = password
         if query is not None:
@@ -199,6 +204,27 @@ class SnowflakeExportBody(object):
         """
 
         self._format = format
+
+    @property
+    def include_header(self) -> 'bool':
+        """Gets the include_header of this SnowflakeExportBody.  # noqa: E501
+
+
+        :return: The include_header of this SnowflakeExportBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._include_header
+
+    @include_header.setter
+    def include_header(self, include_header: 'bool'):
+        """Sets the include_header of this SnowflakeExportBody.
+
+
+        :param include_header: The include_header of this SnowflakeExportBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._include_header = include_header
 
     @property
     def password(self) -> 'str':

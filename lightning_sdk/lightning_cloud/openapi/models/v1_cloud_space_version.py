@@ -49,6 +49,7 @@ class V1CloudSpaceVersion(object):
         'created_at': 'datetime',
         'description': 'str',
         'draft': 'bool',
+        'globally_visible': 'bool',
         'hide_files': 'bool',
         'id': 'str',
         'license': 'str',
@@ -58,6 +59,7 @@ class V1CloudSpaceVersion(object):
         'paper_org_avatar_url': 'str',
         'paper_url': 'str',
         'project_id': 'str',
+        'unpublished': 'bool',
         'updated_at': 'datetime',
         'user_id': 'str',
         'version_name': 'str'
@@ -72,6 +74,7 @@ class V1CloudSpaceVersion(object):
         'created_at': 'createdAt',
         'description': 'description',
         'draft': 'draft',
+        'globally_visible': 'globallyVisible',
         'hide_files': 'hideFiles',
         'id': 'id',
         'license': 'license',
@@ -81,12 +84,13 @@ class V1CloudSpaceVersion(object):
         'paper_org_avatar_url': 'paperOrgAvatarUrl',
         'paper_url': 'paperUrl',
         'project_id': 'projectId',
+        'unpublished': 'unpublished',
         'updated_at': 'updatedAt',
         'user_id': 'userId',
         'version_name': 'versionName'
     }
 
-    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, cloud_space_id: 'str' =None, code_url: 'str' =None, code_version: 'V1CloudSpaceCodeVersion' =None, created_at: 'datetime' =None, description: 'str' =None, draft: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, license: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version_name: 'str' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, cloud_space_id: 'str' =None, code_url: 'str' =None, code_version: 'V1CloudSpaceCodeVersion' =None, created_at: 'datetime' =None, description: 'str' =None, draft: 'bool' =None, globally_visible: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, license: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version_name: 'str' =None):  # noqa: E501
         """V1CloudSpaceVersion - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._about_page_id = None
@@ -96,6 +100,7 @@ class V1CloudSpaceVersion(object):
         self._created_at = None
         self._description = None
         self._draft = None
+        self._globally_visible = None
         self._hide_files = None
         self._id = None
         self._license = None
@@ -105,6 +110,7 @@ class V1CloudSpaceVersion(object):
         self._paper_org_avatar_url = None
         self._paper_url = None
         self._project_id = None
+        self._unpublished = None
         self._updated_at = None
         self._user_id = None
         self._version_name = None
@@ -125,6 +131,8 @@ class V1CloudSpaceVersion(object):
             self.description = description
         if draft is not None:
             self.draft = draft
+        if globally_visible is not None:
+            self.globally_visible = globally_visible
         if hide_files is not None:
             self.hide_files = hide_files
         if id is not None:
@@ -143,6 +151,8 @@ class V1CloudSpaceVersion(object):
             self.paper_url = paper_url
         if project_id is not None:
             self.project_id = project_id
+        if unpublished is not None:
+            self.unpublished = unpublished
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -317,6 +327,27 @@ class V1CloudSpaceVersion(object):
         """
 
         self._draft = draft
+
+    @property
+    def globally_visible(self) -> 'bool':
+        """Gets the globally_visible of this V1CloudSpaceVersion.  # noqa: E501
+
+
+        :return: The globally_visible of this V1CloudSpaceVersion.  # noqa: E501
+        :rtype: bool
+        """
+        return self._globally_visible
+
+    @globally_visible.setter
+    def globally_visible(self, globally_visible: 'bool'):
+        """Sets the globally_visible of this V1CloudSpaceVersion.
+
+
+        :param globally_visible: The globally_visible of this V1CloudSpaceVersion.  # noqa: E501
+        :type: bool
+        """
+
+        self._globally_visible = globally_visible
 
     @property
     def hide_files(self) -> 'bool':
@@ -506,6 +537,27 @@ class V1CloudSpaceVersion(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def unpublished(self) -> 'bool':
+        """Gets the unpublished of this V1CloudSpaceVersion.  # noqa: E501
+
+
+        :return: The unpublished of this V1CloudSpaceVersion.  # noqa: E501
+        :rtype: bool
+        """
+        return self._unpublished
+
+    @unpublished.setter
+    def unpublished(self, unpublished: 'bool'):
+        """Sets the unpublished of this V1CloudSpaceVersion.
+
+
+        :param unpublished: The unpublished of this V1CloudSpaceVersion.  # noqa: E501
+        :type: bool
+        """
+
+        self._unpublished = unpublished
 
     @property
     def updated_at(self) -> 'datetime':

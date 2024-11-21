@@ -56,6 +56,7 @@ class V1GetUserResponse(object):
         'opted_in_marketing_emails': 'bool',
         'organization': 'str',
         'organizations': 'list[V1Organization]',
+        'phone_number': 'str',
         'picture_url': 'str',
         'preferred_color_scheme': 'str',
         'preferred_ide': 'str',
@@ -90,6 +91,7 @@ class V1GetUserResponse(object):
         'opted_in_marketing_emails': 'optedInMarketingEmails',
         'organization': 'organization',
         'organizations': 'organizations',
+        'phone_number': 'phoneNumber',
         'picture_url': 'pictureUrl',
         'preferred_color_scheme': 'preferredColorScheme',
         'preferred_ide': 'preferredIde',
@@ -108,7 +110,7 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._api_key = None
@@ -125,6 +127,7 @@ class V1GetUserResponse(object):
         self._opted_in_marketing_emails = None
         self._organization = None
         self._organizations = None
+        self._phone_number = None
         self._picture_url = None
         self._preferred_color_scheme = None
         self._preferred_ide = None
@@ -172,6 +175,8 @@ class V1GetUserResponse(object):
             self.organization = organization
         if organizations is not None:
             self.organizations = organizations
+        if phone_number is not None:
+            self.phone_number = phone_number
         if picture_url is not None:
             self.picture_url = picture_url
         if preferred_color_scheme is not None:
@@ -519,6 +524,27 @@ class V1GetUserResponse(object):
         """
 
         self._organizations = organizations
+
+    @property
+    def phone_number(self) -> 'str':
+        """Gets the phone_number of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The phone_number of this V1GetUserResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._phone_number
+
+    @phone_number.setter
+    def phone_number(self, phone_number: 'str'):
+        """Sets the phone_number of this V1GetUserResponse.
+
+
+        :param phone_number: The phone_number of this V1GetUserResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._phone_number = phone_number
 
     @property
     def picture_url(self) -> 'str':

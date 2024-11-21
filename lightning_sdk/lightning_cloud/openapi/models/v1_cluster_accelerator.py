@@ -56,6 +56,7 @@ class V1ClusterAccelerator(object):
         'device_card': 'str',
         'device_info': 'str',
         'display_name': 'str',
+        'dws_only': 'bool',
         'enabled': 'bool',
         'family': 'str',
         'instance_id': 'str',
@@ -95,6 +96,7 @@ class V1ClusterAccelerator(object):
         'device_card': 'deviceCard',
         'device_info': 'deviceInfo',
         'display_name': 'displayName',
+        'dws_only': 'dwsOnly',
         'enabled': 'enabled',
         'family': 'family',
         'instance_id': 'instanceId',
@@ -118,7 +120,7 @@ class V1ClusterAccelerator(object):
         'spot_price': 'spotPrice'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, max_available_quota: 'str' =None, non_spot: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, dws_only: 'bool' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, max_available_quota: 'str' =None, non_spot: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -135,6 +137,7 @@ class V1ClusterAccelerator(object):
         self._device_card = None
         self._device_info = None
         self._display_name = None
+        self._dws_only = None
         self._enabled = None
         self._family = None
         self._instance_id = None
@@ -187,6 +190,8 @@ class V1ClusterAccelerator(object):
             self.device_info = device_info
         if display_name is not None:
             self.display_name = display_name
+        if dws_only is not None:
+            self.dws_only = dws_only
         if enabled is not None:
             self.enabled = enabled
         if family is not None:
@@ -544,6 +549,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._display_name = display_name
+
+    @property
+    def dws_only(self) -> 'bool':
+        """Gets the dws_only of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The dws_only of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: bool
+        """
+        return self._dws_only
+
+    @dws_only.setter
+    def dws_only(self, dws_only: 'bool'):
+        """Sets the dws_only of this V1ClusterAccelerator.
+
+
+        :param dws_only: The dws_only of this V1ClusterAccelerator.  # noqa: E501
+        :type: bool
+        """
+
+        self._dws_only = dws_only
 
     @property
     def enabled(self) -> 'bool':
