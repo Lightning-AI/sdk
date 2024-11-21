@@ -10,6 +10,17 @@ class _AIHub(_StudiosMenu):
     def __init__(self) -> None:
         self._hub = AIHub()
 
+    def api_info(self, api_id: str) -> dict:
+        """Get full API template info such as input details.
+
+        Example:
+          lightning aihub api_info [API_ID]
+
+        Args:
+          api_id: The ID of the API for which information is requested.
+        """
+        return self._hub.api_info(api_id)
+
     def list_apis(self, search: Optional[str] = None) -> List[dict]:
         """List API templates available in the AI Hub.
 

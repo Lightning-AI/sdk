@@ -23,12 +23,66 @@ class AIHub:
         self._api = AIHubApi()
         self._auth = None
 
+    def api_info(self, api_id: str) -> dict:
+        """Get full API template info such as input details.
+
+        Example:
+            ai_hub = AIHub()
+            api_info = ai_hub.api_info("api_12345")
+
+        Args:
+            api_id: The ID of the API for which information is requested.
+
+        Returns:
+            A dictionary containing detailed information about the API,
+            including its name, description, creation and update timestamps,
+            parameters, tags, job specifications, and autoscaling settings.
+        """
+        template = self._api.api_info(api_id)
+
+        api_arguments = [
+            {
+                "name": param.name,
+                "short_description": param.short_description,
+                "required": param.required,
+                "default": param.input.default_value,
+            }
+            for param in template.parameter_spec.parameters
+        ]
+
+        return {
+            "name": template.name,
+            "description": template.description,
+            "created_at": template.created_at,
+            "updated_at": template.updated_at,
+            "api_arguments": api_arguments,
+            "tags": [tag.name for tag in template.tags],
+            "job": {
+                "image": template.spec_v2.job.image,
+                "interruptible": template.spec_v2.job.spot,
+                "instance_type": template.spec_v2.job.instance_type,
+                "resources": template.spec_v2.job.resources,
+            },
+            "autoscaling": {
+                "enabled": template.spec_v2.autoscaling.enabled,
+                "min_replicas": template.spec_v2.autoscaling.min_replicas,
+                "max_replicas": template.spec_v2.autoscaling.max_replicas,
+            },
+        }
+
     def list_apis(self, search: Optional[str] = None) -> List[Dict[str, str]]:
         """Get a list of AI Hub API templates.
 
         Example:
-            api_hub = AIHub()
-            api_list = api_hub.list_apis(search="Llama")
+            ai_hub = AIHub()
+            api_list = ai_hub.list_apis(search="Llama")
+
+        Args:
+            search: A search query to filter the list of APIs. Defaults to None.
+
+        Returns:
+            A list of dictionaries, each containing information about an API,
+            such as its ID, name, description, creator's username, and creation timestamp.
         """
         search_query = search or ""
         api_templates = self._api.list_apis(search_query=search_query)
@@ -84,7 +138,7 @@ class AIHub:
 
         Args:
             api_id: The ID of the API you want to deploy.
-            cluster: The cluster where you want to deploy the API, such as "lightning-public-prod".
+            cluster: The cluster where you want to deploy the API, such as "lightning-public-prod". Defaults to None.
             name: Name for the deployed API. Defaults to None.
             teamspace: The team or group for deployment. Defaults to None.
             org: The organization for deployment. Defaults to None.

@@ -1,4 +1,5 @@
 import re
+import traceback
 from typing import List, Optional
 
 import backoff
@@ -6,6 +7,7 @@ import backoff
 from lightning_sdk.lightning_cloud.openapi.models import (
     CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs,
     V1Deployment,
+    V1DeploymentTemplate,
     V1ParameterizationSpec,
 )
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_template_gallery_response import (
@@ -17,6 +19,15 @@ from lightning_sdk.lightning_cloud.rest_client import LightningClient
 class AIHubApi:
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=3)
+
+    def api_info(self, api_id: str) -> "V1DeploymentTemplate":
+        try:
+            return self._client.deployment_templates_service_get_deployment_template(api_id)
+        except Exception as e:
+            stack_trace = traceback.format_exc()
+            if "record not found" in stack_trace:
+                raise ValueError(f"api_id={api_id} not found.") from None
+            raise e
 
     @backoff.on_predicate(backoff.expo, lambda x: not x, max_tries=5)
     def list_apis(self, search_query: str) -> List[V1DeploymentTemplateGalleryResponse]:
