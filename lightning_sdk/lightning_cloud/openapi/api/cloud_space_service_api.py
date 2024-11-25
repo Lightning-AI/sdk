@@ -1753,6 +1753,7 @@ class CloudSpaceServiceApi(object):
         :param str project_id: (required)
         :param str cloud_space_id: (required)
         :param str org_id:
+        :param str cloud_space_version_id:
         :return: V1DeleteCloudSpaceVersionPublicationResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1776,12 +1777,13 @@ class CloudSpaceServiceApi(object):
         :param str project_id: (required)
         :param str cloud_space_id: (required)
         :param str org_id:
+        :param str cloud_space_version_id:
         :return: V1DeleteCloudSpaceVersionPublicationResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloud_space_id', 'org_id']  # noqa: E501
+        all_params = ['project_id', 'cloud_space_id', 'org_id', 'cloud_space_version_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1816,6 +1818,8 @@ class CloudSpaceServiceApi(object):
         query_params = []
         if 'org_id' in params:
             query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'cloud_space_version_id' in params:
+            query_params.append(('cloudSpaceVersionId', params['cloud_space_version_id']))  # noqa: E501
 
         header_params = {}
 

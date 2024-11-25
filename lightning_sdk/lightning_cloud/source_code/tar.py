@@ -5,8 +5,6 @@ import subprocess
 import tarfile
 from typing import Optional, Tuple
 
-import click
-
 MAX_SPLIT_COUNT = 999
 
 
@@ -85,7 +83,7 @@ def get_split_size(total_size: int,
         1 << 31
     )  # max size per part limited by Requests or urllib as shown in ref above
     if total_size > max_size:
-        raise click.ClickException(
+        raise RuntimeError(
             f"The size of the datastore to be uploaded is bigger than our {max_size/(1 << 40):.2f} TBytes limit"
         )
 

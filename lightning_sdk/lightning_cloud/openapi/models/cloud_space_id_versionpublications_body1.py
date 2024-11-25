@@ -42,21 +42,26 @@ class CloudSpaceIdVersionpublicationsBody1(object):
     """
     swagger_types = {
         'cloud_space_version_id': 'str',
+        'featured': 'bool',
         'org_id': 'str'
     }
 
     attribute_map = {
         'cloud_space_version_id': 'cloudSpaceVersionId',
+        'featured': 'featured',
         'org_id': 'orgId'
     }
 
-    def __init__(self, cloud_space_version_id: 'str' =None, org_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_space_version_id: 'str' =None, featured: 'bool' =None, org_id: 'str' =None):  # noqa: E501
         """CloudSpaceIdVersionpublicationsBody1 - a model defined in Swagger"""  # noqa: E501
         self._cloud_space_version_id = None
+        self._featured = None
         self._org_id = None
         self.discriminator = None
         if cloud_space_version_id is not None:
             self.cloud_space_version_id = cloud_space_version_id
+        if featured is not None:
+            self.featured = featured
         if org_id is not None:
             self.org_id = org_id
 
@@ -80,6 +85,27 @@ class CloudSpaceIdVersionpublicationsBody1(object):
         """
 
         self._cloud_space_version_id = cloud_space_version_id
+
+    @property
+    def featured(self) -> 'bool':
+        """Gets the featured of this CloudSpaceIdVersionpublicationsBody1.  # noqa: E501
+
+
+        :return: The featured of this CloudSpaceIdVersionpublicationsBody1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._featured
+
+    @featured.setter
+    def featured(self, featured: 'bool'):
+        """Sets the featured of this CloudSpaceIdVersionpublicationsBody1.
+
+
+        :param featured: The featured of this CloudSpaceIdVersionpublicationsBody1.  # noqa: E501
+        :type: bool
+        """
+
+        self._featured = featured
 
     @property
     def org_id(self) -> 'str':

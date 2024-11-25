@@ -4,7 +4,6 @@ import time
 from functools import wraps
 from typing import Callable, Optional, Any
 
-import click
 import urllib3
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth
@@ -28,7 +27,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     EndpointServiceApi,
     SlurmJobsUserServiceApi,
     LitLoggerServiceApi,
-    AssistantsServiceApi,
     JobsServiceApi,
     AssistantsServiceApi,
     StorageServiceApi,
@@ -199,8 +197,7 @@ def request_auth_warning_wrapper(func):
             return response
         except ApiException as err:
             if err.status == 401:
-                raise click.ClickException(
-                    "Authentication failed. Please run `lightning login`.")
+                raise ConnectionError("Authentication failed. Please run `lightning login`.")
             raise err
 
     return wrap

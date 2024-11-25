@@ -52,6 +52,7 @@ class AgentsIdBody(object):
         'knowledge': 'str',
         'knowledge_configuration': 'V1KnowledgeConfiguration',
         'model': 'str',
+        'model_provider': 'str',
         'name': 'str',
         'org_id': 'str',
         'prompt_suggestions': 'list[V1PromptSuggestion]',
@@ -75,6 +76,7 @@ class AgentsIdBody(object):
         'knowledge': 'knowledge',
         'knowledge_configuration': 'knowledgeConfiguration',
         'model': 'model',
+        'model_provider': 'modelProvider',
         'name': 'name',
         'org_id': 'orgId',
         'prompt_suggestions': 'promptSuggestions',
@@ -86,7 +88,7 @@ class AgentsIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, expected_cold_start_time: 'str' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, expected_cold_start_time: 'str' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """AgentsIdBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -99,6 +101,7 @@ class AgentsIdBody(object):
         self._knowledge = None
         self._knowledge_configuration = None
         self._model = None
+        self._model_provider = None
         self._name = None
         self._org_id = None
         self._prompt_suggestions = None
@@ -131,6 +134,8 @@ class AgentsIdBody(object):
             self.knowledge_configuration = knowledge_configuration
         if model is not None:
             self.model = model
+        if model_provider is not None:
+            self.model_provider = model_provider
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -380,6 +385,27 @@ class AgentsIdBody(object):
         """
 
         self._model = model
+
+    @property
+    def model_provider(self) -> 'str':
+        """Gets the model_provider of this AgentsIdBody.  # noqa: E501
+
+
+        :return: The model_provider of this AgentsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._model_provider
+
+    @model_provider.setter
+    def model_provider(self, model_provider: 'str'):
+        """Sets the model_provider of this AgentsIdBody.
+
+
+        :param model_provider: The model_provider of this AgentsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._model_provider = model_provider
 
     @property
     def name(self) -> 'str':

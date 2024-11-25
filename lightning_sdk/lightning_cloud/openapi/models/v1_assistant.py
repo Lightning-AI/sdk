@@ -53,6 +53,7 @@ class V1Assistant(object):
         'knowledge': 'str',
         'knowledge_configuration': 'V1KnowledgeConfiguration',
         'model': 'str',
+        'model_provider': 'str',
         'name': 'str',
         'org_id': 'str',
         'project_id': 'str',
@@ -78,6 +79,7 @@ class V1Assistant(object):
         'knowledge': 'knowledge',
         'knowledge_configuration': 'knowledgeConfiguration',
         'model': 'model',
+        'model_provider': 'modelProvider',
         'name': 'name',
         'org_id': 'orgId',
         'project_id': 'projectId',
@@ -90,7 +92,7 @@ class V1Assistant(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, expected_cold_start_time: 'str' =None, file_uploads_enabled: 'bool' =None, id: 'str' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, expected_cold_start_time: 'str' =None, file_uploads_enabled: 'bool' =None, id: 'str' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Assistant - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -104,6 +106,7 @@ class V1Assistant(object):
         self._knowledge = None
         self._knowledge_configuration = None
         self._model = None
+        self._model_provider = None
         self._name = None
         self._org_id = None
         self._project_id = None
@@ -139,6 +142,8 @@ class V1Assistant(object):
             self.knowledge_configuration = knowledge_configuration
         if model is not None:
             self.model = model
+        if model_provider is not None:
+            self.model_provider = model_provider
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -411,6 +416,27 @@ class V1Assistant(object):
         """
 
         self._model = model
+
+    @property
+    def model_provider(self) -> 'str':
+        """Gets the model_provider of this V1Assistant.  # noqa: E501
+
+
+        :return: The model_provider of this V1Assistant.  # noqa: E501
+        :rtype: str
+        """
+        return self._model_provider
+
+    @model_provider.setter
+    def model_provider(self, model_provider: 'str'):
+        """Sets the model_provider of this V1Assistant.
+
+
+        :param model_provider: The model_provider of this V1Assistant.  # noqa: E501
+        :type: str
+        """
+
+        self._model_provider = model_provider
 
     @property
     def name(self) -> 'str':
