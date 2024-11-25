@@ -1,6 +1,5 @@
-import re
 import traceback
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import backoff
 
@@ -8,7 +7,10 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs,
     V1Deployment,
     V1DeploymentTemplate,
-    V1ParameterizationSpec,
+    V1DeploymentTemplateParameter,
+    V1DeploymentTemplateParameterPlacement,
+    V1DeploymentTemplateParameterType,
+    V1JobSpec,
 )
 from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_template_gallery_response import (
     V1DeploymentTemplateGalleryResponse,
@@ -37,31 +39,59 @@ class AIHubApi:
         ).templates
 
     @staticmethod
-    def _parse_and_update_args(cmd: str, **kwargs: dict) -> list:
-        """Parse the command and update the arguments with the provided kwargs.
+    def _update_parameters(
+        job: V1JobSpec, placements: List[V1DeploymentTemplateParameterPlacement], pattern: str, value: str
+    ) -> None:
+        for placement in placements:
+            if placement == V1DeploymentTemplateParameterPlacement.COMMAND:
+                job.command = job.command.replace(pattern, str(value))
+            if placement == V1DeploymentTemplateParameterPlacement.ENTRYPOINT:
+                job.entrypoint = job.entrypoint.replace(pattern, str(value))
 
-        >>> _parse_and_update_args("--arg1 1 --arg2=2", arg1=3)
-        ['--arg1 3']
-        """
-        keys = [key.lstrip("-") for key in re.findall(r"--\w+", cmd)]
-        arguments = {}
-        for key in keys:
-            if key in kwargs:
-                arguments[key] = kwargs[key]
-        return [f"--{k} {v}" for k, v in arguments.items()]
+            if placement == V1DeploymentTemplateParameterPlacement.ENV:
+                for e in job.env:
+                    if e.value == pattern:
+                        e.value = str(value)
 
     @staticmethod
-    def _resolve_api_arguments(parameter_spec: "V1ParameterizationSpec", **kwargs: dict) -> str:
-        return " ".join(AIHubApi._parse_and_update_args(parameter_spec.command, **kwargs))
+    def _set_parameters(
+        job: V1JobSpec, parameters: List[V1DeploymentTemplateParameter], api_arguments: Dict[str, str]
+    ) -> V1JobSpec:
+        for p in parameters:
+            if p.name not in api_arguments:
+                if p.type == V1DeploymentTemplateParameterType.INPUT and p.input and p.input.default_value:
+                    api_arguments[p.name] = p.input.default_value
+
+                if p.type == V1DeploymentTemplateParameterType.SELECT and p.select and len(p.select.options) > 0:
+                    api_arguments[p.name] = p.select.options[0]
+
+                if p.type == V1DeploymentTemplateParameterType.CHECKBOX and p.checkbox:
+                    api_arguments[p.name] = (
+                        (p.checkbox.true_value or "True")
+                        if p.checkbox.is_checked
+                        else (p.checkbox.false_value or "False")
+                    )
+
+        for p in parameters:
+            name = p.name
+            pattern = f"${{{name}}}"
+            if name in api_arguments:
+                AIHubApi._update_parameters(job, p.placements, pattern, api_arguments[name])
+            elif not p.required:
+                AIHubApi._update_parameters(job, p.placements, pattern, "")
+            else:
+                raise ValueError(f"API reqires argument '{p.name}' but is not provided with api_arguments.")
+
+        return job
 
     def deploy_api(
-        self, template_id: str, project_id: str, cluster_id: str, name: Optional[str], **kwargs: dict
+        self, template_id: str, project_id: str, cluster_id: str, name: Optional[str], api_arguments: Dict[str, str]
     ) -> V1Deployment:
         template = self._client.deployment_templates_service_get_deployment_template(template_id)
         name = name or template.name
         template.spec_v2.endpoint.id = None
-        command = self._resolve_api_arguments(template.parameter_spec, **kwargs)
-        template.spec_v2.job.command = command
+
+        AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
         return self._client.jobs_service_create_deployment(
             project_id=project_id,
             body=CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(

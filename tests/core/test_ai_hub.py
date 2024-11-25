@@ -1,5 +1,48 @@
+import pytest
 from unittest.mock import MagicMock
 from lightning_sdk import AIHub
+from lightning_sdk.lightning_cloud.openapi.models.v1_env_var import V1EnvVar
+from lightning_sdk.lightning_cloud.openapi.models import V1DeploymentTemplateParameterType
+from lightning_sdk.lightning_cloud.openapi.models import V1EnvVar
+from lightning_sdk.api.ai_hub_api import AIHubApi
+
+class FakeV1DeploymentTemplateParameter:
+    name = "Model"
+    input = MagicMock(default_value="lit/test-model")
+    placements = ["DEPLOYMENT_TEMPLATE_COMMAND"]
+    required=True
+    type = V1DeploymentTemplateParameterType.INPUT
+
+class FakeDeploymentTemplate:
+    class Job:
+        command = "--model ${Model}"
+        env = [V1EnvVar(name="HF_TOKEN", value="${token}")]
+
+    class ParameterSpec:
+        command = "--model ${Model}"
+        parameters = [FakeV1DeploymentTemplateParameter()]
+    name = "My API"
+    spec_v2 = MagicMock(job=Job())
+    parameter_spec = ParameterSpec()
+
+def test_set_parameters():
+    template = FakeDeploymentTemplate()
+    api_arguments = {"Model": "Llama"}
+    job1 = AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
+    assert job1.command == "--model Llama", "User provided {model: Llama}"
+
+    # Use default value
+    template = FakeDeploymentTemplate()
+    api_arguments = {}
+    template.spec_v2.job = FakeDeploymentTemplate.Job()
+    job2 = AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
+    assert "lit/test-model" in job2.command, f"Parameter should use the default value 'lit/test-model' but is '{job2.command}'"
+
+    template = FakeDeploymentTemplate()
+    FakeV1DeploymentTemplateParameter.input = None
+    with pytest.raises(ValueError, match="API reqires argument 'Model' but is not provided with api_arguments."):
+        api_arguments = {"model": "Llama"}
+        AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
 
 
 def test_list_apis():
@@ -29,12 +72,7 @@ def test_list_api_search():
     apis = hub.list_apis(search="cool-api")
     assert apis[0]["description"] == "This is cool-api"
 
-class FakeDeploymentTemplate:
-    class ParameterSpec:
-        command = ""
-    name = "My API"
-    spec_v2 = MagicMock()
-    parameter_spec = ParameterSpec()
+
 
 def test_deploy():
     class FakeResponse:
@@ -46,10 +84,12 @@ def test_deploy():
     hub = AIHub()
     hub._authenticate = MagicMock(return_value=MagicMock(id=template_id))
     hub._api._client = MagicMock()
-    hub._api._client.deployment_templates_service_get_deployment_template = MagicMock(return_value=FakeDeploymentTemplate())
+    hub._api._client.deployment_templates_service_get_deployment_template = MagicMock(return_value=FakeDeploymentTemplate)
     hub._api._client.jobs_service_create_deployment = MagicMock(
         return_value=FakeResponse()
     )
+    AIHubApi._set_parameters = MagicMock()
+    hub._api._parse_env_list = MagicMock()
 
     deployment = hub.deploy(template_id, cluster="public-prod", name="New API")
     assert deployment["name"] == "New API", "Deployment name is New API"

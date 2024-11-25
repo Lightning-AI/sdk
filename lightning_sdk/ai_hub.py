@@ -127,14 +127,18 @@ class AIHub:
         name: Optional[str] = None,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         org: Optional[Union[str, "Organization"]] = None,
-        **kwargs: Dict[str, Any],
+        api_arguments: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Union[str, bool]]:
         """Deploy an API from the AI Hub.
 
         Example:
             from lightning_sdk import AIHub
-            ai_hub = AIHub()
-            deployment = ai_hub.deploy("temp_01jc37n6qpqkdptjpyep0z06hy", batch_size=10)
+            hub = AIHub()
+            deployment = hub.deploy("temp_01jc37n6qpqkdptjpyep0z06hy")
+
+            # Using API arguments
+            api_arugments = {"batch_size" 10, "batch_timeout": 0.001, "env_token": "lit_xxxx"}
+            deployment = hub.deploy("temp_01jc37n6qpqkdptjpyep0z06hy", api_arugments=api_arugments)
 
         Args:
             api_id: The ID of the API you want to deploy.
@@ -142,7 +146,7 @@ class AIHub:
             name: Name for the deployed API. Defaults to None.
             teamspace: The team or group for deployment. Defaults to None.
             org: The organization for deployment. Defaults to None.
-            **kwargs: Additional keyword arguments for deployment.
+            api_arguments: Additional API argument, such as model name, or batch size.
 
         Returns:
             A dictionary containing the name of the deployed API,
@@ -155,8 +159,9 @@ class AIHub:
         teamspace = self._authenticate(teamspace, org)
         teamspace_id = teamspace.id
 
+        api_arguments = api_arguments or {}
         deployment = self._api.deploy_api(
-            template_id=api_id, cluster_id=cluster, project_id=teamspace_id, name=name, **kwargs
+            template_id=api_id, cluster_id=cluster, project_id=teamspace_id, name=name, api_arguments=api_arguments
         )
         url = quote(f"{LIGHTNING_CLOUD_URL}/{teamspace._org.name}/{teamspace.name}/jobs/{deployment.name}", safe=":/()")
         print("Deployment available at:", url)
