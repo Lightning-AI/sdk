@@ -40,6 +40,7 @@ class V1DeploymentState(object):
     UNSPECIFIED = "DEPLOYMENT_STATE_UNSPECIFIED"
     RUNNING = "DEPLOYMENT_STATE_RUNNING"
     DELETED = "DEPLOYMENT_STATE_DELETED"
+    FAILED = "DEPLOYMENT_STATE_FAILED"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

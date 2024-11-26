@@ -46,6 +46,7 @@ class V1UpdateUserRequest(object):
         'completed_project_onboarding': 'bool',
         'country': 'str',
         'email': 'str',
+        'experimentation_id': 'str',
         'first_name': 'str',
         'general_audience_mode': 'bool',
         'last_name': 'str',
@@ -71,6 +72,7 @@ class V1UpdateUserRequest(object):
         'completed_project_onboarding': 'completedProjectOnboarding',
         'country': 'country',
         'email': 'email',
+        'experimentation_id': 'experimentationId',
         'first_name': 'firstName',
         'general_audience_mode': 'generalAudienceMode',
         'last_name': 'lastName',
@@ -90,13 +92,14 @@ class V1UpdateUserRequest(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1UpdateUserRequest - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._complete_sign_up = None
         self._completed_project_onboarding = None
         self._country = None
         self._email = None
+        self._experimentation_id = None
         self._first_name = None
         self._general_audience_mode = None
         self._last_name = None
@@ -125,6 +128,8 @@ class V1UpdateUserRequest(object):
             self.country = country
         if email is not None:
             self.email = email
+        if experimentation_id is not None:
+            self.experimentation_id = experimentation_id
         if first_name is not None:
             self.first_name = first_name
         if general_audience_mode is not None:
@@ -264,6 +269,27 @@ class V1UpdateUserRequest(object):
         """
 
         self._email = email
+
+    @property
+    def experimentation_id(self) -> 'str':
+        """Gets the experimentation_id of this V1UpdateUserRequest.  # noqa: E501
+
+
+        :return: The experimentation_id of this V1UpdateUserRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._experimentation_id
+
+    @experimentation_id.setter
+    def experimentation_id(self, experimentation_id: 'str'):
+        """Sets the experimentation_id of this V1UpdateUserRequest.
+
+
+        :param experimentation_id: The experimentation_id of this V1UpdateUserRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._experimentation_id = experimentation_id
 
     @property
     def first_name(self) -> 'str':

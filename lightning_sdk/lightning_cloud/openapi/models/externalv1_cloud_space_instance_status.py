@@ -54,6 +54,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'instance_url': 'str',
         'jupyterlab_url': 'str',
         'phase': 'V1CloudSpaceInstanceState',
+        'price': 'float',
         'ssh_host': 'str',
         'ssh_port': 'int',
         'ssh_username': 'str',
@@ -84,6 +85,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'instance_url': 'instanceUrl',
         'jupyterlab_url': 'jupyterlabUrl',
         'phase': 'phase',
+        'price': 'price',
         'ssh_host': 'sshHost',
         'ssh_port': 'sshPort',
         'ssh_username': 'sshUsername',
@@ -100,7 +102,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, app_url: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, app_url: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._app_url = None
         self._cloud_space_id = None
@@ -115,6 +117,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self._instance_url = None
         self._jupyterlab_url = None
         self._phase = None
+        self._price = None
         self._ssh_host = None
         self._ssh_port = None
         self._ssh_username = None
@@ -156,6 +159,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.jupyterlab_url = jupyterlab_url
         if phase is not None:
             self.phase = phase
+        if price is not None:
+            self.price = price
         if ssh_host is not None:
             self.ssh_host = ssh_host
         if ssh_port is not None:
@@ -457,6 +462,27 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._phase = phase
+
+    @property
+    def price(self) -> 'float':
+        """Gets the price of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The price of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: float
+        """
+        return self._price
+
+    @price.setter
+    def price(self, price: 'float'):
+        """Sets the price of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param price: The price of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: float
+        """
+
+        self._price = price
 
     @property
     def ssh_host(self) -> 'str':

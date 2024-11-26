@@ -45,6 +45,7 @@ class V1GetUserResponse(object):
         'api_key': 'str',
         'country': 'str',
         'email': 'str',
+        'experimentation_id': 'str',
         'features': 'V1UserFeatures',
         'first_name': 'str',
         'general_audience_mode': 'bool',
@@ -80,6 +81,7 @@ class V1GetUserResponse(object):
         'api_key': 'apiKey',
         'country': 'country',
         'email': 'email',
+        'experimentation_id': 'experimentationId',
         'features': 'features',
         'first_name': 'firstName',
         'general_audience_mode': 'generalAudienceMode',
@@ -110,12 +112,13 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._api_key = None
         self._country = None
         self._email = None
+        self._experimentation_id = None
         self._features = None
         self._first_name = None
         self._general_audience_mode = None
@@ -153,6 +156,8 @@ class V1GetUserResponse(object):
             self.country = country
         if email is not None:
             self.email = email
+        if experimentation_id is not None:
+            self.experimentation_id = experimentation_id
         if features is not None:
             self.features = features
         if first_name is not None:
@@ -293,6 +298,27 @@ class V1GetUserResponse(object):
         """
 
         self._email = email
+
+    @property
+    def experimentation_id(self) -> 'str':
+        """Gets the experimentation_id of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The experimentation_id of this V1GetUserResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._experimentation_id
+
+    @experimentation_id.setter
+    def experimentation_id(self, experimentation_id: 'str'):
+        """Sets the experimentation_id of this V1GetUserResponse.
+
+
+        :param experimentation_id: The experimentation_id of this V1GetUserResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._experimentation_id = experimentation_id
 
     @property
     def features(self) -> 'V1UserFeatures':

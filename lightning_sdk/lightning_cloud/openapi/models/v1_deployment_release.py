@@ -45,6 +45,7 @@ class V1DeploymentRelease(object):
         'created_at': 'datetime',
         'id': 'str',
         'project_id': 'str',
+        'ready': 'bool',
         'replicas': 'int',
         'spec': 'V1JobSpec',
         'user_id': 'str',
@@ -56,18 +57,20 @@ class V1DeploymentRelease(object):
         'created_at': 'createdAt',
         'id': 'id',
         'project_id': 'projectId',
+        'ready': 'ready',
         'replicas': 'replicas',
         'spec': 'spec',
         'user_id': 'userId',
         'version': 'version'
     }
 
-    def __init__(self, archived: 'bool' =None, created_at: 'datetime' =None, id: 'str' =None, project_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, user_id: 'str' =None, version: 'int' =None):  # noqa: E501
+    def __init__(self, archived: 'bool' =None, created_at: 'datetime' =None, id: 'str' =None, project_id: 'str' =None, ready: 'bool' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, user_id: 'str' =None, version: 'int' =None):  # noqa: E501
         """V1DeploymentRelease - a model defined in Swagger"""  # noqa: E501
         self._archived = None
         self._created_at = None
         self._id = None
         self._project_id = None
+        self._ready = None
         self._replicas = None
         self._spec = None
         self._user_id = None
@@ -81,6 +84,8 @@ class V1DeploymentRelease(object):
             self.id = id
         if project_id is not None:
             self.project_id = project_id
+        if ready is not None:
+            self.ready = ready
         if replicas is not None:
             self.replicas = replicas
         if spec is not None:
@@ -173,6 +178,27 @@ class V1DeploymentRelease(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def ready(self) -> 'bool':
+        """Gets the ready of this V1DeploymentRelease.  # noqa: E501
+
+
+        :return: The ready of this V1DeploymentRelease.  # noqa: E501
+        :rtype: bool
+        """
+        return self._ready
+
+    @ready.setter
+    def ready(self, ready: 'bool'):
+        """Sets the ready of this V1DeploymentRelease.
+
+
+        :param ready: The ready of this V1DeploymentRelease.  # noqa: E501
+        :type: bool
+        """
+
+        self._ready = ready
 
     @property
     def replicas(self) -> 'int':

@@ -44,6 +44,7 @@ class V1GetModelFilesResponse(object):
         'filepaths': 'list[str]',
         'model_id': 'str',
         'project_id': 'str',
+        'size_bytes': 'str',
         'version': 'str'
     }
 
@@ -51,14 +52,16 @@ class V1GetModelFilesResponse(object):
         'filepaths': 'filepaths',
         'model_id': 'modelId',
         'project_id': 'projectId',
+        'size_bytes': 'sizeBytes',
         'version': 'version'
     }
 
-    def __init__(self, filepaths: 'list[str]' =None, model_id: 'str' =None, project_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, filepaths: 'list[str]' =None, model_id: 'str' =None, project_id: 'str' =None, size_bytes: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1GetModelFilesResponse - a model defined in Swagger"""  # noqa: E501
         self._filepaths = None
         self._model_id = None
         self._project_id = None
+        self._size_bytes = None
         self._version = None
         self.discriminator = None
         if filepaths is not None:
@@ -67,6 +70,8 @@ class V1GetModelFilesResponse(object):
             self.model_id = model_id
         if project_id is not None:
             self.project_id = project_id
+        if size_bytes is not None:
+            self.size_bytes = size_bytes
         if version is not None:
             self.version = version
 
@@ -132,6 +137,27 @@ class V1GetModelFilesResponse(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def size_bytes(self) -> 'str':
+        """Gets the size_bytes of this V1GetModelFilesResponse.  # noqa: E501
+
+
+        :return: The size_bytes of this V1GetModelFilesResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._size_bytes
+
+    @size_bytes.setter
+    def size_bytes(self, size_bytes: 'str'):
+        """Sets the size_bytes of this V1GetModelFilesResponse.
+
+
+        :param size_bytes: The size_bytes of this V1GetModelFilesResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._size_bytes = size_bytes
 
     @property
     def version(self) -> 'str':
