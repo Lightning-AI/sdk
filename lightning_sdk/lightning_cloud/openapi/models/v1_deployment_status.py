@@ -43,6 +43,7 @@ class V1DeploymentStatus(object):
     swagger_types = {
         'deleting_replicas': 'str',
         'failing_replicas': 'str',
+        'first_job_state_current_release': 'str',
         'message': 'str',
         'pending_replicas': 'str',
         'ready_replicas': 'str',
@@ -52,16 +53,18 @@ class V1DeploymentStatus(object):
     attribute_map = {
         'deleting_replicas': 'deletingReplicas',
         'failing_replicas': 'failingReplicas',
+        'first_job_state_current_release': 'firstJobStateCurrentRelease',
         'message': 'message',
         'pending_replicas': 'pendingReplicas',
         'ready_replicas': 'readyReplicas',
         'urls': 'urls'
     }
 
-    def __init__(self, deleting_replicas: 'str' =None, failing_replicas: 'str' =None, message: 'str' =None, pending_replicas: 'str' =None, ready_replicas: 'str' =None, urls: 'list[str]' =None):  # noqa: E501
+    def __init__(self, deleting_replicas: 'str' =None, failing_replicas: 'str' =None, first_job_state_current_release: 'str' =None, message: 'str' =None, pending_replicas: 'str' =None, ready_replicas: 'str' =None, urls: 'list[str]' =None):  # noqa: E501
         """V1DeploymentStatus - a model defined in Swagger"""  # noqa: E501
         self._deleting_replicas = None
         self._failing_replicas = None
+        self._first_job_state_current_release = None
         self._message = None
         self._pending_replicas = None
         self._ready_replicas = None
@@ -71,6 +74,8 @@ class V1DeploymentStatus(object):
             self.deleting_replicas = deleting_replicas
         if failing_replicas is not None:
             self.failing_replicas = failing_replicas
+        if first_job_state_current_release is not None:
+            self.first_job_state_current_release = first_job_state_current_release
         if message is not None:
             self.message = message
         if pending_replicas is not None:
@@ -121,6 +126,27 @@ class V1DeploymentStatus(object):
         """
 
         self._failing_replicas = failing_replicas
+
+    @property
+    def first_job_state_current_release(self) -> 'str':
+        """Gets the first_job_state_current_release of this V1DeploymentStatus.  # noqa: E501
+
+
+        :return: The first_job_state_current_release of this V1DeploymentStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._first_job_state_current_release
+
+    @first_job_state_current_release.setter
+    def first_job_state_current_release(self, first_job_state_current_release: 'str'):
+        """Sets the first_job_state_current_release of this V1DeploymentStatus.
+
+
+        :param first_job_state_current_release: The first_job_state_current_release of this V1DeploymentStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._first_job_state_current_release = first_job_state_current_release
 
     @property
     def message(self) -> 'str':

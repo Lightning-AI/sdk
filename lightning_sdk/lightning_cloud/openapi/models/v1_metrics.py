@@ -41,24 +41,50 @@ class V1Metrics(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'internal_start_step': 'int',
         'name': 'str',
         'values': 'list[V1MetricValue]'
     }
 
     attribute_map = {
+        'internal_start_step': 'internalStartStep',
         'name': 'name',
         'values': 'values'
     }
 
-    def __init__(self, name: 'str' =None, values: 'list[V1MetricValue]' =None):  # noqa: E501
+    def __init__(self, internal_start_step: 'int' =None, name: 'str' =None, values: 'list[V1MetricValue]' =None):  # noqa: E501
         """V1Metrics - a model defined in Swagger"""  # noqa: E501
+        self._internal_start_step = None
         self._name = None
         self._values = None
         self.discriminator = None
+        if internal_start_step is not None:
+            self.internal_start_step = internal_start_step
         if name is not None:
             self.name = name
         if values is not None:
             self.values = values
+
+    @property
+    def internal_start_step(self) -> 'int':
+        """Gets the internal_start_step of this V1Metrics.  # noqa: E501
+
+
+        :return: The internal_start_step of this V1Metrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._internal_start_step
+
+    @internal_start_step.setter
+    def internal_start_step(self, internal_start_step: 'int'):
+        """Sets the internal_start_step of this V1Metrics.
+
+
+        :param internal_start_step: The internal_start_step of this V1Metrics.  # noqa: E501
+        :type: int
+        """
+
+        self._internal_start_step = internal_start_step
 
     @property
     def name(self) -> 'str':

@@ -42,29 +42,24 @@ class V1MetricValue(object):
     """
     swagger_types = {
         'created_at': 'datetime',
-        'internal_step': 'str',
         'step': 'str',
         'value': 'float'
     }
 
     attribute_map = {
         'created_at': 'createdAt',
-        'internal_step': 'internalStep',
         'step': 'step',
         'value': 'value'
     }
 
-    def __init__(self, created_at: 'datetime' =None, internal_step: 'str' =None, step: 'str' =None, value: 'float' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, step: 'str' =None, value: 'float' =None):  # noqa: E501
         """V1MetricValue - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
-        self._internal_step = None
         self._step = None
         self._value = None
         self.discriminator = None
         if created_at is not None:
             self.created_at = created_at
-        if internal_step is not None:
-            self.internal_step = internal_step
         if step is not None:
             self.step = step
         if value is not None:
@@ -90,27 +85,6 @@ class V1MetricValue(object):
         """
 
         self._created_at = created_at
-
-    @property
-    def internal_step(self) -> 'str':
-        """Gets the internal_step of this V1MetricValue.  # noqa: E501
-
-
-        :return: The internal_step of this V1MetricValue.  # noqa: E501
-        :rtype: str
-        """
-        return self._internal_step
-
-    @internal_step.setter
-    def internal_step(self, internal_step: 'str'):
-        """Sets the internal_step of this V1MetricValue.
-
-
-        :param internal_step: The internal_step of this V1MetricValue.  # noqa: E501
-        :type: str
-        """
-
-        self._internal_step = internal_step
 
     @property
     def step(self) -> 'str':
