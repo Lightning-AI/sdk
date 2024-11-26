@@ -509,6 +509,7 @@ def _download_model_files(
         pbar = tqdm(
             desc=f"Downloading {version}",
             unit="B",
+            total=float(response.size_bytes),
             unit_scale=True,
             unit_divisor=1000,
         )
