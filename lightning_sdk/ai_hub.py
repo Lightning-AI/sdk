@@ -15,8 +15,17 @@ class AIHub:
     """An interface to interact with the AI Hub.
 
     Example:
-        ai_hub = AIHub()
-        api_list = ai_hub.list_apis()
+        from lightning_sdk import AIHub
+        hub = AIHub()
+
+        # List public API templates
+        api_list = hub.list_apis()
+
+        # Get detailed information about an API template
+        api_info =  hub.api_info("temp_xxxx")
+
+        # Deploy an API template
+        deployment = hub.deploy("temp_xxxx")
     """
 
     def __init__(self) -> None:
@@ -28,7 +37,7 @@ class AIHub:
 
         Example:
             ai_hub = AIHub()
-            api_info = ai_hub.api_info("api_12345")
+            api_info = ai_hub.api_info("temp_xxxx")
 
         Args:
             api_id: The ID of the API for which information is requested.
@@ -70,8 +79,11 @@ class AIHub:
             },
         }
 
-    def list_apis(self, search: Optional[str] = None) -> List[Dict[str, str]]:
-        """Get a list of AI Hub API templates.
+    def list_apis(
+        self,
+        search: Optional[str] = None,
+    ) -> List[Dict[str, str]]:
+        """Get a list of public AI Hub API templates.
 
         Example:
             ai_hub = AIHub()
@@ -93,9 +105,6 @@ class AIHub:
                 "name": template.name,
                 "description": template.description,
                 "creator_username": template.creator_username,
-                "created_on": template.creation_timestamp.strftime("%Y-%m-%d %H:%M:%S")
-                if template.creation_timestamp
-                else None,
             }
             results.append(result)
         return results
@@ -134,11 +143,11 @@ class AIHub:
         Example:
             from lightning_sdk import AIHub
             hub = AIHub()
-            deployment = hub.deploy("temp_01jc37n6qpqkdptjpyep0z06hy")
+            deployment = hub.deploy("temp_xxxx")
 
             # Using API arguments
-            api_arugments = {"batch_size" 10, "batch_timeout": 0.001, "env_token": "lit_xxxx"}
-            deployment = hub.deploy("temp_01jc37n6qpqkdptjpyep0z06hy", api_arugments=api_arugments)
+            api_arugments = {"model": "unitary/toxic-bert", "batch_size" 10, "token": "lit_xxxx"}
+            deployment = hub.deploy("temp_xxxx", api_arugments=api_arugments)
 
         Args:
             api_id: The ID of the API you want to deploy.
