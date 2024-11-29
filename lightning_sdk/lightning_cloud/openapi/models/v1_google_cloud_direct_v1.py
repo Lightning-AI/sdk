@@ -44,7 +44,6 @@ class V1GoogleCloudDirectV1(object):
         'bucket_name': 'str',
         'credentials_secret_id': 'str',
         'credentials_service_account_email': 'str',
-        'dws_enabled': 'bool',
         'primary_region': 'str',
         'project_id': 'str',
         'regions': 'list[str]',
@@ -56,7 +55,6 @@ class V1GoogleCloudDirectV1(object):
         'bucket_name': 'bucketName',
         'credentials_secret_id': 'credentialsSecretId',
         'credentials_service_account_email': 'credentialsServiceAccountEmail',
-        'dws_enabled': 'dwsEnabled',
         'primary_region': 'primaryRegion',
         'project_id': 'projectId',
         'regions': 'regions',
@@ -64,12 +62,11 @@ class V1GoogleCloudDirectV1(object):
         'source_cidr_ips': 'sourceCidrIps'
     }
 
-    def __init__(self, bucket_name: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, dws_enabled: 'bool' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._credentials_secret_id = None
         self._credentials_service_account_email = None
-        self._dws_enabled = None
         self._primary_region = None
         self._project_id = None
         self._regions = None
@@ -82,8 +79,6 @@ class V1GoogleCloudDirectV1(object):
             self.credentials_secret_id = credentials_secret_id
         if credentials_service_account_email is not None:
             self.credentials_service_account_email = credentials_service_account_email
-        if dws_enabled is not None:
-            self.dws_enabled = dws_enabled
         if primary_region is not None:
             self.primary_region = primary_region
         if project_id is not None:
@@ -159,27 +154,6 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._credentials_service_account_email = credentials_service_account_email
-
-    @property
-    def dws_enabled(self) -> 'bool':
-        """Gets the dws_enabled of this V1GoogleCloudDirectV1.  # noqa: E501
-
-
-        :return: The dws_enabled of this V1GoogleCloudDirectV1.  # noqa: E501
-        :rtype: bool
-        """
-        return self._dws_enabled
-
-    @dws_enabled.setter
-    def dws_enabled(self, dws_enabled: 'bool'):
-        """Sets the dws_enabled of this V1GoogleCloudDirectV1.
-
-
-        :param dws_enabled: The dws_enabled of this V1GoogleCloudDirectV1.  # noqa: E501
-        :type: bool
-        """
-
-        self._dws_enabled = dws_enabled
 
     @property
     def primary_region(self) -> 'str':

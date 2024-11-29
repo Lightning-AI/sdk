@@ -43,20 +43,23 @@ class V1Checkbox(object):
     swagger_types = {
         'false_value': 'str',
         'is_checked': 'bool',
-        'true_value': 'str'
+        'true_value': 'str',
+        'value': 'bool'
     }
 
     attribute_map = {
         'false_value': 'falseValue',
         'is_checked': 'isChecked',
-        'true_value': 'trueValue'
+        'true_value': 'trueValue',
+        'value': 'value'
     }
 
-    def __init__(self, false_value: 'str' =None, is_checked: 'bool' =None, true_value: 'str' =None):  # noqa: E501
+    def __init__(self, false_value: 'str' =None, is_checked: 'bool' =None, true_value: 'str' =None, value: 'bool' =None):  # noqa: E501
         """V1Checkbox - a model defined in Swagger"""  # noqa: E501
         self._false_value = None
         self._is_checked = None
         self._true_value = None
+        self._value = None
         self.discriminator = None
         if false_value is not None:
             self.false_value = false_value
@@ -64,6 +67,8 @@ class V1Checkbox(object):
             self.is_checked = is_checked
         if true_value is not None:
             self.true_value = true_value
+        if value is not None:
+            self.value = value
 
     @property
     def false_value(self) -> 'str':
@@ -127,6 +132,27 @@ class V1Checkbox(object):
         """
 
         self._true_value = true_value
+
+    @property
+    def value(self) -> 'bool':
+        """Gets the value of this V1Checkbox.  # noqa: E501
+
+
+        :return: The value of this V1Checkbox.  # noqa: E501
+        :rtype: bool
+        """
+        return self._value
+
+    @value.setter
+    def value(self, value: 'bool'):
+        """Sets the value of this V1Checkbox.
+
+
+        :param value: The value of this V1Checkbox.  # noqa: E501
+        :type: bool
+        """
+
+        self._value = value
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

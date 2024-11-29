@@ -54,6 +54,7 @@ class DeploymentsIdBody(object):
         'spec': 'V1JobSpec',
         'status': 'V1DeploymentStatus',
         'strategy': 'V1DeploymentStrategy',
+        'template_id': 'str',
         'updated_at': 'datetime',
         'user_id': 'str'
     }
@@ -72,11 +73,12 @@ class DeploymentsIdBody(object):
         'spec': 'spec',
         'status': 'status',
         'strategy': 'strategy',
+        'template_id': 'templateId',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """DeploymentsIdBody - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
         self._cloudspace_id = None
@@ -91,6 +93,7 @@ class DeploymentsIdBody(object):
         self._spec = None
         self._status = None
         self._strategy = None
+        self._template_id = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
@@ -120,6 +123,8 @@ class DeploymentsIdBody(object):
             self.status = status
         if strategy is not None:
             self.strategy = strategy
+        if template_id is not None:
+            self.template_id = template_id
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -397,6 +402,27 @@ class DeploymentsIdBody(object):
         """
 
         self._strategy = strategy
+
+    @property
+    def template_id(self) -> 'str':
+        """Gets the template_id of this DeploymentsIdBody.  # noqa: E501
+
+
+        :return: The template_id of this DeploymentsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._template_id
+
+    @template_id.setter
+    def template_id(self, template_id: 'str'):
+        """Sets the template_id of this DeploymentsIdBody.
+
+
+        :param template_id: The template_id of this DeploymentsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._template_id = template_id
 
     @property
     def updated_at(self) -> 'datetime':

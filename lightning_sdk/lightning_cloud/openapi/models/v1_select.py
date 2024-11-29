@@ -41,19 +41,24 @@ class V1Select(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'options': 'list[str]'
+        'options': 'list[str]',
+        'value': 'str'
     }
 
     attribute_map = {
-        'options': 'options'
+        'options': 'options',
+        'value': 'value'
     }
 
-    def __init__(self, options: 'list[str]' =None):  # noqa: E501
+    def __init__(self, options: 'list[str]' =None, value: 'str' =None):  # noqa: E501
         """V1Select - a model defined in Swagger"""  # noqa: E501
         self._options = None
+        self._value = None
         self.discriminator = None
         if options is not None:
             self.options = options
+        if value is not None:
+            self.value = value
 
     @property
     def options(self) -> 'list[str]':
@@ -75,6 +80,27 @@ class V1Select(object):
         """
 
         self._options = options
+
+    @property
+    def value(self) -> 'str':
+        """Gets the value of this V1Select.  # noqa: E501
+
+
+        :return: The value of this V1Select.  # noqa: E501
+        :rtype: str
+        """
+        return self._value
+
+    @value.setter
+    def value(self, value: 'str'):
+        """Sets the value of this V1Select.
+
+
+        :param value: The value of this V1Select.  # noqa: E501
+        :type: str
+        """
+
+        self._value = value
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

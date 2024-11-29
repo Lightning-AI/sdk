@@ -59,6 +59,7 @@ class V1Job(object):
         'stopped_at': 'datetime',
         'timings': 'dict(str, V1JobTiming)',
         'total_cost': 'float',
+        'total_size_bytes': 'str',
         'updated_at': 'datetime',
         'urls': 'list[str]',
         'user_id': 'str',
@@ -84,13 +85,14 @@ class V1Job(object):
         'stopped_at': 'stoppedAt',
         'timings': 'timings',
         'total_cost': 'totalCost',
+        'total_size_bytes': 'totalSizeBytes',
         'updated_at': 'updatedAt',
         'urls': 'urls',
         'user_id': 'userId',
         'user_logs_started_at': 'userLogsStartedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deployment_id = None
@@ -110,6 +112,7 @@ class V1Job(object):
         self._stopped_at = None
         self._timings = None
         self._total_cost = None
+        self._total_size_bytes = None
         self._updated_at = None
         self._urls = None
         self._user_id = None
@@ -151,6 +154,8 @@ class V1Job(object):
             self.timings = timings
         if total_cost is not None:
             self.total_cost = total_cost
+        if total_size_bytes is not None:
+            self.total_size_bytes = total_size_bytes
         if updated_at is not None:
             self.updated_at = updated_at
         if urls is not None:
@@ -539,6 +544,27 @@ class V1Job(object):
         """
 
         self._total_cost = total_cost
+
+    @property
+    def total_size_bytes(self) -> 'str':
+        """Gets the total_size_bytes of this V1Job.  # noqa: E501
+
+
+        :return: The total_size_bytes of this V1Job.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_size_bytes
+
+    @total_size_bytes.setter
+    def total_size_bytes(self, total_size_bytes: 'str'):
+        """Sets the total_size_bytes of this V1Job.
+
+
+        :param total_size_bytes: The total_size_bytes of this V1Job.  # noqa: E501
+        :type: str
+        """
+
+        self._total_size_bytes = total_size_bytes
 
     @property
     def updated_at(self) -> 'datetime':

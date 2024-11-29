@@ -42,23 +42,28 @@ class V1Input(object):
     """
     swagger_types = {
         'default_value': 'str',
-        'placeholder': 'str'
+        'placeholder': 'str',
+        'value': 'str'
     }
 
     attribute_map = {
         'default_value': 'defaultValue',
-        'placeholder': 'placeholder'
+        'placeholder': 'placeholder',
+        'value': 'value'
     }
 
-    def __init__(self, default_value: 'str' =None, placeholder: 'str' =None):  # noqa: E501
+    def __init__(self, default_value: 'str' =None, placeholder: 'str' =None, value: 'str' =None):  # noqa: E501
         """V1Input - a model defined in Swagger"""  # noqa: E501
         self._default_value = None
         self._placeholder = None
+        self._value = None
         self.discriminator = None
         if default_value is not None:
             self.default_value = default_value
         if placeholder is not None:
             self.placeholder = placeholder
+        if value is not None:
+            self.value = value
 
     @property
     def default_value(self) -> 'str':
@@ -101,6 +106,27 @@ class V1Input(object):
         """
 
         self._placeholder = placeholder
+
+    @property
+    def value(self) -> 'str':
+        """Gets the value of this V1Input.  # noqa: E501
+
+
+        :return: The value of this V1Input.  # noqa: E501
+        :rtype: str
+        """
+        return self._value
+
+    @value.setter
+    def value(self, value: 'str'):
+        """Sets the value of this V1Input.
+
+
+        :param value: The value of this V1Input.  # noqa: E501
+        :type: str
+        """
+
+        self._value = value
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

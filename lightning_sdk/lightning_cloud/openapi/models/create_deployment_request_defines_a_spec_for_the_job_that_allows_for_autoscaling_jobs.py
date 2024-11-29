@@ -47,6 +47,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'endpoint': 'V1Endpoint',
         'name': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
+        'parent_template_id': 'str',
         'replicas': 'int',
         'spec': 'V1JobSpec',
         'strategy': 'V1DeploymentStrategy'
@@ -59,12 +60,13 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'endpoint': 'endpoint',
         'name': 'name',
         'parameter_spec': 'parameterSpec',
+        'parent_template_id': 'parentTemplateId',
         'replicas': 'replicas',
         'spec': 'spec',
         'strategy': 'strategy'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs - a model defined in Swagger"""  # noqa: E501
         self._autoscaling = None
         self._cloudspace_id = None
@@ -72,6 +74,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         self._endpoint = None
         self._name = None
         self._parameter_spec = None
+        self._parent_template_id = None
         self._replicas = None
         self._spec = None
         self._strategy = None
@@ -88,6 +91,8 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
             self.name = name
         if parameter_spec is not None:
             self.parameter_spec = parameter_spec
+        if parent_template_id is not None:
+            self.parent_template_id = parent_template_id
         if replicas is not None:
             self.replicas = replicas
         if spec is not None:
@@ -220,6 +225,27 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         """
 
         self._parameter_spec = parameter_spec
+
+    @property
+    def parent_template_id(self) -> 'str':
+        """Gets the parent_template_id of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+
+
+        :return: The parent_template_id of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_template_id
+
+    @parent_template_id.setter
+    def parent_template_id(self, parent_template_id: 'str'):
+        """Sets the parent_template_id of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.
+
+
+        :param parent_template_id: The parent_template_id of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_template_id = parent_template_id
 
     @property
     def replicas(self) -> 'int':
