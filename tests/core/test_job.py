@@ -164,12 +164,12 @@ def test_select_job_backend_correctly_v2(job_backend_selector_mocker_v2):
 def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env, interruptible):
 
         teamspace = Teamspace("ts-abc", org="org-abc")
-        job = _JobV2("test-job", teamspace, cluster="c-abc", _fetch_job=False)
+        job = _JobV2("test-job", teamspace, _fetch_job=False)
 
         submit_mock = mock.MagicMock()
         job._job_api.submit_job = submit_mock
 
-        job._submit(machine=machine, image="image-abc", command=command, env=env, interruptible=interruptible)
+        job._submit(machine=machine, image="image-abc", command=command, env=env, interruptible=interruptible, cluster="c-abc")
 
         # test that everything was passed along correctly to the api layer and that class values and function params are mixed correctly
         submit_mock.assert_called_once_with(name="test-job", command=command, cluster_id="c-abc", teamspace_id="ts-abc001", studio_id=None, image="image-abc", machine=machine, interruptible=interruptible, env=env)
@@ -182,10 +182,10 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
 
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
     submit_mock = mock.MagicMock()
     job._job_api.submit_job = submit_mock
-    job._submit(machine=machine, studio=studio, env=env, interruptible=interruptible, command="echo hello")
+    job._submit(machine=machine, cluster=studio.cluster, studio=studio, env=env, interruptible=interruptible, command="echo hello")
 
     submit_mock.assert_called_once_with(name="test-job", command="echo hello", cluster_id="c-abc", teamspace_id="ts-abc001", studio_id="st-abc", image=None, machine=machine, interruptible=interruptible, env=env)
 
@@ -205,20 +205,20 @@ def test_jobv2_run_arg_validation(internal_studio_init_mocker):
 def test_submit_jobv2_error_cases(internal_studio_init_mocker):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
 
     with pytest.raises(ValueError, match="image and studio are mutually exclusive as both define the environment to run the job in"):
-        job._submit(machine=Machine.T4_X_4, studio=studio, image="image-abc", command="echo hello", env={"key": "value"}, interruptible=False)
+        job._submit(machine=Machine.T4_X_4, studio=studio, image="image-abc", command="echo hello", env={"key": "value"}, interruptible=False, cluster=studio.cluster)
 
     with pytest.raises(ValueError, match="command is required when using a studio"):
-        job._submit(machine=Machine.T4_X_4, studio=studio, image=None, command=None, env={"key": "value"}, interruptible=False)
+        job._submit(machine=Machine.T4_X_4, studio=studio, image=None, command=None, env={"key": "value"}, interruptible=False, cluster=studio.cluster)
 
     with pytest.raises(ValueError, match="either image or studio must be provided"):
-        job._submit(machine=Machine.T4_X_4, studio=None, image=None, command="echo hello", env={"key": "value"}, interruptible=False)
+        job._submit(machine=Machine.T4_X_4, studio=None, image=None, command="echo hello", env={"key": "value"}, interruptible=False, cluster=studio.cluster)
 
 def test_get_job_by_name(internal_studio_init_mocker):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
-    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
 
     job._job_api.get_job_by_name = mock.MagicMock()
     job._update_internal_job()
@@ -228,7 +228,7 @@ def test_get_job_by_name(internal_studio_init_mocker):
 
 def test_get_job_by_id(internal_studio_init_mocker):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
-    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
 
     # simulate updating internal job
     job._job = V1Job(id="test-job-id")
@@ -241,7 +241,7 @@ def test_get_job_by_id(internal_studio_init_mocker):
 
 def test_get_job_by_name_first_and_then_by_id(internal_studio_init_mocker):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
-    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
     job._job_api.get_job_by_name = mock.MagicMock()
 
     job._job_api.get_job = mock.MagicMock()
@@ -258,7 +258,7 @@ def test_get_job_by_name_first_and_then_by_id(internal_studio_init_mocker):
 
 def test_get_job_by_name_on_init(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
-    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster)
+    job = _JobV2("test-job", studio.teamspace)
 
     assert hasattr(job, "_job")
     assert job._job is not None
@@ -276,7 +276,7 @@ def test_get_job_by_name_on_init(job_api_get_job_by_name_mocker, internal_studio
 def test_jobv2_status(job_api_get_job_by_name_mocker, internal_studio_init_mocker, internal_status, external_status):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster)
+    job = _JobV2("test-job", studio.teamspace)
 
     get_job_mock = mock.MagicMock()
     get_job_mock.return_value = V1Job(id="test-job-id", state=internal_status)
@@ -299,7 +299,7 @@ def test_jobv2_status(job_api_get_job_by_name_mocker, internal_studio_init_mocke
 def test_jobv2_machine(internal_studio_init_mocker, internal_instance_name, internal_instance_type, expected_machine):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster, _fetch_job=False)
+    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
 
     get_job_mock = mock.MagicMock()
     get_job_mock.return_value = V1Job(id="test-job-id", spec=V1JobSpec(instance_name=internal_instance_name, instance_type=internal_instance_type))
@@ -312,7 +312,7 @@ def test_jobv2_machine(internal_studio_init_mocker, internal_instance_name, inte
 def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster)
+    job = _JobV2("test-job", studio.teamspace)
 
     i = 0
     def get_job_side_effect(*args, **kwargs):
@@ -339,7 +339,7 @@ def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker)
 def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name=f"st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace, cluster=studio.cluster)
+    job = _JobV2("test-job", studio.teamspace,)
 
     delete_job_mock = mock.MagicMock()
     job._job_api.delete_job = delete_job_mock
@@ -347,3 +347,17 @@ def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocke
     job.delete()
 
     delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001", cloudspace_id=None)
+
+
+def test_submit_jobv2_studio_resolve(job_backend_selector_mocker_v2, internal_studio_init_mocker):
+    from lightning_sdk.job.v2 import _JobV2
+    import lightning_sdk
+    importlib.reload(lightning_sdk.job.job)
+    from lightning_sdk.job.job import Job
+
+    submit_mock = mock.MagicMock()
+    _JobV2._submit = submit_mock
+
+    job = Job.run("test-job", machine=Machine.CPU, command="echo hello", studio="st-abc", teamspace="ts-abc", org="org-abc")
+
+    submit_mock.assert_called_once_with(command="echo hello", cluster="c-abc", env=None, image=None, interruptible=False, machine=Machine.CPU, studio=Studio(name="st-abc", teamspace="ts-abc", org="org-abc"))

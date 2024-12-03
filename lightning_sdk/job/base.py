@@ -16,15 +16,20 @@ class _BaseJob(ABC):
     def __init__(
         self,
         name: str,
-        teamspace: Union[str, "Teamspace"] = None,
-        org: Union[str, "Organization"] = None,
-        user: Union[str, "User"] = None,
-        cluster: Optional[str] = None,
+        teamspace: Union[str, "Teamspace", None] = None,
+        org: Union[str, "Organization", None] = None,
+        user: Union[str, "User", None] = None,
         *,
         _fetch_job: bool = True,
     ) -> None:
-        self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
-        self._cluster = cluster
+        _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        if _teamspace is None:
+            raise ValueError(
+                "Cannot resolve the teamspace from provided arguments."
+                f" Got teamspace={teamspace}, org={org}, user={user}."
+            )
+        else:
+            self._teamspace = _teamspace
         self._name = name
         self._job = None
 
@@ -37,18 +42,25 @@ class _BaseJob(ABC):
         name: str,
         machine: "Machine",
         command: Optional[str] = None,
-        studio: Optional["Studio"] = None,
+        studio: Union["Studio", str, None] = None,
         image: Optional[str] = None,
-        teamspace: Union[str, "Teamspace"] = None,
-        org: Union[str, "Organization"] = None,
-        user: Union[str, "User"] = None,
+        teamspace: Union[str, "Teamspace", None] = None,
+        org: Union[str, "Organization", None] = None,
+        user: Union[str, "User", None] = None,
         cluster: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
     ) -> "_BaseJob":
+        from lightning_sdk.studio import Studio
+
         if not name:
             raise ValueError("A job needs to have a name!")
-        if studio is not None:
+
+        if image is None:
+            if not isinstance(studio, Studio):
+                studio = Studio(name=studio, teamspace=teamspace, org=org, user=user, cluster=cluster, create_ok=False)
+
+            # studio is a Studio instance at this point
             if teamspace is None:
                 teamspace = studio.teamspace
             else:
@@ -60,11 +72,30 @@ class _BaseJob(ABC):
                         "Can only run jobs with Studio envs in the teamspace of that Studio."
                     )
 
-        # TODO: resolve studio and support string studios
-        # TODO: assertions for studio to be on cluster
-        # TODO: if cluster is not provided use studio cluster if provided, otherwise use default cluster from teamspace
-        inst = cls(name=name, teamspace=teamspace, org=org, user=user, cluster=cluster, _fetch_job=False)
-        inst._submit(machine=machine, command=command, studio=studio, image=image, env=env, interruptible=interruptible)
+            if cluster is None:
+                cluster = studio.cluster
+
+            if cluster != studio.cluster:
+                raise ValueError(
+                    "Studio cluster does not match provided cluster. "
+                    "Can only run jobs with Studio envs in the same cluster."
+                )
+        else:
+            if studio is not None:
+                raise RuntimeError(
+                    "image and studio are mutually exclusive as both define the environment to run the job in"
+                )
+
+        inst = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
+        inst._submit(
+            machine=machine,
+            cluster=cluster,
+            command=command,
+            studio=studio,
+            image=image,
+            env=env,
+            interruptible=interruptible,
+        )
         return inst
 
     @abstractmethod
@@ -76,6 +107,7 @@ class _BaseJob(ABC):
         image: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
+        cluster: Optional[str] = None,
     ) -> None:
         """Submits a job and updates the internal _job attribute as well as the _name attribute."""
 
@@ -123,7 +155,3 @@ class _BaseJob(ABC):
     @property
     def teamspace(self) -> "Teamspace":
         return self._teamspace
-
-    @property
-    def cluster(self) -> Optional[str]:
-        return self._cluster

@@ -28,17 +28,20 @@ class Job(_BaseJob):
     def __init__(
         self,
         name: str,
-        teamspace: Union[str, "Teamspace"] = None,
-        org: Union[str, "Organization"] = None,
-        user: Union[str, "User"] = None,
-        cluster: Optional[str] = None,
+        teamspace: Union[str, "Teamspace", None] = None,
+        org: Union[str, "Organization", None] = None,
+        user: Union[str, "User", None] = None,
         *,
         _fetch_job: bool = True,
     ) -> None:
         internal_job_cls = _JobV2 if _has_jobs_v2() else _JobV1
 
         self._internal_job = internal_job_cls(
-            name=name, teamspace=teamspace, org=org, user=user, cluster=cluster, _fetch_job=_fetch_job
+            name=name,
+            teamspace=teamspace,
+            org=org,
+            user=user,
+            _fetch_job=_fetch_job,
         )
 
     @classmethod
@@ -47,11 +50,11 @@ class Job(_BaseJob):
         name: str,
         machine: "Machine",
         command: Optional[str] = None,
-        studio: Optional["Studio"] = None,
-        image: Optional[str] = None,
-        teamspace: Union[str, "Teamspace"] = None,
-        org: Union[str, "Organization"] = None,
-        user: Union[str, "User"] = None,
+        studio: Union["Studio", str, None] = None,
+        image: Union[str, None] = None,
+        teamspace: Union[str, "Teamspace", None] = None,
+        org: Union[str, "Organization", None] = None,
+        user: Union[str, "User", None] = None,
         cluster: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
@@ -81,9 +84,16 @@ class Job(_BaseJob):
         image: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
+        cluster: Optional[str] = None,
     ) -> None:
         return self._internal_job._submit(
-            machine=machine, command=command, studio=studio, image=image, env=env, interruptible=interruptible
+            machine=machine,
+            cluster=cluster,
+            command=command,
+            studio=studio,
+            image=image,
+            env=env,
+            interruptible=interruptible,
         )
 
     def stop(self) -> None:

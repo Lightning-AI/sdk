@@ -20,15 +20,14 @@ class _JobV1(_BaseJob):
     def __init__(
         self,
         name: str,
-        teamspace: Union[str, "Teamspace"] = None,
-        org: Union[str, "Organization"] = None,
-        user: Union[str, "User"] = None,
-        cluster: Optional[str] = None,
+        teamspace: Union[str, "Teamspace", None] = None,
+        org: Union[str, "Organization", None] = None,
+        user: Union[str, "User", None] = None,
         *,
         _fetch_job: bool = True,
     ) -> None:
         self._job_api = JobApiV1()
-        super().__init__(name=name, teamspace=teamspace, org=org, user=user, cluster=cluster, _fetch_job=_fetch_job)
+        super().__init__(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=_fetch_job)
 
     @classmethod
     def run(
@@ -37,9 +36,9 @@ class _JobV1(_BaseJob):
         machine: "Machine",
         command: str,
         studio: "Studio",
-        teamspace: Union[str, "Teamspace"] = None,
-        org: Union[str, "Organization"] = None,
-        user: Union[str, "User"] = None,
+        teamspace: Union[str, "Teamspace", None] = None,
+        org: Union[str, "Organization", None] = None,
+        user: Union[str, "User", None] = None,
         cluster: Optional[str] = None,
         interruptible: bool = False,
     ) -> "_BaseJob":
@@ -65,6 +64,7 @@ class _JobV1(_BaseJob):
         image: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
+        cluster: Optional[str] = None,
     ) -> None:
         if studio is None:
             raise ValueError("Studio is required for submitting jobs")
@@ -85,7 +85,7 @@ class _JobV1(_BaseJob):
             command=command,
             studio_id=studio._studio.id,
             teamspace_id=self._teamspace.id,
-            cluster_id=self._cluster,
+            cluster_id=cluster,
             machine=machine,
             interruptible=interruptible,
         )

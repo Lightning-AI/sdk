@@ -16,15 +16,14 @@ class _JobV2(_BaseJob):
     def __init__(
         self,
         name: str,
-        teamspace: Union[str, "Teamspace"] = None,
-        org: Union[str, "Organization"] = None,
-        user: Union[str, "User"] = None,
-        cluster: Optional[str] = None,
+        teamspace: Union[str, "Teamspace", None] = None,
+        org: Union[str, "Organization", None] = None,
+        user: Union[str, "User", None] = None,
         *,
         _fetch_job: bool = True,
     ) -> None:
         self._job_api = JobApiV2()
-        super().__init__(name=name, teamspace=teamspace, org=org, user=user, cluster=cluster, _fetch_job=_fetch_job)
+        super().__init__(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=_fetch_job)
 
     def _submit(
         self,
@@ -34,6 +33,7 @@ class _JobV2(_BaseJob):
         image: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
+        cluster: Optional[str] = None,
     ) -> None:
         # Command is required if Studio is provided to know what to run
         # Image is mutually exclusive with Studio
@@ -52,10 +52,13 @@ class _JobV2(_BaseJob):
             if image is None:
                 raise ValueError("either image or studio must be provided")
 
+        if cluster is None:
+            raise ValueError("cluster is required")
+
         submitted = self._job_api.submit_job(
             name=self.name,
             command=command,
-            cluster_id=self._cluster,
+            cluster_id=cluster,
             teamspace_id=self._teamspace.id,
             studio_id=studio_id,
             image=image,
