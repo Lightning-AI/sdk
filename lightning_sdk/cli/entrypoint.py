@@ -5,6 +5,7 @@ from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.ai_hub import _AIHub
 from lightning_sdk.cli.download import _Downloads
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
+from lightning_sdk.cli.run import _Run
 from lightning_sdk.cli.upload import _Uploads
 from lightning_sdk.lightning_cloud.login import Auth
 
@@ -19,8 +20,7 @@ class StudioCLI:
         self.upload = _Uploads()
         self.aihub = _AIHub()
 
-        if _LIGHTNING_AVAILABLE:
-            self.run = _LegacyLightningCLI()
+        self.run = _Run(legacy_run=_LegacyLightningCLI() if _LIGHTNING_AVAILABLE else None)
 
     def login(self) -> None:
         """Login to Lightning AI Studios."""

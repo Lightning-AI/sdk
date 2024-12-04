@@ -52,9 +52,6 @@ class _JobV2(_BaseJob):
             if image is None:
                 raise ValueError("either image or studio must be provided")
 
-        if cluster is None:
-            raise ValueError("cluster is required")
-
         submitted = self._job_api.submit_job(
             name=self.name,
             command=command,

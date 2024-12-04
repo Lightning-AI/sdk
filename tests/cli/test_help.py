@@ -4,11 +4,7 @@ import pytest
 import sys
 
 
-@pytest.mark.skipif(
-    not _LIGHTNING_AVAILABLE,
-    reason="This is the CLI if lightning is available",
-)
-def test_root_message_lightning_available():
+def test_root_message():
     message = """NAME
     lightning - Command line interface (CLI) to interact with/manage Lightning AI Studios.
 
@@ -28,7 +24,7 @@ GROUPS
        Download files and folders from Lightning AI.
 
      run
-       Legacy CLI for `fabric run model` and `lightning run app`.
+       Run async workloads on the Lightning AI platform.
 
      upload
        Upload files and folders to Lightning AI.
@@ -44,39 +40,52 @@ COMMANDS
     result = subprocess.run("lightning", shell=True, capture_output=True, text=True)
     assert message in result.stdout or message in result.stderr
 
-
-@pytest.mark.skipif(_LIGHTNING_AVAILABLE, reason="This is the CLI if lightning is not available")
-def test_root_message_lightning_unavailable():
+@pytest.mark.skipif(
+    not _LIGHTNING_AVAILABLE,
+    reason="This is the CLI if lightning is available",
+)
+def test_run_message_lightning_available():
     message = """NAME
-    lightning - Command line interface (CLI) to interact with/manage Lightning AI Studios.
+    lightning run - Run async workloads on the Lightning AI platform.
 
 SYNOPSIS
-    lightning GROUP | COMMAND
+    lightning run COMMAND
 
 DESCRIPTION
-    Command line interface (CLI) to interact with/manage Lightning AI Studios.
-
-GROUPS
-    GROUP is one of the following:
-
-     aihub
-       Interact with Lightning Studio - AI Hub.
-
-     download
-       Download files and folders from Lightning AI.
-
-     upload
-       Upload files and folders to Lightning AI.
+    Run async workloads on the Lightning AI platform.
 
 COMMANDS
     COMMAND is one of the following:
 
-     login
-       Login to Lightning AI Studios.
+     app
+       Legacy CLI for `lightning_app run app`.
 
-     logout
-       Logout from Lightning AI Studios."""
-    result = subprocess.run("lightning", shell=True, capture_output=True, text=True)
+     job
+       Run async workloads using a docker image or a compute environment from your studio.
+
+     model
+       Legacy CLI for `fabric run model`."""
+    result = subprocess.run("lightning run", shell=True, capture_output=True, text=True)
+    assert message in result.stdout or message in result.stderr
+
+
+@pytest.mark.skipif(_LIGHTNING_AVAILABLE, reason="This is the CLI if lightning is not available")
+def test_run_message_lightning_unavailable():
+    message = """NAME
+    lightning run - Run async workloads on the Lightning AI platform.
+
+SYNOPSIS
+    lightning run COMMAND
+
+DESCRIPTION
+    Run async workloads on the Lightning AI platform.
+
+COMMANDS
+    COMMAND is one of the following:
+
+     job
+       Run async workloads using a docker image or a compute environment from your studio."""
+    result = subprocess.run("lightning run", shell=True, capture_output=True, text=True)
     assert message in result.stdout or message in result.stderr
 
 
@@ -267,5 +276,72 @@ FLAGS
         Disable caching of packages installed from requirements.txt
     -b, --blocking=BLOCKING
         Type: bool"""
+
+    assert message in result.stderr or message in result.stdout
+
+# for some reason the strings are slightly different for every python version. It doesn't make sense to list them all here
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or above")
+def test_run_job_help():
+
+    result = subprocess.run("lightning run job --help", shell=True, capture_output=True, text=True)
+    message = """INFO: Showing help with the command 'lightning run job -- --help'.
+
+NAME
+    lightning run job - Run async workloads using a docker image or a compute environment from your studio.
+
+SYNOPSIS
+    lightning run job NAME MACHINE <flags>
+
+DESCRIPTION
+    Run async workloads using a docker image or a compute environment from your studio.
+
+POSITIONAL ARGUMENTS
+    NAME
+        Type: str
+        The name of the job. Needs to be unique within the teamspace.
+    MACHINE
+        Type: str
+        The machine type to run the job on. One of CPU_SMALL, CPU, DATA_PREP, DATA_PREP_MAX, DATA_PREP_ULTRA, T4, T4_X_4, L4, L4_X_4, L4_X_8, A10G, A10G_X_4, A10G_X_8, L40S, L40S_X_4, L40S_X_8, A100_X_8, H100_X_8, H200_X_8.
+
+FLAGS
+    --command=COMMAND
+        Type: Optional[Optional]
+        Default: None
+        The command to run inside your job. Required if using a studio. Optional if using an image. If not provided for images, will run the container entrypoint and default command.
+    -s, --studio=STUDIO
+        Type: Optional[Optional]
+        Default: None
+        The studio env to run the job with. Mutually exclusive with image.
+    --image=IMAGE
+        Type: Optional[Optional]
+        Default: None
+        The docker image to run the job with. Mutually exclusive with studio.
+    -t, --teamspace=TEAMSPACE
+        Type: Optional[Optional]
+        Default: None
+        The teamspace the job should be associated with. Defaults to the current teamspace.
+    -o, --org=ORG
+        Type: Optional[Optional]
+        Default: None
+        The organization owning the teamspace (if any). Defaults to the current organization.
+    -u, --user=USER
+        Type: Optional[Optional]
+        Default: None
+        The user owning the teamspace (if any). Defaults to the current user.
+    --cluster=CLUSTER
+        Type: Optional[Optional]
+        Default: None
+        The cluster to run the job on. Defaults to the studio cluster if running with studio compute env. If not provided will fall back to the teamspaces default cluster.
+    -e, --env=ENV
+        Type: Optional[Optional]
+        Default: None
+        Environment variables to set inside the job.
+    --interruptible=INTERRUPTIBLE
+        Type: bool
+        Default: False
+        Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+
+NOTES
+    You can also use flags syntax for POSITIONAL ARGUMENTS"""
 
     assert message in result.stderr or message in result.stdout
