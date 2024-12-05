@@ -50,10 +50,12 @@ class ProjectIdAgentsBody(object):
         'knowledge': 'str',
         'knowledge_configuration': 'V1KnowledgeConfiguration',
         'model': 'str',
+        'model_provider': 'str',
         'name': 'str',
         'org_id': 'str',
         'prompt_suggestions': 'list[V1PromptSuggestion]',
         'prompt_template': 'str',
+        'publish_status': 'str',
         'thumbnail_url': 'str'
     }
 
@@ -67,14 +69,16 @@ class ProjectIdAgentsBody(object):
         'knowledge': 'knowledge',
         'knowledge_configuration': 'knowledgeConfiguration',
         'model': 'model',
+        'model_provider': 'modelProvider',
         'name': 'name',
         'org_id': 'orgId',
         'prompt_suggestions': 'promptSuggestions',
         'prompt_template': 'promptTemplate',
+        'publish_status': 'publishStatus',
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, description: 'str' =None, endpoint: 'V1Endpoint' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, description: 'str' =None, endpoint: 'V1Endpoint' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """ProjectIdAgentsBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -85,10 +89,12 @@ class ProjectIdAgentsBody(object):
         self._knowledge = None
         self._knowledge_configuration = None
         self._model = None
+        self._model_provider = None
         self._name = None
         self._org_id = None
         self._prompt_suggestions = None
         self._prompt_template = None
+        self._publish_status = None
         self._thumbnail_url = None
         self.discriminator = None
         if cloudspace_id is not None:
@@ -109,6 +115,8 @@ class ProjectIdAgentsBody(object):
             self.knowledge_configuration = knowledge_configuration
         if model is not None:
             self.model = model
+        if model_provider is not None:
+            self.model_provider = model_provider
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -117,6 +125,8 @@ class ProjectIdAgentsBody(object):
             self.prompt_suggestions = prompt_suggestions
         if prompt_template is not None:
             self.prompt_template = prompt_template
+        if publish_status is not None:
+            self.publish_status = publish_status
         if thumbnail_url is not None:
             self.thumbnail_url = thumbnail_url
 
@@ -310,6 +320,27 @@ class ProjectIdAgentsBody(object):
         self._model = model
 
     @property
+    def model_provider(self) -> 'str':
+        """Gets the model_provider of this ProjectIdAgentsBody.  # noqa: E501
+
+
+        :return: The model_provider of this ProjectIdAgentsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._model_provider
+
+    @model_provider.setter
+    def model_provider(self, model_provider: 'str'):
+        """Sets the model_provider of this ProjectIdAgentsBody.
+
+
+        :param model_provider: The model_provider of this ProjectIdAgentsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._model_provider = model_provider
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this ProjectIdAgentsBody.  # noqa: E501
 
@@ -392,6 +423,27 @@ class ProjectIdAgentsBody(object):
         """
 
         self._prompt_template = prompt_template
+
+    @property
+    def publish_status(self) -> 'str':
+        """Gets the publish_status of this ProjectIdAgentsBody.  # noqa: E501
+
+
+        :return: The publish_status of this ProjectIdAgentsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._publish_status
+
+    @publish_status.setter
+    def publish_status(self, publish_status: 'str'):
+        """Sets the publish_status of this ProjectIdAgentsBody.
+
+
+        :param publish_status: The publish_status of this ProjectIdAgentsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._publish_status = publish_status
 
     @property
     def thumbnail_url(self) -> 'str':

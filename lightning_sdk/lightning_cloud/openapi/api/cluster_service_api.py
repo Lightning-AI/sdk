@@ -2197,6 +2197,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
+        :param bool include_pricing:
         :return: V1ListDefaultClusterAcceleratorsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2217,12 +2218,13 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
+        :param bool include_pricing:
         :return: V1ListDefaultClusterAcceleratorsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = []  # noqa: E501
+        all_params = ['include_pricing']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2243,6 +2245,8 @@ class ClusterServiceApi(object):
         path_params = {}
 
         query_params = []
+        if 'include_pricing' in params:
+            query_params.append(('includePricing', params['include_pricing']))  # noqa: E501
 
         header_params = {}
 

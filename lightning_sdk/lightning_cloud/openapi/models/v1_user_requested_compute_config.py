@@ -48,6 +48,7 @@ class V1UserRequestedComputeConfig(object):
         'gpu_image_override': 'str',
         'id': 'str',
         'name': 'str',
+        'requested_run_duration_seconds': 'str',
         'same_compute_on_resume': 'bool',
         'shm_size': 'int',
         'spot': 'bool'
@@ -61,12 +62,13 @@ class V1UserRequestedComputeConfig(object):
         'gpu_image_override': 'gpuImageOverride',
         'id': 'id',
         'name': 'name',
+        'requested_run_duration_seconds': 'requestedRunDurationSeconds',
         'same_compute_on_resume': 'sameComputeOnResume',
         'shm_size': 'shmSize',
         'spot': 'spot'
     }
 
-    def __init__(self, affinity_identifier: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, name: 'str' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, affinity_identifier: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, name: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None, spot: 'bool' =None):  # noqa: E501
         """V1UserRequestedComputeConfig - a model defined in Swagger"""  # noqa: E501
         self._affinity_identifier = None
         self._count = None
@@ -75,6 +77,7 @@ class V1UserRequestedComputeConfig(object):
         self._gpu_image_override = None
         self._id = None
         self._name = None
+        self._requested_run_duration_seconds = None
         self._same_compute_on_resume = None
         self._shm_size = None
         self._spot = None
@@ -93,6 +96,8 @@ class V1UserRequestedComputeConfig(object):
             self.id = id
         if name is not None:
             self.name = name
+        if requested_run_duration_seconds is not None:
+            self.requested_run_duration_seconds = requested_run_duration_seconds
         if same_compute_on_resume is not None:
             self.same_compute_on_resume = same_compute_on_resume
         if shm_size is not None:
@@ -252,6 +257,27 @@ class V1UserRequestedComputeConfig(object):
         """
 
         self._name = name
+
+    @property
+    def requested_run_duration_seconds(self) -> 'str':
+        """Gets the requested_run_duration_seconds of this V1UserRequestedComputeConfig.  # noqa: E501
+
+
+        :return: The requested_run_duration_seconds of this V1UserRequestedComputeConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._requested_run_duration_seconds
+
+    @requested_run_duration_seconds.setter
+    def requested_run_duration_seconds(self, requested_run_duration_seconds: 'str'):
+        """Sets the requested_run_duration_seconds of this V1UserRequestedComputeConfig.
+
+
+        :param requested_run_duration_seconds: The requested_run_duration_seconds of this V1UserRequestedComputeConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._requested_run_duration_seconds = requested_run_duration_seconds
 
     @property
     def same_compute_on_resume(self) -> 'bool':

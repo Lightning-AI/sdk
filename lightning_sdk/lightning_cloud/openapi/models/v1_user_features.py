@@ -44,6 +44,7 @@ class V1UserFeatures(object):
         'advanced_deployment_autoscaling': 'bool',
         'affiliate_links': 'bool',
         'agents_v2': 'bool',
+        'ai_hub_monetization': 'bool',
         'auto_fast_load': 'bool',
         'auto_join_orgs': 'bool',
         'aws_trainium': 'bool',
@@ -112,6 +113,7 @@ class V1UserFeatures(object):
         'show_dev_admin': 'bool',
         'slurm': 'bool',
         'slurm_machine_selector': 'bool',
+        'snapshotter_service': 'bool',
         'snowflake_connection': 'bool',
         'spot_v2': 'bool',
         'studio_config': 'bool',
@@ -126,6 +128,7 @@ class V1UserFeatures(object):
         'advanced_deployment_autoscaling': 'advancedDeploymentAutoscaling',
         'affiliate_links': 'affiliateLinks',
         'agents_v2': 'agentsV2',
+        'ai_hub_monetization': 'aiHubMonetization',
         'auto_fast_load': 'autoFastLoad',
         'auto_join_orgs': 'autoJoinOrgs',
         'aws_trainium': 'awsTrainium',
@@ -194,6 +197,7 @@ class V1UserFeatures(object):
         'show_dev_admin': 'showDevAdmin',
         'slurm': 'slurm',
         'slurm_machine_selector': 'slurmMachineSelector',
+        'snapshotter_service': 'snapshotterService',
         'snowflake_connection': 'snowflakeConnection',
         'spot_v2': 'spotV2',
         'studio_config': 'studioConfig',
@@ -204,11 +208,12 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_customize_api: 'bool' =None, deployment_data_path: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_version_visibility: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, dynamic_workload_scheduling: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lightning_registry: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, multiple_deployment_versions: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, s3_folders: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_customize_api: 'bool' =None, deployment_data_path: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_version_visibility: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, dynamic_workload_scheduling: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lightning_registry: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, multiple_deployment_versions: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, s3_folders: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._advanced_deployment_autoscaling = None
         self._affiliate_links = None
         self._agents_v2 = None
+        self._ai_hub_monetization = None
         self._auto_fast_load = None
         self._auto_join_orgs = None
         self._aws_trainium = None
@@ -277,6 +282,7 @@ class V1UserFeatures(object):
         self._show_dev_admin = None
         self._slurm = None
         self._slurm_machine_selector = None
+        self._snapshotter_service = None
         self._snowflake_connection = None
         self._spot_v2 = None
         self._studio_config = None
@@ -292,6 +298,8 @@ class V1UserFeatures(object):
             self.affiliate_links = affiliate_links
         if agents_v2 is not None:
             self.agents_v2 = agents_v2
+        if ai_hub_monetization is not None:
+            self.ai_hub_monetization = ai_hub_monetization
         if auto_fast_load is not None:
             self.auto_fast_load = auto_fast_load
         if auto_join_orgs is not None:
@@ -428,6 +436,8 @@ class V1UserFeatures(object):
             self.slurm = slurm
         if slurm_machine_selector is not None:
             self.slurm_machine_selector = slurm_machine_selector
+        if snapshotter_service is not None:
+            self.snapshotter_service = snapshotter_service
         if snowflake_connection is not None:
             self.snowflake_connection = snowflake_connection
         if spot_v2 is not None:
@@ -507,6 +517,27 @@ class V1UserFeatures(object):
         """
 
         self._agents_v2 = agents_v2
+
+    @property
+    def ai_hub_monetization(self) -> 'bool':
+        """Gets the ai_hub_monetization of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The ai_hub_monetization of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._ai_hub_monetization
+
+    @ai_hub_monetization.setter
+    def ai_hub_monetization(self, ai_hub_monetization: 'bool'):
+        """Sets the ai_hub_monetization of this V1UserFeatures.
+
+
+        :param ai_hub_monetization: The ai_hub_monetization of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._ai_hub_monetization = ai_hub_monetization
 
     @property
     def auto_fast_load(self) -> 'bool':
@@ -1935,6 +1966,27 @@ class V1UserFeatures(object):
         """
 
         self._slurm_machine_selector = slurm_machine_selector
+
+    @property
+    def snapshotter_service(self) -> 'bool':
+        """Gets the snapshotter_service of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The snapshotter_service of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._snapshotter_service
+
+    @snapshotter_service.setter
+    def snapshotter_service(self, snapshotter_service: 'bool'):
+        """Sets the snapshotter_service of this V1UserFeatures.
+
+
+        :param snapshotter_service: The snapshotter_service of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._snapshotter_service = snapshotter_service
 
     @property
     def snowflake_connection(self) -> 'bool':

@@ -46,6 +46,7 @@ class V1DeploymentTemplateParameter(object):
         'display_name': 'str',
         'input': 'V1Input',
         'long_description': 'str',
+        'machines_selector': 'V1MachinesSelector',
         'name': 'str',
         'placements': 'list[V1DeploymentTemplateParameterPlacement]',
         'readonly': 'bool',
@@ -61,6 +62,7 @@ class V1DeploymentTemplateParameter(object):
         'display_name': 'displayName',
         'input': 'input',
         'long_description': 'longDescription',
+        'machines_selector': 'machinesSelector',
         'name': 'name',
         'placements': 'placements',
         'readonly': 'readonly',
@@ -70,13 +72,14 @@ class V1DeploymentTemplateParameter(object):
         'type': 'type'
     }
 
-    def __init__(self, checkbox: 'V1Checkbox' =None, data_path: 'V1DataPath' =None, display_name: 'str' =None, input: 'V1Input' =None, long_description: 'str' =None, name: 'str' =None, placements: 'list[V1DeploymentTemplateParameterPlacement]' =None, readonly: 'bool' =None, required: 'bool' =None, select: 'V1Select' =None, short_description: 'str' =None, type: 'V1DeploymentTemplateParameterType' =None):  # noqa: E501
+    def __init__(self, checkbox: 'V1Checkbox' =None, data_path: 'V1DataPath' =None, display_name: 'str' =None, input: 'V1Input' =None, long_description: 'str' =None, machines_selector: 'V1MachinesSelector' =None, name: 'str' =None, placements: 'list[V1DeploymentTemplateParameterPlacement]' =None, readonly: 'bool' =None, required: 'bool' =None, select: 'V1Select' =None, short_description: 'str' =None, type: 'V1DeploymentTemplateParameterType' =None):  # noqa: E501
         """V1DeploymentTemplateParameter - a model defined in Swagger"""  # noqa: E501
         self._checkbox = None
         self._data_path = None
         self._display_name = None
         self._input = None
         self._long_description = None
+        self._machines_selector = None
         self._name = None
         self._placements = None
         self._readonly = None
@@ -95,6 +98,8 @@ class V1DeploymentTemplateParameter(object):
             self.input = input
         if long_description is not None:
             self.long_description = long_description
+        if machines_selector is not None:
+            self.machines_selector = machines_selector
         if name is not None:
             self.name = name
         if placements is not None:
@@ -214,6 +219,27 @@ class V1DeploymentTemplateParameter(object):
         """
 
         self._long_description = long_description
+
+    @property
+    def machines_selector(self) -> 'V1MachinesSelector':
+        """Gets the machines_selector of this V1DeploymentTemplateParameter.  # noqa: E501
+
+
+        :return: The machines_selector of this V1DeploymentTemplateParameter.  # noqa: E501
+        :rtype: V1MachinesSelector
+        """
+        return self._machines_selector
+
+    @machines_selector.setter
+    def machines_selector(self, machines_selector: 'V1MachinesSelector'):
+        """Sets the machines_selector of this V1DeploymentTemplateParameter.
+
+
+        :param machines_selector: The machines_selector of this V1DeploymentTemplateParameter.  # noqa: E501
+        :type: V1MachinesSelector
+        """
+
+        self._machines_selector = machines_selector
 
     @property
     def name(self) -> 'str':

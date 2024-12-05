@@ -51,6 +51,7 @@ class V1ClusterSpec(object):
         'freeze_accelerators': 'bool',
         'google_cloud_v1': 'V1GoogleCloudDirectV1',
         'insurer_disabled': 'bool',
+        'lambda_labs_v1': 'V1LambdaLabsDirectV1',
         'overprovisioning': 'list[V1InstanceOverprovisioningSpec]',
         'pause_automation': 'bool',
         'security_options': 'V1ClusterSecurityOptions',
@@ -70,6 +71,7 @@ class V1ClusterSpec(object):
         'freeze_accelerators': 'freezeAccelerators',
         'google_cloud_v1': 'googleCloudV1',
         'insurer_disabled': 'insurerDisabled',
+        'lambda_labs_v1': 'lambdaLabsV1',
         'overprovisioning': 'overprovisioning',
         'pause_automation': 'pauseAutomation',
         'security_options': 'securityOptions',
@@ -78,7 +80,7 @@ class V1ClusterSpec(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_instance_types = None
@@ -90,6 +92,7 @@ class V1ClusterSpec(object):
         self._freeze_accelerators = None
         self._google_cloud_v1 = None
         self._insurer_disabled = None
+        self._lambda_labs_v1 = None
         self._overprovisioning = None
         self._pause_automation = None
         self._security_options = None
@@ -117,6 +120,8 @@ class V1ClusterSpec(object):
             self.google_cloud_v1 = google_cloud_v1
         if insurer_disabled is not None:
             self.insurer_disabled = insurer_disabled
+        if lambda_labs_v1 is not None:
+            self.lambda_labs_v1 = lambda_labs_v1
         if overprovisioning is not None:
             self.overprovisioning = overprovisioning
         if pause_automation is not None:
@@ -343,6 +348,27 @@ class V1ClusterSpec(object):
         """
 
         self._insurer_disabled = insurer_disabled
+
+    @property
+    def lambda_labs_v1(self) -> 'V1LambdaLabsDirectV1':
+        """Gets the lambda_labs_v1 of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The lambda_labs_v1 of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1LambdaLabsDirectV1
+        """
+        return self._lambda_labs_v1
+
+    @lambda_labs_v1.setter
+    def lambda_labs_v1(self, lambda_labs_v1: 'V1LambdaLabsDirectV1'):
+        """Sets the lambda_labs_v1 of this V1ClusterSpec.
+
+
+        :param lambda_labs_v1: The lambda_labs_v1 of this V1ClusterSpec.  # noqa: E501
+        :type: V1LambdaLabsDirectV1
+        """
+
+        self._lambda_labs_v1 = lambda_labs_v1
 
     @property
     def overprovisioning(self) -> 'list[V1InstanceOverprovisioningSpec]':

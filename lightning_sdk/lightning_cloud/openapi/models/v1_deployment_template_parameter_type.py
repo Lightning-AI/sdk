@@ -41,6 +41,7 @@ class V1DeploymentTemplateParameterType(object):
     INPUT = "DEPLOYMENT_TEMPLATE_INPUT"
     DATA_PATH = "DEPLOYMENT_TEMPLATE_DATA_PATH"
     CHECKBOX = "DEPLOYMENT_TEMPLATE_CHECKBOX"
+    MACHINES_SELECTOR = "DEPLOYMENT_TEMPLATE_MACHINES_SELECTOR"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

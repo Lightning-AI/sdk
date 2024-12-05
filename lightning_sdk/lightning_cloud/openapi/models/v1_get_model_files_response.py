@@ -45,6 +45,7 @@ class V1GetModelFilesResponse(object):
         'model_id': 'str',
         'project_id': 'str',
         'size_bytes': 'str',
+        'upload_complete': 'bool',
         'version': 'str'
     }
 
@@ -53,15 +54,17 @@ class V1GetModelFilesResponse(object):
         'model_id': 'modelId',
         'project_id': 'projectId',
         'size_bytes': 'sizeBytes',
+        'upload_complete': 'uploadComplete',
         'version': 'version'
     }
 
-    def __init__(self, filepaths: 'list[str]' =None, model_id: 'str' =None, project_id: 'str' =None, size_bytes: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, filepaths: 'list[str]' =None, model_id: 'str' =None, project_id: 'str' =None, size_bytes: 'str' =None, upload_complete: 'bool' =None, version: 'str' =None):  # noqa: E501
         """V1GetModelFilesResponse - a model defined in Swagger"""  # noqa: E501
         self._filepaths = None
         self._model_id = None
         self._project_id = None
         self._size_bytes = None
+        self._upload_complete = None
         self._version = None
         self.discriminator = None
         if filepaths is not None:
@@ -72,6 +75,8 @@ class V1GetModelFilesResponse(object):
             self.project_id = project_id
         if size_bytes is not None:
             self.size_bytes = size_bytes
+        if upload_complete is not None:
+            self.upload_complete = upload_complete
         if version is not None:
             self.version = version
 
@@ -158,6 +163,27 @@ class V1GetModelFilesResponse(object):
         """
 
         self._size_bytes = size_bytes
+
+    @property
+    def upload_complete(self) -> 'bool':
+        """Gets the upload_complete of this V1GetModelFilesResponse.  # noqa: E501
+
+
+        :return: The upload_complete of this V1GetModelFilesResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._upload_complete
+
+    @upload_complete.setter
+    def upload_complete(self, upload_complete: 'bool'):
+        """Sets the upload_complete of this V1GetModelFilesResponse.
+
+
+        :param upload_complete: The upload_complete of this V1GetModelFilesResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._upload_complete = upload_complete
 
     @property
     def version(self) -> 'str':

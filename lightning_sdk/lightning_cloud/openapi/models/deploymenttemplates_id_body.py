@@ -46,7 +46,7 @@ class DeploymenttemplatesIdBody(object):
         'description': 'str',
         'featured': 'bool',
         'image_url': 'str',
-        'metrics': 'list[V1DeploymentMetrics]',
+        'metrics': 'V1DeploymentMetrics',
         'name': 'str',
         'org_id': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
@@ -74,7 +74,7 @@ class DeploymenttemplatesIdBody(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, description: 'str' =None, featured: 'bool' =None, image_url: 'str' =None, metrics: 'list[V1DeploymentMetrics]' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, description: 'str' =None, featured: 'bool' =None, image_url: 'str' =None, metrics: 'V1DeploymentMetrics' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """DeploymenttemplatesIdBody - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._categories = None
@@ -226,22 +226,22 @@ class DeploymenttemplatesIdBody(object):
         self._image_url = image_url
 
     @property
-    def metrics(self) -> 'list[V1DeploymentMetrics]':
+    def metrics(self) -> 'V1DeploymentMetrics':
         """Gets the metrics of this DeploymenttemplatesIdBody.  # noqa: E501
 
 
         :return: The metrics of this DeploymenttemplatesIdBody.  # noqa: E501
-        :rtype: list[V1DeploymentMetrics]
+        :rtype: V1DeploymentMetrics
         """
         return self._metrics
 
     @metrics.setter
-    def metrics(self, metrics: 'list[V1DeploymentMetrics]'):
+    def metrics(self, metrics: 'V1DeploymentMetrics'):
         """Sets the metrics of this DeploymenttemplatesIdBody.
 
 
         :param metrics: The metrics of this DeploymenttemplatesIdBody.  # noqa: E501
-        :type: list[V1DeploymentMetrics]
+        :type: V1DeploymentMetrics
         """
 
         self._metrics = metrics

@@ -70,6 +70,8 @@ class V1RuleResource(object):
     MANAGEDENDPOINT = "managedEndpoint"
     JOB = "job"
     DEPLOYMENT = "deployment"
+    MODEL = "model"
+    SLURMJOB = "slurmJob"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

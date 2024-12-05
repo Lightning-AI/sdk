@@ -46,7 +46,7 @@ class V1CreateDeploymentTemplateRequest(object):
         'deployment_id': 'str',
         'description': 'str',
         'image_url': 'str',
-        'metrics': 'list[V1DeploymentMetrics]',
+        'metrics': 'V1DeploymentMetrics',
         'name': 'str',
         'org_id': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
@@ -78,7 +78,7 @@ class V1CreateDeploymentTemplateRequest(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, deployment_id: 'str' =None, description: 'str' =None, image_url: 'str' =None, metrics: 'list[V1DeploymentMetrics]' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, version: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, deployment_id: 'str' =None, description: 'str' =None, image_url: 'str' =None, metrics: 'V1DeploymentMetrics' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, version: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """V1CreateDeploymentTemplateRequest - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._categories = None
@@ -236,22 +236,22 @@ class V1CreateDeploymentTemplateRequest(object):
         self._image_url = image_url
 
     @property
-    def metrics(self) -> 'list[V1DeploymentMetrics]':
+    def metrics(self) -> 'V1DeploymentMetrics':
         """Gets the metrics of this V1CreateDeploymentTemplateRequest.  # noqa: E501
 
 
         :return: The metrics of this V1CreateDeploymentTemplateRequest.  # noqa: E501
-        :rtype: list[V1DeploymentMetrics]
+        :rtype: V1DeploymentMetrics
         """
         return self._metrics
 
     @metrics.setter
-    def metrics(self, metrics: 'list[V1DeploymentMetrics]'):
+    def metrics(self, metrics: 'V1DeploymentMetrics'):
         """Sets the metrics of this V1CreateDeploymentTemplateRequest.
 
 
         :param metrics: The metrics of this V1CreateDeploymentTemplateRequest.  # noqa: E501
-        :type: list[V1DeploymentMetrics]
+        :type: V1DeploymentMetrics
         """
 
         self._metrics = metrics
