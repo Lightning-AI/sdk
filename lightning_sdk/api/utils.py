@@ -28,6 +28,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UploadProjectArtifactResponse,
     VersionUploadsBody,
 )
+from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive import V1ModelVersionArchive
 
 try:
     from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
@@ -490,6 +491,21 @@ class _FileDownloader:
             raise
 
         os.rename(tmp_filename, self.local_path)
+
+
+def _get_model_version(client: LightningClient, teamspace_id: str, name: str, version: str) -> V1ModelVersionArchive:
+    api = ModelsStoreApi(client.api_client)
+    models = api.models_store_list_models(project_id=teamspace_id, name=name).models
+    if not models:
+        raise ValueError(f"Model {name} does not exist")
+    elif len(models) > 1:
+        raise ValueError("Multiple models with the same name found")
+    if version == "latest":
+        return models[0].latest_version
+    versions = api.models_store_list_model_versions(project_id=teamspace_id, model_id=models[0].id).versions
+    if not versions:
+        raise ValueError(f"Model {name} does not have any versions")
+    return next(v for v in versions if v.version == version)
 
 
 def _download_model_files(

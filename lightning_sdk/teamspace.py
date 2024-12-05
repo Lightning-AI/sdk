@@ -245,6 +245,11 @@ class Teamspace:
         download_dir = Path(download_dir)
 
         name, version = _parse_model_and_version(name)
+        model_version = self._teamspace_api.get_model_version(name=name, version=version, teamspace_id=self.id)
+        if not model_version.upload_complete:
+            raise RuntimeError(
+                f"Model {name}:{version} is not fully uploaded yet. Please wait until the upload is complete."
+            )
         downloaded_files = self._teamspace_api.download_model_files(
             name=name,
             version=version,

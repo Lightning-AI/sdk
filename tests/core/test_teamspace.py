@@ -1,3 +1,5 @@
+from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive import V1ModelVersionArchive
+
 from lightning_sdk.user import User
 from lightning_sdk.organization import Organization
 from lightning_sdk.teamspace import Teamspace
@@ -277,55 +279,66 @@ def test_upload_model_multiple_files(
     )
 
 
+@pytest.mark.parametrize("folder", ["download_dir", None])
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+@mock.patch("lightning_sdk.api.teamspace_api._get_model_version")
 def test_download_model(
+    get_model_version_mock,
     download_model_files_mock,
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
     tmp_path,
     monkeypatch,
+    folder
 ):
     monkeypatch.chdir(tmp_path)
-
     ts = Teamspace("ts-abc", user="user-abc")
+    get_model_version_mock.return_value = V1ModelVersionArchive(
+        model_id="model-id",
+        version="v3",
+        upload_complete=True,
+    )
     download_model_files_mock.return_value = ["checkpoint/file.pt", "checkpoint/other"]
 
-    # download_dir default (current working directory)
-    result = ts.download_model("user/modelname")
-    download_model_files_mock.assert_called_with(
+    result = ts.download_model("user/modelname", download_dir=folder)
+    get_model_version_mock.assert_called_with(
         client=mock.ANY,
         teamspace_id="ts-abc002",
         name="user/modelname",
-        version="latest",
-        download_dir=tmp_path,
-        progress_bar=True,
-    )
-    assert result == str(tmp_path)
+        version="latest",)
 
-    # download_dir specified
-    download_dir = "download_dir"
-    result = ts.download_model("user/modelname", download_dir=download_dir)
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
         teamspace_id="ts-abc002",
         name="user/modelname",
         version="latest",
-        download_dir=Path(download_dir),
+        download_dir=Path(folder) if folder else tmp_path,
         progress_bar=True,
     )
-    assert result == str(tmp_path / download_dir)
+    assert result == str(tmp_path / folder if folder else tmp_path)
 
 
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+@mock.patch("lightning_sdk.api.teamspace_api._get_model_version")
 def test_download_model_version(
+get_model_version_mock,
     download_model_files_mock,
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
     tmp_path,
 ):
     ts = Teamspace("ts-abc", user="user-abc")
+    get_model_version_mock.return_value = V1ModelVersionArchive(
+        model_id="model-id",
+        version="v3",
+        upload_complete=True,
+    )
 
     ts.download_model("user/modelname:v3", download_dir=tmp_path)
+    get_model_version_mock.assert_called_with(
+        client=mock.ANY,
+
+        teamspace_id='ts-abc002', name='user/modelname', version='v3')
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
         teamspace_id="ts-abc002",
