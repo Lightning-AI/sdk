@@ -146,7 +146,7 @@ class AIHub:
             deployment = hub.deploy("temp_xxxx")
 
             # Using API arguments
-            api_arugments = {"model": "unitary/toxic-bert", "batch_size" 10, "token": "lit_xxxx"}
+            api_arugments = {"model": "unitary/toxic-bert", "batch_size": 10, "token": "lit_xxxx"}
             deployment = hub.deploy("temp_xxxx", api_arugments=api_arugments)
 
         Args:
@@ -172,11 +172,19 @@ class AIHub:
         deployment = self._api.deploy_api(
             template_id=api_id, cluster_id=cluster, project_id=teamspace_id, name=name, api_arguments=api_arguments
         )
-        url = quote(f"{LIGHTNING_CLOUD_URL}/{teamspace._org.name}/{teamspace.name}/jobs/{deployment.name}", safe=":/()")
+        url = (
+            quote(
+                f"{LIGHTNING_CLOUD_URL}/{teamspace._org.name}/{teamspace.name}/jobs/{deployment.name}",
+                safe=":/()",
+            )
+            + "?app_id=deployment"
+        )
         print("Deployment available at:", url)
+
         return {
             "id": deployment.id,
             "name": deployment.name,
-            "base_url": deployment.status.urls[0],
+            "deployment_url": url,
+            "api_endpoint": deployment.status.urls[0],
             "interruptible": deployment.spec.spot,
         }
