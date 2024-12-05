@@ -24,12 +24,37 @@ class AIHubApi:
 
     def api_info(self, api_id: str) -> "V1DeploymentTemplate":
         try:
-            return self._client.deployment_templates_service_get_deployment_template(api_id)
+            template = self._client.deployment_templates_service_get_deployment_template(api_id)
         except Exception as e:
             stack_trace = traceback.format_exc()
             if "record not found" in stack_trace:
                 raise ValueError(f"api_id={api_id} not found.") from None
             raise e
+
+        api_arguments = []
+        for param in template.parameter_spec.parameters:
+            default = None
+            if param.type == V1DeploymentTemplateParameterType.INPUT and param.input:
+                default = param.input.default_value
+            if param.type == V1DeploymentTemplateParameterType.SELECT and param.select:
+                default = param.select.options[0]
+            if param.type == V1DeploymentTemplateParameterType.CHECKBOX and param.checkbox:
+                default = (
+                    (param.checkbox.true_value or "True")
+                    if param.checkbox.is_checked
+                    else (param.checkbox.false_value or "False")
+                )
+
+            api_arguments.append(
+                {
+                    "name": param.name,
+                    "short_description": param.short_description,
+                    "required": param.required,
+                    "type": param.type,
+                    "default": default,
+                }
+            )
+        return template, api_arguments
 
     @backoff.on_predicate(backoff.expo, lambda x: not x, max_tries=5)
     def list_apis(self, search_query: str) -> List[V1DeploymentTemplateGalleryResponse]:

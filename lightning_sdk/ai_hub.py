@@ -47,17 +47,7 @@ class AIHub:
             including its name, description, creation and update timestamps,
             parameters, tags, job specifications, and autoscaling settings.
         """
-        template = self._api.api_info(api_id)
-
-        api_arguments = [
-            {
-                "name": param.name,
-                "short_description": param.short_description,
-                "required": param.required,
-                "default": param.input.default_value,
-            }
-            for param in template.parameter_spec.parameters
-        ]
+        template, api_arguments = self._api.api_info(api_id)
 
         return {
             "name": template.name,
