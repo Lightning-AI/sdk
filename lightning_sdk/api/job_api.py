@@ -141,13 +141,15 @@ class JobApiV2:
         self,
         name: str,
         command: Optional[str],
-        cluster_id: str,
+        cluster_id: Optional[str],
         teamspace_id: str,
         studio_id: Optional[str],
         image: Optional[str],
         machine: Machine,
         interruptible: bool,
         env: Optional[Dict[str, str]],
+        image_credentials: Optional[str],
+        cluster_auth: bool,
     ) -> V1Job:
         env_vars = []
         if env is not None:
@@ -160,13 +162,15 @@ class JobApiV2:
 
         spec = V1JobSpec(
             cloudspace_id=studio_id or "",
-            cluster_id=cluster_id,
+            cluster_id=cluster_id or "",
             command=command or "",
             env=env_vars,
             image=image or "",
             instance_name=instance_name,
             run_id=run_id,
             spot=interruptible,
+            image_cluster_credentials=cluster_auth,
+            image_secret_ref=image_credentials or "",
         )
         body = ProjectIdJobsBody(name=name, spec=spec)
 

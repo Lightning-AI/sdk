@@ -172,7 +172,7 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
         job._submit(machine=machine, image="image-abc", command=command, env=env, interruptible=interruptible, cluster="c-abc")
 
         # test that everything was passed along correctly to the api layer and that class values and function params are mixed correctly
-        submit_mock.assert_called_once_with(name="test-job", command=command, cluster_id="c-abc", teamspace_id="ts-abc001", studio_id=None, image="image-abc", machine=machine, interruptible=interruptible, env=env)
+        submit_mock.assert_called_once_with(name="test-job", command=command, cluster_id="c-abc", teamspace_id="ts-abc001", studio_id=None, image="image-abc", machine=machine, interruptible=interruptible, env=env, image_credentials=None, cluster_auth=False)
 
 
 @pytest.mark.parametrize("machine", [Machine.A10G, Machine.DATA_PREP_MAX])
@@ -187,7 +187,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
     job._job_api.submit_job = submit_mock
     job._submit(machine=machine, cluster=studio.cluster, studio=studio, env=env, interruptible=interruptible, command="echo hello")
 
-    submit_mock.assert_called_once_with(name="test-job", command="echo hello", cluster_id="c-abc", teamspace_id="ts-abc001", studio_id="st-abc", image=None, machine=machine, interruptible=interruptible, env=env)
+    submit_mock.assert_called_once_with(name="test-job", command="echo hello", cluster_id="c-abc", teamspace_id="ts-abc001", studio_id="st-abc", image=None, machine=machine, interruptible=interruptible, env=env, image_credentials=None, cluster_auth=False)
 
 
 def test_jobv2_run_arg_validation(internal_studio_init_mocker):
@@ -360,4 +360,4 @@ def test_submit_jobv2_studio_resolve(job_backend_selector_mocker_v2, internal_st
 
     job = Job.run("test-job", machine=Machine.CPU, command="echo hello", studio="st-abc", teamspace="ts-abc", org="org-abc")
 
-    submit_mock.assert_called_once_with(command="echo hello", cluster="c-abc", env=None, image=None, interruptible=False, machine=Machine.CPU, studio=Studio(name="st-abc", teamspace="ts-abc", org="org-abc"))
+    submit_mock.assert_called_once_with(command="echo hello", cluster="c-abc", env=None, image=None, interruptible=False, machine=Machine.CPU, studio=Studio(name="st-abc", teamspace="ts-abc", org="org-abc"), cluster_auth=False, image_credentials=None)

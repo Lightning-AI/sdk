@@ -58,6 +58,8 @@ class Job(_BaseJob):
         cluster: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
+        image_credentials: Optional[str] = None,
+        cluster_auth: bool = False,
     ) -> "Job":
         ret_val = super().run(
             name=name,
@@ -71,6 +73,8 @@ class Job(_BaseJob):
             cluster=cluster,
             env=env,
             interruptible=interruptible,
+            image_credentials=image_credentials,
+            cluster_auth=cluster_auth,
         )
         # required for typing with "Job"
         assert isinstance(ret_val, cls)
@@ -85,6 +89,8 @@ class Job(_BaseJob):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cluster: Optional[str] = None,
+        image_credentials: Optional[str] = None,
+        cluster_auth: bool = False,
     ) -> None:
         return self._internal_job._submit(
             machine=machine,
@@ -94,6 +100,8 @@ class Job(_BaseJob):
             image=image,
             env=env,
             interruptible=interruptible,
+            image_credentials=image_credentials,
+            cluster_auth=cluster_auth,
         )
 
     def stop(self) -> None:

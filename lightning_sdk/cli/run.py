@@ -36,6 +36,10 @@ class _Run:
                 If not provided will fall back to the teamspaces default cluster.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+            image_credentials: The credentials used to pull the image. Required if the image is private.
+                This should be the name of the respective credentials secret created on the Lightning AI platform.
+            cluster_auth: Whether to authenticate with the cluster to pull the image.
+                Required if the registry is part of a cluster provider (e.g. ECR).
         """
         self.job.__func__.__doc__ = docstr
 
@@ -55,6 +59,8 @@ class _Run:
         cluster: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
+        image_credentials: Optional[str] = None,
+        cluster_auth: bool = False,
     ) -> None:
         machine_enum = Machine(machine.upper())
         Job.run(
@@ -69,4 +75,6 @@ class _Run:
             cluster=cluster,
             env=env,
             interruptible=interruptible,
+            image_credentials=image_credentials,
+            cluster_auth=cluster_auth,
         )

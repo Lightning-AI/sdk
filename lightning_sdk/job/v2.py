@@ -34,6 +34,8 @@ class _JobV2(_BaseJob):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cluster: Optional[str] = None,
+        image_credentials: Optional[str] = None,
+        cluster_auth: bool = False,
     ) -> None:
         # Command is required if Studio is provided to know what to run
         # Image is mutually exclusive with Studio
@@ -62,6 +64,8 @@ class _JobV2(_BaseJob):
             machine=machine,
             interruptible=interruptible,
             env=env,
+            image_credentials=image_credentials,
+            cluster_auth=cluster_auth,
         )
         self._job = submitted
         self._name = submitted.name

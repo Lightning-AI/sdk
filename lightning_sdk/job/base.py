@@ -50,6 +50,8 @@ class _BaseJob(ABC):
         cluster: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
+        image_credentials: Optional[str] = None,
+        cluster_auth: bool = False,
     ) -> "_BaseJob":
         from lightning_sdk.studio import Studio
 
@@ -80,6 +82,13 @@ class _BaseJob(ABC):
                     "Studio cluster does not match provided cluster. "
                     "Can only run jobs with Studio envs in the same cluster."
                 )
+
+            if image_credentials is not None:
+                raise ValueError("image_credentials is only supported when using a custom image")
+
+            if cluster_auth:
+                raise ValueError("cluster_auth is only supported when using a custom image")
+
         else:
             if studio is not None:
                 raise RuntimeError(
@@ -95,6 +104,8 @@ class _BaseJob(ABC):
             image=image,
             env=env,
             interruptible=interruptible,
+            image_credentials=image_credentials,
+            cluster_auth=cluster_auth,
         )
         return inst
 
@@ -108,6 +119,8 @@ class _BaseJob(ABC):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cluster: Optional[str] = None,
+        image_credentials: Optional[str] = None,
+        cluster_auth: bool = False,
     ) -> None:
         """Submits a job and updates the internal _job attribute as well as the _name attribute."""
 

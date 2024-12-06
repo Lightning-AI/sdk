@@ -340,6 +340,14 @@ FLAGS
         Type: bool
         Default: False
         Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+    --image_credentials=IMAGE_CREDENTIALS
+        Type: Optional[Optional]
+        Default: None
+        The credentials used to pull the image. Required if the image is private. This should be the name of the respective credentials secret created on the Lightning AI platform.
+    --cluster_auth=CLUSTER_AUTH
+        Type: bool
+        Default: False
+        Whether to authenticate with the cluster to pull the image. Required if the registry is part of a cluster provider (e.g. ECR).
 
 NOTES
     You can also use flags syntax for POSITIONAL ARGUMENTS"""

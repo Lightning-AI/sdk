@@ -54,6 +54,8 @@ class _JobV1(_BaseJob):
             cluster=cluster,
             env=None,
             interruptible=interruptible,
+            image_credentials=None,
+            cluster_auth=False,
         )
 
     def _submit(
@@ -65,11 +67,13 @@ class _JobV1(_BaseJob):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cluster: Optional[str] = None,
+        image_credentials: Optional[str] = None,
+        cluster_auth: bool = False,
     ) -> None:
         if studio is None:
             raise ValueError("Studio is required for submitting jobs")
 
-        if image is not None:
+        if image is not None or image_credentials is not None or cluster_auth:
             raise ValueError("Image is not supported for submitting jobs")
 
         if env is not None:
