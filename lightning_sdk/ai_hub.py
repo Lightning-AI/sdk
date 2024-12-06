@@ -119,33 +119,33 @@ class AIHub:
             raise ValueError("You need to pass a teamspace or an org for your deployment.")
         return teamspace
 
-    def deploy(
+    def run(
         self,
         api_id: str,
-        cluster: Optional[str] = None,
+        api_arguments: Optional[Dict[str, Any]] = None,
         name: Optional[str] = None,
+        cluster: Optional[str] = None,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         org: Optional[Union[str, "Organization"]] = None,
-        api_arguments: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Union[str, bool]]:
         """Deploy an API from the AI Hub.
 
         Example:
             from lightning_sdk import AIHub
             hub = AIHub()
-            deployment = hub.deploy("temp_xxxx")
+            deployment = hub.run("temp_xxxx")
 
             # Using API arguments
             api_arugments = {"model": "unitary/toxic-bert", "batch_size": 10, "token": "lit_xxxx"}
-            deployment = hub.deploy("temp_xxxx", api_arugments=api_arugments)
+            deployment = hub.run("temp_xxxx", api_arugments=api_arugments)
 
         Args:
-            api_id: The ID of the API you want to deploy.
-            cluster: The cluster where you want to deploy the API, such as "lightning-public-prod". Defaults to None.
+            api_id: The ID of the AIHub template you want to run.
+            api_arguments: Additional API argument, such as model name, or batch size.
             name: Name for the deployed API. Defaults to None.
+            cluster: The cluster where you want to run the template, such as "lightning-public-prod". Defaults to None.
             teamspace: The team or group for deployment. Defaults to None.
             org: The organization for deployment. Defaults to None.
-            api_arguments: Additional API argument, such as model name, or batch size.
 
         Returns:
             A dictionary containing the name of the deployed API,
@@ -159,7 +159,7 @@ class AIHub:
         teamspace_id = teamspace.id
 
         api_arguments = api_arguments or {}
-        deployment = self._api.deploy_api(
+        deployment = self._api.run_api(
             template_id=api_id, cluster_id=cluster, project_id=teamspace_id, name=name, api_arguments=api_arguments
         )
         url = (

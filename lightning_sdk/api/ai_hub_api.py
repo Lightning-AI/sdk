@@ -1,5 +1,5 @@
 import traceback
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import backoff
 
@@ -22,7 +22,7 @@ class AIHubApi:
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=3)
 
-    def api_info(self, api_id: str) -> "V1DeploymentTemplate":
+    def api_info(self, api_id: str) -> Tuple[V1DeploymentTemplate, List[Dict[str, str]]]:
         try:
             template = self._client.deployment_templates_service_get_deployment_template(api_id)
         except Exception as e:
@@ -109,7 +109,7 @@ class AIHubApi:
 
         return job
 
-    def deploy_api(
+    def run_api(
         self, template_id: str, project_id: str, cluster_id: str, name: Optional[str], api_arguments: Dict[str, str]
     ) -> V1Deployment:
         template = self._client.deployment_templates_service_get_deployment_template(template_id)

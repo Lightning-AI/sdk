@@ -91,6 +91,6 @@ def test_deploy():
     AIHubApi._set_parameters = MagicMock()
     hub._api._parse_env_list = MagicMock()
 
-    deployment = hub.deploy(template_id, cluster="public-prod", name="New API")
+    deployment = hub.run(template_id, cluster="public-prod", name="New API")
     assert deployment["name"] == "New API", "Deployment name is New API"
     assert deployment["api_endpoint"] == "http://lightning.ai/example", f"base_url is decoded from the server response"

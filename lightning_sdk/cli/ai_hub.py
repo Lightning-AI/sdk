@@ -46,4 +46,4 @@ class _AIHub(_StudiosMenu):
           teamspace: Teamspace to deploy the API to. Defaults to user's default teamspace.
           org: Organization to deploy the API to. Defaults to user's default organization.
         """
-        return self._hub.deploy(api_id, cluster=cluster, name=name, teamspace=teamspace, org=org)
+        return self._hub.run(api_id, cluster=cluster, name=name, teamspace=teamspace, org=org)
