@@ -55,6 +55,7 @@ class V1DeploymentTemplate(object):
         'name': 'str',
         'org_id': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
+        'pricing': 'V1ApiPricingSpec',
         'project_id': 'str',
         'spec': 'V1JobSpec',
         'spec_v2': 'V1DeploymentSpec',
@@ -81,6 +82,7 @@ class V1DeploymentTemplate(object):
         'name': 'name',
         'org_id': 'orgId',
         'parameter_spec': 'parameterSpec',
+        'pricing': 'pricing',
         'project_id': 'projectId',
         'spec': 'spec',
         'spec_v2': 'specV2',
@@ -92,7 +94,7 @@ class V1DeploymentTemplate(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, metrics: 'V1DeploymentMetrics' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, spec_v2: 'V1DeploymentSpec' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, metrics: 'V1DeploymentMetrics' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pricing: 'V1ApiPricingSpec' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, spec_v2: 'V1DeploymentSpec' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1DeploymentTemplate - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._about_page_id = None
@@ -108,6 +110,7 @@ class V1DeploymentTemplate(object):
         self._name = None
         self._org_id = None
         self._parameter_spec = None
+        self._pricing = None
         self._project_id = None
         self._spec = None
         self._spec_v2 = None
@@ -146,6 +149,8 @@ class V1DeploymentTemplate(object):
             self.org_id = org_id
         if parameter_spec is not None:
             self.parameter_spec = parameter_spec
+        if pricing is not None:
+            self.pricing = pricing
         if project_id is not None:
             self.project_id = project_id
         if spec is not None:
@@ -458,6 +463,27 @@ class V1DeploymentTemplate(object):
         """
 
         self._parameter_spec = parameter_spec
+
+    @property
+    def pricing(self) -> 'V1ApiPricingSpec':
+        """Gets the pricing of this V1DeploymentTemplate.  # noqa: E501
+
+
+        :return: The pricing of this V1DeploymentTemplate.  # noqa: E501
+        :rtype: V1ApiPricingSpec
+        """
+        return self._pricing
+
+    @pricing.setter
+    def pricing(self, pricing: 'V1ApiPricingSpec'):
+        """Sets the pricing of this V1DeploymentTemplate.
+
+
+        :param pricing: The pricing of this V1DeploymentTemplate.  # noqa: E501
+        :type: V1ApiPricingSpec
+        """
+
+        self._pricing = pricing
 
     @property
     def project_id(self) -> 'str':

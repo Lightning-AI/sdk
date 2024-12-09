@@ -44,7 +44,7 @@ class V1Message(object):
         'assistant_id': 'str',
         'author': 'V1MessageAuthor',
         'completion_tokens': 'str',
-        'content': 'V1MessageContent',
+        'content': 'list[V1MessageContent]',
         'conversation_id': 'str',
         'created_at': 'datetime',
         'executable': 'bool',
@@ -66,7 +66,7 @@ class V1Message(object):
         'prompt_tokens': 'promptTokens'
     }
 
-    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'V1MessageContent' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._assistant_id = None
         self._author = None
@@ -164,22 +164,22 @@ class V1Message(object):
         self._completion_tokens = completion_tokens
 
     @property
-    def content(self) -> 'V1MessageContent':
+    def content(self) -> 'list[V1MessageContent]':
         """Gets the content of this V1Message.  # noqa: E501
 
 
         :return: The content of this V1Message.  # noqa: E501
-        :rtype: V1MessageContent
+        :rtype: list[V1MessageContent]
         """
         return self._content
 
     @content.setter
-    def content(self, content: 'V1MessageContent'):
+    def content(self, content: 'list[V1MessageContent]'):
         """Sets the content of this V1Message.
 
 
         :param content: The content of this V1Message.  # noqa: E501
-        :type: V1MessageContent
+        :type: list[V1MessageContent]
         """
 
         self._content = content

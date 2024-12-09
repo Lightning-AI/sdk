@@ -54,6 +54,7 @@ class V1SystemInfo(object):
         'gpu_count': 'int',
         'gpu_memory_gb': 'int',
         'gpu_name': 'str',
+        'hostname': 'str',
         'hyperparameters': 'str',
         'installed_packages': 'str',
         'litlogger_version': 'str',
@@ -76,6 +77,7 @@ class V1SystemInfo(object):
         'gpu_count': 'gpuCount',
         'gpu_memory_gb': 'gpuMemoryGb',
         'gpu_name': 'gpuName',
+        'hostname': 'hostname',
         'hyperparameters': 'hyperparameters',
         'installed_packages': 'installedPackages',
         'litlogger_version': 'litloggerVersion',
@@ -84,7 +86,7 @@ class V1SystemInfo(object):
         'system_memory_gb': 'systemMemoryGb'
     }
 
-    def __init__(self, cli_args: 'str' =None, cpu_count_logical: 'int' =None, cpu_count_physical: 'int' =None, cpu_name: 'str' =None, cuda_version: 'str' =None, cudnn_version: 'str' =None, execution_command: 'str' =None, git_branch: 'str' =None, git_commit_hash: 'str' =None, git_repo_name: 'str' =None, gpu_count: 'int' =None, gpu_memory_gb: 'int' =None, gpu_name: 'str' =None, hyperparameters: 'str' =None, installed_packages: 'str' =None, litlogger_version: 'str' =None, os_name: 'str' =None, python_version: 'str' =None, system_memory_gb: 'int' =None):  # noqa: E501
+    def __init__(self, cli_args: 'str' =None, cpu_count_logical: 'int' =None, cpu_count_physical: 'int' =None, cpu_name: 'str' =None, cuda_version: 'str' =None, cudnn_version: 'str' =None, execution_command: 'str' =None, git_branch: 'str' =None, git_commit_hash: 'str' =None, git_repo_name: 'str' =None, gpu_count: 'int' =None, gpu_memory_gb: 'int' =None, gpu_name: 'str' =None, hostname: 'str' =None, hyperparameters: 'str' =None, installed_packages: 'str' =None, litlogger_version: 'str' =None, os_name: 'str' =None, python_version: 'str' =None, system_memory_gb: 'int' =None):  # noqa: E501
         """V1SystemInfo - a model defined in Swagger"""  # noqa: E501
         self._cli_args = None
         self._cpu_count_logical = None
@@ -99,6 +101,7 @@ class V1SystemInfo(object):
         self._gpu_count = None
         self._gpu_memory_gb = None
         self._gpu_name = None
+        self._hostname = None
         self._hyperparameters = None
         self._installed_packages = None
         self._litlogger_version = None
@@ -132,6 +135,8 @@ class V1SystemInfo(object):
             self.gpu_memory_gb = gpu_memory_gb
         if gpu_name is not None:
             self.gpu_name = gpu_name
+        if hostname is not None:
+            self.hostname = hostname
         if hyperparameters is not None:
             self.hyperparameters = hyperparameters
         if installed_packages is not None:
@@ -417,6 +422,27 @@ class V1SystemInfo(object):
         """
 
         self._gpu_name = gpu_name
+
+    @property
+    def hostname(self) -> 'str':
+        """Gets the hostname of this V1SystemInfo.  # noqa: E501
+
+
+        :return: The hostname of this V1SystemInfo.  # noqa: E501
+        :rtype: str
+        """
+        return self._hostname
+
+    @hostname.setter
+    def hostname(self, hostname: 'str'):
+        """Sets the hostname of this V1SystemInfo.
+
+
+        :param hostname: The hostname of this V1SystemInfo.  # noqa: E501
+        :type: str
+        """
+
+        self._hostname = hostname
 
     @property
     def hyperparameters(self) -> 'str':

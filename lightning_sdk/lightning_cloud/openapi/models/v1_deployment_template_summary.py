@@ -53,6 +53,7 @@ class V1DeploymentTemplateSummary(object):
         'image_url': 'str',
         'name': 'str',
         'org_id': 'str',
+        'pricing': 'V1ApiPricingSpec',
         'project_id': 'str',
         'thumbnail_url': 'str',
         'unpublished': 'bool',
@@ -74,6 +75,7 @@ class V1DeploymentTemplateSummary(object):
         'image_url': 'imageUrl',
         'name': 'name',
         'org_id': 'orgId',
+        'pricing': 'pricing',
         'project_id': 'projectId',
         'thumbnail_url': 'thumbnailUrl',
         'unpublished': 'unpublished',
@@ -82,7 +84,7 @@ class V1DeploymentTemplateSummary(object):
         'version': 'version'
     }
 
-    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, thumbnail_url: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, pricing: 'V1ApiPricingSpec' =None, project_id: 'str' =None, thumbnail_url: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1DeploymentTemplateSummary - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._about_page_id = None
@@ -96,6 +98,7 @@ class V1DeploymentTemplateSummary(object):
         self._image_url = None
         self._name = None
         self._org_id = None
+        self._pricing = None
         self._project_id = None
         self._thumbnail_url = None
         self._unpublished = None
@@ -127,6 +130,8 @@ class V1DeploymentTemplateSummary(object):
             self.name = name
         if org_id is not None:
             self.org_id = org_id
+        if pricing is not None:
+            self.pricing = pricing
         if project_id is not None:
             self.project_id = project_id
         if thumbnail_url is not None:
@@ -391,6 +396,27 @@ class V1DeploymentTemplateSummary(object):
         """
 
         self._org_id = org_id
+
+    @property
+    def pricing(self) -> 'V1ApiPricingSpec':
+        """Gets the pricing of this V1DeploymentTemplateSummary.  # noqa: E501
+
+
+        :return: The pricing of this V1DeploymentTemplateSummary.  # noqa: E501
+        :rtype: V1ApiPricingSpec
+        """
+        return self._pricing
+
+    @pricing.setter
+    def pricing(self, pricing: 'V1ApiPricingSpec'):
+        """Sets the pricing of this V1DeploymentTemplateSummary.
+
+
+        :param pricing: The pricing of this V1DeploymentTemplateSummary.  # noqa: E501
+        :type: V1ApiPricingSpec
+        """
+
+        self._pricing = pricing
 
     @property
     def project_id(self) -> 'str':

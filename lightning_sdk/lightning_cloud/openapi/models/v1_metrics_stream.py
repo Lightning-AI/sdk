@@ -61,6 +61,8 @@ class V1MetricsStream(object):
         'system_info': 'V1SystemInfo',
         'tags': 'list[V1MetricsTags]',
         'trackers': 'dict(str, V1MetricsTracker)',
+        'updated_at': 'datetime',
+        'updates_counter': 'int',
         'user_id': 'str',
         'version': 'datetime',
         'version_number': 'int',
@@ -88,13 +90,15 @@ class V1MetricsStream(object):
         'system_info': 'systemInfo',
         'tags': 'tags',
         'trackers': 'trackers',
+        'updated_at': 'updatedAt',
+        'updates_counter': 'updatesCounter',
         'user_id': 'userId',
         'version': 'version',
         'version_number': 'versionNumber',
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, user_id: 'str' =None, version: 'datetime' =None, version_number: 'int' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, updated_at: 'datetime' =None, updates_counter: 'int' =None, user_id: 'str' =None, version: 'datetime' =None, version_number: 'int' =None, work_id: 'str' =None):  # noqa: E501
         """V1MetricsStream - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
@@ -116,6 +120,8 @@ class V1MetricsStream(object):
         self._system_info = None
         self._tags = None
         self._trackers = None
+        self._updated_at = None
+        self._updates_counter = None
         self._user_id = None
         self._version = None
         self._version_number = None
@@ -161,6 +167,10 @@ class V1MetricsStream(object):
             self.tags = tags
         if trackers is not None:
             self.trackers = trackers
+        if updated_at is not None:
+            self.updated_at = updated_at
+        if updates_counter is not None:
+            self.updates_counter = updates_counter
         if user_id is not None:
             self.user_id = user_id
         if version is not None:
@@ -589,6 +599,48 @@ class V1MetricsStream(object):
         """
 
         self._trackers = trackers
+
+    @property
+    def updated_at(self) -> 'datetime':
+        """Gets the updated_at of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The updated_at of this V1MetricsStream.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._updated_at
+
+    @updated_at.setter
+    def updated_at(self, updated_at: 'datetime'):
+        """Sets the updated_at of this V1MetricsStream.
+
+
+        :param updated_at: The updated_at of this V1MetricsStream.  # noqa: E501
+        :type: datetime
+        """
+
+        self._updated_at = updated_at
+
+    @property
+    def updates_counter(self) -> 'int':
+        """Gets the updates_counter of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The updates_counter of this V1MetricsStream.  # noqa: E501
+        :rtype: int
+        """
+        return self._updates_counter
+
+    @updates_counter.setter
+    def updates_counter(self, updates_counter: 'int'):
+        """Sets the updates_counter of this V1MetricsStream.
+
+
+        :param updates_counter: The updates_counter of this V1MetricsStream.  # noqa: E501
+        :type: int
+        """
+
+        self._updates_counter = updates_counter
 
     @property
     def user_id(self) -> 'str':

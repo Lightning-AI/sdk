@@ -48,7 +48,6 @@ class V1MultiMachineJob(object):
         'machines': 'int',
         'name': 'str',
         'project_id': 'str',
-        'release_id': 'str',
         'spec': 'V1JobSpec',
         'status': 'V1MultiMachineJobStatus',
         'updated_at': 'datetime',
@@ -63,14 +62,13 @@ class V1MultiMachineJob(object):
         'machines': 'machines',
         'name': 'name',
         'project_id': 'projectId',
-        'release_id': 'releaseId',
         'spec': 'spec',
         'status': 'status',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, id: 'str' =None, machines: 'int' =None, name: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, spec: 'V1JobSpec' =None, status: 'V1MultiMachineJobStatus' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, id: 'str' =None, machines: 'int' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, status: 'V1MultiMachineJobStatus' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1MultiMachineJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._created_at = None
@@ -79,7 +77,6 @@ class V1MultiMachineJob(object):
         self._machines = None
         self._name = None
         self._project_id = None
-        self._release_id = None
         self._spec = None
         self._status = None
         self._updated_at = None
@@ -99,8 +96,6 @@ class V1MultiMachineJob(object):
             self.name = name
         if project_id is not None:
             self.project_id = project_id
-        if release_id is not None:
-            self.release_id = release_id
         if spec is not None:
             self.spec = spec
         if status is not None:
@@ -256,27 +251,6 @@ class V1MultiMachineJob(object):
         """
 
         self._project_id = project_id
-
-    @property
-    def release_id(self) -> 'str':
-        """Gets the release_id of this V1MultiMachineJob.  # noqa: E501
-
-
-        :return: The release_id of this V1MultiMachineJob.  # noqa: E501
-        :rtype: str
-        """
-        return self._release_id
-
-    @release_id.setter
-    def release_id(self, release_id: 'str'):
-        """Sets the release_id of this V1MultiMachineJob.
-
-
-        :param release_id: The release_id of this V1MultiMachineJob.  # noqa: E501
-        :type: str
-        """
-
-        self._release_id = release_id
 
     @property
     def spec(self) -> 'V1JobSpec':

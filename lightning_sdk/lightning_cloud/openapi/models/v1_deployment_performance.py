@@ -42,33 +42,53 @@ class V1DeploymentPerformance(object):
     """
     swagger_types = {
         'cold_start': 'int',
+        'cold_start_description': 'str',
         'latency': 'int',
+        'latency_description': 'str',
         'requests_per_dollar': 'str',
-        'throughput': 'str'
+        'requests_per_dollar_description': 'str',
+        'throughput': 'str',
+        'throughput_description': 'str'
     }
 
     attribute_map = {
         'cold_start': 'coldStart',
+        'cold_start_description': 'coldStartDescription',
         'latency': 'latency',
+        'latency_description': 'latencyDescription',
         'requests_per_dollar': 'requestsPerDollar',
-        'throughput': 'throughput'
+        'requests_per_dollar_description': 'requestsPerDollarDescription',
+        'throughput': 'throughput',
+        'throughput_description': 'throughputDescription'
     }
 
-    def __init__(self, cold_start: 'int' =None, latency: 'int' =None, requests_per_dollar: 'str' =None, throughput: 'str' =None):  # noqa: E501
+    def __init__(self, cold_start: 'int' =None, cold_start_description: 'str' =None, latency: 'int' =None, latency_description: 'str' =None, requests_per_dollar: 'str' =None, requests_per_dollar_description: 'str' =None, throughput: 'str' =None, throughput_description: 'str' =None):  # noqa: E501
         """V1DeploymentPerformance - a model defined in Swagger"""  # noqa: E501
         self._cold_start = None
+        self._cold_start_description = None
         self._latency = None
+        self._latency_description = None
         self._requests_per_dollar = None
+        self._requests_per_dollar_description = None
         self._throughput = None
+        self._throughput_description = None
         self.discriminator = None
         if cold_start is not None:
             self.cold_start = cold_start
+        if cold_start_description is not None:
+            self.cold_start_description = cold_start_description
         if latency is not None:
             self.latency = latency
+        if latency_description is not None:
+            self.latency_description = latency_description
         if requests_per_dollar is not None:
             self.requests_per_dollar = requests_per_dollar
+        if requests_per_dollar_description is not None:
+            self.requests_per_dollar_description = requests_per_dollar_description
         if throughput is not None:
             self.throughput = throughput
+        if throughput_description is not None:
+            self.throughput_description = throughput_description
 
     @property
     def cold_start(self) -> 'int':
@@ -92,6 +112,27 @@ class V1DeploymentPerformance(object):
         self._cold_start = cold_start
 
     @property
+    def cold_start_description(self) -> 'str':
+        """Gets the cold_start_description of this V1DeploymentPerformance.  # noqa: E501
+
+
+        :return: The cold_start_description of this V1DeploymentPerformance.  # noqa: E501
+        :rtype: str
+        """
+        return self._cold_start_description
+
+    @cold_start_description.setter
+    def cold_start_description(self, cold_start_description: 'str'):
+        """Sets the cold_start_description of this V1DeploymentPerformance.
+
+
+        :param cold_start_description: The cold_start_description of this V1DeploymentPerformance.  # noqa: E501
+        :type: str
+        """
+
+        self._cold_start_description = cold_start_description
+
+    @property
     def latency(self) -> 'int':
         """Gets the latency of this V1DeploymentPerformance.  # noqa: E501
 
@@ -111,6 +152,27 @@ class V1DeploymentPerformance(object):
         """
 
         self._latency = latency
+
+    @property
+    def latency_description(self) -> 'str':
+        """Gets the latency_description of this V1DeploymentPerformance.  # noqa: E501
+
+
+        :return: The latency_description of this V1DeploymentPerformance.  # noqa: E501
+        :rtype: str
+        """
+        return self._latency_description
+
+    @latency_description.setter
+    def latency_description(self, latency_description: 'str'):
+        """Sets the latency_description of this V1DeploymentPerformance.
+
+
+        :param latency_description: The latency_description of this V1DeploymentPerformance.  # noqa: E501
+        :type: str
+        """
+
+        self._latency_description = latency_description
 
     @property
     def requests_per_dollar(self) -> 'str':
@@ -134,6 +196,27 @@ class V1DeploymentPerformance(object):
         self._requests_per_dollar = requests_per_dollar
 
     @property
+    def requests_per_dollar_description(self) -> 'str':
+        """Gets the requests_per_dollar_description of this V1DeploymentPerformance.  # noqa: E501
+
+
+        :return: The requests_per_dollar_description of this V1DeploymentPerformance.  # noqa: E501
+        :rtype: str
+        """
+        return self._requests_per_dollar_description
+
+    @requests_per_dollar_description.setter
+    def requests_per_dollar_description(self, requests_per_dollar_description: 'str'):
+        """Sets the requests_per_dollar_description of this V1DeploymentPerformance.
+
+
+        :param requests_per_dollar_description: The requests_per_dollar_description of this V1DeploymentPerformance.  # noqa: E501
+        :type: str
+        """
+
+        self._requests_per_dollar_description = requests_per_dollar_description
+
+    @property
     def throughput(self) -> 'str':
         """Gets the throughput of this V1DeploymentPerformance.  # noqa: E501
 
@@ -153,6 +236,27 @@ class V1DeploymentPerformance(object):
         """
 
         self._throughput = throughput
+
+    @property
+    def throughput_description(self) -> 'str':
+        """Gets the throughput_description of this V1DeploymentPerformance.  # noqa: E501
+
+
+        :return: The throughput_description of this V1DeploymentPerformance.  # noqa: E501
+        :rtype: str
+        """
+        return self._throughput_description
+
+    @throughput_description.setter
+    def throughput_description(self, throughput_description: 'str'):
+        """Sets the throughput_description of this V1DeploymentPerformance.
+
+
+        :param throughput_description: The throughput_description of this V1DeploymentPerformance.  # noqa: E501
+        :type: str
+        """
+
+        self._throughput_description = throughput_description
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

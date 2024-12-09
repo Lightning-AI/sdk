@@ -68,6 +68,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'sync_eta_seconds': 'str',
         'sync_in_progress': 'bool',
         'sync_percentage': 'str',
+        'termination_time': 'datetime',
         'vscode_url': 'str'
     }
 
@@ -99,10 +100,11 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'sync_eta_seconds': 'syncEtaSeconds',
         'sync_in_progress': 'syncInProgress',
         'sync_percentage': 'syncPercentage',
+        'termination_time': 'terminationTime',
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, app_url: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, app_url: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_eta_seconds: 'str' =None, sync_in_progress: 'bool' =None, sync_percentage: 'str' =None, termination_time: 'datetime' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._app_url = None
         self._cloud_space_id = None
@@ -131,6 +133,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self._sync_eta_seconds = None
         self._sync_in_progress = None
         self._sync_percentage = None
+        self._termination_time = None
         self._vscode_url = None
         self.discriminator = None
         if app_url is not None:
@@ -187,6 +190,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.sync_in_progress = sync_in_progress
         if sync_percentage is not None:
             self.sync_percentage = sync_percentage
+        if termination_time is not None:
+            self.termination_time = termination_time
         if vscode_url is not None:
             self.vscode_url = vscode_url
 
@@ -758,6 +763,27 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._sync_percentage = sync_percentage
+
+    @property
+    def termination_time(self) -> 'datetime':
+        """Gets the termination_time of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The termination_time of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._termination_time
+
+    @termination_time.setter
+    def termination_time(self, termination_time: 'datetime'):
+        """Sets the termination_time of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param termination_time: The termination_time of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: datetime
+        """
+
+        self._termination_time = termination_time
 
     @property
     def vscode_url(self) -> 'str':

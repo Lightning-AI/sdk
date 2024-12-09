@@ -50,6 +50,7 @@ class DeploymenttemplatesIdBody(object):
         'name': 'str',
         'org_id': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
+        'pricing': 'V1ApiPricingSpec',
         'spec': 'str',
         'tags': 'list[V1ResourceTag]',
         'thumbnail': 'str',
@@ -67,6 +68,7 @@ class DeploymenttemplatesIdBody(object):
         'name': 'name',
         'org_id': 'orgId',
         'parameter_spec': 'parameterSpec',
+        'pricing': 'pricing',
         'spec': 'spec',
         'tags': 'tags',
         'thumbnail': 'thumbnail',
@@ -74,7 +76,7 @@ class DeploymenttemplatesIdBody(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, description: 'str' =None, featured: 'bool' =None, image_url: 'str' =None, metrics: 'V1DeploymentMetrics' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, description: 'str' =None, featured: 'bool' =None, image_url: 'str' =None, metrics: 'V1DeploymentMetrics' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pricing: 'V1ApiPricingSpec' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """DeploymenttemplatesIdBody - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._categories = None
@@ -85,6 +87,7 @@ class DeploymenttemplatesIdBody(object):
         self._name = None
         self._org_id = None
         self._parameter_spec = None
+        self._pricing = None
         self._spec = None
         self._tags = None
         self._thumbnail = None
@@ -109,6 +112,8 @@ class DeploymenttemplatesIdBody(object):
             self.org_id = org_id
         if parameter_spec is not None:
             self.parameter_spec = parameter_spec
+        if pricing is not None:
+            self.pricing = pricing
         if spec is not None:
             self.spec = spec
         if tags is not None:
@@ -308,6 +313,27 @@ class DeploymenttemplatesIdBody(object):
         """
 
         self._parameter_spec = parameter_spec
+
+    @property
+    def pricing(self) -> 'V1ApiPricingSpec':
+        """Gets the pricing of this DeploymenttemplatesIdBody.  # noqa: E501
+
+
+        :return: The pricing of this DeploymenttemplatesIdBody.  # noqa: E501
+        :rtype: V1ApiPricingSpec
+        """
+        return self._pricing
+
+    @pricing.setter
+    def pricing(self, pricing: 'V1ApiPricingSpec'):
+        """Sets the pricing of this DeploymenttemplatesIdBody.
+
+
+        :param pricing: The pricing of this DeploymenttemplatesIdBody.  # noqa: E501
+        :type: V1ApiPricingSpec
+        """
+
+        self._pricing = pricing
 
     @property
     def spec(self) -> 'str':

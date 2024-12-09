@@ -202,6 +202,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_agent_job import V1AgentJob
 from lightning_sdk.lightning_cloud.openapi.models.v1_agent_job_artifact import V1AgentJobArtifact
 from lightning_sdk.lightning_cloud.openapi.models.v1_agent_upload_multipart_url import V1AgentUploadMultipartUrl
 from lightning_sdk.lightning_cloud.openapi.models.v1_agent_upload_part_response import V1AgentUploadPartResponse
+from lightning_sdk.lightning_cloud.openapi.models.v1_api_pricing_spec import V1ApiPricingSpec
 from lightning_sdk.lightning_cloud.openapi.models.v1_app_type import V1AppType
 from lightning_sdk.lightning_cloud.openapi.models.v1_append_logger_metrics_response import V1AppendLoggerMetricsResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_approve_auto_join_domain_response import V1ApproveAutoJoinDomainResponse
@@ -601,6 +602,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_membership import V1Members
 from lightning_sdk.lightning_cloud.openapi.models.v1_message import V1Message
 from lightning_sdk.lightning_cloud.openapi.models.v1_message_author import V1MessageAuthor
 from lightning_sdk.lightning_cloud.openapi.models.v1_message_content import V1MessageContent
+from lightning_sdk.lightning_cloud.openapi.models.v1_message_content_type import V1MessageContentType
 from lightning_sdk.lightning_cloud.openapi.models.v1_metadata import V1Metadata
 from lightning_sdk.lightning_cloud.openapi.models.v1_metric_value import V1MetricValue
 from lightning_sdk.lightning_cloud.openapi.models.v1_metrics import V1Metrics

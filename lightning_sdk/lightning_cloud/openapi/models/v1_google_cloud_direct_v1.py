@@ -42,6 +42,8 @@ class V1GoogleCloudDirectV1(object):
     """
     swagger_types = {
         'bucket_name': 'str',
+        'compute_list_bucket_project_role': 'str',
+        'compute_project_role': 'str',
         'credentials_secret_id': 'str',
         'credentials_service_account_email': 'str',
         'primary_region': 'str',
@@ -53,6 +55,8 @@ class V1GoogleCloudDirectV1(object):
 
     attribute_map = {
         'bucket_name': 'bucketName',
+        'compute_list_bucket_project_role': 'computeListBucketProjectRole',
+        'compute_project_role': 'computeProjectRole',
         'credentials_secret_id': 'credentialsSecretId',
         'credentials_service_account_email': 'credentialsServiceAccountEmail',
         'primary_region': 'primaryRegion',
@@ -62,9 +66,11 @@ class V1GoogleCloudDirectV1(object):
         'source_cidr_ips': 'sourceCidrIps'
     }
 
-    def __init__(self, bucket_name: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, compute_list_bucket_project_role: 'str' =None, compute_project_role: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
+        self._compute_list_bucket_project_role = None
+        self._compute_project_role = None
         self._credentials_secret_id = None
         self._credentials_service_account_email = None
         self._primary_region = None
@@ -75,6 +81,10 @@ class V1GoogleCloudDirectV1(object):
         self.discriminator = None
         if bucket_name is not None:
             self.bucket_name = bucket_name
+        if compute_list_bucket_project_role is not None:
+            self.compute_list_bucket_project_role = compute_list_bucket_project_role
+        if compute_project_role is not None:
+            self.compute_project_role = compute_project_role
         if credentials_secret_id is not None:
             self.credentials_secret_id = credentials_secret_id
         if credentials_service_account_email is not None:
@@ -110,6 +120,48 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._bucket_name = bucket_name
+
+    @property
+    def compute_list_bucket_project_role(self) -> 'str':
+        """Gets the compute_list_bucket_project_role of this V1GoogleCloudDirectV1.  # noqa: E501
+
+
+        :return: The compute_list_bucket_project_role of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._compute_list_bucket_project_role
+
+    @compute_list_bucket_project_role.setter
+    def compute_list_bucket_project_role(self, compute_list_bucket_project_role: 'str'):
+        """Sets the compute_list_bucket_project_role of this V1GoogleCloudDirectV1.
+
+
+        :param compute_list_bucket_project_role: The compute_list_bucket_project_role of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._compute_list_bucket_project_role = compute_list_bucket_project_role
+
+    @property
+    def compute_project_role(self) -> 'str':
+        """Gets the compute_project_role of this V1GoogleCloudDirectV1.  # noqa: E501
+
+
+        :return: The compute_project_role of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._compute_project_role
+
+    @compute_project_role.setter
+    def compute_project_role(self, compute_project_role: 'str'):
+        """Sets the compute_project_role of this V1GoogleCloudDirectV1.
+
+
+        :param compute_project_role: The compute_project_role of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._compute_project_role = compute_project_role
 
     @property
     def credentials_secret_id(self) -> 'str':
