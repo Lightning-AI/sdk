@@ -43,20 +43,23 @@ class V1DataPath(object):
     swagger_types = {
         'single_file': 'bool',
         'stored_path': 'str',
-        'target_path': 'str'
+        'target_path': 'str',
+        'updated_at': 'datetime'
     }
 
     attribute_map = {
         'single_file': 'singleFile',
         'stored_path': 'storedPath',
-        'target_path': 'targetPath'
+        'target_path': 'targetPath',
+        'updated_at': 'updatedAt'
     }
 
-    def __init__(self, single_file: 'bool' =None, stored_path: 'str' =None, target_path: 'str' =None):  # noqa: E501
+    def __init__(self, single_file: 'bool' =None, stored_path: 'str' =None, target_path: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1DataPath - a model defined in Swagger"""  # noqa: E501
         self._single_file = None
         self._stored_path = None
         self._target_path = None
+        self._updated_at = None
         self.discriminator = None
         if single_file is not None:
             self.single_file = single_file
@@ -64,6 +67,8 @@ class V1DataPath(object):
             self.stored_path = stored_path
         if target_path is not None:
             self.target_path = target_path
+        if updated_at is not None:
+            self.updated_at = updated_at
 
     @property
     def single_file(self) -> 'bool':
@@ -127,6 +132,27 @@ class V1DataPath(object):
         """
 
         self._target_path = target_path
+
+    @property
+    def updated_at(self) -> 'datetime':
+        """Gets the updated_at of this V1DataPath.  # noqa: E501
+
+
+        :return: The updated_at of this V1DataPath.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._updated_at
+
+    @updated_at.setter
+    def updated_at(self, updated_at: 'datetime'):
+        """Sets the updated_at of this V1DataPath.
+
+
+        :param updated_at: The updated_at of this V1DataPath.  # noqa: E501
+        :type: datetime
+        """
+
+        self._updated_at = updated_at
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

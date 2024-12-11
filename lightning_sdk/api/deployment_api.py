@@ -548,8 +548,6 @@ def to_spec(
         spot=spot,
         instance_name=_MACHINE_TO_COMPUTE_NAME[machine],
         readiness_probe=to_health_check(health_check),
-        skip_data_connections_setup=True,
-        skip_filesystem_setup=True,
     )
 
 

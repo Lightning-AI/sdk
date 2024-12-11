@@ -41,19 +41,24 @@ class IdStartBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'compute_config': 'V1UserRequestedComputeConfig'
+        'compute_config': 'V1UserRequestedComputeConfig',
+        'is_forked': 'bool'
     }
 
     attribute_map = {
-        'compute_config': 'computeConfig'
+        'compute_config': 'computeConfig',
+        'is_forked': 'isForked'
     }
 
-    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None):  # noqa: E501
+    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, is_forked: 'bool' =None):  # noqa: E501
         """IdStartBody - a model defined in Swagger"""  # noqa: E501
         self._compute_config = None
+        self._is_forked = None
         self.discriminator = None
         if compute_config is not None:
             self.compute_config = compute_config
+        if is_forked is not None:
+            self.is_forked = is_forked
 
     @property
     def compute_config(self) -> 'V1UserRequestedComputeConfig':
@@ -75,6 +80,27 @@ class IdStartBody(object):
         """
 
         self._compute_config = compute_config
+
+    @property
+    def is_forked(self) -> 'bool':
+        """Gets the is_forked of this IdStartBody.  # noqa: E501
+
+
+        :return: The is_forked of this IdStartBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_forked
+
+    @is_forked.setter
+    def is_forked(self, is_forked: 'bool'):
+        """Sets the is_forked of this IdStartBody.
+
+
+        :param is_forked: The is_forked of this IdStartBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_forked = is_forked
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

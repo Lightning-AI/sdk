@@ -50,6 +50,7 @@ class ProjectIdCloudspacesBody(object):
         'disk_size': 'str',
         'display_name': 'str',
         'name': 'str',
+        'plugins': 'list[str]',
         'requested_run_duration_seconds': 'str',
         'seed_files': 'list[V1CloudSpaceSeedFile]',
         'spot': 'bool'
@@ -65,12 +66,13 @@ class ProjectIdCloudspacesBody(object):
         'disk_size': 'diskSize',
         'display_name': 'displayName',
         'name': 'name',
+        'plugins': 'plugins',
         'requested_run_duration_seconds': 'requestedRunDurationSeconds',
         'seed_files': 'seedFiles',
         'spot': 'spot'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, requested_run_duration_seconds: 'str' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, spot: 'bool' =None):  # noqa: E501
         """ProjectIdCloudspacesBody - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cloud_space_instance_cpu_image_override = None
@@ -81,6 +83,7 @@ class ProjectIdCloudspacesBody(object):
         self._disk_size = None
         self._display_name = None
         self._name = None
+        self._plugins = None
         self._requested_run_duration_seconds = None
         self._seed_files = None
         self._spot = None
@@ -103,6 +106,8 @@ class ProjectIdCloudspacesBody(object):
             self.display_name = display_name
         if name is not None:
             self.name = name
+        if plugins is not None:
+            self.plugins = plugins
         if requested_run_duration_seconds is not None:
             self.requested_run_duration_seconds = requested_run_duration_seconds
         if seed_files is not None:
@@ -298,6 +303,27 @@ class ProjectIdCloudspacesBody(object):
         """
 
         self._name = name
+
+    @property
+    def plugins(self) -> 'list[str]':
+        """Gets the plugins of this ProjectIdCloudspacesBody.  # noqa: E501
+
+
+        :return: The plugins of this ProjectIdCloudspacesBody.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._plugins
+
+    @plugins.setter
+    def plugins(self, plugins: 'list[str]'):
+        """Sets the plugins of this ProjectIdCloudspacesBody.
+
+
+        :param plugins: The plugins of this ProjectIdCloudspacesBody.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._plugins = plugins
 
     @property
     def requested_run_duration_seconds(self) -> 'str':

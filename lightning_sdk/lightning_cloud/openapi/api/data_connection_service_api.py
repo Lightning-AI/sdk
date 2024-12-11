@@ -716,6 +716,7 @@ class DataConnectionServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id:
+        :param list[str] state:
         :return: V1ListDataConnectionsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -738,12 +739,13 @@ class DataConnectionServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id:
+        :param list[str] state:
         :return: V1ListDataConnectionsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'state']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -772,6 +774,9 @@ class DataConnectionServiceApi(object):
         query_params = []
         if 'cluster_id' in params:
             query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
+        if 'state' in params:
+            query_params.append(('state', params['state']))  # noqa: E501
+            collection_formats['state'] = 'multi'  # noqa: E501
 
         header_params = {}
 

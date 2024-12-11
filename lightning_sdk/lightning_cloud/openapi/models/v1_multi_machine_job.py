@@ -46,6 +46,7 @@ class V1MultiMachineJob(object):
         'desired_state': 'V1MultiMachineJobState',
         'id': 'str',
         'machines': 'int',
+        'message': 'str',
         'name': 'str',
         'project_id': 'str',
         'spec': 'V1JobSpec',
@@ -60,6 +61,7 @@ class V1MultiMachineJob(object):
         'desired_state': 'desiredState',
         'id': 'id',
         'machines': 'machines',
+        'message': 'message',
         'name': 'name',
         'project_id': 'projectId',
         'spec': 'spec',
@@ -68,13 +70,14 @@ class V1MultiMachineJob(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, id: 'str' =None, machines: 'int' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, status: 'V1MultiMachineJobStatus' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, id: 'str' =None, machines: 'int' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, status: 'V1MultiMachineJobStatus' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1MultiMachineJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._created_at = None
         self._desired_state = None
         self._id = None
         self._machines = None
+        self._message = None
         self._name = None
         self._project_id = None
         self._spec = None
@@ -92,6 +95,8 @@ class V1MultiMachineJob(object):
             self.id = id
         if machines is not None:
             self.machines = machines
+        if message is not None:
+            self.message = message
         if name is not None:
             self.name = name
         if project_id is not None:
@@ -209,6 +214,27 @@ class V1MultiMachineJob(object):
         """
 
         self._machines = machines
+
+    @property
+    def message(self) -> 'str':
+        """Gets the message of this V1MultiMachineJob.  # noqa: E501
+
+
+        :return: The message of this V1MultiMachineJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._message
+
+    @message.setter
+    def message(self, message: 'str'):
+        """Sets the message of this V1MultiMachineJob.
+
+
+        :param message: The message of this V1MultiMachineJob.  # noqa: E501
+        :type: str
+        """
+
+        self._message = message
 
     @property
     def name(self) -> 'str':

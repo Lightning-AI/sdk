@@ -41,6 +41,8 @@ class V1JobSpec(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'artifacts_destination': 'str',
+        'artifacts_source': 'str',
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'command': 'str',
@@ -58,13 +60,13 @@ class V1JobSpec(object):
         'resources': 'V1Resources',
         'restart_policy': 'str',
         'run_id': 'str',
-        'skip_data_connections_setup': 'bool',
-        'skip_filesystem_setup': 'bool',
         'spot': 'bool',
         'volumes': 'list[V1Volume]'
     }
 
     attribute_map = {
+        'artifacts_destination': 'artifactsDestination',
+        'artifacts_source': 'artifactsSource',
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'command': 'command',
@@ -82,14 +84,14 @@ class V1JobSpec(object):
         'resources': 'resources',
         'restart_policy': 'restartPolicy',
         'run_id': 'runId',
-        'skip_data_connections_setup': 'skipDataConnectionsSetup',
-        'skip_filesystem_setup': 'skipFilesystemSetup',
         'spot': 'spot',
         'volumes': 'volumes'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, skip_data_connections_setup: 'bool' =None, skip_filesystem_setup: 'bool' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
+        self._artifacts_destination = None
+        self._artifacts_source = None
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
@@ -107,11 +109,13 @@ class V1JobSpec(object):
         self._resources = None
         self._restart_policy = None
         self._run_id = None
-        self._skip_data_connections_setup = None
-        self._skip_filesystem_setup = None
         self._spot = None
         self._volumes = None
         self.discriminator = None
+        if artifacts_destination is not None:
+            self.artifacts_destination = artifacts_destination
+        if artifacts_source is not None:
+            self.artifacts_source = artifacts_source
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
@@ -146,14 +150,52 @@ class V1JobSpec(object):
             self.restart_policy = restart_policy
         if run_id is not None:
             self.run_id = run_id
-        if skip_data_connections_setup is not None:
-            self.skip_data_connections_setup = skip_data_connections_setup
-        if skip_filesystem_setup is not None:
-            self.skip_filesystem_setup = skip_filesystem_setup
         if spot is not None:
             self.spot = spot
         if volumes is not None:
             self.volumes = volumes
+
+    @property
+    def artifacts_destination(self) -> 'str':
+        """Gets the artifacts_destination of this V1JobSpec.  # noqa: E501
+
+
+        :return: The artifacts_destination of this V1JobSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._artifacts_destination
+
+    @artifacts_destination.setter
+    def artifacts_destination(self, artifacts_destination: 'str'):
+        """Sets the artifacts_destination of this V1JobSpec.
+
+
+        :param artifacts_destination: The artifacts_destination of this V1JobSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._artifacts_destination = artifacts_destination
+
+    @property
+    def artifacts_source(self) -> 'str':
+        """Gets the artifacts_source of this V1JobSpec.  # noqa: E501
+
+
+        :return: The artifacts_source of this V1JobSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._artifacts_source
+
+    @artifacts_source.setter
+    def artifacts_source(self, artifacts_source: 'str'):
+        """Sets the artifacts_source of this V1JobSpec.
+
+
+        :param artifacts_source: The artifacts_source of this V1JobSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._artifacts_source = artifacts_source
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -511,48 +553,6 @@ class V1JobSpec(object):
         """
 
         self._run_id = run_id
-
-    @property
-    def skip_data_connections_setup(self) -> 'bool':
-        """Gets the skip_data_connections_setup of this V1JobSpec.  # noqa: E501
-
-
-        :return: The skip_data_connections_setup of this V1JobSpec.  # noqa: E501
-        :rtype: bool
-        """
-        return self._skip_data_connections_setup
-
-    @skip_data_connections_setup.setter
-    def skip_data_connections_setup(self, skip_data_connections_setup: 'bool'):
-        """Sets the skip_data_connections_setup of this V1JobSpec.
-
-
-        :param skip_data_connections_setup: The skip_data_connections_setup of this V1JobSpec.  # noqa: E501
-        :type: bool
-        """
-
-        self._skip_data_connections_setup = skip_data_connections_setup
-
-    @property
-    def skip_filesystem_setup(self) -> 'bool':
-        """Gets the skip_filesystem_setup of this V1JobSpec.  # noqa: E501
-
-
-        :return: The skip_filesystem_setup of this V1JobSpec.  # noqa: E501
-        :rtype: bool
-        """
-        return self._skip_filesystem_setup
-
-    @skip_filesystem_setup.setter
-    def skip_filesystem_setup(self, skip_filesystem_setup: 'bool'):
-        """Sets the skip_filesystem_setup of this V1JobSpec.
-
-
-        :param skip_filesystem_setup: The skip_filesystem_setup of this V1JobSpec.  # noqa: E501
-        :type: bool
-        """
-
-        self._skip_filesystem_setup = skip_filesystem_setup
 
     @property
     def spot(self) -> 'bool':
