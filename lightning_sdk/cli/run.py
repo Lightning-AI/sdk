@@ -40,7 +40,19 @@ class _Run:
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cluster_auth: Whether to authenticate with the cluster to pull the image.
                 Required if the registry is part of a cluster provider (e.g. ECR).
+            artifacts_local: The path of inside the docker container, you want to persist images from.
+                CAUTION: When setting this to "/", it will effectively erase your container.
+                Only supported for jobs with a docker image compute environment.
+            artifacts_remote: The remote storage to persist your artifacts to.
+                Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
+                PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
+                E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
+                within it.
+                Note that the connection needs to be added to the teamspace already in order for it to be found.
+                Only supported for jobs with a docker image compute environment.
         """
+        # TODO: the docstrings from artifacts_local and artifacts_remote don't show up completely,
+        # might need to switch to explicit cli definition
         self.job.__func__.__doc__ = docstr
 
     # TODO: sadly, fire displays both Optional[type] and Union[type, None] as Optional[Optional]
@@ -61,6 +73,8 @@ class _Run:
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
         cluster_auth: bool = False,
+        artifacts_local: Optional[str] = None,
+        artifacts_remote: Optional[str] = None,
     ) -> None:
         machine_enum = Machine(machine.upper())
         Job.run(
@@ -77,4 +91,6 @@ class _Run:
             interruptible=interruptible,
             image_credentials=image_credentials,
             cluster_auth=cluster_auth,
+            artifacts_local=artifacts_local,
+            artifacts_remote=artifacts_remote,
         )

@@ -348,6 +348,14 @@ FLAGS
         Type: bool
         Default: False
         Whether to authenticate with the cluster to pull the image. Required if the registry is part of a cluster provider (e.g. ECR).
+    --artifacts_local=ARTIFACTS_LOCAL
+        Type: Optional[Optional]
+        Default: None
+        The path of inside the docker container, you want to persist images from.
+    --artifacts_remote=ARTIFACTS_REMOTE
+        Type: Optional[Optional]
+        Default: None
+        The remote storage to persist your artifacts to.
 
 NOTES
     You can also use flags syntax for POSITIONAL ARGUMENTS"""
