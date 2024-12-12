@@ -36,6 +36,8 @@ class _JobV2(_BaseJob):
         cluster: Optional[str] = None,
         image_credentials: Optional[str] = None,
         cluster_auth: bool = False,
+        artifacts_local: Optional[str] = None,
+        artifacts_remote: Optional[str] = None,
     ) -> None:
         # Command is required if Studio is provided to know what to run
         # Image is mutually exclusive with Studio
@@ -66,6 +68,8 @@ class _JobV2(_BaseJob):
             env=env,
             image_credentials=image_credentials,
             cluster_auth=cluster_auth,
+            artifacts_local=artifacts_local,
+            artifacts_remote=artifacts_remote,
         )
         self._job = submitted
         self._name = submitted.name
@@ -112,10 +116,18 @@ class _JobV2(_BaseJob):
 
     @property
     def artifact_path(self) -> Optional[str]:
+        if self._guaranteed_job.spec.image != "":
+            if self._guaranteed_job.spec.artifacts_destination != "":
+                splits = self._guaranteed_job.spec.artifacts_destination.split(":")
+                return f"/teamspace/{splits[0]}_connections/{splits[1]}/{splits[2]}"
+            return None
+
         return f"/teamspace/jobs/{self._guaranteed_job.name}/artifacts"
 
     @property
     def snapshot_path(self) -> Optional[str]:
+        if self._guaranteed_job.spec.image != "":
+            return None
         return f"/teamspace/jobs/{self._guaranteed_job.name}/snapshot"
 
     @property

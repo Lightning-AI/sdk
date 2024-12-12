@@ -69,12 +69,17 @@ class _JobV1(_BaseJob):
         cluster: Optional[str] = None,
         image_credentials: Optional[str] = None,
         cluster_auth: bool = False,
+        artifacts_local: Optional[str] = None,
+        artifacts_remote: Optional[str] = None,
     ) -> None:
         if studio is None:
             raise ValueError("Studio is required for submitting jobs")
 
         if image is not None or image_credentials is not None or cluster_auth:
             raise ValueError("Image is not supported for submitting jobs")
+
+        if artifacts_local is not None or artifacts_remote is not None:
+            raise ValueError("Specifying how to persist artifacts is not yet supported with jobs")
 
         if env is not None:
             raise ValueError("Environment variables are not supported for submitting jobs")

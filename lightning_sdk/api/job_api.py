@@ -150,6 +150,8 @@ class JobApiV2:
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
         cluster_auth: bool,
+        artifacts_local: Optional[str],
+        artifacts_remote: Optional[str],
     ) -> V1Job:
         env_vars = []
         if env is not None:
@@ -171,6 +173,8 @@ class JobApiV2:
             spot=interruptible,
             image_cluster_credentials=cluster_auth,
             image_secret_ref=image_credentials or "",
+            artifacts_source=artifacts_local or "",
+            artifacts_destination=artifacts_remote or "",
         )
         body = ProjectIdJobsBody(name=name, spec=spec)
 

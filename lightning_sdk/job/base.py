@@ -52,6 +52,8 @@ class _BaseJob(ABC):
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
         cluster_auth: bool = False,
+        artifacts_local: Optional[str] = None,
+        artifacts_remote: Optional[str] = None,
     ) -> "_BaseJob":
         from lightning_sdk.studio import Studio
 
@@ -89,10 +91,26 @@ class _BaseJob(ABC):
             if cluster_auth:
                 raise ValueError("cluster_auth is only supported when using a custom image")
 
+            if artifacts_local is not None or artifacts_remote is not None:
+                raise ValueError(
+                    "Specifying artifacts persistence is supported for docker images only. "
+                    "Other jobs will automatically persist artifacts to the teamspace distributed filesystem."
+                )
+
         else:
             if studio is not None:
                 raise RuntimeError(
                     "image and studio are mutually exclusive as both define the environment to run the job in"
+                )
+
+            # they either need to specified both or none of them
+            if bool(artifacts_local) != bool(artifacts_remote):
+                raise ValueError("Artifact persistence requires both artifacts_local and artifacts_remote to be set")
+
+            if artifacts_remote and len(artifacts_remote.split(":")) != 3:
+                raise ValueError(
+                    "Artifact persistence requires exactly three arguments separated by colon of kind "
+                    f"<CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>, got {artifacts_local}"
                 )
 
         inst = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
@@ -106,6 +124,8 @@ class _BaseJob(ABC):
             interruptible=interruptible,
             image_credentials=image_credentials,
             cluster_auth=cluster_auth,
+            artifacts_local=artifacts_local,
+            artifacts_remote=artifacts_remote,
         )
         return inst
 
@@ -121,6 +141,8 @@ class _BaseJob(ABC):
         cluster: Optional[str] = None,
         image_credentials: Optional[str] = None,
         cluster_auth: bool = False,
+        artifacts_local: Optional[str] = None,
+        artifacts_remote: Optional[str] = None,
     ) -> None:
         """Submits a job and updates the internal _job attribute as well as the _name attribute."""
 

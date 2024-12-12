@@ -96,7 +96,7 @@ def test_job_v2_submit_job():
     job_api._client.jobs_service_create_job = create_job_mock
 
 
-    job_api.submit_job(name="test-job", cluster_id="c-abc", teamspace_id="ts-abc", image="", studio_id="st-abc", machine=Machine.T4_X_4, interruptible=False, env={"key": "value"}, command="echo hello", image_credentials=None, cluster_auth=True)
+    job_api.submit_job(name="test-job", cluster_id="c-abc", teamspace_id="ts-abc", image="", studio_id="st-abc", machine=Machine.T4_X_4, interruptible=False, env={"key": "value"}, command="echo hello", image_credentials=None, cluster_auth=True, artifacts_local=None, artifacts_remote=None)
 
     spec = V1JobSpec(
             cloudspace_id="st-abc",
@@ -108,14 +108,16 @@ def test_job_v2_submit_job():
             run_id=mock.ANY,
             spot=False,
             image_cluster_credentials=True,
-            image_secret_ref=""
+            image_secret_ref="",
+            artifacts_source="",
+            artifacts_destination=""
         )
     body = ProjectIdJobsBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
     create_job_mock = mock.MagicMock()
     job_api._client.jobs_service_create_job = create_job_mock
-    job_api.submit_job(name="test-job", cluster_id="c-abc", teamspace_id="ts-abc", studio_id="", image="image-abc", machine=Machine.T4_X_4, interruptible=True, env=None, command=None, image_credentials="dockerhub", cluster_auth=False)
+    job_api.submit_job(name="test-job", cluster_id="c-abc", teamspace_id="ts-abc", studio_id="", image="image-abc", machine=Machine.T4_X_4, interruptible=True, env=None, command=None, image_credentials="dockerhub", cluster_auth=False, artifacts_local="/output", artifacts_remote="efs:data:some-path")
 
     spec = V1JobSpec(
             cloudspace_id="",
@@ -127,7 +129,9 @@ def test_job_v2_submit_job():
             run_id=mock.ANY,
             spot=True,
             image_cluster_credentials=False,
-            image_secret_ref="dockerhub"
+            image_secret_ref="dockerhub",
+            artifacts_source="/output",
+            artifacts_destination="efs:data:some-path"
         )
     body = ProjectIdJobsBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)

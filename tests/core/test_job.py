@@ -161,7 +161,8 @@ def test_select_job_backend_correctly_v2(job_backend_selector_mocker_v2):
 @pytest.mark.parametrize("command", [None, "echo hello"])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
-def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env, interruptible):
+@pytest.mark.parametrize("artifacts_local,artifacts_remote", [(None, None), ("", ""), ("/output", "efs:data:some-path")])
+def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env, interruptible, artifacts_local, artifacts_remote):
 
         teamspace = Teamspace("ts-abc", org="org-abc")
         job = _JobV2("test-job", teamspace, _fetch_job=False)
@@ -169,10 +170,10 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
         submit_mock = mock.MagicMock()
         job._job_api.submit_job = submit_mock
 
-        job._submit(machine=machine, image="image-abc", command=command, env=env, interruptible=interruptible, cluster="c-abc")
+        job._submit(machine=machine, image="image-abc", command=command, env=env, interruptible=interruptible, cluster="c-abc", artifacts_local=artifacts_local, artifacts_remote=artifacts_remote)
 
         # test that everything was passed along correctly to the api layer and that class values and function params are mixed correctly
-        submit_mock.assert_called_once_with(name="test-job", command=command, cluster_id="c-abc", teamspace_id="ts-abc001", studio_id=None, image="image-abc", machine=machine, interruptible=interruptible, env=env, image_credentials=None, cluster_auth=False)
+        submit_mock.assert_called_once_with(name="test-job", command=command, cluster_id="c-abc", teamspace_id="ts-abc001", studio_id=None, image="image-abc", machine=machine, interruptible=interruptible, env=env, image_credentials=None, cluster_auth=False, artifacts_local=artifacts_local, artifacts_remote=artifacts_remote)
 
 
 @pytest.mark.parametrize("machine", [Machine.A10G, Machine.DATA_PREP_MAX])
@@ -187,7 +188,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
     job._job_api.submit_job = submit_mock
     job._submit(machine=machine, cluster=studio.cluster, studio=studio, env=env, interruptible=interruptible, command="echo hello")
 
-    submit_mock.assert_called_once_with(name="test-job", command="echo hello", cluster_id="c-abc", teamspace_id="ts-abc001", studio_id="st-abc", image=None, machine=machine, interruptible=interruptible, env=env, image_credentials=None, cluster_auth=False)
+    submit_mock.assert_called_once_with(name="test-job", command="echo hello", cluster_id="c-abc", teamspace_id="ts-abc001", studio_id="st-abc", image=None, machine=machine, interruptible=interruptible, env=env, image_credentials=None, cluster_auth=False, artifacts_local=None, artifacts_remote=None)
 
 
 def test_jobv2_run_arg_validation(internal_studio_init_mocker):
@@ -360,4 +361,26 @@ def test_submit_jobv2_studio_resolve(job_backend_selector_mocker_v2, internal_st
 
     job = Job.run("test-job", machine=Machine.CPU, command="echo hello", studio="st-abc", teamspace="ts-abc", org="org-abc")
 
-    submit_mock.assert_called_once_with(command="echo hello", cluster="c-abc", env=None, image=None, interruptible=False, machine=Machine.CPU, studio=Studio(name="st-abc", teamspace="ts-abc", org="org-abc"), cluster_auth=False, image_credentials=None)
+    submit_mock.assert_called_once_with(command="echo hello", cluster="c-abc", env=None, image=None, interruptible=False, machine=Machine.CPU, studio=Studio(name="st-abc", teamspace="ts-abc", org="org-abc"), cluster_auth=False, image_credentials=None, artifacts_local=None, artifacts_remote=None)
+
+@pytest.mark.parametrize("expected_artifacts_path,expected_snapshot_path,image,studio,artifacts_source, artifacts_destination", [
+    ("/teamspace/jobs/test-job/artifacts", "/teamspace/jobs/test-job/snapshot", None, "st-abc", None, None),
+    ("/teamspace/efs_connections/data/some-path", None, "ubuntu", None, "/output", "efs:data:some-path"),
+    (None, None, "ubuntu", None, None, None)
+])
+def test_submit_jobv2_studio_path(job_backend_selector_mocker_v2, internal_studio_init_mocker, expected_artifacts_path, expected_snapshot_path, image,studio, artifacts_source, artifacts_destination):
+    from lightning_sdk.job.v2 import _JobV2
+    import lightning_sdk
+    importlib.reload(lightning_sdk.job.job)
+    from lightning_sdk.job.job import Job
+
+    submit_mock = mock.MagicMock()
+    _JobV2._submit = submit_mock
+
+    job = Job.run("test-job", machine=Machine.CPU, command="echo hello", studio=studio, image=image, teamspace="ts-abc", org="org-abc", artifacts_local=artifacts_source, artifacts_remote=artifacts_destination)
+
+    submit_mock.assert_called_once_with(command="echo hello", cluster=None if image else "c-abc", env=None, image=image, interruptible=False, machine=Machine.CPU, studio=None if image else Studio(name="st-abc", teamspace="ts-abc", org="org-abc"), cluster_auth=False, image_credentials=None, artifacts_local=artifacts_source, artifacts_remote=artifacts_destination)
+    job._internal_job._job = V1Job(name="test-job", spec=V1JobSpec(image=image or "", artifacts_source=artifacts_source, artifacts_destination=artifacts_destination))
+
+    assert job.artifact_path == expected_artifacts_path
+    assert job.snapshot_path == expected_snapshot_path
