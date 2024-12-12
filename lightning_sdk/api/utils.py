@@ -513,7 +513,8 @@ def _get_model_version(client: LightningClient, teamspace_id: str, name: str, ve
 
 def _download_model_files(
     client: LightningClient,
-    teamspace_id: str,
+    teamspace_name: str,
+    teamspace_owner_name: str,
     name: str,
     version: str,
     download_dir: Path,
@@ -521,7 +522,9 @@ def _download_model_files(
     num_workers: int = 20,
 ) -> List[str]:
     api = ModelsStoreApi(client.api_client)
-    response = api.models_store_get_model_files(project_id=teamspace_id, name=name, version=version)
+    response = api.models_store_get_model_files(
+        project_name=teamspace_name, project_owner_name=teamspace_owner_name, name=name, version=version
+    )
 
     pbar = None
     if progress_bar:
@@ -541,7 +544,7 @@ def _download_model_files(
             client=client,
             model_id=response.model_id,
             version=response.version,
-            teamspace_id=teamspace_id,
+            teamspace_id=response.project_id,
             remote_path=filepath,
             file_path=str(local_file),
             num_workers=num_workers,

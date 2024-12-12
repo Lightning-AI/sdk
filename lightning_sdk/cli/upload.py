@@ -9,8 +9,8 @@ from tqdm import tqdm
 
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.exceptions import StudioCliError
-from lightning_sdk.cli.models import _get_teamspace, _parse_model_name
 from lightning_sdk.cli.studios_menu import _StudiosMenu
+from lightning_sdk.models import upload_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 
@@ -20,7 +20,7 @@ class _Uploads(_StudiosMenu):
 
     _studio_upload_status_path = "~/.lightning/studios/uploads"
 
-    def model(self, name: str, path: Optional[str] = None, cloud_account: Optional[str] = None) -> None:
+    def model(self, name: str, path: str = ".", cloud_account: Optional[str] = None) -> None:
         """Upload a Model.
 
         Args:
@@ -29,14 +29,7 @@ class _Uploads(_StudiosMenu):
           path: The path to the file or directory you want to upload. Defaults to the current directory.
           cloud_account: The name of the cloud account to store the Model in.
         """
-        org_name, teamspace_name, model_name = _parse_model_name(name)
-        teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
-        teamspace.upload_model(
-            path=path or ".",
-            name=model_name,
-            progress_bar=True,
-            cluster_id=cloud_account,
-        )
+        upload_model(name, path, cloud_account=cloud_account)
 
     def _resolve_studio(self, studio: Optional[str]) -> Studio:
         user = _get_authed_user()

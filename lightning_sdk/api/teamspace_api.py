@@ -260,12 +260,14 @@ class TeamspaceApi:
         name: str,
         version: str,
         download_dir: Path,
-        teamspace_id: str,
+        teamspace_name: str,
+        teamspace_owner_name: str,
         progress_bar: bool = True,
     ) -> List[str]:
         return _download_model_files(
             client=self._client,
-            teamspace_id=teamspace_id,
+            teamspace_name=teamspace_name,
+            teamspace_owner_name=teamspace_owner_name,
             name=name,
             version=version,
             download_dir=download_dir,

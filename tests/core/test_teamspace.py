@@ -309,7 +309,8 @@ def test_download_model(
 
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
-        teamspace_id="ts-abc002",
+        teamspace_name="ts-abc",
+        teamspace_owner_name="user-abc",
         name="user/modelname",
         version="latest",
         download_dir=Path(folder) if folder else tmp_path,
@@ -341,7 +342,8 @@ get_model_version_mock,
         teamspace_id='ts-abc002', name='user/modelname', version='v3')
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
-        teamspace_id="ts-abc002",
+        teamspace_name="ts-abc",
+        teamspace_owner_name="user-abc",
         name="user/modelname",
         version="v3",
         download_dir=tmp_path,

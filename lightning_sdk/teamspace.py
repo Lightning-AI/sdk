@@ -153,7 +153,7 @@ class Teamspace:
 
     def upload_model(
         self,
-        path: str,
+        path: Union[str, Path],
         name: str,
         progress_bar: bool = True,
         cluster_id: Optional[str] = None,
@@ -254,7 +254,8 @@ class Teamspace:
             name=name,
             version=version,
             download_dir=download_dir,
-            teamspace_id=self.id,
+            teamspace_name=self.name,
+            teamspace_owner_name=self.owner.name,
             progress_bar=progress_bar,
         )
 

@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Optional
 
 from lightning_sdk.cli.exceptions import StudioCliError
-from lightning_sdk.cli.models import _get_teamspace, _parse_model_name
 from lightning_sdk.cli.studios_menu import _StudiosMenu
+from lightning_sdk.models import download_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 
@@ -21,10 +21,8 @@ class _Downloads(_StudiosMenu):
             This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
           download_dir: The directory where the Model should be downloaded.
         """
-        org_name, teamspace_name, model_name = _parse_model_name(name)
-        teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
-        teamspace.download_model(
-            name=model_name,
+        download_model(
+            name=name,
             download_dir=download_dir,
             progress_bar=True,
         )
