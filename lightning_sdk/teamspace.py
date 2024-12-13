@@ -106,6 +106,10 @@ class Teamspace:
         return studios
 
     @property
+    def default_cluster(self) -> str:
+        return self._teamspace.project_settings.preferred_cluster
+
+    @property
     def clusters(self) -> List[str]:
         """All clusters associated with that teamspace."""
         clusters = self._teamspace_api.list_clusters(teamspace_id=self.id)
