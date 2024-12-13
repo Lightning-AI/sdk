@@ -1,13 +1,25 @@
 import os
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from lightning_sdk.api import OrgApi, TeamspaceApi, UserApi
 from lightning_sdk.lightning_cloud.openapi.models import V1Membership, V1OwnerType
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _get_authed_user
+
+if TYPE_CHECKING:
+    from lightning_sdk.teamspace import Teamspace
+
+
+# TODO: Maybe just have a `Model` object?
+@dataclass
+class UploadedModelInfo:
+    name: str
+    version: str
+    teamspace: str
+    cloud_account: str
 
 
 def _get_teamspace_and_path(
@@ -38,8 +50,10 @@ def _list_teamspaces() -> List[str]:
     ]
 
 
-def _get_teamspace(name: str, organization: str) -> Teamspace:
+def _get_teamspace(name: str, organization: str) -> "Teamspace":
     """Get a Teamspace object from the SDK."""
+    from lightning_sdk.teamspace import Teamspace
+
     org_api = OrgApi()
     user_api = UserApi()
     authed_user = _get_authed_user()
@@ -113,20 +127,27 @@ def download_model(
         raise e
 
 
-def upload_model(name: str, path: Union[Path, str] = ".", cloud_account: Optional[str] = None) -> None:
+def upload_model(
+    name: str,
+    path: Union[Path, str] = ".",
+    cloud_account: Optional[str] = None,
+    progress_bar: bool = True,
+) -> UploadedModelInfo:
     """Upload a Model.
 
     Args:
         name: The name of the Model you want to upload.
-        This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
+            This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
         path: The path to the file or directory you want to upload. Defaults to the current directory.
         cloud_account: The name of the cloud account to store the Model in.
+            If not provided, the default cloud account for the Teamspace will be used.
+        progress_bar: Whether to show a progress bar for the upload.
     """
     org_name, teamspace_name, model_name, _ = _parse_model_name_and_version(name)
     teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
-    teamspace.upload_model(
+    return teamspace.upload_model(
         path=path,
         name=model_name,
-        progress_bar=True,
-        cluster_id=cloud_account,
+        cloud_account=cloud_account,
+        progress_bar=progress_bar,
     )

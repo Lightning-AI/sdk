@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, List, Optional, Union
 
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import TeamspaceApi
-from lightning_sdk.api.teamspace_api import UploadedModelInfo
+from lightning_sdk.models import UploadedModelInfo
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
 from lightning_sdk.user import User
@@ -155,18 +155,17 @@ class Teamspace:
         self,
         path: Union[str, Path],
         name: str,
+        cloud_account: Optional[str] = None,
         progress_bar: bool = True,
-        cluster_id: Optional[str] = None,
     ) -> UploadedModelInfo:
         """Upload a local checkpoint file to the model store.
 
         Args:
             path: Path to the model file or folder to upload.
             name: Name tag of the model to upload.
+            cloud_account: The name of the cloud account to store the Model in.
+                If not provided, the default cloud account for the Teamspace will be used.
             progress_bar: Whether to show a progress bar for the upload.
-            cluster_id: The name of the cluster to use. Only required if it can't be determined
-                automatically.
-
         """
         if not path:
             raise ValueError("No path provided to upload")
@@ -176,7 +175,7 @@ class Teamspace:
         if not path.exists():
             raise FileNotFoundError(str(path))
 
-        cluster_id = self._teamspace_api._determine_cluster_id(self.id) if cluster_id is None else cluster_id
+        cloud_account = self._teamspace_api._determine_cluster_id(self.id) if cloud_account is None else cloud_account
         filepaths = [path] if path.is_file() else [p for p in path.rglob("*") if p.is_file()]
 
         if not filepaths:
@@ -196,14 +195,14 @@ class Teamspace:
             metadata={"filenames": filenames},
             private=True,
             teamspace_id=self.id,
-            cluster_id=cluster_id,
+            cluster_id=cloud_account,
         )
         self._teamspace_api.upload_model_files(
             model_id=model.model_id,
             version=model.version,
             root_path=root_path,
             filepaths=filepaths,
-            cluster_id=cluster_id,
+            cluster_id=cloud_account,
             teamspace_id=self.id,
             progress_bar=progress_bar,
         )
@@ -216,7 +215,7 @@ class Teamspace:
             name=name,
             version=model.version,
             teamspace=self.name,
-            cluster=cluster_id,
+            cloud_account=cloud_account,
         )
 
     def download_model(

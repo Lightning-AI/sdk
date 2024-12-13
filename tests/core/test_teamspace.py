@@ -210,7 +210,7 @@ def test_upload_model_single_file(
     assert result.name == "modelname"
     assert result.version == "v3"
     assert result.teamspace == "ts-abc"
-    assert result.cluster == "test-cluster-id"
+    assert result.cloud_account == "test-cluster-id"
 
     ts._teamspace_api.delete_model = mock.Mock()
     ts.delete_model("user/modelname")
