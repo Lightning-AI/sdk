@@ -50,6 +50,7 @@ class V1MultiMachineJob(object):
         'name': 'str',
         'project_id': 'str',
         'spec': 'V1JobSpec',
+        'state': 'V1MultiMachineJobState',
         'status': 'V1MultiMachineJobStatus',
         'updated_at': 'datetime',
         'user_id': 'str'
@@ -65,12 +66,13 @@ class V1MultiMachineJob(object):
         'name': 'name',
         'project_id': 'projectId',
         'spec': 'spec',
+        'state': 'state',
         'status': 'status',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, id: 'str' =None, machines: 'int' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, status: 'V1MultiMachineJobStatus' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, id: 'str' =None, machines: 'int' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1MultiMachineJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._created_at = None
@@ -81,6 +83,7 @@ class V1MultiMachineJob(object):
         self._name = None
         self._project_id = None
         self._spec = None
+        self._state = None
         self._status = None
         self._updated_at = None
         self._user_id = None
@@ -103,6 +106,8 @@ class V1MultiMachineJob(object):
             self.project_id = project_id
         if spec is not None:
             self.spec = spec
+        if state is not None:
+            self.state = state
         if status is not None:
             self.status = status
         if updated_at is not None:
@@ -298,6 +303,27 @@ class V1MultiMachineJob(object):
         """
 
         self._spec = spec
+
+    @property
+    def state(self) -> 'V1MultiMachineJobState':
+        """Gets the state of this V1MultiMachineJob.  # noqa: E501
+
+
+        :return: The state of this V1MultiMachineJob.  # noqa: E501
+        :rtype: V1MultiMachineJobState
+        """
+        return self._state
+
+    @state.setter
+    def state(self, state: 'V1MultiMachineJobState'):
+        """Sets the state of this V1MultiMachineJob.
+
+
+        :param state: The state of this V1MultiMachineJob.  # noqa: E501
+        :type: V1MultiMachineJobState
+        """
+
+        self._state = state
 
     @property
     def status(self) -> 'V1MultiMachineJobStatus':

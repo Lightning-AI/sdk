@@ -42,6 +42,7 @@ class V1GetModelFilesResponse(object):
     """
     swagger_types = {
         'filepaths': 'list[str]',
+        'filesizes': 'list[str]',
         'model_id': 'str',
         'project_id': 'str',
         'size_bytes': 'str',
@@ -51,6 +52,7 @@ class V1GetModelFilesResponse(object):
 
     attribute_map = {
         'filepaths': 'filepaths',
+        'filesizes': 'filesizes',
         'model_id': 'modelId',
         'project_id': 'projectId',
         'size_bytes': 'sizeBytes',
@@ -58,9 +60,10 @@ class V1GetModelFilesResponse(object):
         'version': 'version'
     }
 
-    def __init__(self, filepaths: 'list[str]' =None, model_id: 'str' =None, project_id: 'str' =None, size_bytes: 'str' =None, upload_complete: 'bool' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, filepaths: 'list[str]' =None, filesizes: 'list[str]' =None, model_id: 'str' =None, project_id: 'str' =None, size_bytes: 'str' =None, upload_complete: 'bool' =None, version: 'str' =None):  # noqa: E501
         """V1GetModelFilesResponse - a model defined in Swagger"""  # noqa: E501
         self._filepaths = None
+        self._filesizes = None
         self._model_id = None
         self._project_id = None
         self._size_bytes = None
@@ -69,6 +72,8 @@ class V1GetModelFilesResponse(object):
         self.discriminator = None
         if filepaths is not None:
             self.filepaths = filepaths
+        if filesizes is not None:
+            self.filesizes = filesizes
         if model_id is not None:
             self.model_id = model_id
         if project_id is not None:
@@ -100,6 +105,27 @@ class V1GetModelFilesResponse(object):
         """
 
         self._filepaths = filepaths
+
+    @property
+    def filesizes(self) -> 'list[str]':
+        """Gets the filesizes of this V1GetModelFilesResponse.  # noqa: E501
+
+
+        :return: The filesizes of this V1GetModelFilesResponse.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._filesizes
+
+    @filesizes.setter
+    def filesizes(self, filesizes: 'list[str]'):
+        """Sets the filesizes of this V1GetModelFilesResponse.
+
+
+        :param filesizes: The filesizes of this V1GetModelFilesResponse.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._filesizes = filesizes
 
     @property
     def model_id(self) -> 'str':

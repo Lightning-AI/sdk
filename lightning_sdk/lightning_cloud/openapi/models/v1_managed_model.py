@@ -41,6 +41,7 @@ class V1ManagedModel(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'abilities': 'V1ManagedModelAbilities',
         'completion_token_price': 'float',
         'description': 'str',
         'endpoint_id': 'str',
@@ -50,6 +51,7 @@ class V1ManagedModel(object):
     }
 
     attribute_map = {
+        'abilities': 'abilities',
         'completion_token_price': 'completionTokenPrice',
         'description': 'description',
         'endpoint_id': 'endpointId',
@@ -58,8 +60,9 @@ class V1ManagedModel(object):
         'prompt_token_price': 'promptTokenPrice'
     }
 
-    def __init__(self, completion_token_price: 'float' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, completion_token_price: 'float' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
+        self._abilities = None
         self._completion_token_price = None
         self._description = None
         self._endpoint_id = None
@@ -67,6 +70,8 @@ class V1ManagedModel(object):
         self._name = None
         self._prompt_token_price = None
         self.discriminator = None
+        if abilities is not None:
+            self.abilities = abilities
         if completion_token_price is not None:
             self.completion_token_price = completion_token_price
         if description is not None:
@@ -79,6 +84,27 @@ class V1ManagedModel(object):
             self.name = name
         if prompt_token_price is not None:
             self.prompt_token_price = prompt_token_price
+
+    @property
+    def abilities(self) -> 'V1ManagedModelAbilities':
+        """Gets the abilities of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The abilities of this V1ManagedModel.  # noqa: E501
+        :rtype: V1ManagedModelAbilities
+        """
+        return self._abilities
+
+    @abilities.setter
+    def abilities(self, abilities: 'V1ManagedModelAbilities'):
+        """Sets the abilities of this V1ManagedModel.
+
+
+        :param abilities: The abilities of this V1ManagedModel.  # noqa: E501
+        :type: V1ManagedModelAbilities
+        """
+
+        self._abilities = abilities
 
     @property
     def completion_token_price(self) -> 'float':

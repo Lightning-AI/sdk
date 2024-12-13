@@ -41,6 +41,7 @@ class DeploymentsIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'apis': 'list[V1DeploymentAPI]',
         'autoscaling': 'V1AutoscalingSpec',
         'cloudspace_id': 'str',
         'created_at': 'datetime',
@@ -60,6 +61,7 @@ class DeploymentsIdBody(object):
     }
 
     attribute_map = {
+        'apis': 'apis',
         'autoscaling': 'autoscaling',
         'cloudspace_id': 'cloudspaceId',
         'created_at': 'createdAt',
@@ -78,8 +80,9 @@ class DeploymentsIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """DeploymentsIdBody - a model defined in Swagger"""  # noqa: E501
+        self._apis = None
         self._autoscaling = None
         self._cloudspace_id = None
         self._created_at = None
@@ -97,6 +100,8 @@ class DeploymentsIdBody(object):
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
+        if apis is not None:
+            self.apis = apis
         if autoscaling is not None:
             self.autoscaling = autoscaling
         if cloudspace_id is not None:
@@ -129,6 +134,27 @@ class DeploymentsIdBody(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def apis(self) -> 'list[V1DeploymentAPI]':
+        """Gets the apis of this DeploymentsIdBody.  # noqa: E501
+
+
+        :return: The apis of this DeploymentsIdBody.  # noqa: E501
+        :rtype: list[V1DeploymentAPI]
+        """
+        return self._apis
+
+    @apis.setter
+    def apis(self, apis: 'list[V1DeploymentAPI]'):
+        """Sets the apis of this DeploymentsIdBody.
+
+
+        :param apis: The apis of this DeploymentsIdBody.  # noqa: E501
+        :type: list[V1DeploymentAPI]
+        """
+
+        self._apis = apis
 
     @property
     def autoscaling(self) -> 'V1AutoscalingSpec':

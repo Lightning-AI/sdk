@@ -43,6 +43,7 @@ class V1AWSDirectV1(object):
     swagger_types = {
         'bucket_endpoint': 'str',
         'bucket_name': 'str',
+        'cloud_formation_disabled': 'bool',
         'efs_enabled': 'bool',
         'external_id': 'str',
         'primary_region': 'str',
@@ -56,6 +57,7 @@ class V1AWSDirectV1(object):
     attribute_map = {
         'bucket_endpoint': 'bucketEndpoint',
         'bucket_name': 'bucketName',
+        'cloud_formation_disabled': 'cloudFormationDisabled',
         'efs_enabled': 'efsEnabled',
         'external_id': 'externalId',
         'primary_region': 'primaryRegion',
@@ -66,10 +68,11 @@ class V1AWSDirectV1(object):
         'use_launch_templates': 'useLaunchTemplates'
     }
 
-    def __init__(self, bucket_endpoint: 'str' =None, bucket_name: 'str' =None, efs_enabled: 'bool' =None, external_id: 'str' =None, primary_region: 'str' =None, regional_load_balancers: 'list[V1RegionalLoadBalancer]' =None, regions: 'list[str]' =None, role_arn: 'str' =None, source_cidr_ips: 'list[str]' =None, use_launch_templates: 'bool' =None):  # noqa: E501
+    def __init__(self, bucket_endpoint: 'str' =None, bucket_name: 'str' =None, cloud_formation_disabled: 'bool' =None, efs_enabled: 'bool' =None, external_id: 'str' =None, primary_region: 'str' =None, regional_load_balancers: 'list[V1RegionalLoadBalancer]' =None, regions: 'list[str]' =None, role_arn: 'str' =None, source_cidr_ips: 'list[str]' =None, use_launch_templates: 'bool' =None):  # noqa: E501
         """V1AWSDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_endpoint = None
         self._bucket_name = None
+        self._cloud_formation_disabled = None
         self._efs_enabled = None
         self._external_id = None
         self._primary_region = None
@@ -83,6 +86,8 @@ class V1AWSDirectV1(object):
             self.bucket_endpoint = bucket_endpoint
         if bucket_name is not None:
             self.bucket_name = bucket_name
+        if cloud_formation_disabled is not None:
+            self.cloud_formation_disabled = cloud_formation_disabled
         if efs_enabled is not None:
             self.efs_enabled = efs_enabled
         if external_id is not None:
@@ -141,6 +146,27 @@ class V1AWSDirectV1(object):
         """
 
         self._bucket_name = bucket_name
+
+    @property
+    def cloud_formation_disabled(self) -> 'bool':
+        """Gets the cloud_formation_disabled of this V1AWSDirectV1.  # noqa: E501
+
+
+        :return: The cloud_formation_disabled of this V1AWSDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._cloud_formation_disabled
+
+    @cloud_formation_disabled.setter
+    def cloud_formation_disabled(self, cloud_formation_disabled: 'bool'):
+        """Sets the cloud_formation_disabled of this V1AWSDirectV1.
+
+
+        :param cloud_formation_disabled: The cloud_formation_disabled of this V1AWSDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._cloud_formation_disabled = cloud_formation_disabled
 
     @property
     def efs_enabled(self) -> 'bool':
