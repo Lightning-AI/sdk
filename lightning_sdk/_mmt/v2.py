@@ -1,9 +1,9 @@
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
-from lightning_sdk.api.job_api import JobApiV2
-from lightning_sdk.job.base import _BaseJob
+from lightning_sdk.api.mmt_api import MMTApi
 
 if TYPE_CHECKING:
+    from lightning_sdk.job.job import Job
     from lightning_sdk.machine import Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.status import Status
@@ -11,8 +11,10 @@ if TYPE_CHECKING:
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
 
+from lightning_sdk._mmt.base import _BaseMMT
 
-class _JobV2(_BaseJob):
+
+class _MMTV2(_BaseMMT):
     def __init__(
         self,
         name: str,
@@ -22,11 +24,12 @@ class _JobV2(_BaseJob):
         *,
         _fetch_job: bool = True,
     ) -> None:
-        self._job_api = JobApiV2()
+        self._job_api = MMTApi()
         super().__init__(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=_fetch_job)
 
     def _submit(
         self,
+        num_machines: int,
         machine: "Machine",
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
@@ -38,7 +41,7 @@ class _JobV2(_BaseJob):
         cluster_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
-    ) -> "_JobV2":
+    ) -> "_MMTV2":
         # Command is required if Studio is provided to know what to run
         # Image is mutually exclusive with Studio
         # Command is optional for Image
@@ -55,9 +58,9 @@ class _JobV2(_BaseJob):
             studio_id = None
             if image is None:
                 raise ValueError("either image or studio must be provided")
-
         submitted = self._job_api.submit_job(
             name=self.name,
+            num_machines=num_machines,
             command=command,
             cluster_id=cluster,
             teamspace_id=self._teamspace.id,
@@ -75,6 +78,10 @@ class _JobV2(_BaseJob):
         self._name = submitted.name
         return self
 
+    @property
+    def machines(self) -> Tuple["Job", ...]:
+        raise NotImplementedError
+
     def stop(self) -> None:
         self._job_api.stop_job(job_id=self._guaranteed_job.id, teamspace_id=self._teamspace.id)
 
@@ -82,7 +89,6 @@ class _JobV2(_BaseJob):
         self._job_api.delete_job(
             job_id=self._guaranteed_job.id,
             teamspace_id=self._teamspace.id,
-            cloudspace_id=self._guaranteed_job.spec.cloudspace_id,
         )
 
     @property
@@ -104,32 +110,20 @@ class _JobV2(_BaseJob):
 
     @property
     def status(self) -> "Status":
-        return self._job_api._job_state_to_external(self._latest_job.state)
-
-    @property
-    def machine(self) -> "Machine":
-        # only fetch the job it it hasn't been fetched yet as machine cannot change over time
-        return self._job_api._get_job_machine_from_spec(self._guaranteed_job.spec)
+        # TODO: Should this rather be a list of states from the individual machines?
+        return self._job_api._job_state_to_external(self._latest_job.desired_state)
 
     @property
     def artifact_path(self) -> Optional[str]:
-        if self._guaranteed_job.spec.image != "":
-            if self._guaranteed_job.spec.artifacts_destination != "":
-                splits = self._guaranteed_job.spec.artifacts_destination.split(":")
-                return f"/teamspace/{splits[0]}_connections/{splits[1]}/{splits[2]}"
-            return None
-
-        return f"/teamspace/jobs/{self._guaranteed_job.name}/artifacts"
+        raise NotImplementedError
 
     @property
     def snapshot_path(self) -> Optional[str]:
-        if self._guaranteed_job.spec.image != "":
-            return None
-        return f"/teamspace/jobs/{self._guaranteed_job.name}/snapshot"
+        raise NotImplementedError
 
     @property
-    def share_path(self) -> Optional[str]:
-        raise NotImplementedError("Not implemented yet")
+    def machine(self) -> "Machine":
+        return self._job_api._get_job_machine_from_spec(self._guaranteed_job.spec)
 
     def _update_internal_job(self) -> None:
         if getattr(self, "_job", None) is None:
@@ -137,3 +131,11 @@ class _JobV2(_BaseJob):
             return
 
         self._job = self._job_api.get_job(job_id=self._job.id, teamspace_id=self._teamspace.id)
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def teamspace(self) -> "Teamspace":
+        return self._teamspace

@@ -71,7 +71,7 @@ class _JobV1(_BaseJob):
         cluster_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
-    ) -> None:
+    ) -> "_JobV1":
         if studio is None:
             raise ValueError("Studio is required for submitting jobs")
 
@@ -100,6 +100,7 @@ class _JobV1(_BaseJob):
         )
         self._name = _submitted.name
         self._job = _submitted
+        return self
 
     def _update_internal_job(self) -> None:
         try:

@@ -11,8 +11,6 @@ from unittest import mock
 import os
 import pytest
 from lightning_sdk.machine import Machine
-from lightning_sdk.lightning_cloud.openapi import V1GetUserResponse
-from lightning_sdk.lightning_cloud.openapi import V1UserFeatures
 from lightning_sdk.lightning_cloud.openapi import V1Job, V1JobSpec, JobsIdBody1
 
 

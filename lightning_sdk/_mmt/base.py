@@ -1,7 +1,5 @@
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, Optional, Union
-
-from lightning_sdk.utils.resolve import _resolve_teamspace
+from abc import abstractmethod
+from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import Machine
@@ -11,36 +9,17 @@ if TYPE_CHECKING:
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
 
+from lightning_sdk.job.base import _BaseJob
+from lightning_sdk.job.job import Job
 
-class _BaseJob(ABC):
-    def __init__(
-        self,
-        name: str,
-        teamspace: Union[str, "Teamspace", None] = None,
-        org: Union[str, "Organization", None] = None,
-        user: Union[str, "User", None] = None,
-        *,
-        _fetch_job: bool = True,
-    ) -> None:
-        _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
-        if _teamspace is None:
-            raise ValueError(
-                "Cannot resolve the teamspace from provided arguments."
-                f" Got teamspace={teamspace}, org={org}, user={user}."
-            )
-        else:
-            self._teamspace = _teamspace
-        self._name = name
-        self._job = None
 
-        if _fetch_job:
-            self._update_internal_job()
-
+class _BaseMMT(_BaseJob):
     @classmethod
     def run(
         cls,
         name: str,
         machine: "Machine",
+        num_machines: int,
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
         image: Optional[str] = None,
@@ -54,8 +33,11 @@ class _BaseJob(ABC):
         cluster_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
-    ) -> "_BaseJob":
+    ) -> "_BaseMMT":
         from lightning_sdk.studio import Studio
+
+        if num_machines <= 1:
+            raise ValueError("Multi-Machine training cannot be run with less than 2 Machines")
 
         if not name:
             raise ValueError("A job needs to have a name!")
@@ -114,7 +96,8 @@ class _BaseJob(ABC):
                 )
 
         inst = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
-        return inst._submit(
+        inst._submit(
+            num_machines=num_machines,
             machine=machine,
             cluster=cluster,
             command=command,
@@ -127,10 +110,12 @@ class _BaseJob(ABC):
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
         )
+        return inst
 
     @abstractmethod
     def _submit(
         self,
+        num_machines: int,
         machine: "Machine",
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
@@ -142,8 +127,18 @@ class _BaseJob(ABC):
         cluster_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
-    ) -> "_BaseJob":
+    ) -> None:
         """Submits a job and updates the internal _job attribute as well as the _name attribute."""
+
+    @property
+    @abstractmethod
+    def machines(self) -> Tuple["Job", ...]:
+        pass
+
+    @property
+    @abstractmethod
+    def machine(self) -> "Machine":
+        pass
 
     @abstractmethod
     def stop(self) -> None:
@@ -160,11 +155,6 @@ class _BaseJob(ABC):
 
     @property
     @abstractmethod
-    def machine(self) -> "Machine":
-        pass
-
-    @property
-    @abstractmethod
     def artifact_path(self) -> Optional[str]:
         pass
 
@@ -174,9 +164,8 @@ class _BaseJob(ABC):
         pass
 
     @property
-    @abstractmethod
     def share_path(self) -> Optional[str]:
-        pass
+        return None
 
     @abstractmethod
     def _update_internal_job(self) -> None:
