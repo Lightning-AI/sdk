@@ -29,7 +29,7 @@ jobs:
         python setup.py bdist_wheel
         ls -lh dist/
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: pypi-packages-${{ github.sha }}
         path: dist
@@ -40,10 +40,11 @@ jobs:
     runs-on: "ubuntu-22.04"
     timeout-minutes: 5
     steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: pypi-packages-${{ github.sha }}
         path: dist
+        merge-multiple: true
     - run: ls -lh dist/
 
     - name: Upload to release
@@ -58,10 +59,11 @@ jobs:
     runs-on: "ubuntu-22.04"
     timeout-minutes: 10
     steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: pypi-packages-${{ github.sha }}
         path: dist
+        merge-multiple: true
     - run: ls -lh dist/
 
     # We do this, since failures on test.pypi aren't that bad
