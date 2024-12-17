@@ -569,7 +569,8 @@ def _create_app(
 
     # Check if 'interruptible' is in the arguments and convert it to a string
     if isinstance(other_arguments, dict) and "interruptible" in other_arguments:
-        other_arguments["interruptible"] = str(other_arguments["interruptible"]).lower()
+        other_arguments["spot"] = str(other_arguments["interruptible"]).lower()
+        del other_arguments["interruptible"]
 
     body = AppsIdBody(
         cluster_id=cluster_id,
