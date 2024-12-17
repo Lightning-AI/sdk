@@ -66,6 +66,7 @@ class MMTApi:
             cloudspace_id=studio_id or "",
             cluster_id=cluster_id or "",
             command=command or "",
+            entrypoint="sh -c",
             env=env_vars,
             image=image or "",
             instance_name=instance_name,
