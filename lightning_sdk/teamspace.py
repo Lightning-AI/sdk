@@ -293,18 +293,17 @@ def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name:
             organizations = _get_organizations_for_authed_user()
             message = (
                 f"Teamspace {entire_ts_name} does not exist. "
-                "Is it maybe an organizational Teamspace? You are a member of the following organizations: "
-                f"{[o.name for o in organizations]}. Maybe specify one of these instead "
-                "of your user if the Teamspace belongs to the organization."
+                f"Is {teamspace_name} an organizational Teamspace? You are a member of the following organizations: "
+                f"{[o.name for o in organizations]}. Try specifying the `org` parameter instead "
+                "of `user` if the Teamspace belongs to the organization."
             )
         else:
             # organization teamspace owner
             user = User()
             message = (
                 f"Teamspace {entire_ts_name} does not exist. "
-                f"Is it maybe a user Teamspace. You specified org={owner.name}, "
-                "but maybe the Teamspace is part of your user? "
-                f"Consider specifying user={user.name} instead of your org."
+                f"Is {teamspace_name} a user Teamspace? "
+                f"Consider specifying user={user.name} instead of org={owner.name}."
             )
 
     return ValueError(message, *error.args[1:])
