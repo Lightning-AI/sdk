@@ -47,7 +47,8 @@ class V1ManagedModel(object):
         'endpoint_id': 'str',
         'id': 'str',
         'name': 'str',
-        'prompt_token_price': 'float'
+        'prompt_token_price': 'float',
+        'status': 'V1AssistantModelStatus'
     }
 
     attribute_map = {
@@ -57,10 +58,11 @@ class V1ManagedModel(object):
         'endpoint_id': 'endpointId',
         'id': 'id',
         'name': 'name',
-        'prompt_token_price': 'promptTokenPrice'
+        'prompt_token_price': 'promptTokenPrice',
+        'status': 'status'
     }
 
-    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, completion_token_price: 'float' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, completion_token_price: 'float' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, status: 'V1AssistantModelStatus' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._abilities = None
         self._completion_token_price = None
@@ -69,6 +71,7 @@ class V1ManagedModel(object):
         self._id = None
         self._name = None
         self._prompt_token_price = None
+        self._status = None
         self.discriminator = None
         if abilities is not None:
             self.abilities = abilities
@@ -84,6 +87,8 @@ class V1ManagedModel(object):
             self.name = name
         if prompt_token_price is not None:
             self.prompt_token_price = prompt_token_price
+        if status is not None:
+            self.status = status
 
     @property
     def abilities(self) -> 'V1ManagedModelAbilities':
@@ -231,6 +236,27 @@ class V1ManagedModel(object):
         """
 
         self._prompt_token_price = prompt_token_price
+
+    @property
+    def status(self) -> 'V1AssistantModelStatus':
+        """Gets the status of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The status of this V1ManagedModel.  # noqa: E501
+        :rtype: V1AssistantModelStatus
+        """
+        return self._status
+
+    @status.setter
+    def status(self, status: 'V1AssistantModelStatus'):
+        """Sets the status of this V1ManagedModel.
+
+
+        :param status: The status of this V1ManagedModel.  # noqa: E501
+        :type: V1AssistantModelStatus
+        """
+
+        self._status = status
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

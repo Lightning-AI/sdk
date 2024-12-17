@@ -41,6 +41,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
                             and the value is json key in definition.
     """
     swagger_types = {
+        'apis': 'list[V1DeploymentAPI]',
         'autoscaling': 'V1AutoscalingSpec',
         'cloudspace_id': 'str',
         'cluster_id': 'str',
@@ -54,6 +55,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
     }
 
     attribute_map = {
+        'apis': 'apis',
         'autoscaling': 'autoscaling',
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
@@ -66,8 +68,9 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'strategy': 'strategy'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs - a model defined in Swagger"""  # noqa: E501
+        self._apis = None
         self._autoscaling = None
         self._cloudspace_id = None
         self._cluster_id = None
@@ -79,6 +82,8 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         self._spec = None
         self._strategy = None
         self.discriminator = None
+        if apis is not None:
+            self.apis = apis
         if autoscaling is not None:
             self.autoscaling = autoscaling
         if cloudspace_id is not None:
@@ -99,6 +104,27 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
             self.spec = spec
         if strategy is not None:
             self.strategy = strategy
+
+    @property
+    def apis(self) -> 'list[V1DeploymentAPI]':
+        """Gets the apis of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+
+
+        :return: The apis of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :rtype: list[V1DeploymentAPI]
+        """
+        return self._apis
+
+    @apis.setter
+    def apis(self, apis: 'list[V1DeploymentAPI]'):
+        """Sets the apis of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.
+
+
+        :param apis: The apis of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :type: list[V1DeploymentAPI]
+        """
+
+        self._apis = apis
 
     @property
     def autoscaling(self) -> 'V1AutoscalingSpec':

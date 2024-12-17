@@ -42,6 +42,7 @@ class V1DeploymentAPI(object):
     """
     swagger_types = {
         'body': 'V1Body',
+        'headers': 'list[V1Header]',
         'method': 'str',
         'path': 'str',
         '_query_params': 'list[V1QueryParam]'
@@ -49,20 +50,24 @@ class V1DeploymentAPI(object):
 
     attribute_map = {
         'body': 'body',
+        'headers': 'headers',
         'method': 'method',
         'path': 'path',
         '_query_params': 'queryParams'
     }
 
-    def __init__(self, body: 'V1Body' =None, method: 'str' =None, path: 'str' =None, _query_params: 'list[V1QueryParam]' =None):  # noqa: E501
+    def __init__(self, body: 'V1Body' =None, headers: 'list[V1Header]' =None, method: 'str' =None, path: 'str' =None, _query_params: 'list[V1QueryParam]' =None):  # noqa: E501
         """V1DeploymentAPI - a model defined in Swagger"""  # noqa: E501
         self._body = None
+        self._headers = None
         self._method = None
         self._path = None
         self.__query_params = None
         self.discriminator = None
         if body is not None:
             self.body = body
+        if headers is not None:
+            self.headers = headers
         if method is not None:
             self.method = method
         if path is not None:
@@ -90,6 +95,27 @@ class V1DeploymentAPI(object):
         """
 
         self._body = body
+
+    @property
+    def headers(self) -> 'list[V1Header]':
+        """Gets the headers of this V1DeploymentAPI.  # noqa: E501
+
+
+        :return: The headers of this V1DeploymentAPI.  # noqa: E501
+        :rtype: list[V1Header]
+        """
+        return self._headers
+
+    @headers.setter
+    def headers(self, headers: 'list[V1Header]'):
+        """Sets the headers of this V1DeploymentAPI.
+
+
+        :param headers: The headers of this V1DeploymentAPI.  # noqa: E501
+        :type: list[V1Header]
+        """
+
+        self._headers = headers
 
     @property
     def method(self) -> 'str':

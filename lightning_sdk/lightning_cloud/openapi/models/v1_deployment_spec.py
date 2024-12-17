@@ -41,29 +41,55 @@ class V1DeploymentSpec(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'apis': 'list[V1DeploymentAPI]',
         'autoscaling': 'V1AutoscalingSpec',
         'endpoint': 'V1Endpoint',
         'job': 'V1JobSpec'
     }
 
     attribute_map = {
+        'apis': 'apis',
         'autoscaling': 'autoscaling',
         'endpoint': 'endpoint',
         'job': 'job'
     }
 
-    def __init__(self, autoscaling: 'V1AutoscalingSpec' =None, endpoint: 'V1Endpoint' =None, job: 'V1JobSpec' =None):  # noqa: E501
+    def __init__(self, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, endpoint: 'V1Endpoint' =None, job: 'V1JobSpec' =None):  # noqa: E501
         """V1DeploymentSpec - a model defined in Swagger"""  # noqa: E501
+        self._apis = None
         self._autoscaling = None
         self._endpoint = None
         self._job = None
         self.discriminator = None
+        if apis is not None:
+            self.apis = apis
         if autoscaling is not None:
             self.autoscaling = autoscaling
         if endpoint is not None:
             self.endpoint = endpoint
         if job is not None:
             self.job = job
+
+    @property
+    def apis(self) -> 'list[V1DeploymentAPI]':
+        """Gets the apis of this V1DeploymentSpec.  # noqa: E501
+
+
+        :return: The apis of this V1DeploymentSpec.  # noqa: E501
+        :rtype: list[V1DeploymentAPI]
+        """
+        return self._apis
+
+    @apis.setter
+    def apis(self, apis: 'list[V1DeploymentAPI]'):
+        """Sets the apis of this V1DeploymentSpec.
+
+
+        :param apis: The apis of this V1DeploymentSpec.  # noqa: E501
+        :type: list[V1DeploymentAPI]
+        """
+
+        self._apis = apis
 
     @property
     def autoscaling(self) -> 'V1AutoscalingSpec':
