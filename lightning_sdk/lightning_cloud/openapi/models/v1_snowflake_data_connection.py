@@ -43,52 +43,42 @@ class V1SnowflakeDataConnection(object):
     swagger_types = {
         'bucket_name': 'str',
         'compress': 'bool',
+        'credential_id': 'str',
         'format': 'str',
         'include_header': 'bool',
-        'query': 'str',
-        'secret_account': 'str',
-        'secret_password': 'str',
-        'secret_username': 'str'
+        'query': 'str'
     }
 
     attribute_map = {
         'bucket_name': 'bucketName',
         'compress': 'compress',
+        'credential_id': 'credentialId',
         'format': 'format',
         'include_header': 'includeHeader',
-        'query': 'query',
-        'secret_account': 'secretAccount',
-        'secret_password': 'secretPassword',
-        'secret_username': 'secretUsername'
+        'query': 'query'
     }
 
-    def __init__(self, bucket_name: 'str' =None, compress: 'bool' =None, format: 'str' =None, include_header: 'bool' =None, query: 'str' =None, secret_account: 'str' =None, secret_password: 'str' =None, secret_username: 'str' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, compress: 'bool' =None, credential_id: 'str' =None, format: 'str' =None, include_header: 'bool' =None, query: 'str' =None):  # noqa: E501
         """V1SnowflakeDataConnection - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._compress = None
+        self._credential_id = None
         self._format = None
         self._include_header = None
         self._query = None
-        self._secret_account = None
-        self._secret_password = None
-        self._secret_username = None
         self.discriminator = None
         if bucket_name is not None:
             self.bucket_name = bucket_name
         if compress is not None:
             self.compress = compress
+        if credential_id is not None:
+            self.credential_id = credential_id
         if format is not None:
             self.format = format
         if include_header is not None:
             self.include_header = include_header
         if query is not None:
             self.query = query
-        if secret_account is not None:
-            self.secret_account = secret_account
-        if secret_password is not None:
-            self.secret_password = secret_password
-        if secret_username is not None:
-            self.secret_username = secret_username
 
     @property
     def bucket_name(self) -> 'str':
@@ -131,6 +121,27 @@ class V1SnowflakeDataConnection(object):
         """
 
         self._compress = compress
+
+    @property
+    def credential_id(self) -> 'str':
+        """Gets the credential_id of this V1SnowflakeDataConnection.  # noqa: E501
+
+
+        :return: The credential_id of this V1SnowflakeDataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._credential_id
+
+    @credential_id.setter
+    def credential_id(self, credential_id: 'str'):
+        """Sets the credential_id of this V1SnowflakeDataConnection.
+
+
+        :param credential_id: The credential_id of this V1SnowflakeDataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._credential_id = credential_id
 
     @property
     def format(self) -> 'str':
@@ -194,69 +205,6 @@ class V1SnowflakeDataConnection(object):
         """
 
         self._query = query
-
-    @property
-    def secret_account(self) -> 'str':
-        """Gets the secret_account of this V1SnowflakeDataConnection.  # noqa: E501
-
-
-        :return: The secret_account of this V1SnowflakeDataConnection.  # noqa: E501
-        :rtype: str
-        """
-        return self._secret_account
-
-    @secret_account.setter
-    def secret_account(self, secret_account: 'str'):
-        """Sets the secret_account of this V1SnowflakeDataConnection.
-
-
-        :param secret_account: The secret_account of this V1SnowflakeDataConnection.  # noqa: E501
-        :type: str
-        """
-
-        self._secret_account = secret_account
-
-    @property
-    def secret_password(self) -> 'str':
-        """Gets the secret_password of this V1SnowflakeDataConnection.  # noqa: E501
-
-
-        :return: The secret_password of this V1SnowflakeDataConnection.  # noqa: E501
-        :rtype: str
-        """
-        return self._secret_password
-
-    @secret_password.setter
-    def secret_password(self, secret_password: 'str'):
-        """Sets the secret_password of this V1SnowflakeDataConnection.
-
-
-        :param secret_password: The secret_password of this V1SnowflakeDataConnection.  # noqa: E501
-        :type: str
-        """
-
-        self._secret_password = secret_password
-
-    @property
-    def secret_username(self) -> 'str':
-        """Gets the secret_username of this V1SnowflakeDataConnection.  # noqa: E501
-
-
-        :return: The secret_username of this V1SnowflakeDataConnection.  # noqa: E501
-        :rtype: str
-        """
-        return self._secret_username
-
-    @secret_username.setter
-    def secret_username(self, secret_username: 'str'):
-        """Sets the secret_username of this V1SnowflakeDataConnection.
-
-
-        :param secret_username: The secret_username of this V1SnowflakeDataConnection.  # noqa: E501
-        :type: str
-        """
-
-        self._secret_username = secret_username
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

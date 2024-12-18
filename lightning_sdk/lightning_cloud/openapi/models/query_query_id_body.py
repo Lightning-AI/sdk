@@ -41,60 +41,29 @@ class QueryQueryIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'account': 'str',
         'connection_id': 'str',
-        'password': 'str',
-        'query': 'str',
-        'username': 'str'
+        'credential_id': 'str',
+        'query': 'str'
     }
 
     attribute_map = {
-        'account': 'account',
         'connection_id': 'connectionId',
-        'password': 'password',
-        'query': 'query',
-        'username': 'username'
+        'credential_id': 'credentialId',
+        'query': 'query'
     }
 
-    def __init__(self, account: 'str' =None, connection_id: 'str' =None, password: 'str' =None, query: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, connection_id: 'str' =None, credential_id: 'str' =None, query: 'str' =None):  # noqa: E501
         """QueryQueryIdBody - a model defined in Swagger"""  # noqa: E501
-        self._account = None
         self._connection_id = None
-        self._password = None
+        self._credential_id = None
         self._query = None
-        self._username = None
         self.discriminator = None
-        if account is not None:
-            self.account = account
         if connection_id is not None:
             self.connection_id = connection_id
-        if password is not None:
-            self.password = password
+        if credential_id is not None:
+            self.credential_id = credential_id
         if query is not None:
             self.query = query
-        if username is not None:
-            self.username = username
-
-    @property
-    def account(self) -> 'str':
-        """Gets the account of this QueryQueryIdBody.  # noqa: E501
-
-
-        :return: The account of this QueryQueryIdBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._account
-
-    @account.setter
-    def account(self, account: 'str'):
-        """Sets the account of this QueryQueryIdBody.
-
-
-        :param account: The account of this QueryQueryIdBody.  # noqa: E501
-        :type: str
-        """
-
-        self._account = account
 
     @property
     def connection_id(self) -> 'str':
@@ -118,25 +87,25 @@ class QueryQueryIdBody(object):
         self._connection_id = connection_id
 
     @property
-    def password(self) -> 'str':
-        """Gets the password of this QueryQueryIdBody.  # noqa: E501
+    def credential_id(self) -> 'str':
+        """Gets the credential_id of this QueryQueryIdBody.  # noqa: E501
 
 
-        :return: The password of this QueryQueryIdBody.  # noqa: E501
+        :return: The credential_id of this QueryQueryIdBody.  # noqa: E501
         :rtype: str
         """
-        return self._password
+        return self._credential_id
 
-    @password.setter
-    def password(self, password: 'str'):
-        """Sets the password of this QueryQueryIdBody.
+    @credential_id.setter
+    def credential_id(self, credential_id: 'str'):
+        """Sets the credential_id of this QueryQueryIdBody.
 
 
-        :param password: The password of this QueryQueryIdBody.  # noqa: E501
+        :param credential_id: The credential_id of this QueryQueryIdBody.  # noqa: E501
         :type: str
         """
 
-        self._password = password
+        self._credential_id = credential_id
 
     @property
     def query(self) -> 'str':
@@ -158,27 +127,6 @@ class QueryQueryIdBody(object):
         """
 
         self._query = query
-
-    @property
-    def username(self) -> 'str':
-        """Gets the username of this QueryQueryIdBody.  # noqa: E501
-
-
-        :return: The username of this QueryQueryIdBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._username
-
-    @username.setter
-    def username(self, username: 'str'):
-        """Sets the username of this QueryQueryIdBody.
-
-
-        :param username: The username of this QueryQueryIdBody.  # noqa: E501
-        :type: str
-        """
-
-        self._username = username
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

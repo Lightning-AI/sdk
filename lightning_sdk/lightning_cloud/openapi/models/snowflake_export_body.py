@@ -41,85 +41,54 @@ class SnowflakeExportBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'account': 'str',
         'cluster_id': 'str',
         'compress': 'bool',
         'connection_id': 'str',
+        'credential_id': 'str',
         'format': 'str',
         'include_header': 'bool',
-        'password': 'str',
         'query': 'str',
-        'query_name': 'str',
-        'username': 'str'
+        'query_name': 'str'
     }
 
     attribute_map = {
-        'account': 'account',
         'cluster_id': 'clusterId',
         'compress': 'compress',
         'connection_id': 'connectionId',
+        'credential_id': 'credentialId',
         'format': 'format',
         'include_header': 'includeHeader',
-        'password': 'password',
         'query': 'query',
-        'query_name': 'queryName',
-        'username': 'username'
+        'query_name': 'queryName'
     }
 
-    def __init__(self, account: 'str' =None, cluster_id: 'str' =None, compress: 'bool' =None, connection_id: 'str' =None, format: 'str' =None, include_header: 'bool' =None, password: 'str' =None, query: 'str' =None, query_name: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, compress: 'bool' =None, connection_id: 'str' =None, credential_id: 'str' =None, format: 'str' =None, include_header: 'bool' =None, query: 'str' =None, query_name: 'str' =None):  # noqa: E501
         """SnowflakeExportBody - a model defined in Swagger"""  # noqa: E501
-        self._account = None
         self._cluster_id = None
         self._compress = None
         self._connection_id = None
+        self._credential_id = None
         self._format = None
         self._include_header = None
-        self._password = None
         self._query = None
         self._query_name = None
-        self._username = None
         self.discriminator = None
-        if account is not None:
-            self.account = account
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if compress is not None:
             self.compress = compress
         if connection_id is not None:
             self.connection_id = connection_id
+        if credential_id is not None:
+            self.credential_id = credential_id
         if format is not None:
             self.format = format
         if include_header is not None:
             self.include_header = include_header
-        if password is not None:
-            self.password = password
         if query is not None:
             self.query = query
         if query_name is not None:
             self.query_name = query_name
-        if username is not None:
-            self.username = username
-
-    @property
-    def account(self) -> 'str':
-        """Gets the account of this SnowflakeExportBody.  # noqa: E501
-
-
-        :return: The account of this SnowflakeExportBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._account
-
-    @account.setter
-    def account(self, account: 'str'):
-        """Sets the account of this SnowflakeExportBody.
-
-
-        :param account: The account of this SnowflakeExportBody.  # noqa: E501
-        :type: str
-        """
-
-        self._account = account
 
     @property
     def cluster_id(self) -> 'str':
@@ -185,6 +154,27 @@ class SnowflakeExportBody(object):
         self._connection_id = connection_id
 
     @property
+    def credential_id(self) -> 'str':
+        """Gets the credential_id of this SnowflakeExportBody.  # noqa: E501
+
+
+        :return: The credential_id of this SnowflakeExportBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._credential_id
+
+    @credential_id.setter
+    def credential_id(self, credential_id: 'str'):
+        """Sets the credential_id of this SnowflakeExportBody.
+
+
+        :param credential_id: The credential_id of this SnowflakeExportBody.  # noqa: E501
+        :type: str
+        """
+
+        self._credential_id = credential_id
+
+    @property
     def format(self) -> 'str':
         """Gets the format of this SnowflakeExportBody.  # noqa: E501
 
@@ -227,27 +217,6 @@ class SnowflakeExportBody(object):
         self._include_header = include_header
 
     @property
-    def password(self) -> 'str':
-        """Gets the password of this SnowflakeExportBody.  # noqa: E501
-
-
-        :return: The password of this SnowflakeExportBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._password
-
-    @password.setter
-    def password(self, password: 'str'):
-        """Sets the password of this SnowflakeExportBody.
-
-
-        :param password: The password of this SnowflakeExportBody.  # noqa: E501
-        :type: str
-        """
-
-        self._password = password
-
-    @property
     def query(self) -> 'str':
         """Gets the query of this SnowflakeExportBody.  # noqa: E501
 
@@ -288,27 +257,6 @@ class SnowflakeExportBody(object):
         """
 
         self._query_name = query_name
-
-    @property
-    def username(self) -> 'str':
-        """Gets the username of this SnowflakeExportBody.  # noqa: E501
-
-
-        :return: The username of this SnowflakeExportBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._username
-
-    @username.setter
-    def username(self, username: 'str'):
-        """Sets the username of this SnowflakeExportBody.
-
-
-        :param username: The username of this SnowflakeExportBody.  # noqa: E501
-        :type: str
-        """
-
-        self._username = username
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

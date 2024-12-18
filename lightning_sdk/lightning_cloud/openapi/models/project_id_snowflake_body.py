@@ -41,92 +41,40 @@ class ProjectIdSnowflakeBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'account': 'str',
-        'password': 'str',
-        'username': 'str'
+        'credential_id': 'str'
     }
 
     attribute_map = {
-        'account': 'account',
-        'password': 'password',
-        'username': 'username'
+        'credential_id': 'credentialId'
     }
 
-    def __init__(self, account: 'str' =None, password: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, credential_id: 'str' =None):  # noqa: E501
         """ProjectIdSnowflakeBody - a model defined in Swagger"""  # noqa: E501
-        self._account = None
-        self._password = None
-        self._username = None
+        self._credential_id = None
         self.discriminator = None
-        if account is not None:
-            self.account = account
-        if password is not None:
-            self.password = password
-        if username is not None:
-            self.username = username
+        if credential_id is not None:
+            self.credential_id = credential_id
 
     @property
-    def account(self) -> 'str':
-        """Gets the account of this ProjectIdSnowflakeBody.  # noqa: E501
+    def credential_id(self) -> 'str':
+        """Gets the credential_id of this ProjectIdSnowflakeBody.  # noqa: E501
 
 
-        :return: The account of this ProjectIdSnowflakeBody.  # noqa: E501
+        :return: The credential_id of this ProjectIdSnowflakeBody.  # noqa: E501
         :rtype: str
         """
-        return self._account
+        return self._credential_id
 
-    @account.setter
-    def account(self, account: 'str'):
-        """Sets the account of this ProjectIdSnowflakeBody.
+    @credential_id.setter
+    def credential_id(self, credential_id: 'str'):
+        """Sets the credential_id of this ProjectIdSnowflakeBody.
 
 
-        :param account: The account of this ProjectIdSnowflakeBody.  # noqa: E501
+        :param credential_id: The credential_id of this ProjectIdSnowflakeBody.  # noqa: E501
         :type: str
         """
 
-        self._account = account
-
-    @property
-    def password(self) -> 'str':
-        """Gets the password of this ProjectIdSnowflakeBody.  # noqa: E501
-
-
-        :return: The password of this ProjectIdSnowflakeBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._password
-
-    @password.setter
-    def password(self, password: 'str'):
-        """Sets the password of this ProjectIdSnowflakeBody.
-
-
-        :param password: The password of this ProjectIdSnowflakeBody.  # noqa: E501
-        :type: str
-        """
-
-        self._password = password
-
-    @property
-    def username(self) -> 'str':
-        """Gets the username of this ProjectIdSnowflakeBody.  # noqa: E501
-
-
-        :return: The username of this ProjectIdSnowflakeBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._username
-
-    @username.setter
-    def username(self, username: 'str'):
-        """Sets the username of this ProjectIdSnowflakeBody.
-
-
-        :param username: The username of this ProjectIdSnowflakeBody.  # noqa: E501
-        :type: str
-        """
-
-        self._username = username
+        self._credential_id = credential_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

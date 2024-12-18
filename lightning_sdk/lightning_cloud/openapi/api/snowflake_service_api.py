@@ -53,6 +53,9 @@ class SnowflakeServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
+        :param str username:
+        :param str password:
+        :param str account:
         :return: V1CheckSnowflakeConnectionResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -74,12 +77,15 @@ class SnowflakeServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
+        :param str username:
+        :param str password:
+        :param str account:
         :return: V1CheckSnowflakeConnectionResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id']  # noqa: E501
+        all_params = ['project_id', 'username', 'password', 'account']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -106,6 +112,12 @@ class SnowflakeServiceApi(object):
             path_params['projectId'] = params['project_id']  # noqa: E501
 
         query_params = []
+        if 'username' in params:
+            query_params.append(('username', params['username']))  # noqa: E501
+        if 'password' in params:
+            query_params.append(('password', params['password']))  # noqa: E501
+        if 'account' in params:
+            query_params.append(('account', params['account']))  # noqa: E501
 
         header_params = {}
 
