@@ -17,6 +17,8 @@ from lightning_sdk.job.work import Work
 
 
 class _JobV1(_BaseJob):
+    """Implementation to run async workloads from your Studio."""
+
     def __init__(
         self,
         name: str,
@@ -26,6 +28,15 @@ class _JobV1(_BaseJob):
         *,
         _fetch_job: bool = True,
     ) -> None:
+        """Fetch already existing jobs.
+
+        Args:
+            name: the name of the job
+            teamspace: the teamspace the job is part of
+            org: the name of the organization owning the :param`teamspace` in case it is owned by an org
+            user: the name of the user owning the :param`teamspace`
+                in case it is owned directly by a user instead of an org
+        """
         self._job_api = JobApiV1()
         super().__init__(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=_fetch_job)
 
@@ -42,6 +53,22 @@ class _JobV1(_BaseJob):
         cluster: Optional[str] = None,
         interruptible: bool = False,
     ) -> "_BaseJob":
+        """Start a new async workload from your studio.
+
+        Args:
+            name: the name of the job
+            machine: the machine to run the workload on
+            command: the command to execute
+            studio: the studio the job belongs to
+            teamspace: the teamspace the job is part of
+            org: the organization owning the teamspace (if applicable)
+            user: the user owning the teamspace (if applicable)
+            cluster: the cluster to run the workload on
+            interruptible: whether the workload can be interrupted
+
+        Returns:
+            the created job
+        """
         return super().run(
             name=name,
             machine=machine,
@@ -72,9 +99,27 @@ class _JobV1(_BaseJob):
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> "_JobV1":
+        """Submit a job to run on a machine.
+
+        Args:
+            machine: The machine to run the job on.
+            command: The command to execute.
+            studio: The studio the job belongs to.
+            image: The image to use for the job (not supported).
+            env: The environment variables for the job (not supported).
+            interruptible: Whether the job can be interrupted.
+            cluster: The cluster to run the job on.
+            image_credentials: The image credentials for the job (not supported).
+            cluster_auth: Whether to use cluster authentication for the job (not supported).
+            artifacts_local: The local path for persisting artifacts (not supported).
+            artifacts_remote: The remote path for persisting artifacts (not supported).
+
+        Returns:
+            The submitted job.
+
+        """
         if studio is None:
             raise ValueError("Studio is required for submitting jobs")
-
         if image is not None or image_credentials is not None or cluster_auth:
             raise ValueError("Image is not supported for submitting jobs")
 
@@ -83,12 +128,9 @@ class _JobV1(_BaseJob):
 
         if env is not None:
             raise ValueError("Environment variables are not supported for submitting jobs")
-
         if command is None:
             raise ValueError("Command is required for submitting jobs")
-
         # TODO: add support for empty names (will give an empty string)
-
         _submitted = self._job_api.submit_job(
             name=self._name,
             command=command,
@@ -110,6 +152,7 @@ class _JobV1(_BaseJob):
 
     @property
     def status(self) -> "Status":
+        """Returns the status of the job."""
         try:
             status = self._job_api.get_job_status(self._job.id, self.teamspace.id)
             return _internal_status_to_external_status(status)
@@ -119,12 +162,17 @@ class _JobV1(_BaseJob):
             ) from None
 
     def stop(self) -> None:
+        """Stops the job. is blocking until the ob is stopped."""
         if self.status in (Status.Stopped, Status.Failed):
             return None
 
         return self._job_api.stop_job(self._job.id, self.teamspace.id)
 
     def delete(self) -> None:
+        """Deletes the job.
+
+        Caution: this also deletes all artifacts created by the job.
+        """
         self._job_api.delete_job(self._job.id, self.teamspace.id)
 
     def _name_filter(self, orig_name: str) -> str:
@@ -132,6 +180,7 @@ class _JobV1(_BaseJob):
 
     @cached_property
     def work(self) -> Work:
+        """Get the work associated with the job."""
         _work = self._job_api.list_works(self._job.id, self.teamspace.id)
         if len(_work) == 0:
             raise ValueError("No works found for job")
@@ -139,26 +188,32 @@ class _JobV1(_BaseJob):
 
     @property
     def machine(self) -> "Machine":
+        """Get the machine the job is running on."""
         return self.work.machine
 
     @property
     def id(self) -> str:
+        """The id of the job."""
         return self._job.id
 
     @property
     def name(self) -> str:
+        """The name of the job."""
         return self._job.name
 
     @property
     def artifact_path(self) -> Optional[str]:
+        """The path to the artifacts of the job in the distributed teamspace filesystem."""
         return self.work.artifact_path
 
     @property
     def snapshot_path(self) -> Optional[str]:
+        """The path to the snapshot of the job in the distributed teamspace filesystem."""
         return f"/teamspace/jobs/{self.name}/snapshot"
 
     @property
     def share_path(self) -> Optional[str]:
+        """The path to the share of the job in the distributed teamspace filesystem."""
         return f"/teamspace/jobs/{self.name}/share"
 
 
