@@ -1,7 +1,15 @@
 from unittest import mock
+
+from lightning_sdk.lightning_cloud.openapi.models import (
+    V1Membership,
+    V1Organization,
+    V1OwnerType,
+    V1Project,
+    V1SearchUser,
+)
 from lightning_sdk.models import _get_teamspace
 from lightning_sdk.user import User
-from lightning_sdk.lightning_cloud.openapi.models import V1Membership, V1OwnerType, V1Organization, V1Project, V1SearchUser
+
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.models._get_authed_user")
@@ -18,7 +26,7 @@ def test_get_teamspace_org_owner(mock_org_api, mock_user_api, mock_get_authed_us
 
     mock_get_authed_user.return_value.id = "user-id"
 
-    mock_teamspace_api().get_teamspace.return_value = V1Project(name = "test-teamspace")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="test-teamspace")
 
     teamspace = _get_teamspace("test-teamspace", "test-org")
 
@@ -34,7 +42,9 @@ def test_get_teamspace_org_owner(mock_org_api, mock_user_api, mock_get_authed_us
 @mock.patch("lightning_sdk.models._get_authed_user")
 @mock.patch("lightning_sdk.models.UserApi")
 @mock.patch("lightning_sdk.models.OrgApi")
-def test_get_teamspace_authed_owner(mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_authed_user_api):
+def test_get_teamspace_authed_owner(
+    mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_authed_user_api
+):
     mock_user_api()._get_all_teamspace_memberships.return_value = [
         V1Membership(name="test-teamspace", owner_id="org-id", owner_type=V1OwnerType.ORGANIZATION),
         V1Membership(name="test-teamspace", owner_id="user-id", owner_type=V1OwnerType.USER),
@@ -47,7 +57,7 @@ def test_get_teamspace_authed_owner(mock_org_api, mock_user_api, mock_get_authed
     mock_authed_user_api().get_user.return_value.username = "test-user"
     mock_get_authed_user.return_value = User("test-user")
 
-    mock_teamspace_api().get_teamspace.return_value = V1Project(name = "test-teamspace")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="test-teamspace")
 
     teamspace = _get_teamspace("test-teamspace", "test-user")
 
@@ -63,7 +73,9 @@ def test_get_teamspace_authed_owner(mock_org_api, mock_user_api, mock_get_authed
 @mock.patch("lightning_sdk.models._get_authed_user")
 @mock.patch("lightning_sdk.models.UserApi")
 @mock.patch("lightning_sdk.models.OrgApi")
-def test_get_teamspace_other_user_owner(mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_authed_user_api):
+def test_get_teamspace_other_user_owner(
+    mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_authed_user_api
+):
     mock_user_api()._get_all_teamspace_memberships.return_value = [
         V1Membership(name="test-teamspace", owner_id="org-id", owner_type=V1OwnerType.ORGANIZATION),
         V1Membership(name="test-teamspace", owner_id="user-id", owner_type=V1OwnerType.USER),
@@ -78,7 +90,7 @@ def test_get_teamspace_other_user_owner(mock_org_api, mock_user_api, mock_get_au
 
     mock_get_authed_user.return_value.id = "user-id"
 
-    mock_teamspace_api().get_teamspace.return_value = V1Project(name = "test-teamspace-2")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="test-teamspace-2")
 
     teamspace = _get_teamspace("test-teamspace-2", "test-user-2")
 

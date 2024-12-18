@@ -1,17 +1,19 @@
-from lightning_sdk.services.utilities import _get_project, _get_cluster, download_file
-from lightning_sdk.services import utilities as utilities_module
-from unittest.mock import MagicMock
-from lightning_sdk.lightning_cloud.openapi import (
-    V1ListMembershipsResponse,
-    V1Membership,
-    V1ListProjectClusterBindingsResponse,
-    V1ProjectClusterBinding,
-    V1DownloadServiceExecutionArtifactResponse,
-    V1ProjectArtifact,
-)
 import os
-import pytest
 import re
+from unittest.mock import MagicMock
+
+import pytest
+
+from lightning_sdk.lightning_cloud.openapi import (
+    V1DownloadServiceExecutionArtifactResponse,
+    V1ListMembershipsResponse,
+    V1ListProjectClusterBindingsResponse,
+    V1Membership,
+    V1ProjectArtifact,
+    V1ProjectClusterBinding,
+)
+from lightning_sdk.services import utilities as utilities_module
+from lightning_sdk.services.utilities import _get_cluster, _get_project, download_file
 
 
 def test_get_project():
@@ -86,12 +88,15 @@ def test_download_file(monkeypatch, tmpdir):
     monkeypatch.setenv("LIGHTNING_CLOUD_PROJECT_ID", "project_id")
 
     client_mock = MagicMock()
-    client_mock.endpoint_service_download_service_execution_artifact.return_value = V1DownloadServiceExecutionArtifactResponse(
-        artifacts=[
-            V1ProjectArtifact(
-                url="https://raw.githubusercontent.com/Lightning-AI/pytorch-lightning/master/examples/pytorch/basics/autoencoder.py"
-            )
-        ]
+    client_mock.endpoint_service_download_service_execution_artifact.return_value = (
+        V1DownloadServiceExecutionArtifactResponse(
+            artifacts=[
+                V1ProjectArtifact(
+                    url="https://raw.githubusercontent.com/Lightning-AI/pytorch-lightning/"
+                    "master/examples/pytorch/basics/autoencoder.py"
+                )
+            ]
+        )
     )
     monkeypatch.setattr(utilities_module, "LightningClient", MagicMock(return_value=client_mock))
 

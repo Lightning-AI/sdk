@@ -1,15 +1,16 @@
 import contextlib
 import os
 import subprocess
+from unittest import mock
 
 import pytest
-from unittest import mock
-from lightning_sdk.api.studio_api import StudioApi
+
 from lightning_sdk.api import studio_api as studio_api_module
+from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
-    V1CloudSpace,
     ProjectIdCloudspacesBody,
+    V1CloudSpace,
     V1CloudSpaceSeedFile,
     V1GetCloudSpaceInstanceStatusResponse,
 )
@@ -28,7 +29,7 @@ def test_get_studio_error(internal_studio_api_mocker_get_studio):
         studio_api.get_studio("xyz", "ts-abc")
 
 
-@pytest.mark.parametrize("cluster", (None, "c-abc"))
+@pytest.mark.parametrize("cluster", [None, "c-abc"])
 def test_create_studio(internal_studio_api_mocker_create_studio, cluster):
     mock_create_cloud_space, _ = internal_studio_api_mocker_create_studio
 
@@ -57,7 +58,7 @@ def test_get_studio_status(internal_studio_api_mocker_studio_status):
 
 @pytest.mark.parametrize(
     "machine",
-    (
+    [
         Machine.CPU,
         Machine.DATA_PREP,
         Machine.T4,
@@ -70,7 +71,7 @@ def test_get_studio_status(internal_studio_api_mocker_studio_status):
         Machine.H100_X_8,
         Machine.H200_X_8,
         "trn1.2xlarge",
-    ),
+    ],
 )
 def test_switch_studio_machine(internal_studio_api_mocker_switch_machine, machine):
     studio_api = StudioApi()
@@ -158,7 +159,7 @@ def test_duplicate_org(internal_studio_api_mocker_duplicate_org):
 
 
 @pytest.mark.parametrize(
-    "studio_id, expect_error, error_message, expect_info",
+    ("studio_id", "expect_error", "error_message", "expect_info"),
     [
         ("st-abc", False, "", ""),
         ("st-def", True, "abc", ""),
@@ -183,7 +184,7 @@ def test_install_plugin(internal_studio_api_install_plugin_mocker, studio_id, ex
 
 
 @pytest.mark.parametrize(
-    "studio_id, expect_error, error_message",
+    ("studio_id", "expect_error", "error_message"),
     [
         ("st-abc", False, ""),
         ("st-def", True, "abc"),
@@ -204,7 +205,7 @@ def test_uninstall_plugin(internal_studio_api_uninstall_plugin_mocker, studio_id
 
 
 @pytest.mark.parametrize(
-    "studio_id, expect_error, error_message, expected_port",
+    ("studio_id", "expect_error", "error_message", "expected_port"),
     [
         ("st-abc", False, "", 0),
         ("st-def", False, "", 1),

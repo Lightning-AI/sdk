@@ -1,6 +1,6 @@
 import os
-import subprocess
 from contextlib import nullcontext
+from unittest import mock
 
 import pytest
 
@@ -8,16 +8,13 @@ from lightning_sdk.machine import Machine
 from lightning_sdk.plugin import (
     InferenceServerPlugin,
     JobsPlugin,
-    MultiMachineTrainingPlugin,
     MultiMachineDataPrepPlugin,
+    MultiMachineTrainingPlugin,
     Plugin,
 )
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
-from lightning_sdk.api.utils import _BYTES_PER_MB
-from unittest import mock
-from unittest.mock import Mock
 
 
 @pytest.mark.parametrize("create_ok", [True, False])
@@ -88,7 +85,8 @@ def test_studio_start_wrong_machine(
 
     with pytest.raises(
         RuntimeError,
-        match=f"Requested to start studio on {Machine.A10G}, but studio is already running on {Machine.T4}. Consider switching instead!",
+        match=f"Requested to start studio on {Machine.A10G}, but studio is already running on {Machine.T4}."
+        " Consider switching instead!",
     ):
         studio.start(Machine.A10G)
 
@@ -163,7 +161,7 @@ def test_run_command_error(internal_studio_init_mocker, internal_studio_run_erro
     studio = Studio("st-abc", "ts-abc", "org-abc")
 
     with pytest.raises(RuntimeError, match="No such file or directory foo"):
-        result = studio.run("foo", "bar")
+        studio.run("foo", "bar")
 
 
 def test_run_command_exit_code(internal_studio_init_mocker, internal_studio_run_mocker):
@@ -280,7 +278,7 @@ def test_run_plugin(internal_studio_init_mocker, internal_studio_status_mocker, 
     studio.run_plugin("my-fancy-dummy-plugin")
 
 
-@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
+@pytest.mark.parametrize("cloud_compute", list(Machine))
 def test_run_job(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -301,7 +299,7 @@ def test_run_job(
     studio.run_plugin("jobs", command="python my-file.py", name="my-fancy-job-name", machine=cloud_compute)
 
 
-@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
+@pytest.mark.parametrize("cloud_compute", list(Machine))
 def test_run_mmt(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -334,7 +332,7 @@ def test_run_mmt(
     )
 
 
-@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
+@pytest.mark.parametrize("cloud_compute", list(Machine))
 def test_run_data_prep(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -367,7 +365,7 @@ def test_run_data_prep(
     )
 
 
-@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
+@pytest.mark.parametrize("cloud_compute", list(Machine))
 def test_run_inference(
     internal_studio_init_mocker,
     internal_user_api_mocker,
@@ -448,7 +446,7 @@ def test_download_file(
 
 
 @pytest.mark.parametrize(
-    "kwargs,expected",
+    ("kwargs", "expected"),
     [
         ({"user": "user-abc"}, "Studio(name=st-abc, teamspace=Teamspace(name=ts-abc, owner=User(name=user-abc)))"),
         ({"org": "org-abc"}, "Studio(name=st-abc, teamspace=Teamspace(name=ts-abc, owner=Organization(name=org-abc)))"),
@@ -468,7 +466,7 @@ def test_repr(
 
 
 @pytest.mark.parametrize(
-    "kwargs,expected",
+    ("kwargs", "expected"),
     [
         ({"user": "user-abc"}, "Studio(name=st-abc, teamspace=Teamspace(name=ts-abc, owner=User(name=user-abc)))"),
         ({"org": "org-abc"}, "Studio(name=st-abc, teamspace=Teamspace(name=ts-abc, owner=Organization(name=org-abc)))"),
@@ -496,15 +494,16 @@ def studio_autoshutdown(internal_studio_init_mocker, internal_studio_status_mock
     studio = Studio("st-abc", "ts-abc", "org-abc")
 
     # TODO: remove auto_shutdown after proper deprecation phase
-    studio.auto_sleep
-    studio.auto_shutdown
-    studio.auto_sleep_time
-    studio.auto_shutdown_time
+    studio.auto_sleep  # noqa: B018
+    studio.auto_shutdown  # noqa: B018
+    studio.auto_sleep_time  # noqa: B018
+    studio.auto_shutdown_time  # noqa: B018
 
     studio.auto_sleep = False
     studio.auto_shutdown = False
     studio.auto_sleep_time = 42
     studio.auto_shutdown_time = 42
+
 
 @pytest.mark.parametrize("name", ["abc", "def"])
 def test_cluster(internal_studio_init_mocker, internal_studio_status_mocker, name):

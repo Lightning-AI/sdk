@@ -1,21 +1,23 @@
+from typing import List
+from unittest import mock
+
+import pytest
+
 from lightning_sdk.api.job_api import JobApiV1
+from lightning_sdk.job.v2 import JobApiV2
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
     Externalv1Lightningwork,
-    V1JobSpec,
-    V1Job,
     JobsIdBody1,
+    V1Job,
+    V1JobSpec,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-import pytest
-from unittest import mock
-from lightning_sdk.job.v2 import JobApiV2
-from lightning_sdk.status import Status
 from lightning_sdk.machine import Machine
-from typing import List
+from lightning_sdk.status import Status
 
 
-def test_get_job(internal_job_api_mocker_get_job):
+def test_get_job_v1(internal_job_api_mocker_get_job):
     job_api = JobApiV1()
     job = job_api.get_job("j-abc", "ts-abc")
     assert isinstance(job, Externalv1LightningappInstance)
@@ -28,7 +30,7 @@ def test_get_job_error(internal_job_api_mocker_get_job):
 
 
 @pytest.mark.parametrize(
-    "name,expected_status",
+    ("name", "expected_status"),
     [
         ("j-abc", None),
         ("j-def", "LIGHTNINGAPP_INSTANCE_STATE_UNSPECIFIED"),
@@ -88,54 +90,84 @@ def test_get_work(internal_job_api_mocker_get_work):
     assert w.name == "root.w-abc"
     assert w.display_name == "work abc"
 
+
 def test_job_v2_submit_job():
-    from lightning_sdk.lightning_cloud.openapi import V1JobSpec, ProjectIdJobsBody, V1EnvVar
+    from lightning_sdk.lightning_cloud.openapi import ProjectIdJobsBody, V1EnvVar, V1JobSpec
+
     job_api = JobApiV2()
 
     create_job_mock = mock.MagicMock()
     job_api._client.jobs_service_create_job = create_job_mock
 
-
-    job_api.submit_job(name="test-job", cluster_id="c-abc", teamspace_id="ts-abc", image="", studio_id="st-abc", machine=Machine.T4_X_4, interruptible=False, env={"key": "value"}, command="echo hello", image_credentials=None, cluster_auth=True, artifacts_local=None, artifacts_remote=None)
+    job_api.submit_job(
+        name="test-job",
+        cluster_id="c-abc",
+        teamspace_id="ts-abc",
+        image="",
+        studio_id="st-abc",
+        machine=Machine.T4_X_4,
+        interruptible=False,
+        env={"key": "value"},
+        command="echo hello",
+        image_credentials=None,
+        cluster_auth=True,
+        artifacts_local=None,
+        artifacts_remote=None,
+    )
 
     spec = V1JobSpec(
-            cloudspace_id="st-abc",
-            cluster_id="c-abc",
-            command="echo hello",
-            env=[V1EnvVar(name="key", value="value")],
-            image="",
-            instance_name="g4dn.12xlarge",
-            run_id=mock.ANY,
-            spot=False,
-            image_cluster_credentials=True,
-            image_secret_ref="",
-            artifacts_source="",
-            artifacts_destination=""
-        )
+        cloudspace_id="st-abc",
+        cluster_id="c-abc",
+        command="echo hello",
+        env=[V1EnvVar(name="key", value="value")],
+        image="",
+        instance_name="g4dn.12xlarge",
+        run_id=mock.ANY,
+        spot=False,
+        image_cluster_credentials=True,
+        image_secret_ref="",
+        artifacts_source="",
+        artifacts_destination="",
+    )
     body = ProjectIdJobsBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
     create_job_mock = mock.MagicMock()
     job_api._client.jobs_service_create_job = create_job_mock
-    job_api.submit_job(name="test-job", cluster_id="c-abc", teamspace_id="ts-abc", studio_id="", image="image-abc", machine=Machine.T4_X_4, interruptible=True, env=None, command=None, image_credentials="dockerhub", cluster_auth=False, artifacts_local="/output", artifacts_remote="efs:data:some-path")
+    job_api.submit_job(
+        name="test-job",
+        cluster_id="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.T4_X_4,
+        interruptible=True,
+        env=None,
+        command=None,
+        image_credentials="dockerhub",
+        cluster_auth=False,
+        artifacts_local="/output",
+        artifacts_remote="efs:data:some-path",
+    )
 
     spec = V1JobSpec(
-            cloudspace_id="",
-            cluster_id="c-abc",
-            command="",
-            env=[],
-            image="image-abc",
-            instance_name="g4dn.12xlarge",
-            run_id=mock.ANY,
-            spot=True,
-            image_cluster_credentials=False,
-            image_secret_ref="dockerhub",
-            artifacts_source="/output",
-            artifacts_destination="efs:data:some-path"
-        )
+        cloudspace_id="",
+        cluster_id="c-abc",
+        command="",
+        env=[],
+        image="image-abc",
+        instance_name="g4dn.12xlarge",
+        run_id=mock.ANY,
+        spot=True,
+        image_cluster_credentials=False,
+        image_secret_ref="dockerhub",
+        artifacts_source="/output",
+        artifacts_destination="efs:data:some-path",
+    )
     body = ProjectIdJobsBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
+
 
 def test_get_job_by_name():
     job_api = JobApiV2()
@@ -146,7 +178,8 @@ def test_get_job_by_name():
     job_api.get_job_by_name("test-job", "ts-abc")
     get_job_by_name_mock.assert_called_once_with(name="test-job", project_id="ts-abc")
 
-def test_get_job():
+
+def test_get_job_v2():
     job_api = JobApiV2()
 
     get_job_mock = mock.MagicMock()
@@ -155,8 +188,9 @@ def test_get_job():
     job_api.get_job("test-job-id", "ts-abc")
     get_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc")
 
+
 @pytest.mark.parametrize(
-    "internal_state, expected_state",
+    ("internal_state", "expected_state"),
     [
         ("pending", Status.Pending),
         ("running", Status.Running),
@@ -170,8 +204,9 @@ def test_translate_state(internal_state, expected_state):
     job_api = JobApiV2()
     assert job_api._job_state_to_external(internal_state) == expected_state
 
+
 @pytest.mark.parametrize(
-    "instance_name, instance_type,expected_machine",
+    ("instance_name", "instance_type", "expected_machine"),
     [
         ("g4dn.12xlarge", None, Machine.T4_X_4),
         ("p4d.24xlarge", "p4d.24xlarge", Machine.A100_X_8),
@@ -190,23 +225,24 @@ def test_machine_translate(instance_name, instance_type, expected_machine):
 
     assert job_api._get_job_machine_from_spec(spec) == expected_machine
 
-@pytest.mark.parametrize("job_states, total_calls_get_job, called_update_job",
-                         [
-                             (["running", "stopped"], 2, True),
-                             (["running", "completed"], 2, True),
-                             (["stopped"], 1, False),
-                             (["completed"], 1, False),
-                             (["failed"], 1, False),
-                             (["pending", "stopped"], 2, True),
-                             (["pending", "running", "stopped"], 3, True),
-                             (["stopping", "stopping", "stopping", "stopped"], 4, False),
-                         ])
-def test_jobv2_stop(job_states: List[str], total_calls_get_job: int, called_update_job: bool):
 
+@pytest.mark.parametrize(
+    ("job_states", "total_calls_get_job", "called_update_job"),
+    [
+        (["running", "stopped"], 2, True),
+        (["running", "completed"], 2, True),
+        (["stopped"], 1, False),
+        (["completed"], 1, False),
+        (["failed"], 1, False),
+        (["pending", "stopped"], 2, True),
+        (["pending", "running", "stopped"], 3, True),
+        (["stopping", "stopping", "stopping", "stopped"], 4, False),
+    ],
+)
+def test_jobv2_stop(job_states: List[str], total_calls_get_job: int, called_update_job: bool):
     job_api = JobApiV2()
 
     def get_job_side_effect(*args, **kwargs):
-
         while job_states:
             return V1Job(id="test-job-id", state=job_states.pop(0), spec=V1JobSpec(cloudspace_id="cloudspace-id"))
 
@@ -224,11 +260,16 @@ def test_jobv2_stop(job_states: List[str], total_calls_get_job: int, called_upda
     assert get_job_mock.call_count == total_calls_get_job
 
     if called_update_job:
-        update_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc", body=JobsIdBody1(cloudspace_id="cloudspace-id", state="stopped"))
+        update_job_mock.assert_called_once_with(
+            id="test-job-id", project_id="ts-abc", body=JobsIdBody1(cloudspace_id="cloudspace-id", state="stopped")
+        )
     else:
         update_job_mock.assert_not_called()
 
-@pytest.mark.parametrize("cloudspace_id, expected_cloudspace_id", [(None, ""), ("cloudspace-id", "cloudspace-id"), ("", "")])
+
+@pytest.mark.parametrize(
+    ("cloudspace_id", "expected_cloudspace_id"), [(None, ""), ("cloudspace-id", "cloudspace-id"), ("", "")]
+)
 def test_jobv2_delete(cloudspace_id, expected_cloudspace_id):
     job_api = JobApiV2()
 

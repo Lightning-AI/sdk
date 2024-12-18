@@ -1,19 +1,21 @@
+import re
+from unittest.mock import MagicMock
+
+import pytest
+
+from lightning_sdk.api import deployment_api as deployment_api_module
 from lightning_sdk.deployment import deployment as deployment_module
 from lightning_sdk.deployment.deployment import AutoScaleConfig
-from lightning_sdk.api import deployment_api as deployment_api_module
-import re
-import pytest
-from unittest.mock import MagicMock
-from lightning_sdk.machine import Machine
 from lightning_sdk.lightning_cloud.openapi import (
-    V1Deployment,
-    V1JobSpec,
-    V1Endpoint,
     V1AutoscalingSpec,
-    V1EndpointAuth,
+    V1Deployment,
     V1DeploymentStatus,
+    V1Endpoint,
+    V1EndpointAuth,
+    V1JobSpec,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+from lightning_sdk.machine import Machine
 
 
 def test_to_autoscaling():
@@ -246,8 +248,8 @@ def test_deployment_start_first_time(monkeypatch):
     client.jobs_service_get_deployment_by_name = fn
     monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
 
+    deployment = deployment_module.Deployment(name="ollama")
     with pytest.raises(ValueError, match="An autoscaling config should be provided."):
-        deployment = deployment_module.Deployment(name="ollama")
         deployment.start()
 
     deployment = deployment_module.Deployment(name="ollama")
@@ -364,6 +366,7 @@ def test_deployment_stop(monkeypatch):
     deployment.stop()
     assert deployment_spec.replicas == 0
 
+
 def test_deployment_get(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
@@ -398,6 +401,7 @@ def test_deployment_get(monkeypatch):
 
     requests_mock.Session().get.assert_called()
 
+
 def test_deployment_post(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
@@ -419,9 +423,7 @@ def test_deployment_post(monkeypatch):
                 user_api_key=True,
             )
         ),
-        status=V1DeploymentStatus(
-            urls=[url]
-        ),
+        status=V1DeploymentStatus(urls=[url]),
         strategy=None,
     )
 
@@ -429,17 +431,11 @@ def test_deployment_post(monkeypatch):
 
     deployment = deployment_module.Deployment(name="ollama")
 
-    json = {
-            "model": "llama3.1",
-            "messages": [{
-                "role": "user",
-                "content": "why is the sky blue?"
-            }],
-            "stream": True
-        }
+    json = {"model": "llama3.1", "messages": [{"role": "user", "content": "why is the sky blue?"}], "stream": True}
     deployment.post("/api/chat", json=json)
 
     requests_mock.Session().post.assert_called_with(f"{url}/api/chat", json=json, verify=False)
+
 
 def test_deployment_put(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
@@ -462,9 +458,7 @@ def test_deployment_put(monkeypatch):
                 user_api_key=True,
             )
         ),
-        status=V1DeploymentStatus(
-            urls=[url]
-        ),
+        status=V1DeploymentStatus(urls=[url]),
         strategy=None,
     )
 
@@ -475,6 +469,7 @@ def test_deployment_put(monkeypatch):
     deployment.put("")
 
     requests_mock.Session().put.assert_called_with(f"{url}/", verify=False)
+
 
 def test_deployment_delete(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
@@ -497,9 +492,7 @@ def test_deployment_delete(monkeypatch):
                 user_api_key=True,
             )
         ),
-        status=V1DeploymentStatus(
-            urls=[url]
-        ),
+        status=V1DeploymentStatus(urls=[url]),
         strategy=None,
     )
 

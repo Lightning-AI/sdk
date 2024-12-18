@@ -1,19 +1,21 @@
+import os
 from unittest import mock
+
 import pytest
 
-from lightning_sdk.utils.resolve import (
-    _resolve_org_name,
-    _resolve_org,
-    _resolve_user_name,
-    _resolve_user,
-    _resolve_teamspace_name,
-    _resolve_teamspace,
-    _parse_model_and_version,
-)
 from lightning_sdk.organization import Organization
-from lightning_sdk.user import User
 from lightning_sdk.teamspace import Teamspace
-import os
+from lightning_sdk.user import User
+from lightning_sdk.utils.resolve import (
+    _parse_model_and_version,
+    _resolve_org,
+    _resolve_org_name,
+    _resolve_teamspace,
+    _resolve_teamspace_name,
+    _resolve_user,
+    _resolve_user_name,
+)
+
 
 @pytest.mark.parametrize("provided", [None, "abc"])
 @mock.patch.dict(os.environ, clear=True)
@@ -149,7 +151,7 @@ def test_resolve_teamspace_name_env_var(provided):
 
 
 @pytest.mark.parametrize(
-    "teamspace_name, org_name, user_name, expected_result",
+    ("teamspace_name", "org_name", "user_name", "expected_result"),
     [
         ("ts-abc", None, "user-abc", {"name": "ts-abc", "user": {"name": "user-abc"}}),
         ("ts-def", "org-abc", None, {"name": "ts-def", "org": {"name": "org-abc"}}),

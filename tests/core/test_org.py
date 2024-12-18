@@ -1,9 +1,8 @@
+import os
+from unittest import mock
+
 from lightning_sdk.organization import Organization
 from lightning_sdk.teamspace import Teamspace
-
-import pytest
-from unittest import mock
-import os
 
 
 def test_org_init_from_name(internal_get_org_api_mocker):

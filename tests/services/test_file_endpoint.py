@@ -1,7 +1,7 @@
+from unittest.mock import MagicMock
+
 import lightning_sdk.services.file_endpoint as file_endpoint_module
 from lightning_sdk.services.file_endpoint import Client
-from unittest.mock import MagicMock
-import pytest
 
 
 def test_file_endpoint(monkeypatch):

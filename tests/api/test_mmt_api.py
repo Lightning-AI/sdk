@@ -1,16 +1,18 @@
+from typing import List
+from unittest import mock
+
+import pytest
+
 from lightning_sdk.api.mmt_api import MMTApi
 from lightning_sdk.lightning_cloud.openapi import (
-    V1JobSpec,
-    V1EnvVar,
-    ProjectIdMultimachinejobsBody,
-    V1MultiMachineJob,
     MultimachinejobsIdBody,
+    ProjectIdMultimachinejobsBody,
+    V1EnvVar,
+    V1JobSpec,
+    V1MultiMachineJob,
 )
-import pytest
-from unittest import mock
-from lightning_sdk.status import Status
 from lightning_sdk.machine import Machine
-from typing import List
+from lightning_sdk.status import Status
 
 
 def test_mmt_v2_submit_job():
@@ -19,46 +21,75 @@ def test_mmt_v2_submit_job():
     create_job_mock = mock.MagicMock()
     job_api._client.jobs_service_create_multi_machine_job = create_job_mock
 
-    job_api.submit_job(name="test-job", num_machines=5, cluster_id="c-abc", teamspace_id="ts-abc", image="", studio_id="st-abc", machine=Machine.T4_X_4, interruptible=False, env={"key": "value"}, command="echo hello", image_credentials=None, cluster_auth=True, artifacts_local=None, artifacts_remote=None)
+    job_api.submit_job(
+        name="test-job",
+        num_machines=5,
+        cluster_id="c-abc",
+        teamspace_id="ts-abc",
+        image="",
+        studio_id="st-abc",
+        machine=Machine.T4_X_4,
+        interruptible=False,
+        env={"key": "value"},
+        command="echo hello",
+        image_credentials=None,
+        cluster_auth=True,
+        artifacts_local=None,
+        artifacts_remote=None,
+    )
 
     spec = V1JobSpec(
-            cloudspace_id="st-abc",
-            cluster_id="c-abc",
-            command="echo hello",
-            env=[V1EnvVar(name="key", value="value")],
-            image="",
-            entrypoint="sh -c",
-            instance_name="g4dn.12xlarge",
-            run_id=mock.ANY,
-            spot=False,
-            image_cluster_credentials=True,
-            image_secret_ref="",
-            artifacts_source="",
-            artifacts_destination=""
-        )
+        cloudspace_id="st-abc",
+        cluster_id="c-abc",
+        command="echo hello",
+        env=[V1EnvVar(name="key", value="value")],
+        image="",
+        entrypoint="sh -c",
+        instance_name="g4dn.12xlarge",
+        run_id=mock.ANY,
+        spot=False,
+        image_cluster_credentials=True,
+        image_secret_ref="",
+        artifacts_source="",
+        artifacts_destination="",
+    )
     body = ProjectIdMultimachinejobsBody(name="test-job", spec=spec, cluster_id="c-abc", machines=5)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
-
     create_job_mock = mock.MagicMock()
     job_api._client.jobs_service_create_multi_machine_job = create_job_mock
-    job_api.submit_job(name="test-job", num_machines=2, cluster_id="c-abc", teamspace_id="ts-abc", studio_id="", image="image-abc", machine=Machine.T4_X_4, interruptible=True, env=None, command=None, image_credentials="dockerhub", cluster_auth=False, artifacts_local="/output", artifacts_remote="efs:data:some-path")
+    job_api.submit_job(
+        name="test-job",
+        num_machines=2,
+        cluster_id="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.T4_X_4,
+        interruptible=True,
+        env=None,
+        command=None,
+        image_credentials="dockerhub",
+        cluster_auth=False,
+        artifacts_local="/output",
+        artifacts_remote="efs:data:some-path",
+    )
 
     spec = V1JobSpec(
-            cloudspace_id="",
-            cluster_id="c-abc",
-            command="",
-            env=[],
-            image="image-abc",
-            entrypoint="sh -c",
-            instance_name="g4dn.12xlarge",
-            run_id=mock.ANY,
-            spot=True,
-            image_cluster_credentials=False,
-            image_secret_ref="dockerhub",
-            artifacts_source="/output",
-            artifacts_destination="efs:data:some-path"
-        )
+        cloudspace_id="",
+        cluster_id="c-abc",
+        command="",
+        env=[],
+        image="image-abc",
+        entrypoint="sh -c",
+        instance_name="g4dn.12xlarge",
+        run_id=mock.ANY,
+        spot=True,
+        image_cluster_credentials=False,
+        image_secret_ref="dockerhub",
+        artifacts_source="/output",
+        artifacts_destination="efs:data:some-path",
+    )
     body = ProjectIdMultimachinejobsBody(name="test-job", spec=spec, cluster_id="c-abc", machines=2)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
@@ -84,14 +115,14 @@ def test_get_mmt():
 
 
 @pytest.mark.parametrize(
-    "internal_state, expected_state",
+    ("internal_state", "expected_state"),
     [
         ("MultiMachineJob_STATE_UNSPECIFIED", Status.Pending),
         ("MultiMachineJob_STATE_RUNNING", Status.Running),
         ("MultiMachineJob_STATE_STOPPED", Status.Stopped),
         ("MultiMachineJob_STATE_FAILED", Status.Failed),
         ("MultiMachineJob_STATE_COMPLETED", Status.Completed),
-    ]
+    ],
 )
 def test_translate_state(internal_state, expected_state):
     job_api = MMTApi()
@@ -99,7 +130,7 @@ def test_translate_state(internal_state, expected_state):
 
 
 @pytest.mark.parametrize(
-    "instance_name, instance_type,expected_machine",
+    ("instance_name", "instance_type", "expected_machine"),
     [
         ("g4dn.12xlarge", None, Machine.T4_X_4),
         ("p4d.24xlarge", "p4d.24xlarge", Machine.A100_X_8),
@@ -119,31 +150,37 @@ def test_machine_translate(instance_name, instance_type, expected_machine):
     assert job_api._get_job_machine_from_spec(spec) == expected_machine
 
 
-@pytest.mark.parametrize("job_states, total_calls_get_job, called_update_job",
-                         [
-                             (["MultiMachineJob_STATE_RUNNING", "MultiMachineJob_STATE_STOPPED"], 2, True),
-                             (["MultiMachineJob_STATE_RUNNING", "MultiMachineJob_STATE_COMPLETED"], 2, True),
-                             (["MultiMachineJob_STATE_RUNNING", "MultiMachineJob_STATE_FAILED"], 2, True),
-                             (["MultiMachineJob_STATE_STOPPED"], 1, False),
-                             (["MultiMachineJob_STATE_COMPLETED"], 1, False),
-                             (["MultiMachineJob_STATE_FAILED"], 1, False),
-                             (["MultiMachineJob_STATE_UNSPECIFIED", "MultiMachineJob_STATE_STOPPED"], 2, True),
-                             (["MultiMachineJob_STATE_UNSPECIFIED", "MultiMachineJob_STATE_RUNNING", "MultiMachineJob_STATE_STOPPED"], 3, True),
-                         ])
+@pytest.mark.parametrize(
+    ("job_states", "total_calls_get_job", "called_update_job"),
+    [
+        (["MultiMachineJob_STATE_RUNNING", "MultiMachineJob_STATE_STOPPED"], 2, True),
+        (["MultiMachineJob_STATE_RUNNING", "MultiMachineJob_STATE_COMPLETED"], 2, True),
+        (["MultiMachineJob_STATE_RUNNING", "MultiMachineJob_STATE_FAILED"], 2, True),
+        (["MultiMachineJob_STATE_STOPPED"], 1, False),
+        (["MultiMachineJob_STATE_COMPLETED"], 1, False),
+        (["MultiMachineJob_STATE_FAILED"], 1, False),
+        (["MultiMachineJob_STATE_UNSPECIFIED", "MultiMachineJob_STATE_STOPPED"], 2, True),
+        (
+            ["MultiMachineJob_STATE_UNSPECIFIED", "MultiMachineJob_STATE_RUNNING", "MultiMachineJob_STATE_STOPPED"],
+            3,
+            True,
+        ),
+    ],
+)
 def test_mmt_stop(job_states: List[str], total_calls_get_job: int, called_update_job: bool):
-
-
     job_api = MMTApi()
 
-
     def get_job_side_effect(*args, **kwargs):
-
-
         while job_states:
-            return V1MultiMachineJob(id="test-job-id", desired_state=job_states.pop(0), spec=V1JobSpec(cloudspace_id="cloudspace-id"))
+            return V1MultiMachineJob(
+                id="test-job-id", desired_state=job_states.pop(0), spec=V1JobSpec(cloudspace_id="cloudspace-id")
+            )
 
-
-        return V1MultiMachineJob(id="test-job-id", desired_state="MultiMachineJob_STATE_STOPPED", spec=V1JobSpec(cloudspace_id="cloudspace-id"))
+        return V1MultiMachineJob(
+            id="test-job-id",
+            desired_state="MultiMachineJob_STATE_STOPPED",
+            spec=V1JobSpec(cloudspace_id="cloudspace-id"),
+        )
 
     get_job_mock = mock.MagicMock()
     get_job_mock.side_effect = get_job_side_effect
@@ -156,9 +193,12 @@ def test_mmt_stop(job_states: List[str], total_calls_get_job: int, called_update
 
     assert get_job_mock.call_count == total_calls_get_job
 
-
     if called_update_job:
-        update_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc", body=MultimachinejobsIdBody(desired_state="MultiMachineJob_STATE_STOPPED"))
+        update_job_mock.assert_called_once_with(
+            id="test-job-id",
+            project_id="ts-abc",
+            body=MultimachinejobsIdBody(desired_state="MultiMachineJob_STATE_STOPPED"),
+        )
     else:
         update_job_mock.assert_not_called()
 

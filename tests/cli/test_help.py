@@ -1,7 +1,9 @@
 import subprocess
-from lightning_sdk.cli.entrypoint import _LIGHTNING_AVAILABLE
-import pytest
 import sys
+
+import pytest
+
+from lightning_sdk.cli.entrypoint import _LIGHTNING_AVAILABLE
 
 
 def test_root_message():
@@ -39,6 +41,7 @@ COMMANDS
        Logout from Lightning AI Studios."""
     result = subprocess.run("lightning", shell=True, capture_output=True, text=True)
     assert message in result.stdout or message in result.stderr
+
 
 @pytest.mark.skipif(
     not _LIGHTNING_AVAILABLE,
@@ -279,10 +282,10 @@ FLAGS
 
     assert message in result.stderr or message in result.stdout
 
+
 # for some reason the strings are slightly different for every python version. It doesn't make sense to list them all here
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or above")
 def test_run_job_help():
-
     result = subprocess.run("lightning run job --help", shell=True, capture_output=True, text=True)
     message = """INFO: Showing help with the command 'lightning run job -- --help'.
 

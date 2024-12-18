@@ -1,10 +1,11 @@
+import pytest
+
 from lightning_sdk import Machine
 from lightning_sdk.api.utils import _MACHINE_TO_COMPUTE_NAME
-import pytest
 
 
 @pytest.mark.parametrize(
-    "deprecated, new_machine",
+    ("deprecated", "new_machine"),
     [
         ("L40", "L40S"),
         ("L40_X_4", "L40S_X_4"),

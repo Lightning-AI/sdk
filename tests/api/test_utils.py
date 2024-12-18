@@ -1,24 +1,32 @@
-import pytest
 from unittest import mock
-from unittest.mock import Mock, AsyncMock, mock_open, MagicMock, ANY, PropertyMock
+from unittest.mock import MagicMock, Mock, PropertyMock, mock_open
+
+import pytest
+
 import lightning_sdk.api.utils
-from lightning_sdk.machine import Machine
-from lightning_sdk.api.utils import _machine_to_compute_name, _download_model_files, _ModelFileUploader, _FileUploader, _FileDownloader
+from lightning_sdk.api.utils import (
+    _download_model_files,
+    _FileDownloader,
+    _FileUploader,
+    _machine_to_compute_name,
+    _ModelFileUploader,
+)
 from lightning_sdk.lightning_cloud.openapi import (
     ProjectIdStorageBody,
-    V1SignedUrl,
-    V1PresignedUrl,
     UploadIdPartsBody,
-    V1UploadProjectArtifactPartsResponse,
     UploadsUploadIdBody,
+    V1PresignedUrl,
+    V1SignedUrl,
+    V1UploadProjectArtifactPartsResponse,
     VersionUploadsBody,
 )
+from lightning_sdk.machine import Machine
 
 
 def _make_mocked_file_uploader(monkeypatch, file_path, remote_path):
     # Threadpools don't like mocks as input, so we just use a regular map here
     monkeypatch.setattr(lightning_sdk.api.utils.ThreadPoolExecutor, "map", map)
-    uploader = _FileUploader(
+    return _FileUploader(
         client=Mock(),
         teamspace_id="test-project-id",
         cluster_id="test-cluster-id",
@@ -26,7 +34,6 @@ def _make_mocked_file_uploader(monkeypatch, file_path, remote_path):
         file_path=file_path,
         remote_path=remote_path,
     )
-    return uploader
 
 
 def test_file_uploader_path_exists(monkeypatch):
@@ -35,7 +42,7 @@ def test_file_uploader_path_exists(monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "machine,compute_name",
+    ("machine", "compute_name"),
     [
         (Machine.CPU, "cpu-4"),
         (Machine.L40S_X_8, "g6e.48xlarge"),
@@ -46,11 +53,9 @@ def test_machine_to_compute_name(machine, compute_name):
     assert _machine_to_compute_name(machine) == compute_name
 
 
-
 @mock.patch("lightning_sdk.api.utils.requests")
 def test_file_uploader(_, tmp_path, monkeypatch):
     """Tests the basic calls that uploader makes to model store API."""
-
     file_path = tmp_path / "file"
     file_path.touch()
     uploader = _make_mocked_file_uploader(monkeypatch, file_path=file_path, remote_path="path/to/file/on/remote")
@@ -81,7 +86,7 @@ def test_file_uploader(_, tmp_path, monkeypatch):
     uploader.client.storage_service_complete_upload_project_artifact.assert_called_once()
 
     # 0 because mocked data has length 0
-    uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
+    assert uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
 
 
 def _make_mocked_model_uploader(monkeypatch, file_path, remote_path):
@@ -109,7 +114,6 @@ def test_model_file_uploader_path_exists(monkeypatch):
 @mock.patch("lightning_sdk.api.utils.requests")
 def test_model_file_uploader(_, tmp_path, monkeypatch):
     """Tests the basic calls that uploader makes to model store API."""
-
     file_path = tmp_path / "file"
     file_path.touch()
     uploader = _make_mocked_model_uploader(monkeypatch, file_path=file_path, remote_path="path/to/file/on/remote")
@@ -142,7 +146,7 @@ def test_model_file_uploader(_, tmp_path, monkeypatch):
     uploader.api.models_store_complete_multi_part_upload.assert_called_once()
 
     # 0 because mocked data has length 0
-    uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
+    assert uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
 
 
 @mock.patch("lightning_sdk.api.utils.ModelsStoreApi")
@@ -160,13 +164,19 @@ def test_download_model_files(download_mock, api_mock, tmp_path):
         Mock(url="http://example.com/file2", size=10),
     ]
 
-    delay = 0.01
-
     _download_model_files(
-        client=Mock(), teamspace_name="test-project", teamspace_owner_name="test-user", name="modelname", version="latest", download_dir=tmp_path, progress_bar=False
+        client=Mock(),
+        teamspace_name="test-project",
+        teamspace_owner_name="test-user",
+        name="modelname",
+        version="latest",
+        download_dir=tmp_path,
+        progress_bar=False,
     )
 
-    api_mock.return_value.models_store_get_model_files.assert_called_once_with(project_name="test-project", project_owner_name="test-user", name="modelname", version="latest")
+    api_mock.return_value.models_store_get_model_files.assert_called_once_with(
+        project_name="test-project", project_owner_name="test-user", name="modelname", version="latest"
+    )
 
     assert api_mock.return_value.models_store_get_model_file_url.call_count == 2
     api_mock.return_value.models_store_get_model_file_url.assert_any_call(
@@ -181,11 +191,10 @@ def test_download_model_files(download_mock, api_mock, tmp_path):
 
 def mock_iter_content(chunk_size):
     chunks = [b"test_data"]
-    for chunk in chunks:
-        yield chunk
+    yield from chunks
 
 
-@mock.patch('requests.get')
+@mock.patch("requests.get")
 def test_download_chunk_success(mock_get):
     url = "http://example.com"
     start = 0
@@ -220,7 +229,7 @@ def test_download_chunk_success(mock_get):
         mock_file().write.assert_called_once_with(b"test_data")
 
 
-@mock.patch('requests.get')
+@mock.patch("requests.get")
 @mock.patch.object(lightning_sdk.api.utils._FileDownloader, "url", new_callable=PropertyMock)
 @mock.patch("lightning_sdk.api.utils._FileDownloader.refresh")
 def test_download_chunk_failure(mock_refresh, mock_url, mock_get):

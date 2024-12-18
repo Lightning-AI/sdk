@@ -1,13 +1,14 @@
-from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive import V1ModelVersionArchive
-
-from lightning_sdk.user import User
-from lightning_sdk.organization import Organization
-from lightning_sdk.teamspace import Teamspace
-import pytest
 import os
-from unittest import mock
 from contextlib import nullcontext
 from pathlib import Path
+from unittest import mock
+
+import pytest
+
+from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive import V1ModelVersionArchive
+from lightning_sdk.organization import Organization
+from lightning_sdk.teamspace import Teamspace
+from lightning_sdk.user import User
 
 
 @pytest.mark.parametrize("user", ["user-abc", None, -1])
@@ -107,7 +108,7 @@ def test_teamspace_list_clusters_studios_org(
 
 
 @pytest.mark.parametrize(
-    "kwargs,expected",
+    ("kwargs", "expected"),
     [
         ({"user": "user-abc"}, "Teamspace(name=ts-abc, owner=User(name=user-abc))"),
         ({"org": "org-abc"}, "Teamspace(name=ts-abc, owner=Organization(name=org-abc))"),
@@ -126,7 +127,7 @@ def test_repr(
 
 
 @pytest.mark.parametrize(
-    "kwargs,expected",
+    ("kwargs", "expected"),
     [
         ({"user": "user-abc"}, "Teamspace(name=ts-abc, owner=User(name=user-abc))"),
         ({"org": "org-abc"}, "Teamspace(name=ts-abc, owner=Organization(name=org-abc))"),
@@ -251,13 +252,13 @@ def test_upload_model_multiple_files(
 
     ts._teamspace_api.create_model.assert_called_once()
     assert ts._teamspace_api.upload_model_file.call_count == 2
-    call_args = dict(
-        model_id="test-model-id",
-        version="v3",
-        cluster_id="test-cluster-id",
-        teamspace_id="ts-abc002",
-        progress_bar=True,
-    )
+    call_args = {
+        "model_id": "test-model-id",
+        "version": "v3",
+        "cluster_id": "test-cluster-id",
+        "teamspace_id": "ts-abc002",
+        "progress_bar": True,
+    }
     ts._teamspace_api.upload_model_file.assert_any_call(
         local_path=(upload_path / "file"),
         remote_path="file",
@@ -289,7 +290,7 @@ def test_download_model(
     internal_user_api_mocker,
     tmp_path,
     monkeypatch,
-    folder
+    folder,
 ):
     monkeypatch.chdir(tmp_path)
     ts = Teamspace("ts-abc", user="user-abc")
@@ -305,7 +306,8 @@ def test_download_model(
         client=mock.ANY,
         teamspace_id="ts-abc002",
         name="user/modelname",
-        version="latest",)
+        version="latest",
+    )
 
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
@@ -322,7 +324,7 @@ def test_download_model(
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
 @mock.patch("lightning_sdk.api.teamspace_api._get_model_version")
 def test_download_model_version(
-get_model_version_mock,
+    get_model_version_mock,
     download_model_files_mock,
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
@@ -337,9 +339,8 @@ get_model_version_mock,
 
     ts.download_model("user/modelname:v3", download_dir=tmp_path)
     get_model_version_mock.assert_called_with(
-        client=mock.ANY,
-
-        teamspace_id='ts-abc002', name='user/modelname', version='v3')
+        client=mock.ANY, teamspace_id="ts-abc002", name="user/modelname", version="v3"
+    )
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
         teamspace_name="ts-abc",

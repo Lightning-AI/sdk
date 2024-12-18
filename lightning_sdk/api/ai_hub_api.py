@@ -105,7 +105,7 @@ class AIHubApi:
             elif not p.required:
                 AIHubApi._update_parameters(job, p.placements, pattern, "")
             else:
-                raise ValueError(f"API reqires argument '{p.name}' but is not provided with api_arguments.")
+                raise ValueError(f"API requires argument '{p.name}' but is not provided with api_arguments.")
 
         return job
 

@@ -1,12 +1,22 @@
-from lightning_sdk.utils.dynamic import ConditionBaseMeta
 from typing import Literal
+
 import pytest
 
-@pytest.mark.parametrize("condition_result,expected_method_name,nonexpected_method_name", [
-    (True, "method_a", "method_b"),
-    (False, "method_b", "method_a"),
-])
-def test_condition_base_meta(condition_result: bool, expected_method_name: Literal['method_a', 'method_b'], nonexpected_method_name: Literal['method_a', 'method_b']):
+from lightning_sdk.utils.dynamic import ConditionBaseMeta
+
+
+@pytest.mark.parametrize(
+    ("condition_result", "expected_method_name", "nonexpected_method_name"),
+    [
+        (True, "method_a", "method_b"),
+        (False, "method_b", "method_a"),
+    ],
+)
+def test_condition_base_meta(
+    condition_result: bool,
+    expected_method_name: Literal["method_a", "method_b"],
+    nonexpected_method_name: Literal["method_a", "method_b"],
+):
     class A:
         def method_a(self):
             return "method_a"

@@ -1,9 +1,8 @@
-from lightning_sdk.user import User
-from lightning_sdk.teamspace import Teamspace
-
-import pytest
-from unittest import mock
 import os
+from unittest import mock
+
+from lightning_sdk.teamspace import Teamspace
+from lightning_sdk.user import User
 
 
 def test_user_init_from_name(internal_user_api_mocker):

@@ -1,15 +1,15 @@
 from datetime import datetime
 
 import pytest
-import re
+
 from lightning_sdk.machine import Machine
 from lightning_sdk.plugin import (
     InferenceServerPlugin,
     JobsPlugin,
-    MultiMachineTrainingPlugin,
     MultiMachineDataPrepPlugin,
-    SlurmJobsPlugin,
+    MultiMachineTrainingPlugin,
     Plugin,
+    SlurmJobsPlugin,
     _run_name,
 )
 from lightning_sdk.studio import Studio
@@ -41,7 +41,7 @@ def test_run_job_plugins(
 
     from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import CloudSpaceServiceApi
 
-    CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance
+    CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance  # noqa: B018
     from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
 
     calls = CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance.mock_calls
@@ -51,7 +51,7 @@ def test_run_job_plugins(
     assert calls[2].kwargs["body"].unique_id == __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__["st-ghi-2"]
 
 
-@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
+@pytest.mark.parametrize("cloud_compute", list(Machine))
 def test_run_job(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -78,8 +78,7 @@ def test_run_job(
     assert job.name != ""
 
 
-
-@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
+@pytest.mark.parametrize("cloud_compute", list(Machine))
 def test_run_mmt(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -98,7 +97,7 @@ def test_run_mmt(
     plugin.run(command="python my-file.py", name="my-fancy-mmt-name", num_instances=42, machine=cloud_compute)
 
 
-@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
+@pytest.mark.parametrize("cloud_compute", list(Machine))
 def test_run_inference(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -149,7 +148,7 @@ def test_run_name():
     assert start_time == time_stamp == datetime.now().replace(second=0, microsecond=0)
 
 
-@pytest.mark.parametrize("cloud_compute", [m for m in Machine])
+@pytest.mark.parametrize("cloud_compute", list(Machine))
 def test_run_data_prep(
     internal_studio_init_mocker,
     internal_studio_status_mocker,

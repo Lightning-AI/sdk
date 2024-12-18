@@ -1,6 +1,7 @@
+from unittest.mock import ANY, MagicMock
+
 import lightning_sdk.services.file_endpoint as file_endpoint_module
 from lightning_sdk.services import LLMFinetune
-from unittest.mock import MagicMock, ANY
 
 
 def test_llm_finetune(monkeypatch):

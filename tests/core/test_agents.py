@@ -1,8 +1,5 @@
 from lightning_sdk.agents import Agent
 from lightning_sdk.lightning_cloud.openapi import V1Assistant
-from unittest import mock
-import os
-import pytest
 
 
 def test_agent_init(internal_agents_api_get_agent_mocker):
