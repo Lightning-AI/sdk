@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
 
 class _BaseJob(ABC):
+    """Base interface to all job types."""
+
     def __init__(
         self,
         name: str,
@@ -22,6 +24,15 @@ class _BaseJob(ABC):
         *,
         _fetch_job: bool = True,
     ) -> None:
+        """Fetch already existing jobs.
+
+        Args:
+            name: the name of the job
+            teamspace: the teamspace the job is part of
+            org: the name of the organization owning the :param`teamspace` in case it is owned by an org
+            user: the name of the user owning the :param`teamspace`
+                in case it is owned directly by a user instead of an org.
+        """
         _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         if _teamspace is None:
             raise ValueError(
@@ -55,6 +66,37 @@ class _BaseJob(ABC):
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> "_BaseJob":
+        """Run async workloads using a docker image or a compute environment from your studio.
+
+        Args:
+            name: The name of the job. Needs to be unique within the teamspace.
+            machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
+            command: The command to run inside your job. Required if using a studio. Optional if using an image.
+                If not provided for images, will run the container entrypoint and default command.
+            studio: The studio env to run the job with. Mutually exclusive with image.
+            image: The docker image to run the job with. Mutually exclusive with studio.
+            teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
+            org: The organization owning the teamspace (if any). Defaults to the current organization.
+            user: The user owning the teamspace (if any). Defaults to the current user.
+            cluster: The cluster to run the job on. Defaults to the studio cluster if running with studio compute env.
+                If not provided will fall back to the teamspaces default cluster.
+            env: Environment variables to set inside the job.
+            interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+            image_credentials: The credentials used to pull the image. Required if the image is private.
+                This should be the name of the respective credentials secret created on the Lightning AI platform.
+            cluster_auth: Whether to authenticate with the cluster to pull the image.
+                Required if the registry is part of a cluster provider (e.g. ECR).
+            artifacts_local: The path of inside the docker container, you want to persist images from.
+                CAUTION: When setting this to "/", it will effectively erase your container.
+                Only supported for jobs with a docker image compute environment.
+            artifacts_remote: The remote storage to persist your artifacts to.
+                Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
+                PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
+                E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
+                within it.
+                Note that the connection needs to be added to the teamspace already in order for it to be found.
+                Only supported for jobs with a docker image compute environment.
+        """
         from lightning_sdk.studio import Studio
 
         if not name:
@@ -143,40 +185,72 @@ class _BaseJob(ABC):
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> "_BaseJob":
-        """Submits a job and updates the internal _job attribute as well as the _name attribute."""
+        """Submit a new job to the Lightning AI platform.
+
+        Args:
+            machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
+            command: The command to run inside your job. Required if using a studio. Optional if using an image.
+                If not provided for images, will run the container entrypoint and default command.
+            studio: The studio env to run the job with. Mutually exclusive with image.
+            image: The docker image to run the job with. Mutually exclusive with studio.
+            env: Environment variables to set inside the job.
+            interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+            cluster: The cluster to run the job on. Defaults to the studio cluster if running with studio compute env.
+                If not provided will fall back to the teamspaces default cluster.
+            image_credentials: The credentials used to pull the image. Required if the image is private.
+                This should be the name of the respective credentials secret created on the Lightning AI platform.
+            cluster_auth: Whether to authenticate with the cluster to pull the image.
+                Required if the registry is part of a cluster provider (e.g. ECR).
+            artifacts_local: The path of inside the docker container, you want to persist images from.
+                CAUTION: When setting this to "/", it will effectively erase your container.
+                Only supported for jobs with a docker image compute environment.
+            artifacts_remote: The remote storage to persist your artifacts to.
+                Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
+                PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
+                E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
+                within it.
+                Note that the connection needs to be added to the teamspace already in order for it to be found.
+                Only supported for jobs with a docker image compute environment.
+        """
 
     @abstractmethod
     def stop(self) -> None:
-        pass
+        """Stops the job.
+
+        This is blocking until the job is stopped.
+        """
 
     @abstractmethod
     def delete(self) -> None:
-        pass
+        """Deletes the job.
+
+        Caution: This also deletes all artifacts and snapshots associated with the job.
+        """
 
     @property
     @abstractmethod
     def status(self) -> "Status":
-        pass
+        """The current status of the job."""
 
     @property
     @abstractmethod
     def machine(self) -> "Machine":
-        pass
+        """The machine type the job is running on."""
 
     @property
     @abstractmethod
     def artifact_path(self) -> Optional[str]:
-        pass
+        """Path to the artifacts created by the job within the distributed teamspace filesystem."""
 
     @property
     @abstractmethod
     def snapshot_path(self) -> Optional[str]:
-        pass
+        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem."""
 
     @property
     @abstractmethod
     def share_path(self) -> Optional[str]:
-        pass
+        """Path to the jobs share path."""
 
     @abstractmethod
     def _update_internal_job(self) -> None:
@@ -184,8 +258,10 @@ class _BaseJob(ABC):
 
     @property
     def name(self) -> str:
+        """The job's name."""
         return self._name
 
     @property
     def teamspace(self) -> "Teamspace":
+        """The teamspace the job is part of."""
         return self._teamspace
