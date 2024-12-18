@@ -96,6 +96,7 @@ ignore = [
     "D100",   # todo: Missing docstring in public module
     "D104",   # todo: Missing docstring in public package
     "D107",   # Missing docstring in `__init__`
+    "D417",   # Missing argument in docstring. Ignored since we don't necesarily want to document deprecated args
     "ANN101", # Missing type annotation for `self` in method
     "ANN102", # Missing type annotation for `cls` in classmethod
     "S301",   # todo: `pickle` and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue  # todo

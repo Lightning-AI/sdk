@@ -127,7 +127,15 @@ class JobsPlugin(_Plugin):
         cloud_compute: Optional[Machine] = None,
         interruptible: bool = False,
     ) -> Job:
-        """Launches an asynchronous job."""
+        """Launches an asynchronous job.
+
+        Args:
+            command: The command to be executed.
+            name: The name of the job.
+            machine: The machine to run the job on.
+            interruptible: Whether to run the job on an interruptible machine.
+                These are cheaper but can be preempted at any time.
+        """
         if not name:
             name = _run_name("job")
 
@@ -164,7 +172,18 @@ class MultiMachineTrainingPlugin(_Plugin):
         strategy: str = "parallel",
         interruptible: bool = False,
     ) -> Job:
-        """Launches an asynchronous multi-machine-training."""
+        """Launches an asynchronous multi-machine-training.
+
+        Args:
+            command: The command to be executed.
+            name: The name of the job.
+            machine: The machine to run the job on.
+            num_instances: The number of instances to run the job on.
+            strategy: The strategy to use for the multi-machine-training.
+                Everything but 'parallel' is highly experimental and usage is generally not recommended.
+            interruptible: Whether to run the job on an interruptible machine.
+                These are cheaper but can be preempted at any time.
+        """
         if not name:
             name = _run_name("dist-run")
 
@@ -201,7 +220,16 @@ class MultiMachineDataPrepPlugin(_Plugin):
         num_instances: int = 2,
         interruptible: bool = False,
     ) -> Job:
-        """Launches an asynchronous multi-machine-processing-job."""
+        """Launches an asynchronous multi-machine-data-processing job.
+
+        Args:
+            command: The command to be executed.
+            name: The name of the job.
+            machine: The machine to run the job on.
+            num_instances: The number of instances to run the job on.
+            interruptible: Whether to run the job on an interruptible machine.
+                These are cheaper but can be preempted at any time.
+        """
         if not name:
             name = _run_name("data-prep")
 
