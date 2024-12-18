@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 from lightning_sdk.job.base import _BaseJob
 from lightning_sdk.job.job import Job
+from lightning_sdk.utils.resolve import _resolve_deprecated_cluster
 
 
 class _BaseMMT(_BaseJob):
@@ -26,15 +27,18 @@ class _BaseMMT(_BaseJob):
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
-        cluster_auth: bool = False,
+        cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "_BaseMMT":
         from lightning_sdk.studio import Studio
+
+        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
         if num_machines <= 1:
             raise ValueError("Multi-Machine training cannot be run with less than 2 Machines")
@@ -44,7 +48,9 @@ class _BaseMMT(_BaseJob):
 
         if image is None:
             if not isinstance(studio, Studio):
-                studio = Studio(name=studio, teamspace=teamspace, org=org, user=user, cluster=cluster, create_ok=False)
+                studio = Studio(
+                    name=studio, teamspace=teamspace, org=org, user=user, cloud_account=cloud_account, create_ok=False
+                )
 
             # studio is a Studio instance at this point
             if teamspace is None:
@@ -58,20 +64,20 @@ class _BaseMMT(_BaseJob):
                         "Can only run jobs with Studio envs in the teamspace of that Studio."
                     )
 
-            if cluster is None:
-                cluster = studio.cluster
+            if cloud_account is None:
+                cloud_account = studio.cloud_account
 
-            if cluster != studio.cluster:
+            if cloud_account != studio.cloud_account:
                 raise ValueError(
-                    "Studio cluster does not match provided cluster. "
-                    "Can only run jobs with Studio envs in the same cluster."
+                    "Studio cloud_account does not match provided cloud_account. "
+                    "Can only run jobs with Studio envs in the same cloud_account."
                 )
 
             if image_credentials is not None:
                 raise ValueError("image_credentials is only supported when using a custom image")
 
-            if cluster_auth:
-                raise ValueError("cluster_auth is only supported when using a custom image")
+            if cloud_account_auth:
+                raise ValueError("cloud_account_auth is only supported when using a custom image")
 
             if artifacts_local is not None or artifacts_remote is not None:
                 raise ValueError(
@@ -99,14 +105,14 @@ class _BaseMMT(_BaseJob):
         inst._submit(
             num_machines=num_machines,
             machine=machine,
-            cluster=cluster,
+            cloud_account=cloud_account,
             command=command,
             studio=studio,
             image=image,
             env=env,
             interruptible=interruptible,
             image_credentials=image_credentials,
-            cluster_auth=cluster_auth,
+            cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
         )
@@ -122,9 +128,9 @@ class _BaseMMT(_BaseJob):
         image: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         image_credentials: Optional[str] = None,
-        cluster_auth: bool = False,
+        cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> None:

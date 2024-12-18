@@ -32,7 +32,7 @@ from lightning_sdk.organization import Organization
 from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace, _resolve_user
+from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_org, _resolve_teamspace, _resolve_user
 
 
 class Deployment:
@@ -81,7 +81,7 @@ class Deployment:
             raise ValueError("You need to pass a teamspace or an org for your deployment.")
 
         self._deployment_api = DeploymentApi()
-        self._cluster = _get_cluster(client=self._deployment_api._client, project_id=self._teamspace.id)
+        self._cloud_account = _get_cluster(client=self._deployment_api._client, project_id=self._teamspace.id)
         self._is_created = False
         deployment = self._deployment_api.get_deployment_by_name(name, self._teamspace.id)
         if deployment:
@@ -102,8 +102,9 @@ class Deployment:
         replicas: Optional[int] = None,
         health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
         auth: Optional[Union[BasicAuth, TokenAuth]] = None,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         custom_domain: Optional[str] = None,
+        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> None:
         """The Lightning AI Deployment.
 
@@ -124,7 +125,7 @@ class Deployment:
             replicas: The number of replicas to deploy with.
             health_check: The health check config to know whether your service is ready to receive traffic.
             auth: The auth config to protect your services. Only Basic and Token supported.
-            cluster: The name of the cluster, the studio should be created on.
+            cloud_account: The name of the cloud account, the studio should be created on.
                 Doesn't matter when the studio already exists.
             custom_domain: Whether your service would be referenced under a custom doamin.
 
@@ -136,9 +137,11 @@ class Deployment:
         if self._is_created:
             raise RuntimeError("This deployment has already been started.")
 
-        if cluster is None and self._cluster is not None:
-            print(f"No cluster was provided, defaulting to {self._cluster.cluster_id}")
-            cluster = os.getenv("LIGHTNING_CLUSTER_ID") or self._cluster.cluster_id
+        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+
+        if cloud_account is None and self._cloud_account is not None:
+            print(f"No cloud account was provided, defaulting to {self._cloud_account.cluster_id}")
+            cloud_account = os.getenv("LIGHTNING_CLUSTER_ID") or self._cloud_account.cluster_id
 
         self._deployment = self._deployment_api.create_deployment(
             V1Deployment(
@@ -148,7 +151,7 @@ class Deployment:
                 project_id=self._teamspace.id,
                 replicas=replicas,
                 spec=to_spec(
-                    cluster_id=cluster,
+                    cloud_account=cloud_account,
                     command=command,
                     entrypoint=entrypoint,
                     env=env,
@@ -171,7 +174,7 @@ class Deployment:
         command: Optional[str] = None,
         env: Optional[List[Union[Env, Secret]]] = None,
         spot: Optional[bool] = None,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
         # Changing those arguments don't create a new release
         min_replicas: Optional[int] = None,
@@ -182,7 +185,10 @@ class Deployment:
         replicas: Optional[int] = None,
         auth: Optional[Union[BasicAuth, TokenAuth]] = None,
         custom_domain: Optional[str] = None,
+        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> None:
+        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+
         self._deployment = self._deployment_api.update_deployment(
             self._deployment,
             name=name or self._name,
@@ -190,7 +196,7 @@ class Deployment:
             replicas=replicas,
             min_replicas=min_replicas,
             max_replicas=max_replicas,
-            cluster_id=cluster,
+            cloud_account=cloud_account,
             machine=machine,
             environment=environment,
             entrypoint=entrypoint,
@@ -312,8 +318,8 @@ class Deployment:
         return None
 
     @property
-    def cluster(self) -> Optional[str]:
-        """The cluster of the replicas."""
+    def cloud_account(self) -> Optional[str]:
+        """The cloud_account of the replicas."""
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return self._deployment.spec.cluster_id

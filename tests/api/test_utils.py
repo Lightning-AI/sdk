@@ -29,7 +29,7 @@ def _make_mocked_file_uploader(monkeypatch, file_path, remote_path):
     return _FileUploader(
         client=Mock(),
         teamspace_id="test-project-id",
-        cluster_id="test-cluster-id",
+        cloud_account="test-cluster-id",
         progress_bar=False,
         file_path=file_path,
         remote_path=remote_path,
@@ -97,7 +97,7 @@ def _make_mocked_model_uploader(monkeypatch, file_path, remote_path):
         model_id="test-model-id",
         version="test-version",
         teamspace_id="test-project-id",
-        cluster_id="test-cluster-id",
+        cloud_account="test-cluster-id",
         progress_bar=False,
         file_path=file_path,
         remote_path=remote_path,

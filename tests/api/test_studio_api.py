@@ -29,19 +29,19 @@ def test_get_studio_error(internal_studio_api_mocker_get_studio):
         studio_api.get_studio("xyz", "ts-abc")
 
 
-@pytest.mark.parametrize("cluster", [None, "c-abc"])
-def test_create_studio(internal_studio_api_mocker_create_studio, cluster):
+@pytest.mark.parametrize("cloud_account", [None, "c-abc"])
+def test_create_studio(internal_studio_api_mocker_create_studio, cloud_account):
     mock_create_cloud_space, _ = internal_studio_api_mocker_create_studio
 
     studio_api = StudioApi()
-    studio = studio_api.create_studio("st-abc", "ts-abc", cluster=cluster)
+    studio = studio_api.create_studio("st-abc", "ts-abc", cloud_account=cloud_account)
     assert isinstance(studio, V1CloudSpace)
-    assert studio.cluster_id == cluster
+    assert studio.cluster_id == cloud_account or ""
 
     mock_create_cloud_space.assert_called_once_with(
         mock.ANY,
         ProjectIdCloudspacesBody(
-            cluster_id=cluster,
+            cluster_id=cloud_account,
             name="st-abc",
             display_name="st-abc",
             seed_files=[V1CloudSpaceSeedFile(path="main.py", contents="print('Hello, Lightning World!')\n")],
@@ -311,7 +311,7 @@ def test_create_inference_run(internal_studio_api_create_app_mocker):
         endpoint="/fancy-predict",
         studio_id="st-abc",
         teamspace_id="ts-abc",
-        cluster_id="cluster-abc",
+        cloud_account="cluster-abc",
         interruptible=False,
     )
     assert resp.name == "fancy-inference-name"
@@ -336,7 +336,7 @@ def test_upload_file(
         client=mock.ANY,
         file_path=filepath,
         remote_path="/cloudspaces/st-abc/code/content/file1",
-        cluster_id="cluster-abc",
+        cloud_account="cluster-abc",
         teamspace_id="ts-abc",
         progress_bar=progress_bar,
     )

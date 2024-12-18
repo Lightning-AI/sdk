@@ -331,10 +331,10 @@ FLAGS
         Type: Optional[Optional]
         Default: None
         The user owning the teamspace (if any). Defaults to the current user.
-    --cluster=CLUSTER
+    --cloud_account=CLOUD_ACCOUNT
         Type: Optional[Optional]
         Default: None
-        The cluster to run the job on. Defaults to the studio cluster if running with studio compute env. If not provided will fall back to the teamspaces default cluster.
+        The cloud account to run the job on. Defaults to the studio cloud account if running with studio compute env. If not provided will fall back to the teamspaces default cloud account.
     -e, --env=ENV
         Type: Optional[Optional]
         Default: None
@@ -347,10 +347,10 @@ FLAGS
         Type: Optional[Optional]
         Default: None
         The credentials used to pull the image. Required if the image is private. This should be the name of the respective credentials secret created on the Lightning AI platform.
-    --cluster_auth=CLUSTER_AUTH
+    --cloud_account_auth=CLOUD_ACCOUNT_AUTH
         Type: bool
         Default: False
-        Whether to authenticate with the cluster to pull the image. Required if the registry is part of a cluster provider (e.g. ECR).
+        Whether to authenticate with the cloud account to pull the image. Required if the registry is part of a cloud provider (e.g. ECR).
     --artifacts_local=ARTIFACTS_LOCAL
         Type: Optional[Optional]
         Default: None

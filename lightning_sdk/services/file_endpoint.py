@@ -11,6 +11,7 @@ from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import CommandArgumentCommandArgumentType
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.services.utilities import _get_cluster, _get_project, _get_service_url
+from lightning_sdk.utils.resolve import _resolve_deprecated_cluster
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -25,16 +26,19 @@ class Client:
         self,
         name: str,
         teamspace: Optional[str],
-        cluster_id: Optional[str] = None,
+        cloud_account: Optional[str] = None,
+        cluster_id: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> None:
         """Constructor of the Client.
 
         Args:
             name: The name of the Studio File Endpoint Service.
             teamspace: The name of the teamspace you want to attach the upload data and artifacts to be.
-            cluster_id: The name of the cluster on which to upload the data.
+            cloud_account: The name of the cloud account on which to upload the data.
 
         """
+        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster_id)
+
         self._auth = Auth()
 
         try:
@@ -46,7 +50,9 @@ class Client:
         self._teamspace = teamspace
         self._client = LightningClient()
         self._project = _get_project(client=self._client, project_name=teamspace)
-        self._cluster = _get_cluster(client=self._client, project_id=self._project.project_id, cluster_id=cluster_id)
+        self._cloud_account = _get_cluster(
+            client=self._client, project_id=self._project.project_id, cluster_id=cloud_account
+        )
         self._file_endpoint = self._client.endpoint_service_get_file_endpoint_by_name(
             project_id=self._project.project_id, name=self._name
         )
@@ -101,7 +107,7 @@ class Client:
             _FileUploader(
                 client=self._client,
                 teamspace_id=self._project.project_id,
-                cluster_id=self._cluster.cluster_id,
+                cloud_account=self._cloud_account.cluster_id,
                 file_path=argument.value,
                 progress_bar=True,
                 remote_path=_sanitize_uploads_remote_path(argument.value),
@@ -109,7 +115,7 @@ class Client:
 
         json = {
             "teamspace_id": self._project.project_id,
-            "cluster_id": self._cluster.cluster_id,
+            "cluster_id": self._cloud_account.cluster_id,
             "input": {},
         }
         for argument in self._arguments:

@@ -195,14 +195,14 @@ def test_upload_model_single_file(
         metadata={"filenames": "checkpoint.pt"},
         private=True,
         teamspace_id="ts-abc002",
-        cluster_id="test-cluster-id",
+        cloud_account="test-cluster-id",
     )
     ts._teamspace_api.upload_model_file.assert_called_with(
         model_id="test-model-id",
         version="v3",
         local_path=file_path,
         remote_path="checkpoint.pt",
-        cluster_id="test-cluster-id",
+        cloud_account="test-cluster-id",
         teamspace_id="ts-abc002",
         progress_bar=True,
     )
@@ -255,7 +255,7 @@ def test_upload_model_multiple_files(
     call_args = {
         "model_id": "test-model-id",
         "version": "v3",
-        "cluster_id": "test-cluster-id",
+        "cloud_account": "test-cluster-id",
         "teamspace_id": "ts-abc002",
         "progress_bar": True,
     }

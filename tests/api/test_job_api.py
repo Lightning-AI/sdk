@@ -101,7 +101,7 @@ def test_job_v2_submit_job():
 
     job_api.submit_job(
         name="test-job",
-        cluster_id="c-abc",
+        cloud_account="c-abc",
         teamspace_id="ts-abc",
         image="",
         studio_id="st-abc",
@@ -110,7 +110,7 @@ def test_job_v2_submit_job():
         env={"key": "value"},
         command="echo hello",
         image_credentials=None,
-        cluster_auth=True,
+        cloud_account_auth=True,
         artifacts_local=None,
         artifacts_remote=None,
     )
@@ -136,7 +136,7 @@ def test_job_v2_submit_job():
     job_api._client.jobs_service_create_job = create_job_mock
     job_api.submit_job(
         name="test-job",
-        cluster_id="c-abc",
+        cloud_account="c-abc",
         teamspace_id="ts-abc",
         studio_id="",
         image="image-abc",
@@ -145,7 +145,7 @@ def test_job_v2_submit_job():
         env=None,
         command=None,
         image_credentials="dockerhub",
-        cluster_auth=False,
+        cloud_account_auth=False,
         artifacts_local="/output",
         artifacts_remote="efs:data:some-path",
     )

@@ -32,7 +32,7 @@ class _AIHub(_StudiosMenu):
     def deploy(
         self,
         api_id: str,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         name: Optional[str] = None,
         teamspace: Optional[str] = None,
         org: Optional[str] = None,
@@ -41,9 +41,9 @@ class _AIHub(_StudiosMenu):
 
         Args:
           api_id: API template ID.
-          cluster: Cluster to deploy the API to. Defaults to user's default cluster.
+          cloud_account: Cloud Account to deploy the API to. Defaults to user's default cloud account.
           name: Name of the deployed API. Defaults to the name of the API template.
           teamspace: Teamspace to deploy the API to. Defaults to user's default teamspace.
           org: Organization to deploy the API to. Defaults to user's default organization.
         """
-        return self._hub.run(api_id, cluster=cluster, name=name, teamspace=teamspace, org=org)
+        return self._hub.run(api_id, cloud_account=cloud_account, name=name, teamspace=teamspace, org=org)

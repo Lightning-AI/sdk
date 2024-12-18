@@ -11,7 +11,7 @@ from lightning_sdk.owner import Owner
 from lightning_sdk.status import Status
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_teamspace, _setup_logger
+from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace, _setup_logger
 
 if TYPE_CHECKING:
     from lightning_sdk.plugin import Plugin
@@ -30,10 +30,9 @@ class Studio:
         teamspace: the name of the teamspace the studio is contained by
         org: the name of the organization owning the :param`teamspace` in case it is owned by an org
         user: the name of the user owning the :param`teamspace` in case it is owned directly by a user instead of an org
-        cluster: the name of the cluster, the studio should be created on.
+        cloud_account: the name of the cloud account, the studio should be created on.
             Doesn't matter when the studio already exists.
         create_ok: whether the studio will be created if it does not yet exist. Defaults to True
-
     Note:
         Since a teamspace can either be owned by an org or by a user directly,
         only one of the arguments can be provided.
@@ -49,13 +48,14 @@ class Studio:
         teamspace: Optional[Union[str, Teamspace]] = None,
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         create_ok: bool = True,
+        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> None:
         self._studio_api = StudioApi()
 
         self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
-        self._cluster = cluster
+        self._cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
         self._setup_done = False
 
         self._plugins = {}
@@ -70,7 +70,9 @@ class Studio:
                 self._studio = self._studio_api.get_studio(name, self._teamspace.id)
             except ValueError as e:
                 if create_ok:
-                    self._studio = self._studio_api.create_studio(name, self._teamspace.id, cluster=self._cluster)
+                    self._studio = self._studio_api.create_studio(
+                        name, self._teamspace.id, cloud_account=self._cloud_account
+                    )
                 else:
                     raise ValueError(f"Studio {name} does not exist.") from e
 
@@ -144,6 +146,11 @@ class Studio:
     @property
     def cluster(self) -> str:
         """Returns the cluster the Studio is running on."""
+        warnings.warn("Studio.cluster is deprecated. Use Studio.cloud_account instead", DeprecationWarning)
+        return self.cloud_account
+
+    @property
+    def cloud_account(self) -> str:
         return self._studio.cluster_id
 
     def start(self, machine: Union[Machine, str] = Machine.CPU, interruptible: bool = False) -> None:
@@ -242,7 +249,7 @@ class Studio:
         self._studio_api.upload_file(
             studio_id=self._studio.id,
             teamspace_id=self._teamspace.id,
-            cluster_id=self._studio.cluster_id,
+            cloud_account=self._studio.cluster_id,
             file_path=file_path,
             remote_path=os.path.normpath(remote_path),
             progress_bar=progress_bar,
@@ -258,7 +265,7 @@ class Studio:
             target_path=file_path,
             studio_id=self._studio.id,
             teamspace_id=self._teamspace.id,
-            cluster_id=self._studio.cluster_id,
+            cloud_account=self._studio.cluster_id,
         )
 
     def download_folder(self, remote_path: str, target_path: Optional[str] = None) -> None:
@@ -271,7 +278,7 @@ class Studio:
             target_path=target_path,
             studio_id=self._studio.id,
             teamspace_id=self._teamspace.id,
-            cluster_id=self._studio.cluster_id,
+            cloud_account=self._studio.cluster_id,
         )
 
     @property

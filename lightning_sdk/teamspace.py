@@ -1,3 +1,4 @@
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional, Union
 
@@ -97,23 +98,33 @@ class Teamspace:
         from lightning_sdk.studio import Studio
 
         studios = []
-        clusters = self._teamspace_api.list_clusters(teamspace_id=self.id)
+        clusters = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
         for cl in clusters:
-            _studios = self._teamspace_api.list_studios(teamspace_id=self.id, cluster_id=cl.cluster_id)
+            _studios = self._teamspace_api.list_studios(teamspace_id=self.id, cloud_account=cl.cluster_id)
             for s in _studios:
                 studios.append(Studio(name=s.name, teamspace=self, cluster=cl.cluster_name, create_ok=False))
 
         return studios
 
     @property
-    def default_cluster(self) -> str:
+    def default_cloud_account(self) -> str:
         return self._teamspace.project_settings.preferred_cluster
+
+    @property
+    def cloud_accounts(self) -> List[str]:
+        """All cloud accounts associated with that teamspace."""
+        clusters = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
+        return [cl.cluster_name for cl in clusters]
 
     @property
     def clusters(self) -> List[str]:
         """All clusters associated with that teamspace."""
-        clusters = self._teamspace_api.list_clusters(teamspace_id=self.id)
-        return [cl.cluster_name for cl in clusters]
+        warnings.warn(
+            "The 'clusters' attribute is deprecated and will be removed in the future. "
+            "Please use the 'cloud_accounts' attribute instead.",
+            DeprecationWarning,
+        )
+        return self.cloud_accounts
 
     def __eq__(self, other: "Teamspace") -> bool:
         """Checks whether the provided other object is equal to this one."""
@@ -179,7 +190,9 @@ class Teamspace:
         if not path.exists():
             raise FileNotFoundError(str(path))
 
-        cloud_account = self._teamspace_api._determine_cluster_id(self.id) if cloud_account is None else cloud_account
+        cloud_account = (
+            self._teamspace_api._determine_cloud_account(self.id) if cloud_account is None else cloud_account
+        )
         filepaths = [path] if path.is_file() else [p for p in path.rglob("*") if p.is_file()]
 
         if not filepaths:
@@ -199,14 +212,14 @@ class Teamspace:
             metadata={"filenames": filenames},
             private=True,
             teamspace_id=self.id,
-            cluster_id=cloud_account,
+            cloud_account=cloud_account,
         )
         self._teamspace_api.upload_model_files(
             model_id=model.model_id,
             version=model.version,
             root_path=root_path,
             filepaths=filepaths,
-            cluster_id=cloud_account,
+            cloud_account=cloud_account,
             teamspace_id=self.id,
             progress_bar=progress_bar,
         )

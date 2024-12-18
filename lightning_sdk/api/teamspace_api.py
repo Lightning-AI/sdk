@@ -66,12 +66,12 @@ class TeamspaceApi:
                 teamspaces.append(self._get_teamspace_by_id(teamspace.project_id))
         return teamspaces
 
-    def list_studios(self, teamspace_id: str, cluster_id: str = "") -> List[V1CloudSpace]:
+    def list_studios(self, teamspace_id: str, cloud_account: str = "") -> List[V1CloudSpace]:
         """List studios in teamspace."""
         kwargs = {"project_id": teamspace_id, "user_id": self._get_authed_user_id()}
 
-        if cluster_id:
-            kwargs["cluster_id"] = cluster_id
+        if cloud_account:
+            kwargs["cluster_id"] = cloud_account
 
         cloudspaces = []
 
@@ -87,8 +87,8 @@ class TeamspaceApi:
 
         return cloudspaces
 
-    def list_clusters(self, teamspace_id: str) -> List[V1ProjectClusterBinding]:
-        """Lists clusters in a teamspace."""
+    def list_cloud_accounts(self, teamspace_id: str) -> List[V1ProjectClusterBinding]:
+        """Lists cloud_accounts in a teamspace."""
         return self._client.projects_service_list_project_cluster_bindings(project_id=teamspace_id).clusters
 
     def _get_authed_user_id(self) -> str:
@@ -97,32 +97,32 @@ class TeamspaceApi:
         auth.authenticate()
         return auth.user_id
 
-    def get_default_cluster_id(self, teamspace_id: str) -> str:
-        """Get the default cluster id of the teamspace."""
+    def get_default_cloud_account(self, teamspace_id: str) -> str:
+        """Get the default cloud account id of the teamspace."""
         return self._client.projects_service_get_project(teamspace_id).project_settings.preferred_cluster
 
-    def _determine_cluster_id(self, teamspace_id: str) -> str:
-        """Attempts to determine the cluster id of the teamspace.
+    def _determine_cloud_account(self, teamspace_id: str) -> str:
+        """Attempts to determine the cloud account id of the teamspace.
 
         Raises an error if it's ambiguous.
 
         """
-        # when you run  from studio, the cluster is with env. vars
-        cluster_id = os.getenv("LIGHTNING_CLUSTER_ID")
-        if cluster_id:
-            return cluster_id
+        # when you run  from studio, the cloud account is with env. vars
+        cloud_account = os.getenv("LIGHTNING_CLUSTER_ID")
+        if cloud_account:
+            return cloud_account
 
         # if there is only one cluster, use that and ignore default setting :D
-        cluster_ids = [c.cluster_id for c in self.list_clusters(teamspace_id=teamspace_id)]
-        if len(cluster_ids) == 1:
-            return cluster_ids[0]
-        # otherwise, try to determine the default cluster, another API call but we do not care :(
-        default_cluster_id = self.get_default_cluster_id(teamspace_id=teamspace_id)
-        if default_cluster_id:
-            return default_cluster_id
+        cloud_accounts = [c.cluster_id for c in self.list_cloud_accounts(teamspace_id=teamspace_id)]
+        if len(cloud_accounts) == 1:
+            return cloud_accounts[0]
+        # otherwise, try to determine the default cloud_account, another API call but we do not care :(
+        default_cloud_account = self.get_default_cloud_account(teamspace_id=teamspace_id)
+        if default_cloud_account:
+            return default_cloud_account
         raise RuntimeError(
-            "Could not determine the current cluster id. Please provide it manually as input."
-            f" Choices are: {', '.join(cluster_ids)}"
+            "Could not determine the current cloud account. Please provide it manually as input."
+            f" Choices are: {', '.join(cloud_accounts)}"
         )
 
     def create_agent(
@@ -176,18 +176,18 @@ class TeamspaceApi:
         metadata: Dict[str, str],
         private: bool,
         teamspace_id: str,
-        cluster_id: str,
+        cloud_account: str,
     ) -> V1ModelVersionArchive:
         # ask if such model already exists by listing models with specific name
         models = self.models.models_store_list_models(project_id=teamspace_id, name=name).models
         if len(models) == 0:
             return self.models.models_store_create_model(
-                body=ProjectIdModelsBody(cluster_id=cluster_id, metadata=metadata, name=name, private=private),
+                body=ProjectIdModelsBody(cluster_id=cloud_account, metadata=metadata, name=name, private=private),
                 project_id=teamspace_id,
             )
         assert len(models) == 1, "Multiple models with the same name found"
         return self.models.models_store_create_model_version(
-            body=ModelIdVersionsBody(cluster_id=cluster_id),
+            body=ModelIdVersionsBody(cluster_id=cloud_account),
             project_id=teamspace_id,
             model_id=models[0].id,
         )
@@ -211,7 +211,7 @@ class TeamspaceApi:
         version: str,
         local_path: Path,
         remote_path: str,
-        cluster_id: str,
+        cloud_account: str,
         teamspace_id: str,
         progress_bar: bool = True,
     ) -> None:
@@ -220,7 +220,7 @@ class TeamspaceApi:
             model_id=model_id,
             version=version,
             teamspace_id=teamspace_id,
-            cluster_id=cluster_id,
+            cloud_account=cloud_account,
             file_path=str(local_path),
             remote_path=str(remote_path),
             progress_bar=progress_bar,
@@ -233,7 +233,7 @@ class TeamspaceApi:
         version: str,
         root_path: Path,
         filepaths: List[Path],
-        cluster_id: str,
+        cloud_account: str,
         teamspace_id: str,
         progress_bar: bool = True,
     ) -> None:
@@ -244,7 +244,7 @@ class TeamspaceApi:
                 version=version,
                 local_path=filepath,
                 remote_path=str(filepath.relative_to(root_path)),
-                cluster_id=cluster_id,
+                cloud_account=cloud_account,
                 teamspace_id=teamspace_id,
                 progress_bar=progress_bar,  # TODO: Global progress bar
             )

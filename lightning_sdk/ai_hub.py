@@ -124,7 +124,7 @@ class AIHub:
         api_id: str,
         api_arguments: Optional[Dict[str, Any]] = None,
         name: Optional[str] = None,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         org: Optional[Union[str, "Organization"]] = None,
     ) -> Dict[str, Union[str, bool]]:
@@ -143,7 +143,8 @@ class AIHub:
             api_id: The ID of the AIHub template you want to run.
             api_arguments: Additional API argument, such as model name, or batch size.
             name: Name for the deployed API. Defaults to None.
-            cluster: The cluster where you want to run the template, such as "lightning-public-prod". Defaults to None.
+            cloud_account: The cloud account where you want to run the template, such as "lightning-public-prod".
+                Defaults to None.
             teamspace: The team or group for deployment. Defaults to None.
             org: The organization for deployment. Defaults to None.
 
@@ -160,7 +161,11 @@ class AIHub:
 
         api_arguments = api_arguments or {}
         deployment = self._api.run_api(
-            template_id=api_id, cluster_id=cluster, project_id=teamspace_id, name=name, api_arguments=api_arguments
+            template_id=api_id,
+            cloud_account=cloud_account or "",
+            project_id=teamspace_id,
+            name=name,
+            api_arguments=api_arguments,
         )
         url = (
             quote(

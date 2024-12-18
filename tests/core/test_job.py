@@ -176,17 +176,17 @@ def test_submit_job_v2_image(
         command=command,
         env=env,
         interruptible=interruptible,
-        cluster="c-abc",
+        cloud_account="c-abc",
         artifacts_local=artifacts_local,
         artifacts_remote=artifacts_remote,
     )
 
-    # test that everything was passed along correctly to the api layer and that class values
-    # and function params are mixed correctly
+    # test that everything was passed along correctly to the api layer and
+    # that class values and function params are mixed correctly
     submit_mock.assert_called_once_with(
         name="test-job",
         command=command,
-        cluster_id="c-abc",
+        cloud_account="c-abc",
         teamspace_id="ts-abc001",
         studio_id=None,
         image="image-abc",
@@ -194,7 +194,7 @@ def test_submit_job_v2_image(
         interruptible=interruptible,
         env=env,
         image_credentials=None,
-        cluster_auth=False,
+        cloud_account_auth=False,
         artifacts_local=artifacts_local,
         artifacts_remote=artifacts_remote,
     )
@@ -211,7 +211,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
     job._job_api.submit_job = submit_mock
     job._submit(
         machine=machine,
-        cluster=studio.cluster,
+        cloud_account=studio.cloud_account,
         studio=studio,
         env=env,
         interruptible=interruptible,
@@ -221,7 +221,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
     submit_mock.assert_called_once_with(
         name="test-job",
         command="echo hello",
-        cluster_id="c-abc",
+        cloud_account="c-abc",
         teamspace_id="ts-abc001",
         studio_id="st-abc",
         image=None,
@@ -229,7 +229,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         interruptible=interruptible,
         env=env,
         image_credentials=None,
-        cluster_auth=False,
+        cloud_account_auth=False,
         artifacts_local=None,
         artifacts_remote=None,
     )
@@ -267,7 +267,7 @@ def test_submit_jobv2_error_cases(internal_studio_init_mocker):
             command="echo hello",
             env={"key": "value"},
             interruptible=False,
-            cluster=studio.cluster,
+            cloud_account=studio.cloud_account,
         )
 
     with pytest.raises(ValueError, match="command is required when using a studio"):
@@ -278,7 +278,7 @@ def test_submit_jobv2_error_cases(internal_studio_init_mocker):
             command=None,
             env={"key": "value"},
             interruptible=False,
-            cluster=studio.cluster,
+            cloud_account=studio.cloud_account,
         )
 
     with pytest.raises(ValueError, match="either image or studio must be provided"):
@@ -289,7 +289,7 @@ def test_submit_jobv2_error_cases(internal_studio_init_mocker):
             command="echo hello",
             env={"key": "value"},
             interruptible=False,
-            cluster=studio.cluster,
+            cloud_account=studio.cloud_account,
         )
 
 
@@ -455,13 +455,13 @@ def test_submit_jobv2_studio_resolve(job_backend_selector_mocker_v2, internal_st
 
     submit_mock.assert_called_once_with(
         command="echo hello",
-        cluster="c-abc",
+        cloud_account="c-abc",
         env=None,
         image=None,
         interruptible=False,
         machine=Machine.CPU,
         studio=Studio(name="st-abc", teamspace="ts-abc", org="org-abc"),
-        cluster_auth=False,
+        cloud_account_auth=False,
         image_credentials=None,
         artifacts_local=None,
         artifacts_remote=None,
@@ -516,13 +516,13 @@ def test_submit_jobv2_studio_path(
 
     submit_mock.assert_called_once_with(
         command="echo hello",
-        cluster=None if image else "c-abc",
+        cloud_account=None if image else "c-abc",
         env=None,
         image=image,
         interruptible=False,
         machine=Machine.CPU,
         studio=None if image else Studio(name="st-abc", teamspace="ts-abc", org="org-abc"),
-        cluster_auth=False,
+        cloud_account_auth=False,
         image_credentials=None,
         artifacts_local=artifacts_source,
         artifacts_remote=artifacts_destination,

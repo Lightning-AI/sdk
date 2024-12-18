@@ -50,8 +50,9 @@ class _JobV1(_BaseJob):
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         interruptible: bool = False,
+        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "_BaseJob":
         """Start a new async workload from your studio.
 
@@ -63,7 +64,7 @@ class _JobV1(_BaseJob):
             teamspace: the teamspace the job is part of
             org: the organization owning the teamspace (if applicable)
             user: the user owning the teamspace (if applicable)
-            cluster: the cluster to run the workload on
+            cloud_account: the cloud account to run the workload on
             interruptible: whether the workload can be interrupted
 
         Returns:
@@ -78,11 +79,12 @@ class _JobV1(_BaseJob):
             teamspace=teamspace,
             org=org,
             user=user,
-            cluster=cluster,
+            cloud_account=cloud_account,
             env=None,
             interruptible=interruptible,
             image_credentials=None,
-            cluster_auth=False,
+            cloud_account_auth=False,
+            cluster=cluster,
         )
 
     def _submit(
@@ -93,9 +95,9 @@ class _JobV1(_BaseJob):
         image: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         image_credentials: Optional[str] = None,
-        cluster_auth: bool = False,
+        cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> "_JobV1":
@@ -108,9 +110,9 @@ class _JobV1(_BaseJob):
             image: The image to use for the job (not supported).
             env: The environment variables for the job (not supported).
             interruptible: Whether the job can be interrupted.
-            cluster: The cluster to run the job on.
+            cloud_account: The cloud account to run the job on.
             image_credentials: The image credentials for the job (not supported).
-            cluster_auth: Whether to use cluster authentication for the job (not supported).
+            cloud_account_auth: Whether to use cloud account authentication for the job (not supported).
             artifacts_local: The local path for persisting artifacts (not supported).
             artifacts_remote: The remote path for persisting artifacts (not supported).
 
@@ -120,7 +122,7 @@ class _JobV1(_BaseJob):
         """
         if studio is None:
             raise ValueError("Studio is required for submitting jobs")
-        if image is not None or image_credentials is not None or cluster_auth:
+        if image is not None or image_credentials is not None or cloud_account_auth:
             raise ValueError("Image is not supported for submitting jobs")
 
         if artifacts_local is not None or artifacts_remote is not None:
@@ -136,7 +138,7 @@ class _JobV1(_BaseJob):
             command=command,
             studio_id=studio._studio.id,
             teamspace_id=self._teamspace.id,
-            cluster_id=cluster,
+            cloud_account=cloud_account or "",
             machine=machine,
             interruptible=interruptible,
         )

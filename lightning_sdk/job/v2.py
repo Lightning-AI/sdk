@@ -42,9 +42,9 @@ class _JobV2(_BaseJob):
         image: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         image_credentials: Optional[str] = None,
-        cluster_auth: bool = False,
+        cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> "_JobV2":
@@ -58,12 +58,13 @@ class _JobV2(_BaseJob):
             image: The docker image to run the job with. Mutually exclusive with studio.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
-            cluster: The cluster to run the job on. Defaults to the studio cluster if running with studio compute env.
-                If not provided will fall back to the teamspaces default cluster.
+            cloud_account: The cloud account to run the job on.
+                Defaults to the studio cloud account if running with studio compute env.
+                If not provided will fall back to the teamspaces default cloud account.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
-            cluster_auth: Whether to authenticate with the cluster to pull the image.
-                Required if the registry is part of a cluster provider (e.g. ECR).
+            cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
+                Required if the registry is part of a cloud provider (e.g. ECR).
             artifacts_local: The path of inside the docker container, you want to persist images from.
                 CAUTION: When setting this to "/", it will effectively erase your container.
                 Only supported for jobs with a docker image compute environment.
@@ -95,7 +96,7 @@ class _JobV2(_BaseJob):
         submitted = self._job_api.submit_job(
             name=self.name,
             command=command,
-            cluster_id=cluster,
+            cloud_account=cloud_account,
             teamspace_id=self._teamspace.id,
             studio_id=studio_id,
             image=image,
@@ -103,7 +104,7 @@ class _JobV2(_BaseJob):
             interruptible=interruptible,
             env=env,
             image_credentials=image_credentials,
-            cluster_auth=cluster_auth,
+            cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
         )

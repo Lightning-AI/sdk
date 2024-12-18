@@ -25,7 +25,6 @@ def test_submit_mmt_v2_image(
 
     submit_mock = mock.MagicMock()
     job._job_api.submit_job = submit_mock
-
     job._submit(
         num_machines=5,
         machine=machine,
@@ -33,18 +32,18 @@ def test_submit_mmt_v2_image(
         command=command,
         env=env,
         interruptible=interruptible,
-        cluster="c-abc",
+        cloud_account="c-abc",
         artifacts_local=artifacts_local,
         artifacts_remote=artifacts_remote,
     )
 
-    # test that everything was passed along correctly to the api layer
-    # and that class values and function params are mixed correctly
+    # test that everything was passed along correctly to the api layer and
+    # that class values and function params are mixed correctly
     submit_mock.assert_called_once_with(
         name="test-job",
         num_machines=5,
         command=command,
-        cluster_id="c-abc",
+        cloud_account="c-abc",
         teamspace_id="ts-abc001",
         studio_id=None,
         image="image-abc",
@@ -52,7 +51,7 @@ def test_submit_mmt_v2_image(
         interruptible=interruptible,
         env=env,
         image_credentials=None,
-        cluster_auth=False,
+        cloud_account_auth=False,
         artifacts_local=artifacts_local,
         artifacts_remote=artifacts_remote,
     )
@@ -70,7 +69,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
     job._submit(
         machine=machine,
         num_machines=5,
-        cluster=studio.cluster,
+        cloud_account=studio.cloud_account,
         studio=studio,
         env=env,
         interruptible=interruptible,
@@ -81,7 +80,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         name="test-job",
         num_machines=5,
         command="echo hello",
-        cluster_id="c-abc",
+        cloud_account="c-abc",
         teamspace_id="ts-abc001",
         studio_id="st-abc",
         image=None,
@@ -89,7 +88,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         interruptible=interruptible,
         env=env,
         image_credentials=None,
-        cluster_auth=False,
+        cloud_account_auth=False,
         artifacts_local=None,
         artifacts_remote=None,
     )
@@ -128,7 +127,7 @@ def test_submit_mmtv2_error_cases(internal_studio_init_mocker):
             command="echo hello",
             env={"key": "value"},
             interruptible=False,
-            cluster=studio.cluster,
+            cloud_account=studio.cloud_account,
         )
 
     with pytest.raises(ValueError, match="command is required when using a studio"):
@@ -140,7 +139,7 @@ def test_submit_mmtv2_error_cases(internal_studio_init_mocker):
             command=None,
             env={"key": "value"},
             interruptible=False,
-            cluster=studio.cluster,
+            cloud_account=studio.cloud_account,
         )
 
     with pytest.raises(ValueError, match="either image or studio must be provided"):
@@ -152,7 +151,7 @@ def test_submit_mmtv2_error_cases(internal_studio_init_mocker):
             command="echo hello",
             env={"key": "value"},
             interruptible=False,
-            cluster=studio.cluster,
+            cloud_account=studio.cloud_account,
         )
 
 

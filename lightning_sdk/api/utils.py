@@ -66,14 +66,14 @@ class _FileUploader:
         self,
         client: LightningClient,
         teamspace_id: str,
-        cluster_id: str,
+        cloud_account: str,
         file_path: str,
         remote_path: str,
         progress_bar: bool,
     ) -> None:
         self.client = client
         self.teamspace_id = teamspace_id
-        self.cluster_id = cluster_id
+        self.cloud_account = cloud_account
 
         self.local_path = file_path
 
@@ -107,7 +107,7 @@ class _FileUploader:
 
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload."""
-        body = ProjectIdStorageBody(cluster_id=self.cluster_id, filename=self.remote_path)
+        body = ProjectIdStorageBody(cluster_id=self.cloud_account, filename=self.remote_path)
         resp: V1UploadProjectArtifactResponse = self.client.storage_service_upload_project_artifact(
             body=body, project_id=self.teamspace_id
         )
@@ -123,7 +123,7 @@ class _FileUploader:
                 completed.extend(self._process_upload_batch(executor=p, batch=batch, upload_id=resp.upload_id))
 
         completed_body = StorageCompleteBody(
-            cluster_id=self.cluster_id, filename=self.remote_path, parts=completed, upload_id=resp.upload_id
+            cluster_id=self.cloud_account, filename=self.remote_path, parts=completed, upload_id=resp.upload_id
         )
         self.client.storage_service_complete_upload_project_artifact(body=completed_body, project_id=self.teamspace_id)
 
@@ -135,7 +135,7 @@ class _FileUploader:
 
     def _request_urls(self, parts: List[int], upload_id: str) -> List[V1PresignedUrl]:
         """Requests urls for a batch of parts."""
-        body = UploadsUploadIdBody(cluster_id=self.cluster_id, filename=self.remote_path, parts=parts)
+        body = UploadsUploadIdBody(cluster_id=self.cloud_account, filename=self.remote_path, parts=parts)
         resp: V1UploadProjectArtifactPartsResponse = self.client.storage_service_upload_project_artifact_parts(
             body, self.teamspace_id, upload_id
         )
@@ -192,7 +192,7 @@ class _ModelFileUploader:
         model_id: str,
         version: str,
         teamspace_id: str,
-        cluster_id: str,
+        cloud_account: str,
         file_path: str,
         remote_path: str,
         progress_bar: bool,
@@ -201,7 +201,6 @@ class _ModelFileUploader:
         self.model_id = model_id
         self.version = version
         self.teamspace_id = teamspace_id
-        self.cluster_id = cluster_id
         self.local_path = file_path
         self.remote_path = remote_path
 
@@ -562,7 +561,7 @@ def _create_app(
     client: CloudSpaceServiceApi,
     studio_id: str,
     teamspace_id: str,
-    cluster_id: str,
+    cloud_account: str,
     plugin_type: str,
     **other_arguments: Any,
 ) -> Externalv1LightningappInstance:
@@ -575,7 +574,7 @@ def _create_app(
         del other_arguments["interruptible"]
 
     body = AppsIdBody(
-        cluster_id=cluster_id,
+        cluster_id=cloud_account,
         plugin_arguments=other_arguments,
         service_id=os.getenv(_LIGHTNING_SERVICE_EXECUTION_ID_KEY),
         unique_id=__GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id],
@@ -586,6 +585,6 @@ def _create_app(
     ).lightningappinstance
 
     if _LIGHTNING_DEBUG:
-        print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {cluster_id=}")
+        print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {cloud_account=}")
 
     return resp

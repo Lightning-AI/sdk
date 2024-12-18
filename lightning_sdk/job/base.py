@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Dict, Optional, Union
 
-from lightning_sdk.utils.resolve import _resolve_teamspace
+from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import Machine
@@ -58,13 +58,14 @@ class _BaseJob(ABC):
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
-        cluster_auth: bool = False,
+        cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "_BaseJob":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -78,14 +79,15 @@ class _BaseJob(ABC):
             teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
             org: The organization owning the teamspace (if any). Defaults to the current organization.
             user: The user owning the teamspace (if any). Defaults to the current user.
-            cluster: The cluster to run the job on. Defaults to the studio cluster if running with studio compute env.
-                If not provided will fall back to the teamspaces default cluster.
+            cloud_account: The cloud account to run the job on.
+                Defaults to the studio cloud account if running with studio compute env.
+                If not provided will fall back to the teamspaces default cloud account.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
-            cluster_auth: Whether to authenticate with the cluster to pull the image.
-                Required if the registry is part of a cluster provider (e.g. ECR).
+            cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
+                Required if the registry is part of a cloud provider (e.g. ECR).
             artifacts_local: The path of inside the docker container, you want to persist images from.
                 CAUTION: When setting this to "/", it will effectively erase your container.
                 Only supported for jobs with a docker image compute environment.
@@ -99,12 +101,16 @@ class _BaseJob(ABC):
         """
         from lightning_sdk.studio import Studio
 
+        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+
         if not name:
             raise ValueError("A job needs to have a name!")
 
         if image is None:
             if not isinstance(studio, Studio):
-                studio = Studio(name=studio, teamspace=teamspace, org=org, user=user, cluster=cluster, create_ok=False)
+                studio = Studio(
+                    name=studio, teamspace=teamspace, org=org, user=user, cloud_account=cloud_account, create_ok=False
+                )
 
             # studio is a Studio instance at this point
             if teamspace is None:
@@ -118,20 +124,20 @@ class _BaseJob(ABC):
                         "Can only run jobs with Studio envs in the teamspace of that Studio."
                     )
 
-            if cluster is None:
-                cluster = studio.cluster
+            if cloud_account is None:
+                cloud_account = studio.cloud_account
 
-            if cluster != studio.cluster:
+            if cloud_account != studio.cloud_account:
                 raise ValueError(
-                    "Studio cluster does not match provided cluster. "
-                    "Can only run jobs with Studio envs in the same cluster."
+                    "Studio cloud account does not match provided cloud account. "
+                    "Can only run jobs with Studio envs in the same cloud account."
                 )
 
             if image_credentials is not None:
                 raise ValueError("image_credentials is only supported when using a custom image")
 
-            if cluster_auth:
-                raise ValueError("cluster_auth is only supported when using a custom image")
+            if cloud_account_auth:
+                raise ValueError("cloud_account_auth is only supported when using a custom image")
 
             if artifacts_local is not None or artifacts_remote is not None:
                 raise ValueError(
@@ -158,14 +164,14 @@ class _BaseJob(ABC):
         inst = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
         return inst._submit(
             machine=machine,
-            cluster=cluster,
+            cloud_account=cloud_account,
             command=command,
             studio=studio,
             image=image,
             env=env,
             interruptible=interruptible,
             image_credentials=image_credentials,
-            cluster_auth=cluster_auth,
+            cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
         )
@@ -179,9 +185,9 @@ class _BaseJob(ABC):
         image: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         image_credentials: Optional[str] = None,
-        cluster_auth: bool = False,
+        cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> "_BaseJob":
@@ -195,12 +201,13 @@ class _BaseJob(ABC):
             image: The docker image to run the job with. Mutually exclusive with studio.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
-            cluster: The cluster to run the job on. Defaults to the studio cluster if running with studio compute env.
-                If not provided will fall back to the teamspaces default cluster.
+            cloud_account: The cloud account to run the job on.
+                Defaults to the studio cloud account if running with studio compute env.
+                If not provided will fall back to the teamspaces default cloud account.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
-            cluster_auth: Whether to authenticate with the cluster to pull the image.
-                Required if the registry is part of a cluster provider (e.g. ECR).
+            cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
+                Required if the registry is part of a cloud provider (e.g. ECR).
             artifacts_local: The path of inside the docker container, you want to persist images from.
                 CAUTION: When setting this to "/", it will effectively erase your container.
                 Only supported for jobs with a docker image compute environment.

@@ -48,7 +48,7 @@ def test_list_teamspaces(internal_teamspace_api_list_mocker):
 def test_list_studios(internal_studio_api_list_mocker):
     teamspace_api = TeamspaceApi()
 
-    studios = teamspace_api.list_studios(cluster_id="cluster_abc", teamspace_id="ts-abc")
+    studios = teamspace_api.list_studios(cloud_account="cluster_abc", teamspace_id="ts-abc")
 
     assert len(studios) == 3
     for st in studios:
@@ -58,7 +58,7 @@ def test_list_studios(internal_studio_api_list_mocker):
 def test_list_clusters(internal_teamspace_api_cluster_list_mocker):
     teamspace_api = TeamspaceApi()
 
-    clusters = teamspace_api.list_clusters(teamspace_id="ts-abc")
+    clusters = teamspace_api.list_cloud_accounts(teamspace_id="ts-abc")
 
     assert len(clusters) == 2
     for cl in clusters:
@@ -89,7 +89,7 @@ def test_upload_model_file(uploader_mock):
         version="latest",
         local_path=Path("path/to/checkpoint.pt"),
         remote_path="modelpath/on/cluster",
-        cluster_id="test-cluster-id",
+        cloud_account="test-cluster-id",
         teamspace_id="test-project-id",
         progress_bar=False,
     )
@@ -99,7 +99,7 @@ def test_upload_model_file(uploader_mock):
         version="latest",
         file_path="path/to/checkpoint.pt",
         remote_path="modelpath/on/cluster",
-        cluster_id="test-cluster-id",
+        cloud_account="test-cluster-id",
         teamspace_id="test-project-id",
         progress_bar=False,
     )
@@ -110,30 +110,30 @@ def test_try_get_cluster_id():
     # cluster set via env variable
     teamspace_api = TeamspaceApi()
     with mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "cluster-via-env"}):
-        cluster_id = teamspace_api._determine_cluster_id("teamspace-id")
+        cluster_id = teamspace_api._determine_cloud_account("teamspace-id")
     assert cluster_id == "cluster-via-env"
 
     # teamspace has single cluster
-    teamspace_api.list_clusters = mock.Mock(return_value=[mock.Mock(cluster_id="test-cluster")])
-    teamspace_api.get_default_cluster_id = mock.Mock(return_value="test-cluster")
+    teamspace_api.list_cloud_accounts = mock.Mock(return_value=[mock.Mock(cluster_id="test-cluster")])
+    teamspace_api.get_default_cloud_account = mock.Mock(return_value="test-cluster")
     with mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": ""}):
-        cluster_id = teamspace_api._determine_cluster_id("teamspace-id")
+        cluster_id = teamspace_api._determine_cloud_account("teamspace-id")
     assert cluster_id == "test-cluster"
 
     # disabled cluster default
-    teamspace_api.get_default_cluster_id = mock.Mock(return_value="")
+    teamspace_api.get_default_cloud_account = mock.Mock(return_value="")
 
     # ambiguous, can't determine which cluster to use
-    teamspace_api.list_clusters = mock.Mock(
+    teamspace_api.list_cloud_accounts = mock.Mock(
         return_value=[
             mock.Mock(cluster_id="test-cluster-1"),
             mock.Mock(cluster_id="test-cluster-2"),
         ]
     )
     with mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": ""}), pytest.raises(
-        RuntimeError, match="Could not determine the current cluster id"
+        RuntimeError, match="Could not determine the current cloud account"
     ):
-        _ = teamspace_api._determine_cluster_id("teamspace-id")
+        _ = teamspace_api._determine_cloud_account("teamspace-id")
 
 
 def test_create_delete_model():
@@ -145,7 +145,9 @@ def test_create_delete_model():
         models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[])),
         models_store_create_model=mock.MagicMock(return_value=mock.MagicMock(model_id="model-id")),
     )
-    teamspace_api.create_model(teamspace_id="ts-abc", **model_body)
+    teamspace_api.create_model(
+        teamspace_id="ts-abc", name="model-name", metadata={}, private=True, cloud_account="cluster-abc"
+    )
     # validate the calls
     teamspace_api._models.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
     teamspace_api._models.models_store_create_model.assert_called_with(
@@ -165,7 +167,6 @@ def test_create_delete_model():
 
 def test_create_delete_model_version():
     teamspace_api = TeamspaceApi()
-    model_body = {"name": "model-name", "metadata": {}, "private": True, "cluster_id": "cluster-abc"}
     # mock the models_store_list_models and models_store_create_model_version for existing model
     teamspace_api._models = mock.MagicMock(
         models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[mock.MagicMock(id="model-id")])),
@@ -173,7 +174,20 @@ def test_create_delete_model_version():
             return_value=mock.MagicMock(model_id="model-id", version="v1")
         ),
     )
-    version = teamspace_api.create_model(teamspace_id="ts-abc", **model_body)
+    version = teamspace_api.create_model(
+        teamspace_id="ts-abc",
+        name="model-name",
+        metadata={},
+        private=True,
+        cloud_account="cluster-abc",
+    )
+    version = teamspace_api.create_model(
+        teamspace_id="ts-abc",
+        name="model-name",
+        metadata={},
+        private=True,
+        cloud_account="cluster-abc",
+    )
     teamspace_api._models.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
     teamspace_api._models.models_store_create_model_version.assert_called_with(
         project_id="ts-abc", body=ModelIdVersionsBody(cluster_id="cluster-abc"), model_id="model-id"

@@ -110,7 +110,7 @@ class AIHubApi:
         return job
 
     def run_api(
-        self, template_id: str, project_id: str, cluster_id: str, name: Optional[str], api_arguments: Dict[str, str]
+        self, template_id: str, project_id: str, cloud_account: str, name: Optional[str], api_arguments: Dict[str, str]
     ) -> V1Deployment:
         template = self._client.deployment_templates_service_get_deployment_template(template_id)
         name = name or template.name
@@ -121,7 +121,7 @@ class AIHubApi:
             project_id=project_id,
             body=CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(
                 autoscaling=template.spec_v2.autoscaling,
-                cluster_id=cluster_id,
+                cluster_id=cloud_account,
                 endpoint=template.spec_v2.endpoint,
                 name=name,
                 replicas=0,

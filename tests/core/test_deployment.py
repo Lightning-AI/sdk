@@ -263,7 +263,7 @@ def test_deployment_start_first_time(monkeypatch):
             threshold=75,
         ),
         ports=[50],
-        cluster="cluster_id",
+        cloud_account="cluster_id",
         machine=Machine.A10G,
         environment="ollama/ollama:latest",
     )

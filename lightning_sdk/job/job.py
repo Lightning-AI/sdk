@@ -55,13 +55,14 @@ class Job(_BaseJob):
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
-        cluster_auth: bool = False,
+        cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "Job":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -69,30 +70,31 @@ class Job(_BaseJob):
         name: The name of the job. Needs to be unique within the teamspace.
         machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
         command: The command to run inside your job. Required if using a studio. Optional if using an image.
-        If not provided for images, will run the container entrypoint and default command.
+            If not provided for images, will run the container entrypoint and default command.
         studio: The studio env to run the job with. Mutually exclusive with image.
         image: The docker image to run the job with. Mutually exclusive with studio.
         teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
         org: The organization owning the teamspace (if any). Defaults to the current organization.
         user: The user owning the teamspace (if any). Defaults to the current user.
-        cluster: The cluster to run the job on. Defaults to the studio cluster if running with studio compute env.
-        If not provided will fall back to the teamspaces default cluster.
+        cloud_account: The cloud acocunt to run the job on.
+            Defaults to the studio cloud account if running with studio compute env.
+        If not provided will fall back to the teamspaces default cloud account.
         env: Environment variables to set inside the job.
         interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
         image_credentials: The credentials used to pull the image. Required if the image is private.
-        This should be the name of the respective credentials secret created on the Lightning AI platform.
-        cluster_auth: Whether to authenticate with the cluster to pull the image.
-        Required if the registry is part of a cluster provider (e.g. ECR).
+            This should be the name of the respective credentials secret created on the Lightning AI platform.
+        cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
+            Required if the registry is part of a cloud provider (e.g. ECR).
         artifacts_local: The path of inside the docker container, you want to persist images from.
-        CAUTION: When setting this to "/", it will effectively erase your container.
-        Only supported for jobs with a docker image compute environment.
+            CAUTION: When setting this to "/", it will effectively erase your container.
+            Only supported for jobs with a docker image compute environment.
         artifacts_remote: The remote storage to persist your artifacts to.
-        Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
-        PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
-        E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
-        within it.
-        Note that the connection needs to be added to the teamspace already in order for it to be found.
-        Only supported for jobs with a docker image compute environment.
+            Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
+            PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
+            E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
+            within it.
+            Note that the connection needs to be added to the teamspace already in order for it to be found.
+            Only supported for jobs with a docker image compute environment.
         """
         ret_val = super().run(
             name=name,
@@ -103,13 +105,14 @@ class Job(_BaseJob):
             teamspace=teamspace,
             org=org,
             user=user,
-            cluster=cluster,
+            cloud_account=cloud_account,
             env=env,
             interruptible=interruptible,
             image_credentials=image_credentials,
-            cluster_auth=cluster_auth,
+            cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            cluster=cluster,
         )
         # required for typing with "Job"
         assert isinstance(ret_val, cls)
@@ -123,9 +126,9 @@ class Job(_BaseJob):
         image: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         image_credentials: Optional[str] = None,
-        cluster_auth: bool = False,
+        cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> "Job":
@@ -139,12 +142,13 @@ class Job(_BaseJob):
             image: The docker image to run the job with. Mutually exclusive with studio.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
-            cluster: The cluster to run the job on. Defaults to the studio cluster if running with studio compute env.
-                If not provided will fall back to the teamspaces default cluster.
+            cloud_account: The cloud account to run the job on.
+                Defaults to the studio cloud account if running with studio compute env.
+                If not provided will fall back to the teamspaces default cloud account.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
-            cluster_auth: Whether to authenticate with the cluster to pull the image.
-                Required if the registry is part of a cluster provider (e.g. ECR).
+            cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
+                Required if the registry is part of a cloud provider (e.g. ECR).
             artifacts_local: The path of inside the docker container, you want to persist images from.
                 CAUTION: When setting this to "/", it will effectively erase your container.
                 Only supported for jobs with a docker image compute environment.
@@ -158,14 +162,14 @@ class Job(_BaseJob):
         """
         self._job = self._internal_job._submit(
             machine=machine,
-            cluster=cluster,
+            cloud_account=cloud_account,
             command=command,
             studio=studio,
             image=image,
             env=env,
             interruptible=interruptible,
             image_credentials=image_credentials,
-            cluster_auth=cluster_auth,
+            cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
         )

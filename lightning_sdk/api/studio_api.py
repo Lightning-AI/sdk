@@ -108,11 +108,11 @@ class StudioApi:
         self,
         name: str,
         teamspace_id: str,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
     ) -> V1CloudSpace:
-        """Create a Studio with a given name in a given Teamspace on a possibly given cluster."""
+        """Create a Studio with a given name in a given Teamspace on a possibly given cloud_account."""
         body = ProjectIdCloudspacesBody(
-            cluster_id=cluster,
+            cluster_id=cloud_account,
             name=name,
             display_name=name,
             seed_files=[V1CloudSpaceSeedFile(path="main.py", contents="print('Hello, Lightning World!')\n")],
@@ -383,20 +383,32 @@ class StudioApi:
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
 
     def upload_file(
-        self, studio_id: str, teamspace_id: str, cluster_id: str, file_path: str, remote_path: str, progress_bar: bool
+        self,
+        studio_id: str,
+        teamspace_id: str,
+        cloud_account: str,
+        file_path: str,
+        remote_path: str,
+        progress_bar: bool,
     ) -> None:
         """Uploads file to given remote path on the studio."""
         _FileUploader(
             client=self._client,
             teamspace_id=teamspace_id,
-            cluster_id=cluster_id,
+            cloud_account=cloud_account,
             file_path=file_path,
             remote_path=_sanitize_studio_remote_path(remote_path, studio_id),
             progress_bar=progress_bar,
         )()
 
     def download_file(
-        self, path: str, target_path: str, studio_id: str, teamspace_id: str, cluster_id: str, progress_bar: bool = True
+        self,
+        path: str,
+        target_path: str,
+        studio_id: str,
+        teamspace_id: str,
+        cloud_account: str,
+        progress_bar: bool = True,
     ) -> None:
         """Downloads a given file from a Studio to a target location."""
         # TODO: Update this endpoint to permit basic auth
@@ -405,7 +417,7 @@ class StudioApi:
         token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
 
         query_params = {
-            "clusterId": cluster_id,
+            "clusterId": cloud_account,
             "key": _sanitize_studio_remote_path(path, studio_id),
             "token": token,
         }
@@ -439,7 +451,13 @@ class StudioApi:
                 pbar_update(len(chunk))
 
     def download_folder(
-        self, path: str, target_path: str, studio_id: str, teamspace_id: str, cluster_id: str, progress_bar: bool = True
+        self,
+        path: str,
+        target_path: str,
+        studio_id: str,
+        teamspace_id: str,
+        cloud_account: str,
+        progress_bar: bool = True,
     ) -> None:
         """Downloads a given folder from a Studio to a target location."""
         # TODO: Update this endpoint to permit basic auth
@@ -448,7 +466,7 @@ class StudioApi:
         token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
 
         query_params = {
-            "clusterId": cluster_id,
+            "clusterId": cloud_account,
             "prefix": _sanitize_studio_remote_path(path, studio_id),
             "token": token,
         }
@@ -553,14 +571,14 @@ class StudioApi:
         machine: Machine,
         studio_id: str,
         teamspace_id: str,
-        cluster_id: str,
+        cloud_account: str,
         interruptible: bool,
     ) -> Externalv1LightningappInstance:
         """Creates a job with given commands."""
         return self._create_app(
             studio_id=studio_id,
             teamspace_id=teamspace_id,
-            cluster_id=cluster_id,
+            cloud_account=cloud_account,
             plugin_type="job",
             entrypoint=entrypoint,
             name=name,
@@ -577,7 +595,7 @@ class StudioApi:
         strategy: str,
         studio_id: str,
         teamspace_id: str,
-        cluster_id: str,
+        cloud_account: str,
         interruptible: bool,
     ) -> Externalv1LightningappInstance:
         """Creates a multi-machine job with given commands."""
@@ -589,7 +607,7 @@ class StudioApi:
         return self._create_app(
             studio_id=studio_id,
             teamspace_id=teamspace_id,
-            cluster_id=cluster_id,
+            cloud_account=cloud_account,
             plugin_type="distributed_plugin",
             entrypoint=entrypoint,
             name=name,
@@ -605,7 +623,7 @@ class StudioApi:
         machine: Machine,
         studio_id: str,
         teamspace_id: str,
-        cluster_id: str,
+        cloud_account: str,
         interruptible: bool,
     ) -> Externalv1LightningappInstance:
         """Creates a multi-machine job with given commands."""
@@ -616,7 +634,7 @@ class StudioApi:
         return self._create_app(
             studio_id=studio_id,
             teamspace_id=teamspace_id,
-            cluster_id=cluster_id,
+            cloud_account=cloud_account,
             plugin_type="litdata",
             entrypoint=entrypoint,
             name=name,
@@ -638,14 +656,14 @@ class StudioApi:
         endpoint: str,
         studio_id: str,
         teamspace_id: str,
-        cluster_id: str,
+        cloud_account: str,
         interruptible: bool,
     ) -> Externalv1LightningappInstance:
         """Creates an inference job for given endpoint."""
         return self._create_app(
             studio_id=studio_id,
             teamspace_id=teamspace_id,
-            cluster_id=cluster_id,
+            cloud_account=cloud_account,
             plugin_type="inference_plugin",
             compute=_MACHINE_TO_COMPUTE_NAME[machine],
             entrypoint=entrypoint,
@@ -661,14 +679,14 @@ class StudioApi:
         )
 
     def _create_app(
-        self, studio_id: str, teamspace_id: str, cluster_id: str, plugin_type: str, **other_arguments: Any
+        self, studio_id: str, teamspace_id: str, cloud_account: str, plugin_type: str, **other_arguments: Any
     ) -> Externalv1LightningappInstance:
         """Creates an arbitrary app."""
         return _create_app(
             self._client,
             studio_id=studio_id,
             teamspace_id=teamspace_id,
-            cluster_id=cluster_id,
+            cloud_account=cloud_account,
             plugin_type=plugin_type,
             **other_arguments,
         )

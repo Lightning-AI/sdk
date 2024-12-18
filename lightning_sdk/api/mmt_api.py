@@ -41,7 +41,7 @@ class MMTApi:
         name: str,
         num_machines: int,
         command: Optional[str],
-        cluster_id: Optional[str],
+        cloud_account: Optional[str],
         teamspace_id: str,
         studio_id: Optional[str],
         image: Optional[str],
@@ -49,7 +49,7 @@ class MMTApi:
         interruptible: bool,
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
-        cluster_auth: bool,
+        cloud_account_auth: bool,
         artifacts_local: Optional[str],
         artifacts_remote: Optional[str],
     ) -> V1MultiMachineJob:
@@ -64,7 +64,7 @@ class MMTApi:
 
         spec = V1JobSpec(
             cloudspace_id=studio_id or "",
-            cluster_id=cluster_id or "",
+            cluster_id=cloud_account or "",
             command=command or "",
             entrypoint="sh -c",
             env=env_vars,
@@ -72,12 +72,14 @@ class MMTApi:
             instance_name=instance_name,
             run_id=run_id,
             spot=interruptible,
-            image_cluster_credentials=cluster_auth,
+            image_cluster_credentials=cloud_account_auth,
             image_secret_ref=image_credentials or "",
             artifacts_source=artifacts_local or "",
             artifacts_destination=artifacts_remote or "",
         )
-        body = ProjectIdMultimachinejobsBody(name=name, spec=spec, cluster_id=cluster_id or "", machines=num_machines)
+        body = ProjectIdMultimachinejobsBody(
+            name=name, spec=spec, cluster_id=cloud_account or "", machines=num_machines
+        )
 
         job: V1MultiMachineJob = self._client.jobs_service_create_multi_machine_job(project_id=teamspace_id, body=body)
         return job

@@ -47,13 +47,14 @@ class MMT(_BaseMMT):
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
-        cluster_auth: bool = False,
+        cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "MMT":
         ret_val = super().run(
             name=name,
@@ -65,13 +66,14 @@ class MMT(_BaseMMT):
             teamspace=teamspace,
             org=org,
             user=user,
-            cluster=cluster,
+            cloud_account=cloud_account,
             env=env,
             interruptible=interruptible,
             image_credentials=image_credentials,
-            cluster_auth=cluster_auth,
+            cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            cluster=cluster,  # deprecated in favor of cloud_account
         )
         # required for typing with "Job"
         assert isinstance(ret_val, cls)
@@ -86,23 +88,23 @@ class MMT(_BaseMMT):
         image: Optional[str] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
-        cluster: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         image_credentials: Optional[str] = None,
-        cluster_auth: bool = False,
+        cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> "MMT":
         self._job = self._internal_mmt._submit(
             num_machines=num_machines,
             machine=machine,
-            cluster=cluster,
+            cloud_account=cloud_account,
             command=command,
             studio=studio,
             image=image,
             env=env,
             interruptible=interruptible,
             image_credentials=image_credentials,
-            cluster_auth=cluster_auth,
+            cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
         )
@@ -150,8 +152,8 @@ class MMT(_BaseMMT):
         return self._internal_mmt._teamspace
 
     @property
-    def cluster(self) -> Optional[str]:
-        return self._internal_mmt.cluster
+    def cloud_account(self) -> Optional[str]:
+        return self._internal_mmt.cloud_account
 
     def __getattr__(self, key: str) -> Any:
         """Forward the attribute lookup to the internal job implementation."""

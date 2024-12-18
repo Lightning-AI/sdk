@@ -46,6 +46,24 @@ def _resolve_deprecated_cloud_compute(machine: Machine, cloud_compute: Optional[
     return machine
 
 
+def _resolve_deprecated_cluster(cloud_account: Optional[str], cluster: Optional[str]) -> Optional[str]:
+    if cluster is not None:
+        if cloud_account is not None:
+            raise ValueError(
+                "Cannot use both 'cluster' and 'cloud_account' at the same time."
+                "Please don't set the 'cluster' as it will be deprecated!"
+            )
+
+        warnings.warn(
+            "The 'cluster' argument will be deprecated in the future! "
+            "Please consider using the 'cloud_account' argument instead!",
+            DeprecationWarning,
+        )
+        return cluster
+
+    return cloud_account
+
+
 def _resolve_org_name(name: Optional[str]) -> Optional[str]:
     if name is None:
         name = os.environ.get("LIGHTNING_ORG", "") or None

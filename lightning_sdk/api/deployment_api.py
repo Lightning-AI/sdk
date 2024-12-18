@@ -239,7 +239,7 @@ class DeploymentApi:
         command: Optional[str] = None,
         env: Optional[List[Union[Env, Secret]]] = None,
         spot: Optional[bool] = None,
-        cluster_id: Optional[str] = None,
+        cloud_account: Optional[str] = None,
         min_replicas: Optional[int] = None,
         max_replicas: Optional[int] = None,
         name: Optional[str] = None,
@@ -270,7 +270,7 @@ class DeploymentApi:
         requires_release |= apply_change(deployment.spec, "command", command)
         requires_release |= apply_change(deployment.spec, "env", to_env(env))
         requires_release |= apply_change(deployment.spec, "env", to_health_check(health_check))
-        requires_release |= apply_change(deployment.spec, "cluster_id", cluster_id)
+        requires_release |= apply_change(deployment.spec, "cluster_id", cloud_account)
         requires_release |= apply_change(deployment.spec, "spot", spot)
 
         if requires_release:
@@ -521,7 +521,7 @@ def to_health_check(
 
 
 def to_spec(
-    cluster_id: Optional[str],
+    cloud_account: Optional[str],
     machine: Optional[Machine],
     environment: Optional[str],
     entrypoint: Optional[str],
@@ -530,8 +530,8 @@ def to_spec(
     env: Optional[List[Union[Secret, Env]]] = None,
     health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
 ) -> V1JobSpec:
-    if cluster_id is None:
-        raise ValueError("The cluster should be defined.")
+    if cloud_account is None:
+        raise ValueError("The cloud account should be defined.")
 
     if machine is None:
         raise ValueError("The machine should be defined.")
@@ -540,7 +540,7 @@ def to_spec(
         raise ValueError("The environment should be defined.")
 
     return V1JobSpec(
-        cluster_id=cluster_id,
+        cluster_id=cloud_account,
         command=command,
         entrypoint=entrypoint,
         env=to_env(env),

@@ -147,7 +147,7 @@ class JobsPlugin(_Plugin):
             command=command,
             studio=self._studio,
             teamspace=self._studio.teamspace,
-            cluster=self._studio._cluster,
+            cloud_account=self._studio.cloud_account,
             interruptible=interruptible,
         )
 
@@ -198,7 +198,7 @@ class MultiMachineTrainingPlugin(_Plugin):
             strategy=strategy,
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
-            cluster_id=self._studio._studio.cluster_id,
+            cloud_account=self._studio.cloud_account,
             interruptible=interruptible,
         )
 
@@ -242,7 +242,7 @@ class MultiMachineDataPrepPlugin(_Plugin):
             machine=machine,
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
-            cluster_id=self._studio._studio.cluster_id,
+            cloud_account=self._studio.cloud_account,
             interruptible=interruptible,
         )
 
@@ -289,7 +289,7 @@ class InferenceServerPlugin(_Plugin):
             endpoint=endpoint,
             studio_id=self._studio._studio.id,
             teamspace_id=self._studio._teamspace.id,
-            cluster_id=self._studio._studio.cluster_id,
+            cloud_account=self._studio.cloud_account,
             interruptible=interruptible,
         )
 
