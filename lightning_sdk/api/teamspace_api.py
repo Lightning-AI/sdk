@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from tqdm.auto import tqdm
+
 from lightning_sdk.api.utils import _download_model_files, _DummyBody, _get_model_version, _ModelFileUploader
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
@@ -235,6 +237,7 @@ class TeamspaceApi:
         teamspace_id: str,
         progress_bar: bool = True,
     ) -> None:
+        main_pbar = tqdm(total=len(filepaths), desc="Uploading files...", position=0) if progress_bar else None
         for filepath in filepaths:
             self.upload_model_file(
                 model_id=model_id,
@@ -245,6 +248,8 @@ class TeamspaceApi:
                 teamspace_id=teamspace_id,
                 progress_bar=progress_bar,  # TODO: Global progress bar
             )
+            if main_pbar:
+                main_pbar.update(1)
 
     def complete_model_upload(self, model_id: str, version: str, teamspace_id: str) -> None:
         self.models.models_store_complete_model_upload(

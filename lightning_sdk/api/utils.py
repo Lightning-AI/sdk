@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import backoff
 import requests
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__, _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.openapi import (
@@ -215,6 +215,8 @@ class _ModelFileUploader:
                 unit="B",
                 unit_scale=True,
                 unit_divisor=1000,
+                position=1,
+                leave=False,
             )
         else:
             self.progress_bar = None
