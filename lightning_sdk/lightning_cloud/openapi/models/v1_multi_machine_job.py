@@ -44,6 +44,7 @@ class V1MultiMachineJob(object):
         'cloudspace_id': 'str',
         'created_at': 'datetime',
         'desired_state': 'V1MultiMachineJobState',
+        'fault_tolerance': 'V1MultiMachineJobFaultTolerance',
         'id': 'str',
         'machines': 'int',
         'message': 'str',
@@ -60,6 +61,7 @@ class V1MultiMachineJob(object):
         'cloudspace_id': 'cloudspaceId',
         'created_at': 'createdAt',
         'desired_state': 'desiredState',
+        'fault_tolerance': 'faultTolerance',
         'id': 'id',
         'machines': 'machines',
         'message': 'message',
@@ -72,11 +74,12 @@ class V1MultiMachineJob(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, id: 'str' =None, machines: 'int' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, id: 'str' =None, machines: 'int' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1MultiMachineJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._created_at = None
         self._desired_state = None
+        self._fault_tolerance = None
         self._id = None
         self._machines = None
         self._message = None
@@ -94,6 +97,8 @@ class V1MultiMachineJob(object):
             self.created_at = created_at
         if desired_state is not None:
             self.desired_state = desired_state
+        if fault_tolerance is not None:
+            self.fault_tolerance = fault_tolerance
         if id is not None:
             self.id = id
         if machines is not None:
@@ -177,6 +182,27 @@ class V1MultiMachineJob(object):
         """
 
         self._desired_state = desired_state
+
+    @property
+    def fault_tolerance(self) -> 'V1MultiMachineJobFaultTolerance':
+        """Gets the fault_tolerance of this V1MultiMachineJob.  # noqa: E501
+
+
+        :return: The fault_tolerance of this V1MultiMachineJob.  # noqa: E501
+        :rtype: V1MultiMachineJobFaultTolerance
+        """
+        return self._fault_tolerance
+
+    @fault_tolerance.setter
+    def fault_tolerance(self, fault_tolerance: 'V1MultiMachineJobFaultTolerance'):
+        """Sets the fault_tolerance of this V1MultiMachineJob.
+
+
+        :param fault_tolerance: The fault_tolerance of this V1MultiMachineJob.  # noqa: E501
+        :type: V1MultiMachineJobFaultTolerance
+        """
+
+        self._fault_tolerance = fault_tolerance
 
     @property
     def id(self) -> 'str':
