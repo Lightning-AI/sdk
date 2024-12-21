@@ -1,3 +1,4 @@
+import concurrent.futures
 import errno
 import math
 import os
@@ -377,6 +378,7 @@ class _FileDownloader:
         teamspace_id: str,
         remote_path: str,
         file_path: str,
+        executor: ThreadPoolExecutor,
         num_workers: int = 20,
         progress_bar: Optional[tqdm] = None,
     ) -> None:
@@ -390,7 +392,7 @@ class _FileDownloader:
         self.num_workers = num_workers
         self._url = ""
         self._size = 0
-        self.refresh()
+        self.executor = executor
 
     @backoff.on_exception(backoff.expo, ApiException, max_tries=10)
     def refresh(self) -> None:
@@ -446,15 +448,13 @@ class _FileDownloader:
                 if remaining_size > 0:
                     f.write(b"\x00" * remaining_size)
 
-    def _multipart_download(self, filename: str, max_workers: int) -> None:
-        num_chunks = max_workers
+    def _multipart_download(self, filename: str, num_workers: int) -> None:
+        num_chunks = num_workers
         chunk_size = math.ceil(self.size / num_chunks)
 
         if chunk_size < _DOWNLOAD_MIN_CHUNK_SIZE:
             num_chunks = math.ceil(self.size / _DOWNLOAD_MIN_CHUNK_SIZE)
             chunk_size = _DOWNLOAD_MIN_CHUNK_SIZE
-
-        num_workers = min(max_workers, num_chunks)
 
         ranges = []
         for part_number in range(num_chunks):
@@ -462,10 +462,12 @@ class _FileDownloader:
             end = min(start + chunk_size - 1, self.size - 1)
             ranges.append((start, end))
 
-        with ThreadPoolExecutor(max_workers=num_workers) as executor:
-            executor.map(partial(self._download_chunk, filename), ranges)
+        futures = [self.executor.submit(self._download_chunk, filename, r) for r in ranges]
+        concurrent.futures.wait(futures)
 
     def download(self) -> None:
+        self.refresh()
+
         tmp_filename = f"{self.local_path}.download"
 
         try:
@@ -537,24 +539,33 @@ def _download_model_files(
             unit_divisor=1000,
         )
 
-    for filepath in response.filepaths:
-        local_file = download_dir / filepath
-        local_file.parent.mkdir(parents=True, exist_ok=True)
+    with ThreadPoolExecutor(max_workers=min(num_workers, len(response.filepaths))) as file_executor, ThreadPoolExecutor(
+        max_workers=num_workers
+    ) as part_executor:
+        futures = []
 
-        file_downloader = _FileDownloader(
-            client=client,
-            model_id=response.model_id,
-            version=response.version,
-            teamspace_id=response.project_id,
-            remote_path=filepath,
-            file_path=str(local_file),
-            num_workers=num_workers,
-            progress_bar=pbar,
-        )
+        for filepath in response.filepaths:
+            local_file = download_dir / filepath
+            local_file.parent.mkdir(parents=True, exist_ok=True)
 
-        file_downloader.download()
+            file_downloader = _FileDownloader(
+                client=client,
+                model_id=response.model_id,
+                version=response.version,
+                teamspace_id=response.project_id,
+                remote_path=filepath,
+                file_path=str(local_file),
+                num_workers=num_workers,
+                progress_bar=pbar,
+                executor=part_executor,
+            )
 
-    return response.filepaths
+            futures.append(file_executor.submit(file_downloader.download))
+
+        # wait for all threads
+        concurrent.futures.wait(futures)
+
+        return response.filepaths
 
 
 def _create_app(

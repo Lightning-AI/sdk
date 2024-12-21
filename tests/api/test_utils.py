@@ -150,19 +150,15 @@ def test_model_file_uploader(_, tmp_path, monkeypatch):
 
 
 @mock.patch("lightning_sdk.api.utils.ModelsStoreApi")
-@mock.patch("lightning_sdk.api.utils._FileDownloader.download")
-def test_download_model_files(download_mock, api_mock, tmp_path):
+@mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
+@mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
+def test_download_model_files(wait_mock, executor_mock, api_mock, tmp_path):
     api_mock.return_value.models_store_get_model_files.return_value = Mock(
         model_id="test-model-id",
         project_id="test-project-id",
         version="latest",
         filepaths=["path/to/file1", "path/to/file2"],
     )
-
-    api_mock.return_value.models_store_get_model_file_url.side_effect = [
-        Mock(url="http://example.com/file1", size=10),
-        Mock(url="http://example.com/file2", size=10),
-    ]
 
     _download_model_files(
         client=Mock(),
@@ -178,15 +174,26 @@ def test_download_model_files(download_mock, api_mock, tmp_path):
         project_name="test-project", project_owner_name="test-user", name="modelname", version="latest"
     )
 
-    assert api_mock.return_value.models_store_get_model_file_url.call_count == 2
-    api_mock.return_value.models_store_get_model_file_url.assert_any_call(
-        project_id="test-project-id", model_id="test-model-id", version="latest", filepath="path/to/file1"
-    )
-    api_mock.return_value.models_store_get_model_file_url.assert_any_call(
-        project_id="test-project-id", model_id="test-model-id", version="latest", filepath="path/to/file2"
+
+@mock.patch("lightning_sdk.api.utils.ModelsStoreApi")
+def test_file_downloader_refresh(api_mock):
+    api_mock.return_value.models_store_get_model_file_url.return_value = Mock(url="http://example.com/file1", size=10)
+
+    file_downloader = _FileDownloader(
+        client=Mock(),
+        model_id="model-id",
+        version="version",
+        teamspace_id="project-id",
+        remote_path="file1-remote",
+        file_path="file1-local",
+        num_workers=1,
+        executor=Mock(),
     )
 
-    assert download_mock.call_count == 2
+    file_downloader.refresh()
+
+    assert file_downloader._url == "http://example.com/file1"
+    assert file_downloader._size == 10
 
 
 def mock_iter_content(chunk_size):
@@ -217,7 +224,10 @@ def test_download_chunk_success(mock_get):
         teamspace_id="bar",
         remote_path="some",
         file_path=filename,
+        executor=Mock(),
     )
+
+    file_downloader._url = url
 
     with mock.patch("builtins.open", mock_open()) as mock_file:
         file_downloader._download_chunk(filename, (start, end))
@@ -255,6 +265,7 @@ def test_download_chunk_failure(mock_refresh, mock_url, mock_get):
         teamspace_id="bar",
         remote_path="some",
         file_path=filename,
+        executor=Mock(),
     )
 
     file_downloader._download_chunk(filename, (start, end))
@@ -262,4 +273,4 @@ def test_download_chunk_failure(mock_refresh, mock_url, mock_get):
     mock_get.assert_called_once_with(url, headers={"Range": "bytes=0-100"}, stream=True)
     assert mock_response.raise_for_status.call_count == 1
 
-    assert mock_refresh.call_count == 2
+    assert mock_refresh.call_count == 1
