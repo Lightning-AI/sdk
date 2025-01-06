@@ -1,15 +1,19 @@
+import json
 import time
 from typing import TYPE_CHECKING, Dict, Optional
 
+from lightning_sdk.api.job_api import JobApiV1
 from lightning_sdk.api.utils import (
     _COMPUTE_NAME_TO_MACHINE,
     _MACHINE_TO_COMPUTE_NAME,
+    _create_app,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
 )
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
 from lightning_sdk.lightning_cloud.openapi import (
+    Externalv1LightningappInstance,
     MultimachinejobsIdBody,
     ProjectIdMultimachinejobsBody,
     V1EnvVar,
@@ -24,7 +28,43 @@ if TYPE_CHECKING:
     from lightning_sdk.status import Status
 
 
-class MMTApi:
+class MMTApiV1(JobApiV1):
+    def __init__(self) -> None:
+        self._cloud_url = _cloud_url()
+        self._client = LightningClient(max_tries=7)
+
+    def submit_job(
+        self,
+        name: str,
+        num_machines: int,
+        command: Optional[str],
+        cloud_account: Optional[str],
+        teamspace_id: str,
+        studio_id: str,
+        machine: Machine,
+        interruptible: bool,
+        strategy: str,
+    ) -> Externalv1LightningappInstance:
+        """Creates a multi-machine job with given commands."""
+        distributed_args = {
+            "cloud_compute": _MACHINE_TO_COMPUTE_NAME[machine],
+            "num_instances": num_machines,
+            "strategy": strategy,
+        }
+        return _create_app(
+            client=self._client,
+            studio_id=studio_id,
+            teamspace_id=teamspace_id,
+            cloud_account=cloud_account or "",
+            plugin_type="distributed_plugin",
+            entrypoint=command,
+            name=name,
+            distributedArguments=json.dumps(distributed_args),
+            interruptible=interruptible,
+        )
+
+
+class MMTApiV2:
     mmt_state_unspecified = "MultiMachineJob_STATE_UNSPECIFIED"
     mmt_state_running = "MultiMachineJob_STATE_RUNNING"
     mmt_state_stopped = "MultiMachineJob_STATE_STOPPED"

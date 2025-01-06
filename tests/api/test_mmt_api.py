@@ -3,7 +3,12 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.api.mmt_api import MMTApi
+from lightning_sdk.api.mmt_api import MMTApiV1, MMTApiV2
+
+try:
+    from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
+except ImportError:
+    from lightning_sdk.lightning_cloud.openapi import AppsIdBody
 from lightning_sdk.lightning_cloud.openapi import (
     MultimachinejobsIdBody,
     ProjectIdMultimachinejobsBody,
@@ -15,8 +20,45 @@ from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 
 
+def test_mmt_v1_submit_job():
+    job_api = MMTApiV1()
+
+    create_job_mock = mock.MagicMock()
+    job_api._client.cloud_space_service_create_cloud_space_app_instance = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=5,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="st-abc",
+        machine=Machine.T4_X_4,
+        interruptible=False,
+        command="echo hello",
+        strategy="parallel",
+    )
+
+    body = AppsIdBody(
+        cluster_id="c-abc",
+        plugin_arguments={
+            "distributedArguments": '{"cloud_compute": '
+            '"g4dn.12xlarge", '
+            '"num_instances": 5, "strategy": '
+            '"parallel"}',
+            "entrypoint": "echo hello",
+            "name": "test-job",
+            "spot": "false",
+        },
+        unique_id=mock.ANY,
+    )
+
+    create_job_mock.assert_called_once_with(
+        body=body, project_id="ts-abc", cloudspace_id="st-abc", id="distributed_plugin"
+    )
+
+
 def test_mmt_v2_submit_job():
-    job_api = MMTApi()
+    job_api = MMTApiV2()
 
     create_job_mock = mock.MagicMock()
     job_api._client.jobs_service_create_multi_machine_job = create_job_mock
@@ -95,7 +137,7 @@ def test_mmt_v2_submit_job():
 
 
 def test_get_mmt_by_name():
-    job_api = MMTApi()
+    job_api = MMTApiV2()
 
     get_job_by_name_mock = mock.MagicMock()
     job_api._client.jobs_service_get_multi_machine_job_by_name = get_job_by_name_mock
@@ -105,7 +147,7 @@ def test_get_mmt_by_name():
 
 
 def test_get_mmt():
-    job_api = MMTApi()
+    job_api = MMTApiV2()
 
     get_job_mock = mock.MagicMock()
     job_api._client.jobs_service_get_multi_machine_job = get_job_mock
@@ -125,7 +167,7 @@ def test_get_mmt():
     ],
 )
 def test_translate_state(internal_state, expected_state):
-    job_api = MMTApi()
+    job_api = MMTApiV2()
     assert job_api._job_state_to_external(internal_state) == expected_state
 
 
@@ -140,7 +182,7 @@ def test_translate_state(internal_state, expected_state):
     ],
 )
 def test_machine_translate(instance_name, instance_type, expected_machine):
-    job_api = MMTApi()
+    job_api = MMTApiV2()
 
     spec = V1JobSpec(
         instance_name=instance_name,
@@ -168,7 +210,7 @@ def test_machine_translate(instance_name, instance_type, expected_machine):
     ],
 )
 def test_mmt_stop(job_states: List[str], total_calls_get_job: int, called_update_job: bool):
-    job_api = MMTApi()
+    job_api = MMTApiV2()
 
     def get_job_side_effect(*args, **kwargs):
         while job_states:
@@ -204,7 +246,7 @@ def test_mmt_stop(job_states: List[str], total_calls_get_job: int, called_update
 
 
 def test_mmt_delete():
-    job_api = MMTApi()
+    job_api = MMTApiV2()
 
     delete_job_mock = mock.MagicMock()
     job_api._client.jobs_service_delete_multi_machine_job = delete_job_mock

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
-from lightning_sdk.api.mmt_api import MMTApi
+from lightning_sdk.api.mmt_api import MMTApiV2
 
 if TYPE_CHECKING:
     from lightning_sdk.job.job import Job
@@ -24,7 +24,7 @@ class _MMTV2(_BaseMMT):
         *,
         _fetch_job: bool = True,
     ) -> None:
-        self._job_api = MMTApi()
+        self._job_api = MMTApiV2()
         super().__init__(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=_fetch_job)
 
     def _submit(
