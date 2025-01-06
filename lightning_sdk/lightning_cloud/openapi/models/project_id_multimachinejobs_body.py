@@ -42,6 +42,7 @@ class ProjectIdMultimachinejobsBody(object):
     """
     swagger_types = {
         'cluster_id': 'str',
+        'fault_tolerance': 'V1MultiMachineJobFaultTolerance',
         'machines': 'int',
         'name': 'str',
         'spec': 'V1JobSpec'
@@ -49,20 +50,24 @@ class ProjectIdMultimachinejobsBody(object):
 
     attribute_map = {
         'cluster_id': 'clusterId',
+        'fault_tolerance': 'faultTolerance',
         'machines': 'machines',
         'name': 'name',
         'spec': 'spec'
     }
 
-    def __init__(self, cluster_id: 'str' =None, machines: 'int' =None, name: 'str' =None, spec: 'V1JobSpec' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, machines: 'int' =None, name: 'str' =None, spec: 'V1JobSpec' =None):  # noqa: E501
         """ProjectIdMultimachinejobsBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
+        self._fault_tolerance = None
         self._machines = None
         self._name = None
         self._spec = None
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if fault_tolerance is not None:
+            self.fault_tolerance = fault_tolerance
         if machines is not None:
             self.machines = machines
         if name is not None:
@@ -90,6 +95,27 @@ class ProjectIdMultimachinejobsBody(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def fault_tolerance(self) -> 'V1MultiMachineJobFaultTolerance':
+        """Gets the fault_tolerance of this ProjectIdMultimachinejobsBody.  # noqa: E501
+
+
+        :return: The fault_tolerance of this ProjectIdMultimachinejobsBody.  # noqa: E501
+        :rtype: V1MultiMachineJobFaultTolerance
+        """
+        return self._fault_tolerance
+
+    @fault_tolerance.setter
+    def fault_tolerance(self, fault_tolerance: 'V1MultiMachineJobFaultTolerance'):
+        """Sets the fault_tolerance of this ProjectIdMultimachinejobsBody.
+
+
+        :param fault_tolerance: The fault_tolerance of this ProjectIdMultimachinejobsBody.  # noqa: E501
+        :type: V1MultiMachineJobFaultTolerance
+        """
+
+        self._fault_tolerance = fault_tolerance
 
     @property
     def machines(self) -> 'int':

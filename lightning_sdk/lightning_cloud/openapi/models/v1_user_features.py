@@ -47,7 +47,6 @@ class V1UserFeatures(object):
         'ai_hub_monetization': 'bool',
         'auto_fast_load': 'bool',
         'auto_join_orgs': 'bool',
-        'aws_trainium': 'bool',
         'b2c_experience': 'bool',
         'cap_add': 'list[str]',
         'cap_drop': 'list[str]',
@@ -57,7 +56,6 @@ class V1UserFeatures(object):
         'code_tab': 'bool',
         'collab_screen_sharing': 'bool',
         'cost_attribution_settings': 'bool',
-        'crypto_monitoring': 'bool',
         'custom_app_domain': 'bool',
         'custom_instance_types': 'bool',
         'default_one_cluster': 'bool',
@@ -132,7 +130,6 @@ class V1UserFeatures(object):
         'ai_hub_monetization': 'aiHubMonetization',
         'auto_fast_load': 'autoFastLoad',
         'auto_join_orgs': 'autoJoinOrgs',
-        'aws_trainium': 'awsTrainium',
         'b2c_experience': 'b2cExperience',
         'cap_add': 'capAdd',
         'cap_drop': 'capDrop',
@@ -142,7 +139,6 @@ class V1UserFeatures(object):
         'code_tab': 'codeTab',
         'collab_screen_sharing': 'collabScreenSharing',
         'cost_attribution_settings': 'costAttributionSettings',
-        'crypto_monitoring': 'cryptoMonitoring',
         'custom_app_domain': 'customAppDomain',
         'custom_instance_types': 'customInstanceTypes',
         'default_one_cluster': 'defaultOneCluster',
@@ -210,7 +206,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, aws_trainium: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, crypto_monitoring: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_customize_api: 'bool' =None, deployment_data_path: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_version_visibility: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, dynamic_workload_scheduling: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, instant_capacity_reservation: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lightning_registry: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, multiple_deployment_versions: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, s3_folders: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_customize_api: 'bool' =None, deployment_data_path: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_version_visibility: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, dynamic_workload_scheduling: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, instant_capacity_reservation: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lightning_registry: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, multiple_deployment_versions: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, s3_folders: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._advanced_deployment_autoscaling = None
         self._affiliate_links = None
@@ -218,7 +214,6 @@ class V1UserFeatures(object):
         self._ai_hub_monetization = None
         self._auto_fast_load = None
         self._auto_join_orgs = None
-        self._aws_trainium = None
         self._b2c_experience = None
         self._cap_add = None
         self._cap_drop = None
@@ -228,7 +223,6 @@ class V1UserFeatures(object):
         self._code_tab = None
         self._collab_screen_sharing = None
         self._cost_attribution_settings = None
-        self._crypto_monitoring = None
         self._custom_app_domain = None
         self._custom_instance_types = None
         self._default_one_cluster = None
@@ -307,8 +301,6 @@ class V1UserFeatures(object):
             self.auto_fast_load = auto_fast_load
         if auto_join_orgs is not None:
             self.auto_join_orgs = auto_join_orgs
-        if aws_trainium is not None:
-            self.aws_trainium = aws_trainium
         if b2c_experience is not None:
             self.b2c_experience = b2c_experience
         if cap_add is not None:
@@ -327,8 +319,6 @@ class V1UserFeatures(object):
             self.collab_screen_sharing = collab_screen_sharing
         if cost_attribution_settings is not None:
             self.cost_attribution_settings = cost_attribution_settings
-        if crypto_monitoring is not None:
-            self.crypto_monitoring = crypto_monitoring
         if custom_app_domain is not None:
             self.custom_app_domain = custom_app_domain
         if custom_instance_types is not None:
@@ -587,27 +577,6 @@ class V1UserFeatures(object):
         self._auto_join_orgs = auto_join_orgs
 
     @property
-    def aws_trainium(self) -> 'bool':
-        """Gets the aws_trainium of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The aws_trainium of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._aws_trainium
-
-    @aws_trainium.setter
-    def aws_trainium(self, aws_trainium: 'bool'):
-        """Sets the aws_trainium of this V1UserFeatures.
-
-
-        :param aws_trainium: The aws_trainium of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._aws_trainium = aws_trainium
-
-    @property
     def b2c_experience(self) -> 'bool':
         """Gets the b2c_experience of this V1UserFeatures.  # noqa: E501
 
@@ -795,27 +764,6 @@ class V1UserFeatures(object):
         """
 
         self._cost_attribution_settings = cost_attribution_settings
-
-    @property
-    def crypto_monitoring(self) -> 'bool':
-        """Gets the crypto_monitoring of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The crypto_monitoring of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._crypto_monitoring
-
-    @crypto_monitoring.setter
-    def crypto_monitoring(self, crypto_monitoring: 'bool'):
-        """Sets the crypto_monitoring of this V1UserFeatures.
-
-
-        :param crypto_monitoring: The crypto_monitoring of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._crypto_monitoring = crypto_monitoring
 
     @property
     def custom_app_domain(self) -> 'bool':

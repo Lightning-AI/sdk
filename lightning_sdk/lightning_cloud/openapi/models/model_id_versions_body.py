@@ -41,19 +41,24 @@ class ModelIdVersionsBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'cluster_id': 'str'
+        'cluster_id': 'str',
+        'version': 'str'
     }
 
     attribute_map = {
-        'cluster_id': 'clusterId'
+        'cluster_id': 'clusterId',
+        'version': 'version'
     }
 
-    def __init__(self, cluster_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """ModelIdVersionsBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
+        self._version = None
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if version is not None:
+            self.version = version
 
     @property
     def cluster_id(self) -> 'str':
@@ -75,6 +80,27 @@ class ModelIdVersionsBody(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def version(self) -> 'str':
+        """Gets the version of this ModelIdVersionsBody.  # noqa: E501
+
+
+        :return: The version of this ModelIdVersionsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._version
+
+    @version.setter
+    def version(self, version: 'str'):
+        """Sets the version of this ModelIdVersionsBody.
+
+
+        :param version: The version of this ModelIdVersionsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._version = version
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

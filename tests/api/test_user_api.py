@@ -24,7 +24,7 @@ def test_user_api_valueerror(internal_user_api_mocker, monkeypatch):
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
     autospec=True,
-    return_value=V1GetUserResponse(features=V1UserFeatures(aws_trainium=True, jobs_v2=True)),
+    return_value=V1GetUserResponse(features=V1UserFeatures(plugin_sweeps=True, jobs_v2=True)),
 )
 def test_user_api_get_feature_flags(mocker):
     user_api = UserApi()
@@ -33,6 +33,6 @@ def test_user_api_get_feature_flags(mocker):
 
     # These are some random feature flags that are currently available.
     # If this test fails because they were removed, it needs to be updated to new flags here and in the mock above
-    assert feature_flags.aws_trainium
+    assert feature_flags.plugin_sweeps
     assert feature_flags.jobs_v2
     assert not feature_flags.enable_efs
