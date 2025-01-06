@@ -32,7 +32,11 @@ dependencies = [
     "simple-term-menu", # for CLI
     "lightning-utilities", # for legacy CLI
 ]
+
 dynamic = ["version"]
+
+[project.optional-dependencies]
+serve = ["litserve>=0.2.5"]
 
 [project.scripts]
 lightning = "lightning_sdk.cli.entrypoint:main_cli"

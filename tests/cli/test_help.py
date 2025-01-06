@@ -22,11 +22,17 @@ GROUPS
      aihub
        Interact with Lightning Studio - AI Hub.
 
+     dockerize
+       Generate a Dockerfile for a LitServe model.
+
      download
        Download files and folders from Lightning AI.
 
      run
        Run async workloads on the Lightning AI platform.
+
+     serve
+       Serve a LitServe model.
 
      upload
        Upload files and folders to Lightning AI.

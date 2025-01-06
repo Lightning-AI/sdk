@@ -47,7 +47,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r tests/requirements.txt ${{ matrix.extra-installs }}
-        pip install . --upgrade
+        pip install '.[serve]' --upgrade
         pip list
 
     - name: Configure AWS credentials
