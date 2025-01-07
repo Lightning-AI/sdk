@@ -27,5 +27,5 @@ __all__ = [
     "AIHub",
 ]
 
-__version__ = "0.1.42"
+__version__ = "0.1.43"
 _check_version_and_prompt_upgrade(__version__)
