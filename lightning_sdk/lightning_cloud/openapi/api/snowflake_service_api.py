@@ -56,6 +56,8 @@ class SnowflakeServiceApi(object):
         :param str username:
         :param str password:
         :param str account:
+        :param str private_key_file:
+        :param str private_key_password:
         :return: V1CheckSnowflakeConnectionResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -80,12 +82,14 @@ class SnowflakeServiceApi(object):
         :param str username:
         :param str password:
         :param str account:
+        :param str private_key_file:
+        :param str private_key_password:
         :return: V1CheckSnowflakeConnectionResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'username', 'password', 'account']  # noqa: E501
+        all_params = ['project_id', 'username', 'password', 'account', 'private_key_file', 'private_key_password']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -118,6 +122,10 @@ class SnowflakeServiceApi(object):
             query_params.append(('password', params['password']))  # noqa: E501
         if 'account' in params:
             query_params.append(('account', params['account']))  # noqa: E501
+        if 'private_key_file' in params:
+            query_params.append(('privateKeyFile', params['private_key_file']))  # noqa: E501
+        if 'private_key_password' in params:
+            query_params.append(('privateKeyPassword', params['private_key_password']))  # noqa: E501
 
         header_params = {}
 

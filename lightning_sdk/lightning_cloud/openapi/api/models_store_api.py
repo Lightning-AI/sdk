@@ -1037,7 +1037,7 @@ class ModelsStoreApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/{projectOwnerName}/{projectName}/models/{modelName}', 'GET',
+            '/v1/projects/{projectOwnerName}/{projectName}/models/{modelName}', 'GET',
             path_params,
             query_params,
             header_params,

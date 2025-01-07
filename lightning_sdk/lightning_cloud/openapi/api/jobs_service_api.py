@@ -2600,7 +2600,8 @@ class JobsServiceApi(object):
         :param str cloudspace_id:
         :param str user_id:
         :param str deployment_id:
-        :param bool standalone: Whether to list standalone jobs, not part of a deployment.
+        :param str multi_machine_job_id:
+        :param bool standalone: Whether to list standalone jobs, not part of a deployment or mmt.
         :param str page_token:
         :param int limit:
         :param str state:
@@ -2628,7 +2629,8 @@ class JobsServiceApi(object):
         :param str cloudspace_id:
         :param str user_id:
         :param str deployment_id:
-        :param bool standalone: Whether to list standalone jobs, not part of a deployment.
+        :param str multi_machine_job_id:
+        :param bool standalone: Whether to list standalone jobs, not part of a deployment or mmt.
         :param str page_token:
         :param int limit:
         :param str state:
@@ -2637,7 +2639,7 @@ class JobsServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'user_id', 'deployment_id', 'standalone', 'page_token', 'limit', 'state']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'user_id', 'deployment_id', 'multi_machine_job_id', 'standalone', 'page_token', 'limit', 'state']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2670,6 +2672,8 @@ class JobsServiceApi(object):
             query_params.append(('userId', params['user_id']))  # noqa: E501
         if 'deployment_id' in params:
             query_params.append(('deploymentId', params['deployment_id']))  # noqa: E501
+        if 'multi_machine_job_id' in params:
+            query_params.append(('multiMachineJobId', params['multi_machine_job_id']))  # noqa: E501
         if 'standalone' in params:
             query_params.append(('standalone', params['standalone']))  # noqa: E501
         if 'page_token' in params:

@@ -83,6 +83,7 @@ class V1UserFeatures(object):
         'lit_logger_storage_v2': 'bool',
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
+        'mmt_v2': 'bool',
         'model_store': 'bool',
         'multiple_deployment_versions': 'bool',
         'multiple_studio_versions': 'bool',
@@ -166,6 +167,7 @@ class V1UserFeatures(object):
         'lit_logger_storage_v2': 'litLoggerStorageV2',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
+        'mmt_v2': 'mmtV2',
         'model_store': 'modelStore',
         'multiple_deployment_versions': 'multipleDeploymentVersions',
         'multiple_studio_versions': 'multipleStudioVersions',
@@ -206,7 +208,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_customize_api: 'bool' =None, deployment_data_path: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_version_visibility: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, dynamic_workload_scheduling: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, instant_capacity_reservation: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lightning_registry: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_store: 'bool' =None, multiple_deployment_versions: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, s3_folders: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_customize_api: 'bool' =None, deployment_data_path: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_version_visibility: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, dynamic_workload_scheduling: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, instant_capacity_reservation: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lightning_registry: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mmt_v2: 'bool' =None, model_store: 'bool' =None, multiple_deployment_versions: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, s3_folders: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._advanced_deployment_autoscaling = None
         self._affiliate_links = None
@@ -250,6 +252,7 @@ class V1UserFeatures(object):
         self._lit_logger_storage_v2 = None
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
+        self._mmt_v2 = None
         self._model_store = None
         self._multiple_deployment_versions = None
         self._multiple_studio_versions = None
@@ -373,6 +376,8 @@ class V1UserFeatures(object):
             self.mmt_fault_tolerance = mmt_fault_tolerance
         if mmt_strategy_selector is not None:
             self.mmt_strategy_selector = mmt_strategy_selector
+        if mmt_v2 is not None:
+            self.mmt_v2 = mmt_v2
         if model_store is not None:
             self.model_store = model_store
         if multiple_deployment_versions is not None:
@@ -1331,6 +1336,27 @@ class V1UserFeatures(object):
         """
 
         self._mmt_strategy_selector = mmt_strategy_selector
+
+    @property
+    def mmt_v2(self) -> 'bool':
+        """Gets the mmt_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The mmt_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._mmt_v2
+
+    @mmt_v2.setter
+    def mmt_v2(self, mmt_v2: 'bool'):
+        """Sets the mmt_v2 of this V1UserFeatures.
+
+
+        :param mmt_v2: The mmt_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._mmt_v2 = mmt_v2
 
     @property
     def model_store(self) -> 'bool':

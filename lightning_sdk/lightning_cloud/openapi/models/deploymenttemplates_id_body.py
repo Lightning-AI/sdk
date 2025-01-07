@@ -43,6 +43,7 @@ class DeploymenttemplatesIdBody(object):
     swagger_types = {
         'about_page_content': 'str',
         'categories': 'list[str]',
+        'cloud_space_id': 'str',
         'description': 'str',
         'featured': 'bool',
         'image_url': 'str',
@@ -61,6 +62,7 @@ class DeploymenttemplatesIdBody(object):
     attribute_map = {
         'about_page_content': 'aboutPageContent',
         'categories': 'categories',
+        'cloud_space_id': 'cloudSpaceId',
         'description': 'description',
         'featured': 'featured',
         'image_url': 'imageUrl',
@@ -76,10 +78,11 @@ class DeploymenttemplatesIdBody(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, description: 'str' =None, featured: 'bool' =None, image_url: 'str' =None, metrics: 'V1DeploymentMetrics' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pricing: 'V1ApiPricingSpec' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, categories: 'list[str]' =None, cloud_space_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, image_url: 'str' =None, metrics: 'V1DeploymentMetrics' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pricing: 'V1ApiPricingSpec' =None, spec: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, visibility: 'V1DeploymentTemplateType' =None):  # noqa: E501
         """DeploymenttemplatesIdBody - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._categories = None
+        self._cloud_space_id = None
         self._description = None
         self._featured = None
         self._image_url = None
@@ -98,6 +101,8 @@ class DeploymenttemplatesIdBody(object):
             self.about_page_content = about_page_content
         if categories is not None:
             self.categories = categories
+        if cloud_space_id is not None:
+            self.cloud_space_id = cloud_space_id
         if description is not None:
             self.description = description
         if featured is not None:
@@ -166,6 +171,27 @@ class DeploymenttemplatesIdBody(object):
         """
 
         self._categories = categories
+
+    @property
+    def cloud_space_id(self) -> 'str':
+        """Gets the cloud_space_id of this DeploymenttemplatesIdBody.  # noqa: E501
+
+
+        :return: The cloud_space_id of this DeploymenttemplatesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloud_space_id
+
+    @cloud_space_id.setter
+    def cloud_space_id(self, cloud_space_id: 'str'):
+        """Sets the cloud_space_id of this DeploymenttemplatesIdBody.
+
+
+        :param cloud_space_id: The cloud_space_id of this DeploymenttemplatesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cloud_space_id = cloud_space_id
 
     @property
     def description(self) -> 'str':
