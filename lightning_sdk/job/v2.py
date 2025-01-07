@@ -134,17 +134,6 @@ class _JobV2(_BaseJob):
         return self._job
 
     @property
-    def _guaranteed_job(self) -> Any:
-        """Guarantees that the job was fetched at some point before returning it.
-
-        Doesn't guarantee to have the lastest version of the job. Use _latest_job for that.
-        """
-        if getattr(self, "_job", None) is None:
-            self._update_internal_job()
-
-        return self._job
-
-    @property
     def status(self) -> "Status":
         """The current status of the job."""
         return self._job_api._job_state_to_external(self._latest_job.state)

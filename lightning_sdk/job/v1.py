@@ -177,9 +177,6 @@ class _JobV1(_BaseJob):
         """
         self._job_api.delete_job(self._job.id, self.teamspace.id)
 
-    def _name_filter(self, orig_name: str) -> str:
-        return orig_name.replace("root.", "")
-
     @cached_property
     def work(self) -> Work:
         """Get the work associated with the job."""
@@ -192,11 +189,6 @@ class _JobV1(_BaseJob):
     def machine(self) -> "Machine":
         """Get the machine the job is running on."""
         return self.work.machine
-
-    @property
-    def id(self) -> str:
-        """The id of the job."""
-        return self._job.id
 
     @property
     def name(self) -> str:
@@ -217,6 +209,14 @@ class _JobV1(_BaseJob):
     def share_path(self) -> Optional[str]:
         """The path to the share of the job in the distributed teamspace filesystem."""
         return f"/teamspace/jobs/{self.name}/share"
+
+    # the following and functions are solely to make the Work class function
+    @property
+    def _id(self) -> str:
+        return self._guaranteed_job.id
+
+    def _name_filter(self, name: str) -> str:
+        return name.replace("root.", "")
 
 
 def _internal_status_to_external_status(internal_status: str) -> "Status":

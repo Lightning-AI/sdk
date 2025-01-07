@@ -1,33 +1,62 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional, Protocol
 
 from lightning_sdk.api.job_api import JobApiV1
 
 if TYPE_CHECKING:
-    from lightning_sdk.job.job import Job
+    from lightning_sdk.status import Status
     from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.machine import Machine
 
 
+class _WorkHolder(Protocol):
+    @property
+    def _id(self) -> str:
+        ...
+
+    @property
+    def name(self) -> str:
+        ...
+
+    def _name_filter(self, name: str) -> str:
+        ...
+
+
 class Work:
-    def __init__(self, work_id: str, job: "Job", teamspace: "Teamspace") -> None:
+    def __init__(self, work_id: str, job: _WorkHolder, teamspace: "Teamspace") -> None:
         self._id = work_id
         self._job = job
         self._teamspace = teamspace
         self._job_api = JobApiV1()
-        self._work = self._job_api.get_work(work_id=work_id, job_id=job.id, teamspace_id=teamspace.id)
+        self._work = None
+
+    @property
+    def _latest_work(self) -> Any:
+        self._work = self._job_api.get_work(work_id=self._id, job_id=self._job._id, teamspace_id=self._teamspace.id)
+        return self._work
+
+    @property
+    def _guaranteed_work(self) -> Any:
+        if self._work is None:
+            return self._latest_work
+
+        return self._work
 
     @property
     def id(self) -> str:
-        return self._work.id
+        return self._guaranteed_work.id
 
     @property
     def name(self) -> str:
-        return self._job._name_filter(self._work.name)
+        return self._job._name_filter(self._guaranteed_work.name)
 
     @property
     def machine(self) -> "Machine":
-        return self._job_api.get_machine_from_work(self._work)
+        return self._job_api.get_machine_from_work(self._guaranteed_work)
 
     @property
     def artifact_path(self) -> Optional[str]:
         return f"/teamspace/jobs/{self._job.name}/{self.name}"
+
+    @property
+    def status(self) -> "Status":
+        return self._job_api.get_status_from_work(self._latest_work)

@@ -1,6 +1,6 @@
 import json
 import time
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from lightning_sdk.api.job_api import JobApiV1
 from lightning_sdk.api.utils import (
@@ -17,6 +17,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     MultimachinejobsIdBody,
     ProjectIdMultimachinejobsBody,
     V1EnvVar,
+    V1Job,
     V1JobSpec,
     V1MultiMachineJob,
     V1MultiMachineJobState,
@@ -65,13 +66,6 @@ class MMTApiV1(JobApiV1):
 
 
 class MMTApiV2:
-    mmt_state_unspecified = "MultiMachineJob_STATE_UNSPECIFIED"
-    mmt_state_running = "MultiMachineJob_STATE_RUNNING"
-    mmt_state_stopped = "MultiMachineJob_STATE_STOPPED"
-    mmt_state_deleted = "MultiMachineJob_STATE_DELETED"
-    mmt_state_failed = "MultiMachineJob_STATE_FAILED"
-    mmt_state_completed = "MultiMachineJob_STATE_COMPLETED"
-
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
         self._client = LightningClient(max_tries=7)
@@ -149,7 +143,7 @@ class MMTApiV2:
             return
 
         if current_state != Status.Stopped:
-            update_body = MultimachinejobsIdBody(desired_state=self.mmt_state_stopped)
+            update_body = MultimachinejobsIdBody(desired_state=V1MultiMachineJobState.STOPPED)
             self._client.jobs_service_update_multi_machine_job(body=update_body, project_id=teamspace_id, id=job_id)
 
         while True:
@@ -166,18 +160,22 @@ class MMTApiV2:
     def delete_job(self, job_id: str, teamspace_id: str) -> None:
         self._client.jobs_service_delete_multi_machine_job(project_id=teamspace_id, id=job_id)
 
+    def list_mmt_subjobs(self, job_id: str, teamspace_id: str) -> List[V1Job]:
+        jobs_resp = self._client.jobs_service_list_jobs(project_id=teamspace_id, multi_machine_job_id=job_id)
+        return jobs_resp.jobs
+
     def _job_state_to_external(self, state: V1MultiMachineJobState) -> "Status":
         from lightning_sdk.status import Status
 
-        if str(state) == self.mmt_state_unspecified:
+        if str(state) == V1MultiMachineJobState.UNSPECIFIED:
             return Status.Pending
-        if str(state) == self.mmt_state_running:
+        if str(state) == V1MultiMachineJobState.RUNNING:
             return Status.Running
-        if str(state) == self.mmt_state_stopped:
+        if str(state) == V1MultiMachineJobState.STOPPED:
             return Status.Stopped
-        if str(state) == self.mmt_state_completed:
+        if str(state) == V1MultiMachineJobState.COMPLETED:
             return Status.Completed
-        if str(state) == self.mmt_state_failed:
+        if str(state) == V1MultiMachineJobState.FAILED:
             return Status.Failed
         return Status.Pending
 

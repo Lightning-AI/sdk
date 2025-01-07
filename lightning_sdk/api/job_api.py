@@ -24,6 +24,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LightningappInstanceState,
     V1LightningappInstanceStatus,
     V1LightningworkSpec,
+    V1LightningworkState,
     V1ListLightningworkResponse,
     V1UserRequestedComputeConfig,
 )
@@ -123,6 +124,31 @@ class JobApiV1:
             entrypoint=command,
             interruptible=interruptible,
         )
+
+    def get_status_from_work(self, work: Externalv1Lightningwork) -> "Status":
+        from lightning_sdk.status import Status
+
+        internal_status = work.status.phase
+
+        if internal_status in (
+            V1LightningworkState.UNSPECIFIED,
+            V1LightningworkState.IMAGE_BUILDING,
+            V1LightningworkState.PENDING,
+            V1LightningworkState.NOT_STARTED,
+            V1LightningworkState.DELETED,
+        ):
+            return Status.Pending
+
+        if internal_status == V1LightningworkState.RUNNING:
+            return Status.Running
+
+        if internal_status == V1LightningworkState.STOPPED:
+            return Status.Stopped
+
+        if internal_status == V1LightningworkState.FAILED:
+            return Status.Failed
+
+        return Status.Pending
 
 
 class JobApiV2:

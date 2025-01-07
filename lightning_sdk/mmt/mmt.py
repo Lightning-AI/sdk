@@ -1,12 +1,11 @@
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Protocol, Tuple, Union
 
-from lightning_sdk._mmt.base import _BaseMMT
-from lightning_sdk._mmt.v1 import _MMTV1
-from lightning_sdk._mmt.v2 import _MMTV2
 from lightning_sdk.job.job import _has_jobs_v2
+from lightning_sdk.mmt.base import _BaseMMT
+from lightning_sdk.mmt.v1 import _MMTV1
+from lightning_sdk.mmt.v2 import _MMTV2
 
 if TYPE_CHECKING:
-    from lightning_sdk.job import Job
     from lightning_sdk.machine import Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.status import Status
@@ -15,7 +14,31 @@ if TYPE_CHECKING:
     from lightning_sdk.user import User
 
 
+class MMTMachine(Protocol):
+    """A single machine in multi-machine training."""
+
+    @property
+    def name(self) -> str:
+        ...
+
+    @property
+    def machine(self) -> "Machine":
+        ...
+
+    @property
+    def artifact_path(self) -> Optional[str]:
+        ...
+
+    @property
+    def status(self) -> "Status":
+        ...
+
+
 class MMT(_BaseMMT):
+    _force_v1: (
+        bool
+    ) = False  # required for studio plugin still working correctly as v2 currently does not support the studio env
+
     def __init__(
         self,
         name: str,
@@ -25,7 +48,7 @@ class MMT(_BaseMMT):
         *,
         _fetch_job: bool = True,
     ) -> None:
-        internal_mmt_cls = _MMTV2 if _has_jobs_v2() else _MMTV1
+        internal_mmt_cls = _MMTV2 if _has_jobs_v2() and not self._force_v1 else _MMTV1
 
         self._internal_mmt = internal_mmt_cls(
             name=name,
@@ -121,7 +144,7 @@ class MMT(_BaseMMT):
         return self._internal_mmt.status
 
     @property
-    def machines(self) -> Tuple["Job", ...]:
+    def machines(self) -> Tuple[MMTMachine, ...]:
         return self._internal_mmt.machines
 
     @property
@@ -161,3 +184,7 @@ class MMT(_BaseMMT):
             return getattr(super(), key)
         except AttributeError:
             return getattr(self._internal_mmt, key)
+
+    @property
+    def _guaranteed_job(self) -> Any:
+        return self._internal_mmt._guaranteed_job

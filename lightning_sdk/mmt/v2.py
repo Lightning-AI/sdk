@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
 
-from lightning_sdk._mmt.base import _BaseMMT
+from lightning_sdk.mmt.base import _BaseMMT
 
 
 class _MMTV2(_BaseMMT):
@@ -80,7 +80,12 @@ class _MMTV2(_BaseMMT):
 
     @property
     def machines(self) -> Tuple["Job", ...]:
-        raise NotImplementedError
+        from lightning_sdk.job import Job
+
+        return tuple(
+            Job(name=j.name, teamspace=self.teamspace)
+            for j in self._job_api.list_mmt_subjobs(self._guaranteed_job.id, self.teamspace.id)
+        )
 
     def stop(self) -> None:
         self._job_api.stop_job(job_id=self._guaranteed_job.id, teamspace_id=self._teamspace.id)
@@ -98,27 +103,17 @@ class _MMTV2(_BaseMMT):
         return self._job
 
     @property
-    def _guaranteed_job(self) -> Any:
-        """Guarantees that the job was fetched at some point before returning it.
-
-        Doesn't guarantee to have the lastest version of the job. Use _latest_job for that.
-        """
-        if getattr(self, "_job", None) is None:
-            self._update_internal_job()
-
-        return self._job
-
-    @property
     def status(self) -> "Status":
-        # TODO: Should this rather be a list of states from the individual machines?
-        return self._job_api._job_state_to_external(self._latest_job.desired_state)
+        return self._job_api._job_state_to_external(self._latest_job.state)
 
     @property
     def artifact_path(self) -> Optional[str]:
+        # TODO: Since grouping for those is not done yet on the BE, we cannot yet have a unified link here
         raise NotImplementedError
 
     @property
     def snapshot_path(self) -> Optional[str]:
+        # TODO: Since grouping for those is not done yet on the BE, we cannot yet have a unified link here
         raise NotImplementedError
 
     @property

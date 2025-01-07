@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace
 
@@ -272,3 +272,14 @@ class _BaseJob(ABC):
     def teamspace(self) -> "Teamspace":
         """The teamspace the job is part of."""
         return self._teamspace
+
+    @property
+    def _guaranteed_job(self) -> Any:
+        """Guarantees that the job was fetched at some point before returning it.
+
+        Doesn't guarantee to have the lastest version of the job. Use _latest_job for that.
+        """
+        if getattr(self, "_job", None) is None:
+            self._update_internal_job()
+
+        return self._job

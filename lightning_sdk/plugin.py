@@ -169,7 +169,6 @@ class MultiMachineTrainingPlugin(_Plugin):
         machine: Machine = Machine.CPU,
         cloud_compute: Optional[Machine] = None,
         num_instances: int = 2,
-        strategy: str = "parallel",
         interruptible: bool = False,
     ) -> Job:
         """Launches an asynchronous multi-machine-training.
@@ -179,30 +178,30 @@ class MultiMachineTrainingPlugin(_Plugin):
             name: The name of the job.
             machine: The machine to run the job on.
             num_instances: The number of instances to run the job on.
-            strategy: The strategy to use for the multi-machine-training.
-                Everything but 'parallel' is highly experimental and usage is generally not recommended.
             interruptible: Whether to run the job on an interruptible machine.
                 These are cheaper but can be preempted at any time.
         """
+        from lightning_sdk.mmt import MMT
+
         if not name:
             name = _run_name("dist-run")
 
         machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
 
-        # TODO: assert num_instances >=2
-        resp = self._studio._studio_api.create_multi_machine_job(
-            entrypoint=command,
+        MMT._force_v1 = True
+
+        mmt = MMT.run(
             name=name,
-            num_instances=num_instances,
+            num_machines=num_instances,
             machine=machine,
-            strategy=strategy,
-            studio_id=self._studio._studio.id,
-            teamspace_id=self._studio._teamspace.id,
-            cloud_account=self._studio.cloud_account,
+            command=command,
+            studio=self._studio,
+            teamspace=self._studio.teamspace,
             interruptible=interruptible,
         )
 
-        return Job(resp.name, self._studio.teamspace)
+        MMT._force_v1 = False
+        return mmt
 
 
 class MultiMachineDataPrepPlugin(_Plugin):

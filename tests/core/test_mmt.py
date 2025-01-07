@@ -2,9 +2,9 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk._mmt.v2 import _MMTV2
 from lightning_sdk.lightning_cloud.openapi import MultimachinejobsIdBody, V1JobSpec, V1MultiMachineJob
 from lightning_sdk.machine import Machine
+from lightning_sdk.mmt.v2 import _MMTV2
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
@@ -225,7 +225,7 @@ def test_mmtv2_status(mmt_api_get_job_by_name_mocker, internal_studio_init_mocke
     job = _MMTV2("test-job", studio.teamspace)
 
     get_job_mock = mock.MagicMock()
-    get_job_mock.return_value = V1MultiMachineJob(id="test-job-id", desired_state=internal_status)
+    get_job_mock.return_value = V1MultiMachineJob(id="test-job-id", state=internal_status)
     job._job_api.get_job = get_job_mock
 
     assert job.status == external_status

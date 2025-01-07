@@ -214,13 +214,15 @@ def test_mmt_stop(job_states: List[str], total_calls_get_job: int, called_update
 
     def get_job_side_effect(*args, **kwargs):
         while job_states:
+            state = job_states.pop(0)
             return V1MultiMachineJob(
-                id="test-job-id", desired_state=job_states.pop(0), spec=V1JobSpec(cloudspace_id="cloudspace-id")
+                id="test-job-id", desired_state=state, spec=V1JobSpec(cloudspace_id="cloudspace-id"), state=state
             )
 
         return V1MultiMachineJob(
             id="test-job-id",
             desired_state="MultiMachineJob_STATE_STOPPED",
+            state="MultiMachineJob_STATE_STOPPED",
             spec=V1JobSpec(cloudspace_id="cloudspace-id"),
         )
 
