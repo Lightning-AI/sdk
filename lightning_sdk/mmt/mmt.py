@@ -1,5 +1,7 @@
+from functools import lru_cache
 from typing import TYPE_CHECKING, Any, Dict, Optional, Protocol, Tuple, Union
 
+from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.job.job import _has_jobs_v2
 from lightning_sdk.mmt.base import _BaseMMT
 from lightning_sdk.mmt.v1 import _MMTV1
@@ -12,6 +14,19 @@ if TYPE_CHECKING:
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
+
+
+@lru_cache(maxsize=None)
+def _has_mmt_v2() -> bool:
+    # users need both mmtv2 and jobsv2 flags in order for mmtv2 to work correctly
+    if not _has_jobs_v2():
+        return False
+
+    api = UserApi()
+    try:
+        return api._get_feature_flags().mmt_v2
+    except Exception:
+        return False
 
 
 class MMTMachine(Protocol):
@@ -48,7 +63,7 @@ class MMT(_BaseMMT):
         *,
         _fetch_job: bool = True,
     ) -> None:
-        internal_mmt_cls = _MMTV2 if _has_jobs_v2() and not self._force_v1 else _MMTV1
+        internal_mmt_cls = _MMTV2 if _has_mmt_v2() and not self._force_v1 else _MMTV1
 
         self._internal_mmt = internal_mmt_cls(
             name=name,
