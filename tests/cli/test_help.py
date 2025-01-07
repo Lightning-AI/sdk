@@ -72,6 +72,9 @@ COMMANDS
      job
        Run async workloads using a docker image or a compute environment from your studio.
 
+     mmt
+       Run async workloads on multiple machines using a docker image.
+
      model
        Legacy CLI for `fabric run model`."""
     result = subprocess.run("lightning run", shell=True, capture_output=True, text=True)
@@ -93,7 +96,10 @@ COMMANDS
     COMMAND is one of the following:
 
      job
-       Run async workloads using a docker image or a compute environment from your studio."""
+       Run async workloads using a docker image or a compute environment from your studio.
+
+     mmt
+       Run async workloads on multiple machines using a docker image."""
     result = subprocess.run("lightning run", shell=True, capture_output=True, text=True)
     assert message in result.stdout or message in result.stderr
 
@@ -299,7 +305,7 @@ NAME
     lightning run job - Run async workloads using a docker image or a compute environment from your studio.
 
 SYNOPSIS
-    lightning run job NAME MACHINE <flags>
+    lightning run job NAME <flags>
 
 DESCRIPTION
     Run async workloads using a docker image or a compute environment from your studio.
@@ -308,11 +314,12 @@ POSITIONAL ARGUMENTS
     NAME
         Type: str
         The name of the job. Needs to be unique within the teamspace.
-    MACHINE
-        Type: str
-        The machine type to run the job on. One of CPU_SMALL, CPU, DATA_PREP, DATA_PREP_MAX, DATA_PREP_ULTRA, T4, T4_X_4, L4, L4_X_4, L4_X_8, A10G, A10G_X_4, A10G_X_8, L40S, L40S_X_4, L40S_X_8, A100_X_8, H100_X_8, H200_X_8.
 
 FLAGS
+    -m, --machine=MACHINE
+        Type: Optional[Optional]
+        Default: None
+        The machine type to run the job on. One of CPU_SMALL, CPU, DATA_PREP, DATA_PREP_MAX, DATA_PREP_ULTRA, T4, T4_X_4, L4, L4_X_4, L4_X_8, A10G, A10G_X_4, A10G_X_8, L40S, L40S_X_4, L40S_X_8, A100_X_8, H100_X_8, H200_X_8.
     --command=COMMAND
         Type: Optional[Optional]
         Default: None
