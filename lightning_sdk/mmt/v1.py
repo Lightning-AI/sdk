@@ -16,6 +16,8 @@ from lightning_sdk.mmt.base import _BaseMMT
 
 
 class _MMTV1(_BaseMMT):
+    """V1 Implementation of Multi-Machine Training."""
+
     def __init__(
         self,
         name: str,
@@ -25,6 +27,15 @@ class _MMTV1(_BaseMMT):
         *,
         _fetch_job: bool = True,
     ) -> None:
+        """Fetch already existing jobs.
+
+        Args:
+            name: the name of the job
+            teamspace: the teamspace the job is part of
+            org: the name of the organization owning the :param`teamspace` in case it is owned by an org
+            user: the name of the user owning the :param`teamspace`
+                in case it is owned directly by a user instead of an org.
+        """
         self._job_api = MMTApiV1()
         super().__init__(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=_fetch_job)
 
@@ -43,6 +54,35 @@ class _MMTV1(_BaseMMT):
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> "_MMTV1":
+        """Submit a new multi-machine job to the Lightning AI platform.
+
+        Args:
+            num_machines: The number of machines to run on.
+            machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
+            command: The command to run inside your job. Required if using a studio. Optional if using an image.
+                If not provided for images, will run the container entrypoint and default command.
+            studio: The studio env to run the job with. Mutually exclusive with image.
+            image: The docker image to run the job with. Mutually exclusive with studio.
+            env: Environment variables to set inside the job.
+            interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+            cloud_account: The cloud account to run the job on.
+                Defaults to the studio cloud account if running with studio compute env.
+                If not provided will fall back to the teamspaces default cloud account.
+            image_credentials: The credentials used to pull the image. Required if the image is private.
+                This should be the name of the respective credentials secret created on the Lightning AI platform.
+            cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
+                Required if the registry is part of a cloud provider (e.g. ECR).
+            artifacts_local: The path of inside the docker container, you want to persist images from.
+                CAUTION: When setting this to "/", it will effectively erase your container.
+                Only supported for jobs with a docker image compute environment.
+            artifacts_remote: The remote storage to persist your artifacts to.
+                Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
+                PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
+                E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
+                within it.
+                Note that the connection needs to be added to the teamspace already in order for it to be found.
+                Only supported for jobs with a docker image compute environment.
+        """
         if studio is None:
             raise ValueError("Studio is required for submitting jobs")
         if image is not None or image_credentials is not None or cloud_account_auth:
@@ -80,18 +120,25 @@ class _MMTV1(_BaseMMT):
 
     @property
     def machines(self) -> Tuple["Work", ...]:
+        """Returns the sub-jobs for each individual instance."""
         works = self._job_api.list_works(self._guaranteed_job.id, self.teamspace.id)
 
         return tuple(Work(w.id, self, self.teamspace) for w in works)
 
     def stop(self) -> None:
+        """Stops the job."""
         self._job_api.stop_job(self._guaranteed_job.id, self.teamspace.id)
 
     def delete(self) -> None:
+        """Deletes the job.
+
+        Caution: This also deletes all artifacts and snapshots associated with the job.
+        """
         self._job_api.delete_job(self._guaranteed_job.id, self.teamspace.id)
 
     @property
     def status(self) -> "Status":
+        """The current status of the job."""
         try:
             status = self._job_api.get_job_status(self._job.id, self.teamspace.id)
             return _internal_status_to_external_status(status)
@@ -102,22 +149,27 @@ class _MMTV1(_BaseMMT):
 
     @property
     def artifact_path(self) -> Optional[str]:
+        """Path to the artifacts created by the job within the distributed teamspace filesystem."""
         return f"/teamspace/jobs/{self.name}"
 
     @property
     def snapshot_path(self) -> Optional[str]:
+        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem."""
         return f"/teamspace/jobs/{self.name}/snapshot"
 
     @property
     def machine(self) -> "Machine":
+        """Returns the machine type this job is running on."""
         return self.machines[0].machine
 
     @property
     def name(self) -> str:
+        """The job's name."""
         return self._name
 
     @property
     def teamspace(self) -> "Teamspace":
+        """The teamspace the job is part of."""
         return self._teamspace
 
     # the following and functions are solely to make the Work class function

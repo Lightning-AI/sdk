@@ -25,6 +25,8 @@ def _has_jobs_v2() -> bool:
 
 
 class Job(_BaseJob):
+    """Class to submit and manage single-machine jobs on the Lightning AI Platform."""
+
     def __init__(
         self,
         name: str,
@@ -34,6 +36,15 @@ class Job(_BaseJob):
         *,
         _fetch_job: bool = True,
     ) -> None:
+        """Fetch already existing jobs.
+
+        Args:
+            name: the name of the job
+            teamspace: the teamspace the job is part of
+            org: the name of the organization owning the :param`teamspace` in case it is owned by an org
+            user: the name of the user owning the :param`teamspace`
+                in case it is owned directly by a user instead of an org.
+        """
         internal_job_cls = _JobV2 if _has_jobs_v2() else _JobV1
 
         self._internal_job = internal_job_cls(
