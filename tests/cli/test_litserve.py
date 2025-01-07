@@ -1,7 +1,7 @@
 import os
 import sys
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 import pytest
 
@@ -100,3 +100,73 @@ def test_docker_api_with_gpu(mock_cwd, temp_script):
     dockerfile_content = (mock_cwd / "Dockerfile").read_text()
     assert "FROM nvidia/cuda:" in dockerfile_content
     assert 'CMD ["python", "/app/server.py"]' in dockerfile_content
+
+
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@patch("docker.from_env")
+@patch("rich.prompt.Confirm.ask")
+def test_cloud_deployment(mock_confirm, mock_docker, mock_cwd, temp_script, capsys):
+    lit_serve = _LitServe()
+    mock_client = mock_docker.return_value
+
+    # Mock Docker client responses
+    mock_client.ping.return_value = True
+    mock_client.api.build.return_value = [{"stream": "Step 1/10"}]
+    mock_client.api.push.return_value = [{"status": "Pushing"}]
+
+    # Mock user confirmations
+    mock_confirm.side_effect = [
+        True,  # "Would you like to deploy this model to the cloud?"
+        True,  # "Is the Dockerfile correct?"
+    ]
+
+    # Test with specific repository tag
+    test_tag = "test-repo/model:latest"
+    lit_serve.api(temp_script, cloud=True, repository=test_tag)
+
+    # Verify Docker operations
+    mock_client.ping.assert_called_once()
+    mock_client.api.build.assert_called_once()
+    mock_client.api.push.assert_called_once()
+
+    # Verify user was prompted twice
+    assert mock_confirm.call_count == 1
+    mock_confirm.assert_has_calls([call("Is the Dockerfile correct?", default=True)])
+
+    # Capture and verify the output
+    captured = capsys.readouterr()
+    assert f"✅ Image pushed to {test_tag}" in captured.out
+
+
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@patch("docker.from_env")
+@patch("rich.prompt.Confirm.ask")
+def test_cloud_deployment_non_interactive(mock_confirm, mock_docker, mock_cwd, temp_script, capsys):
+    lit_serve = _LitServe()
+    mock_client = mock_docker.return_value
+
+    # Mock Docker client responses
+    mock_client.ping.return_value = True
+    mock_client.api.build.return_value = [{"stream": "Step 1/10"}]
+    mock_client.api.push.return_value = [{"status": "Pushing"}]
+
+    test_tag = "test-repo/model:latest"
+    lit_serve.api(temp_script, cloud=True, repository=test_tag, non_interactive=True)
+
+    mock_client.ping.assert_called_once()
+    mock_client.api.build.assert_called_once()
+    mock_client.api.push.assert_called_once()
+
+    assert mock_confirm.call_count == 0
+    captured = capsys.readouterr()
+    assert f"✅ Image pushed to {test_tag}" in captured.out
+
+
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@patch("docker.from_env")
+def test_cloud_deployment_no_docker(mock_docker, temp_script):
+    mock_docker.side_effect = ImportError("docker-py is not installed")
+    lit_serve = _LitServe()
+
+    with pytest.raises(ImportError, match="docker-py is not installed"):
+        lit_serve.api(temp_script, cloud=True)

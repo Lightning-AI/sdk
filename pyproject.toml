@@ -36,7 +36,7 @@ dependencies = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
-serve = ["litserve>=0.2.5"]
+serve = ["litserve>=0.2.5", "docker"]
 
 [project.scripts]
 lightning = "lightning_sdk.cli.entrypoint:main_cli"
