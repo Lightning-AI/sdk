@@ -245,11 +245,6 @@ class Job(_BaseJob):
         """The teamspace the job is part of."""
         return self._internal_job._teamspace
 
-    @property
-    def cluster(self) -> Optional[str]:
-        """The cluster the job is running on."""
-        return self._internal_job.cluster
-
     def __getattr__(self, key: str) -> Any:
         """Forward the attribute lookup to the internal job implementation."""
         try:
