@@ -38,6 +38,7 @@ class V1MultiMachineJobState(object):
     allowed enum values
     """
     UNSPECIFIED = "MultiMachineJob_STATE_UNSPECIFIED"
+    PENDING = "MultiMachineJob_STATE_PENDING"
     RUNNING = "MultiMachineJob_STATE_RUNNING"
     STOPPED = "MultiMachineJob_STATE_STOPPED"
     DELETED = "MultiMachineJob_STATE_DELETED"

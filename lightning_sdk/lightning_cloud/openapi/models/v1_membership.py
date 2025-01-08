@@ -52,6 +52,7 @@ class V1Membership(object):
         'job_count': 'str',
         'membership_count': 'str',
         'name': 'str',
+        'next_free_credits_grant_at': 'datetime',
         'owner_id': 'str',
         'owner_type': 'V1OwnerType',
         'project_id': 'str',
@@ -73,6 +74,7 @@ class V1Membership(object):
         'job_count': 'jobCount',
         'membership_count': 'membershipCount',
         'name': 'name',
+        'next_free_credits_grant_at': 'nextFreeCreditsGrantAt',
         'owner_id': 'ownerId',
         'owner_type': 'ownerType',
         'project_id': 'projectId',
@@ -82,7 +84,7 @@ class V1Membership(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_credits_enabled: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, membership_count: 'str' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_credits_enabled: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant_at: 'datetime' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Membership - a model defined in Swagger"""  # noqa: E501
         self._balance = None
         self._created_at = None
@@ -95,6 +97,7 @@ class V1Membership(object):
         self._job_count = None
         self._membership_count = None
         self._name = None
+        self._next_free_credits_grant_at = None
         self._owner_id = None
         self._owner_type = None
         self._project_id = None
@@ -125,6 +128,8 @@ class V1Membership(object):
             self.membership_count = membership_count
         if name is not None:
             self.name = name
+        if next_free_credits_grant_at is not None:
+            self.next_free_credits_grant_at = next_free_credits_grant_at
         if owner_id is not None:
             self.owner_id = owner_id
         if owner_type is not None:
@@ -370,6 +375,27 @@ class V1Membership(object):
         """
 
         self._name = name
+
+    @property
+    def next_free_credits_grant_at(self) -> 'datetime':
+        """Gets the next_free_credits_grant_at of this V1Membership.  # noqa: E501
+
+
+        :return: The next_free_credits_grant_at of this V1Membership.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._next_free_credits_grant_at
+
+    @next_free_credits_grant_at.setter
+    def next_free_credits_grant_at(self, next_free_credits_grant_at: 'datetime'):
+        """Sets the next_free_credits_grant_at of this V1Membership.
+
+
+        :param next_free_credits_grant_at: The next_free_credits_grant_at of this V1Membership.  # noqa: E501
+        :type: datetime
+        """
+
+        self._next_free_credits_grant_at = next_free_credits_grant_at
 
     @property
     def owner_id(self) -> 'str':

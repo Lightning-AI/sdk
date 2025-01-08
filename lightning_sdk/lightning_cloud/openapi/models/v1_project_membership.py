@@ -58,6 +58,7 @@ class V1ProjectMembership(object):
         'last_name': 'str',
         'membership_count': 'str',
         'name': 'str',
+        'next_free_credits_grant_at': 'datetime',
         'organization': 'str',
         'owner_id': 'str',
         'owner_type': 'V1OwnerType',
@@ -87,6 +88,7 @@ class V1ProjectMembership(object):
         'last_name': 'lastName',
         'membership_count': 'membershipCount',
         'name': 'name',
+        'next_free_credits_grant_at': 'nextFreeCreditsGrantAt',
         'organization': 'organization',
         'owner_id': 'ownerId',
         'owner_type': 'ownerType',
@@ -98,7 +100,7 @@ class V1ProjectMembership(object):
         'username': 'username'
     }
 
-    def __init__(self, avatar_url: 'str' =None, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, email: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, organization: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, avatar_url: 'str' =None, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, email: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant_at: 'datetime' =None, organization: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
         """V1ProjectMembership - a model defined in Swagger"""  # noqa: E501
         self._avatar_url = None
         self._balance = None
@@ -117,6 +119,7 @@ class V1ProjectMembership(object):
         self._last_name = None
         self._membership_count = None
         self._name = None
+        self._next_free_credits_grant_at = None
         self._organization = None
         self._owner_id = None
         self._owner_type = None
@@ -161,6 +164,8 @@ class V1ProjectMembership(object):
             self.membership_count = membership_count
         if name is not None:
             self.name = name
+        if next_free_credits_grant_at is not None:
+            self.next_free_credits_grant_at = next_free_credits_grant_at
         if organization is not None:
             self.organization = organization
         if owner_id is not None:
@@ -536,6 +541,27 @@ class V1ProjectMembership(object):
         """
 
         self._name = name
+
+    @property
+    def next_free_credits_grant_at(self) -> 'datetime':
+        """Gets the next_free_credits_grant_at of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The next_free_credits_grant_at of this V1ProjectMembership.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._next_free_credits_grant_at
+
+    @next_free_credits_grant_at.setter
+    def next_free_credits_grant_at(self, next_free_credits_grant_at: 'datetime'):
+        """Sets the next_free_credits_grant_at of this V1ProjectMembership.
+
+
+        :param next_free_credits_grant_at: The next_free_credits_grant_at of this V1ProjectMembership.  # noqa: E501
+        :type: datetime
+        """
+
+        self._next_free_credits_grant_at = next_free_credits_grant_at
 
     @property
     def organization(self) -> 'str':
