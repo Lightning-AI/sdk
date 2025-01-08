@@ -186,3 +186,8 @@ class _MMTV2(_BaseMMT):
     def teamspace(self) -> "Teamspace":
         """The teamspace the job is part of."""
         return self._teamspace
+
+    @property
+    def link(self) -> str:
+        # TODO: Since we don't have a UI for this yet, we can't have a link
+        raise NotImplementedError

@@ -16,6 +16,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1Lightningwork,
     JobsIdBody1,
     ProjectIdJobsBody,
+    V1CloudSpace,
     V1ComputeConfig,
     V1EnvVar,
     V1Job,
@@ -101,6 +102,12 @@ class JobApiV1:
         compute_config: V1ComputeConfig = spec.compute_config
         compute: str = compute_config.instance_type
         return _COMPUTE_NAME_TO_MACHINE[compute]
+
+    def get_studio_name(self, job: Externalv1LightningappInstance) -> str:
+        cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
+            project_id=job.project_id, id=job.spec.cloud_space_id
+        )
+        return cs.name
 
     def submit_job(
         self,
@@ -246,6 +253,12 @@ class JobApiV2:
 
     def delete_job(self, job_id: str, teamspace_id: str, cloudspace_id: Optional[str]) -> None:
         self._client.jobs_service_delete_job(project_id=teamspace_id, id=job_id, cloudspace_id=cloudspace_id or "")
+
+    def get_studio_name(self, job: V1Job) -> str:
+        cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
+            project_id=job.project_id, id=job.spec.cloudspace_id
+        )
+        return cs.name
 
     def _job_state_to_external(self, state: str) -> "Status":
         from lightning_sdk.status import Status

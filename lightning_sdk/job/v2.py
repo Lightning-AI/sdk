@@ -167,6 +167,15 @@ class _JobV2(_BaseJob):
         """The path to the share of the job within the distributed teamspace filesystem."""
         raise NotImplementedError("Not implemented yet")
 
+    @property
+    def link(self) -> str:
+        if self._guaranteed_job.spec.image:
+            return (
+                f"https://lightning.ai/{self.teamspace.owner.name}/{self.teamspace.name}/jobs/{self.name}?app_id=jobs"
+            )
+
+        return super().link
+
     def _update_internal_job(self) -> None:
         if getattr(self, "_job", None) is None:
             self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)

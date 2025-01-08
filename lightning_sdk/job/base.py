@@ -274,6 +274,11 @@ class _BaseJob(ABC):
         return self._teamspace
 
     @property
+    def link(self) -> str:
+        """A link to view the current job in the UI."""
+        return f"https://lightning.ai/{self.teamspace.owner.name}/{self.teamspace.name}/studios/{self._job_api.get_studio_name(self._guaranteed_job)}/app?app_id=jobs&job_name={self.name}"
+
+    @property
     def _guaranteed_job(self) -> Any:
         """Guarantees that the job was fetched at some point before returning it.
 

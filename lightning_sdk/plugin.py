@@ -3,7 +3,8 @@ import logging
 import os
 import warnings
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional, Protocol, Union, runtime_checkable
+from contextlib import contextmanager
+from typing import TYPE_CHECKING, Any, Generator, Optional, Protocol, Union, runtime_checkable
 
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
@@ -16,6 +17,7 @@ from lightning_sdk.utils.resolve import (
 
 if TYPE_CHECKING:
     from lightning_sdk.lightning_cloud.openapi import Externalv1LightningappInstance
+    from lightning_sdk.mmt import MMT
 
 _logger = _setup_logger(__name__)
 
@@ -141,7 +143,7 @@ class JobsPlugin(_Plugin):
 
         machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
 
-        job = Job.run(
+        return Job.run(
             name=name,
             machine=machine,
             command=command,
@@ -150,10 +152,6 @@ class JobsPlugin(_Plugin):
             cloud_account=self._studio.cloud_account,
             interruptible=interruptible,
         )
-
-        _logger.info(_success_message(job, self))
-
-        return job
 
 
 class MultiMachineTrainingPlugin(_Plugin):
@@ -170,7 +168,7 @@ class MultiMachineTrainingPlugin(_Plugin):
         cloud_compute: Optional[Machine] = None,
         num_instances: int = 2,
         interruptible: bool = False,
-    ) -> Job:
+    ) -> "MMT":
         """Launches an asynchronous multi-machine-training.
 
         Args:
@@ -188,20 +186,16 @@ class MultiMachineTrainingPlugin(_Plugin):
 
         machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
 
-        MMT._force_v1 = True
-
-        mmt = MMT.run(
-            name=name,
-            num_machines=num_instances,
-            machine=machine,
-            command=command,
-            studio=self._studio,
-            teamspace=self._studio.teamspace,
-            interruptible=interruptible,
-        )
-
-        MMT._force_v1 = False
-        return mmt
+        with forced_v1(MMT) as v1mmt:
+            return v1mmt.run(
+                name=name,
+                num_machines=num_instances,
+                machine=machine,
+                command=command,
+                studio=self._studio,
+                teamspace=self._studio.teamspace,
+                interruptible=interruptible,
+            )
 
 
 class MultiMachineDataPrepPlugin(_Plugin):
@@ -245,7 +239,8 @@ class MultiMachineDataPrepPlugin(_Plugin):
             interruptible=interruptible,
         )
 
-        return Job(resp.name, self._studio.teamspace)
+        with forced_v1(Job) as v1_job:
+            return v1_job(resp.name, self._studio.teamspace)
 
 
 class InferenceServerPlugin(_Plugin):
@@ -293,7 +288,8 @@ class InferenceServerPlugin(_Plugin):
         )
 
         _logger.info(_success_message(resp, self))
-        return Job(resp.name, self._studio.teamspace)
+        with forced_v1(Job) as v1_job:
+            return v1_job(resp.name, self._studio.teamspace)
 
 
 class SlurmJobsPlugin(_Plugin):
@@ -430,3 +426,12 @@ def _run_name(plugin_type: str) -> str:
 def _success_message(resp: Union["Externalv1LightningappInstance", Job], plugin_instance: _RunnablePlugin) -> str:
     """Compiles the success message for a given runnable plugin."""
     return f"{plugin_instance._plugin_run_name} {resp.name} was successfully launched. View it at https://lightning.ai/{plugin_instance._studio.owner.name}/{plugin_instance._studio.teamspace.name}/studios/{plugin_instance.studio}/app?app_id={plugin_instance._slug_name}&job_name={resp.name}"
+
+
+@contextmanager
+def forced_v1(cls: Any) -> Generator[Any, None, None]:
+    """Forces to use the v1 version of a class when using a class with multiple backends."""
+    orig_val = getattr(cls, "_force_v1", False)
+    cls._force_v1 = True
+    yield cls
+    cls._force_v1 = orig_val

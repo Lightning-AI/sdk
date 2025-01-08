@@ -172,6 +172,10 @@ class _MMTV1(_BaseMMT):
         """The teamspace the job is part of."""
         return self._teamspace
 
+    @property
+    def link(self) -> str:
+        return f"https://lightning.ai/{self.teamspace.owner.name}/{self.teamspace.name}/studios/{self._job_api.get_studio_name(self._guaranteed_job)}/app?app_id=mmt&app_tab=Runs&job_name={self.name}"
+
     # the following and functions are solely to make the Work class function
     @property
     def _id(self) -> str:

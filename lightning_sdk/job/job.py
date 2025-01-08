@@ -5,6 +5,9 @@ from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.job.base import _BaseJob
 from lightning_sdk.job.v1 import _JobV1
 from lightning_sdk.job.v2 import _JobV2
+from lightning_sdk.utils.resolve import _setup_logger
+
+_logger = _setup_logger(__name__)
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import Machine
@@ -27,6 +30,8 @@ def _has_jobs_v2() -> bool:
 class Job(_BaseJob):
     """Class to submit and manage single-machine jobs on the Lightning AI Platform."""
 
+    _force_v1: bool = False
+
     def __init__(
         self,
         name: str,
@@ -45,7 +50,7 @@ class Job(_BaseJob):
             user: the name of the user owning the :param`teamspace`
                 in case it is owned directly by a user instead of an org.
         """
-        internal_job_cls = _JobV2 if _has_jobs_v2() else _JobV1
+        internal_job_cls = _JobV2 if _has_jobs_v2() and not self._force_v1 else _JobV1
 
         self._internal_job = internal_job_cls(
             name=name,
@@ -127,6 +132,8 @@ class Job(_BaseJob):
         )
         # required for typing with "Job"
         assert isinstance(ret_val, cls)
+
+        _logger.info(f"Job was successfully launched. View it at {ret_val.link}")
         return ret_val
 
     def _submit(
@@ -249,3 +256,7 @@ class Job(_BaseJob):
             return getattr(super(), key)
         except AttributeError:
             return getattr(self._internal_job, key)
+
+    @property
+    def link(self) -> str:
+        return self._internal_job.link

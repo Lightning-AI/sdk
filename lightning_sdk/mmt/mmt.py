@@ -1,3 +1,4 @@
+from contextlib import suppress
 from functools import lru_cache
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
@@ -6,6 +7,7 @@ from lightning_sdk.job.job import _has_jobs_v2
 from lightning_sdk.mmt.base import MMTMachine, _BaseMMT
 from lightning_sdk.mmt.v1 import _MMTV1
 from lightning_sdk.mmt.v2 import _MMTV2
+from lightning_sdk.utils.resolve import _setup_logger
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import Machine
@@ -14,6 +16,8 @@ if TYPE_CHECKING:
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
+
+_logger = _setup_logger(__name__)
 
 
 @lru_cache(maxsize=None)
@@ -137,8 +141,15 @@ class MMT(_BaseMMT):
             artifacts_remote=artifacts_remote,
             cluster=cluster,  # deprecated in favor of cloud_account
         )
-        # required for typing with "Job"
+        # required for typing with "MMT"
         assert isinstance(ret_val, cls)
+
+        msg = "Multi-Machine Job was successfully launched."
+
+        with suppress(NotImplementedError):
+            msg += f" View it at {ret_val.link}"
+
+        _logger.info(msg)
         return ret_val
 
     def _submit(
@@ -254,6 +265,10 @@ class MMT(_BaseMMT):
     def teamspace(self) -> "Teamspace":
         """The teamspace the job is part of."""
         return self._internal_mmt._teamspace
+
+    @property
+    def link(self) -> str:
+        return self._internal_mmt.link
 
     def __getattr__(self, key: str) -> Any:
         """Forward the attribute lookup to the internal job implementation."""

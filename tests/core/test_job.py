@@ -441,7 +441,12 @@ def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocke
     delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001", cloudspace_id=None)
 
 
-def test_submit_jobv2_studio_resolve(job_backend_selector_mocker_v2, internal_studio_init_mocker):
+def test_submit_jobv2_studio_resolve(
+    job_backend_selector_mocker_v2,
+    internal_studio_init_mocker,
+    internal_job_get_cloudspace_mocker,
+    job_api_get_job_by_name_mocker,
+):
     import lightning_sdk
     from lightning_sdk.job.v2 import _JobV2
 
@@ -486,6 +491,8 @@ def test_submit_jobv2_studio_resolve(job_backend_selector_mocker_v2, internal_st
 def test_submit_jobv2_studio_path(
     job_backend_selector_mocker_v2,
     internal_studio_init_mocker,
+    internal_job_get_cloudspace_mocker,
+    job_api_get_job_by_name_mocker,
     expected_artifacts_path,
     expected_snapshot_path,
     image,
@@ -527,6 +534,7 @@ def test_submit_jobv2_studio_path(
         artifacts_local=artifacts_source,
         artifacts_remote=artifacts_destination,
     )
+
     job._internal_job._job = V1Job(
         name="test-job",
         spec=V1JobSpec(

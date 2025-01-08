@@ -282,6 +282,7 @@ def test_run_plugin(internal_studio_init_mocker, internal_studio_status_mocker, 
 def test_run_job(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
+    internal_job_get_cloudspace_mocker,
     internal_job_run_mocker,
     internal_job_api_mocker_all_jobs_valid,
     cloud_compute,
@@ -303,6 +304,7 @@ def test_run_job(
 def test_run_mmt(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
+    internal_job_get_cloudspace_mocker,
     internal_mmt_run_mocker,
     internal_job_api_mocker_all_jobs_valid,
     cloud_compute,

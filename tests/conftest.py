@@ -30,6 +30,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1GetUserResponse,
     V1Job,
     V1JobSpec,
+    V1LightningappInstanceSpec,
     V1LightningappInstanceState,
     V1LightningappInstanceStatus,
     V1LightningRun,
@@ -1385,6 +1386,23 @@ def internal_studio_plugin_run_mocker(mocker):
 
 
 @pytest.fixture()
+def internal_job_get_cloudspace_mocker(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+        return_value=V1CloudSpace(
+            name="st-abc-de",
+            display_name="st-abc-de",
+            id="st-abc-de",
+        ),
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture()
 def internal_job_run_mocker(mocker):
     def side_effect(self, body, project_id, cloudspace_id, id):
         from lightning_sdk.api.studio_api import _MACHINE_TO_COMPUTE_NAME
@@ -1394,7 +1412,11 @@ def internal_job_run_mocker(mocker):
         assert body.plugin_arguments["compute"] in _MACHINE_TO_COMPUTE_NAME.values()
 
         return V1CreateCloudSpaceAppInstanceResponse(
-            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
+            lightningappinstance=Externalv1LightningappInstance(
+                name=body.plugin_arguments["name"],
+                project_id="ts-abc",
+                spec=V1LightningappInstanceSpec(cloud_space_id="st-abc"),
+            )
         )
 
     mocker.patch(
@@ -1421,7 +1443,11 @@ def internal_mmt_run_mocker(mocker):
         assert distributed_args["cloud_compute"] in _MACHINE_TO_COMPUTE_NAME.values()
 
         return V1CreateCloudSpaceAppInstanceResponse(
-            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
+            lightningappinstance=Externalv1LightningappInstance(
+                name=body.plugin_arguments["name"],
+                project_id="ts-abc",
+                spec=V1LightningappInstanceSpec(cloud_space_id="st-abc"),
+            )
         )
 
     mocker.patch(
