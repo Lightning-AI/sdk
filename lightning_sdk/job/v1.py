@@ -210,6 +210,11 @@ class _JobV1(_BaseJob):
         """The path to the share of the job in the distributed teamspace filesystem."""
         return f"/teamspace/jobs/{self.name}/share"
 
+    @property
+    def logs(self) -> str:
+        """The logs of the job."""
+        return self.work.logs
+
     # the following and functions are solely to make the Work class function
     @property
     def _id(self) -> str:

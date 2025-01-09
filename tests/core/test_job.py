@@ -5,6 +5,7 @@ from unittest import mock
 import pytest
 
 from lightning_sdk.job import Job
+from lightning_sdk.job.v1 import _JobV1
 from lightning_sdk.job.v2 import _JobV2
 from lightning_sdk.job.work import Work
 from lightning_sdk.lightning_cloud.openapi import Externalv1LightningappInstance, JobsIdBody1, V1Job, V1JobSpec
@@ -544,3 +545,34 @@ def test_submit_jobv2_studio_path(
 
     assert job.artifact_path == expected_artifacts_path
     assert job.snapshot_path == expected_snapshot_path
+
+
+def test_job_logs_v2(
+    internal_job_logs_mocker,
+    job_api_get_job_by_name_mocker,
+    internal_studio_init_mocker,
+    job_api_get_job_by_id_mocker,
+):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+
+    job = _JobV2(
+        "test-job",
+        studio.teamspace,
+    )
+
+    assert job.logs == "⚡  ~ echo Hello\nHello\n"
+
+
+def test_job_logs_v1(
+    internal_job_logs_mocker,
+    internal_studio_init_mocker,
+    internal_job_api_mocker_get_work,
+):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+
+    job = _JobV1(
+        "j-abc",
+        studio.teamspace,
+    )
+
+    assert job.logs == "⚡  ~ echo Hello\nHello\n"

@@ -168,6 +168,15 @@ class _JobV2(_BaseJob):
         raise NotImplementedError("Not implemented yet")
 
     @property
+    def logs(self) -> str:
+        from lightning_sdk.status import Status
+
+        if self.status not in (Status.Failed, Status.Completed, Status.Stopped):
+            raise RuntimeError("Getting jobs logs while the job is pending or running is not supported yet!")
+
+        return self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
+
+    @property
     def link(self) -> str:
         if self._guaranteed_job.spec.image:
             return (

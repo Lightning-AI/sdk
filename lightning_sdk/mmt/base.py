@@ -36,6 +36,11 @@ class MMTMachine(Protocol):
         """The status of this job."""
         ...
 
+    @property
+    def logs(self) -> str:
+        """The logs of the given machine."""
+        ...
+
 
 class _BaseMMT(_BaseJob):
     """Base interface to all job types."""
@@ -272,6 +277,11 @@ class _BaseMMT(_BaseJob):
     def teamspace(self) -> "Teamspace":
         """The teamspace the job is part of."""
         return self._teamspace
+
+    @property
+    def logs(self) -> str:
+        """Logs of the rank 0 machine."""
+        return self.machines[0].logs
 
     @abstractmethod
     def _update_internal_job(self) -> None:

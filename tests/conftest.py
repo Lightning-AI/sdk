@@ -24,6 +24,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterStatus,
     V1CreateCloudSpaceAppInstanceResponse,
     V1DeleteCloudSpaceResponse,
+    V1DownloadJobLogsResponse,
+    V1DownloadLightningappInstanceLogsResponse,
     V1Endpoint,
     V1ExecuteCloudSpaceCommandResponse,
     V1GetCloudSpaceInstanceStatusResponse,
@@ -35,6 +37,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LightningappInstanceStatus,
     V1LightningRun,
     V1LightningworkSpec,
+    V1LightningworkState,
+    V1LightningworkStatus,
     V1ListCloudSpacesResponse,
     V1ListLightningworkResponse,
     V1ListMembershipsResponse,
@@ -1923,6 +1927,7 @@ def internal_job_api_mocker_get_work(mocker):
             id="w-abc",
             project_id=project_id,
             spec=V1LightningworkSpec(user_requested_compute_config=V1UserRequestedComputeConfig(name="g4dn.12xlarge")),
+            status=V1LightningworkStatus(phase=V1LightningworkState.STOPPED),
         )
 
     mocker.patch(
@@ -2113,6 +2118,17 @@ def job_api_get_job_by_name_mocker(mocker):
 
 
 @pytest.fixture()
+def job_api_get_job_by_id_mocker(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_get_job",
+        autospec=True,
+        return_value=V1Job(id="test-job-id", spec=V1JobSpec(cloudspace_id=None), state="completed"),
+    )
+    yield [mocker]
+    mocker.resetall()
+
+
+@pytest.fixture()
 def mmt_api_get_job_by_name_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_get_multi_machine_job_by_name",
@@ -2120,4 +2136,40 @@ def mmt_api_get_job_by_name_mocker(mocker):
         return_value=V1MultiMachineJob(id="test-job-id", spec=V1JobSpec(cloudspace_id=None)),
     )
     yield [mocker]
+    mocker.resetall()
+
+
+@pytest.fixture()
+def internal_job_logs_mocker(mocker):
+    log_msg = "[2025-01-08T14:15:03.797142418Z] ⚡  ~ echo Hello\n[2025-01-08T14:15:03.803077717Z] Hello\n"
+    dummy_url = "http://dummy-url.com/logs"
+
+    class DummyOpener:
+        def read(self) -> bytes:
+            return log_msg.encode("utf-8")
+
+    def side_effect(url):
+        assert url == dummy_url
+        return DummyOpener()
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_download_job_logs",
+        autospec=True,
+        return_value=V1DownloadJobLogsResponse(url=dummy_url),
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_download_lightningapp_instance_logs",
+        autospec=True,
+        return_value=V1DownloadLightningappInstanceLogsResponse(url=dummy_url),
+    )
+
+    mocker.patch(
+        "lightning_sdk.api.job_api.urlopen",
+        autospec=True,
+        side_effect=side_effect,
+    )
+
+    yield [mocker]
+
     mocker.resetall()

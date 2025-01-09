@@ -245,6 +245,13 @@ class Job(_BaseJob):
         """The teamspace the job is part of."""
         return self._internal_job._teamspace
 
+    @property
+    def logs(self) -> str:
+        """The logs of the job."""
+        if self.status not in (Status.Failed, Status.Completed, Status.Stopped):
+            raise RuntimeError("Getting jobs logs while the job is pending or running is not supported yet!")
+        return self._internal_job.logs
+
     def __getattr__(self, key: str) -> Any:
         """Forward the attribute lookup to the internal job implementation."""
         try:

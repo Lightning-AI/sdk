@@ -1,10 +1,12 @@
 import time
 from typing import TYPE_CHECKING, Dict, List, Optional
+from urllib.request import urlopen
 
 from lightning_sdk.api.utils import (
     _COMPUTE_NAME_TO_MACHINE,
     _MACHINE_TO_COMPUTE_NAME,
     _create_app,
+    remove_datetime_prefix,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
@@ -18,6 +20,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     ProjectIdJobsBody,
     V1CloudSpace,
     V1ComputeConfig,
+    V1DownloadJobLogsResponse,
+    V1DownloadLightningappInstanceLogsResponse,
     V1EnvVar,
     V1Job,
     V1JobSpec,
@@ -157,6 +161,16 @@ class JobApiV1:
 
         return Status.Pending
 
+    def get_logs_finished(self, job_id: str, work_id: str, teamspace_id: str) -> str:
+        resp: (
+            V1DownloadLightningappInstanceLogsResponse
+        ) = self._client.lightningapp_instance_service_download_lightningapp_instance_logs(
+            project_id=teamspace_id, id=job_id, work_id=work_id
+        )
+
+        data = urlopen(resp.url).read().decode("utf-8")
+        return remove_datetime_prefix(str(data))
+
 
 class JobApiV2:
     v2_job_state_pending = "pending"
@@ -253,6 +267,14 @@ class JobApiV2:
 
     def delete_job(self, job_id: str, teamspace_id: str, cloudspace_id: Optional[str]) -> None:
         self._client.jobs_service_delete_job(project_id=teamspace_id, id=job_id, cloudspace_id=cloudspace_id or "")
+
+    def get_logs_finished(self, job_id: str, teamspace_id: str) -> str:
+        resp: V1DownloadJobLogsResponse = self._client.jobs_service_download_job_logs(
+            project_id=teamspace_id, id=job_id
+        )
+
+        data = urlopen(resp.url).read().decode("utf-8")
+        return remove_datetime_prefix(str(data))
 
     def get_studio_name(self, job: V1Job) -> str:
         cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(

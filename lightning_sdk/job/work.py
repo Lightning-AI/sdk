@@ -60,3 +60,13 @@ class Work:
     @property
     def status(self) -> "Status":
         return self._job_api.get_status_from_work(self._latest_work)
+
+    @property
+    def logs(self) -> str:
+        """The logs of the work."""
+        from lightning_sdk.status import Status
+
+        if self.status not in (Status.Failed, Status.Completed, Status.Stopped):
+            raise RuntimeError("Getting jobs logs while the job is pending or running is not supported yet!")
+
+        return self._job_api.get_logs_finished(job_id=self._job._id, work_id=self._id, teamspace_id=self._teamspace.id)

@@ -2,6 +2,7 @@ import concurrent.futures
 import errno
 import math
 import os
+import re
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pathlib import Path
@@ -599,3 +600,10 @@ def _create_app(
         print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {cloud_account=}")
 
     return resp
+
+
+def remove_datetime_prefix(text: str) -> str:
+    # Use a regular expression to match the datetime pattern at the start of each line
+    # lines looks something like
+    # '[2025-01-08T14:15:03.797142418Z] ⚡  ~ echo Hello\n[2025-01-08T14:15:03.803077717Z] Hello\n'
+    return re.sub(r"^\[.*?\] ", "", text, flags=re.MULTILINE)
