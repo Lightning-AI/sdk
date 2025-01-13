@@ -57,7 +57,8 @@ class V1ClusterSpec(object):
         'security_options': 'V1ClusterSecurityOptions',
         'slurm_v1': 'V1SlurmV1',
         'tagging_options': 'V1ClusterTaggingOptions',
-        'user_id': 'str'
+        'user_id': 'str',
+        'vultr_v1': 'V1VultrDirectV1'
     }
 
     attribute_map = {
@@ -77,10 +78,11 @@ class V1ClusterSpec(object):
         'security_options': 'securityOptions',
         'slurm_v1': 'slurmV1',
         'tagging_options': 'taggingOptions',
-        'user_id': 'userId'
+        'user_id': 'userId',
+        'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_instance_types = None
@@ -99,6 +101,7 @@ class V1ClusterSpec(object):
         self._slurm_v1 = None
         self._tagging_options = None
         self._user_id = None
+        self._vultr_v1 = None
         self.discriminator = None
         if auth_token is not None:
             self.auth_token = auth_token
@@ -134,6 +137,8 @@ class V1ClusterSpec(object):
             self.tagging_options = tagging_options
         if user_id is not None:
             self.user_id = user_id
+        if vultr_v1 is not None:
+            self.vultr_v1 = vultr_v1
 
     @property
     def auth_token(self) -> 'str':
@@ -495,6 +500,27 @@ class V1ClusterSpec(object):
         """
 
         self._user_id = user_id
+
+    @property
+    def vultr_v1(self) -> 'V1VultrDirectV1':
+        """Gets the vultr_v1 of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The vultr_v1 of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1VultrDirectV1
+        """
+        return self._vultr_v1
+
+    @vultr_v1.setter
+    def vultr_v1(self, vultr_v1: 'V1VultrDirectV1'):
+        """Sets the vultr_v1 of this V1ClusterSpec.
+
+
+        :param vultr_v1: The vultr_v1 of this V1ClusterSpec.  # noqa: E501
+        :type: V1VultrDirectV1
+        """
+
+        self._vultr_v1 = vultr_v1
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

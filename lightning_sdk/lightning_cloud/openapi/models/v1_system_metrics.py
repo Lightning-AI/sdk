@@ -44,25 +44,22 @@ class V1SystemMetrics(object):
         'cpu': 'V1CPUSystemMetrics',
         'gpu': 'list[V1GPUSystemMetrics]',
         'storage': 'V1StorageSystemMetrics',
-        'timestamp': 'datetime',
-        'trainium': 'list[V1TrainiumSystemMetrics]'
+        'timestamp': 'datetime'
     }
 
     attribute_map = {
         'cpu': 'cpu',
         'gpu': 'gpu',
         'storage': 'storage',
-        'timestamp': 'timestamp',
-        'trainium': 'trainium'
+        'timestamp': 'timestamp'
     }
 
-    def __init__(self, cpu: 'V1CPUSystemMetrics' =None, gpu: 'list[V1GPUSystemMetrics]' =None, storage: 'V1StorageSystemMetrics' =None, timestamp: 'datetime' =None, trainium: 'list[V1TrainiumSystemMetrics]' =None):  # noqa: E501
+    def __init__(self, cpu: 'V1CPUSystemMetrics' =None, gpu: 'list[V1GPUSystemMetrics]' =None, storage: 'V1StorageSystemMetrics' =None, timestamp: 'datetime' =None):  # noqa: E501
         """V1SystemMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu = None
         self._gpu = None
         self._storage = None
         self._timestamp = None
-        self._trainium = None
         self.discriminator = None
         if cpu is not None:
             self.cpu = cpu
@@ -72,8 +69,6 @@ class V1SystemMetrics(object):
             self.storage = storage
         if timestamp is not None:
             self.timestamp = timestamp
-        if trainium is not None:
-            self.trainium = trainium
 
     @property
     def cpu(self) -> 'V1CPUSystemMetrics':
@@ -158,27 +153,6 @@ class V1SystemMetrics(object):
         """
 
         self._timestamp = timestamp
-
-    @property
-    def trainium(self) -> 'list[V1TrainiumSystemMetrics]':
-        """Gets the trainium of this V1SystemMetrics.  # noqa: E501
-
-
-        :return: The trainium of this V1SystemMetrics.  # noqa: E501
-        :rtype: list[V1TrainiumSystemMetrics]
-        """
-        return self._trainium
-
-    @trainium.setter
-    def trainium(self, trainium: 'list[V1TrainiumSystemMetrics]'):
-        """Sets the trainium of this V1SystemMetrics.
-
-
-        :param trainium: The trainium of this V1SystemMetrics.  # noqa: E501
-        :type: list[V1TrainiumSystemMetrics]
-        """
-
-        self._trainium = trainium
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

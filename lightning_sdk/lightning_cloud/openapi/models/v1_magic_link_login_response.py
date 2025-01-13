@@ -41,19 +41,71 @@ class V1MagicLinkLoginResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'auth_start_url': 'str',
+        'sso_enabled': 'bool',
         'waitlisted': 'bool'
     }
 
     attribute_map = {
+        'auth_start_url': 'authStartUrl',
+        'sso_enabled': 'ssoEnabled',
         'waitlisted': 'waitlisted'
     }
 
-    def __init__(self, waitlisted: 'bool' =None):  # noqa: E501
+    def __init__(self, auth_start_url: 'str' =None, sso_enabled: 'bool' =None, waitlisted: 'bool' =None):  # noqa: E501
         """V1MagicLinkLoginResponse - a model defined in Swagger"""  # noqa: E501
+        self._auth_start_url = None
+        self._sso_enabled = None
         self._waitlisted = None
         self.discriminator = None
+        if auth_start_url is not None:
+            self.auth_start_url = auth_start_url
+        if sso_enabled is not None:
+            self.sso_enabled = sso_enabled
         if waitlisted is not None:
             self.waitlisted = waitlisted
+
+    @property
+    def auth_start_url(self) -> 'str':
+        """Gets the auth_start_url of this V1MagicLinkLoginResponse.  # noqa: E501
+
+
+        :return: The auth_start_url of this V1MagicLinkLoginResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._auth_start_url
+
+    @auth_start_url.setter
+    def auth_start_url(self, auth_start_url: 'str'):
+        """Sets the auth_start_url of this V1MagicLinkLoginResponse.
+
+
+        :param auth_start_url: The auth_start_url of this V1MagicLinkLoginResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._auth_start_url = auth_start_url
+
+    @property
+    def sso_enabled(self) -> 'bool':
+        """Gets the sso_enabled of this V1MagicLinkLoginResponse.  # noqa: E501
+
+
+        :return: The sso_enabled of this V1MagicLinkLoginResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._sso_enabled
+
+    @sso_enabled.setter
+    def sso_enabled(self, sso_enabled: 'bool'):
+        """Sets the sso_enabled of this V1MagicLinkLoginResponse.
+
+
+        :param sso_enabled: The sso_enabled of this V1MagicLinkLoginResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._sso_enabled = sso_enabled
 
     @property
     def waitlisted(self) -> 'bool':

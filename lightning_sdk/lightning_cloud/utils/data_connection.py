@@ -1,14 +1,13 @@
 import os
 from time import sleep, time
-from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection
+from lightning_sdk.lightning_cloud import rest_client
+from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection, V1S3FolderDataConnection, V1EfsConfig
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 import urllib3
 
 
 def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeout: int = 15) -> None:
     """Utility to add a data connection."""
-    from lightning_sdk.lightning_cloud import rest_client
-
     client = rest_client.LightningClient(retry=False)
 
     project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
@@ -31,10 +30,10 @@ def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeou
     try:
         client.data_connection_service_create_data_connection(body, project_id)
     except (ApiException, urllib3.exceptions.HTTPError) as ex:
-        # Note: This function can be called in a distributed way. 
+        # Note: This function can be called in a distributed way.
         # There is a race condition where one machine might create the entry before another machine
         # and this request would fail with duplicated key
-        # In this case, it is fine not to raise 
+        # In this case, it is fine not to raise
         if isinstance(ex, ApiException) and 'duplicate key value violates unique constraint' in str(ex.body):
             pass
         else:
@@ -45,3 +44,140 @@ def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeou
 
     while not os.path.isdir(f"/teamspace/s3_connections/{bucket_name}") and (time() - start) < create_timeout:
         sleep(1)
+    
+    return
+
+def create_s3_folder(folder_name: str, create_timeout: int = 15) -> None:
+    """
+    Utility function to create a writable S3 folder.
+
+    Parameters:
+        1. folder_name (str): The name of the folder to create.
+        2. create_timeout (int): The timeout for the folder creation.
+    Returns:
+        None
+    """
+    client = rest_client.LightningClient(retry=False)
+
+    project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
+    cluster_id = os.getenv("LIGHTNING_CLUSTER_ID")
+
+    # Get existing data connections
+    data_connections = client.data_connection_service_list_data_connections(project_id).data_connections
+    
+    for connection in data_connections:
+        existing_folder_name = getattr(connection, 'name', None)
+        isS3Folder = getattr(connection, 's3_folder', None) is not None
+
+        if existing_folder_name == folder_name and isS3Folder:
+            return
+
+    # If we get here, no matching folder was found, proceed with creation
+    body = Create(
+        name=folder_name,
+        create_resources=True,
+        cluster_id=cluster_id,
+        access_cluster_ids=[cluster_id],
+        force=True,
+        writable=True,
+        s3_folder=V1S3FolderDataConnection()
+    )
+    try:
+        client.data_connection_service_create_data_connection(body, project_id)
+    except (ApiException, urllib3.exceptions.HTTPError) as ex:
+        # Note: This function can be called in a distributed way.
+        # There is a race condition where one machine might create the entry before another machine
+        # and this request would fail with duplicated key
+        # In this case, it is fine not to raise
+        if isinstance(ex, ApiException) and 'duplicate key value violates unique constraint' in str(ex.body):
+            pass
+        else:
+            raise ex
+
+    # Wait for the filesystem picks up the new data connection
+    start = time()
+
+    while not os.path.isdir(f"/teamspace/s3_folders/{folder_name}") and (time() - start) < create_timeout:
+        sleep(1)
+
+    return
+
+def create_efs_folder(folder_name: str, region: str) -> None:
+    """
+    Utility function to create a EFS folder.
+
+    Args:
+        folder_name: The name of the folder to create.
+        region: the region to create the efs in. Could be something like "us-east-1"
+    """
+    client = rest_client.LightningClient(retry=False)
+
+    project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
+    cluster_id = os.getenv("LIGHTNING_CLUSTER_ID")
+
+
+    # Get existing data connections
+    data_connections = client.data_connection_service_list_data_connections(project_id).data_connections
+
+    for connection in data_connections:
+        existing_folder_name = getattr(connection, 'name', None)
+        isEFS = getattr(connection, 'efs', None) is not None
+
+        if existing_folder_name == folder_name and isEFS:
+            return
+
+    # If we get here, no matching folder was found, proceed with creation
+    body = Create(
+        name=folder_name,
+        create_resources=True,
+        cluster_id=cluster_id,
+        access_cluster_ids=[cluster_id],
+        force=True,
+        efs=V1EfsConfig(region=region),
+    )
+    try:
+        client.data_connection_service_create_data_connection(body, project_id)
+    except ApiException as e:
+        # Note: This function can be called in a distributed way.
+        # There is a race condition where one machine might create the entry before another machine
+        # and this request would fail with duplicated key
+        # In this case, it is fine not to raise
+        if'duplicate key value violates unique constraint' in str(e.body):
+            return
+        raise e from None
+
+    except urllib3.exceptions.HTTPError as e:
+        raise e from None
+
+def delete_data_connection(name: str):
+    """Utility to delete a data connection
+
+    Args:
+        name: the name of the data connection to remove
+    """
+    client = rest_client.LightningClient(retry=False)
+
+    project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
+
+    # Get existing data connections
+    data_connections = client.data_connection_service_list_data_connections(project_id).data_connections
+
+    data_connection_id = None
+
+    for conn in data_connections:
+        if conn.name == name:
+            data_connection_id = conn.id
+            break
+
+    # data connection wasn't found
+    if data_connection_id is None:
+        return
+
+    try:
+        client.data_connection_service_delete_data_connection(project_id=project_id, id=data_connection_id)
+    except ApiException as e:
+        # TODO: with managed efs folders the contract around when it actually deletes is a bit fragile.
+        #  It may exhaust the attempts before the connection is actually unmounted from the studio.
+        #  for now it's best to actually stop the studio and all other things where the connection
+        #  is mounted before trying to delete it
+        raise e from None

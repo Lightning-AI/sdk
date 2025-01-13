@@ -41,6 +41,7 @@ from lightning_sdk.lightning_cloud.openapi.api.lightningapp_v2_service_api impor
 from lightning_sdk.lightning_cloud.openapi.api.lightningwork_service_api import LightningworkServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lit_logger_service_api import LitLoggerServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lit_page_service_api import LitPageServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.lit_registry_service_api import LitRegistryServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.models_store_api import ModelsStoreApi
 from lightning_sdk.lightning_cloud.openapi.api.organizations_service_api import OrganizationsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.profiler_service_api import ProfilerServiceApi
@@ -157,6 +158,7 @@ from lightning_sdk.lightning_cloud.openapi.models.project_id_fileendpoints_body 
 from lightning_sdk.lightning_cloud.openapi.models.project_id_getapp_body import ProjectIdGetappBody
 from lightning_sdk.lightning_cloud.openapi.models.project_id_invite_body import ProjectIdInviteBody
 from lightning_sdk.lightning_cloud.openapi.models.project_id_jobs_body import ProjectIdJobsBody
+from lightning_sdk.lightning_cloud.openapi.models.project_id_litregistry_body import ProjectIdLitregistryBody
 from lightning_sdk.lightning_cloud.openapi.models.project_id_memberships_body import ProjectIdMembershipsBody
 from lightning_sdk.lightning_cloud.openapi.models.project_id_models_body import ProjectIdModelsBody
 from lightning_sdk.lightning_cloud.openapi.models.project_id_multimachinejobs_body import ProjectIdMultimachinejobsBody
@@ -589,6 +591,8 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_list_studio_jobs_response i
 from lightning_sdk.lightning_cloud.openapi.models.v1_list_user_slurm_jobs_response import V1ListUserSLURMJobsResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_lit_page import V1LitPage
 from lightning_sdk.lightning_cloud.openapi.models.v1_lit_page_type import V1LitPageType
+from lightning_sdk.lightning_cloud.openapi.models.v1_lit_registry_project import V1LitRegistryProject
+from lightning_sdk.lightning_cloud.openapi.models.v1_lit_repository import V1LitRepository
 from lightning_sdk.lightning_cloud.openapi.models.v1_locked_resource import V1LockedResource
 from lightning_sdk.lightning_cloud.openapi.models.v1_log_page import V1LogPage
 from lightning_sdk.lightning_cloud.openapi.models.v1_logger_artifact import V1LoggerArtifact
@@ -732,7 +736,6 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_system_metrics import V1Sys
 from lightning_sdk.lightning_cloud.openapi.models.v1_system_metrics_list import V1SystemMetricsList
 from lightning_sdk.lightning_cloud.openapi.models.v1_telemetry import V1Telemetry
 from lightning_sdk.lightning_cloud.openapi.models.v1_timestamp_code_telemetry import V1TimestampCodeTelemetry
-from lightning_sdk.lightning_cloud.openapi.models.v1_trainium_system_metrics import V1TrainiumSystemMetrics
 from lightning_sdk.lightning_cloud.openapi.models.v1_transaction import V1Transaction
 from lightning_sdk.lightning_cloud.openapi.models.v1_transfer_org_balance_response import V1TransferOrgBalanceResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_transfer_project_balance_response import V1TransferProjectBalanceResponse
@@ -786,6 +789,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_validate_managed_endpoint_r
 from lightning_sdk.lightning_cloud.openapi.models.v1_validate_managed_model_response import V1ValidateManagedModelResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_verify_verification_response import V1VerifyVerificationResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_volume import V1Volume
+from lightning_sdk.lightning_cloud.openapi.models.v1_vultr_direct_v1 import V1VultrDirectV1
 from lightning_sdk.lightning_cloud.openapi.models.v1_work import V1Work
 from lightning_sdk.lightning_cloud.openapi.models.validate import Validate
 from lightning_sdk.lightning_cloud.openapi.models.validateautojoindomain_domain_body import ValidateautojoindomainDomainBody

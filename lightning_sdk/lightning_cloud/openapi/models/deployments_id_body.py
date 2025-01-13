@@ -56,6 +56,7 @@ class DeploymentsIdBody(object):
         'status': 'V1DeploymentStatus',
         'strategy': 'V1DeploymentStrategy',
         'template_id': 'str',
+        'total_cost': 'float',
         'updated_at': 'datetime',
         'user_id': 'str'
     }
@@ -76,11 +77,12 @@ class DeploymentsIdBody(object):
         'status': 'status',
         'strategy': 'strategy',
         'template_id': 'templateId',
+        'total_cost': 'totalCost',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """DeploymentsIdBody - a model defined in Swagger"""  # noqa: E501
         self._apis = None
         self._autoscaling = None
@@ -97,6 +99,7 @@ class DeploymentsIdBody(object):
         self._status = None
         self._strategy = None
         self._template_id = None
+        self._total_cost = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
@@ -130,6 +133,8 @@ class DeploymentsIdBody(object):
             self.strategy = strategy
         if template_id is not None:
             self.template_id = template_id
+        if total_cost is not None:
+            self.total_cost = total_cost
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -449,6 +454,27 @@ class DeploymentsIdBody(object):
         """
 
         self._template_id = template_id
+
+    @property
+    def total_cost(self) -> 'float':
+        """Gets the total_cost of this DeploymentsIdBody.  # noqa: E501
+
+
+        :return: The total_cost of this DeploymentsIdBody.  # noqa: E501
+        :rtype: float
+        """
+        return self._total_cost
+
+    @total_cost.setter
+    def total_cost(self, total_cost: 'float'):
+        """Sets the total_cost of this DeploymentsIdBody.
+
+
+        :param total_cost: The total_cost of this DeploymentsIdBody.  # noqa: E501
+        :type: float
+        """
+
+        self._total_cost = total_cost
 
     @property
     def updated_at(self) -> 'datetime':
