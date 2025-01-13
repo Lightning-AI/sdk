@@ -248,6 +248,8 @@ class Job(_BaseJob):
     @property
     def logs(self) -> str:
         """The logs of the job."""
+        from lightning_sdk.status import Status
+
         if self.status not in (Status.Failed, Status.Completed, Status.Stopped):
             raise RuntimeError("Getting jobs logs while the job is pending or running is not supported yet!")
         return self._internal_job.logs
