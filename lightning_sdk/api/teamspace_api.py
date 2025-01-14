@@ -1,12 +1,13 @@
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import _download_model_files, _DummyBody, _get_model_version, _ModelFileUploader
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
+    Externalv1LightningappInstance,
     ModelIdVersionsBody,
     ModelsStoreApi,
     ProjectIdAgentsBody,
@@ -14,7 +15,9 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Assistant,
     V1CloudSpace,
     V1Endpoint,
+    V1Job,
     V1ModelVersionArchive,
+    V1MultiMachineJob,
     V1Project,
     V1ProjectClusterBinding,
     V1PromptSuggestion,
@@ -277,3 +280,18 @@ class TeamspaceApi:
             download_dir=download_dir,
             progress_bar=progress_bar,
         )
+
+    def list_jobs(self, teamspace_id: str) -> Tuple[List[Externalv1LightningappInstance], List[V1Job]]:
+        apps = self._client.lightningapp_instance_service_list_lightningapp_instances(
+            project_id=teamspace_id, source_app="job_run_plugin"
+        ).lightningapps
+        jobs = self._client.jobs_service_list_jobs(project_id=teamspace_id, standalone=True).jobs
+
+        return apps, jobs
+
+    def list_mmts(self, teamspace_id: str) -> Tuple[List[Externalv1LightningappInstance], List[V1MultiMachineJob]]:
+        apps = self._client.lightningapp_instance_service_list_lightningapp_instances(
+            project_id=teamspace_id, source_app="distributed_plugin"
+        ).lightningapps
+        jobs = self._client.jobs_service_list_multi_machine_jobs(project_id=teamspace_id).multi_machine_jobs
+        return apps, jobs

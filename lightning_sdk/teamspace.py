@@ -1,6 +1,6 @@
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import TeamspaceApi
@@ -17,6 +17,8 @@ from lightning_sdk.utils.resolve import (
 )
 
 if TYPE_CHECKING:
+    from lightning_sdk.job import Job
+    from lightning_sdk.mmt import MMT
     from lightning_sdk.studio import Studio
 
 
@@ -125,6 +127,54 @@ class Teamspace:
             DeprecationWarning,
         )
         return self.cloud_accounts
+
+    @property
+    def jobs(self) -> Tuple["Job", ...]:
+        from lightning_sdk.job import Job
+        from lightning_sdk.plugin import forced_v1
+
+        jobsv1, jobsv2 = self._teamspace_api.list_jobs(teamspace_id=self.id)
+
+        jobs = []
+
+        for j1 in jobsv1:
+            with forced_v1(Job):
+                # _fetch_job = False to prevent refetching on init since we already got it
+                job = Job(name=j1.name, teamspace=self, _fetch_job=False)
+            job._internal_job._job = j1
+            jobs.append(job)
+
+        for j2 in jobsv2:
+            # _fetch_job = False to prevent refetching on init since we already got it
+            job = Job(name=j2.name, teamspace=self, _fetch_job=False)
+            job._internal_job._job = j2
+            jobs.append(job)
+
+        return tuple(jobs)
+
+    @property
+    def multi_machine_jobs(self) -> Tuple["MMT", ...]:
+        from lightning_sdk.mmt import MMT
+        from lightning_sdk.plugin import forced_v1
+
+        mmtsv1, mmtsv2 = self._teamspace_api.list_mmts(teamspace_id=self.id)
+
+        mmts = []
+
+        for m1 in mmtsv1:
+            with forced_v1(MMT):
+                # _fetch_job = False to prevent refetching on init since we already got it
+                mmt = MMT(name=m1.name, teamspace=self, _fetch_job=False)
+            mmt._internal_mmt._job = m1
+            mmts.append(mmt)
+
+        for m2 in mmtsv2:
+            # _fetch_job = False to prevent refetching on init since we already got it
+            mmt = MMT(name=m2.name, teamspace=self, _fetch_job=False)
+            mmt._internal_mmt._job = m2
+            mmts.append(mmt)
+
+        return tuple(mmts)
 
     def __eq__(self, other: "Teamspace") -> bool:
         """Checks whether the provided other object is equal to this one."""

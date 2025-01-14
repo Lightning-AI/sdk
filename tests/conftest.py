@@ -2090,6 +2090,27 @@ def job_backend_selector_mocker_v2(mocker, internal_get_org_api_mocker, internal
 
 
 @pytest.fixture()
+def mmt_backend_selector_mocker_v2(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
+        autospec=True,
+        return_value=V1GetUserResponse(features=V1UserFeatures(mmt_v2=True, jobs_v2=True)),
+    )
+    import lightning_sdk
+
+    importlib.reload(lightning_sdk.job.job)
+    lightning_sdk.job.job._has_jobs_v2.cache_clear()
+    importlib.reload(lightning_sdk.mmt.mmt)
+    lightning_sdk.mmt.mmt._has_mmt_v2.cache_clear()
+    yield [mocker, *internal_get_org_api_mocker, *internal_teamspace_api_mocker]
+    mocker.resetall()
+    importlib.reload(lightning_sdk.job.job)
+    lightning_sdk.job.job._has_jobs_v2.cache_clear()
+    importlib.reload(lightning_sdk.mmt.mmt)
+    lightning_sdk.mmt.mmt._has_mmt_v2.cache_clear()
+
+
+@pytest.fixture()
 def job_backend_selector_mocker_v1(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",

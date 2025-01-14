@@ -5,7 +5,14 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive import V1ModelVersionArchive
+from lightning_sdk.job import Job
+from lightning_sdk.lightning_cloud.openapi import (
+    Externalv1LightningappInstance,
+    V1Job,
+    V1ModelVersionArchive,
+    V1MultiMachineJob,
+)
+from lightning_sdk.mmt import MMT
 from lightning_sdk.organization import Organization
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
@@ -350,3 +357,59 @@ def test_download_model_version(
         download_dir=tmp_path,
         progress_bar=True,
     )
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_jobs")
+def test_list_jobs(list_jobs_mock, job_backend_selector_mocker_v2):
+    from lightning_sdk.job.v1 import _JobV1
+    from lightning_sdk.job.v2 import _JobV2
+
+    apps = [Externalv1LightningappInstance(name="jobv1-1"), Externalv1LightningappInstance(name="jobv1-2")]
+    jobs = [V1Job(name="jobv2-1"), V1Job(name="jobv2-2"), V1Job(name="jobv2-3")]
+    ts = Teamspace("ts-abc", org="org-abc")
+
+    list_jobs_mock.return_value = (apps, jobs)
+
+    # it's important that there are no additional calls to fetch individual jobs here.
+    # they'd raise API Errors since we only mock the teamspace APIs listing
+    # and not individual fetch requests
+    listed_jobs = ts.jobs
+
+    assert len(listed_jobs) == 5
+    assert all(isinstance(j, Job) for j in listed_jobs)
+
+    for lj, aj in zip(listed_jobs, apps):
+        assert lj.name == aj.name
+        assert isinstance(lj._internal_job, _JobV1)
+
+    for lj, jj in zip(listed_jobs[2:], jobs):
+        assert lj.name == jj.name
+        assert isinstance(lj._internal_job, _JobV2)
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
+def test_list_mmts(list_mmts_mock, mmt_backend_selector_mocker_v2):
+    from lightning_sdk.mmt.v1 import _MMTV1
+    from lightning_sdk.mmt.v2 import _MMTV2
+
+    apps = [Externalv1LightningappInstance(name="mmtv1-1"), Externalv1LightningappInstance(name="mmtv1-2")]
+    mmts = [V1MultiMachineJob(name="mmtv2-1"), V1MultiMachineJob(name="mmtv2-2"), V1MultiMachineJob(name="mmtv2-3")]
+    ts = Teamspace("ts-abc", org="org-abc")
+
+    list_mmts_mock.return_value = (apps, mmts)
+
+    # it's important that there are no additional calls to fetch individual mmts here.
+    # they'd raise API Errors since we only mock the teamspace APIs listing
+    # and not individual fetch requests
+    listed_mmts = ts.multi_machine_jobs
+
+    assert len(listed_mmts) == 5
+    assert all(isinstance(j, MMT) for j in listed_mmts)
+
+    for lj, aj in zip(listed_mmts, apps):
+        assert lj.name == aj.name
+        assert isinstance(lj._internal_mmt, _MMTV1)
+
+    for lj, jj in zip(listed_mmts[2:], mmts):
+        assert lj.name == jj.name
+        assert isinstance(lj._internal_mmt, _MMTV2)
