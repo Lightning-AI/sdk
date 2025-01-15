@@ -28,6 +28,9 @@ GROUPS
      download
        Download files and folders from Lightning AI.
 
+     list
+       List resources on the Lightning AI platform.
+
      run
        Run async workloads on the Lightning AI platform.
 

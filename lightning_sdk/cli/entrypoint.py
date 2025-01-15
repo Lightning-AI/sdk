@@ -5,6 +5,7 @@ from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.ai_hub import _AIHub
 from lightning_sdk.cli.download import _Downloads
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
+from lightning_sdk.cli.list import _List
 from lightning_sdk.cli.run import _Run
 from lightning_sdk.cli.serve import _Docker, _LitServe
 from lightning_sdk.cli.upload import _Uploads
@@ -23,6 +24,7 @@ class StudioCLI:
         self.run = _Run(legacy_run=_LegacyLightningCLI() if _LIGHTNING_AVAILABLE else None)
         self.serve = _LitServe()
         self.dockerize = _Docker()
+        self.list = _List()
 
     def login(self) -> None:
         """Login to Lightning AI Studios."""
