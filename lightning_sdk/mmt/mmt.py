@@ -270,6 +270,21 @@ class MMT(_BaseMMT):
     def link(self) -> str:
         return self._internal_mmt.link
 
+    @property
+    def studio(self) -> Optional["Studio"]:
+        """The studio used to submit the MMT."""
+        return self._internal_mmt.studio
+
+    @property
+    def image(self) -> Optional[str]:
+        """The image used to submit the MMT."""
+        return self._internal_mmt.image
+
+    @property
+    def command(self) -> str:
+        """The command the MMT is running."""
+        return self._internal_mmt.command
+
     def __getattr__(self, key: str) -> Any:
         """Forward the attribute lookup to the internal job implementation."""
         try:

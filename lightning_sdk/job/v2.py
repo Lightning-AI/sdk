@@ -178,12 +178,34 @@ class _JobV2(_BaseJob):
 
     @property
     def link(self) -> str:
-        if self._guaranteed_job.spec.image:
+        if self._job_api.get_image_name(self._guaranteed_job):
             return (
                 f"https://lightning.ai/{self.teamspace.owner.name}/{self.teamspace.name}/jobs/{self.name}?app_id=jobs"
             )
 
         return super().link
+
+    @property
+    def image(self) -> Optional[str]:
+        """The image used to submit the job."""
+        return self._job_api.get_image_name(self._guaranteed_job)
+
+    @property
+    def studio(self) -> Optional["Studio"]:
+        """The studio used to submit the job."""
+        from lightning_sdk.studio import Studio
+
+        studio_name = self._job_api.get_studio_name(self._guaranteed_job)
+
+        # if job was submitted with image, studio will be None
+        if not studio_name:
+            return None
+        return Studio(studio_name, teamspace=self.teamspace)
+
+    @property
+    def command(self) -> str:
+        """The command the job is running."""
+        return self._job_api.get_command(self._guaranteed_job)
 
     def _update_internal_job(self) -> None:
         if getattr(self, "_job", None) is None:

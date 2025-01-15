@@ -215,6 +215,25 @@ class _JobV1(_BaseJob):
         """The logs of the job."""
         return self.work.logs
 
+    @property
+    def image(self) -> Optional[str]:
+        """The image used to submit the job."""
+        # jobsv1 don't support images, so return None here
+        return None
+
+    @property
+    def studio(self) -> Optional["Studio"]:
+        """The studio used to submit the job."""
+        from lightning_sdk.studio import Studio
+
+        studio_name = self._job_api.get_studio_name(self._guaranteed_job)
+        return Studio(studio_name, teamspace=self.teamspace)
+
+    @property
+    def command(self) -> str:
+        """The command the job is running."""
+        return self._job_api.get_command(self._guaranteed_job)
+
     # the following and functions are solely to make the Work class function
     @property
     def _id(self) -> str:

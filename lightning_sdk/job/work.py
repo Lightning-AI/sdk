@@ -3,9 +3,10 @@ from typing import TYPE_CHECKING, Any, Optional, Protocol
 from lightning_sdk.api.job_api import JobApiV1
 
 if TYPE_CHECKING:
+    from lightning_sdk.job.base import MachineDict
+    from lightning_sdk.machine import Machine
     from lightning_sdk.status import Status
     from lightning_sdk.teamspace import Teamspace
-from lightning_sdk.machine import Machine
 
 
 class _WorkHolder(Protocol):
@@ -70,3 +71,11 @@ class Work:
             raise RuntimeError("Getting jobs logs while the job is pending or running is not supported yet!")
 
         return self._job_api.get_logs_finished(job_id=self._job._id, work_id=self._id, teamspace_id=self._teamspace.id)
+
+    def dict(self) -> "MachineDict":
+        """Dict representation of the work."""
+        return {
+            "name": self.name,
+            "status": self.status,
+            "machine": self.machine,
+        }

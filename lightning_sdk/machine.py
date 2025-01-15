@@ -26,3 +26,7 @@ class Machine(DeprecationEnum):
     A100_X_8 = "A100_X_8"
     H100_X_8 = "H100_X_8"
     H200_X_8 = "H200_X_8"
+
+    def __str__(self) -> str:
+        """String representation of the enum."""
+        return str(self.value)

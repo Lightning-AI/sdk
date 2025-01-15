@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, TypedDict, Union
 
 from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace
 
@@ -10,6 +10,19 @@ if TYPE_CHECKING:
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
+
+
+class MachineDict(TypedDict):
+    name: str
+    status: "Status"
+    machine: "Machine"
+
+
+class JobDict(MachineDict):
+    command: str
+    teamspace: str
+    studio: Optional[str]
+    image: Optional[str]
 
 
 class _BaseJob(ABC):
@@ -279,9 +292,47 @@ class _BaseJob(ABC):
         """The logs of the job."""
 
     @property
+    @abstractmethod
+    def image(self) -> Optional[str]:
+        """The image used to submit the job."""
+
+    @property
+    @abstractmethod
+    def studio(self) -> Optional["Studio"]:
+        """The studio used to submit the job."""
+
+    @property
+    @abstractmethod
+    def command(self) -> str:
+        """The command the job is running."""
+
+    def dict(self) -> JobDict:
+        """Dict representation of this job."""
+        studio = self.studio
+
+        return {
+            "name": self.name,
+            "teamspace": f"{self.teamspace.owner.name}/{self.teamspace.name}",
+            "studio": studio.name if studio else None,
+            "image": self.image,
+            "command": self.command,
+            "status": self.status,
+            "machine": self.machine,
+        }
+
+    def json(self) -> str:
+        """JSON representation of this job."""
+        import json
+
+        return json.dumps(self.dict(), indent=4, sort_keys=True, default=str)
+
+    @property
     def link(self) -> str:
         """A link to view the current job in the UI."""
-        return f"https://lightning.ai/{self.teamspace.owner.name}/{self.teamspace.name}/studios/{self._job_api.get_studio_name(self._guaranteed_job)}/app?app_id=jobs&job_name={self.name}"
+        studio_name = self._job_api.get_studio_name(self._guaranteed_job)
+        if not studio_name:
+            raise RuntimeError("Cannot extract studio name from job")
+        return f"https://lightning.ai/{self.teamspace.owner.name}/{self.teamspace.name}/studios/{studio_name}/app?app_id=jobs&job_name={self.name}"
 
     @property
     def _guaranteed_job(self) -> Any:

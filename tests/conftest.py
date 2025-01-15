@@ -2132,7 +2132,7 @@ def job_api_get_job_by_name_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_find_job",
         autospec=True,
-        return_value=V1Job(id="test-job-id", spec=V1JobSpec(cloudspace_id=None)),
+        return_value=V1Job(id="test-job-id", spec=V1JobSpec(cloudspace_id="st-abc")),
     )
     yield [mocker]
     mocker.resetall()
@@ -2143,7 +2143,7 @@ def job_api_get_job_by_id_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_get_job",
         autospec=True,
-        return_value=V1Job(id="test-job-id", spec=V1JobSpec(cloudspace_id=None), state="completed"),
+        return_value=V1Job(id="test-job-id", spec=V1JobSpec(cloudspace_id="st-abc"), state="completed"),
     )
     yield [mocker]
     mocker.resetall()

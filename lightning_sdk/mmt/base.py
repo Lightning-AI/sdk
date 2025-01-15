@@ -1,7 +1,8 @@
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Dict, Optional, Protocol, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Protocol, Tuple, Union
 
 if TYPE_CHECKING:
+    from lightning_sdk.job.base import MachineDict
     from lightning_sdk.machine import Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.status import Status
@@ -39,6 +40,10 @@ class MMTMachine(Protocol):
     @property
     def logs(self) -> str:
         """The logs of the given machine."""
+        ...
+
+    def dict(self) -> "MachineDict":
+        """Dict representation of the given machine."""
         ...
 
 
@@ -282,6 +287,26 @@ class _BaseMMT(_BaseJob):
     def logs(self) -> str:
         """Logs of the rank 0 machine."""
         return self.machines[0].logs
+
+    def dict(
+        self
+    ) -> Dict[str, Union[str, "Studio", "Status", "Machine", None, List[Dict[str, Union[str, "Status", "Machine"]]]]]:
+        """Dict representation of this job."""
+        studio = self.studio
+
+        return {
+            "name": self.name,
+            "teamspace": f"{self.teamspace.owner.name}/{self.teamspace.name}",
+            "studio": studio.name if studio else None,
+            "image": self.image,
+            "command": self.command,
+            "status": self.status,
+            "machine": self.machine,
+            "machines": [
+                {"name": d["name"], "status": d["status"], "machine": d["machine"]}
+                for d in (x.dict() for x in self.machines)
+            ],
+        }
 
     @abstractmethod
     def _update_internal_job(self) -> None:

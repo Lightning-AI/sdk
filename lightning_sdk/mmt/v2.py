@@ -191,3 +191,25 @@ class _MMTV2(_BaseMMT):
     def link(self) -> str:
         # TODO: Since we don't have a UI for this yet, we can't have a link
         raise NotImplementedError
+
+    @property
+    def image(self) -> Optional[str]:
+        """The image used to submit the job."""
+        return self._job_api.get_image_name(self._guaranteed_job)
+
+    @property
+    def studio(self) -> Optional["Studio"]:
+        """The studio used to submit the job."""
+        from lightning_sdk.studio import Studio
+
+        studio_name = self._job_api.get_studio_name(self._guaranteed_job)
+
+        # if job was submitted with image, studio will be None
+        if not studio_name:
+            return None
+        return Studio(studio_name, teamspace=self.teamspace)
+
+    @property
+    def command(self) -> str:
+        """The command the job is running."""
+        return self._job_api.get_command(self._guaranteed_job)

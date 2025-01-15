@@ -16,6 +16,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
     MultimachinejobsIdBody,
     ProjectIdMultimachinejobsBody,
+    V1CloudSpace,
     V1EnvVar,
     V1Job,
     V1JobSpec,
@@ -178,6 +179,21 @@ class MMTApiV2:
         if str(state) == V1MultiMachineJobState.FAILED:
             return Status.Failed
         return Status.Pending
+
+    def get_studio_name(self, job: V1MultiMachineJob) -> Optional[str]:
+        if job.spec.cloudspace_id:
+            cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
+                project_id=job.project_id, id=job.spec.cloudspace_id
+            )
+            return cs.name
+
+        return None
+
+    def get_image_name(self, job: V1MultiMachineJob) -> Optional[str]:
+        return job.spec.image or None
+
+    def get_command(self, job: V1MultiMachineJob) -> str:
+        return job.spec.command
 
     def _get_job_machine_from_spec(self, spec: V1JobSpec) -> "Machine":
         instance_name = spec.instance_name

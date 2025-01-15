@@ -8,7 +8,17 @@ from lightning_sdk.job import Job
 from lightning_sdk.job.v1 import _JobV1
 from lightning_sdk.job.v2 import _JobV2
 from lightning_sdk.job.work import Work
-from lightning_sdk.lightning_cloud.openapi import Externalv1LightningappInstance, JobsIdBody1, V1Job, V1JobSpec
+from lightning_sdk.lightning_cloud.openapi import (
+    Externalv1LightningappInstance,
+    JobsIdBody1,
+    V1ComputeConfig,
+    V1EnvVar,
+    V1Job,
+    V1JobSpec,
+    V1LightningappInstanceSpec,
+    V1LightningappInstanceState,
+    V1LightningappInstanceStatus,
+)
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
@@ -439,7 +449,7 @@ def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocke
 
     job.delete()
 
-    delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001", cloudspace_id=None)
+    delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001", cloudspace_id="st-abc")
 
 
 def test_submit_jobv2_studio_resolve(
@@ -576,3 +586,84 @@ def test_job_logs_v1(
     )
 
     assert job.logs == "⚡  ~ echo Hello\nHello\n"
+
+
+def test_job_v2_dict_json(internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+
+    internal_job = V1Job(
+        name="my-job",
+        project_id="ts-abc",
+        spec=V1JobSpec(cloudspace_id="st-abc", command="some command", instance_type="cpu-4"),
+        state="running",
+    )
+
+    get_job_mock = mock.MagicMock()
+    get_job_mock.return_value = internal_job
+    get_studio_name_mock = mock.MagicMock()
+    get_studio_name_mock.return_value = studio.name
+    job = _JobV2("my-job", teamspace=studio.teamspace, _fetch_job=False)
+    job._job = internal_job
+    job._update_internal_job = get_job_mock
+    job._job_api.get_studio_name = get_studio_name_mock
+
+    job_dict = job.dict()
+
+    assert job_dict["name"] == "my-job"
+    assert job_dict["teamspace"] == "org-abc/ts-abc"
+    assert job_dict["studio"] == "st-abc"
+    assert job_dict["image"] is None
+    assert job_dict["command"] == "some command"
+    assert job_dict["status"] == Status.Running
+    assert job_dict["machine"] == Machine.CPU
+
+    assert job.json() == (
+        '{\n    "command": "some command",\n    "image": null,\n    "machine": "CPU",\n    '
+        '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc"\n}'
+    )
+
+
+def test_job_v1_dict_json(internal_studio_init_mocker, internal_job_api_mocker_get_work):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+
+    internal_job = Externalv1LightningappInstance(
+        name="my-job",
+        project_id="ts-abc",
+        spec=V1LightningappInstanceSpec(
+            cloud_space_id="st-abc",
+            compute_config=V1ComputeConfig(instance_type="cpu-4"),
+            env=[
+                V1EnvVar(name="foo", value="bar"),
+                V1EnvVar(name="bar", value="foo"),
+                V1EnvVar(name="COMMAND", value="some command"),
+            ],
+        ),
+        status=V1LightningappInstanceStatus(phase=V1LightningappInstanceState.RUNNING),
+    )
+
+    get_job_mock = mock.MagicMock()
+    get_job_mock.return_value = internal_job
+    get_studio_name_mock = mock.MagicMock()
+    get_studio_name_mock.return_value = studio.name
+    get_status_mock = mock.MagicMock()
+    get_status_mock.return_value = internal_job.status.phase
+
+    job = _JobV1("my-job", teamspace=studio.teamspace, _fetch_job=False)
+    job._job = internal_job
+    job._update_internal_job = get_job_mock
+    job._job_api.get_studio_name = get_studio_name_mock
+    job._job_api.get_job_status = get_status_mock
+    job_dict = job.dict()
+
+    assert job_dict["name"] == "my-job"
+    assert job_dict["teamspace"] == "org-abc/ts-abc"
+    assert job_dict["studio"] == "st-abc"
+    assert job_dict["image"] is None
+    assert job_dict["command"] == "some command"
+    assert job_dict["status"] == Status.Running
+    assert job_dict["machine"] == Machine.T4_X_4  # coming from the work
+
+    assert job.json() == (
+        '{\n    "command": "some command",\n    "image": null,\n    "machine": "T4_X_4",\n    '
+        '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc"\n}'
+    )

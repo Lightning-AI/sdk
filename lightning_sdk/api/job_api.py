@@ -171,6 +171,15 @@ class JobApiV1:
         data = urlopen(resp.url).read().decode("utf-8")
         return remove_datetime_prefix(str(data))
 
+    def get_command(self, job: Externalv1LightningappInstance) -> str:
+        env = job.spec.env
+
+        for e in env:
+            if e.name == "COMMAND":
+                return e.value
+
+        raise RuntimeError("Could not extract command from app")
+
 
 class JobApiV2:
     v2_job_state_pending = "pending"
@@ -276,11 +285,20 @@ class JobApiV2:
         data = urlopen(resp.url).read().decode("utf-8")
         return remove_datetime_prefix(str(data))
 
-    def get_studio_name(self, job: V1Job) -> str:
-        cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
-            project_id=job.project_id, id=job.spec.cloudspace_id
-        )
-        return cs.name
+    def get_studio_name(self, job: V1Job) -> Optional[str]:
+        if job.spec.cloudspace_id:
+            cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
+                project_id=job.project_id, id=job.spec.cloudspace_id
+            )
+            return cs.name
+
+        return None
+
+    def get_image_name(self, job: V1Job) -> Optional[str]:
+        return job.spec.image or None
+
+    def get_command(self, job: V1Job) -> str:
+        return job.spec.command
 
     def _job_state_to_external(self, state: str) -> "Status":
         from lightning_sdk.status import Status

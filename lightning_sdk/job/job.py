@@ -246,6 +246,21 @@ class Job(_BaseJob):
         return self._internal_job._teamspace
 
     @property
+    def studio(self) -> Optional["Studio"]:
+        """The studio used to submit the job."""
+        return self._internal_job.studio
+
+    @property
+    def image(self) -> Optional[str]:
+        """The image used to submit the job."""
+        return self._internal_job.image
+
+    @property
+    def command(self) -> str:
+        """The command the job is running."""
+        return self._internal_job.command
+
+    @property
     def logs(self) -> str:
         """The logs of the job."""
         from lightning_sdk.status import Status
