@@ -133,7 +133,6 @@ def create_efs_folder(folder_name: str, region: str) -> None:
         cluster_id=cluster_id,
         access_cluster_ids=[cluster_id],
         force=True,
-        writable=True,
         efs=V1EfsConfig(region=region),
     )
     try:

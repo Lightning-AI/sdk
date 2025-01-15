@@ -44,6 +44,7 @@ class V1DeploymentAPI(object):
         'body': 'V1Body',
         'headers': 'list[V1Header]',
         'method': 'str',
+        'name': 'str',
         'path': 'str',
         '_query_params': 'list[V1QueryParam]'
     }
@@ -52,15 +53,17 @@ class V1DeploymentAPI(object):
         'body': 'body',
         'headers': 'headers',
         'method': 'method',
+        'name': 'name',
         'path': 'path',
         '_query_params': 'queryParams'
     }
 
-    def __init__(self, body: 'V1Body' =None, headers: 'list[V1Header]' =None, method: 'str' =None, path: 'str' =None, _query_params: 'list[V1QueryParam]' =None):  # noqa: E501
+    def __init__(self, body: 'V1Body' =None, headers: 'list[V1Header]' =None, method: 'str' =None, name: 'str' =None, path: 'str' =None, _query_params: 'list[V1QueryParam]' =None):  # noqa: E501
         """V1DeploymentAPI - a model defined in Swagger"""  # noqa: E501
         self._body = None
         self._headers = None
         self._method = None
+        self._name = None
         self._path = None
         self.__query_params = None
         self.discriminator = None
@@ -70,6 +73,8 @@ class V1DeploymentAPI(object):
             self.headers = headers
         if method is not None:
             self.method = method
+        if name is not None:
+            self.name = name
         if path is not None:
             self.path = path
         if _query_params is not None:
@@ -137,6 +142,27 @@ class V1DeploymentAPI(object):
         """
 
         self._method = method
+
+    @property
+    def name(self) -> 'str':
+        """Gets the name of this V1DeploymentAPI.  # noqa: E501
+
+
+        :return: The name of this V1DeploymentAPI.  # noqa: E501
+        :rtype: str
+        """
+        return self._name
+
+    @name.setter
+    def name(self, name: 'str'):
+        """Sets the name of this V1DeploymentAPI.
+
+
+        :param name: The name of this V1DeploymentAPI.  # noqa: E501
+        :type: str
+        """
+
+        self._name = name
 
     @property
     def path(self) -> 'str':
