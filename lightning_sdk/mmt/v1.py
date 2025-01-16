@@ -53,6 +53,7 @@ class _MMTV1(_BaseMMT):
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        entrypoint: str = "sh -c",
     ) -> "_MMTV1":
         """Submit a new multi-machine job to the Lightning AI platform.
 
@@ -82,10 +83,14 @@ class _MMTV1(_BaseMMT):
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
+            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+                just runs the provided command in a standard shell.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
         """
         if studio is None:
             raise ValueError("Studio is required for submitting jobs")
-        if image is not None or image_credentials is not None or cloud_account_auth:
+        if image is not None or image_credentials is not None or cloud_account_auth or entrypoint != "sh -c":
             raise ValueError("Image is not supported for submitting jobs")
 
         if artifacts_local is not None or artifacts_remote is not None:

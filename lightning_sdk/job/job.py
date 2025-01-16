@@ -78,6 +78,7 @@ class Job(_BaseJob):
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        entrypoint: str = "sh -c",
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "Job":
         """Run async workloads using a docker image or a compute environment from your studio.
@@ -111,6 +112,10 @@ class Job(_BaseJob):
             within it.
             Note that the connection needs to be added to the teamspace already in order for it to be found.
             Only supported for jobs with a docker image compute environment.
+        entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+            just runs the provided command in a standard shell.
+            To use the pre-defined entrypoint of the provided image, set this to an empty string.
+            Only applicable when submitting docker jobs.
         """
         ret_val = super().run(
             name=name,
@@ -128,6 +133,7 @@ class Job(_BaseJob):
             cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            entrypoint=entrypoint,
             cluster=cluster,
         )
         # required for typing with "Job"
@@ -149,6 +155,7 @@ class Job(_BaseJob):
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        entrypoint: str = "sh -c",
     ) -> "Job":
         """Submit a new job to the Lightning AI platform.
 
@@ -177,6 +184,9 @@ class Job(_BaseJob):
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
+            entrypoint: The entrypoint of your docker container. Defaults to sh -c.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
         """
         self._job = self._internal_job._submit(
             machine=machine,

@@ -69,6 +69,7 @@ class _BaseMMT(_BaseJob):
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        entrypoint: str = "sh -c",
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "_BaseMMT":
         """Run async workloads using a docker image across multiple machines.
@@ -103,6 +104,10 @@ class _BaseMMT(_BaseJob):
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
+            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+                just runs the provided command in a standard shell.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
         """
         from lightning_sdk.studio import Studio
 
@@ -153,6 +158,9 @@ class _BaseMMT(_BaseJob):
                     "Other jobs will automatically persist artifacts to the teamspace distributed filesystem."
                 )
 
+            if entrypoint != "sh -c":
+                raise ValueError("Specifying the entrypoint has no effect for jobs with Studio envs.")
+
         else:
             if studio is not None:
                 raise RuntimeError(
@@ -183,6 +191,7 @@ class _BaseMMT(_BaseJob):
             cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            entrypoint=entrypoint,
         )
         return inst
 
@@ -201,6 +210,7 @@ class _BaseMMT(_BaseJob):
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        entrypoint: str = "sh -c",
     ) -> None:
         """Submit a new multi-machine job to the Lightning AI platform.
 
@@ -230,6 +240,9 @@ class _BaseMMT(_BaseJob):
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
+            entrypoint: The entrypoint of your docker container. Defaults to sh -c.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
         """
 
     @property

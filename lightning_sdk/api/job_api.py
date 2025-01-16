@@ -208,6 +208,7 @@ class JobApiV2:
         cloud_account_auth: bool,
         artifacts_local: Optional[str],
         artifacts_remote: Optional[str],
+        entrypoint: str,
     ) -> V1Job:
         env_vars = []
         if env is not None:
@@ -222,6 +223,7 @@ class JobApiV2:
             cloudspace_id=studio_id or "",
             cluster_id=cloud_account or "",
             command=command or "",
+            entrypoint=entrypoint,
             env=env_vars,
             image=image or "",
             instance_name=instance_name,

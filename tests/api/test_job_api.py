@@ -113,6 +113,7 @@ def test_job_v2_submit_job():
         cloud_account_auth=True,
         artifacts_local=None,
         artifacts_remote=None,
+        entrypoint="sh -c",
     )
 
     spec = V1JobSpec(
@@ -128,6 +129,7 @@ def test_job_v2_submit_job():
         image_secret_ref="",
         artifacts_source="",
         artifacts_destination="",
+        entrypoint="sh -c",
     )
     body = ProjectIdJobsBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
@@ -148,6 +150,7 @@ def test_job_v2_submit_job():
         cloud_account_auth=False,
         artifacts_local="/output",
         artifacts_remote="efs:data:some-path",
+        entrypoint="sh -c",
     )
 
     spec = V1JobSpec(
@@ -163,6 +166,7 @@ def test_job_v2_submit_job():
         image_secret_ref="dockerhub",
         artifacts_source="/output",
         artifacts_destination="efs:data:some-path",
+        entrypoint="sh -c",
     )
     body = ProjectIdJobsBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)

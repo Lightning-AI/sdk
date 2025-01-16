@@ -208,6 +208,7 @@ def test_submit_job_v2_image(
         cloud_account_auth=False,
         artifacts_local=artifacts_local,
         artifacts_remote=artifacts_remote,
+        entrypoint="sh -c",
     )
 
 
@@ -243,6 +244,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         cloud_account_auth=False,
         artifacts_local=None,
         artifacts_remote=None,
+        entrypoint="sh -c",
     )
 
 

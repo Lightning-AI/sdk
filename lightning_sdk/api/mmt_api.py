@@ -87,6 +87,7 @@ class MMTApiV2:
         cloud_account_auth: bool,
         artifacts_local: Optional[str],
         artifacts_remote: Optional[str],
+        entrypoint: str,
     ) -> V1MultiMachineJob:
         env_vars = []
         if env is not None:
@@ -101,7 +102,7 @@ class MMTApiV2:
             cloudspace_id=studio_id or "",
             cluster_id=cloud_account or "",
             command=command or "",
-            entrypoint="sh -c",
+            entrypoint=entrypoint,
             env=env_vars,
             image=image or "",
             instance_name=instance_name,

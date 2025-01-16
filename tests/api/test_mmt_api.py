@@ -78,6 +78,7 @@ def test_mmt_v2_submit_job():
         cloud_account_auth=True,
         artifacts_local=None,
         artifacts_remote=None,
+        entrypoint="sh -c",
     )
 
     spec = V1JobSpec(
@@ -115,6 +116,7 @@ def test_mmt_v2_submit_job():
         cloud_account_auth=False,
         artifacts_local="/output",
         artifacts_remote="efs:data:some-path",
+        entrypoint="sh -c",
     )
 
     spec = V1JobSpec(

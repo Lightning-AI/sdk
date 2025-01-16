@@ -87,6 +87,7 @@ class MMT(_BaseMMT):
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        entrypoint: str = "sh -c",
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "MMT":
         """Run async workloads using a docker image across multiple machines.
@@ -121,6 +122,9 @@ class MMT(_BaseMMT):
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
+            entrypoint: The entrypoint of your docker container. Defaults to sh -c.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
         """
         ret_val = super().run(
             name=name,
@@ -166,6 +170,7 @@ class MMT(_BaseMMT):
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        entrypoint: str = "sh -c",
     ) -> "MMT":
         """Submit a new multi-machine job to the Lightning AI platform.
 
@@ -195,6 +200,10 @@ class MMT(_BaseMMT):
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
+            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+                just runs the provided command in a standard shell.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
         """
         self._job = self._internal_mmt._submit(
             num_machines=num_machines,
