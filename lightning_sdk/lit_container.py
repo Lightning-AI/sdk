@@ -1,17 +1,17 @@
 from typing import Dict, List, Optional
 
-from lightning_sdk.api.lit_registry_api import LitRegistryApi
+from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.utils.resolve import _resolve_teamspace
 
 
-class LitRegistry:
+class LitContainer:
     def __init__(self) -> None:
-        self._api = LitRegistryApi()
+        self._api = LitContainerApi()
 
     def list_containers(
         self, teamspace: str, org: Optional[str] = None, user: Optional[str] = None
     ) -> List[Dict[str, str]]:
-        """List available containers.
+        """List available docker repositories.
 
         Args:
             teamspace: The teamspace to list containers from.
@@ -37,3 +37,21 @@ class LitRegistry:
                 }
             )
         return table
+
+    def delete_container(
+        self, container: str, teamspace: str, org: Optional[str] = None, user: Optional[str] = None
+    ) -> None:
+        """Delete a docker container.
+
+        Args:
+            container: Name of the container to delete.
+            teamspace: The teamspace which contains the container.
+            org: The organization which contains the container.
+            user: The user which contains the container.
+        """
+        try:
+            teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        except Exception as e:
+            raise ValueError("Could not resolve teamspace") from e
+        project_id = teamspace.id
+        return self._api.delete_container(project_id, container)

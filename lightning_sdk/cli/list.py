@@ -4,7 +4,7 @@ from rich.console import Console
 from rich.table import Table
 
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
-from lightning_sdk.lit_registry import LitRegistry
+from lightning_sdk.lit_container import LitContainer
 
 
 class _List(_TeamspacesMenu):
@@ -41,7 +41,7 @@ class _List(_TeamspacesMenu):
             teamspace: The teamspace to list containers from. Should be specified as {owner}/{name}
                 If not provided, can be selected in an interactive menu.
         """
-        api = LitRegistry()
+        api = LitContainer()
         resolved_teamspace = self._resolve_teamspace(teamspace=teamspace)
         result = api.list_containers(teamspace=resolved_teamspace.name, org=resolved_teamspace.owner.name)
         table = Table(pad_edge=True, box=None)

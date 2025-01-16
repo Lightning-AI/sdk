@@ -3,6 +3,7 @@ from lightning_utilities.core.imports import RequirementCache
 
 from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.ai_hub import _AIHub
+from lightning_sdk.cli.delete import _Delete
 from lightning_sdk.cli.download import _Downloads
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
 from lightning_sdk.cli.list import _List
@@ -25,6 +26,7 @@ class StudioCLI:
         self.serve = _LitServe()
         self.dockerize = _Docker()
         self.list = _List()
+        self.delete = _Delete()
 
     def login(self) -> None:
         """Login to Lightning AI Studios."""

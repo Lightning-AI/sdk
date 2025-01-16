@@ -22,6 +22,9 @@ GROUPS
      aihub
        Interact with Lightning Studio - AI Hub.
 
+     delete
+       Delete resources on the Lightning AI platform.
+
      dockerize
        Generate a Dockerfile for a LitServe model.
 
