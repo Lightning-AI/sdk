@@ -43,6 +43,7 @@ class V1Model(object):
     swagger_types = {
         'categories': 'list[str]',
         'created_at': 'datetime',
+        'default_version': 'V1ModelVersionArchive',
         'description': 'str',
         'downloads': 'str',
         'id': 'str',
@@ -61,6 +62,7 @@ class V1Model(object):
     attribute_map = {
         'categories': 'categories',
         'created_at': 'createdAt',
+        'default_version': 'defaultVersion',
         'description': 'description',
         'downloads': 'downloads',
         'id': 'id',
@@ -76,10 +78,11 @@ class V1Model(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'V1ModelVersionArchive' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, default_version: 'V1ModelVersionArchive' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'V1ModelVersionArchive' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Model - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
+        self._default_version = None
         self._description = None
         self._downloads = None
         self._id = None
@@ -98,6 +101,8 @@ class V1Model(object):
             self.categories = categories
         if created_at is not None:
             self.created_at = created_at
+        if default_version is not None:
+            self.default_version = default_version
         if description is not None:
             self.description = description
         if downloads is not None:
@@ -166,6 +171,27 @@ class V1Model(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def default_version(self) -> 'V1ModelVersionArchive':
+        """Gets the default_version of this V1Model.  # noqa: E501
+
+
+        :return: The default_version of this V1Model.  # noqa: E501
+        :rtype: V1ModelVersionArchive
+        """
+        return self._default_version
+
+    @default_version.setter
+    def default_version(self, default_version: 'V1ModelVersionArchive'):
+        """Sets the default_version of this V1Model.
+
+
+        :param default_version: The default_version of this V1Model.  # noqa: E501
+        :type: V1ModelVersionArchive
+        """
+
+        self._default_version = default_version
 
     @property
     def description(self) -> 'str':

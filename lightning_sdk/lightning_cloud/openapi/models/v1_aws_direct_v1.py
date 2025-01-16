@@ -41,6 +41,7 @@ class V1AWSDirectV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'ami_owner_id': 'str',
         'bucket_endpoint': 'str',
         'bucket_name': 'str',
         'cloud_formation_disabled': 'bool',
@@ -55,6 +56,7 @@ class V1AWSDirectV1(object):
     }
 
     attribute_map = {
+        'ami_owner_id': 'amiOwnerId',
         'bucket_endpoint': 'bucketEndpoint',
         'bucket_name': 'bucketName',
         'cloud_formation_disabled': 'cloudFormationDisabled',
@@ -68,8 +70,9 @@ class V1AWSDirectV1(object):
         'use_launch_templates': 'useLaunchTemplates'
     }
 
-    def __init__(self, bucket_endpoint: 'str' =None, bucket_name: 'str' =None, cloud_formation_disabled: 'bool' =None, efs_enabled: 'bool' =None, external_id: 'str' =None, primary_region: 'str' =None, regional_load_balancers: 'list[V1RegionalLoadBalancer]' =None, regions: 'list[str]' =None, role_arn: 'str' =None, source_cidr_ips: 'list[str]' =None, use_launch_templates: 'bool' =None):  # noqa: E501
+    def __init__(self, ami_owner_id: 'str' =None, bucket_endpoint: 'str' =None, bucket_name: 'str' =None, cloud_formation_disabled: 'bool' =None, efs_enabled: 'bool' =None, external_id: 'str' =None, primary_region: 'str' =None, regional_load_balancers: 'list[V1RegionalLoadBalancer]' =None, regions: 'list[str]' =None, role_arn: 'str' =None, source_cidr_ips: 'list[str]' =None, use_launch_templates: 'bool' =None):  # noqa: E501
         """V1AWSDirectV1 - a model defined in Swagger"""  # noqa: E501
+        self._ami_owner_id = None
         self._bucket_endpoint = None
         self._bucket_name = None
         self._cloud_formation_disabled = None
@@ -82,6 +85,8 @@ class V1AWSDirectV1(object):
         self._source_cidr_ips = None
         self._use_launch_templates = None
         self.discriminator = None
+        if ami_owner_id is not None:
+            self.ami_owner_id = ami_owner_id
         if bucket_endpoint is not None:
             self.bucket_endpoint = bucket_endpoint
         if bucket_name is not None:
@@ -104,6 +109,27 @@ class V1AWSDirectV1(object):
             self.source_cidr_ips = source_cidr_ips
         if use_launch_templates is not None:
             self.use_launch_templates = use_launch_templates
+
+    @property
+    def ami_owner_id(self) -> 'str':
+        """Gets the ami_owner_id of this V1AWSDirectV1.  # noqa: E501
+
+
+        :return: The ami_owner_id of this V1AWSDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._ami_owner_id
+
+    @ami_owner_id.setter
+    def ami_owner_id(self, ami_owner_id: 'str'):
+        """Sets the ami_owner_id of this V1AWSDirectV1.
+
+
+        :param ami_owner_id: The ami_owner_id of this V1AWSDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._ami_owner_id = ami_owner_id
 
     @property
     def bucket_endpoint(self) -> 'str':
