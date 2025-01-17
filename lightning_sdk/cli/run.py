@@ -53,6 +53,10 @@ class _Run:
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
+            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+                just runs the provided command in a standard shell.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
         """
         # TODO: the docstrings from artifacts_local and artifacts_remote don't show up completely,
         # might need to switch to explicit cli definition
@@ -93,6 +97,10 @@ class _Run:
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
+            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+                just runs the provided command in a standard shell.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
         """
         # TODO: the docstrings from artifacts_local and artifacts_remote don't show up completely,
         # might need to switch to explicit cli definition
@@ -118,6 +126,7 @@ class _Run:
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        entrypoint: str = "sh -c",
     ) -> None:
         if machine is None:
             # TODO: infer from studio
@@ -145,6 +154,7 @@ class _Run:
             cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            entrypoint=entrypoint,
         )
 
     # TODO: sadly, fire displays both Optional[type] and Union[type, None] as Optional[Optional]
@@ -167,6 +177,7 @@ class _Run:
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        entrypoint: str = "sh -c",
     ) -> None:
         if name is None:
             from datetime import datetime
@@ -203,4 +214,5 @@ class _Run:
             cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            entrypoint=entrypoint,
         )

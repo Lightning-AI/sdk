@@ -357,7 +357,7 @@ FLAGS
         Type: Optional[Optional]
         Default: None
         The cloud account to run the job on. Defaults to the studio cloud account if running with studio compute env. If not provided will fall back to the teamspaces default cloud account.
-    -e, --env=ENV
+    --env=ENV
         Type: Optional[Optional]
         Default: None
         Environment variables to set inside the job.
@@ -381,6 +381,10 @@ FLAGS
         Type: Optional[Optional]
         Default: None
         The remote storage to persist your artifacts to.
+    --entrypoint=ENTRYPOINT
+        Type: str
+        Default: 'sh -c'
+        The entrypoint of your docker container. Defaults to `sh -c` which just runs the provided command in a standard shell. To use the pre-defined entrypoint of the provided image, set this to an empty string. Only applicable when submitting docker jobs.
 
 NOTES
     You can also use flags syntax for POSITIONAL ARGUMENTS"""
