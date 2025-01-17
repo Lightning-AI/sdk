@@ -43,6 +43,9 @@ GROUPS
      serve
        Serve a LitServe model.
 
+     stop
+       Stop resources on the Lightning AI platform.
+
      upload
        Upload files and folders to Lightning AI.
 

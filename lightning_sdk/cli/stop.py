@@ -3,11 +3,11 @@ from typing import Optional
 from lightning_sdk.cli.job_and_mmt_action import _JobAndMMTAction
 
 
-class _Inspect(_JobAndMMTAction):
-    """Inspect resources of the Lightning AI platform to get additional details as JSON."""
+class _Stop(_JobAndMMTAction):
+    """Stop resources on the Lightning AI platform."""
 
     def job(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-        """Inspect a job for further details as JSON.
+        """Stop a job.
 
         Args:
             name: the name of the job. If not specified can be selected interactively.
@@ -16,10 +16,13 @@ class _Inspect(_JobAndMMTAction):
                 If not specified can be selected interactively.
 
         """
-        print(super().job(name=name, teamspace=teamspace).json())
+        job = super().job(name=name, teamspace=teamspace)
+
+        job.stop()
+        print(f"Successfully stopped {job.name}!")
 
     def mmt(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-        """Inspect a multi-machine job for further details as JSON.
+        """Stop a multi-machine job.
 
         Args:
             name: the name of the job. If not specified can be selected interactively.
@@ -28,4 +31,7 @@ class _Inspect(_JobAndMMTAction):
                 If not specified can be selected interactively.
 
         """
-        print(super().mmt(name=name, teamspace=teamspace).json())
+        mmt = super().mmt(name=name, teamspace=teamspace)
+
+        mmt.stop()
+        print(f"Successfully stopped {mmt.name}!")
