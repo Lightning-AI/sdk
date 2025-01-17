@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 
 from lightning_sdk.api.mmt_api import MMTApiV1
+from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.job.v1 import _internal_status_to_external_status
 from lightning_sdk.job.work import Work
 
@@ -179,7 +180,10 @@ class _MMTV1(_BaseMMT):
 
     @property
     def link(self) -> str:
-        return f"https://lightning.ai/{self.teamspace.owner.name}/{self.teamspace.name}/studios/{self._job_api.get_studio_name(self._guaranteed_job)}/app?app_id=mmt&app_tab=Runs&job_name={self.name}"
+        return (
+            f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/studios/{self._job_api.get_studio_name(self._guaranteed_job)}/"
+            f"app?app_id=mmt&app_tab=Runs&job_name={self.name}"
+        )
 
     @property
     def image(self) -> Optional[str]:

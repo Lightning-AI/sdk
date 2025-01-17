@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from lightning_sdk.api.job_api import JobApiV2
+from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.job.base import _BaseJob
 
 if TYPE_CHECKING:
@@ -185,9 +186,7 @@ class _JobV2(_BaseJob):
     @property
     def link(self) -> str:
         if self._job_api.get_image_name(self._guaranteed_job):
-            return (
-                f"https://lightning.ai/{self.teamspace.owner.name}/{self.teamspace.name}/jobs/{self.name}?app_id=jobs"
-            )
+            return f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/jobs/{self.name}?app_id=jobs"
 
         return super().link
 

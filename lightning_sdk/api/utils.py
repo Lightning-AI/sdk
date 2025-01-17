@@ -353,7 +353,7 @@ def _machine_to_compute_name(machine: Union[Machine, str]) -> str:
 
 _COMPUTE_NAME_TO_MACHINE: Dict[str, Machine] = {v: k for k, v in _MACHINE_TO_COMPUTE_NAME.items()}
 
-_DEFAULT_CLOUD_URL = "https://lightning.ai:443"
+_DEFAULT_CLOUD_URL = "https://lightning.ai"
 
 
 def _get_cloud_url() -> str:

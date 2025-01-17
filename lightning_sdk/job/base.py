@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Dict, Optional, TypedDict, Union
 
+from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace
 
 if TYPE_CHECKING:
@@ -345,7 +346,10 @@ class _BaseJob(ABC):
         studio_name = self._job_api.get_studio_name(self._guaranteed_job)
         if not studio_name:
             raise RuntimeError("Cannot extract studio name from job")
-        return f"https://lightning.ai/{self.teamspace.owner.name}/{self.teamspace.name}/studios/{studio_name}/app?app_id=jobs&job_name={self.name}"
+        return (
+            f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/studios/"
+            f"{studio_name}/app?app_id=jobs&job_name={self.name}"
+        )
 
     @property
     def _guaranteed_job(self) -> Any:

@@ -9,16 +9,16 @@ def test_llm_finetune(monkeypatch):
 
     arguments = [
         (
-            "https://fid-csid.cloudspaces.lightning.ai:443",
+            "https://fid-csid.cloudspaces.lightning.ai",
             {
                 "teamspace_id": "teamspace_id",
                 "cluster_id": "cluster_id",
                 "input": ANY,
             },
         ),
-        ("https://fid-csid.cloudspaces.lightning.ai:443?run_id=run_id", None),
-        ("https://fid-csid.cloudspaces.lightning.ai:443?run_id=run_id", None),
-        ("https://fid-csid.cloudspaces.lightning.ai:443?run_id=run_id", None),
+        ("https://fid-csid.cloudspaces.lightning.ai?run_id=run_id", None),
+        ("https://fid-csid.cloudspaces.lightning.ai?run_id=run_id", None),
+        ("https://fid-csid.cloudspaces.lightning.ai?run_id=run_id", None),
     ]
 
     responses = [
