@@ -1,3 +1,4 @@
+import importlib
 from unittest import mock
 
 import pytest
@@ -313,3 +314,24 @@ def test_mmtv2_delete(mmt_api_get_job_by_name_mocker, internal_studio_init_mocke
     job.delete()
 
     delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
+
+
+def test_mmt_instantiation_fallback_v2_to_v1(
+    internal_studio_init_mocker, mmt_backend_selector_mocker_v2, internal_mmt_fallback_mocker
+):
+    import lightning_sdk
+    from lightning_sdk.mmt.v1 import _MMTV1
+    from lightning_sdk.mmt.v2 import _MMTV2
+
+    importlib.reload(lightning_sdk.mmt.mmt)
+    from lightning_sdk.mmt.mmt import MMT
+
+    # the internal_mmt_fallback_mocker makes sure that attempts to init a _MMTV2
+    # fail with APIExceptions which should trigger a fallback to _MMTV1
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    m = MMT(name="abc", teamspace=studio.teamspace)
+    assert isinstance(m._internal_mmt, _MMTV1)
+
+    # when we're not fetching then job (e.g. on job creation) there's no fallback necessary
+    m = MMT(name="abc", teamspace=studio.teamspace, _fetch_job=False)
+    assert isinstance(m._internal_mmt, _MMTV2)

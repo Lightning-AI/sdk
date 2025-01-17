@@ -58,15 +58,40 @@ class MMT(_BaseMMT):
             user: the name of the user owning the :param`teamspace`
                 in case it is owned directly by a user instead of an org.
         """
-        internal_mmt_cls = _MMTV2 if _has_mmt_v2() and not self._force_v1 else _MMTV1
+        from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
-        self._internal_mmt = internal_mmt_cls(
-            name=name,
-            teamspace=teamspace,
-            org=org,
-            user=user,
-            _fetch_job=_fetch_job,
-        )
+        if _has_mmt_v2() and not self._force_v1:
+            # try with v2 and fall back to v1
+            try:
+                mmt = _MMTV2(
+                    name=name,
+                    teamspace=teamspace,
+                    org=org,
+                    user=user,
+                    _fetch_job=_fetch_job,
+                )
+            except ApiException as e:
+                try:
+                    mmt = _MMTV1(
+                        name=name,
+                        teamspace=teamspace,
+                        org=org,
+                        user=user,
+                        _fetch_job=_fetch_job,
+                    )
+                except ApiException:
+                    raise e from e
+
+        else:
+            mmt = _MMTV1(
+                name=name,
+                teamspace=teamspace,
+                org=org,
+                user=user,
+                _fetch_job=_fetch_job,
+            )
+
+        self._internal_mmt = mmt
 
     @classmethod
     def run(

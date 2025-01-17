@@ -50,15 +50,40 @@ class Job(_BaseJob):
             user: the name of the user owning the :param`teamspace`
                 in case it is owned directly by a user instead of an org.
         """
-        internal_job_cls = _JobV2 if _has_jobs_v2() and not self._force_v1 else _JobV1
+        from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
-        self._internal_job = internal_job_cls(
-            name=name,
-            teamspace=teamspace,
-            org=org,
-            user=user,
-            _fetch_job=_fetch_job,
-        )
+        if _has_jobs_v2() and not self._force_v1:
+            # try with v2 and fall back to v1
+            try:
+                job = _JobV2(
+                    name=name,
+                    teamspace=teamspace,
+                    org=org,
+                    user=user,
+                    _fetch_job=_fetch_job,
+                )
+            except ApiException as e:
+                try:
+                    job = _JobV1(
+                        name=name,
+                        teamspace=teamspace,
+                        org=org,
+                        user=user,
+                        _fetch_job=_fetch_job,
+                    )
+                except ApiException:
+                    raise e from e
+
+        else:
+            job = _JobV1(
+                name=name,
+                teamspace=teamspace,
+                org=org,
+                user=user,
+                _fetch_job=_fetch_job,
+            )
+
+        self._internal_job = job
 
     @classmethod
     def run(

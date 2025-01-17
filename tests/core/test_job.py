@@ -669,3 +669,24 @@ def test_job_v1_dict_json(internal_studio_init_mocker, internal_job_api_mocker_g
         '{\n    "command": "some command",\n    "image": null,\n    "machine": "T4_X_4",\n    '
         '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc"\n}'
     )
+
+
+def test_job_instantiation_fallback_v2_to_v1(
+    internal_studio_init_mocker, job_backend_selector_mocker_v2, internal_job_fallback_mocker
+):
+    import lightning_sdk
+    from lightning_sdk.job.v1 import _JobV1
+    from lightning_sdk.job.v2 import _JobV2
+
+    importlib.reload(lightning_sdk.job.job)
+    from lightning_sdk.job.job import Job
+
+    # the internal_job_fallback_mocker makes sure that attempts to init a _JobV2
+    # fail with APIExceptions which should trigger a fallback to _JobV1
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    j = Job(name="abc", teamspace=studio.teamspace)
+    assert isinstance(j._internal_job, _JobV1)
+
+    # when we're not fetching then job (e.g. on job creation) there's no fallback necessary
+    j = Job(name="abc", teamspace=studio.teamspace, _fetch_job=False)
+    assert isinstance(j._internal_job, _JobV2)

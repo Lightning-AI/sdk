@@ -2194,3 +2194,49 @@ def internal_job_logs_mocker(mocker):
     yield [mocker]
 
     mocker.resetall()
+
+
+@pytest.fixture()
+def internal_job_fallback_mocker(mocker):
+    def v2_side_effect(*args, **kwargs):
+        raise ApiException(status=404, reason="Not found")
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_find_job",
+        autospec=True,
+        side_effect=v2_side_effect,
+    )
+
+    def find_instance(self, project_id, name):
+        return Externalv1LightningappInstance(name=name, project_id=project_id, id=name)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
+        side_effect=find_instance,
+        autospec=True,
+    )
+    yield [mocker]
+    mocker.resetall()
+
+
+@pytest.fixture()
+def internal_mmt_fallback_mocker(mocker):
+    def v2_side_effect(*args, **kwargs):
+        raise ApiException(status=404, reason="Not found")
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_get_multi_machine_job_by_name",
+        autospec=True,
+        side_effect=v2_side_effect,
+    )
+
+    def find_instance(self, project_id, name):
+        return Externalv1LightningappInstance(name=name, project_id=project_id, id=name)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
+        side_effect=find_instance,
+        autospec=True,
+    )
+    yield [mocker]
+    mocker.resetall()
