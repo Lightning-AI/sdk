@@ -302,6 +302,13 @@ class JobApiV2:
     def get_command(self, job: V1Job) -> str:
         return job.spec.command
 
+    def get_mmt_name(self, job: V1Job) -> str:
+        if job.multi_machine_job_id:
+            splits = job.name.rsplit("-", 1)
+            if len(splits) == 2:
+                return splits[0]
+        return ""
+
     def _job_state_to_external(self, state: str) -> "Status":
         from lightning_sdk.status import Status
 

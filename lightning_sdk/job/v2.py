@@ -185,9 +185,18 @@ class _JobV2(_BaseJob):
 
     @property
     def link(self) -> str:
+        mmt_name = self._job_api.get_mmt_name(self._guaranteed_job)
+
         if self._job_api.get_image_name(self._guaranteed_job):
+            if mmt_name:
+                # don't go via the studio unless we use studio env
+                return (
+                    f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/"
+                    f"jobs/{mmt_name}?app_id=mmt&machine_name={self.name}"
+                )
             return f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/jobs/{self.name}?app_id=jobs"
 
+        # TODO: MMT env with studio
         return super().link
 
     @property

@@ -1,4 +1,3 @@
-from contextlib import suppress
 from functools import lru_cache
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
@@ -173,10 +172,7 @@ class MMT(_BaseMMT):
         # required for typing with "MMT"
         assert isinstance(ret_val, cls)
 
-        msg = "Multi-Machine Job was successfully launched."
-
-        with suppress(NotImplementedError):
-            msg += f" View it at {ret_val.link}"
+        msg = f"Multi-Machine Job was successfully launched. View it at {ret_val.link}"
 
         _logger.info(msg)
         return ret_val

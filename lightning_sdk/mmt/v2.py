@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
 from lightning_sdk.api.mmt_api import MMTApiV2
+from lightning_sdk.api.utils import _get_cloud_url
 
 if TYPE_CHECKING:
     from lightning_sdk.job.job import Job
@@ -195,8 +196,8 @@ class _MMTV2(_BaseMMT):
 
     @property
     def link(self) -> str:
-        # TODO: Since we don't have a UI for this yet, we can't have a link
-        raise NotImplementedError
+        # TODO: MMT env with studio -> go to studio plugin
+        return f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/jobs/{self.name}?app_id=mmt"
 
     @property
     def image(self) -> Optional[str]:
