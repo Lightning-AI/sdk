@@ -31,6 +31,9 @@ GROUPS
      download
        Download files and folders from Lightning AI.
 
+     inspect
+       Inspect resources of the Lightning AI platform to get additional details as JSON.
+
      list
        List resources on the Lightning AI platform.
 
