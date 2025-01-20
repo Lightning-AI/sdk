@@ -434,7 +434,7 @@ def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker)
 
     assert get_job_mock.call_count == 6
     update_job_mock.assert_called_once_with(
-        id="test-job-id", project_id="ts-abc001", body=JobsIdBody1(cloudspace_id="cloudspace-id", state="stopped")
+        id="test-job-id", project_id="ts-abc001", body=JobsIdBody1(cloudspace_id="cloudspace-id", state="stop")
     )
 
 
