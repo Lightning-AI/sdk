@@ -182,12 +182,16 @@ class JobApiV1:
 
 
 class JobApiV2:
+    # these are stages the job can be in.
     v2_job_state_pending = "pending"
     v2_job_state_running = "running"
     v2_job_state_stopped = "stopped"
     v2_job_state_completed = "completed"
     v2_job_state_failed = "failed"
     v2_job_state_stopping = "stopping"
+
+    # this is the user action to stop the job.
+    v2_job_state_stop = "stop"
 
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
@@ -262,7 +266,7 @@ class JobApiV2:
             return
 
         if current_state != Status.Stopping:
-            update_body = JobsIdBody1(cloudspace_id=current_job.spec.cloudspace_id, state=self.v2_job_state_stopped)
+            update_body = JobsIdBody1(cloudspace_id=current_job.spec.cloudspace_id, state=self.v2_job_state_stop)
             self._client.jobs_service_update_job(body=update_body, project_id=teamspace_id, id=job_id)
 
         while True:
