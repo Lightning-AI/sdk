@@ -52,7 +52,6 @@ class V1UserFeatures(object):
         'cap_drop': 'list[str]',
         'capacity_reservation_byoc': 'bool',
         'capacity_reservation_dry_run': 'bool',
-        'cluster_proxy': 'bool',
         'code_tab': 'bool',
         'collab_screen_sharing': 'bool',
         'cost_attribution_settings': 'bool',
@@ -66,7 +65,6 @@ class V1UserFeatures(object):
         'deployment_version_visibility': 'bool',
         'docs_agent': 'bool',
         'drive_v2': 'bool',
-        'dynamic_workload_scheduling': 'bool',
         'enable_crypto_crackdown': 'bool',
         'enable_efs': 'bool',
         'enable_storage_limits': 'bool',
@@ -137,7 +135,6 @@ class V1UserFeatures(object):
         'cap_drop': 'capDrop',
         'capacity_reservation_byoc': 'capacityReservationByoc',
         'capacity_reservation_dry_run': 'capacityReservationDryRun',
-        'cluster_proxy': 'clusterProxy',
         'code_tab': 'codeTab',
         'collab_screen_sharing': 'collabScreenSharing',
         'cost_attribution_settings': 'costAttributionSettings',
@@ -151,7 +148,6 @@ class V1UserFeatures(object):
         'deployment_version_visibility': 'deploymentVersionVisibility',
         'docs_agent': 'docsAgent',
         'drive_v2': 'driveV2',
-        'dynamic_workload_scheduling': 'dynamicWorkloadScheduling',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'enable_efs': 'enableEfs',
         'enable_storage_limits': 'enableStorageLimits',
@@ -210,7 +206,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, cluster_proxy: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_customize_api: 'bool' =None, deployment_data_path: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_version_visibility: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, dynamic_workload_scheduling: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, instant_capacity_reservation: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lightning_registry: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mmt_v2: 'bool' =None, model_store: 'bool' =None, multiple_deployment_versions: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_customize_api: 'bool' =None, deployment_data_path: 'bool' =None, deployment_gallery: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_version_visibility: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, gcp: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, instant_capacity_reservation: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lightning_registry: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mmt_v2: 'bool' =None, model_store: 'bool' =None, multiple_deployment_versions: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._advanced_deployment_autoscaling = None
         self._affiliate_links = None
@@ -223,7 +219,6 @@ class V1UserFeatures(object):
         self._cap_drop = None
         self._capacity_reservation_byoc = None
         self._capacity_reservation_dry_run = None
-        self._cluster_proxy = None
         self._code_tab = None
         self._collab_screen_sharing = None
         self._cost_attribution_settings = None
@@ -237,7 +232,6 @@ class V1UserFeatures(object):
         self._deployment_version_visibility = None
         self._docs_agent = None
         self._drive_v2 = None
-        self._dynamic_workload_scheduling = None
         self._enable_crypto_crackdown = None
         self._enable_efs = None
         self._enable_storage_limits = None
@@ -317,8 +311,6 @@ class V1UserFeatures(object):
             self.capacity_reservation_byoc = capacity_reservation_byoc
         if capacity_reservation_dry_run is not None:
             self.capacity_reservation_dry_run = capacity_reservation_dry_run
-        if cluster_proxy is not None:
-            self.cluster_proxy = cluster_proxy
         if code_tab is not None:
             self.code_tab = code_tab
         if collab_screen_sharing is not None:
@@ -345,8 +337,6 @@ class V1UserFeatures(object):
             self.docs_agent = docs_agent
         if drive_v2 is not None:
             self.drive_v2 = drive_v2
-        if dynamic_workload_scheduling is not None:
-            self.dynamic_workload_scheduling = dynamic_workload_scheduling
         if enable_crypto_crackdown is not None:
             self.enable_crypto_crackdown = enable_crypto_crackdown
         if enable_efs is not None:
@@ -692,27 +682,6 @@ class V1UserFeatures(object):
         self._capacity_reservation_dry_run = capacity_reservation_dry_run
 
     @property
-    def cluster_proxy(self) -> 'bool':
-        """Gets the cluster_proxy of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The cluster_proxy of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._cluster_proxy
-
-    @cluster_proxy.setter
-    def cluster_proxy(self, cluster_proxy: 'bool'):
-        """Sets the cluster_proxy of this V1UserFeatures.
-
-
-        :param cluster_proxy: The cluster_proxy of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._cluster_proxy = cluster_proxy
-
-    @property
     def code_tab(self) -> 'bool':
         """Gets the code_tab of this V1UserFeatures.  # noqa: E501
 
@@ -984,27 +953,6 @@ class V1UserFeatures(object):
         """
 
         self._drive_v2 = drive_v2
-
-    @property
-    def dynamic_workload_scheduling(self) -> 'bool':
-        """Gets the dynamic_workload_scheduling of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The dynamic_workload_scheduling of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._dynamic_workload_scheduling
-
-    @dynamic_workload_scheduling.setter
-    def dynamic_workload_scheduling(self, dynamic_workload_scheduling: 'bool'):
-        """Sets the dynamic_workload_scheduling of this V1UserFeatures.
-
-
-        :param dynamic_workload_scheduling: The dynamic_workload_scheduling of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._dynamic_workload_scheduling = dynamic_workload_scheduling
 
     @property
     def enable_crypto_crackdown(self) -> 'bool':

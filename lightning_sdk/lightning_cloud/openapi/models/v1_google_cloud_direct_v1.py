@@ -47,6 +47,7 @@ class V1GoogleCloudDirectV1(object):
         'credentials_service_account_email': 'str',
         'primary_region': 'str',
         'project_id': 'str',
+        'project_sa_enabled': 'bool',
         'regions': 'list[str]',
         'service_account_email': 'str',
         'source_cidr_ips': 'list[str]'
@@ -59,12 +60,13 @@ class V1GoogleCloudDirectV1(object):
         'credentials_service_account_email': 'credentialsServiceAccountEmail',
         'primary_region': 'primaryRegion',
         'project_id': 'projectId',
+        'project_sa_enabled': 'projectSaEnabled',
         'regions': 'regions',
         'service_account_email': 'serviceAccountEmail',
         'source_cidr_ips': 'sourceCidrIps'
     }
 
-    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._compute_project_role = None
@@ -72,6 +74,7 @@ class V1GoogleCloudDirectV1(object):
         self._credentials_service_account_email = None
         self._primary_region = None
         self._project_id = None
+        self._project_sa_enabled = None
         self._regions = None
         self._service_account_email = None
         self._source_cidr_ips = None
@@ -88,6 +91,8 @@ class V1GoogleCloudDirectV1(object):
             self.primary_region = primary_region
         if project_id is not None:
             self.project_id = project_id
+        if project_sa_enabled is not None:
+            self.project_sa_enabled = project_sa_enabled
         if regions is not None:
             self.regions = regions
         if service_account_email is not None:
@@ -222,6 +227,29 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def project_sa_enabled(self) -> 'bool':
+        """Gets the project_sa_enabled of this V1GoogleCloudDirectV1.  # noqa: E501
+
+        If enabled, we will set up and use (for compute machines) service accounts with fine-graned permissions, to allow access objects under the teamspace prefix only. This flag assumed to be removed once this is dogfooded well ehough.  # noqa: E501
+
+        :return: The project_sa_enabled of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._project_sa_enabled
+
+    @project_sa_enabled.setter
+    def project_sa_enabled(self, project_sa_enabled: 'bool'):
+        """Sets the project_sa_enabled of this V1GoogleCloudDirectV1.
+
+        If enabled, we will set up and use (for compute machines) service accounts with fine-graned permissions, to allow access objects under the teamspace prefix only. This flag assumed to be removed once this is dogfooded well ehough.  # noqa: E501
+
+        :param project_sa_enabled: The project_sa_enabled of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._project_sa_enabled = project_sa_enabled
 
     @property
     def regions(self) -> 'list[str]':

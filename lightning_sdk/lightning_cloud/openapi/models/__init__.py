@@ -757,6 +757,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_vultr_direct_v1 import V1Vu
 from lightning_sdk.lightning_cloud.openapi.models.v1_work import V1Work
 from lightning_sdk.lightning_cloud.openapi.models.validate import Validate
 from lightning_sdk.lightning_cloud.openapi.models.validateautojoindomain_domain_body import ValidateautojoindomainDomainBody
+from lightning_sdk.lightning_cloud.openapi.models.version_default_body import VersionDefaultBody
 from lightning_sdk.lightning_cloud.openapi.models.version_uploads_body import VersionUploadsBody
 from lightning_sdk.lightning_cloud.openapi.models.versions_id_body import VersionsIdBody
 from lightning_sdk.lightning_cloud.openapi.models.versions_version_body import VersionsVersionBody
