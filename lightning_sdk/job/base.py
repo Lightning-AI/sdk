@@ -62,6 +62,8 @@ class _BaseJob(ABC):
         if _fetch_job:
             self._update_internal_job()
 
+        self._prevent_refetch_latest = False
+
     @classmethod
     def run(
         cls,
@@ -372,5 +374,9 @@ class _BaseJob(ABC):
     @property
     def _latest_job(self) -> Any:
         """Guarantees to fetch the latest version of a job before returning it."""
+        # in some cases we know we just refetched the latest state, no need to refetch again
+        if self._prevent_refetch_latest:
+            return self._guaranteed_job
+
         self._update_internal_job()
         return self._job

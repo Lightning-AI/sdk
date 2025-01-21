@@ -33,6 +33,10 @@ class _List(_TeamspacesMenu):
         table.add_column("Machine")
         table.add_column("Total Cost")
         for j in jobs:
+            # we know we just fetched these, so no need to refetch
+            j._prevent_refetch_latest = True
+            j._internal_job._prevent_refetch_latest = True
+
             studio = j.studio
             table.add_row(
                 j.name,
@@ -69,6 +73,10 @@ class _List(_TeamspacesMenu):
         table.add_column("Num Machines")
         table.add_column("Total Cost")
         for j in jobs:
+            # we know we just fetched these, so no need to refetch
+            j._prevent_refetch_latest = True
+            j._internal_job._prevent_refetch_latest = True
+
             studio = j.studio
             table.add_row(
                 j.name,
