@@ -20,7 +20,32 @@ class _List(_TeamspacesMenu):
         """
         resolved_teamspace = self._resolve_teamspace(teamspace=teamspace)
 
-        print("Available Jobs:\n" + "\n".join([j.name for j in resolved_teamspace.jobs]))
+        jobs = resolved_teamspace.jobs
+
+        table = Table(
+            pad_edge=True,
+        )
+        table.add_column("Name")
+        table.add_column("Teamspace")
+        table.add_column("Studio")
+        table.add_column("Image")
+        table.add_column("Status")
+        table.add_column("Machine")
+        table.add_column("Total Cost")
+        for j in jobs:
+            studio = j.studio
+            table.add_row(
+                j.name,
+                f"{j.teamspace.owner.name}/{j.teamspace.name}",
+                studio.name if studio else None,
+                j.image,
+                str(j.status),
+                str(j.machine),
+                f"{j.total_cost:.3f}",
+            )
+
+        console = Console()
+        console.print(table)
 
     def mmts(self, teamspace: Optional[str] = None) -> None:
         """List multi-machine jobs for a given teamspace.
@@ -32,7 +57,32 @@ class _List(_TeamspacesMenu):
         """
         resolved_teamspace = self._resolve_teamspace(teamspace=teamspace)
 
-        print("Available MMTs:\n" + "\n".join([j.name for j in resolved_teamspace.multi_machine_jobs]))
+        jobs = resolved_teamspace.multi_machine_jobs
+
+        table = Table(pad_edge=True)
+        table.add_column("Name")
+        table.add_column("Teamspace")
+        table.add_column("Studio")
+        table.add_column("Image")
+        table.add_column("Status")
+        table.add_column("Machine")
+        table.add_column("Num Machines")
+        table.add_column("Total Cost")
+        for j in jobs:
+            studio = j.studio
+            table.add_row(
+                j.name,
+                f"{j.teamspace.owner.name}/{j.teamspace.name}",
+                studio.name if studio else None,
+                j.image,
+                str(j.status),
+                str(j.machine),
+                str(j.num_machines),
+                str(j.total_cost),
+            )
+
+        console = Console()
+        console.print(table)
 
     def containers(self, teamspace: Optional[str] = None) -> None:
         """Display the list of available containers.
