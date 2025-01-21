@@ -111,7 +111,7 @@ class _Run:
     # might need to move to different cli library
     def job(
         self,
-        name: str,
+        name: Optional[str] = None,
         machine: Optional[str] = None,
         command: Optional[str] = None,
         studio: Optional[str] = None,
@@ -128,6 +128,12 @@ class _Run:
         artifacts_remote: Optional[str] = None,
         entrypoint: str = "sh -c",
     ) -> None:
+        if not name:
+            from datetime import datetime
+
+            timestr = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+            name = f"job-{timestr}"
+
         if machine is None:
             # TODO: infer from studio
             machine = "CPU"
@@ -138,6 +144,7 @@ class _Run:
         if cloud_account is None:
             cloud_account = resolved_teamspace.default_cloud_account
         machine_enum = Machine(machine.upper())
+
         Job.run(
             name=name,
             machine=machine_enum,

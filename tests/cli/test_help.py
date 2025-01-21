@@ -317,17 +317,16 @@ NAME
     lightning run job - Run async workloads using a docker image or a compute environment from your studio.
 
 SYNOPSIS
-    lightning run job NAME <flags>
+    lightning run job <flags>
 
 DESCRIPTION
     Run async workloads using a docker image or a compute environment from your studio.
 
-POSITIONAL ARGUMENTS
-    NAME
-        Type: str
-        The name of the job. Needs to be unique within the teamspace.
-
 FLAGS
+    -n, --name=NAME
+        Type: Optional[Optional]
+        Default: None
+        The name of the job. Needs to be unique within the teamspace.
     -m, --machine=MACHINE
         Type: Optional[Optional]
         Default: None
@@ -387,9 +386,6 @@ FLAGS
     --entrypoint=ENTRYPOINT
         Type: str
         Default: 'sh -c'
-        The entrypoint of your docker container. Defaults to `sh -c` which just runs the provided command in a standard shell. To use the pre-defined entrypoint of the provided image, set this to an empty string. Only applicable when submitting docker jobs.
-
-NOTES
-    You can also use flags syntax for POSITIONAL ARGUMENTS"""
+        The entrypoint of your docker container. Defaults to `sh -c` which just runs the provided command in a standard shell. To use the pre-defined entrypoint of the provided image, set this to an empty string. Only applicable when submitting docker jobs."""
 
     assert message in result.stderr or message in result.stdout
