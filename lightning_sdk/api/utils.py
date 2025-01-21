@@ -354,12 +354,19 @@ def _machine_to_compute_name(machine: Union[Machine, str]) -> str:
 _COMPUTE_NAME_TO_MACHINE: Dict[str, Machine] = {v: k for k, v in _MACHINE_TO_COMPUTE_NAME.items()}
 
 _DEFAULT_CLOUD_URL = "https://lightning.ai"
+_DEFAULT_REGISTRY_URL = "litcr.io"
 
 
 def _get_cloud_url() -> str:
     cloud_url = os.environ.get("LIGHTNING_CLOUD_URL", _DEFAULT_CLOUD_URL)
     os.environ["LIGHTNING_CLOUD_URL"] = cloud_url
     return cloud_url
+
+
+def _get_registry_url() -> str:
+    registry_url = os.environ.get("LIGHTNING_REGISTRY_URL", _DEFAULT_REGISTRY_URL)
+    os.environ["LIGHTNING_REGISTRY_URL"] = registry_url
+    return registry_url
 
 
 def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:

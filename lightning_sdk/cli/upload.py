@@ -4,18 +4,22 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from simple_term_menu import TerminalMenu
 from tqdm import tqdm
 
+from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.cli.studios_menu import _StudiosMenu
+from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.models import upload_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 
 
-class _Uploads(_StudiosMenu):
+class _Uploads(_StudiosMenu, _TeamspacesMenu):
     """Upload files and folders to Lightning AI."""
 
     _studio_upload_status_path = "~/.lightning/studios/uploads"
@@ -145,6 +149,33 @@ class _Uploads(_StudiosMenu):
             + selected_studio.name
         )
         print(f"See your file at {studio_url}")
+
+    def container(self, container: str, tag: str = "latest", teamspace: Optional[str] = None) -> None:
+        teamspace = self._resolve_teamspace(teamspace)
+        api = LitContainerApi()
+        console = Console()
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            TimeElapsedColumn(),
+            console=console,
+            transient=False,
+        ) as progress:
+            push_task = progress.add_task("Pushing Docker image", total=None)
+            resp = api.upload_container(container, teamspace, tag)
+            for line in resp:
+                if "status" in line:
+                    console.print(line["status"], style="bright_black")
+                    progress.update(push_task, description="Pushing Docker image")
+                elif "aux" in line:
+                    console.print(line["aux"], style="bright_black")
+                elif "error" in line:
+                    progress.stop()
+                    console.print(f"\n[red]{line}[/red]")
+                    return
+                else:
+                    console.print(line, style="bright_black")
+            progress.update(push_task, description="[green]Container pushed![/green]")
 
     def _start_parallel_upload(
         self, executor: concurrent.futures.ThreadPoolExecutor, studio: Studio, upload_state: Dict[str, str]
