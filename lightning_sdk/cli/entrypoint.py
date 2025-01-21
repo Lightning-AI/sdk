@@ -1,3 +1,7 @@
+import sys
+from types import TracebackType
+from typing import Type
+
 from fire import Fire
 from lightning_utilities.core.imports import RequirementCache
 
@@ -32,6 +36,8 @@ class StudioCLI:
         self.inspect = _Inspect()
         self.stop = _Stop()
 
+        sys.excepthook = _notify_exception
+
     def login(self) -> None:
         """Login to Lightning AI Studios."""
         auth = Auth()
@@ -46,6 +52,11 @@ class StudioCLI:
         """Logout from Lightning AI Studios."""
         auth = Auth()
         auth.clear()
+
+
+def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:  # No
+    """CLI won't show tracebacks, just print the exception message."""
+    print(value)
 
 
 def main_cli() -> None:
