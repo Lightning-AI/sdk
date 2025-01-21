@@ -131,7 +131,7 @@ class _Run:
         if machine is None:
             # TODO: infer from studio
             machine = "CPU"
-        machine_enum = Machine(machine.upper())
+        machine_enum = Machine[machine.upper()]
 
         resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
 
@@ -188,7 +188,7 @@ class _Run:
         if machine is None:
             # TODO: infer from studio
             machine = "CPU"
-        machine_enum = Machine(machine.upper())
+        machine_enum = Machine[machine.upper()]
 
         resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
         if cloud_account is None:
