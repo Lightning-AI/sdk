@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Dict, Optional, Union
 
 from lightning_sdk.api.job_api import JobApiV2
 from lightning_sdk.api.utils import _get_cloud_url
@@ -133,12 +133,6 @@ class _JobV2(_BaseJob):
             teamspace_id=self._teamspace.id,
             cloudspace_id=self._guaranteed_job.spec.cloudspace_id,
         )
-
-    @property
-    def _latest_job(self) -> Any:
-        """Guarantees to fetch the latest version of a job before returning it."""
-        self._update_internal_job()
-        return self._job
 
     @property
     def status(self) -> "Status":

@@ -180,6 +180,10 @@ class JobApiV1:
 
         raise RuntimeError("Could not extract command from app")
 
+    def get_total_cost(self, job: Externalv1LightningappInstance) -> float:
+        status: V1LightningappInstanceStatus = job.status
+        return status.total_cost
+
 
 class JobApiV2:
     # these are stages the job can be in.
@@ -337,3 +341,6 @@ class JobApiV2:
         return _COMPUTE_NAME_TO_MACHINE.get(
             instance_type, _COMPUTE_NAME_TO_MACHINE.get(instance_name, instance_type or instance_name)
         )
+
+    def get_total_cost(self, job: V1Job) -> float:
+        return job.total_cost

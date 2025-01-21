@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 
 from lightning_sdk.api.mmt_api import MMTApiV2
 from lightning_sdk.api.utils import _get_cloud_url
@@ -148,12 +148,6 @@ class _MMTV2(_BaseMMT):
             job_id=self._guaranteed_job.id,
             teamspace_id=self._teamspace.id,
         )
-
-    @property
-    def _latest_job(self) -> Any:
-        """Guarantees to fetch the latest version of a job before returning it."""
-        self._update_internal_job()
-        return self._job
 
     @property
     def status(self) -> "Status":

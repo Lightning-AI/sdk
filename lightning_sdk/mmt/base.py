@@ -303,7 +303,18 @@ class _BaseMMT(_BaseJob):
 
     def dict(
         self
-    ) -> Dict[str, Union[str, "Studio", "Status", "Machine", None, List[Dict[str, Union[str, "Status", "Machine"]]]]]:
+    ) -> Dict[
+        str,
+        Union[
+            str,
+            float,
+            "Studio",
+            "Status",
+            "Machine",
+            None,
+            List[Dict[str, Union[str, "Status", "Machine"]]],
+        ],
+    ]:
         """Dict representation of this job."""
         studio = self.studio
 
@@ -319,6 +330,7 @@ class _BaseMMT(_BaseJob):
                 {"name": d["name"], "status": d["status"], "machine": d["machine"]}
                 for d in (x.dict() for x in self.machines)
             ],
+            "total_cost": self.total_cost,
         }
 
     @abstractmethod

@@ -598,6 +598,7 @@ def test_job_v2_dict_json(internal_studio_init_mocker):
         project_id="ts-abc",
         spec=V1JobSpec(cloudspace_id="st-abc", command="some command", instance_type="cpu-4"),
         state="running",
+        total_cost=3.51,
     )
 
     get_job_mock = mock.MagicMock()
@@ -618,10 +619,12 @@ def test_job_v2_dict_json(internal_studio_init_mocker):
     assert job_dict["command"] == "some command"
     assert job_dict["status"] == Status.Running
     assert job_dict["machine"] == Machine.CPU
+    assert job_dict["total_cost"] == 3.51
 
     assert job.json() == (
         '{\n    "command": "some command",\n    "image": null,\n    "machine": "CPU",\n    '
-        '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc"\n}'
+        '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc",\n    '
+        '"total_cost": 3.51\n}'
     )
 
 
@@ -640,7 +643,7 @@ def test_job_v1_dict_json(internal_studio_init_mocker, internal_job_api_mocker_g
                 V1EnvVar(name="COMMAND", value="some command"),
             ],
         ),
-        status=V1LightningappInstanceStatus(phase=V1LightningappInstanceState.RUNNING),
+        status=V1LightningappInstanceStatus(phase=V1LightningappInstanceState.RUNNING, total_cost=3.51),
     )
 
     get_job_mock = mock.MagicMock()
@@ -664,10 +667,12 @@ def test_job_v1_dict_json(internal_studio_init_mocker, internal_job_api_mocker_g
     assert job_dict["command"] == "some command"
     assert job_dict["status"] == Status.Running
     assert job_dict["machine"] == Machine.T4_X_4  # coming from the work
+    assert job_dict["total_cost"] == 3.51
 
     assert job.json() == (
         '{\n    "command": "some command",\n    "image": null,\n    "machine": "T4_X_4",\n    '
-        '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc"\n}'
+        '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc",\n    '
+        '"total_cost": 3.51\n}'
     )
 
 

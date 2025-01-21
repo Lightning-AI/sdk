@@ -203,3 +203,6 @@ class MMTApiV2:
         return _COMPUTE_NAME_TO_MACHINE.get(
             instance_type, _COMPUTE_NAME_TO_MACHINE.get(instance_name, instance_type or instance_name)
         )
+
+    def get_total_cost(self, job: V1MultiMachineJob) -> float:
+        return job.total_cost

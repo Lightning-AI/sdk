@@ -24,6 +24,7 @@ class JobDict(MachineDict):
     teamspace: str
     studio: Optional[str]
     image: Optional[str]
+    total_cost: float
 
 
 class _BaseJob(ABC):
@@ -332,6 +333,7 @@ class _BaseJob(ABC):
             "command": self.command,
             "status": self.status,
             "machine": self.machine,
+            "total_cost": self.total_cost,
         }
 
     def json(self) -> str:
@@ -360,4 +362,15 @@ class _BaseJob(ABC):
         if getattr(self, "_job", None) is None:
             self._update_internal_job()
 
+        return self._job
+
+    @property
+    def total_cost(self) -> float:
+        """The number of credits the job was consuming so far."""
+        return self._job_api.get_total_cost(self._latest_job)
+
+    @property
+    def _latest_job(self) -> Any:
+        """Guarantees to fetch the latest version of a job before returning it."""
+        self._update_internal_job()
         return self._job
