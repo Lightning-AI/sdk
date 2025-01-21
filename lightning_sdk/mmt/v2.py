@@ -214,3 +214,8 @@ class _MMTV2(_BaseMMT):
     def command(self) -> str:
         """The command the job is running."""
         return self._job_api.get_command(self._guaranteed_job)
+
+    @property
+    def num_machines(self) -> int:
+        """Returns the number of machines assigned to this multi-machine job."""
+        return self._job_api.get_num_machines(self._guaranteed_job)

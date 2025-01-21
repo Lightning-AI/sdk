@@ -251,6 +251,11 @@ class _BaseMMT(_BaseJob):
         """Returns the sub-jobs for each individual instance."""
 
     @property
+    def num_machines(self) -> int:
+        """Returns the number of machines assigned to this multi-machine job."""
+        return len(self.machines)
+
+    @property
     @abstractmethod
     def machine(self) -> "Machine":
         """Returns the machine type this job is running on."""

@@ -206,3 +206,6 @@ class MMTApiV2:
 
     def get_total_cost(self, job: V1MultiMachineJob) -> float:
         return job.total_cost
+
+    def get_num_machines(self, job: V1MultiMachineJob) -> int:
+        return job.machines
