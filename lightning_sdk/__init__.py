@@ -4,6 +4,7 @@ from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noq
 from lightning_sdk.helpers import _check_version_and_prompt_upgrade
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
+from lightning_sdk.mmt import MMT
 from lightning_sdk.organization import Organization
 from lightning_sdk.plugin import JobsPlugin, MultiMachineTrainingPlugin, Plugin, SlurmJobsPlugin
 from lightning_sdk.status import Status
@@ -15,6 +16,7 @@ __all__ = [
     "Job",
     "JobsPlugin",
     "Machine",
+    "MMT",
     "MultiMachineTrainingPlugin",
     "Organization",
     "Plugin",
