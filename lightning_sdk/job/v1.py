@@ -174,7 +174,7 @@ class _JobV1(_BaseJob):
 
     def stop(self) -> None:
         """Stops the job. is blocking until the ob is stopped."""
-        if self.status in (Status.Stopped, Status.Failed):
+        if self.status in (Status.Stopped, Status.Completed, Status.Failed):
             return None
 
         return self._job_api.stop_job(self._job.id, self.teamspace.id)

@@ -3,11 +3,11 @@ from typing import TYPE_CHECKING, Dict, Optional, Union
 from lightning_sdk.api.job_api import JobApiV2
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.job.base import _BaseJob
+from lightning_sdk.status import Status
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import Machine
     from lightning_sdk.organization import Organization
-    from lightning_sdk.status import Status
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
@@ -121,6 +121,9 @@ class _JobV2(_BaseJob):
 
     def stop(self) -> None:
         """Stop the job. If the job is already stopped, this is a no-op. This is blocking until the job is stopped."""
+        if self.status in (Status.Stopped, Status.Completed, Status.Failed):
+            return
+
         self._job_api.stop_job(job_id=self._guaranteed_job.id, teamspace_id=self._teamspace.id)
 
     def delete(self) -> None:

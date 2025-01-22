@@ -4,11 +4,11 @@ from lightning_sdk.api.mmt_api import MMTApiV1
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.job.v1 import _internal_status_to_external_status
 from lightning_sdk.job.work import Work
+from lightning_sdk.status import Status
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import Machine
     from lightning_sdk.organization import Organization
-    from lightning_sdk.status import Status
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
@@ -133,6 +133,8 @@ class _MMTV1(_BaseMMT):
 
     def stop(self) -> None:
         """Stops the job."""
+        if self.status in (Status.Stopped, Status.Completed, Status.Failed):
+            return
         self._job_api.stop_job(self._guaranteed_job.id, self.teamspace.id)
 
     def delete(self) -> None:
