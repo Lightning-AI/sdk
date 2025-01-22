@@ -42,7 +42,6 @@ class V1ClusterSpec(object):
     """
     swagger_types = {
         'auth_token': 'str',
-        'available_instance_types': 'list[str]',
         'aws_v1': 'V1AWSDirectV1',
         'cluster_type': 'V1ClusterType',
         'deletion_options': 'V1ClusterDeletionOptions',
@@ -63,7 +62,6 @@ class V1ClusterSpec(object):
 
     attribute_map = {
         'auth_token': 'authToken',
-        'available_instance_types': 'availableInstanceTypes',
         'aws_v1': 'awsV1',
         'cluster_type': 'clusterType',
         'deletion_options': 'deletionOptions',
@@ -82,10 +80,9 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_instance_types: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
-        self._available_instance_types = None
         self._aws_v1 = None
         self._cluster_type = None
         self._deletion_options = None
@@ -105,8 +102,6 @@ class V1ClusterSpec(object):
         self.discriminator = None
         if auth_token is not None:
             self.auth_token = auth_token
-        if available_instance_types is not None:
-            self.available_instance_types = available_instance_types
         if aws_v1 is not None:
             self.aws_v1 = aws_v1
         if cluster_type is not None:
@@ -160,29 +155,6 @@ class V1ClusterSpec(object):
         """
 
         self._auth_token = auth_token
-
-    @property
-    def available_instance_types(self) -> 'list[str]':
-        """Gets the available_instance_types of this V1ClusterSpec.  # noqa: E501
-
-        available_instance_types is a list of instance types that are available for the cluster. This is just a soft filter to prevent users from using instances that we haven't prepared for. If the list is empty, no filtering is done.  # noqa: E501
-
-        :return: The available_instance_types of this V1ClusterSpec.  # noqa: E501
-        :rtype: list[str]
-        """
-        return self._available_instance_types
-
-    @available_instance_types.setter
-    def available_instance_types(self, available_instance_types: 'list[str]'):
-        """Sets the available_instance_types of this V1ClusterSpec.
-
-        available_instance_types is a list of instance types that are available for the cluster. This is just a soft filter to prevent users from using instances that we haven't prepared for. If the list is empty, no filtering is done.  # noqa: E501
-
-        :param available_instance_types: The available_instance_types of this V1ClusterSpec.  # noqa: E501
-        :type: list[str]
-        """
-
-        self._available_instance_types = available_instance_types
 
     @property
     def aws_v1(self) -> 'V1AWSDirectV1':

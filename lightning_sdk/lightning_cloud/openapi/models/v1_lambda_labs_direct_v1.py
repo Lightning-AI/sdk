@@ -41,19 +41,24 @@ class V1LambdaLabsDirectV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'credentials_secret_id': 'str'
+        'credentials_secret_id': 'str',
+        'parent_cluster_id': 'str'
     }
 
     attribute_map = {
-        'credentials_secret_id': 'credentialsSecretId'
+        'credentials_secret_id': 'credentialsSecretId',
+        'parent_cluster_id': 'parentClusterId'
     }
 
-    def __init__(self, credentials_secret_id: 'str' =None):  # noqa: E501
+    def __init__(self, credentials_secret_id: 'str' =None, parent_cluster_id: 'str' =None):  # noqa: E501
         """V1LambdaLabsDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._credentials_secret_id = None
+        self._parent_cluster_id = None
         self.discriminator = None
         if credentials_secret_id is not None:
             self.credentials_secret_id = credentials_secret_id
+        if parent_cluster_id is not None:
+            self.parent_cluster_id = parent_cluster_id
 
     @property
     def credentials_secret_id(self) -> 'str':
@@ -77,6 +82,29 @@ class V1LambdaLabsDirectV1(object):
         """
 
         self._credentials_secret_id = credentials_secret_id
+
+    @property
+    def parent_cluster_id(self) -> 'str':
+        """Gets the parent_cluster_id of this V1LambdaLabsDirectV1.  # noqa: E501
+
+        Note: LambdaLabs is missing object store in their offering, we will need to use either GCP or AWS S3 for that.  # noqa: E501
+
+        :return: The parent_cluster_id of this V1LambdaLabsDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_cluster_id
+
+    @parent_cluster_id.setter
+    def parent_cluster_id(self, parent_cluster_id: 'str'):
+        """Sets the parent_cluster_id of this V1LambdaLabsDirectV1.
+
+        Note: LambdaLabs is missing object store in their offering, we will need to use either GCP or AWS S3 for that.  # noqa: E501
+
+        :param parent_cluster_id: The parent_cluster_id of this V1LambdaLabsDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_cluster_id = parent_cluster_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
