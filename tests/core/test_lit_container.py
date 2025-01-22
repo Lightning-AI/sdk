@@ -11,6 +11,7 @@ from lightning_sdk.lit_container import LitContainer
 def mock_teamspace():
     teamspace = MagicMock()
     teamspace.id = "test-project-id"
+    teamspace.owner.name = "test-org"
     return teamspace
 
 
@@ -120,3 +121,13 @@ def test_upload_container_with_org(lit_container, mock_teamspace):
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org="test-org", user=None)
         mock_upload.assert_called_once_with("my-container", mock_teamspace, "latest")
+
+
+def test_download_container(lit_container, mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
+        lit_container._api, "_docker_client"
+    ) as mock_docker_client:
+        mock_resolve.return_value = mock_teamspace
+
+        lit_container.download_container(container="my-container", teamspace="test-team", tag="latest")
+        mock_docker_client.images.pull.assert_called_once(), "Docker pull was not called"

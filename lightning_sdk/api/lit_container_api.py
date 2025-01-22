@@ -10,6 +10,14 @@ class LitContainerApi:
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=3)
 
+        import docker
+
+        try:
+            self._docker_client = docker.from_env()
+            self._docker_client.ping()
+        except docker.errors.DockerException as e:
+            raise RuntimeError(f"Failed to connect to Docker daemon: {e!s}. Is Docker running?") from None
+
     def list_containers(self, project_id: str) -> List:
         project = self._client.lit_registry_service_get_lit_project_registry(project_id)
         return project.repositories
@@ -24,19 +32,24 @@ class LitContainerApi:
         import docker
 
         try:
-            client = docker.from_env()
-            client.ping()
-        except docker.errors.DockerException as e:
-            raise RuntimeError(f"Failed to connect to Docker daemon: {e!s}. Is Docker running?") from None
-
-        try:
-            client.images.get(container)
+            self._docker_client.images.get(container)
         except docker.errors.ImageNotFound:
             raise ValueError(f"Container {container} does not exist") from None
 
         registry_url = _get_registry_url()
         repository = f"{registry_url}/lit-container/{teamspace.owner.name}/{teamspace.name}/{container}"
-        tagged = client.api.tag(container, repository, tag)
+        tagged = self._docker_client.api.tag(container, repository, tag)
         if not tagged:
             raise ValueError(f"Could not tag container {container} with {repository}:{tag}")
-        return client.api.push(repository, stream=True, decode=True)
+        return self._docker_client.api.push(repository, stream=True, decode=True)
+
+    def download_container(self, container: str, teamspace: Teamspace, tag: str) -> Generator[str, None, None]:
+        import docker
+
+        registry_url = _get_registry_url()
+        repository = f"{registry_url}/lit-container/{teamspace.owner.name}/{teamspace.name}/{container}"
+        try:
+            self._docker_client.images.pull(repository, tag=tag)
+        except docker.errors.APIError as e:
+            raise ValueError(f"Could not pull container {container} from {repository}:{tag}") from e
+        return self._docker_client.api.tag(repository, container, tag)

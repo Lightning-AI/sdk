@@ -3,14 +3,18 @@ import re
 from pathlib import Path
 from typing import Optional
 
+from rich.console import Console
+
+from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.cli.studios_menu import _StudiosMenu
+from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.models import download_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 
 
-class _Downloads(_StudiosMenu):
+class _Downloads(_StudiosMenu, _TeamspacesMenu):
     """Download files and folders from Lightning AI."""
 
     def model(self, name: str, download_dir: str = ".") -> None:
@@ -130,3 +134,18 @@ class _Downloads(_StudiosMenu):
                 f"Could not download the file from the given Studio {studio}. "
                 "Please contact Lightning AI directly to resolve this issue."
             ) from e
+
+    def container(self, container: str, teamspace: Optional[str] = None, tag: str = "latest") -> None:
+        """Download a docker container from a teamspace.
+
+        Args:
+          container: The name of the container to download.
+          teamspace: The name of the teamspace to download the container from.
+          tag: The tag of the container to download.
+        """
+        resolved_teamspace = self._resolve_teamspace(teamspace)
+        console = Console()
+        with console.status("Downloading container..."):
+            api = LitContainerApi()
+            api.download_container(container, resolved_teamspace, tag)
+            console.print("Container downloaded successfully", style="green")
