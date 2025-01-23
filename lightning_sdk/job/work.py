@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Optional, Protocol
+from typing import TYPE_CHECKING, Any, Optional, Protocol, Union
 
 from lightning_sdk.api.job_api import JobApiV1
 
@@ -51,7 +51,7 @@ class Work:
         return self._job._name_filter(self._guaranteed_work.name)
 
     @property
-    def machine(self) -> "Machine":
+    def machine(self) -> Union["Machine", str]:
         return self._job_api.get_machine_from_work(self._guaranteed_work)
 
     @property

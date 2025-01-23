@@ -56,6 +56,39 @@ def test_mmt_v1_submit_job():
         body=body, project_id="ts-abc", cloudspace_id="st-abc", id="distributed_plugin"
     )
 
+    create_job_mock = mock.MagicMock()
+    job_api._client.cloud_space_service_create_cloud_space_app_instance = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=5,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="st-abc",
+        machine="some-dummy-machine",
+        interruptible=False,
+        command="echo hello",
+        strategy="parallel",
+    )
+
+    body = AppsIdBody(
+        cluster_id="c-abc",
+        plugin_arguments={
+            "distributedArguments": '{"cloud_compute": '
+            '"some-dummy-machine", '
+            '"num_instances": 5, "strategy": '
+            '"parallel"}',
+            "entrypoint": "echo hello",
+            "name": "test-job",
+            "spot": "false",
+        },
+        unique_id=mock.ANY,
+    )
+
+    create_job_mock.assert_called_once_with(
+        body=body, project_id="ts-abc", cloudspace_id="st-abc", id="distributed_plugin"
+    )
+
 
 def test_mmt_v2_submit_job():
     job_api = MMTApiV2()
@@ -108,7 +141,7 @@ def test_mmt_v2_submit_job():
         teamspace_id="ts-abc",
         studio_id="",
         image="image-abc",
-        machine=Machine.T4_X_4,
+        machine="some-dummy-machine",
         interruptible=True,
         env=None,
         command=None,
@@ -126,7 +159,7 @@ def test_mmt_v2_submit_job():
         env=[],
         image="image-abc",
         entrypoint="sh -c",
-        instance_name="g4dn.12xlarge",
+        instance_name="some-dummy-machine",
         run_id=mock.ANY,
         spot=True,
         image_cluster_credentials=False,

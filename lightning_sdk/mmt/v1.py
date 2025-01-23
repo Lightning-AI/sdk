@@ -43,7 +43,7 @@ class _MMTV1(_BaseMMT):
     def _submit(
         self,
         num_machines: int,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -166,7 +166,7 @@ class _MMTV1(_BaseMMT):
         return f"/teamspace/jobs/{self.name}/snapshot"
 
     @property
-    def machine(self) -> "Machine":
+    def machine(self) -> Union["Machine", str]:
         """Returns the machine type this job is running on."""
         return self.machines[0].machine
 

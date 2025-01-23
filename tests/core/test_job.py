@@ -483,6 +483,7 @@ def test_submit_jobv2_studio_resolve(
         image_credentials=None,
         artifacts_local=None,
         artifacts_remote=None,
+        entrypoint="sh -c",
     )
 
 
@@ -546,6 +547,7 @@ def test_submit_jobv2_studio_path(
         image_credentials=None,
         artifacts_local=artifacts_source,
         artifacts_remote=artifacts_destination,
+        entrypoint="sh -c",
     )
 
     job._internal_job._job = V1Job(

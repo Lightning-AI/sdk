@@ -44,7 +44,7 @@ class _JobV1(_BaseJob):
     def run(
         cls,
         name: str,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: str,
         studio: "Studio",
         teamspace: Union[str, "Teamspace", None] = None,
@@ -89,7 +89,7 @@ class _JobV1(_BaseJob):
 
     def _submit(
         self,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -195,7 +195,7 @@ class _JobV1(_BaseJob):
         return Work(_work[0].id, self, self.teamspace)
 
     @property
-    def machine(self) -> "Machine":
+    def machine(self) -> Union["Machine", str]:
         """Get the machine the job is running on."""
         return self.work.machine
 

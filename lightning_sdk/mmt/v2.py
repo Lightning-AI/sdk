@@ -42,7 +42,7 @@ class _MMTV2(_BaseMMT):
     def _submit(
         self,
         num_machines: int,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -169,7 +169,7 @@ class _MMTV2(_BaseMMT):
         raise NotImplementedError
 
     @property
-    def machine(self) -> "Machine":
+    def machine(self) -> Union["Machine", str]:
         """Returns the machine type this job is running on."""
         return self._job_api._get_job_machine_from_spec(self._guaranteed_job.spec)
 

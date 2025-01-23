@@ -37,7 +37,7 @@ class _JobV2(_BaseJob):
 
     def _submit(
         self,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -143,7 +143,7 @@ class _JobV2(_BaseJob):
         return self._job_api._job_state_to_external(self._latest_job.state)
 
     @property
-    def machine(self) -> "Machine":
+    def machine(self) -> Union["Machine", str]:
         """The machine type the job is running on."""
         # only fetch the job it it hasn't been fetched yet as machine cannot change over time
         return self._job_api._get_job_machine_from_spec(self._guaranteed_job.spec)

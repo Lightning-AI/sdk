@@ -1,12 +1,12 @@
 import json
 import time
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from lightning_sdk.api.job_api import JobApiV1
 from lightning_sdk.api.utils import (
     _COMPUTE_NAME_TO_MACHINE,
-    _MACHINE_TO_COMPUTE_NAME,
     _create_app,
+    _machine_to_compute_name,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
@@ -43,13 +43,13 @@ class MMTApiV1(JobApiV1):
         cloud_account: Optional[str],
         teamspace_id: str,
         studio_id: str,
-        machine: Machine,
+        machine: Union[Machine, str],
         interruptible: bool,
         strategy: str,
     ) -> Externalv1LightningappInstance:
         """Creates a multi-machine job with given commands."""
         distributed_args = {
-            "cloud_compute": _MACHINE_TO_COMPUTE_NAME[machine],
+            "cloud_compute": _machine_to_compute_name(machine),
             "num_instances": num_machines,
             "strategy": strategy,
         }
@@ -80,7 +80,7 @@ class MMTApiV2:
         teamspace_id: str,
         studio_id: Optional[str],
         image: Optional[str],
-        machine: Machine,
+        machine: Union[Machine, str],
         interruptible: bool,
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
@@ -94,7 +94,7 @@ class MMTApiV2:
             for k, v in env.items():
                 env_vars.append(V1EnvVar(name=k, value=v))
 
-        instance_name = _MACHINE_TO_COMPUTE_NAME[machine]
+        instance_name = _machine_to_compute_name(machine)
 
         run_id = __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id] if studio_id is not None else ""
 

@@ -1,11 +1,11 @@
 import time
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 from urllib.request import urlopen
 
 from lightning_sdk.api.utils import (
     _COMPUTE_NAME_TO_MACHINE,
-    _MACHINE_TO_COMPUTE_NAME,
     _create_app,
+    _machine_to_compute_name,
     remove_datetime_prefix,
 )
 from lightning_sdk.api.utils import (
@@ -120,7 +120,7 @@ class JobApiV1:
         studio_id: str,
         teamspace_id: str,
         cloud_account: str,
-        machine: Machine,
+        machine: Union[Machine, str],
         interruptible: bool,
     ) -> Externalv1LightningappInstance:
         """Creates an arbitrary app."""
@@ -130,7 +130,7 @@ class JobApiV1:
             teamspace_id=teamspace_id,
             cloud_account=cloud_account,
             plugin_type="job",
-            compute=_MACHINE_TO_COMPUTE_NAME[machine],
+            compute=_machine_to_compute_name(machine),
             name=name,
             entrypoint=command,
             interruptible=interruptible,
@@ -209,7 +209,7 @@ class JobApiV2:
         teamspace_id: str,
         studio_id: Optional[str],
         image: Optional[str],
-        machine: Machine,
+        machine: Union[Machine, str],
         interruptible: bool,
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
@@ -223,7 +223,7 @@ class JobApiV2:
             for k, v in env.items():
                 env_vars.append(V1EnvVar(name=k, value=v))
 
-        instance_name = _MACHINE_TO_COMPUTE_NAME[machine]
+        instance_name = _machine_to_compute_name(machine)
 
         run_id = __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id] if studio_id is not None else ""
 

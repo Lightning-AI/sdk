@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class MachineDict(TypedDict):
     name: str
     status: "Status"
-    machine: "Machine"
+    machine: Union["Machine", str]
 
 
 class JobDict(MachineDict):
@@ -68,7 +68,7 @@ class _BaseJob(ABC):
     def run(
         cls,
         name: str,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
         image: Optional[str] = None,
@@ -205,7 +205,7 @@ class _BaseJob(ABC):
     @abstractmethod
     def _submit(
         self,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -271,7 +271,7 @@ class _BaseJob(ABC):
 
     @property
     @abstractmethod
-    def machine(self) -> "Machine":
+    def machine(self) -> Union["Machine", str]:
         """The machine type the job is running on."""
 
     @property

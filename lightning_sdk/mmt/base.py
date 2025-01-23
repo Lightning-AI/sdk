@@ -23,7 +23,7 @@ class MMTMachine(Protocol):
         ...
 
     @property
-    def machine(self) -> "Machine":
+    def machine(self) -> Union["Machine", str]:
         """The actual machine type this node is running on."""
         ...
 
@@ -54,7 +54,7 @@ class _BaseMMT(_BaseJob):
     def run(
         cls,
         name: str,
-        machine: "Machine",
+        machine: Union["Machine", str],
         num_machines: int,
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
@@ -199,7 +199,7 @@ class _BaseMMT(_BaseJob):
     def _submit(
         self,
         num_machines: int,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -257,7 +257,7 @@ class _BaseMMT(_BaseJob):
 
     @property
     @abstractmethod
-    def machine(self) -> "Machine":
+    def machine(self) -> Union["Machine", str]:
         """Returns the machine type this job is running on."""
 
     @abstractmethod

@@ -97,7 +97,7 @@ class MMT(_BaseMMT):
         cls,
         name: str,
         num_machines: int,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
         image: Union[str, None] = None,
@@ -167,6 +167,7 @@ class MMT(_BaseMMT):
             cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            entrypoint=entrypoint,
             cluster=cluster,  # deprecated in favor of cloud_account
         )
         # required for typing with "MMT"
@@ -180,7 +181,7 @@ class MMT(_BaseMMT):
     def _submit(
         self,
         num_machines: int,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -239,6 +240,7 @@ class MMT(_BaseMMT):
             cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            entrypoint=entrypoint,
         )
         return self
 
@@ -264,7 +266,7 @@ class MMT(_BaseMMT):
         return self._internal_mmt.machines
 
     @property
-    def machine(self) -> "Machine":
+    def machine(self) -> Union["Machine", str]:
         """Returns the machine type this job is running on."""
         return self._internal_mmt.machine
 

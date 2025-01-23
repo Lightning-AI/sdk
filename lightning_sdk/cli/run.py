@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional, Union
 
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
@@ -137,7 +137,11 @@ class _Run:
         if machine is None:
             # TODO: infer from studio
             machine = "CPU"
-        machine_enum = Machine[machine.upper()]
+        machine_enum: Union[str, Machine]
+        try:
+            machine_enum = Machine[machine.upper()]
+        except KeyError:
+            machine_enum = machine
 
         resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
 
@@ -195,7 +199,11 @@ class _Run:
         if machine is None:
             # TODO: infer from studio
             machine = "CPU"
-        machine_enum = Machine[machine.upper()]
+        machine_enum: Union[str, Machine]
+        try:
+            machine_enum = Machine[machine.upper()]
+        except KeyError:
+            machine_enum = machine
 
         resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
         if cloud_account is None:

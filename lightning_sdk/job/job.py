@@ -89,7 +89,7 @@ class Job(_BaseJob):
     def run(
         cls,
         name: str,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
         image: Union[str, None] = None,
@@ -169,7 +169,7 @@ class Job(_BaseJob):
 
     def _submit(
         self,
-        machine: "Machine",
+        machine: Union["Machine", str],
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -225,6 +225,7 @@ class Job(_BaseJob):
             cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            entrypoint=entrypoint,
         )
         return self
 
@@ -248,7 +249,7 @@ class Job(_BaseJob):
         return self._internal_job.status
 
     @property
-    def machine(self) -> "Machine":
+    def machine(self) -> Union["Machine", str]:
         """The machine type the job is running on."""
         return self._internal_job.machine
 
