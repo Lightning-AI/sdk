@@ -43,7 +43,7 @@ def _check_version_and_prompt_upgrade(curr_version: str) -> None:
         warnings.warn(
             f"A newer version of {__package_name__} is available ({new_version}). "
             f"Please consider upgrading with `pip install -U {__package_name__}`. "
-            "Not all functionalities of the platform can be guaranteed to work with the current version.",
+            "Not all platform functionality can be guaranteed to work with the current version.",
             UserWarning,
         )
     return
