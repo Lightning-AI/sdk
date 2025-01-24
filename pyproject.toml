@@ -31,12 +31,13 @@ dependencies = [
     "fire", # for CLI
     "simple-term-menu", # for CLI
     "lightning-utilities", # for legacy CLI
+    "docker", # for lit-container-registry
 ]
 
 dynamic = ["version"]
 
 [project.optional-dependencies]
-serve = ["litserve>=0.2.5", "docker"]
+serve = ["litserve>=0.2.5"]
 
 [project.scripts]
 lightning = "lightning_sdk.cli.entrypoint:main_cli"

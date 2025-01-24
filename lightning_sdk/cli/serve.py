@@ -4,6 +4,7 @@ import warnings
 from pathlib import Path
 from typing import Optional, Union
 
+import docker
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
@@ -89,11 +90,6 @@ class _LitServe:
         tag: str = "litserve-model",
         non_interactive: bool = False,
     ) -> None:
-        try:
-            import docker
-        except ImportError:
-            raise ImportError("docker-py is not installed. Please install it with `pip install docker`") from None
-
         try:
             client = docker.from_env()
             client.ping()

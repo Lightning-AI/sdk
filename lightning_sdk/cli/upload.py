@@ -2,14 +2,15 @@ import concurrent.futures
 import json
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Generator, List, Optional
 
+import rich
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from simple_term_menu import TerminalMenu
 from tqdm import tqdm
 
-from lightning_sdk.api.lit_container_api import LitContainerApi
+from lightning_sdk.api.lit_container_api import LCRAuthFailedError, LitContainerApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.cli.studios_menu import _StudiosMenu
@@ -162,20 +163,37 @@ class _Uploads(_StudiosMenu, _TeamspacesMenu):
             transient=False,
         ) as progress:
             push_task = progress.add_task("Pushing Docker image", total=None)
-            resp = api.upload_container(container, teamspace, tag)
-            for line in resp:
-                if "status" in line:
-                    console.print(line["status"], style="bright_black")
-                    progress.update(push_task, description="Pushing Docker image")
-                elif "aux" in line:
-                    console.print(line["aux"], style="bright_black")
-                elif "error" in line:
-                    progress.stop()
-                    console.print(f"\n[red]{line}[/red]")
-                    return
-                else:
-                    console.print(line, style="bright_black")
+            try:
+                lines = api.upload_container(container, teamspace, tag)
+                self._print_docker_push(lines, console, progress, push_task)
+            except LCRAuthFailedError:
+                console.print("Authenticating with Lightning Container Registry...")
+                if not api.authenticate():
+                    raise StudioCliError("Failed to authenticate with Lightning Container Registry") from None
+                console.print("Authenticated with Lightning Container Registry", style="green")
+                lines = api.upload_container(container, teamspace, tag)
+                self._print_docker_push(lines, console, progress, push_task)
             progress.update(push_task, description="[green]Container pushed![/green]")
+
+    @staticmethod
+    def _print_docker_push(
+        lines: Generator, console: Console, progress: Progress, push_task: rich.progress.TaskID
+    ) -> None:
+        for line in lines:
+            if "status" in line:
+                console.print(line["status"], style="bright_black")
+                progress.update(push_task, description="Pushing Docker image")
+            elif "aux" in line:
+                console.print(line["aux"], style="bright_black")
+            elif "error" in line:
+                progress.stop()
+                console.print(f"\n[red]{line}[/red]")
+                return
+            elif "finish" in line:
+                console.print(f"Container available at [i]{line['url']}[/i]")
+                return
+            else:
+                console.print(line, style="bright_black")
 
     def _start_parallel_upload(
         self, executor: concurrent.futures.ThreadPoolExecutor, studio: Studio, upload_state: Dict[str, str]

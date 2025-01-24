@@ -131,3 +131,13 @@ def test_download_container(lit_container, mock_teamspace):
 
         lit_container.download_container(container="my-container", teamspace="test-team", tag="latest")
         mock_docker_client.images.pull.assert_called_once(), "Docker pull was not called"
+
+
+@patch("lightning_sdk.api.lit_container_api.docker")
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+def test_authenticate(mock_lightning_client, mock_docker):
+    api = LitContainerApi()
+    mock_lightning_client.auth_service_get_user.return_value = MagicMock(username="test-user", api_key="test-key")
+    api.authenticate()
+    mock_docker.from_env.assert_called(), "Docker client was not created"
+    mock_docker.from_env().login.assert_called(), "Docker client was not created"
