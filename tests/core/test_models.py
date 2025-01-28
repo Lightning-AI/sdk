@@ -1,5 +1,7 @@
 from unittest import mock
 
+import pytest
+
 from lightning_sdk.lightning_cloud.openapi.models import (
     V1Membership,
     V1Organization,
@@ -7,7 +9,8 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1Project,
     V1SearchUser,
 )
-from lightning_sdk.models import _get_teamspace
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+from lightning_sdk.models import _get_teamspace, download_model
 from lightning_sdk.user import User
 
 
@@ -99,3 +102,19 @@ def test_get_teamspace_other_user_owner(
 
     mock_user_api()._get_all_teamspace_memberships.assert_called_once()
     mock_user_api()._get_user_by_id.assert_called_once_with("user-id-2")
+
+
+@mock.patch("lightning_sdk.models.TeamspaceApi")
+def test_download_model_errors(mock_teamspace_api):
+    mock_teamspace_api().download_model_files.side_effect = ApiException(status=404)
+
+    with pytest.raises(RuntimeError, match="Model 'owner/teamspace/model' not found"):
+        download_model("owner/teamspace/model")
+
+    with pytest.raises(RuntimeError, match="Model 'owner/teamspace/model:version' not found"):
+        download_model("owner/teamspace/model:version")
+
+    mock_teamspace_api().download_model_files.side_effect = ApiException(status=500)
+
+    with pytest.raises(RuntimeError, match="Error downloading model. Status code: 500"):
+        download_model("owner/teamspace/model")

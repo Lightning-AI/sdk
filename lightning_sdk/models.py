@@ -121,10 +121,11 @@ def download_model(
             progress_bar=progress_bar,
         )
     except ApiException as e:
-        # if we get an error, check if the teamspace actually exists (and print the list)
-        # TODO: ideally this would match a specific error about teamspace not being found
-        _ = _get_teamspace(name=teamspace_name, organization=teamspace_owner_name)
-        raise e
+        if e.status == 404:
+            raise RuntimeError(
+                f"Model '{name}' not found. Either the model doesn't exist or you don't have access to it."
+            ) from None
+        raise RuntimeError(f"Error downloading model. Status code: {e.status}.") from None
 
 
 def upload_model(
