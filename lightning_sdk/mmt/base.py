@@ -1,3 +1,4 @@
+import warnings
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Dict, List, Optional, Protocol, Tuple, Union
 
@@ -11,7 +12,7 @@ if TYPE_CHECKING:
     from lightning_sdk.user import User
 
 from lightning_sdk.job.base import _BaseJob
-from lightning_sdk.utils.resolve import _resolve_deprecated_cluster
+from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, in_studio
 
 
 class MMTMachine(Protocol):
@@ -109,6 +110,7 @@ class _BaseMMT(_BaseJob):
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
                 Only applicable when submitting docker jobs.
         """
+        from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
 
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
@@ -166,6 +168,13 @@ class _BaseMMT(_BaseJob):
                 raise RuntimeError(
                     "image and studio are mutually exclusive as both define the environment to run the job in"
                 )
+
+            if cloud_account is None and in_studio():
+                try:
+                    resolve_studio = Studio(teamspace=teamspace, user=user, org=org)
+                    cloud_account = resolve_studio.cloud_account
+                except (ValueError, ApiException):
+                    warnings.warn("Could not infer cloud account from studio. Using teamspace default.")
 
             # they either need to specified both or none of them
             if bool(artifacts_local) != bool(artifacts_remote):

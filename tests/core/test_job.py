@@ -561,6 +561,48 @@ def test_submit_jobv2_studio_path(
     assert job.snapshot_path == expected_snapshot_path
 
 
+def test_submit_job_v2_image_from_studio(
+    job_backend_selector_mocker_v2,
+    internal_studio_init_mocker,
+    internal_job_get_cloudspace_mocker,
+    job_api_get_job_by_name_mocker,
+):
+    import lightning_sdk
+    from lightning_sdk.job.v2 import _JobV2
+
+    importlib.reload(lightning_sdk.job.job)
+    from lightning_sdk.job.job import Job
+
+    submit_mock = mock.MagicMock()
+    _JobV2._submit = submit_mock
+
+    with mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-abc", "LIGHTNING_INTERACTIVE": "true"}):
+        Job.run(
+            "test-job",
+            machine=Machine.CPU,
+            command="echo hello",
+            studio=None,
+            image="ubuntu",
+            teamspace="ts-abc",
+            org="org-abc",
+        )
+
+    submit_mock.assert_called_once_with(
+        command="echo hello",
+        cloud_account="c-abc",  # cloud account is inferred from studio we submit from
+        env=None,
+        image="ubuntu",
+        interruptible=False,
+        machine=Machine.CPU,
+        studio=None,
+        cloud_account_auth=False,
+        image_credentials=None,
+        artifacts_local=None,
+        artifacts_remote=None,
+        entrypoint="sh -c",
+    )
+
+
 def test_job_logs_v2(
     internal_job_logs_mocker,
     job_api_get_job_by_name_mocker,

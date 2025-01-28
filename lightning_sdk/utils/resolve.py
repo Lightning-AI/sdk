@@ -187,3 +187,10 @@ def _parse_model_and_version(name: str) -> Tuple[str, str]:
         "Model version is expected to be in the format `entity/modelname:version` separated by a"
         f" single colon, but got: {name}"
     )
+
+
+def in_studio() -> bool:
+    """Returns true if inside a studio, else false."""
+    has_cloudspace_id = bool(os.getenv("LIGHTNING_CLOUD_SPACE_ID", None))
+    is_interactive = os.getenv("LIGHTNING_INTERACTIVE", "false") == "true"
+    return has_cloudspace_id and is_interactive
