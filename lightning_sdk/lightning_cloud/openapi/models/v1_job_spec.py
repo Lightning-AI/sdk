@@ -56,6 +56,7 @@ class V1JobSpec(object):
         'instance_name': 'str',
         'instance_type': 'str',
         'modified_volume': 'bool',
+        'path_mappings': 'list[V1PathMapping]',
         'readiness_probe': 'V1JobHealthCheckConfig',
         'regions': 'list[str]',
         'resources': 'V1Resources',
@@ -81,6 +82,7 @@ class V1JobSpec(object):
         'instance_name': 'instanceName',
         'instance_type': 'instanceType',
         'modified_volume': 'modifiedVolume',
+        'path_mappings': 'pathMappings',
         'readiness_probe': 'readinessProbe',
         'regions': 'regions',
         'resources': 'resources',
@@ -90,7 +92,7 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
@@ -107,6 +109,7 @@ class V1JobSpec(object):
         self._instance_name = None
         self._instance_type = None
         self._modified_volume = None
+        self._path_mappings = None
         self._readiness_probe = None
         self._regions = None
         self._resources = None
@@ -145,6 +148,8 @@ class V1JobSpec(object):
             self.instance_type = instance_type
         if modified_volume is not None:
             self.modified_volume = modified_volume
+        if path_mappings is not None:
+            self.path_mappings = path_mappings
         if readiness_probe is not None:
             self.readiness_probe = readiness_probe
         if regions is not None:
@@ -474,6 +479,27 @@ class V1JobSpec(object):
         """
 
         self._modified_volume = modified_volume
+
+    @property
+    def path_mappings(self) -> 'list[V1PathMapping]':
+        """Gets the path_mappings of this V1JobSpec.  # noqa: E501
+
+
+        :return: The path_mappings of this V1JobSpec.  # noqa: E501
+        :rtype: list[V1PathMapping]
+        """
+        return self._path_mappings
+
+    @path_mappings.setter
+    def path_mappings(self, path_mappings: 'list[V1PathMapping]'):
+        """Sets the path_mappings of this V1JobSpec.
+
+
+        :param path_mappings: The path_mappings of this V1JobSpec.  # noqa: E501
+        :type: list[V1PathMapping]
+        """
+
+        self._path_mappings = path_mappings
 
     @property
     def readiness_probe(self) -> 'V1JobHealthCheckConfig':

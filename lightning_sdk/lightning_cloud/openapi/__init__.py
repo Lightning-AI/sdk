@@ -647,6 +647,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_organization import V1Organ
 from lightning_sdk.lightning_cloud.openapi.models.v1_owner_type import V1OwnerType
 from lightning_sdk.lightning_cloud.openapi.models.v1_package_manager import V1PackageManager
 from lightning_sdk.lightning_cloud.openapi.models.v1_parameterization_spec import V1ParameterizationSpec
+from lightning_sdk.lightning_cloud.openapi.models.v1_path_mapping import V1PathMapping
 from lightning_sdk.lightning_cloud.openapi.models.v1_path_telemetry import V1PathTelemetry
 from lightning_sdk.lightning_cloud.openapi.models.v1_phase_type import V1PhaseType
 from lightning_sdk.lightning_cloud.openapi.models.v1_plugin import V1Plugin
