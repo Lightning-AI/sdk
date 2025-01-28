@@ -42,6 +42,7 @@ class V1DeploymentAPI(object):
     """
     swagger_types = {
         'body': 'V1Body',
+        'description': 'str',
         'headers': 'list[V1Header]',
         'method': 'str',
         'name': 'str',
@@ -51,6 +52,7 @@ class V1DeploymentAPI(object):
 
     attribute_map = {
         'body': 'body',
+        'description': 'description',
         'headers': 'headers',
         'method': 'method',
         'name': 'name',
@@ -58,9 +60,10 @@ class V1DeploymentAPI(object):
         '_query_params': 'queryParams'
     }
 
-    def __init__(self, body: 'V1Body' =None, headers: 'list[V1Header]' =None, method: 'str' =None, name: 'str' =None, path: 'str' =None, _query_params: 'list[V1QueryParam]' =None):  # noqa: E501
+    def __init__(self, body: 'V1Body' =None, description: 'str' =None, headers: 'list[V1Header]' =None, method: 'str' =None, name: 'str' =None, path: 'str' =None, _query_params: 'list[V1QueryParam]' =None):  # noqa: E501
         """V1DeploymentAPI - a model defined in Swagger"""  # noqa: E501
         self._body = None
+        self._description = None
         self._headers = None
         self._method = None
         self._name = None
@@ -69,6 +72,8 @@ class V1DeploymentAPI(object):
         self.discriminator = None
         if body is not None:
             self.body = body
+        if description is not None:
+            self.description = description
         if headers is not None:
             self.headers = headers
         if method is not None:
@@ -100,6 +105,27 @@ class V1DeploymentAPI(object):
         """
 
         self._body = body
+
+    @property
+    def description(self) -> 'str':
+        """Gets the description of this V1DeploymentAPI.  # noqa: E501
+
+
+        :return: The description of this V1DeploymentAPI.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description: 'str'):
+        """Sets the description of this V1DeploymentAPI.
+
+
+        :param description: The description of this V1DeploymentAPI.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
 
     @property
     def headers(self) -> 'list[V1Header]':

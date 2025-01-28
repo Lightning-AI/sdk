@@ -51,6 +51,7 @@ class V1ClusterSpec(object):
         'google_cloud_v1': 'V1GoogleCloudDirectV1',
         'insurer_disabled': 'bool',
         'lambda_labs_v1': 'V1LambdaLabsDirectV1',
+        'monitor_deletion_disabled': 'bool',
         'overprovisioning': 'list[V1InstanceOverprovisioningSpec]',
         'pause_automation': 'bool',
         'security_options': 'V1ClusterSecurityOptions',
@@ -71,6 +72,7 @@ class V1ClusterSpec(object):
         'google_cloud_v1': 'googleCloudV1',
         'insurer_disabled': 'insurerDisabled',
         'lambda_labs_v1': 'lambdaLabsV1',
+        'monitor_deletion_disabled': 'monitorDeletionDisabled',
         'overprovisioning': 'overprovisioning',
         'pause_automation': 'pauseAutomation',
         'security_options': 'securityOptions',
@@ -80,7 +82,7 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, monitor_deletion_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._aws_v1 = None
@@ -92,6 +94,7 @@ class V1ClusterSpec(object):
         self._google_cloud_v1 = None
         self._insurer_disabled = None
         self._lambda_labs_v1 = None
+        self._monitor_deletion_disabled = None
         self._overprovisioning = None
         self._pause_automation = None
         self._security_options = None
@@ -120,6 +123,8 @@ class V1ClusterSpec(object):
             self.insurer_disabled = insurer_disabled
         if lambda_labs_v1 is not None:
             self.lambda_labs_v1 = lambda_labs_v1
+        if monitor_deletion_disabled is not None:
+            self.monitor_deletion_disabled = monitor_deletion_disabled
         if overprovisioning is not None:
             self.overprovisioning = overprovisioning
         if pause_automation is not None:
@@ -346,6 +351,27 @@ class V1ClusterSpec(object):
         """
 
         self._lambda_labs_v1 = lambda_labs_v1
+
+    @property
+    def monitor_deletion_disabled(self) -> 'bool':
+        """Gets the monitor_deletion_disabled of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The monitor_deletion_disabled of this V1ClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._monitor_deletion_disabled
+
+    @monitor_deletion_disabled.setter
+    def monitor_deletion_disabled(self, monitor_deletion_disabled: 'bool'):
+        """Sets the monitor_deletion_disabled of this V1ClusterSpec.
+
+
+        :param monitor_deletion_disabled: The monitor_deletion_disabled of this V1ClusterSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._monitor_deletion_disabled = monitor_deletion_disabled
 
     @property
     def overprovisioning(self) -> 'list[V1InstanceOverprovisioningSpec]':

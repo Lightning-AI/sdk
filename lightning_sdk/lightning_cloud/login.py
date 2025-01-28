@@ -168,7 +168,10 @@ class AuthServer:
         ok = webbrowser.open(url)
         if not ok:
             # can't open a browser, authentication failed
-            raise RuntimeError("Failed to authenticate to Lightning. When running without access to a browser, `LIGHTNING_USER_ID` and `LIGHTNING_API_KEY` should be exported.")
+            deployment_id = os.environ.get("LIGHTNING_DEPLOYMENT_ID", None)
+            if deployment_id is not None and deployment_id != "":
+                raise RuntimeError("Failed to authenticate to Lightning. Ensure that you have selected 'Include SDK credentials' in the 'Environment' section of the deployment settings.")
+            raise RuntimeError("Failed to authenticate to Lightning. When running without access to a browser, 'LIGHTNING_USER_ID' and 'LIGHTNING_API_KEY' should be exported.")
 
         @app.get("/login-complete")
         async def save_token(request: Request,

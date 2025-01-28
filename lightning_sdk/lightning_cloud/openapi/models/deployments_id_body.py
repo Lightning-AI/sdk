@@ -45,6 +45,7 @@ class DeploymentsIdBody(object):
         'autoscaling': 'V1AutoscalingSpec',
         'cloudspace_id': 'str',
         'created_at': 'datetime',
+        'debug': 'bool',
         'desired_state': 'V1DeploymentState',
         'endpoint': 'V1Endpoint',
         'is_published': 'bool',
@@ -66,6 +67,7 @@ class DeploymentsIdBody(object):
         'autoscaling': 'autoscaling',
         'cloudspace_id': 'cloudspaceId',
         'created_at': 'createdAt',
+        'debug': 'debug',
         'desired_state': 'desiredState',
         'endpoint': 'endpoint',
         'is_published': 'isPublished',
@@ -82,12 +84,13 @@ class DeploymentsIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """DeploymentsIdBody - a model defined in Swagger"""  # noqa: E501
         self._apis = None
         self._autoscaling = None
         self._cloudspace_id = None
         self._created_at = None
+        self._debug = None
         self._desired_state = None
         self._endpoint = None
         self._is_published = None
@@ -111,6 +114,8 @@ class DeploymentsIdBody(object):
             self.cloudspace_id = cloudspace_id
         if created_at is not None:
             self.created_at = created_at
+        if debug is not None:
+            self.debug = debug
         if desired_state is not None:
             self.desired_state = desired_state
         if endpoint is not None:
@@ -223,6 +228,27 @@ class DeploymentsIdBody(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def debug(self) -> 'bool':
+        """Gets the debug of this DeploymentsIdBody.  # noqa: E501
+
+
+        :return: The debug of this DeploymentsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._debug
+
+    @debug.setter
+    def debug(self, debug: 'bool'):
+        """Sets the debug of this DeploymentsIdBody.
+
+
+        :param debug: The debug of this DeploymentsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._debug = debug
 
     @property
     def desired_state(self) -> 'V1DeploymentState':
