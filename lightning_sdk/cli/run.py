@@ -131,7 +131,7 @@ class _Run:
         if not name:
             from datetime import datetime
 
-            timestr = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+            timestr = datetime.now().strftime("%b-%d-%H_%M")
             name = f"job-{timestr}"
 
         if machine is None:
@@ -193,7 +193,7 @@ class _Run:
         if name is None:
             from datetime import datetime
 
-            timestr = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+            timestr = datetime.now().strftime("%b-%d-%H_%M")
             name = f"mmt-{timestr}"
 
         if machine is None:
