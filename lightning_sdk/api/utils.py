@@ -24,6 +24,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     UploadsUploadIdBody,
     V1CompletedPart,
     V1CompleteUpload,
+    V1PathMapping,
     V1PresignedUrl,
     V1SignedUrl,
     V1UploadProjectArtifactPartsResponse,
@@ -614,3 +615,54 @@ def remove_datetime_prefix(text: str) -> str:
     # lines looks something like
     # '[2025-01-08T14:15:03.797142418Z] ⚡  ~ echo Hello\n[2025-01-08T14:15:03.803077717Z] Hello\n'
     return re.sub(r"^\[.*?\] ", "", text, flags=re.MULTILINE)
+
+
+def resolve_path_mappings(
+    mappings: Dict[str, str],
+    artifacts_local: Optional[str],
+    artifacts_remote: Optional[str],
+) -> List[V1PathMapping]:
+    path_mappings_list = []
+    for k, v in mappings.items():
+        splitted = str(v).rsplit(":", 1)
+        connection_name: str
+        connection_path: str
+        if len(splitted) == 1:
+            connection_name = splitted[0]
+            connection_path = ""
+        else:
+            connection_name, connection_path = splitted
+
+        path_mappings_list.append(
+            V1PathMapping(
+                connection_name=connection_name,
+                connection_path=connection_path,
+                container_path=k,
+            )
+        )
+
+    if artifacts_remote:
+        splitted = str(artifacts_remote).rsplit(":", 2)
+        if len(splitted) not in (2, 3):
+            raise RuntimeError(
+                f"Artifacts remote need to be of format efs:connection_name[:path] but got {artifacts_remote}"
+            )
+        else:
+            if not artifacts_local:
+                raise RuntimeError("If Artifacts remote is specified, artifacts local should be specified as well")
+
+            if len(splitted) == 2:
+                _, connection_name = splitted
+                connection_path = ""
+            else:
+                _, connection_name, connection_path = splitted
+
+            path_mappings_list.append(
+                V1PathMapping(
+                    connection_name=connection_name,
+                    connection_path=connection_path,
+                    container_path=artifacts_local,
+                )
+            )
+
+    return path_mappings_list

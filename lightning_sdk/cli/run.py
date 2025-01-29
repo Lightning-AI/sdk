@@ -43,20 +43,28 @@ class _Run:
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
                 Required if the registry is part of a cloud provider (e.g. ECR).
-            artifacts_local: The path of inside the docker container, you want to persist images from.
+            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+                just runs the provided command in a standard shell.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
+            path_mappings: Maps path inside of containers to paths inside data-connections.
+                Should be a comma separated list of form:
+                <MAPPING_1>,<MAPPING_2>,...
+                where each mapping is of the form
+                <CONTAINER_PATH_1>:<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1> and
+                omitting the path inside the connection defaults to the connections root.
+            artifacts_local: Deprecated in favor of path_mappings.
+                The path of inside the docker container, you want to persist images from.
                 CAUTION: When setting this to "/", it will effectively erase your container.
                 Only supported for jobs with a docker image compute environment.
-            artifacts_remote: The remote storage to persist your artifacts to.
+            artifacts_remote: Deprecated in favor of path_mappings.
+                The remote storage to persist your artifacts to.
                 Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
                 PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
                 E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
-            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
-                just runs the provided command in a standard shell.
-                To use the pre-defined entrypoint of the provided image, set this to an empty string.
-                Only applicable when submitting docker jobs.
         """
         # TODO: the docstrings from artifacts_local and artifacts_remote don't show up completely,
         # might need to switch to explicit cli definition
@@ -87,20 +95,28 @@ class _Run:
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
                 Required if the registry is part of a cloud provider (e.g. ECR).
-            artifacts_local: The path of inside the docker container, you want to persist images from.
+            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+                just runs the provided command in a standard shell.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
+            path_mappings: Maps path inside of containers to paths inside data-connections.
+                Should be a comma separated list of form:
+                <MAPPING_1>,<MAPPING_2>,...
+                where each mapping is of the form
+                <CONTAINER_PATH_1>:<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1> and
+                omitting the path inside the connection defaults to the connections root.
+            artifacts_local: Deprecated in favor of path_mappings.
+                The path of inside the docker container, you want to persist images from.
                 CAUTION: When setting this to "/", it will effectively erase your container.
                 Only supported for jobs with a docker image compute environment.
-            artifacts_remote: The remote storage to persist your artifacts to.
+            artifacts_remote: Deprecated in favor of path_mappings.
+                The remote storage to persist your artifacts to.
                 Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
                 PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
                 E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
-            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
-                just runs the provided command in a standard shell.
-                To use the pre-defined entrypoint of the provided image, set this to an empty string.
-                Only applicable when submitting docker jobs.
         """
         # TODO: the docstrings from artifacts_local and artifacts_remote don't show up completely,
         # might need to switch to explicit cli definition
@@ -124,9 +140,10 @@ class _Run:
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
+        entrypoint: str = "sh -c",
+        path_mappings: str = "",
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
-        entrypoint: str = "sh -c",
     ) -> None:
         if not name:
             from datetime import datetime
@@ -149,6 +166,17 @@ class _Run:
             cloud_account = resolved_teamspace.default_cloud_account
         machine_enum = Machine(machine.upper())
 
+        path_mappings_dict = {}
+        for mapping in path_mappings.split(","):
+            splits = str(mapping).split(":", 1)
+            if len(splits) != 2:
+                raise RuntimeError(
+                    "Mapping needs to be of form <CONTAINER_PATH>:<CONNECTION_NAME>[:<PATH_WITHIN_CONNECTION>], "
+                    f"but got {mapping}"
+                )
+
+            path_mappings_dict[splits[0]] = splits[1]
+
         Job.run(
             name=name,
             machine=machine_enum,
@@ -163,9 +191,10 @@ class _Run:
             interruptible=interruptible,
             image_credentials=image_credentials,
             cloud_account_auth=cloud_account_auth,
+            entrypoint=entrypoint,
+            path_mappings=path_mappings_dict,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
-            entrypoint=entrypoint,
         )
 
     # TODO: sadly, fire displays both Optional[type] and Union[type, None] as Optional[Optional]
@@ -186,9 +215,10 @@ class _Run:
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
+        entrypoint: str = "sh -c",
+        path_mappings: str = "",
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
-        entrypoint: str = "sh -c",
     ) -> None:
         if name is None:
             from datetime import datetime
@@ -212,6 +242,17 @@ class _Run:
         if image is None:
             raise RuntimeError("Image needs to be specified to run a multi-machine job")
 
+        path_mappings_dict = {}
+        for mapping in path_mappings.split(","):
+            splits = str(mapping).split(":", 1)
+            if len(splits) != 2:
+                raise RuntimeError(
+                    "Mapping needs to be of form <CONTAINER_PATH>:<CONNECTION_NAME>[:<PATH_WITHIN_CONNECTION>], "
+                    f"but got {mapping}"
+                )
+
+            path_mappings_dict[splits[0]] = splits[1]
+
         MMT.run(
             name=name,
             num_machines=num_machines,
@@ -227,7 +268,8 @@ class _Run:
             interruptible=interruptible,
             image_credentials=image_credentials,
             cloud_account_auth=cloud_account_auth,
+            entrypoint=entrypoint,
+            path_mappings=path_mappings_dict,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
-            entrypoint=entrypoint,
         )

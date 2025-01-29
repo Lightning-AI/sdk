@@ -375,17 +375,21 @@ FLAGS
         Type: bool
         Default: False
         Whether to authenticate with the cloud account to pull the image. Required if the registry is part of a cloud provider (e.g. ECR).
-    --artifacts_local=ARTIFACTS_LOCAL
-        Type: Optional[Optional]
-        Default: None
-        The path of inside the docker container, you want to persist images from.
-    --artifacts_remote=ARTIFACTS_REMOTE
-        Type: Optional[Optional]
-        Default: None
-        The remote storage to persist your artifacts to.
     --entrypoint=ENTRYPOINT
         Type: str
         Default: 'sh -c'
-        The entrypoint of your docker container. Defaults to `sh -c` which just runs the provided command in a standard shell. To use the pre-defined entrypoint of the provided image, set this to an empty string. Only applicable when submitting docker jobs."""
+        The entrypoint of your docker container. Defaults to `sh -c` which just runs the provided command in a standard shell. To use the pre-defined entrypoint of the provided image, set this to an empty string. Only applicable when submitting docker jobs.
+    -p, --path_mappings=PATH_MAPPINGS
+        Type: str
+        Default: ''
+        Maps path inside of containers to paths inside data-connections.
+    --artifacts_local=ARTIFACTS_LOCAL
+        Type: Optional[Optional]
+        Default: None
+        Deprecated in favor of path_mappings. The path of inside the docker container, you want to persist images from.
+    --artifacts_remote=ARTIFACTS_REMOTE
+        Type: Optional[Optional]
+        Default: None
+        Deprecated in favor of path_mappings. The remote storage to persist your artifacts to."""
 
     assert message in result.stderr or message in result.stdout

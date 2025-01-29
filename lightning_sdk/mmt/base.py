@@ -68,9 +68,10 @@ class _BaseMMT(_BaseJob):
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
-        artifacts_local: Optional[str] = None,
-        artifacts_remote: Optional[str] = None,
         entrypoint: str = "sh -c",
+        path_mappings: Optional[Dict[str, str]] = None,
+        artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
+        artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "_BaseMMT":
         """Run async workloads using a docker image across multiple machines.
@@ -95,19 +96,18 @@ class _BaseMMT(_BaseJob):
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
                 Required if the registry is part of a cloud provider (e.g. ECR).
-            artifacts_local: The path of inside the docker container, you want to persist images from.
-                CAUTION: When setting this to "/", it will effectively erase your container.
-                Only supported for jobs with a docker image compute environment.
-            artifacts_remote: The remote storage to persist your artifacts to.
-                Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
-                PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
-                E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
-                within it.
-                Note that the connection needs to be added to the teamspace already in order for it to be found.
-                Only supported for jobs with a docker image compute environment.
             entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
                 just runs the provided command in a standard shell.
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
+            path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
+                represents the data-connection name and the path inside that connection.
+                Should be of form
+                    {
+                        "<CONTAINER_PATH_1>": "<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1>",
+                        "<CONTAINER_PATH_2>": "<CONNECTION_NAME_2>"
+                    }
+                If the path inside the connection is omitted it's assumed to be the root path of that connection.
                 Only applicable when submitting docker jobs.
         """
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -198,9 +198,10 @@ class _BaseMMT(_BaseJob):
             interruptible=interruptible,
             image_credentials=image_credentials,
             cloud_account_auth=cloud_account_auth,
+            entrypoint=entrypoint,
+            path_mappings=path_mappings,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
-            entrypoint=entrypoint,
         )
         return inst
 
@@ -217,9 +218,10 @@ class _BaseMMT(_BaseJob):
         cloud_account: Optional[str] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
-        artifacts_local: Optional[str] = None,
-        artifacts_remote: Optional[str] = None,
         entrypoint: str = "sh -c",
+        path_mappings: Optional[Dict[str, str]] = None,
+        artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
+        artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
     ) -> None:
         """Submit a new multi-machine job to the Lightning AI platform.
 
@@ -239,18 +241,17 @@ class _BaseMMT(_BaseJob):
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
                 Required if the registry is part of a cloud provider (e.g. ECR).
-            artifacts_local: The path of inside the docker container, you want to persist images from.
-                CAUTION: When setting this to "/", it will effectively erase your container.
-                Only supported for jobs with a docker image compute environment.
-            artifacts_remote: The remote storage to persist your artifacts to.
-                Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
-                PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
-                E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
-                within it.
-                Note that the connection needs to be added to the teamspace already in order for it to be found.
-                Only supported for jobs with a docker image compute environment.
             entrypoint: The entrypoint of your docker container. Defaults to sh -c.
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
+            path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
+                represents the data-connection name and the path inside that connection.
+                Should be of form
+                    {
+                        "<CONTAINER_PATH_1>": "<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1>",
+                        "<CONTAINER_PATH_2>": "<CONNECTION_NAME_2>"
+                    }
+                If the path inside the connection is omitted it's assumed to be the root path of that connection.
                 Only applicable when submitting docker jobs.
         """
 

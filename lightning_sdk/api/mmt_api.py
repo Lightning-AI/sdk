@@ -7,10 +7,9 @@ from lightning_sdk.api.utils import (
     _COMPUTE_NAME_TO_MACHINE,
     _create_app,
     _machine_to_compute_name,
+    resolve_path_mappings,
 )
-from lightning_sdk.api.utils import (
-    _get_cloud_url as _cloud_url,
-)
+from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
@@ -85,9 +84,10 @@ class MMTApiV2:
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
         cloud_account_auth: bool,
-        artifacts_local: Optional[str],
-        artifacts_remote: Optional[str],
         entrypoint: str,
+        path_mappings: Optional[Dict[str, str]],
+        artifacts_local: Optional[str],  # deprecated in favor of path_mappings
+        artifacts_remote: Optional[str],  # deprecated in favor of path_mappings
     ) -> V1MultiMachineJob:
         env_vars = []
         if env is not None:
@@ -97,6 +97,12 @@ class MMTApiV2:
         instance_name = _machine_to_compute_name(machine)
 
         run_id = __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id] if studio_id is not None else ""
+
+        path_mappings_list = resolve_path_mappings(
+            mappings=path_mappings or {},
+            artifacts_local=artifacts_local,
+            artifacts_remote=artifacts_remote,
+        )
 
         spec = V1JobSpec(
             cloudspace_id=studio_id or "",
@@ -110,8 +116,7 @@ class MMTApiV2:
             spot=interruptible,
             image_cluster_credentials=cloud_account_auth,
             image_secret_ref=image_credentials or "",
-            artifacts_source=artifacts_local or "",
-            artifacts_destination=artifacts_remote or "",
+            path_mappings=path_mappings_list,
         )
         body = ProjectIdMultimachinejobsBody(
             name=name, spec=spec, cluster_id=cloud_account or "", machines=num_machines

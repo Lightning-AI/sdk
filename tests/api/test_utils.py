@@ -1,3 +1,4 @@
+import re
 from unittest import mock
 from unittest.mock import MagicMock, Mock, PropertyMock, mock_open
 
@@ -10,11 +11,13 @@ from lightning_sdk.api.utils import (
     _FileUploader,
     _machine_to_compute_name,
     _ModelFileUploader,
+    resolve_path_mappings,
 )
 from lightning_sdk.lightning_cloud.openapi import (
     ProjectIdStorageBody,
     UploadIdPartsBody,
     UploadsUploadIdBody,
+    V1PathMapping,
     V1PresignedUrl,
     V1SignedUrl,
     V1UploadProjectArtifactPartsResponse,
@@ -274,3 +277,51 @@ def test_download_chunk_failure(mock_refresh, mock_url, mock_get):
     assert mock_response.raise_for_status.call_count == 1
 
     assert mock_refresh.call_count == 1
+
+
+def test_resolve_path_mappings():
+    assert len(resolve_path_mappings({}, None, None)) == 0
+
+    assert len(resolve_path_mappings({}, "", "")) == 0
+
+    path_mappings = resolve_path_mappings({}, "/output", "efs:some-connection:some-path")
+    assert len(path_mappings) == 1
+    assert isinstance(path_mappings[0], V1PathMapping)
+    assert path_mappings[0].container_path == "/output"
+    assert path_mappings[0].connection_name == "some-connection"
+    assert path_mappings[0].connection_path == "some-path"
+
+    with pytest.raises(
+        RuntimeError,
+        match=re.escape("Artifacts remote need to be of format efs:connection_name[:path] but got some-connection"),
+    ):
+        resolve_path_mappings({}, "/output", "some-connection")
+
+    with pytest.raises(
+        RuntimeError, match="If Artifacts remote is specified, artifacts local should be specified as well"
+    ):
+        resolve_path_mappings({}, "", "efs:some-connection:some-path")
+
+    path_mappings = resolve_path_mappings(
+        {
+            "/path1": "conn1:remotepath1",
+            "/path2": "conn2",
+        },
+        "/output",
+        "efs:some-connection:some-path",
+    )
+
+    assert len(path_mappings) == 3
+    assert all(isinstance(x, V1PathMapping) for x in path_mappings)
+
+    assert path_mappings[0].container_path == "/path1"
+    assert path_mappings[0].connection_name == "conn1"
+    assert path_mappings[0].connection_path == "remotepath1"
+
+    assert path_mappings[1].container_path == "/path2"
+    assert path_mappings[1].connection_name == "conn2"
+    assert path_mappings[1].connection_path == ""
+
+    assert path_mappings[2].container_path == "/output"
+    assert path_mappings[2].connection_name == "some-connection"
+    assert path_mappings[2].connection_path == "some-path"

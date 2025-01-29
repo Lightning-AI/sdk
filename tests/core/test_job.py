@@ -209,6 +209,7 @@ def test_submit_job_v2_image(
         artifacts_local=artifacts_local,
         artifacts_remote=artifacts_remote,
         entrypoint="sh -c",
+        path_mappings=None,
     )
 
 
@@ -245,6 +246,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         artifacts_local=None,
         artifacts_remote=None,
         entrypoint="sh -c",
+        path_mappings=None,
     )
 
 
@@ -484,6 +486,7 @@ def test_submit_jobv2_studio_resolve(
         artifacts_local=None,
         artifacts_remote=None,
         entrypoint="sh -c",
+        path_mappings=None,
     )
 
 
@@ -548,6 +551,7 @@ def test_submit_jobv2_studio_path(
         artifacts_local=artifacts_source,
         artifacts_remote=artifacts_destination,
         entrypoint="sh -c",
+        path_mappings=None,
     )
 
     job._internal_job._job = V1Job(
@@ -600,6 +604,7 @@ def test_submit_job_v2_image_from_studio(
         artifacts_local=None,
         artifacts_remote=None,
         entrypoint="sh -c",
+        path_mappings=None,
     )
 
 

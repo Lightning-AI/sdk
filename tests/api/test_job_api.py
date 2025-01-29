@@ -11,6 +11,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     JobsIdBody1,
     V1Job,
     V1JobSpec,
+    V1PathMapping,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
@@ -114,6 +115,7 @@ def test_job_v2_submit_job():
         artifacts_local=None,
         artifacts_remote=None,
         entrypoint="sh -c",
+        path_mappings=None,
     )
 
     spec = V1JobSpec(
@@ -127,9 +129,8 @@ def test_job_v2_submit_job():
         spot=False,
         image_cluster_credentials=True,
         image_secret_ref="",
-        artifacts_source="",
-        artifacts_destination="",
         entrypoint="sh -c",
+        path_mappings=[],
     )
     body = ProjectIdJobsBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
@@ -151,6 +152,7 @@ def test_job_v2_submit_job():
         artifacts_local="/output",
         artifacts_remote="efs:data:some-path",
         entrypoint="sh -c",
+        path_mappings={"/output2": "data2:some-other-path"},
     )
 
     spec = V1JobSpec(
@@ -164,9 +166,11 @@ def test_job_v2_submit_job():
         spot=True,
         image_cluster_credentials=False,
         image_secret_ref="dockerhub",
-        artifacts_source="/output",
-        artifacts_destination="efs:data:some-path",
         entrypoint="sh -c",
+        path_mappings=[
+            V1PathMapping(container_path="/output2", connection_name="data2", connection_path="some-other-path"),
+            V1PathMapping(container_path="/output", connection_name="data", connection_path="some-path"),
+        ],
     )
     body = ProjectIdJobsBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)

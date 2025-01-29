@@ -85,6 +85,7 @@ class _JobV1(_BaseJob):
             image_credentials=None,
             cloud_account_auth=False,
             cluster=cluster,
+            path_mappings=None,
         )
 
     def _submit(
@@ -101,6 +102,7 @@ class _JobV1(_BaseJob):
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
         entrypoint: str = "sh -c",
+        path_mappings: Optional[Dict[str, str]] = None,
     ) -> "_JobV1":
         """Submit a job to run on a machine.
 
@@ -114,12 +116,11 @@ class _JobV1(_BaseJob):
             cloud_account: The cloud account to run the job on.
             image_credentials: The image credentials for the job (not supported).
             cloud_account_auth: Whether to use cloud account authentication for the job (not supported).
-            artifacts_local: The local path for persisting artifacts (not supported).
-            artifacts_remote: The remote path for persisting artifacts (not supported).
             entrypoint: The entrypoint of your docker container (not supported).
                 Defaults to `sh -c` which just runs the provided command in a standard shell.
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
                 Only applicable when submitting docker jobs.
+            path_mappings: The mappings from data connection inside your container (not supported)
 
         Returns:
             The submitted job.
@@ -140,6 +141,9 @@ class _JobV1(_BaseJob):
 
         if entrypoint != "sh -c":
             raise ValueError("Specifying the entrypoint is not yet supported with jobs")
+
+        if path_mappings is not None:
+            raise ValueError("Specifying path mappings is not yet supported with jobs")
 
         # TODO: add support for empty names (will give an empty string)
         _submitted = self._job_api.submit_job(

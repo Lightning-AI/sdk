@@ -46,9 +46,10 @@ class _JobV2(_BaseJob):
         cloud_account: Optional[str] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
-        artifacts_local: Optional[str] = None,
-        artifacts_remote: Optional[str] = None,
         entrypoint: str = "sh -c",
+        path_mappings: Optional[Dict[str, str]] = None,
+        artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
+        artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
     ) -> "_JobV2":
         """Submit a new job to the Lightning AI platform.
 
@@ -70,16 +71,14 @@ class _JobV2(_BaseJob):
             artifacts_local: The path of inside the docker container, you want to persist images from.
                 CAUTION: When setting this to "/", it will effectively erase your container.
                 Only supported for jobs with a docker image compute environment.
-            artifacts_remote: The remote storage to persist your artifacts to.
-                Should be of format <CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>.
-                PATH_WITHIN_CONNECTION hereby is a path relative to the connection's root.
-                E.g. efs:data:some-path would result in an EFS connection named `data` and to the path `some-path`
-                within it.
-                Note that the connection needs to be added to the teamspace already in order for it to be found.
-                Only supported for jobs with a docker image compute environment.
-            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
-                just runs the provided command in a standard shell.
-                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+            path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
+                represents the data-connection name and the path inside that connection.
+                Should be of form
+                    {
+                        "<CONTAINER_PATH_1>": "<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1>",
+                        "<CONTAINER_PATH_2>": "<CONNECTION_NAME_2>"
+                    }
+                If the path inside the connection is omitted it's assumed to be the root path of that connection.
                 Only applicable when submitting docker jobs.
         """
         # Command is required if Studio is provided to know what to run
@@ -114,6 +113,7 @@ class _JobV2(_BaseJob):
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
             entrypoint=entrypoint,
+            path_mappings=path_mappings,
         )
         self._job = submitted
         self._name = submitted.name

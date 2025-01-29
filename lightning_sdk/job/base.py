@@ -84,6 +84,7 @@ class _BaseJob(ABC):
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
         entrypoint: str = "sh -c",
+        path_mappings: Optional[Dict[str, str]] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "_BaseJob":
         """Run async workloads using a docker image or a compute environment from your studio.
@@ -208,6 +209,7 @@ class _BaseJob(ABC):
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
             entrypoint=entrypoint,
+            path_mappings=path_mappings,
         )
 
     @abstractmethod
@@ -225,6 +227,7 @@ class _BaseJob(ABC):
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
         entrypoint: str = "sh -c",
+        path_mappings: Optional[Dict[str, str]] = None,
     ) -> "_BaseJob":
         """Submit a new job to the Lightning AI platform.
 
