@@ -116,6 +116,12 @@ class AIHubApi:
         name = name or template.name
         template.spec_v2.endpoint.id = None
 
+        # These are needed to ensure templates with a max replicas of 0 will start on creation
+        if template.spec_v2.autoscaling.max_replicas == "0":
+            template.spec_v2.autoscaling.max_replicas = "1"
+        if not template.spec_v2.autoscaling.enabled:
+            template.spec_v2.autoscaling.enabled = True
+
         AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
         return self._client.jobs_service_create_deployment(
             project_id=project_id,
@@ -124,7 +130,7 @@ class AIHubApi:
                 cluster_id=cloud_account,
                 endpoint=template.spec_v2.endpoint,
                 name=name,
-                replicas=0,
+                replicas=1,
                 spec=template.spec_v2.job,
             ),
         )

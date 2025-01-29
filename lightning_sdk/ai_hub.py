@@ -1,11 +1,10 @@
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 from urllib.parse import quote
 
-from lightning_sdk.api import AIHubApi, UserApi
-from lightning_sdk.lightning_cloud import login
-from lightning_sdk.lightning_cloud.env import LIGHTNING_CLOUD_URL
+from lightning_sdk.api import AIHubApi
+from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace
+from lightning_sdk.utils.resolve import _resolve_teamspace
 
 if TYPE_CHECKING:
     from lightning_sdk import Organization, Teamspace
@@ -99,26 +98,6 @@ class AIHub:
             results.append(result)
         return results
 
-    def _authenticate(
-        self,
-        teamspace: Optional[Union[str, "Teamspace"]] = None,
-        org: Optional[Union[str, "Organization"]] = None,
-        user: Optional[Union[str, "User"]] = None,
-    ) -> "Teamspace":
-        if self._auth is None:
-            self._auth = login.Auth()
-        try:
-            self._auth.authenticate()
-            user = User(name=UserApi()._get_user_by_id(self._auth.user_id).username)
-        except ConnectionError as e:
-            raise e
-
-        org = _resolve_org(org)
-        teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user if org is None else None)
-        if teamspace is None:
-            raise ValueError("You need to pass a teamspace or an org for your deployment.")
-        return teamspace
-
     def run(
         self,
         api_id: str,
@@ -127,6 +106,7 @@ class AIHub:
         cloud_account: Optional[str] = None,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         org: Optional[Union[str, "Organization"]] = None,
+        user: Optional[Union[str, "User"]] = None,
     ) -> Dict[str, Union[str, bool]]:
         """Deploy an API from the AI Hub.
 
@@ -146,7 +126,8 @@ class AIHub:
             cloud_account: The cloud account where you want to run the template, such as "lightning-public-prod".
                 Defaults to None.
             teamspace: The team or group for deployment. Defaults to None.
-            org: The organization for deployment. Defaults to None.
+            org: The organization for deployment. Don't pass user with this. Defaults to None.
+            user: The user for deployment. Don't pass org with this. Defaults to None.
 
         Returns:
             A dictionary containing the name of the deployed API,
@@ -156,7 +137,13 @@ class AIHub:
             ValueError: If a teamspace or organization is not provided.
             ConnectionError: If there is an issue with logging in.
         """
-        teamspace = self._authenticate(teamspace, org)
+        if user is not None and org is not None:
+            raise ValueError("User and org are mutually exclusive. Please only specify the one owns the teamspace.")
+
+        teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        if teamspace is None:
+            raise ValueError("You need to pass a teamspace or an org for your deployment.")
+
         teamspace_id = teamspace.id
 
         api_arguments = api_arguments or {}
@@ -167,13 +154,15 @@ class AIHub:
             name=name,
             api_arguments=api_arguments,
         )
+
         url = (
             quote(
-                f"{LIGHTNING_CLOUD_URL}/{teamspace._org.name}/{teamspace.name}/jobs/{deployment.name}",
+                f"{_get_cloud_url}/{teamspace.owner.name}/{teamspace.name}/jobs/{deployment.name}",
                 safe=":/()",
             )
             + "?app_id=deployment"
         )
+
         print("Deployment available at:", url)
 
         return {

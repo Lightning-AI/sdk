@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -84,16 +84,24 @@ def test_list_api_search():
     assert apis[0]["description"] == "This is cool-api"
 
 
-def test_deploy():
+@patch("lightning_sdk.ai_hub._resolve_teamspace")
+def test_run(mock_resolve_teamspace):
     class FakeResponse:
         id = "dep_xxxxx"
         name = "New API"
         status = MagicMock(urls=["http://lightning.ai/example"])
         spec = MagicMock(spot=True)
 
+    class FakeOrg:
+        name = "org-name"
+
+    class FakeTeamspace:
+        id = "mock-ts-id"
+        name = "mock-ts"
+        owner = FakeOrg()
+
     template_id = "temp_01jxxxxxxxxx"
     hub = AIHub()
-    hub._authenticate = MagicMock(return_value=MagicMock(id=template_id))
     hub._api._client = MagicMock()
     hub._api._client.deployment_templates_service_get_deployment_template = MagicMock(
         return_value=FakeDeploymentTemplate
@@ -102,6 +110,8 @@ def test_deploy():
     AIHubApi._set_parameters = MagicMock()
     hub._api._parse_env_list = MagicMock()
 
-    deployment = hub.run(template_id, cloud_account="public-prod", name="New API")
+    mock_resolve_teamspace.return_value = FakeTeamspace()
+
+    deployment = hub.run(template_id, cloud_account="public-prod", name="New API", teamspace="mock-ts", org="mock-org")
     assert deployment["name"] == "New API", "Deployment name is New API"
     assert deployment["api_endpoint"] == "http://lightning.ai/example", "base_url is decoded from the server response"
