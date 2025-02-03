@@ -166,16 +166,7 @@ class _Run:
             cloud_account = resolved_teamspace.default_cloud_account
         machine_enum = Machine(machine.upper())
 
-        path_mappings_dict = {}
-        for mapping in path_mappings.split(","):
-            splits = str(mapping).split(":", 1)
-            if len(splits) != 2:
-                raise RuntimeError(
-                    "Mapping needs to be of form <CONTAINER_PATH>:<CONNECTION_NAME>[:<PATH_WITHIN_CONNECTION>], "
-                    f"but got {mapping}"
-                )
-
-            path_mappings_dict[splits[0]] = splits[1]
+        path_mappings_dict = self._resolve_path_mapping(path_mappings=path_mappings)
 
         Job.run(
             name=name,
@@ -242,16 +233,7 @@ class _Run:
         if image is None:
             raise RuntimeError("Image needs to be specified to run a multi-machine job")
 
-        path_mappings_dict = {}
-        for mapping in path_mappings.split(","):
-            splits = str(mapping).split(":", 1)
-            if len(splits) != 2:
-                raise RuntimeError(
-                    "Mapping needs to be of form <CONTAINER_PATH>:<CONNECTION_NAME>[:<PATH_WITHIN_CONNECTION>], "
-                    f"but got {mapping}"
-                )
-
-            path_mappings_dict[splits[0]] = splits[1]
+        path_mappings_dict = self._resolve_path_mapping(path_mappings=path_mappings)
 
         MMT.run(
             name=name,
@@ -273,3 +255,26 @@ class _Run:
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
         )
+
+    @staticmethod
+    def _resolve_path_mapping(path_mappings: str) -> Dict[str, str]:
+        path_mappings = path_mappings.strip()
+
+        if not path_mappings:
+            return {}
+
+        path_mappings_dict = {}
+        for mapping in path_mappings.split(","):
+            if not mapping.strip():
+                continue
+
+            splits = str(mapping).split(":", 1)
+            if len(splits) != 2:
+                raise RuntimeError(
+                    "Mapping needs to be of form <CONTAINER_PATH>:<CONNECTION_NAME>[:<PATH_WITHIN_CONNECTION>], "
+                    f"but got {mapping}"
+                )
+
+            path_mappings_dict[splits[0].strip()] = splits[1].strip()
+
+        return path_mappings_dict
