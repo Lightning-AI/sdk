@@ -744,3 +744,34 @@ def test_job_instantiation_fallback_v2_to_v1(
     # when we're not fetching then job (e.g. on job creation) there's no fallback necessary
     j = Job(name="abc", teamspace=studio.teamspace, _fetch_job=False)
     assert isinstance(j._internal_job, _JobV2)
+
+
+@pytest.mark.parametrize("target_state", ["stopped", "completed", "failed"])
+def test_jobv2_wait(job_api_get_job_by_name_mocker, internal_studio_init_mocker, target_state):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+
+    job = _JobV2("test-job", studio.teamspace)
+
+    i = 0
+
+    def get_job_side_effect(*args, **kwargs):
+        nonlocal i
+        if i < 5:
+            i += 1
+            return V1Job(id="test-job-id", state="pending", spec=V1JobSpec(cloudspace_id="cloudspace-id"))
+        if i < 10:
+            i += 1
+            return V1Job(id="test-job-id", state="running", spec=V1JobSpec(cloudspace_id="cloudspace-id"))
+
+        return V1Job(id="test-job-id", state=target_state, spec=V1JobSpec(cloudspace_id="cloudspace-id"))
+
+    get_job_mock = mock.MagicMock()
+    get_job_mock.side_effect = get_job_side_effect
+    job._job_api.get_job = get_job_mock
+
+    update_job_mock = mock.MagicMock()
+    job._job_api._client.jobs_service_update_job = update_job_mock
+
+    job.wait(interval=0.1)
+
+    assert get_job_mock.call_count == 11

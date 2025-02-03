@@ -275,6 +275,22 @@ class _BaseJob(ABC):
         Caution: This also deletes all artifacts and snapshots associated with the job.
         """
 
+    def wait(self, interval: float = 5.0) -> None:
+        """Waits for the job to be either completed, manually stopped or failed.
+
+        Args:
+            interval: the number of seconds to spend in-between status checks.
+        """
+        import time
+
+        from lightning_sdk.status import Status
+
+        while True:
+            if self.status in (Status.Completed, Status.Stopped, Status.Failed):
+                break
+
+            time.sleep(interval)
+
     @property
     @abstractmethod
     def status(self) -> "Status":
