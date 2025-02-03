@@ -2137,8 +2137,20 @@ def job_api_get_job_by_name_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_find_job",
         autospec=True,
-        return_value=V1Job(id="test-job-id", spec=V1JobSpec(cloudspace_id="st-abc")),
+        return_value=V1Job(id="test-job-id", spec=V1JobSpec(cloudspace_id="st-abc"), project_id="ts-abc"),
     )
+    yield [mocker]
+    mocker.resetall()
+
+
+@pytest.fixture()
+def job_api_get_cloudspace_name(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+        return_value=V1CloudSpace(name="st-abc", display_name="st-abc", id="st-abc"),
+        autospec=True,
+    )
+
     yield [mocker]
     mocker.resetall()
 

@@ -1,3 +1,4 @@
+import importlib
 import os
 from contextlib import nullcontext
 from unittest import mock
@@ -511,3 +512,93 @@ def studio_autoshutdown(internal_studio_init_mocker, internal_studio_status_mock
 def test_cluster(internal_studio_init_mocker, internal_studio_status_mocker, name):
     studio = Studio(name=f"st-{name}", teamspace="ts-abc", org="org-abc")
     assert studio.cloud_account == f"c-{name}"
+
+
+@pytest.mark.parametrize("machine", [Machine.A10G, Machine.DATA_PREP_MAX])
+@pytest.mark.parametrize("env", [None, {"key": "value"}])
+@pytest.mark.parametrize("interruptible", [True, False])
+def test_submit_job_v2_studio(
+    internal_studio_init_mocker,
+    job_backend_selector_mocker_v2,
+    job_api_get_job_by_name_mocker,
+    job_api_get_cloudspace_name,
+    machine,
+    env,
+    interruptible,
+):
+    import lightning_sdk
+    from lightning_sdk.job.v2 import _JobV2
+
+    importlib.reload(lightning_sdk.job.job)
+    from lightning_sdk.job import Job
+
+    submit_mock = mock.MagicMock()
+    _JobV2._submit = submit_mock
+
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+
+    job = studio.run_job(name="test-job", machine=machine, command="echo hello", env=env, interruptible=interruptible)
+
+    assert isinstance(job, Job)
+
+    submit_mock.assert_called_once_with(
+        command="echo hello",
+        cloud_account="c-abc",
+        studio=studio,
+        image=None,
+        machine=machine,
+        interruptible=interruptible,
+        env=env,
+        image_credentials=None,
+        cloud_account_auth=False,
+        artifacts_local=None,
+        artifacts_remote=None,
+        entrypoint="sh -c",
+        path_mappings=None,
+    )
+
+
+@pytest.mark.parametrize("machine", [Machine.A10G, Machine.DATA_PREP_MAX])
+@pytest.mark.parametrize("env", [None, {"key": "value"}])
+@pytest.mark.parametrize("interruptible", [True, False])
+def test_submit_mmt_v2_studio(
+    internal_studio_init_mocker,
+    mmt_backend_selector_mocker_v2,
+    mmt_api_get_job_by_name_mocker,
+    machine,
+    env,
+    interruptible,
+):
+    import lightning_sdk
+    from lightning_sdk.mmt.v2 import _MMTV2
+
+    importlib.reload(lightning_sdk.mmt.mmt)
+    from lightning_sdk.mmt import MMT
+
+    submit_mock = mock.MagicMock()
+    _MMTV2._submit = submit_mock
+
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+
+    mmt = studio.run_mmt(
+        name="test-job", num_machines=2, machine=machine, command="echo hello", env=env, interruptible=interruptible
+    )
+
+    assert isinstance(mmt, MMT)
+
+    submit_mock.assert_called_once_with(
+        command="echo hello",
+        cloud_account="c-abc",
+        studio=studio,
+        image=None,
+        machine=machine,
+        num_machines=2,
+        interruptible=interruptible,
+        env=env,
+        image_credentials=None,
+        cloud_account_auth=False,
+        artifacts_local=None,
+        artifacts_remote=None,
+        entrypoint="sh -c",
+        path_mappings=None,
+    )

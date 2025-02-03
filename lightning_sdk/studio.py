@@ -1,6 +1,6 @@
 import os
 import warnings
-from typing import TYPE_CHECKING, Any, Mapping, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Tuple, Union
 
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import _machine_to_compute_name
@@ -14,6 +14,8 @@ from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace, _setup_logger
 
 if TYPE_CHECKING:
+    from lightning_sdk.job import Job
+    from lightning_sdk.mmt import MMT
     from lightning_sdk.plugin import Plugin
 
 _logger = _setup_logger(__name__)
@@ -279,6 +281,71 @@ class Studio:
             studio_id=self._studio.id,
             teamspace_id=self._teamspace.id,
             cloud_account=self._studio.cluster_id,
+        )
+
+    def run_job(
+        self,
+        name: str,
+        machine: Union["Machine", str],
+        command: str,
+        env: Optional[Dict[str, str]] = None,
+        interruptible: bool = False,
+    ) -> "Job":
+        """Run async workloads using the compute environment from your studio.
+
+        Args:
+            name: The name of the job. Needs to be unique within the teamspace.
+            machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
+            command: The command to run inside your job.
+            env: Environment variables to set inside the job.
+            interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+        """
+        from lightning_sdk.job import Job
+
+        return Job.run(
+            name=name,
+            machine=machine,
+            command=command,
+            studio=self,
+            image=None,
+            teamspace=self.teamspace,
+            cloud_account=self.cloud_account,
+            env=env,
+            interruptible=interruptible,
+        )
+
+    def run_mmt(
+        self,
+        name: str,
+        num_machines: int,
+        machine: Union["Machine", str],
+        command: str,
+        env: Optional[Dict[str, str]] = None,
+        interruptible: bool = False,
+    ) -> "MMT":
+        """Run async workloads using the compute environment from your studio.
+
+        Args:
+            name: The name of the job. Needs to be unique within the teamspace.
+            num_machines: The number of machines to run on.
+            machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
+            command: The command to run inside your job.
+            env: Environment variables to set inside the job.
+            interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+        """
+        from lightning_sdk.mmt import MMT
+
+        return MMT.run(
+            name=name,
+            num_machines=num_machines,
+            machine=machine,
+            command=command,
+            studio=self,
+            image=None,
+            teamspace=self.teamspace,
+            cloud_account=self.cloud_account,
+            env=env,
+            interruptible=interruptible,
         )
 
     @property

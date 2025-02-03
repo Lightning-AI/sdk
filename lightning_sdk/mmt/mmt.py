@@ -120,7 +120,7 @@ class MMT(_BaseMMT):
         Args:
             name: The name of the job. Needs to be unique within the teamspace.
             machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
-            num_machine: The number of machines to run on.
+            num_machines: The number of machines to run on.
             command: The command to run inside your job. Required if using a studio. Optional if using an image.
                 If not provided for images, will run the container entrypoint and default command.
             studio: The studio env to run the job with. Mutually exclusive with image.
