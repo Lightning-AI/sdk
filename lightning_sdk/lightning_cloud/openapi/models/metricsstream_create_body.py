@@ -44,6 +44,7 @@ class MetricsstreamCreateBody(object):
         'app_id': 'str',
         'cloudspace_id': 'str',
         'dark_color': 'str',
+        'job_id': 'str',
         'light_color': 'str',
         'name': 'str',
         'store_created_at': 'bool',
@@ -58,6 +59,7 @@ class MetricsstreamCreateBody(object):
         'app_id': 'appId',
         'cloudspace_id': 'cloudspaceId',
         'dark_color': 'darkColor',
+        'job_id': 'jobId',
         'light_color': 'lightColor',
         'name': 'name',
         'store_created_at': 'storeCreatedAt',
@@ -68,11 +70,12 @@ class MetricsstreamCreateBody(object):
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, version: 'datetime' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, job_id: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, version: 'datetime' =None, work_id: 'str' =None):  # noqa: E501
         """MetricsstreamCreateBody - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
         self._dark_color = None
+        self._job_id = None
         self._light_color = None
         self._name = None
         self._store_created_at = None
@@ -88,6 +91,8 @@ class MetricsstreamCreateBody(object):
             self.cloudspace_id = cloudspace_id
         if dark_color is not None:
             self.dark_color = dark_color
+        if job_id is not None:
+            self.job_id = job_id
         if light_color is not None:
             self.light_color = light_color
         if name is not None:
@@ -167,6 +172,27 @@ class MetricsstreamCreateBody(object):
         """
 
         self._dark_color = dark_color
+
+    @property
+    def job_id(self) -> 'str':
+        """Gets the job_id of this MetricsstreamCreateBody.  # noqa: E501
+
+
+        :return: The job_id of this MetricsstreamCreateBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._job_id
+
+    @job_id.setter
+    def job_id(self, job_id: 'str'):
+        """Sets the job_id of this MetricsstreamCreateBody.
+
+
+        :param job_id: The job_id of this MetricsstreamCreateBody.  # noqa: E501
+        :type: str
+        """
+
+        self._job_id = job_id
 
     @property
     def light_color(self) -> 'str':

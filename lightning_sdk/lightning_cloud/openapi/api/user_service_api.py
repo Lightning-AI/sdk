@@ -1167,6 +1167,7 @@ class UserServiceApi(object):
         :param str page_token:
         :param str page_size:
         :param str query:
+        :param str organization_id:
         :return: V1SearchUsersResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1190,12 +1191,13 @@ class UserServiceApi(object):
         :param str page_token:
         :param str page_size:
         :param str query:
+        :param str organization_id:
         :return: V1SearchUsersResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['page_token', 'page_size', 'query']  # noqa: E501
+        all_params = ['page_token', 'page_size', 'query', 'organization_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1222,6 +1224,8 @@ class UserServiceApi(object):
             query_params.append(('pageSize', params['page_size']))  # noqa: E501
         if 'query' in params:
             query_params.append(('query', params['query']))  # noqa: E501
+        if 'organization_id' in params:
+            query_params.append(('organizationId', params['organization_id']))  # noqa: E501
 
         header_params = {}
 

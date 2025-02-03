@@ -43,20 +43,23 @@ class V1ClusterTaggingOptions(object):
     swagger_types = {
         'custom_tags': 'list[V1ClusterResourceTag]',
         'tag_instances_with_teamspace_name': 'bool',
-        'tag_instances_with_username': 'bool'
+        'tag_instances_with_username': 'bool',
+        'tag_instances_with_workload_name': 'bool'
     }
 
     attribute_map = {
         'custom_tags': 'customTags',
         'tag_instances_with_teamspace_name': 'tagInstancesWithTeamspaceName',
-        'tag_instances_with_username': 'tagInstancesWithUsername'
+        'tag_instances_with_username': 'tagInstancesWithUsername',
+        'tag_instances_with_workload_name': 'tagInstancesWithWorkloadName'
     }
 
-    def __init__(self, custom_tags: 'list[V1ClusterResourceTag]' =None, tag_instances_with_teamspace_name: 'bool' =None, tag_instances_with_username: 'bool' =None):  # noqa: E501
+    def __init__(self, custom_tags: 'list[V1ClusterResourceTag]' =None, tag_instances_with_teamspace_name: 'bool' =None, tag_instances_with_username: 'bool' =None, tag_instances_with_workload_name: 'bool' =None):  # noqa: E501
         """V1ClusterTaggingOptions - a model defined in Swagger"""  # noqa: E501
         self._custom_tags = None
         self._tag_instances_with_teamspace_name = None
         self._tag_instances_with_username = None
+        self._tag_instances_with_workload_name = None
         self.discriminator = None
         if custom_tags is not None:
             self.custom_tags = custom_tags
@@ -64,6 +67,8 @@ class V1ClusterTaggingOptions(object):
             self.tag_instances_with_teamspace_name = tag_instances_with_teamspace_name
         if tag_instances_with_username is not None:
             self.tag_instances_with_username = tag_instances_with_username
+        if tag_instances_with_workload_name is not None:
+            self.tag_instances_with_workload_name = tag_instances_with_workload_name
 
     @property
     def custom_tags(self) -> 'list[V1ClusterResourceTag]':
@@ -127,6 +132,27 @@ class V1ClusterTaggingOptions(object):
         """
 
         self._tag_instances_with_username = tag_instances_with_username
+
+    @property
+    def tag_instances_with_workload_name(self) -> 'bool':
+        """Gets the tag_instances_with_workload_name of this V1ClusterTaggingOptions.  # noqa: E501
+
+
+        :return: The tag_instances_with_workload_name of this V1ClusterTaggingOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._tag_instances_with_workload_name
+
+    @tag_instances_with_workload_name.setter
+    def tag_instances_with_workload_name(self, tag_instances_with_workload_name: 'bool'):
+        """Sets the tag_instances_with_workload_name of this V1ClusterTaggingOptions.
+
+
+        :param tag_instances_with_workload_name: The tag_instances_with_workload_name of this V1ClusterTaggingOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._tag_instances_with_workload_name = tag_instances_with_workload_name
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

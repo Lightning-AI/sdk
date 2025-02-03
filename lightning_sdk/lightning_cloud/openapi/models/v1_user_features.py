@@ -62,12 +62,14 @@ class V1UserFeatures(object):
         'deployment_customize_api': 'bool',
         'deployment_data_path': 'bool',
         'deployment_persistent_disk': 'bool',
+        'deployment_version_upgrade': 'bool',
         'deployment_version_visibility': 'bool',
         'docs_agent': 'bool',
         'drive_v2': 'bool',
         'enable_crypto_crackdown': 'bool',
         'enable_efs': 'bool',
         'enable_storage_limits': 'bool',
+        'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'filesystem_optimisation': 'bool',
         'inference_job_deployment_plugin': 'bool',
@@ -146,12 +148,14 @@ class V1UserFeatures(object):
         'deployment_customize_api': 'deploymentCustomizeApi',
         'deployment_data_path': 'deploymentDataPath',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
+        'deployment_version_upgrade': 'deploymentVersionUpgrade',
         'deployment_version_visibility': 'deploymentVersionVisibility',
         'docs_agent': 'docsAgent',
         'drive_v2': 'driveV2',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'enable_efs': 'enableEfs',
         'enable_storage_limits': 'enableStorageLimits',
+        'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filesystem_optimisation': 'filesystemOptimisation',
         'inference_job_deployment_plugin': 'inferenceJobDeploymentPlugin',
@@ -208,7 +212,7 @@ class V1UserFeatures(object):
         'writable_data_connections': 'writableDataConnections'
     }
 
-    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_customize_api: 'bool' =None, deployment_data_path: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_version_visibility: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lightning_registry: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mmt_v2: 'bool' =None, multiple_deployment_versions: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, advanced_deployment_autoscaling: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_customize_api: 'bool' =None, deployment_data_path: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_version_upgrade: 'bool' =None, deployment_version_visibility: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_efs: 'bool' =None, enable_storage_limits: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filesystem_optimisation: 'bool' =None, inference_job_deployment_plugin: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, jobs_init: 'bool' =None, jobs_v2: 'bool' =None, landing_studios: 'bool' =None, lightning_registry: 'bool' =None, lit_logger: 'bool' =None, lit_logger_storage_v2: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mmt_v2: 'bool' =None, multiple_deployment_versions: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restart_ide_on_hang: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, spot_v2: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, writable_data_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._advanced_deployment_autoscaling = None
         self._affiliate_links = None
@@ -231,12 +235,14 @@ class V1UserFeatures(object):
         self._deployment_customize_api = None
         self._deployment_data_path = None
         self._deployment_persistent_disk = None
+        self._deployment_version_upgrade = None
         self._deployment_version_visibility = None
         self._docs_agent = None
         self._drive_v2 = None
         self._enable_crypto_crackdown = None
         self._enable_efs = None
         self._enable_storage_limits = None
+        self._fair_share = None
         self._featured_studios_admin = None
         self._filesystem_optimisation = None
         self._inference_job_deployment_plugin = None
@@ -334,6 +340,8 @@ class V1UserFeatures(object):
             self.deployment_data_path = deployment_data_path
         if deployment_persistent_disk is not None:
             self.deployment_persistent_disk = deployment_persistent_disk
+        if deployment_version_upgrade is not None:
+            self.deployment_version_upgrade = deployment_version_upgrade
         if deployment_version_visibility is not None:
             self.deployment_version_visibility = deployment_version_visibility
         if docs_agent is not None:
@@ -346,6 +354,8 @@ class V1UserFeatures(object):
             self.enable_efs = enable_efs
         if enable_storage_limits is not None:
             self.enable_storage_limits = enable_storage_limits
+        if fair_share is not None:
+            self.fair_share = fair_share
         if featured_studios_admin is not None:
             self.featured_studios_admin = featured_studios_admin
         if filesystem_optimisation is not None:
@@ -897,6 +907,27 @@ class V1UserFeatures(object):
         self._deployment_persistent_disk = deployment_persistent_disk
 
     @property
+    def deployment_version_upgrade(self) -> 'bool':
+        """Gets the deployment_version_upgrade of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The deployment_version_upgrade of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._deployment_version_upgrade
+
+    @deployment_version_upgrade.setter
+    def deployment_version_upgrade(self, deployment_version_upgrade: 'bool'):
+        """Sets the deployment_version_upgrade of this V1UserFeatures.
+
+
+        :param deployment_version_upgrade: The deployment_version_upgrade of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._deployment_version_upgrade = deployment_version_upgrade
+
+    @property
     def deployment_version_visibility(self) -> 'bool':
         """Gets the deployment_version_visibility of this V1UserFeatures.  # noqa: E501
 
@@ -1021,6 +1052,27 @@ class V1UserFeatures(object):
         """
 
         self._enable_storage_limits = enable_storage_limits
+
+    @property
+    def fair_share(self) -> 'bool':
+        """Gets the fair_share of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The fair_share of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._fair_share
+
+    @fair_share.setter
+    def fair_share(self, fair_share: 'bool'):
+        """Sets the fair_share of this V1UserFeatures.
+
+
+        :param fair_share: The fair_share of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._fair_share = fair_share
 
     @property
     def featured_studios_admin(self) -> 'bool':

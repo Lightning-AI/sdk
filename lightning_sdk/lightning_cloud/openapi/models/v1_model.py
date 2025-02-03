@@ -43,6 +43,7 @@ class V1Model(object):
     swagger_types = {
         'categories': 'list[str]',
         'created_at': 'datetime',
+        'creator_username': 'str',
         'default_version': 'V1ModelVersionArchive',
         'description': 'str',
         'downloads': 'str',
@@ -62,6 +63,7 @@ class V1Model(object):
     attribute_map = {
         'categories': 'categories',
         'created_at': 'createdAt',
+        'creator_username': 'creatorUsername',
         'default_version': 'defaultVersion',
         'description': 'description',
         'downloads': 'downloads',
@@ -78,10 +80,11 @@ class V1Model(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, default_version: 'V1ModelVersionArchive' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'V1ModelVersionArchive' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, creator_username: 'str' =None, default_version: 'V1ModelVersionArchive' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'V1ModelVersionArchive' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Model - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
+        self._creator_username = None
         self._default_version = None
         self._description = None
         self._downloads = None
@@ -101,6 +104,8 @@ class V1Model(object):
             self.categories = categories
         if created_at is not None:
             self.created_at = created_at
+        if creator_username is not None:
+            self.creator_username = creator_username
         if default_version is not None:
             self.default_version = default_version
         if description is not None:
@@ -171,6 +176,27 @@ class V1Model(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def creator_username(self) -> 'str':
+        """Gets the creator_username of this V1Model.  # noqa: E501
+
+
+        :return: The creator_username of this V1Model.  # noqa: E501
+        :rtype: str
+        """
+        return self._creator_username
+
+    @creator_username.setter
+    def creator_username(self, creator_username: 'str'):
+        """Sets the creator_username of this V1Model.
+
+
+        :param creator_username: The creator_username of this V1Model.  # noqa: E501
+        :type: str
+        """
+
+        self._creator_username = creator_username
 
     @property
     def default_version(self) -> 'V1ModelVersionArchive':

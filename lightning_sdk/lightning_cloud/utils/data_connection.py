@@ -4,7 +4,7 @@ from lightning_sdk.lightning_cloud import rest_client
 from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection, V1S3FolderDataConnection, V1EfsConfig
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 import urllib3
-
+import os
 
 def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeout: int = 15) -> None:
     """Utility to add a data connection."""
@@ -26,7 +26,7 @@ def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeou
         aws=V1AwsDataConnection(
             source=f"s3://{bucket_name}",
             region=region
-    ))
+        ))
     try:
         client.data_connection_service_create_data_connection(body, project_id)
     except (ApiException, urllib3.exceptions.HTTPError) as ex:
@@ -44,7 +44,7 @@ def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeou
 
     while not os.path.isdir(f"/teamspace/s3_connections/{bucket_name}") and (time() - start) < create_timeout:
         sleep(1)
-    
+
     return
 
 def create_s3_folder(folder_name: str, create_timeout: int = 15) -> None:
@@ -64,7 +64,7 @@ def create_s3_folder(folder_name: str, create_timeout: int = 15) -> None:
 
     # Get existing data connections
     data_connections = client.data_connection_service_list_data_connections(project_id).data_connections
-    
+
     for connection in data_connections:
         existing_folder_name = getattr(connection, 'name', None)
         isS3Folder = getattr(connection, 's3_folder', None) is not None
@@ -102,13 +102,14 @@ def create_s3_folder(folder_name: str, create_timeout: int = 15) -> None:
 
     return
 
-def create_efs_folder(folder_name: str, region: str) -> None:
+def create_efs_folder(folder_name: str, region: str, create_timeout: int = 60) -> None:
     """
     Utility function to create a EFS folder.
 
     Args:
         folder_name: The name of the folder to create.
         region: the region to create the efs in. Could be something like "us-east-1"
+        create_timeout: Timeout for creating the efs folder. Defaults to 60 seconds
     """
     client = rest_client.LightningClient(retry=False)
 
@@ -137,7 +138,7 @@ def create_efs_folder(folder_name: str, region: str) -> None:
         efs=V1EfsConfig(region=region),
     )
     try:
-        client.data_connection_service_create_data_connection(body, project_id)
+        connection = client.data_connection_service_create_data_connection(body, project_id)
     except ApiException as e:
         # Note: This function can be called in a distributed way.
         # There is a race condition where one machine might create the entry before another machine
@@ -149,6 +150,72 @@ def create_efs_folder(folder_name: str, region: str) -> None:
 
     except urllib3.exceptions.HTTPError as e:
         raise e from None
+
+    start = time()
+    while True:
+        if time() - start > create_timeout:
+            print(f"Dataconnection {connection.name} didn't become accessible withing {create_timeout} seconds!")
+
+
+        data_connection = client.data_connection_service_get_data_connection(project_id=project_id, id=connection.id)
+        if data_connection.accessible:
+            break
+
+        sleep(1)
+
+def add_efs_connection(name: str, filesystem_id: str, region: str = "us-east-1", create_timeout: int = 60) -> None:
+    """Utility to add an existing EFS filesystem as a data connection.
+
+    Args:
+        name: The name to give to the data connection
+        filesystem_id: The ID of the existing EFS filesystem (e.g., 'fs-1234567')
+        region: AWS region where the EFS filesystem exists (default: 'us-east-1')
+        create_timeout: Timeout in seconds to wait for the connection to be accessible (default: 60)
+    """
+    client = rest_client.LightningClient(retry=False)
+
+    project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
+    cluster_id = os.getenv("LIGHTNING_CLUSTER_ID")
+
+    data_connections = client.data_connection_service_list_data_connections(project_id).data_connections
+
+    if any(d for d in data_connections if d.name == name):
+        return
+
+    body = Create(
+        name=name,
+        create_resources=False,  # Don't create new EFS since we're connecting to existing one
+        cluster_id=cluster_id,
+        access_cluster_ids=[cluster_id],
+        force=True,
+        writable=True,
+        efs=V1EfsConfig(
+            region=region,
+            file_system_id=filesystem_id,
+        )
+    )
+
+    try:
+        connection = client.data_connection_service_create_data_connection(body, project_id)
+    except (ApiException, urllib3.exceptions.HTTPError) as ex:
+        if isinstance(ex, ApiException) and 'duplicate key value violates unique constraint' in str(ex.body):
+            pass
+        else:
+            raise ex
+
+    start = time()
+    while True:
+        if time() - start > create_timeout:
+            print(f"Dataconnection {connection.name} didn't become accessible withing {create_timeout} seconds!")
+            break
+
+        data_connection = client.data_connection_service_get_data_connection(project_id=project_id, id=connection.id)
+        if data_connection.accessible:
+            break
+
+        sleep(1)
+
+    return
 
 def delete_data_connection(name: str):
     """Utility to delete a data connection
@@ -182,3 +249,4 @@ def delete_data_connection(name: str):
         #  for now it's best to actually stop the studio and all other things where the connection
         #  is mounted before trying to delete it
         raise e from None
+

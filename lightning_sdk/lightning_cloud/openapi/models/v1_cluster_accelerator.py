@@ -77,7 +77,10 @@ class V1ClusterAccelerator(object):
         'reservation_available_zones': 'list[str]',
         'resources': 'V1Resources',
         'slug': 'str',
-        'spot_price': 'float'
+        'spot_price': 'float',
+        'spot_quota_code': 'str',
+        'spot_quota_name': 'str',
+        'spot_quota_page_url': 'str'
     }
 
     attribute_map = {
@@ -117,10 +120,13 @@ class V1ClusterAccelerator(object):
         'reservation_available_zones': 'reservationAvailableZones',
         'resources': 'resources',
         'slug': 'slug',
-        'spot_price': 'spotPrice'
+        'spot_price': 'spotPrice',
+        'spot_quota_code': 'spotQuotaCode',
+        'spot_quota_name': 'spotQuotaName',
+        'spot_quota_page_url': 'spotQuotaPageUrl'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, dws_only: 'bool' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, max_available_quota: 'str' =None, non_spot: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, dws_only: 'bool' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, max_available_quota: 'str' =None, non_spot: 'bool' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, resources: 'V1Resources' =None, slug: 'str' =None, spot_price: 'float' =None, spot_quota_code: 'str' =None, spot_quota_name: 'str' =None, spot_quota_page_url: 'str' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -159,6 +165,9 @@ class V1ClusterAccelerator(object):
         self._resources = None
         self._slug = None
         self._spot_price = None
+        self._spot_quota_code = None
+        self._spot_quota_name = None
+        self._spot_quota_page_url = None
         self.discriminator = None
         if accelerator_type is not None:
             self.accelerator_type = accelerator_type
@@ -234,6 +243,12 @@ class V1ClusterAccelerator(object):
             self.slug = slug
         if spot_price is not None:
             self.spot_price = spot_price
+        if spot_quota_code is not None:
+            self.spot_quota_code = spot_quota_code
+        if spot_quota_name is not None:
+            self.spot_quota_name = spot_quota_name
+        if spot_quota_page_url is not None:
+            self.spot_quota_page_url = spot_quota_page_url
 
     @property
     def accelerator_type(self) -> 'str':
@@ -1011,6 +1026,69 @@ class V1ClusterAccelerator(object):
         """
 
         self._spot_price = spot_price
+
+    @property
+    def spot_quota_code(self) -> 'str':
+        """Gets the spot_quota_code of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The spot_quota_code of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: str
+        """
+        return self._spot_quota_code
+
+    @spot_quota_code.setter
+    def spot_quota_code(self, spot_quota_code: 'str'):
+        """Sets the spot_quota_code of this V1ClusterAccelerator.
+
+
+        :param spot_quota_code: The spot_quota_code of this V1ClusterAccelerator.  # noqa: E501
+        :type: str
+        """
+
+        self._spot_quota_code = spot_quota_code
+
+    @property
+    def spot_quota_name(self) -> 'str':
+        """Gets the spot_quota_name of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The spot_quota_name of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: str
+        """
+        return self._spot_quota_name
+
+    @spot_quota_name.setter
+    def spot_quota_name(self, spot_quota_name: 'str'):
+        """Sets the spot_quota_name of this V1ClusterAccelerator.
+
+
+        :param spot_quota_name: The spot_quota_name of this V1ClusterAccelerator.  # noqa: E501
+        :type: str
+        """
+
+        self._spot_quota_name = spot_quota_name
+
+    @property
+    def spot_quota_page_url(self) -> 'str':
+        """Gets the spot_quota_page_url of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The spot_quota_page_url of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: str
+        """
+        return self._spot_quota_page_url
+
+    @spot_quota_page_url.setter
+    def spot_quota_page_url(self, spot_quota_page_url: 'str'):
+        """Sets the spot_quota_page_url of this V1ClusterAccelerator.
+
+
+        :param spot_quota_page_url: The spot_quota_page_url of this V1ClusterAccelerator.  # noqa: E501
+        :type: str
+        """
+
+        self._spot_quota_page_url = spot_quota_page_url
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

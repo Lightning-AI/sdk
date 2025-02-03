@@ -44,6 +44,7 @@ class V1DeploymentAPI(object):
         'body': 'V1Body',
         'description': 'str',
         'headers': 'list[V1Header]',
+        'id': 'str',
         'method': 'str',
         'name': 'str',
         'path': 'str',
@@ -54,17 +55,19 @@ class V1DeploymentAPI(object):
         'body': 'body',
         'description': 'description',
         'headers': 'headers',
+        'id': 'id',
         'method': 'method',
         'name': 'name',
         'path': 'path',
         '_query_params': 'queryParams'
     }
 
-    def __init__(self, body: 'V1Body' =None, description: 'str' =None, headers: 'list[V1Header]' =None, method: 'str' =None, name: 'str' =None, path: 'str' =None, _query_params: 'list[V1QueryParam]' =None):  # noqa: E501
+    def __init__(self, body: 'V1Body' =None, description: 'str' =None, headers: 'list[V1Header]' =None, id: 'str' =None, method: 'str' =None, name: 'str' =None, path: 'str' =None, _query_params: 'list[V1QueryParam]' =None):  # noqa: E501
         """V1DeploymentAPI - a model defined in Swagger"""  # noqa: E501
         self._body = None
         self._description = None
         self._headers = None
+        self._id = None
         self._method = None
         self._name = None
         self._path = None
@@ -76,6 +79,8 @@ class V1DeploymentAPI(object):
             self.description = description
         if headers is not None:
             self.headers = headers
+        if id is not None:
+            self.id = id
         if method is not None:
             self.method = method
         if name is not None:
@@ -147,6 +152,27 @@ class V1DeploymentAPI(object):
         """
 
         self._headers = headers
+
+    @property
+    def id(self) -> 'str':
+        """Gets the id of this V1DeploymentAPI.  # noqa: E501
+
+
+        :return: The id of this V1DeploymentAPI.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: 'str'):
+        """Sets the id of this V1DeploymentAPI.
+
+
+        :param id: The id of this V1DeploymentAPI.  # noqa: E501
+        :type: str
+        """
+
+        self._id = id
 
     @property
     def method(self) -> 'str':

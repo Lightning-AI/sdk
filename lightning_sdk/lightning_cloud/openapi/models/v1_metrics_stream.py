@@ -47,6 +47,7 @@ class V1MetricsStream(object):
         'created_at': 'datetime',
         'dark_color': 'str',
         'id': 'str',
+        'job_id': 'str',
         'job_name': 'str',
         'light_color': 'str',
         'name': 'str',
@@ -77,6 +78,7 @@ class V1MetricsStream(object):
         'created_at': 'createdAt',
         'dark_color': 'darkColor',
         'id': 'id',
+        'job_id': 'jobId',
         'job_name': 'jobName',
         'light_color': 'lightColor',
         'name': 'name',
@@ -100,7 +102,7 @@ class V1MetricsStream(object):
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, updated_at: 'datetime' =None, updates_counter: 'int' =None, user_id: 'str' =None, version: 'datetime' =None, version_number: 'int' =None, visibility: 'V1ResourceVisibility' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, id: 'str' =None, job_id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, updated_at: 'datetime' =None, updates_counter: 'int' =None, user_id: 'str' =None, version: 'datetime' =None, version_number: 'int' =None, visibility: 'V1ResourceVisibility' =None, work_id: 'str' =None):  # noqa: E501
         """V1MetricsStream - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
@@ -108,6 +110,7 @@ class V1MetricsStream(object):
         self._created_at = None
         self._dark_color = None
         self._id = None
+        self._job_id = None
         self._job_name = None
         self._light_color = None
         self._name = None
@@ -142,6 +145,8 @@ class V1MetricsStream(object):
             self.dark_color = dark_color
         if id is not None:
             self.id = id
+        if job_id is not None:
+            self.job_id = job_id
         if job_name is not None:
             self.job_name = job_name
         if light_color is not None:
@@ -310,6 +315,27 @@ class V1MetricsStream(object):
         """
 
         self._id = id
+
+    @property
+    def job_id(self) -> 'str':
+        """Gets the job_id of this V1MetricsStream.  # noqa: E501
+
+
+        :return: The job_id of this V1MetricsStream.  # noqa: E501
+        :rtype: str
+        """
+        return self._job_id
+
+    @job_id.setter
+    def job_id(self, job_id: 'str'):
+        """Sets the job_id of this V1MetricsStream.
+
+
+        :param job_id: The job_id of this V1MetricsStream.  # noqa: E501
+        :type: str
+        """
+
+        self._job_id = job_id
 
     @property
     def job_name(self) -> 'str':

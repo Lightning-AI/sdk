@@ -41,24 +41,50 @@ class V1ResourceVisibility(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'all_org_users': 'bool',
         'all_users': 'bool',
         'user_ids': 'list[str]'
     }
 
     attribute_map = {
+        'all_org_users': 'allOrgUsers',
         'all_users': 'allUsers',
         'user_ids': 'userIds'
     }
 
-    def __init__(self, all_users: 'bool' =None, user_ids: 'list[str]' =None):  # noqa: E501
+    def __init__(self, all_org_users: 'bool' =None, all_users: 'bool' =None, user_ids: 'list[str]' =None):  # noqa: E501
         """V1ResourceVisibility - a model defined in Swagger"""  # noqa: E501
+        self._all_org_users = None
         self._all_users = None
         self._user_ids = None
         self.discriminator = None
+        if all_org_users is not None:
+            self.all_org_users = all_org_users
         if all_users is not None:
             self.all_users = all_users
         if user_ids is not None:
             self.user_ids = user_ids
+
+    @property
+    def all_org_users(self) -> 'bool':
+        """Gets the all_org_users of this V1ResourceVisibility.  # noqa: E501
+
+
+        :return: The all_org_users of this V1ResourceVisibility.  # noqa: E501
+        :rtype: bool
+        """
+        return self._all_org_users
+
+    @all_org_users.setter
+    def all_org_users(self, all_org_users: 'bool'):
+        """Sets the all_org_users of this V1ResourceVisibility.
+
+
+        :param all_org_users: The all_org_users of this V1ResourceVisibility.  # noqa: E501
+        :type: bool
+        """
+
+        self._all_org_users = all_org_users
 
     @property
     def all_users(self) -> 'bool':
