@@ -275,19 +275,24 @@ class _BaseJob(ABC):
         Caution: This also deletes all artifacts and snapshots associated with the job.
         """
 
-    def wait(self, interval: float = 5.0) -> None:
+    def wait(self, interval: float = 5.0, timeout: Optional[float] = None) -> None:
         """Waits for the job to be either completed, manually stopped or failed.
 
         Args:
-            interval: the number of seconds to spend in-between status checks.
+            interval: The number of seconds to spend in-between status checks.
+            timeout: The maximum number of seconds to wait before raising an error. If None, waits forever.
         """
         import time
 
         from lightning_sdk.status import Status
 
+        start = time.time()
         while True:
             if self.status in (Status.Completed, Status.Stopped, Status.Failed):
                 break
+
+            if timeout is not None and time.time() - start > timeout:
+                raise TimeoutError("Job didn't finish within the provided timeout.")
 
             time.sleep(interval)
 
