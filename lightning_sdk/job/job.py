@@ -1,7 +1,5 @@
-from functools import lru_cache
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
-from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.job.base import _BaseJob
 from lightning_sdk.job.v1 import _JobV1
 from lightning_sdk.job.v2 import _JobV2
@@ -16,15 +14,6 @@ if TYPE_CHECKING:
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
-
-
-@lru_cache(maxsize=None)
-def _has_jobs_v2() -> bool:
-    api = UserApi()
-    try:
-        return api._get_feature_flags().jobs_v2
-    except Exception:
-        return False
 
 
 class Job(_BaseJob):
@@ -52,7 +41,7 @@ class Job(_BaseJob):
         """
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
-        if _has_jobs_v2() and not self._force_v1:
+        if not self._force_v1:
             # try with v2 and fall back to v1
             try:
                 job = _JobV2(

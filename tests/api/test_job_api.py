@@ -268,9 +268,7 @@ def test_jobv2_stop(job_states: List[str], total_calls_get_job: int, called_upda
     assert get_job_mock.call_count == total_calls_get_job
 
     if called_update_job:
-        update_job_mock.assert_called_once_with(
-            id="test-job-id", project_id="ts-abc", body=JobsIdBody1(cloudspace_id="cloudspace-id", state="stop")
-        )
+        update_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc", body=JobsIdBody1(state="stop"))
     else:
         update_job_mock.assert_not_called()
 

@@ -275,7 +275,7 @@ class JobApiV2:
             return
 
         if current_state != Status.Stopping:
-            update_body = JobsIdBody1(cloudspace_id=current_job.spec.cloudspace_id, state=self.v2_job_state_stop)
+            update_body = JobsIdBody1(state=self.v2_job_state_stop)
             self._client.jobs_service_update_job(body=update_body, project_id=teamspace_id, id=job_id)
 
         while True:

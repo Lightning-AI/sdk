@@ -286,6 +286,7 @@ def test_run_job(
     internal_job_get_cloudspace_mocker,
     internal_job_run_mocker,
     internal_job_api_mocker_all_jobs_valid,
+    job_api_get_job_by_name_mocker,
     cloud_compute,
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
@@ -519,18 +520,16 @@ def test_cluster(internal_studio_init_mocker, internal_studio_status_mocker, nam
 @pytest.mark.parametrize("interruptible", [True, False])
 def test_submit_job_v2_studio(
     internal_studio_init_mocker,
-    job_backend_selector_mocker_v2,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
     job_api_get_job_by_name_mocker,
     job_api_get_cloudspace_name,
     machine,
     env,
     interruptible,
 ):
-    import lightning_sdk
-    from lightning_sdk.job.v2 import _JobV2
-
-    importlib.reload(lightning_sdk.job.job)
     from lightning_sdk.job import Job
+    from lightning_sdk.job.v2 import _JobV2
 
     submit_mock = mock.MagicMock()
     _JobV2._submit = submit_mock

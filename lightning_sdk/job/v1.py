@@ -126,38 +126,7 @@ class _JobV1(_BaseJob):
             The submitted job.
 
         """
-        if studio is None:
-            raise ValueError("Studio is required for submitting jobs")
-        if image is not None or image_credentials is not None or cloud_account_auth:
-            raise ValueError("Image is not supported for submitting jobs")
-
-        if artifacts_local is not None or artifacts_remote is not None:
-            raise ValueError("Specifying how to persist artifacts is not yet supported with jobs")
-
-        if env is not None:
-            raise ValueError("Environment variables are not supported for submitting jobs")
-        if command is None:
-            raise ValueError("Command is required for submitting jobs")
-
-        if entrypoint != "sh -c":
-            raise ValueError("Specifying the entrypoint is not yet supported with jobs")
-
-        if path_mappings is not None:
-            raise ValueError("Specifying path mappings is not yet supported with jobs")
-
-        # TODO: add support for empty names (will give an empty string)
-        _submitted = self._job_api.submit_job(
-            name=self._name,
-            command=command,
-            studio_id=studio._studio.id,
-            teamspace_id=self._teamspace.id,
-            cloud_account=cloud_account or "",
-            machine=machine,
-            interruptible=interruptible,
-        )
-        self._name = _submitted.name
-        self._job = _submitted
-        return self
+        raise NotImplementedError("Cannot submit new jobs with JobsV1!")
 
     def _update_internal_job(self) -> None:
         try:

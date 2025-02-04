@@ -140,7 +140,12 @@ class _JobV2(_BaseJob):
     @property
     def status(self) -> "Status":
         """The current status of the job."""
-        return self._job_api._job_state_to_external(self._latest_job.state)
+        try:
+            return self._job_api._job_state_to_external(self._latest_job.state)
+        except Exception:
+            raise RuntimeError(
+                f"Job {self._name} does not exist in Teamspace {self.teamspace.name}. Did you delete it?"
+            ) from None
 
     @property
     def machine(self) -> Union["Machine", str]:

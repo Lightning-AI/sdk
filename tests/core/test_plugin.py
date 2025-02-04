@@ -22,36 +22,6 @@ def test_run_plugin(internal_studio_init_mocker, internal_studio_status_mocker, 
     plugin.run()
 
 
-def test_run_job_plugins(
-    internal_studio_init_mocker,
-    internal_studio_status_mocker,
-    internal_job_get_cloudspace_mocker,
-    internal_job_run_mocker,
-    internal_job_api_mocker_all_jobs_valid,
-):
-    studio_1 = Studio("st-ghi", "ts-abc", "org-abc")
-    plugin_1 = JobsPlugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio_1)
-    plugin_1.run("python my-file.py", name="my-fancy-job-name")
-
-    plugin_2 = JobsPlugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio_1)
-    plugin_2.run("python my-file.py", name="my-fancy-job-name")
-
-    studio_2 = Studio("st-ghi-2", "ts-abc", "org-abc")
-    plugin_3 = JobsPlugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio_2)
-    plugin_3.run("python my-file.py", name="my-fancy-job-name")
-
-    from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import CloudSpaceServiceApi
-
-    CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance  # noqa: B018
-    from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
-
-    calls = CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance.mock_calls
-    assert len(calls) == 3
-    assert calls[0].kwargs["body"].unique_id == __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__["st-ghi"]
-    assert calls[1].kwargs["body"].unique_id == __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__["st-ghi"]
-    assert calls[2].kwargs["body"].unique_id == __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__["st-ghi-2"]
-
-
 @pytest.mark.parametrize("cloud_compute", list(Machine))
 def test_run_job(
     internal_studio_init_mocker,
@@ -59,6 +29,7 @@ def test_run_job(
     internal_job_get_cloudspace_mocker,
     internal_job_run_mocker,
     internal_job_api_mocker_all_jobs_valid,
+    job_api_get_job_by_name_mocker,
     cloud_compute,
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")

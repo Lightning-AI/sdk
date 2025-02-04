@@ -20,6 +20,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LightningappInstanceStatus,
 )
 from lightning_sdk.machine import Machine
+from lightning_sdk.plugin import forced_v1
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
@@ -31,7 +32,8 @@ def test_job_init(
     internal_studio_status_mocker,
     internal_job_api_mocker_get_job,
 ):
-    job = Job("j-abc", "ts-abc", org="org-abc")
+    with forced_v1(Job):
+        job = Job("j-abc", "ts-abc", org="org-abc")
     assert isinstance(job._job, Externalv1LightningappInstance)
 
     assert isinstance(job.teamspace, Teamspace)
@@ -44,29 +46,31 @@ def test_job_init_error(
     internal_studio_status_mocker,
     internal_job_api_mocker_get_job,
 ):
-    studio = Studio("st-abc", "ts-abc", org="org-abc")
+    def init_job_error():
+        studio = Studio("st-abc", "ts-abc", org="org-abc")
+
+        with forced_v1(Job):
+            Job("xyz", studio.teamspace)
 
     with pytest.raises(ValueError, match="Job xyz does not exist in Teamspace ts-abc"):
-        Job("xyz", studio.teamspace)
+        init_job_error()
 
 
 @mock.patch.dict(os.environ, clear=True)
 @pytest.mark.parametrize(
     ("name", "expected_status"),
     [
-        ("j-abc", Status.Stopped),  # None
-        ("j-def", Status.Pending),  # "LIGHTNINGAPP_INSTANCE_STATE_UNSPECIFIED"
-        ("j-ghi", Status.Pending),  # "LIGHTNINGAPP_INSTANCE_STATE_IMAGE_BUILDING"
-        ("j-jkl", Status.Pending),  # "LIGHTNINGAPP_INSTANCE_STATE_NOT_STARTED"
-        ("j-mno", Status.Pending),  # "LIGHTNINGAPP_INSTANCE_STATE_PENDING"
-        ("j-pqr", Status.Running),  # "LIGHTNINGAPP_INSTANCE_STATE_RUNNING"
-        ("j-stu", Status.Failed),  # "LIGHTNINGAPP_INSTANCE_STATE_FAILED"
-        ("j-vwx", Status.Stopped),  # "LIGHTNINGAPP_INSTANCE_STATE_STOPPED"
-        ("j-yz", Status.Completed),  # "LIGHTNINGAPP_INSTANCE_STATE_COMPLETED"
+        ("j-abc", Status.Pending),  # None
+        ("j-def", Status.Pending),  # "unknown"
+        ("j-ghi", Status.Pending),  # "pending"
+        ("j-jkl", Status.Running),  # "running"
+        ("j-mno", Status.Failed),  # "failed"
+        ("j-pqr", Status.Stopped),  # "stopped"
+        ("j-stu", Status.Completed),  # "completed"
     ],
 )
 def test_job_status(
-    internal_job_api_mocker_get_job_status,
+    internal_job_api_mocker_get_job_status_v2,
     internal_studio_init_mocker,
     internal_studio_status_mocker,
     name,
@@ -74,6 +78,7 @@ def test_job_status(
 ):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
     job = Job(name, studio.teamspace)
+    job._internal_job._job.name = name
     status = job.status
     assert isinstance(status, Status)
 
@@ -87,7 +92,9 @@ def test_stop_job(
     internal_studio_status_mocker,
 ):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
-    job = Job("j-abc", studio.teamspace)
+
+    with forced_v1(Job):
+        job = Job("j-abc", studio.teamspace)
     status = job.status
 
     assert status == Status.Running
@@ -98,7 +105,7 @@ def test_stop_job(
 
 @mock.patch.dict(os.environ, clear=True)
 def test_delete_job(
-    internal_job_api_mocker_delete_job,
+    internal_job_api_mocker_delete_job_v2,
     internal_studio_init_mocker,
     internal_studio_status_mocker,
 ):
@@ -121,7 +128,8 @@ def test_get_work(
     internal_studio_status_mocker,
 ):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
-    job = Job("j-abc", studio.teamspace)
+    with forced_v1(Job):
+        job = Job("j-abc", studio.teamspace)
     assert isinstance(job.work, Work)
 
     assert job.work.id == "w-abc"
@@ -129,40 +137,6 @@ def test_get_work(
 
     assert job.work.machine == Machine.T4_X_4
     assert job.machine == Machine.T4_X_4
-
-
-def test_select_job_backend_correctly_v1(job_backend_selector_mocker_v1):
-    from lightning_sdk.job.base import _BaseJob
-    from lightning_sdk.job.job import _has_jobs_v2
-    from lightning_sdk.job.v1 import _JobV1
-    from lightning_sdk.job.v2 import _JobV2
-
-    assert _has_jobs_v2() is False
-    j = Job("test-job", "ts-abc", org="org-abc", _fetch_job=False)
-
-    assert isinstance(j, _BaseJob)
-    assert issubclass(Job, _BaseJob)
-    assert isinstance(j._internal_job, _JobV1)
-    assert not isinstance(j._internal_job, _JobV2)
-
-
-def test_select_job_backend_correctly_v2(job_backend_selector_mocker_v2):
-    import lightning_sdk
-    from lightning_sdk.job.base import _BaseJob
-    from lightning_sdk.job.job import _has_jobs_v2
-    from lightning_sdk.job.v1 import _JobV1
-    from lightning_sdk.job.v2 import _JobV2
-
-    importlib.reload(lightning_sdk.job.job)
-    from lightning_sdk.job.job import Job
-
-    assert _has_jobs_v2() is True
-    j = Job("test-job", "ts-abc", org="org-abc", _fetch_job=False)
-
-    assert isinstance(j, _BaseJob)
-    assert issubclass(Job, _BaseJob)
-    assert isinstance(j._internal_job, _JobV2)
-    assert not isinstance(j._internal_job, _JobV1)
 
 
 @pytest.mark.parametrize("machine", [Machine.CPU, Machine.T4_X_4])
@@ -435,9 +409,7 @@ def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker)
     job.stop()
 
     assert get_job_mock.call_count == 6
-    update_job_mock.assert_called_once_with(
-        id="test-job-id", project_id="ts-abc001", body=JobsIdBody1(cloudspace_id="cloudspace-id", state="stop")
-    )
+    update_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc001", body=JobsIdBody1(state="stop"))
 
 
 def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
@@ -457,16 +429,14 @@ def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocke
 
 
 def test_submit_jobv2_studio_resolve(
-    job_backend_selector_mocker_v2,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
     internal_studio_init_mocker,
     internal_job_get_cloudspace_mocker,
     job_api_get_job_by_name_mocker,
 ):
-    import lightning_sdk
-    from lightning_sdk.job.v2 import _JobV2
-
-    importlib.reload(lightning_sdk.job.job)
     from lightning_sdk.job.job import Job
+    from lightning_sdk.job.v2 import _JobV2
 
     submit_mock = mock.MagicMock()
     _JobV2._submit = submit_mock
@@ -506,7 +476,8 @@ def test_submit_jobv2_studio_resolve(
     ],
 )
 def test_submit_jobv2_studio_path(
-    job_backend_selector_mocker_v2,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
     internal_studio_init_mocker,
     internal_job_get_cloudspace_mocker,
     job_api_get_job_by_name_mocker,
@@ -517,11 +488,8 @@ def test_submit_jobv2_studio_path(
     artifacts_source,
     artifacts_destination,
 ):
-    import lightning_sdk
-    from lightning_sdk.job.v2 import _JobV2
-
-    importlib.reload(lightning_sdk.job.job)
     from lightning_sdk.job.job import Job
+    from lightning_sdk.job.v2 import _JobV2
 
     submit_mock = mock.MagicMock()
     _JobV2._submit = submit_mock
@@ -566,16 +534,14 @@ def test_submit_jobv2_studio_path(
 
 
 def test_submit_job_v2_image_from_studio(
-    job_backend_selector_mocker_v2,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
     internal_studio_init_mocker,
     internal_job_get_cloudspace_mocker,
     job_api_get_job_by_name_mocker,
 ):
-    import lightning_sdk
-    from lightning_sdk.job.v2 import _JobV2
-
-    importlib.reload(lightning_sdk.job.job)
     from lightning_sdk.job.job import Job
+    from lightning_sdk.job.v2 import _JobV2
 
     submit_mock = mock.MagicMock()
     _JobV2._submit = submit_mock
@@ -726,7 +692,10 @@ def test_job_v1_dict_json(internal_studio_init_mocker, internal_job_api_mocker_g
 
 
 def test_job_instantiation_fallback_v2_to_v1(
-    internal_studio_init_mocker, job_backend_selector_mocker_v2, internal_job_fallback_mocker
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_studio_init_mocker,
+    internal_job_fallback_mocker,
 ):
     import lightning_sdk
     from lightning_sdk.job.v1 import _JobV1

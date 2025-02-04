@@ -1809,6 +1809,41 @@ def internal_job_api_mocker_get_job_status(mocker):
 
 
 @pytest.fixture()
+def internal_job_api_mocker_get_job_status_v2(mocker):
+    def find_job(self, project_id, name):
+        return V1Job(id=name, spec=V1JobSpec(cloudspace_id="st-abc"), project_id=project_id)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_find_job",
+        side_effect=find_job,
+        autospec=True,
+    )
+
+    phases = {
+        "j-abc": None,
+        "j-def": "unknown",
+        "j-ghi": "pending",
+        "j-jkl": "running",
+        "j-mno": "failed",
+        "j-pqr": "stopped",
+        "j-stu": "completed",
+    }
+
+    def get_job(self, project_id, id):
+        return V1Job(name=id, project_id=project_id, id=id, state=phases[id])
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_get_job",
+        side_effect=get_job,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture()
 def internal_job_api_mocker_stop_job(mocker):
     status = {"j-abc": V1LightningappInstanceState.RUNNING}
 
@@ -1873,6 +1908,45 @@ def internal_job_api_mocker_delete_job(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_delete_lightningapp_instance",
         side_effect=delete_instance,
+        autospec=True,
+    )
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture()
+def internal_job_api_mocker_delete_job_v2(mocker):
+    names = ["j-abc", "j-def"]
+
+    def find_job(self, project_id, name):
+        if name in names:
+            return V1Job(name=name, project_id=project_id, id=name, spec=V1JobSpec())
+        raise ApiException(status=404)
+
+    def get_job(self, project_id, id):
+        if id in names:
+            return V1Job(name=id, project_id=project_id, id=id, spec=V1JobSpec())
+        raise ApiException(status=404)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_find_job",
+        side_effect=find_job,
+        autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_get_job",
+        side_effect=get_job,
+        autospec=True,
+    )
+
+    def delete_job(self, project_id, id, cloudspace_id=""):
+        names.remove(id)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_delete_job",
+        side_effect=delete_job,
         autospec=True,
     )
     yield [mocker]
@@ -2078,23 +2152,6 @@ def available_aws_instance_types():
 
 
 @pytest.fixture()
-def job_backend_selector_mocker_v2(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
-        autospec=True,
-        return_value=V1GetUserResponse(features=V1UserFeatures(jobs_v2=True)),
-    )
-    import lightning_sdk
-
-    importlib.reload(lightning_sdk.job.job)
-    lightning_sdk.job.job._has_jobs_v2.cache_clear()
-    yield [mocker, *internal_get_org_api_mocker, *internal_teamspace_api_mocker]
-    mocker.resetall()
-    importlib.reload(lightning_sdk.job.job)
-    lightning_sdk.job.job._has_jobs_v2.cache_clear()
-
-
-@pytest.fixture()
 def mmt_backend_selector_mocker_v2(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
@@ -2103,33 +2160,12 @@ def mmt_backend_selector_mocker_v2(mocker, internal_get_org_api_mocker, internal
     )
     import lightning_sdk
 
-    importlib.reload(lightning_sdk.job.job)
-    lightning_sdk.job.job._has_jobs_v2.cache_clear()
     importlib.reload(lightning_sdk.mmt.mmt)
     lightning_sdk.mmt.mmt._has_mmt_v2.cache_clear()
     yield [mocker, *internal_get_org_api_mocker, *internal_teamspace_api_mocker]
     mocker.resetall()
-    importlib.reload(lightning_sdk.job.job)
-    lightning_sdk.job.job._has_jobs_v2.cache_clear()
     importlib.reload(lightning_sdk.mmt.mmt)
     lightning_sdk.mmt.mmt._has_mmt_v2.cache_clear()
-
-
-@pytest.fixture()
-def job_backend_selector_mocker_v1(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
-        autospec=True,
-        return_value=V1GetUserResponse(features=V1UserFeatures(jobs_v2=False)),
-    )
-    import lightning_sdk
-
-    importlib.reload(lightning_sdk.job.job)
-    lightning_sdk.job.job._has_jobs_v2.cache_clear()
-    yield [mocker, *internal_get_org_api_mocker, *internal_teamspace_api_mocker]
-    mocker.resetall()
-    importlib.reload(lightning_sdk.job.job)
-    lightning_sdk.job.job._has_jobs_v2.cache_clear()
 
 
 @pytest.fixture()

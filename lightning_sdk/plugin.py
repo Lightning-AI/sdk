@@ -432,6 +432,8 @@ def _success_message(resp: Union["Externalv1LightningappInstance", Job], plugin_
 def forced_v1(cls: Any) -> Generator[Any, None, None]:
     """Forces to use the v1 version of a class when using a class with multiple backends."""
     orig_val = getattr(cls, "_force_v1", False)
-    cls._force_v1 = True
-    yield cls
-    cls._force_v1 = orig_val
+    try:
+        cls._force_v1 = True
+        yield cls
+    finally:
+        cls._force_v1 = orig_val

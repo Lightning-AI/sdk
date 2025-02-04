@@ -360,7 +360,11 @@ def test_download_model_version(
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_jobs")
-def test_list_jobs(list_jobs_mock, job_backend_selector_mocker_v2):
+def test_list_jobs(
+    list_jobs_mock,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+):
     from lightning_sdk.job.v1 import _JobV1
     from lightning_sdk.job.v2 import _JobV2
 
