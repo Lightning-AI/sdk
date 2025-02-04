@@ -213,6 +213,14 @@ class DeploymentApi:
                 return None
             raise ex
 
+    def get_deployment_by_id(self, deployment_id: str, teamspace_id: str) -> Optional[V1Deployment]:
+        try:
+            return self._client.jobs_service_get_deployment(project_id=teamspace_id, id=deployment_id)
+        except ApiException as ex:
+            if "Reason: Not Found" in str(ex):
+                return None
+            raise ex
+
     def create_deployment(
         self,
         deployment: V1Deployment,
@@ -269,7 +277,7 @@ class DeploymentApi:
         requires_release |= apply_change(deployment.spec, "entrypoint", entrypoint)
         requires_release |= apply_change(deployment.spec, "command", command)
         requires_release |= apply_change(deployment.spec, "env", to_env(env))
-        requires_release |= apply_change(deployment.spec, "env", to_health_check(health_check))
+        requires_release |= apply_change(deployment.spec, "readiness_probe", to_health_check(health_check))
         requires_release |= apply_change(deployment.spec, "cluster_id", cloud_account)
         requires_release |= apply_change(deployment.spec, "spot", spot)
 

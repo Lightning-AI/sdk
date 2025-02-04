@@ -42,7 +42,7 @@ class Deployment:
     and switching machine types, etc..
 
     Args:
-        name: The name of the deployment.
+        name: The name or the id of the deployment.
         teamspace: The teamspace in which you want to deploy.
         org: The name of the organization owning the :param`teamspace` in case it is owned by an org
         user: The name of the user owning the :param`teamspace` in case it is owned directly by a user instead of an org
@@ -55,7 +55,7 @@ class Deployment:
 
     def __init__(
         self,
-        name: str,  # Only the name is required in case a deployment already exist.
+        name: str,
         teamspace: Optional[Union[str, Teamspace]] = None,
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
@@ -83,8 +83,14 @@ class Deployment:
         self._deployment_api = DeploymentApi()
         self._cloud_account = _get_cluster(client=self._deployment_api._client, project_id=self._teamspace.id)
         self._is_created = False
-        deployment = self._deployment_api.get_deployment_by_name(name, self._teamspace.id)
+
+        if name.startswith("dep_"):
+            deployment = self._deployment_api.get_deployment_by_id(name, self._teamspace.id)
+        else:
+            deployment = self._deployment_api.get_deployment_by_name(name, self._teamspace.id)
+
         if deployment:
+            self._name = deployment.name
             self._is_created = True
             self._deployment = deployment
 
@@ -163,6 +169,9 @@ class Deployment:
                 strategy=to_strategy(release_strategy),
             )
         )
+
+        # Overrides the name
+        self._name = self._deployment._name
         self._is_created = True
 
     def update(

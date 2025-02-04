@@ -5,7 +5,7 @@ import pytest
 
 from lightning_sdk.api import deployment_api as deployment_api_module
 from lightning_sdk.deployment import deployment as deployment_module
-from lightning_sdk.deployment.deployment import AutoScaleConfig
+from lightning_sdk.deployment.deployment import AutoScaleConfig, HttpHealthCheck
 from lightning_sdk.lightning_cloud.openapi import (
     V1AutoscalingSpec,
     V1Deployment,
@@ -316,10 +316,15 @@ def test_deployment_update(monkeypatch):
         deployment.update(entrypoint="new_entrypoint")
 
     deployment.update(
-        entrypoint="new_entrypoint", release_strategy=deployment_api_module.RollingUpdateReleaseStrategy()
+        entrypoint="new_entrypoint",
+        release_strategy=deployment_api_module.RollingUpdateReleaseStrategy(),
+        health_check=HttpHealthCheck(path="/health", port=8000),
     )
     client.jobs_service_update_deployment.assert_called()
     assert client.jobs_service_update_deployment._mock_mock_calls[0].kwargs["body"].spec.entrypoint == "new_entrypoint"
+    readiness_probe = client.jobs_service_update_deployment._mock_mock_calls[0].kwargs["body"].spec.readiness_probe
+    assert readiness_probe.http_get.path == "/health"
+    assert readiness_probe.http_get.port == 8000
 
 
 def test_deployment_stop(monkeypatch):
