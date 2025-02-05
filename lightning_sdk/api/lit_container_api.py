@@ -48,7 +48,8 @@ class LitContainerApi:
             raise ValueError(f"Container {container} does not exist") from None
 
         registry_url = _get_registry_url()
-        repository = f"{registry_url}/lit-container/{teamspace.owner.name}/{teamspace.name}/{container}"
+        container_basename = container.split("/")[-1]
+        repository = f"{registry_url}/lit-container/{teamspace.owner.name}/{teamspace.name}/{container_basename}"
         tagged = self._docker_client.api.tag(container, repository, tag)
         if not tagged:
             raise ValueError(f"Could not tag container {container} with {repository}:{tag}")
