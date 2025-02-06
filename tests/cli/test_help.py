@@ -43,6 +43,9 @@ GROUPS
      serve
        Serve a LitServe model.
 
+     start
+       Start resources on the Lightning AI platform.
+
      stop
        Stop resources on the Lightning AI platform.
 

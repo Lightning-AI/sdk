@@ -14,6 +14,7 @@ from lightning_sdk.cli.legacy import _LegacyLightningCLI
 from lightning_sdk.cli.list import _List
 from lightning_sdk.cli.run import _Run
 from lightning_sdk.cli.serve import _Docker, _LitServe
+from lightning_sdk.cli.start import _Start
 from lightning_sdk.cli.stop import _Stop
 from lightning_sdk.cli.upload import _Uploads
 from lightning_sdk.lightning_cloud.login import Auth
@@ -35,6 +36,7 @@ class StudioCLI:
         self.delete = _Delete()
         self.inspect = _Inspect()
         self.stop = _Stop()
+        self.start = _Start()
 
         sys.excepthook = _notify_exception
 
