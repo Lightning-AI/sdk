@@ -49,6 +49,9 @@ GROUPS
      stop
        Stop resources on the Lightning AI platform.
 
+     switch
+       Switch machines for resources on the Lightning AI platform.
+
      upload
        Upload files and folders to Lightning AI.
 

@@ -3,20 +3,20 @@ from typing import Optional
 from lightning_sdk import Machine, Studio
 
 
-class _Start:
-    """Start resources on the Lightning AI platform."""
+class _Switch:
+    """Switch machines for resources on the Lightning AI platform."""
 
     def __init__(self) -> None:
         _machine_values = tuple([machine.value for machine in Machine])
 
-        docstr_studio = f"""Start a studio on a given machine.
+        docstr_studio = f"""Switch a studio to a given machine.
 
         Args:
             name: The name of the studio to start.
                 If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
             teamspace: The teamspace the studio is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.
                 If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
-            machine: The machine type to start the studio on. One of {", ".join(_machine_values)}.
+            machine: The machine type to switch to. One of {", ".join(_machine_values)}.
                 Defaults to the CPU Machine.
         """
         self.studio.__func__.__doc__ = docstr_studio
@@ -40,4 +40,4 @@ class _Start:
         except KeyError:
             resolved_machine = machine
 
-        studio.start(resolved_machine)
+        studio.switch_machine(resolved_machine)
