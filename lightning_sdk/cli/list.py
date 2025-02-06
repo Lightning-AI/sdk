@@ -11,6 +11,38 @@ from lightning_sdk.lit_container import LitContainer
 class _List(_TeamspacesMenu):
     """List resources on the Lightning AI platform."""
 
+    def studios(self, teamspace: Optional[str] = None) -> None:
+        """List studios for a given teamspace.
+
+        Args:
+            teamspace: the teamspace to list studios from. Should be specified as {owner}/{name}
+                If not provided, can be selected in an interactive menu.
+
+        """
+        resolved_teamspace = self._resolve_teamspace(teamspace=teamspace)
+
+        studios = resolved_teamspace.studios
+
+        table = Table(
+            pad_edge=True,
+        )
+        table.add_column("Name")
+        table.add_column("Teamspace")
+        table.add_column("Status")
+        table.add_column("Machine")
+        table.add_column("Cloud account")
+        for studio in studios:
+            table.add_row(
+                studio.name,
+                f"{studio.teamspace.owner.name}/{studio.teamspace.name}",
+                str(studio.status),
+                str(studio.machine) if studio.machine is not None else None,
+                str(studio.cloud_account),
+            )
+
+        console = Console()
+        console.print(table)
+
     def jobs(self, teamspace: Optional[str] = None) -> None:
         """List jobs for a given teamspace.
 
