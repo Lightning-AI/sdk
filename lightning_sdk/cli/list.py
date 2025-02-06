@@ -3,6 +3,7 @@ from typing import Optional
 from rich.console import Console
 from rich.table import Table
 
+from lightning_sdk import Machine
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lit_container import LitContainer
 
@@ -108,5 +109,20 @@ class _List(_TeamspacesMenu):
         table.add_column("CREATED")
         for repo in result:
             table.add_row(repo["REPOSITORY"], repo["IMAGE ID"], repo["CREATED"])
+        console = Console()
+        console.print(table)
+
+    def machines(self) -> None:
+        """Display the list of available machines."""
+        table = Table(pad_edge=True)
+        table.add_column("Name")
+
+        # Get all machine types from the enum
+        machine_types = [name for name in dir(Machine) if not name.startswith("_")]
+
+        # Add rows to table
+        for name in sorted(machine_types):
+            table.add_row(name)
+
         console = Console()
         console.print(table)
