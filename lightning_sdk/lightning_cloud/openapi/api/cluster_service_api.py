@@ -1096,6 +1096,7 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str id: (required)
+        :param str org_id:
         :return: V1DeleteClusterUsageRestrictionResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1118,12 +1119,13 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str id: (required)
+        :param str org_id:
         :return: V1DeleteClusterUsageRestrictionResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['cluster_id', 'id']  # noqa: E501
+        all_params = ['cluster_id', 'id', 'org_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1156,6 +1158,8 @@ class ClusterServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 
@@ -2311,6 +2315,7 @@ class ClusterServiceApi(object):
 
         :param async_req bool
         :param str cluster_id: (required)
+        :param str org_id:
         :return: V1ListClusterUsageRestrictionsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2332,12 +2337,13 @@ class ClusterServiceApi(object):
 
         :param async_req bool
         :param str cluster_id: (required)
+        :param str org_id:
         :return: V1ListClusterUsageRestrictionsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['cluster_id']  # noqa: E501
+        all_params = ['cluster_id', 'org_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2364,6 +2370,8 @@ class ClusterServiceApi(object):
             path_params['clusterId'] = params['cluster_id']  # noqa: E501
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 

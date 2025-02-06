@@ -42,23 +42,33 @@ class V1LambdaLabsDirectV1(object):
     """
     swagger_types = {
         'credentials_secret_id': 'str',
-        'parent_cluster_id': 'str'
+        'parent_cluster_id': 'str',
+        'primary_region': 'str',
+        'regions': 'list[str]'
     }
 
     attribute_map = {
         'credentials_secret_id': 'credentialsSecretId',
-        'parent_cluster_id': 'parentClusterId'
+        'parent_cluster_id': 'parentClusterId',
+        'primary_region': 'primaryRegion',
+        'regions': 'regions'
     }
 
-    def __init__(self, credentials_secret_id: 'str' =None, parent_cluster_id: 'str' =None):  # noqa: E501
+    def __init__(self, credentials_secret_id: 'str' =None, parent_cluster_id: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None):  # noqa: E501
         """V1LambdaLabsDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._credentials_secret_id = None
         self._parent_cluster_id = None
+        self._primary_region = None
+        self._regions = None
         self.discriminator = None
         if credentials_secret_id is not None:
             self.credentials_secret_id = credentials_secret_id
         if parent_cluster_id is not None:
             self.parent_cluster_id = parent_cluster_id
+        if primary_region is not None:
+            self.primary_region = primary_region
+        if regions is not None:
+            self.regions = regions
 
     @property
     def credentials_secret_id(self) -> 'str':
@@ -105,6 +115,48 @@ class V1LambdaLabsDirectV1(object):
         """
 
         self._parent_cluster_id = parent_cluster_id
+
+    @property
+    def primary_region(self) -> 'str':
+        """Gets the primary_region of this V1LambdaLabsDirectV1.  # noqa: E501
+
+
+        :return: The primary_region of this V1LambdaLabsDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._primary_region
+
+    @primary_region.setter
+    def primary_region(self, primary_region: 'str'):
+        """Sets the primary_region of this V1LambdaLabsDirectV1.
+
+
+        :param primary_region: The primary_region of this V1LambdaLabsDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._primary_region = primary_region
+
+    @property
+    def regions(self) -> 'list[str]':
+        """Gets the regions of this V1LambdaLabsDirectV1.  # noqa: E501
+
+
+        :return: The regions of this V1LambdaLabsDirectV1.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._regions
+
+    @regions.setter
+    def regions(self, regions: 'list[str]'):
+        """Sets the regions of this V1LambdaLabsDirectV1.
+
+
+        :param regions: The regions of this V1LambdaLabsDirectV1.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._regions = regions
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

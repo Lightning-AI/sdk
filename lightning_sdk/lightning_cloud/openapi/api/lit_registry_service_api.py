@@ -342,6 +342,115 @@ class LitRegistryServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest(self, project_id: 'str', lit_repo_name: 'str', full_hash_digest: 'str', **kwargs) -> 'V1LitRegistryArtifact':  # noqa: E501
+        """lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest(project_id, lit_repo_name, full_hash_digest, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str lit_repo_name: (required)
+        :param str full_hash_digest: (required)
+        :return: V1LitRegistryArtifact
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest_with_http_info(project_id, lit_repo_name, full_hash_digest, **kwargs)  # noqa: E501
+        else:
+            (data) = self.lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest_with_http_info(project_id, lit_repo_name, full_hash_digest, **kwargs)  # noqa: E501
+            return data
+
+    def lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest_with_http_info(self, project_id: 'str', lit_repo_name: 'str', full_hash_digest: 'str', **kwargs) -> 'V1LitRegistryArtifact':  # noqa: E501
+        """lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest_with_http_info(project_id, lit_repo_name, full_hash_digest, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str lit_repo_name: (required)
+        :param str full_hash_digest: (required)
+        :return: V1LitRegistryArtifact
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'lit_repo_name', 'full_hash_digest']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest`")  # noqa: E501
+        # verify the required parameter 'lit_repo_name' is set
+        if ('lit_repo_name' not in params or
+                params['lit_repo_name'] is None):
+            raise ValueError("Missing the required parameter `lit_repo_name` when calling `lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest`")  # noqa: E501
+        # verify the required parameter 'full_hash_digest' is set
+        if ('full_hash_digest' not in params or
+                params['full_hash_digest'] is None):
+            raise ValueError("Missing the required parameter `full_hash_digest` when calling `lit_registry_service_get_lit_registry_repository_image_artifact_version_by_digest`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'lit_repo_name' in params:
+            path_params['litRepoName'] = params['lit_repo_name']  # noqa: E501
+        if 'full_hash_digest' in params:
+            path_params['fullHashDigest'] = params['full_hash_digest']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/lit-registry/{litRepoName}/artifacts/{fullHashDigest}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1LitRegistryArtifact',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def lit_registry_service_get_lit_repository(self, project_id: 'str', lit_repo_name: 'str', **kwargs) -> 'V1LitRepository':  # noqa: E501
         """lit_registry_service_get_lit_repository  # noqa: E501
 
@@ -436,6 +545,107 @@ class LitRegistryServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1LitRepository',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def lit_registry_service_list_lit_registry_repository_image_artifact_versions(self, project_id: 'str', lit_repo_name: 'str', **kwargs) -> 'V1ListLitRegistryRepositoryImageArtifactVersionsResponse':  # noqa: E501
+        """lit_registry_service_list_lit_registry_repository_image_artifact_versions  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.lit_registry_service_list_lit_registry_repository_image_artifact_versions(project_id, lit_repo_name, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str lit_repo_name: (required)
+        :return: V1ListLitRegistryRepositoryImageArtifactVersionsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.lit_registry_service_list_lit_registry_repository_image_artifact_versions_with_http_info(project_id, lit_repo_name, **kwargs)  # noqa: E501
+        else:
+            (data) = self.lit_registry_service_list_lit_registry_repository_image_artifact_versions_with_http_info(project_id, lit_repo_name, **kwargs)  # noqa: E501
+            return data
+
+    def lit_registry_service_list_lit_registry_repository_image_artifact_versions_with_http_info(self, project_id: 'str', lit_repo_name: 'str', **kwargs) -> 'V1ListLitRegistryRepositoryImageArtifactVersionsResponse':  # noqa: E501
+        """lit_registry_service_list_lit_registry_repository_image_artifact_versions  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.lit_registry_service_list_lit_registry_repository_image_artifact_versions_with_http_info(project_id, lit_repo_name, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str lit_repo_name: (required)
+        :return: V1ListLitRegistryRepositoryImageArtifactVersionsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'lit_repo_name']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method lit_registry_service_list_lit_registry_repository_image_artifact_versions" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `lit_registry_service_list_lit_registry_repository_image_artifact_versions`")  # noqa: E501
+        # verify the required parameter 'lit_repo_name' is set
+        if ('lit_repo_name' not in params or
+                params['lit_repo_name'] is None):
+            raise ValueError("Missing the required parameter `lit_repo_name` when calling `lit_registry_service_list_lit_registry_repository_image_artifact_versions`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'lit_repo_name' in params:
+            path_params['litRepoName'] = params['lit_repo_name']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/lit-registry/{litRepoName}/artifacts', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListLitRegistryRepositoryImageArtifactVersionsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

@@ -37,9 +37,12 @@ class V1CloudProvider(object):
     """
     allowed enum values
     """
+    CLOUD_PROVIDER_UNSPECIFIED = "CLOUD_PROVIDER_UNSPECIFIED"
     AWS = "AWS"
     GCP = "GCP"
     VULTR = "VULTR"
+    LAMBDA_LABS = "LAMBDA_LABS"
+    SLURM = "SLURM"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

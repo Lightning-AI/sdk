@@ -59,6 +59,7 @@ class V1JobSpec(object):
         'path_mappings': 'list[V1PathMapping]',
         'readiness_probe': 'V1JobHealthCheckConfig',
         'regions': 'list[str]',
+        'requested_run_duration_seconds': 'str',
         'resources': 'V1Resources',
         'restart_policy': 'str',
         'run_id': 'str',
@@ -85,6 +86,7 @@ class V1JobSpec(object):
         'path_mappings': 'pathMappings',
         'readiness_probe': 'readinessProbe',
         'regions': 'regions',
+        'requested_run_duration_seconds': 'requestedRunDurationSeconds',
         'resources': 'resources',
         'restart_policy': 'restartPolicy',
         'run_id': 'runId',
@@ -92,7 +94,7 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
@@ -112,6 +114,7 @@ class V1JobSpec(object):
         self._path_mappings = None
         self._readiness_probe = None
         self._regions = None
+        self._requested_run_duration_seconds = None
         self._resources = None
         self._restart_policy = None
         self._run_id = None
@@ -154,6 +157,8 @@ class V1JobSpec(object):
             self.readiness_probe = readiness_probe
         if regions is not None:
             self.regions = regions
+        if requested_run_duration_seconds is not None:
+            self.requested_run_duration_seconds = requested_run_duration_seconds
         if resources is not None:
             self.resources = resources
         if restart_policy is not None:
@@ -542,6 +547,27 @@ class V1JobSpec(object):
         """
 
         self._regions = regions
+
+    @property
+    def requested_run_duration_seconds(self) -> 'str':
+        """Gets the requested_run_duration_seconds of this V1JobSpec.  # noqa: E501
+
+
+        :return: The requested_run_duration_seconds of this V1JobSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._requested_run_duration_seconds
+
+    @requested_run_duration_seconds.setter
+    def requested_run_duration_seconds(self, requested_run_duration_seconds: 'str'):
+        """Sets the requested_run_duration_seconds of this V1JobSpec.
+
+
+        :param requested_run_duration_seconds: The requested_run_duration_seconds of this V1JobSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._requested_run_duration_seconds = requested_run_duration_seconds
 
     @property
     def resources(self) -> 'V1Resources':

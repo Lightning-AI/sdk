@@ -43,25 +43,30 @@ class ClusterIdUsagerestrictionsBody(object):
     swagger_types = {
         'instance_type': 'str',
         'max_instances': 'int',
+        'org_id': 'str',
         'restriction_type': 'str'
     }
 
     attribute_map = {
         'instance_type': 'instanceType',
         'max_instances': 'maxInstances',
+        'org_id': 'orgId',
         'restriction_type': 'restrictionType'
     }
 
-    def __init__(self, instance_type: 'str' =None, max_instances: 'int' =None, restriction_type: 'str' =None):  # noqa: E501
+    def __init__(self, instance_type: 'str' =None, max_instances: 'int' =None, org_id: 'str' =None, restriction_type: 'str' =None):  # noqa: E501
         """ClusterIdUsagerestrictionsBody - a model defined in Swagger"""  # noqa: E501
         self._instance_type = None
         self._max_instances = None
+        self._org_id = None
         self._restriction_type = None
         self.discriminator = None
         if instance_type is not None:
             self.instance_type = instance_type
         if max_instances is not None:
             self.max_instances = max_instances
+        if org_id is not None:
+            self.org_id = org_id
         if restriction_type is not None:
             self.restriction_type = restriction_type
 
@@ -106,6 +111,27 @@ class ClusterIdUsagerestrictionsBody(object):
         """
 
         self._max_instances = max_instances
+
+    @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this ClusterIdUsagerestrictionsBody.  # noqa: E501
+
+
+        :return: The org_id of this ClusterIdUsagerestrictionsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this ClusterIdUsagerestrictionsBody.
+
+
+        :param org_id: The org_id of this ClusterIdUsagerestrictionsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
 
     @property
     def restriction_type(self) -> 'str':

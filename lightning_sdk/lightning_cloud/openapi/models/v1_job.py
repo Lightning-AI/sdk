@@ -53,6 +53,7 @@ class V1Job(object):
         'project_id': 'str',
         'ready_at': 'datetime',
         'release_id': 'str',
+        'restart_count': 'int',
         'server_error': 'str',
         'spec': 'V1JobSpec',
         'started_at': 'datetime',
@@ -80,6 +81,7 @@ class V1Job(object):
         'project_id': 'projectId',
         'ready_at': 'readyAt',
         'release_id': 'releaseId',
+        'restart_count': 'restartCount',
         'server_error': 'serverError',
         'spec': 'spec',
         'started_at': 'startedAt',
@@ -94,7 +96,7 @@ class V1Job(object):
         'user_logs_started_at': 'userLogsStartedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deployment_id = None
@@ -108,6 +110,7 @@ class V1Job(object):
         self._project_id = None
         self._ready_at = None
         self._release_id = None
+        self._restart_count = None
         self._server_error = None
         self._spec = None
         self._started_at = None
@@ -145,6 +148,8 @@ class V1Job(object):
             self.ready_at = ready_at
         if release_id is not None:
             self.release_id = release_id
+        if restart_count is not None:
+            self.restart_count = restart_count
         if server_error is not None:
             self.server_error = server_error
         if spec is not None:
@@ -423,6 +428,27 @@ class V1Job(object):
         """
 
         self._release_id = release_id
+
+    @property
+    def restart_count(self) -> 'int':
+        """Gets the restart_count of this V1Job.  # noqa: E501
+
+
+        :return: The restart_count of this V1Job.  # noqa: E501
+        :rtype: int
+        """
+        return self._restart_count
+
+    @restart_count.setter
+    def restart_count(self, restart_count: 'int'):
+        """Sets the restart_count of this V1Job.
+
+
+        :param restart_count: The restart_count of this V1Job.  # noqa: E501
+        :type: int
+        """
+
+        self._restart_count = restart_count
 
     @property
     def server_error(self) -> 'str':
