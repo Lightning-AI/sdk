@@ -4,6 +4,7 @@ from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.cli.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lit_container import LitContainer
+from lightning_sdk.studio import Studio
 
 
 class _Delete(_JobAndMMTAction, _TeamspacesMenu):
@@ -56,3 +57,29 @@ class _Delete(_JobAndMMTAction, _TeamspacesMenu):
 
         mmt.delete()
         print(f"Successfully deleted {mmt.name}!")
+
+    def studio(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
+        """Delete an existing studio.
+
+        Args:
+            name: The name of the studio to delete.
+                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
+                Note: This could delete your current studio if run without arguments.
+            teamspace: The teamspace the studio is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.
+                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
+        """
+        if teamspace is not None:
+            ts_splits = teamspace.split("/")
+            if len(ts_splits) != 2:
+                raise ValueError(f"Teamspace should be of format <OWNER>/<TEAMSPACE_NAME> but got {teamspace}")
+            owner, teamspace = ts_splits
+        else:
+            owner, teamspace = None, None
+
+        try:
+            studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False)
+        except (RuntimeError, ValueError):
+            studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
+
+        studio.delete()
+        print("Studio successfully deleted")
