@@ -33,10 +33,10 @@ Host {name}
   UserKnownHostsFile=/dev/null"""
 
     def ssh(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-        """Get SSH config entry for a studio. Will start the studio if needed.
+        """Get SSH config entry for a studio.
 
         Args:
-            name: The name of the studio to stop.
+            name: The name of the studio to obtain SSH config.
                 If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
             teamspace: The teamspace the studio is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.
                 If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
