@@ -9,6 +9,7 @@ from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.ai_hub import _AIHub
 from lightning_sdk.cli.delete import _Delete
 from lightning_sdk.cli.download import _Downloads
+from lightning_sdk.cli.generate import _Generate
 from lightning_sdk.cli.inspect import _Inspect
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
 from lightning_sdk.cli.list import _List
@@ -39,6 +40,7 @@ class StudioCLI:
         self.stop = _Stop()
         self.start = _Start()
         self.switch = _Switch()
+        self.generate = _Generate()
 
         sys.excepthook = _notify_exception
 

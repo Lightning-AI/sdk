@@ -31,6 +31,9 @@ GROUPS
      download
        Download files and folders from Lightning AI.
 
+     generate
+       Generate configs (such as ssh for studio) and print them to commandline.
+
      inspect
        Inspect resources of the Lightning AI platform to get additional details as JSON.
 
