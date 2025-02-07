@@ -79,6 +79,7 @@ class V1LitRegistryProject(object):
     def id(self) -> 'int':
         """Gets the id of this V1LitRegistryProject.  # noqa: E501
 
+        This is the litcr project ID.  # noqa: E501
 
         :return: The id of this V1LitRegistryProject.  # noqa: E501
         :rtype: int
@@ -89,6 +90,7 @@ class V1LitRegistryProject(object):
     def id(self, id: 'int'):
         """Sets the id of this V1LitRegistryProject.
 
+        This is the litcr project ID.  # noqa: E501
 
         :param id: The id of this V1LitRegistryProject.  # noqa: E501
         :type: int
@@ -121,6 +123,7 @@ class V1LitRegistryProject(object):
     def project_id(self) -> 'str':
         """Gets the project_id of this V1LitRegistryProject.  # noqa: E501
 
+        This is the lightning AI teamspace project ID.  # noqa: E501
 
         :return: The project_id of this V1LitRegistryProject.  # noqa: E501
         :rtype: str
@@ -131,6 +134,7 @@ class V1LitRegistryProject(object):
     def project_id(self, project_id: 'str'):
         """Sets the project_id of this V1LitRegistryProject.
 
+        This is the lightning AI teamspace project ID.  # noqa: E501
 
         :param project_id: The project_id of this V1LitRegistryProject.  # noqa: E501
         :type: str
@@ -142,6 +146,7 @@ class V1LitRegistryProject(object):
     def repo_count(self) -> 'str':
         """Gets the repo_count of this V1LitRegistryProject.  # noqa: E501
 
+        This is how many repositories exist in a project. This will be the same as the number of repository objects we return.  # noqa: E501
 
         :return: The repo_count of this V1LitRegistryProject.  # noqa: E501
         :rtype: str
@@ -152,6 +157,7 @@ class V1LitRegistryProject(object):
     def repo_count(self, repo_count: 'str'):
         """Sets the repo_count of this V1LitRegistryProject.
 
+        This is how many repositories exist in a project. This will be the same as the number of repository objects we return.  # noqa: E501
 
         :param repo_count: The repo_count of this V1LitRegistryProject.  # noqa: E501
         :type: str
@@ -163,6 +169,7 @@ class V1LitRegistryProject(object):
     def repositories(self) -> 'list[V1LitRepository]':
         """Gets the repositories of this V1LitRegistryProject.  # noqa: E501
 
+        This is the list of repositories that belong to a project in our registry.  # noqa: E501
 
         :return: The repositories of this V1LitRegistryProject.  # noqa: E501
         :rtype: list[V1LitRepository]
@@ -173,6 +180,7 @@ class V1LitRegistryProject(object):
     def repositories(self, repositories: 'list[V1LitRepository]'):
         """Sets the repositories of this V1LitRegistryProject.
 
+        This is the list of repositories that belong to a project in our registry.  # noqa: E501
 
         :param repositories: The repositories of this V1LitRegistryProject.  # noqa: E501
         :type: list[V1LitRepository]

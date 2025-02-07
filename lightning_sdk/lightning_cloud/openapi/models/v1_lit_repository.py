@@ -45,6 +45,7 @@ class V1LitRepository(object):
         'creation_time': 'datetime',
         'description': 'str',
         'id': 'str',
+        'latest_artifact': 'V1LitRegistryArtifact',
         'name': 'str',
         'pull_count': 'str',
         'update_time': 'datetime'
@@ -55,17 +56,19 @@ class V1LitRepository(object):
         'creation_time': 'creationTime',
         'description': 'description',
         'id': 'id',
+        'latest_artifact': 'latestArtifact',
         'name': 'name',
         'pull_count': 'pullCount',
         'update_time': 'updateTime'
     }
 
-    def __init__(self, artifact_count: 'str' =None, creation_time: 'datetime' =None, description: 'str' =None, id: 'str' =None, name: 'str' =None, pull_count: 'str' =None, update_time: 'datetime' =None):  # noqa: E501
+    def __init__(self, artifact_count: 'str' =None, creation_time: 'datetime' =None, description: 'str' =None, id: 'str' =None, latest_artifact: 'V1LitRegistryArtifact' =None, name: 'str' =None, pull_count: 'str' =None, update_time: 'datetime' =None):  # noqa: E501
         """V1LitRepository - a model defined in Swagger"""  # noqa: E501
         self._artifact_count = None
         self._creation_time = None
         self._description = None
         self._id = None
+        self._latest_artifact = None
         self._name = None
         self._pull_count = None
         self._update_time = None
@@ -78,6 +81,8 @@ class V1LitRepository(object):
             self.description = description
         if id is not None:
             self.id = id
+        if latest_artifact is not None:
+            self.latest_artifact = latest_artifact
         if name is not None:
             self.name = name
         if pull_count is not None:
@@ -168,6 +173,27 @@ class V1LitRepository(object):
         """
 
         self._id = id
+
+    @property
+    def latest_artifact(self) -> 'V1LitRegistryArtifact':
+        """Gets the latest_artifact of this V1LitRepository.  # noqa: E501
+
+
+        :return: The latest_artifact of this V1LitRepository.  # noqa: E501
+        :rtype: V1LitRegistryArtifact
+        """
+        return self._latest_artifact
+
+    @latest_artifact.setter
+    def latest_artifact(self, latest_artifact: 'V1LitRegistryArtifact'):
+        """Sets the latest_artifact of this V1LitRepository.
+
+
+        :param latest_artifact: The latest_artifact of this V1LitRepository.  # noqa: E501
+        :type: V1LitRegistryArtifact
+        """
+
+        self._latest_artifact = latest_artifact
 
     @property
     def name(self) -> 'str':

@@ -42,6 +42,7 @@ class V1LitRegistryArtifact(object):
     """
     swagger_types = {
         'full_hash_digest': 'str',
+        'location': 'str',
         'pull_time': 'datetime',
         'push_time': 'datetime',
         'short_hash_digest': 'str',
@@ -51,6 +52,7 @@ class V1LitRegistryArtifact(object):
 
     attribute_map = {
         'full_hash_digest': 'fullHashDigest',
+        'location': 'location',
         'pull_time': 'pullTime',
         'push_time': 'pushTime',
         'short_hash_digest': 'shortHashDigest',
@@ -58,9 +60,10 @@ class V1LitRegistryArtifact(object):
         'tag_name': 'tagName'
     }
 
-    def __init__(self, full_hash_digest: 'str' =None, pull_time: 'datetime' =None, push_time: 'datetime' =None, short_hash_digest: 'str' =None, size: 'str' =None, tag_name: 'str' =None):  # noqa: E501
+    def __init__(self, full_hash_digest: 'str' =None, location: 'str' =None, pull_time: 'datetime' =None, push_time: 'datetime' =None, short_hash_digest: 'str' =None, size: 'str' =None, tag_name: 'str' =None):  # noqa: E501
         """V1LitRegistryArtifact - a model defined in Swagger"""  # noqa: E501
         self._full_hash_digest = None
+        self._location = None
         self._pull_time = None
         self._push_time = None
         self._short_hash_digest = None
@@ -69,6 +72,8 @@ class V1LitRegistryArtifact(object):
         self.discriminator = None
         if full_hash_digest is not None:
             self.full_hash_digest = full_hash_digest
+        if location is not None:
+            self.location = location
         if pull_time is not None:
             self.pull_time = pull_time
         if push_time is not None:
@@ -100,6 +105,27 @@ class V1LitRegistryArtifact(object):
         """
 
         self._full_hash_digest = full_hash_digest
+
+    @property
+    def location(self) -> 'str':
+        """Gets the location of this V1LitRegistryArtifact.  # noqa: E501
+
+
+        :return: The location of this V1LitRegistryArtifact.  # noqa: E501
+        :rtype: str
+        """
+        return self._location
+
+    @location.setter
+    def location(self, location: 'str'):
+        """Sets the location of this V1LitRegistryArtifact.
+
+
+        :param location: The location of this V1LitRegistryArtifact.  # noqa: E501
+        :type: str
+        """
+
+        self._location = location
 
     @property
     def pull_time(self) -> 'datetime':

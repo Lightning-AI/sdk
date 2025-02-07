@@ -53,7 +53,7 @@ class LitRegistryServiceApi(object):
 
         :param async_req bool
         :param ProjectIdLitregistryBody body: (required)
-        :param str project_id: (required)
+        :param str project_id: The teamspace project_id (required)
         :return: V1LitRegistryProject
                  If the method is called asynchronously,
                  returns the request thread.
@@ -75,7 +75,7 @@ class LitRegistryServiceApi(object):
 
         :param async_req bool
         :param ProjectIdLitregistryBody body: (required)
-        :param str project_id: (required)
+        :param str project_id: The teamspace project_id (required)
         :return: V1LitRegistryProject
                  If the method is called asynchronously,
                  returns the request thread.
@@ -563,6 +563,7 @@ class LitRegistryServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str lit_repo_name: (required)
+        :param bool latest_only:
         :return: V1ListLitRegistryRepositoryImageArtifactVersionsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -585,12 +586,13 @@ class LitRegistryServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str lit_repo_name: (required)
+        :param bool latest_only:
         :return: V1ListLitRegistryRepositoryImageArtifactVersionsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'lit_repo_name']  # noqa: E501
+        all_params = ['project_id', 'lit_repo_name', 'latest_only']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -623,6 +625,8 @@ class LitRegistryServiceApi(object):
             path_params['litRepoName'] = params['lit_repo_name']  # noqa: E501
 
         query_params = []
+        if 'latest_only' in params:
+            query_params.append(('latestOnly', params['latest_only']))  # noqa: E501
 
         header_params = {}
 

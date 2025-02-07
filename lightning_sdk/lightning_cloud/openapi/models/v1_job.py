@@ -54,6 +54,7 @@ class V1Job(object):
         'ready_at': 'datetime',
         'release_id': 'str',
         'restart_count': 'int',
+        'restart_timings': 'list[V1RestartTiming]',
         'server_error': 'str',
         'spec': 'V1JobSpec',
         'started_at': 'datetime',
@@ -82,6 +83,7 @@ class V1Job(object):
         'ready_at': 'readyAt',
         'release_id': 'releaseId',
         'restart_count': 'restartCount',
+        'restart_timings': 'restartTimings',
         'server_error': 'serverError',
         'spec': 'spec',
         'started_at': 'startedAt',
@@ -96,7 +98,7 @@ class V1Job(object):
         'user_logs_started_at': 'userLogsStartedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deployment_id = None
@@ -111,6 +113,7 @@ class V1Job(object):
         self._ready_at = None
         self._release_id = None
         self._restart_count = None
+        self._restart_timings = None
         self._server_error = None
         self._spec = None
         self._started_at = None
@@ -150,6 +153,8 @@ class V1Job(object):
             self.release_id = release_id
         if restart_count is not None:
             self.restart_count = restart_count
+        if restart_timings is not None:
+            self.restart_timings = restart_timings
         if server_error is not None:
             self.server_error = server_error
         if spec is not None:
@@ -449,6 +454,27 @@ class V1Job(object):
         """
 
         self._restart_count = restart_count
+
+    @property
+    def restart_timings(self) -> 'list[V1RestartTiming]':
+        """Gets the restart_timings of this V1Job.  # noqa: E501
+
+
+        :return: The restart_timings of this V1Job.  # noqa: E501
+        :rtype: list[V1RestartTiming]
+        """
+        return self._restart_timings
+
+    @restart_timings.setter
+    def restart_timings(self, restart_timings: 'list[V1RestartTiming]'):
+        """Sets the restart_timings of this V1Job.
+
+
+        :param restart_timings: The restart_timings of this V1Job.  # noqa: E501
+        :type: list[V1RestartTiming]
+        """
+
+        self._restart_timings = restart_timings
 
     @property
     def server_error(self) -> 'str':
