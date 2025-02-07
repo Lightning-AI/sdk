@@ -139,7 +139,6 @@ class AIHubApi:
             apply_change(template.spec_v2.job, "instance_name", machine)
             apply_change(template.spec_v2.job, "instance_type", machine)
 
-        print(template.spec_v2.job)
         return self._client.jobs_service_create_deployment(
             project_id=project_id,
             body=CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(
@@ -151,3 +150,6 @@ class AIHubApi:
                 spec=template.spec_v2.job,
             ),
         )
+
+    def delete_api(self, deployment_id: str, teamspace_id: str) -> None:
+        self._client.jobs_service_delete_deployment(project_id=teamspace_id, id=deployment_id)

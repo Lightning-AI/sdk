@@ -175,4 +175,22 @@ class AIHub:
             "deployment_url": url,
             "api_endpoint": deployment.status.urls[0],
             "interruptible": deployment.spec.spot,
+            "teamspace id": teamspace_id,
         }
+
+    def delete_deployment(self, deployment: Dict[str, Union[str, bool]]) -> None:
+        """Delete a deployment from the AI Hub.
+
+        Example:
+            from lightning_sdk import AIHub
+            hub = AIHub()
+            deployment = hub.run("temp_xxxx")
+            hub.delete_deployment(deployment)
+
+        Args:
+            deployment: The deployment dictionary returned by the run method.
+        """
+        if "teamspace id" not in deployment or "id" not in deployment:
+            raise ValueError("Deployment dictionary must contain 'teamspace id' and 'id' keys.")
+
+        self._api.delete_api(deployment["id"], deployment["teamspace id"])
