@@ -71,6 +71,7 @@ class _Uploads(_StudiosMenu, _TeamspacesMenu):
             If not specified, will use the file or directory name of the path you want to upload
             and place it in your home directory.
         """
+        console = Console()
         if remote_path is None:
             remote_path = os.path.basename(path)
 
@@ -81,7 +82,7 @@ class _Uploads(_StudiosMenu, _TeamspacesMenu):
 
         selected_studio = self._resolve_studio(studio)
 
-        print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
+        console.print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
 
         pairs = {}
         for root, _, files in os.walk(path):
@@ -112,7 +113,7 @@ class _Uploads(_StudiosMenu, _TeamspacesMenu):
             + "/studios/"
             + selected_studio.name
         )
-        print(f"See your files at {studio_url}")
+        console.print(f"See your files at {studio_url}")
 
     def file(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
         """Upload a file to a Studio.
@@ -126,6 +127,7 @@ class _Uploads(_StudiosMenu, _TeamspacesMenu):
             If not specified, will use the name of the file you want to upload
             and place it in your home directory.
         """
+        console = Console()
         if remote_path is None:
             remote_path = os.path.basename(path)
 
@@ -136,7 +138,7 @@ class _Uploads(_StudiosMenu, _TeamspacesMenu):
 
         selected_studio = self._resolve_studio(studio)
 
-        print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
+        console.print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
 
         self._single_file_upload(selected_studio, path, remote_path, True)
 
@@ -149,7 +151,7 @@ class _Uploads(_StudiosMenu, _TeamspacesMenu):
             + "/studios/"
             + selected_studio.name
         )
-        print(f"See your file at {studio_url}")
+        console.print(f"See your file at {studio_url}")
 
     def container(self, container: str, tag: str = "latest", teamspace: Optional[str] = None) -> None:
         teamspace = self._resolve_teamspace(teamspace)

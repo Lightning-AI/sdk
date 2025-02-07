@@ -167,7 +167,6 @@ class _Docker:
         import litserve as ls
         from litserve import docker_builder
 
-        console = Console()
         requirements = ""
         if os.path.exists("requirements.txt"):
             requirements = "-r requirements.txt"
@@ -210,5 +209,5 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
 [bold]To push the container to a registry:[/bold]
 > [underline]docker push {tag}[/underline]
 """
-        console.print(success_msg)
+        Console().print(success_msg)
         return os.path.abspath("Dockerfile")

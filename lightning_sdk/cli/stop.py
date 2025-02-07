@@ -1,5 +1,7 @@
 from typing import Optional
 
+from rich.console import Console
+
 from lightning_sdk.cli.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.studio import Studio
 
@@ -20,7 +22,7 @@ class _Stop(_JobAndMMTAction):
         job = super().job(name=name, teamspace=teamspace)
 
         job.stop()
-        print(f"Successfully stopped {job.name}!")
+        Console().print(f"Successfully stopped {job.name}!")
 
     def mmt(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
         """Stop a multi-machine job.
@@ -35,7 +37,7 @@ class _Stop(_JobAndMMTAction):
         mmt = super().mmt(name=name, teamspace=teamspace)
 
         mmt.stop()
-        print(f"Successfully stopped {mmt.name}!")
+        Console().print(f"Successfully stopped {mmt.name}!")
 
     def studio(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
         """Stop a running studio.
@@ -60,4 +62,4 @@ class _Stop(_JobAndMMTAction):
             studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
 
         studio.stop()
-        print("Studio successfully stopped")
+        Console().print("Studio successfully stopped")

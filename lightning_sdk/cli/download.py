@@ -143,8 +143,8 @@ class _Downloads(_StudiosMenu, _TeamspacesMenu):
           teamspace: The name of the teamspace to download the container from.
           tag: The tag of the container to download.
         """
-        resolved_teamspace = self._resolve_teamspace(teamspace)
         console = Console()
+        resolved_teamspace = self._resolve_teamspace(teamspace)
         with console.status("Downloading container..."):
             api = LitContainerApi()
             api.download_container(container, resolved_teamspace, tag)

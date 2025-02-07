@@ -40,8 +40,7 @@ class _List(_TeamspacesMenu):
                 str(studio.cloud_account),
             )
 
-        console = Console()
-        console.print(table)
+        Console().print(table)
 
     def jobs(self, teamspace: Optional[str] = None) -> None:
         """List jobs for a given teamspace.
@@ -81,8 +80,7 @@ class _List(_TeamspacesMenu):
                 f"{j.total_cost:.3f}",
             )
 
-        console = Console()
-        console.print(table)
+        Console().print(table)
 
     def mmts(self, teamspace: Optional[str] = None) -> None:
         """List multi-machine jobs for a given teamspace.
@@ -122,8 +120,7 @@ class _List(_TeamspacesMenu):
                 str(j.total_cost),
             )
 
-        console = Console()
-        console.print(table)
+        Console().print(table)
 
     def containers(self, teamspace: Optional[str] = None) -> None:
         """Display the list of available containers.
@@ -141,8 +138,7 @@ class _List(_TeamspacesMenu):
         table.add_column("CREATED")
         for repo in result:
             table.add_row(repo["REPOSITORY"], repo["IMAGE ID"], repo["CREATED"])
-        console = Console()
-        console.print(table)
+        Console().print(table)
 
     def machines(self) -> None:
         """Display the list of available machines."""
@@ -156,5 +152,4 @@ class _List(_TeamspacesMenu):
         for name in sorted(machine_types):
             table.add_row(name)
 
-        console = Console()
-        console.print(table)
+        Console().print(table)

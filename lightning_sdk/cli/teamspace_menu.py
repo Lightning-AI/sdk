@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional
 
+from rich.console import Console
 from simple_term_menu import TerminalMenu
 
 from lightning_sdk.api import OrgApi
@@ -26,7 +27,7 @@ class _TeamspacesMenu:
             if ts["name"] == name and (ts["user"] == owner or ts["org"] == owner):
                 return ts
 
-        print("Could not find Teamspace {teamspace}, please select it from the list:")
+        Console().print("Could not find Teamspace {teamspace}, please select it from the list:")
         return self._get_teamspace_from_interactive_menu(possible_teamspaces)
 
     @staticmethod

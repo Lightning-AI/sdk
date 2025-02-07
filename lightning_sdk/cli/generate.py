@@ -8,8 +8,6 @@ from lightning_sdk import Studio
 class _Generate:
     """Generate configs (such as ssh for studio) and print them to commandline."""
 
-    console = Console()
-
     def _generate_ssh_config(self, name: str, studio_id: str) -> str:
         """Generate SSH config entry for the studio.
 
@@ -55,4 +53,4 @@ Host {name}
             studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
 
         # Print the SSH config
-        self.console.print(self._generate_ssh_config(name, studio._studio.id))
+        Console().print(self._generate_ssh_config(name, studio._studio.id))

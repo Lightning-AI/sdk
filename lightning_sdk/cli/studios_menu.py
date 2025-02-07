@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional
 
+from rich.console import Console
 from simple_term_menu import TerminalMenu
 
 from lightning_sdk.api import OrgApi, TeamspaceApi
@@ -18,7 +19,7 @@ class _StudiosMenu:
             if st["teamspace"] == teamspace and name == st["name"]:
                 return st
 
-        print("Could not find Studio {studio}, please select it from the list:")
+        Console().print("Could not find Studio {studio}, please select it from the list:")
         return self._get_studio_from_interactive_menu(possible_studios)
 
     @staticmethod

@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional
 
+from rich.console import Console
 from simple_term_menu import TerminalMenu
 
 from lightning_sdk.cli.exceptions import StudioCliError
@@ -20,7 +21,7 @@ class _JobsMenu:
             if j.name == job:
                 return j
 
-        print("Could not find Job {job}, please select it from the list:")
+        Console().print("Could not find Job {job}, please select it from the list:")
         return self._get_job_from_interactive_menu(possible_jobs)
 
     @staticmethod

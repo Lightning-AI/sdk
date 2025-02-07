@@ -1,5 +1,7 @@
 from typing import Optional
 
+from rich.console import Console
+
 from lightning_sdk.cli.job_and_mmt_action import _JobAndMMTAction
 
 
@@ -16,7 +18,7 @@ class _Inspect(_JobAndMMTAction):
                 If not specified can be selected interactively.
 
         """
-        print(super().job(name=name, teamspace=teamspace).json())
+        (super().job(name=name, teamspace=teamspace).json())
 
     def mmt(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
         """Inspect a multi-machine job for further details as JSON.
@@ -28,4 +30,4 @@ class _Inspect(_JobAndMMTAction):
                 If not specified can be selected interactively.
 
         """
-        print(super().mmt(name=name, teamspace=teamspace).json())
+        Console().print(super().mmt(name=name, teamspace=teamspace).json())

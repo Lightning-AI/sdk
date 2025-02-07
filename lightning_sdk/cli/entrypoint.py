@@ -4,6 +4,8 @@ from typing import Type
 
 from fire import Fire
 from lightning_utilities.core.imports import RequirementCache
+from rich.console import Console
+from rich.panel import Panel
 
 from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.ai_hub import _AIHub
@@ -62,7 +64,8 @@ class StudioCLI:
 
 def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:  # No
     """CLI won't show tracebacks, just print the exception message."""
-    print(value)
+    console = Console()
+    console.print(Panel(value))
 
 
 def main_cli() -> None:
