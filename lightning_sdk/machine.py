@@ -34,7 +34,7 @@ class Machine:
 
     def __str__(self) -> str:
         """String representation of the Machine."""
-        return str(self.name)
+        return str(self.name) if self.name else str(self.instance_type)
 
     def __eq__(self, other: object) -> bool:
         """Machines are equal if the instance type is equal."""

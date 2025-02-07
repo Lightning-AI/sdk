@@ -12,8 +12,6 @@ import requests
 from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
-    _COMPUTE_NAME_TO_MACHINE,
-    _MACHINE_TO_COMPUTE_NAME,
     _create_app,
     _DummyBody,
     _DummyResponse,
@@ -257,7 +255,7 @@ class StudioApi:
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
             project_id=teamspace_id, id=studio_id
         )
-        return _COMPUTE_NAME_TO_MACHINE[response.compute_config.name]
+        return Machine(response.compute_config.name, response.compute_config.name)
 
     def get_interruptible(self, studio_id: str, teamspace_id: str) -> bool:
         """Get whether the Studio is running on a interruptible instance."""
@@ -582,7 +580,7 @@ class StudioApi:
             plugin_type="job",
             entrypoint=entrypoint,
             name=name,
-            compute=_MACHINE_TO_COMPUTE_NAME[machine],
+            compute=_machine_to_compute_name(machine),
             interruptible=interruptible,
         )
 
@@ -600,7 +598,7 @@ class StudioApi:
     ) -> Externalv1LightningappInstance:
         """Creates a multi-machine job with given commands."""
         distributed_args = {
-            "cloud_compute": _MACHINE_TO_COMPUTE_NAME[machine],
+            "cloud_compute": _machine_to_compute_name(machine),
             "num_instances": num_instances,
             "strategy": strategy,
         }
@@ -628,7 +626,7 @@ class StudioApi:
     ) -> Externalv1LightningappInstance:
         """Creates a multi-machine job with given commands."""
         data_prep_args = {
-            "cloud_compute": _MACHINE_TO_COMPUTE_NAME[machine],
+            "cloud_compute": _machine_to_compute_name(machine),
             "num_instances": num_instances,
         }
         return self._create_app(
@@ -665,7 +663,7 @@ class StudioApi:
             teamspace_id=teamspace_id,
             cloud_account=cloud_account,
             plugin_type="inference_plugin",
-            compute=_MACHINE_TO_COMPUTE_NAME[machine],
+            compute=_machine_to_compute_name(machine),
             entrypoint=entrypoint,
             name=name,
             min_replicas=min_replicas,

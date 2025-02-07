@@ -365,8 +365,8 @@ def test_jobv2_status(job_api_get_job_by_name_mocker, internal_studio_init_mocke
         ("g4dn.12xlarge", None, Machine.T4_X_4),
         ("p4d.24xlarge", "p4d.24xlarge", Machine.A100_X_8),
         ("unknown", "p4d.24xlarge", Machine.A100_X_8),
-        ("unknown", None, "unknown"),
-        ("", "unknown", "unknown"),
+        ("unknown", "", Machine("unknown", "unknown")),
+        ("", "unknown", Machine("", "unknown")),
     ],
 )
 def test_jobv2_machine(internal_studio_init_mocker, internal_instance_name, internal_instance_type, expected_machine):
@@ -637,7 +637,7 @@ def test_job_v2_dict_json(internal_studio_init_mocker):
     assert job_dict["total_cost"] == 3.51
 
     assert job.json() == (
-        '{\n    "command": "some command",\n    "image": null,\n    "machine": "CPU",\n    '
+        '{\n    "command": "some command",\n    "image": null,\n    "machine": "cpu-4",\n    '
         '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc",\n    '
         '"total_cost": 3.51\n}'
     )
@@ -685,7 +685,7 @@ def test_job_v1_dict_json(internal_studio_init_mocker, internal_job_api_mocker_g
     assert job_dict["total_cost"] == 3.51
 
     assert job.json() == (
-        '{\n    "command": "some command",\n    "image": null,\n    "machine": "T4_X_4",\n    '
+        '{\n    "command": "some command",\n    "image": null,\n    "machine": "g4dn.12xlarge",\n    '
         '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc",\n    '
         '"total_cost": 3.51\n}'
     )

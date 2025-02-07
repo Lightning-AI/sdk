@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from lightning_sdk.api.job_api import JobApiV1
 from lightning_sdk.api.utils import (
-    _COMPUTE_NAME_TO_MACHINE,
     _create_app,
     _machine_to_compute_name,
     resolve_path_mappings,
@@ -205,9 +204,7 @@ class MMTApiV2:
         instance_name = spec.instance_name
         instance_type = spec.instance_type
 
-        return _COMPUTE_NAME_TO_MACHINE.get(
-            instance_type, _COMPUTE_NAME_TO_MACHINE.get(instance_name, instance_type or instance_name)
-        )
+        return Machine(instance_name, instance_type or instance_name)
 
     def get_total_cost(self, job: V1MultiMachineJob) -> float:
         return job.total_cost

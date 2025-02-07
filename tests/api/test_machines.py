@@ -1,9 +1,11 @@
 import pytest
 
-from lightning_sdk.api.utils import _MACHINE_TO_COMPUTE_NAME
+from lightning_sdk import Machine
 
 
-@pytest.mark.parametrize("machine_type", _MACHINE_TO_COMPUTE_NAME.values())
+@pytest.mark.parametrize(
+    "machine_type", [machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
+)
 def test_aws_machine_type_api(machine_type, available_aws_instance_types):
     if machine_type.startswith(("cpu", "data-")):
         pytest.skip(f"'{machine_type}' is specific and omitted from testing")

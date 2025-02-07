@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union
 from urllib.request import urlopen
 
 from lightning_sdk.api.utils import (
-    _COMPUTE_NAME_TO_MACHINE,
     _create_app,
     _machine_to_compute_name,
     remove_datetime_prefix,
@@ -98,13 +97,11 @@ class JobApiV1:
     def get_machine_from_work(self, work: Externalv1Lightningwork) -> Machine:
         spec: V1LightningworkSpec = work.spec
         # prefer user-requested config if specified
-        compute_config: V1UserRequestedComputeConfig = spec.user_requested_compute_config
-        compute: str = compute_config.name
-        if compute:
-            return _COMPUTE_NAME_TO_MACHINE[compute]
+        user_requested_compute_config: V1UserRequestedComputeConfig = spec.user_requested_compute_config
+        if user_requested_compute_config.name:
+            return Machine(user_requested_compute_config.name, user_requested_compute_config.name)
         compute_config: V1ComputeConfig = spec.compute_config
-        compute: str = compute_config.instance_type
-        return _COMPUTE_NAME_TO_MACHINE[compute]
+        return Machine(compute_config.instance_type, compute_config.instance_type)
 
     def get_studio_name(self, job: Externalv1LightningappInstance) -> str:
         cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
@@ -343,9 +340,7 @@ class JobApiV2:
         instance_name = spec.instance_name
         instance_type = spec.instance_type
 
-        return _COMPUTE_NAME_TO_MACHINE.get(
-            instance_type, _COMPUTE_NAME_TO_MACHINE.get(instance_name, instance_type or instance_name)
-        )
+        return Machine(instance_name, instance_type or instance_name)
 
     def get_total_cost(self, job: V1Job) -> float:
         return job.total_cost

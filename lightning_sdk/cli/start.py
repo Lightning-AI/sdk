@@ -36,7 +36,7 @@ class _Start:
             studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
 
         try:
-            resolved_machine = Machine[machine.upper()]
+            resolved_machine = getattr(Machine, machine.upper(), Machine(machine, machine))
         except KeyError:
             resolved_machine = machine
 

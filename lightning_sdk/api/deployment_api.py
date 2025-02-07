@@ -1,7 +1,7 @@
 from time import sleep
 from typing import Any, List, Literal, Optional, Union
 
-from lightning_sdk.api.utils import _MACHINE_TO_COMPUTE_NAME
+from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.lightning_cloud.openapi import (
     CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs,
     V1AutoscalingSpec,
@@ -270,8 +270,8 @@ class DeploymentApi:
 
         # Any updates to the Job Spec triggers a new release
         if machine:
-            apply_change(deployment.spec, "instance_name", _MACHINE_TO_COMPUTE_NAME[machine])
-            apply_change(deployment.spec, "instance_type", _MACHINE_TO_COMPUTE_NAME[machine])
+            apply_change(deployment.spec, "instance_name", _machine_to_compute_name(machine))
+            apply_change(deployment.spec, "instance_type", _machine_to_compute_name(machine))
 
         requires_release = False
         requires_release |= apply_change(deployment.spec, "image", environment)
@@ -555,7 +555,7 @@ def to_spec(
         env=to_env(env),
         image=environment,
         spot=spot,
-        instance_name=_MACHINE_TO_COMPUTE_NAME[machine],
+        instance_name=_machine_to_compute_name(machine),
         readiness_probe=to_health_check(health_check),
     )
 

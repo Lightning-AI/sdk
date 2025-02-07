@@ -1414,11 +1414,13 @@ def internal_job_get_cloudspace_mocker(mocker):
 @pytest.fixture()
 def internal_job_run_mocker(mocker):
     def side_effect(self, body, project_id, cloudspace_id, id):
-        from lightning_sdk.api.studio_api import _MACHINE_TO_COMPUTE_NAME
+        from lightning_sdk.machine import Machine
 
         assert body.plugin_arguments["entrypoint"] == "python my-file.py"
         assert body.plugin_arguments["name"] != ""
-        assert body.plugin_arguments["compute"] in _MACHINE_TO_COMPUTE_NAME.values()
+        assert body.plugin_arguments["compute"] in [
+            machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
+        ]
 
         return V1CreateCloudSpaceAppInstanceResponse(
             lightningappinstance=Externalv1LightningappInstance(
@@ -1442,14 +1444,16 @@ def internal_job_run_mocker(mocker):
 @pytest.fixture()
 def internal_mmt_run_mocker(mocker):
     def side_effect(self, body, project_id, cloudspace_id, id):
-        from lightning_sdk.api.studio_api import _MACHINE_TO_COMPUTE_NAME
+        from lightning_sdk.machine import Machine
 
         distributed_args = json.loads(body.plugin_arguments["distributedArguments"])
         assert body.plugin_arguments["entrypoint"] == "python my-file.py"
         assert body.plugin_arguments["name"] == "my-fancy-mmt-name"
         assert distributed_args["num_instances"] == 42
         assert distributed_args["strategy"] == "parallel"
-        assert distributed_args["cloud_compute"] in _MACHINE_TO_COMPUTE_NAME.values()
+        assert distributed_args["cloud_compute"] in [
+            machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
+        ]
 
         return V1CreateCloudSpaceAppInstanceResponse(
             lightningappinstance=Externalv1LightningappInstance(
@@ -1473,7 +1477,7 @@ def internal_mmt_run_mocker(mocker):
 @pytest.fixture()
 def internal_inference_run_mocker(mocker):
     def side_effect(self, body, project_id, cloudspace_id, id):
-        from lightning_sdk.api.studio_api import _MACHINE_TO_COMPUTE_NAME
+        from lightning_sdk.machine import Machine
 
         assert body.plugin_arguments["entrypoint"] == "python my-file.py"
         assert body.plugin_arguments["name"] == "my-fancy-inference-name"
@@ -1484,7 +1488,9 @@ def internal_inference_run_mocker(mocker):
         assert body.plugin_arguments["scale_in_interval"] == "11"
         assert body.plugin_arguments["scale_out_interval"] == "12"
         assert body.plugin_arguments["endpoint"] == "/fancy-predict"
-        assert body.plugin_arguments["compute"] in _MACHINE_TO_COMPUTE_NAME.values()
+        assert body.plugin_arguments["compute"] in [
+            machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
+        ]
 
         return V1CreateCloudSpaceAppInstanceResponse(
             lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
@@ -1531,13 +1537,15 @@ def internal_studio_api_login(mocker):  # noqa: PT004 # todo
 @pytest.fixture()
 def internal_data_prep_run_mocker(mocker):
     def side_effect(self, body, project_id, cloudspace_id, id):
-        from lightning_sdk.api.studio_api import _MACHINE_TO_COMPUTE_NAME
+        from lightning_sdk.machine import Machine
 
         distributed_args = json.loads(body.plugin_arguments["dataPrepArguments"])
         assert body.plugin_arguments["entrypoint"] == "python my-file.py"
         assert body.plugin_arguments["name"] == "my-fancy-data-prep-name"
         assert distributed_args["num_instances"] == 42
-        assert distributed_args["cloud_compute"] in _MACHINE_TO_COMPUTE_NAME.values()
+        assert distributed_args["cloud_compute"] in [
+            machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
+        ]
 
         return V1CreateCloudSpaceAppInstanceResponse(
             lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])

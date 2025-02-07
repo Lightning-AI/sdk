@@ -156,7 +156,7 @@ class _Run:
             machine = "CPU"
         machine_enum: Union[str, Machine]
         try:
-            machine_enum = Machine[machine.upper()]
+            machine_enum = getattr(Machine, machine.upper(), Machine(machine, machine))
         except KeyError:
             machine_enum = machine
 
@@ -222,7 +222,7 @@ class _Run:
             machine = "CPU"
         machine_enum: Union[str, Machine]
         try:
-            machine_enum = Machine[machine.upper()]
+            machine_enum = getattr(Machine, machine.upper(), Machine(machine, machine))
         except KeyError:
             machine_enum = machine
 

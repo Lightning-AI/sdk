@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Tuple, Union
 import backoff
 
 from lightning_sdk.api.deployment_api import apply_change
-from lightning_sdk.api.utils import _MACHINE_TO_COMPUTE_NAME
+from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.lightning_cloud.openapi.models import (
     CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs,
     V1Deployment,
@@ -133,8 +133,8 @@ class AIHubApi:
 
         AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
         if machine and isinstance(machine, Machine):
-            apply_change(template.spec_v2.job, "instance_name", _MACHINE_TO_COMPUTE_NAME[machine])
-            apply_change(template.spec_v2.job, "instance_type", _MACHINE_TO_COMPUTE_NAME[machine])
+            apply_change(template.spec_v2.job, "instance_name", _machine_to_compute_name(machine))
+            apply_change(template.spec_v2.job, "instance_type", _machine_to_compute_name(machine))
         elif machine and isinstance(machine, str):
             apply_change(template.spec_v2.job, "instance_name", machine)
             apply_change(template.spec_v2.job, "instance_type", machine)

@@ -84,9 +84,10 @@ def test_studio_start_wrong_machine(
 ):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
 
+    # TODO: user-freindly names for machines
     with pytest.raises(
         RuntimeError,
-        match=f"Requested to start studio on {Machine.A10G}, but studio is already running on {Machine.T4}."
+        match=f"Requested to start studio on {Machine.A10G}, but studio is already running on g4dn.2xlarge."
         " Consider switching instead!",
     ):
         studio.start(Machine.A10G)
