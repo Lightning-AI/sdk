@@ -8,6 +8,7 @@ import pytest
 from lightning_sdk.job import Job
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
+    V1ClusterAccelerator,
     V1Job,
     V1ModelVersionArchive,
     V1MultiMachineJob,
@@ -417,3 +418,58 @@ def test_list_mmts(list_mmts_mock, mmt_backend_selector_mocker_v2):
     for lj, jj in zip(listed_mmts[2:], mmts):
         assert lj.name == jj.name
         assert isinstance(lj._internal_mmt, _MMTV2)
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+def test_list_machines(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+    mock_teamspace_api().list_machines.return_value = [V1ClusterAccelerator(instance_id="instance-id")]
+    mock_teamspace_api().get_teamspace().id = "teamspace-id"
+
+    teamspace = Teamspace(name="teamspace-name")
+
+    machines = teamspace.list_machines(cloud_account="cloud-account")
+
+    assert len(machines) == 1
+    assert machines[0].instance_type == "instance-id"
+
+    mock_teamspace_api().list_machines.assert_called_once_with("teamspace-id", cloud_account="cloud-account")
+
+
+@mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+def test_list_machines_default_cloud_account(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+    mock_teamspace_api().list_machines.return_value = [V1ClusterAccelerator(instance_id="instance-id")]
+    mock_teamspace_api().get_teamspace().id = "teamspace-id"
+    mock_teamspace_api().get_teamspace().project_settings.preferred_cluster = "preferred-cluster"
+
+    teamspace = Teamspace(name="teamspace-name")
+
+    machines = teamspace.list_machines()
+
+    assert len(machines) == 1
+    assert machines[0].instance_type == "instance-id"
+
+    mock_teamspace_api().list_machines.assert_called_once_with("teamspace-id", cloud_account="preferred-cluster")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "env-cloud-account"})
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+def test_list_machines_env_cloud_account(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+    mock_teamspace_api().list_machines.return_value = [V1ClusterAccelerator(instance_id="instance-id")]
+    mock_teamspace_api().get_teamspace().id = "teamspace-id"
+    mock_teamspace_api().get_teamspace().project_settings.preferred_cluster = "preferred-cluster"
+
+    teamspace = Teamspace(name="teamspace-name")
+
+    machines = teamspace.list_machines()
+
+    assert len(machines) == 1
+    assert machines[0].instance_type == "instance-id"
+
+    mock_teamspace_api().list_machines.assert_called_once_with("teamspace-id", cloud_account="env-cloud-account")

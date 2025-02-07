@@ -9,6 +9,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     ModelIdVersionsBody,
     ProjectIdModelsBody,
     V1CloudSpace,
+    V1ClusterAccelerator,
+    V1ListProjectClusterAcceleratorsResponse,
     V1Project,
     V1ProjectClusterBinding,
 )
@@ -205,4 +207,21 @@ def test_create_delete_model_version():
     teamspace_api.delete_model(name="model-name", version=version.version, teamspace_id="ts-abc")
     teamspace_api._models.models_store_delete_model_version.assert_called_with(
         project_id="ts-abc", model_id="model-id", version=version.version
+    )
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+def test_list_machines(mock_client):
+    mock_client().cluster_service_list_project_cluster_accelerators.return_value = (
+        V1ListProjectClusterAcceleratorsResponse(accelerator=[V1ClusterAccelerator(instance_id="instance-id")])
+    )
+
+    teamspace_api = TeamspaceApi()
+    result = teamspace_api.list_machines("teamspace-id", "cloud-account")
+
+    assert len(result) == 1
+    assert result[0].instance_id == "instance-id"
+
+    mock_client().cluster_service_list_project_cluster_accelerators.assert_called_once_with(
+        project_id="teamspace-id", id="cloud-account"
     )

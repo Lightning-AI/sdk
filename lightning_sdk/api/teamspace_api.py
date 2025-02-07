@@ -14,6 +14,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     ProjectIdModelsBody,
     V1Assistant,
     V1CloudSpace,
+    V1ClusterAccelerator,
     V1Endpoint,
     V1Job,
     V1ModelVersionArchive,
@@ -295,3 +296,9 @@ class TeamspaceApi:
         ).lightningapps
         jobs = self._client.jobs_service_list_multi_machine_jobs(project_id=teamspace_id).multi_machine_jobs
         return apps, jobs
+
+    def list_machines(self, teamspace_id: str, cloud_account: str) -> List[V1ClusterAccelerator]:
+        response = self._client.cluster_service_list_project_cluster_accelerators(
+            project_id=teamspace_id, id=cloud_account
+        )
+        return response.accelerator

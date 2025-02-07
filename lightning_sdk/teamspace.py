@@ -1,9 +1,11 @@
+import os
 import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import TeamspaceApi
+from lightning_sdk.machine import Machine
 from lightning_sdk.models import UploadedModelInfo
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
@@ -175,6 +177,25 @@ class Teamspace:
             mmts.append(mmt)
 
         return tuple(mmts)
+
+    def list_machines(self, cloud_account: Optional[str] = None) -> List[Machine]:
+        if cloud_account is None:
+            cloud_account = os.getenv("LIGHTNING_CLUSTER_ID") or self.default_cloud_account
+
+        cluster_machines = self._teamspace_api.list_machines(self.id, cloud_account=cloud_account)
+        return [
+            Machine(
+                cluster_machine.instance_id,
+                cluster_machine.instance_id,
+                cost=cluster_machine.cost,
+                interruptible_cost=cluster_machine.spot_price,
+                wait_time=float(cluster_machine.available_in_seconds) if cluster_machine.available_in_seconds else None,
+                interruptible_wait_time=float(cluster_machine.available_in_seconds_spot)
+                if cluster_machine.available_in_seconds_spot
+                else None,
+            )
+            for cluster_machine in cluster_machines
+        ]
 
     def __eq__(self, other: "Teamspace") -> bool:
         """Checks whether the provided other object is equal to this one."""
