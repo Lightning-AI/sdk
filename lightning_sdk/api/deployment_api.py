@@ -271,6 +271,7 @@ class DeploymentApi:
         # Any updates to the Job Spec triggers a new release
         if machine:
             apply_change(deployment.spec, "instance_name", _MACHINE_TO_COMPUTE_NAME[machine])
+            apply_change(deployment.spec, "instance_type", _MACHINE_TO_COMPUTE_NAME[machine])
 
         requires_release = False
         requires_release |= apply_change(deployment.spec, "image", environment)

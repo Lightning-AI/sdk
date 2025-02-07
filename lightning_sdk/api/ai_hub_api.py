@@ -1,8 +1,10 @@
 import traceback
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import backoff
 
+from lightning_sdk.api.deployment_api import apply_change
+from lightning_sdk.api.utils import _MACHINE_TO_COMPUTE_NAME
 from lightning_sdk.lightning_cloud.openapi.models import (
     CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs,
     V1Deployment,
@@ -16,6 +18,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_deployment_template_gallery
     V1DeploymentTemplateGalleryResponse,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.machine import Machine
 
 
 class AIHubApi:
@@ -110,7 +113,13 @@ class AIHubApi:
         return job
 
     def run_api(
-        self, template_id: str, project_id: str, cloud_account: str, name: Optional[str], api_arguments: Dict[str, str]
+        self,
+        template_id: str,
+        project_id: str,
+        cloud_account: str,
+        name: Optional[str],
+        api_arguments: Dict[str, str],
+        machine: Optional[Union[str, Machine]],
     ) -> V1Deployment:
         template = self._client.deployment_templates_service_get_deployment_template(template_id)
         name = name or template.name
@@ -123,6 +132,14 @@ class AIHubApi:
             template.spec_v2.autoscaling.enabled = True
 
         AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
+        if machine and isinstance(machine, Machine):
+            apply_change(template.spec_v2.job, "instance_name", _MACHINE_TO_COMPUTE_NAME[machine])
+            apply_change(template.spec_v2.job, "instance_type", _MACHINE_TO_COMPUTE_NAME[machine])
+        elif machine and isinstance(machine, str):
+            apply_change(template.spec_v2.job, "instance_name", machine)
+            apply_change(template.spec_v2.job, "instance_type", machine)
+
+        print(template.spec_v2.job)
         return self._client.jobs_service_create_deployment(
             project_id=project_id,
             body=CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(

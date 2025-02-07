@@ -8,6 +8,7 @@ from lightning_sdk.utils.resolve import _resolve_teamspace
 
 if TYPE_CHECKING:
     from lightning_sdk import Organization, Teamspace
+    from lightning_sdk.machine import Machine
 
 
 class AIHub:
@@ -107,6 +108,7 @@ class AIHub:
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         org: Optional[Union[str, "Organization"]] = None,
         user: Optional[Union[str, "User"]] = None,
+        machine: Optional[Union[str, "Machine"]] = None,
     ) -> Dict[str, Union[str, bool]]:
         """Deploy an API from the AI Hub.
 
@@ -128,6 +130,7 @@ class AIHub:
             teamspace: The team or group for deployment. Defaults to None.
             org: The organization for deployment. Don't pass user with this. Defaults to None.
             user: The user for deployment. Don't pass org with this. Defaults to None.
+            machine: The machine to run the deployment on. Defaults to the first option set in the AI Hub template.
 
         Returns:
             A dictionary containing the name of the deployed API,
@@ -153,6 +156,7 @@ class AIHub:
             project_id=teamspace_id,
             name=name,
             api_arguments=api_arguments,
+            machine=machine,
         )
 
         url = (
