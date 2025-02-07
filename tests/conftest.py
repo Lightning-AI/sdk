@@ -53,6 +53,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1PluginsListResponse,
     V1Project,
     V1ProjectClusterBinding,
+    V1ProjectSettings,
     V1SearchUser,
     V1SearchUsersResponse,
     V1SLURMJob,
@@ -183,6 +184,9 @@ def internal_teamspace_api_mocker(mocker):
         "ts-ghi001": V1Membership(
             name="ts-ghi", display_name="ts-ghi", project_id="ts-ghi001", owner_id="user-abc", owner_type="user"
         ),
+        "ts-001": V1Membership(
+            name="ts-ghi", display_name="ts-ghi", project_id="ts-ghi001", owner_id="user-abc", owner_type="user"
+        ),
     }
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_memberships",
@@ -198,6 +202,7 @@ def internal_teamspace_api_mocker(mocker):
             display_name=mem.display_name,
             owner_id=mem.owner_id,
             owner_type=mem.owner_type,
+            project_settings=V1ProjectSettings(start_studio_on_spot_instance=True),
         )
 
     mocker.patch(
@@ -723,7 +728,7 @@ def internal_studio_start_mocker(mocker):
 
     def side_effect_start(self, body, project_id, id):
         status["st-abc"] = "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
-        machines["st-abc"] = V1UserRequestedComputeConfig(name="cpu-4")
+        machines["st-abc"] = V1UserRequestedComputeConfig(name="cpu-4", spot=body._compute_config.spot)
         return mock.MagicMock()
 
     def side_effect_status(*args, **kwargs):

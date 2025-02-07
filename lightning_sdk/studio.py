@@ -155,9 +155,13 @@ class Studio:
     def cloud_account(self) -> str:
         return self._studio.cluster_id
 
-    def start(self, machine: Union[Machine, str] = Machine.CPU, interruptible: bool = False) -> None:
+    def start(self, machine: Union[Machine, str] = Machine.CPU, interruptible: Optional[bool] = None) -> None:
         """Starts a Studio on the specified machine type (default: CPU-4)."""
         status = self.status
+
+        if interruptible is None:
+            interruptible = self.teamspace.start_studions_on_interruptible
+
         if status == Status.Running:
             curr_machine = _machine_to_compute_name(self.machine) if self.machine is not None else None
             if curr_machine != _machine_to_compute_name(machine):

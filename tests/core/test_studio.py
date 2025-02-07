@@ -58,11 +58,26 @@ def test_studio_start(internal_studio_start_mocker, internal_studio_init_mocker)
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     assert studio.status == Status.Stopped
     assert studio.machine is None
+    assert studio.teamspace.start_studions_on_interruptible is True
 
     studio.start()
 
     assert studio.status == Status.Running
+    assert studio.interruptible is True
     assert studio.machine is not None
+
+
+def test_studio_start_on_demand_machine(internal_studio_start_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    assert studio.status == Status.Stopped
+    assert studio.machine is None
+    assert studio.teamspace.start_studions_on_interruptible is True
+
+    studio.start(interruptible=False)
+
+    assert studio.status == Status.Running
+    assert studio.machine is not None
+    assert studio.interruptible is False
 
 
 def test_studio_start_different_machine(internal_studio_start_mocker, internal_studio_init_mocker):
