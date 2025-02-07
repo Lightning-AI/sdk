@@ -22,7 +22,9 @@ def test_run_plugin(internal_studio_init_mocker, internal_studio_status_mocker, 
     plugin.run()
 
 
-@pytest.mark.parametrize("cloud_compute", list(Machine))
+@pytest.mark.parametrize(
+    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
+)
 def test_run_job(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -51,7 +53,9 @@ def test_run_job(
     assert job.name != ""
 
 
-@pytest.mark.parametrize("cloud_compute", list(Machine))
+@pytest.mark.parametrize(
+    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
+)
 def test_run_mmt(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -71,7 +75,9 @@ def test_run_mmt(
     plugin.run(command="python my-file.py", name="my-fancy-mmt-name", num_instances=42, machine=cloud_compute)
 
 
-@pytest.mark.parametrize("cloud_compute", list(Machine))
+@pytest.mark.parametrize(
+    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
+)
 def test_run_inference(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -122,7 +128,9 @@ def test_run_name():
     assert start_time == time_stamp == datetime.now().replace(second=0, microsecond=0)
 
 
-@pytest.mark.parametrize("cloud_compute", list(Machine))
+@pytest.mark.parametrize(
+    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
+)
 def test_run_data_prep(
     internal_studio_init_mocker,
     internal_studio_status_mocker,

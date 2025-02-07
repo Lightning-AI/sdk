@@ -7,7 +7,7 @@ class _Switch:
     """Switch machines for resources on the Lightning AI platform."""
 
     def __init__(self) -> None:
-        _machine_values = tuple([machine.value for machine in Machine])
+        _machine_values = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
         docstr_studio = f"""Switch a studio to a given machine.
 

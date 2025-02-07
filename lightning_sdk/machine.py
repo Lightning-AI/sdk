@@ -1,32 +1,64 @@
-from lightning_sdk.utils.enum import DeprecationEnum
+from dataclasses import dataclass
+from typing import ClassVar, Optional
 
 
-class Machine(DeprecationEnum):
-    """Enum holding all supported machine types for studios."""
+@dataclass(frozen=True)
+class Machine:
+    # Default Machines
+    CPU_SMALL: ClassVar["Machine"]
+    CPU: ClassVar["Machine"]
+    DATA_PREP: ClassVar["Machine"]
+    DATA_PREP_MAX: ClassVar["Machine"]
+    DATA_PREP_ULTRA: ClassVar["Machine"]
+    T4: ClassVar["Machine"]
+    T4_X_4: ClassVar["Machine"]
+    L4: ClassVar["Machine"]
+    L4_X_4: ClassVar["Machine"]
+    L4_X_8: ClassVar["Machine"]
+    A10G: ClassVar["Machine"]
+    A10G_X_4: ClassVar["Machine"]
+    A10G_X_8: ClassVar["Machine"]
+    L40S: ClassVar["Machine"]
+    L40S_X_4: ClassVar["Machine"]
+    L40S_X_8: ClassVar["Machine"]
+    A100_X_8: ClassVar["Machine"]
+    H100_X_8: ClassVar["Machine"]
+    H200_X_8: ClassVar["Machine"]
 
-    CPU_SMALL = "CPU_SMALL"
-    CPU = "CPU"
-    DATA_PREP = "DATA_PREP"
-    DATA_PREP_MAX = "DATA_PREP_MAX"
-    DATA_PREP_ULTRA = "DATA_PREP_ULTRA"
-    T4 = "T4"
-    T4_X_4 = "T4_X_4"
-    L4 = "L4"
-    L4_X_4 = "L4_X_4"
-    L4_X_8 = "L4_X_8"
-    A10G = "A10G"
-    A10G_X_4 = "A10G_X_4"
-    A10G_X_8 = "A10G_X_8"
-    L40S = "L40S"
-    L40 = "L40", "L40S"  # deprecated
-    L40S_X_4 = "L40S_X_4"
-    L40_X_4 = "L40_X_4", "L40S_X_4"  # deprecated
-    L40S_X_8 = "L40S_X_8"
-    L40_X_8 = "L40_X_8", "L40S_X_8"  # deprecated
-    A100_X_8 = "A100_X_8"
-    H100_X_8 = "H100_X_8"
-    H200_X_8 = "H200_X_8"
+    name: str
+    instance_type: str
+    cost: Optional[float] = None
+    interruptible_cost: Optional[float] = None
+    wait_time: Optional[float] = None
+    interruptible_wait_time: Optional[float] = None
 
     def __str__(self) -> str:
-        """String representation of the enum."""
-        return str(self.value)
+        """String representation of the Machine."""
+        return str(self.name)
+
+    def __eq__(self, other: object) -> bool:
+        """Machines are equal if the instance type is equal."""
+        if isinstance(other, Machine):
+            return self.instance_type == other.instance_type
+        return False
+
+
+Machine.CPU_SMALL = Machine(name="CPU_SMALL", instance_type="m3.medium")
+Machine.CPU = Machine(name="CPU", instance_type="cpu-4")
+Machine.DATA_PREP = Machine(name="DATA_PREP", instance_type="data-large")
+Machine.DATA_PREP_MAX = Machine(name="DATA_PREP_MAX", instance_type="data-max")
+Machine.DATA_PREP_ULTRA = Machine(name="DATA_PREP_ULTRA", instance_type="data-ultra")
+Machine.T4 = Machine(name="T4", instance_type="g4dn.2xlarge")
+Machine.T4_X_4 = Machine(name="T4_X_4", instance_type="g4dn.12xlarge")
+Machine.L4 = Machine(name="L4", instance_type="g6.4xlarge")
+Machine.L4_X_4 = Machine(name="L4_X_4", instance_type="g6.12xlarge")
+Machine.L4_X_8 = Machine(name="L4_X_8", instance_type="g6.48xlarge")
+Machine.A10G = Machine(name="A10G", instance_type="g5.8xlarge")
+Machine.A10G_X_4 = Machine(name="A10G_X_4", instance_type="g5.12xlarge")
+Machine.A10G_X_8 = Machine(name="A10G_X_8", instance_type="g5.48xlarge")
+Machine.L40S = Machine(name="L40S", instance_type="g6e.4xlarge")
+Machine.L40S_X_4 = Machine(name="L40S_X_4", instance_type="g6e.12xlarge")
+Machine.L40S_X_8 = Machine(name="L40S_X_8", instance_type="g6e.48xlarge")
+Machine.A100_X_8 = Machine(name="A100_X_8", instance_type="p4d.24xlarge")
+Machine.H100_X_8 = Machine(name="H100_X_8", instance_type="p5.48xlarge")
+Machine.H200_X_8 = Machine(name="H200_X_8", instance_type="p5e.48xlarge")

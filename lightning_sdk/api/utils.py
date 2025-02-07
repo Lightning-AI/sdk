@@ -322,7 +322,7 @@ class _DummyResponse:
         self.data = data
 
 
-# TODO: This should really come from some kind of metadata service
+# TODO: Drop this, no longer needed
 _MACHINE_TO_COMPUTE_NAME: Dict[Machine, str] = {
     Machine.CPU_SMALL: "m3.medium",
     Machine.CPU: "cpu-4",

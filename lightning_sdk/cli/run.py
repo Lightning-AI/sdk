@@ -8,7 +8,7 @@ from lightning_sdk.teamspace import Teamspace
 if TYPE_CHECKING:
     from lightning_sdk.cli.legacy import _LegacyLightningCLI
 
-_MACHINE_VALUES = tuple([machine.value for machine in Machine])
+_MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
 
 class _Run:

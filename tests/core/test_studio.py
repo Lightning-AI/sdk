@@ -279,7 +279,9 @@ def test_run_plugin(internal_studio_init_mocker, internal_studio_status_mocker, 
     studio.run_plugin("my-fancy-dummy-plugin")
 
 
-@pytest.mark.parametrize("cloud_compute", list(Machine))
+@pytest.mark.parametrize(
+    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
+)
 def test_run_job(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -302,7 +304,9 @@ def test_run_job(
     studio.run_plugin("jobs", command="python my-file.py", name="my-fancy-job-name", machine=cloud_compute)
 
 
-@pytest.mark.parametrize("cloud_compute", list(Machine))
+@pytest.mark.parametrize(
+    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
+)
 def test_run_mmt(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -336,7 +340,9 @@ def test_run_mmt(
     )
 
 
-@pytest.mark.parametrize("cloud_compute", list(Machine))
+@pytest.mark.parametrize(
+    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
+)
 def test_run_data_prep(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -369,7 +375,9 @@ def test_run_data_prep(
     )
 
 
-@pytest.mark.parametrize("cloud_compute", list(Machine))
+@pytest.mark.parametrize(
+    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
+)
 def test_run_inference(
     internal_studio_init_mocker,
     internal_user_api_mocker,
