@@ -3,6 +3,7 @@ from typing import Dict, List, Optional
 from rich.console import Console
 from simple_term_menu import TerminalMenu
 
+from lightning_sdk import Studio
 from lightning_sdk.api import OrgApi, TeamspaceApi
 from lightning_sdk.user import User
 
@@ -77,3 +78,24 @@ class _StudiosMenu:
                 possible_studios.append({"name": st.name, **teamspaces[teamspace_id]})
 
         return possible_studios
+
+    def _get_studio(self, name: str, teamspace: str) -> Studio:
+        """Get studio object from name and teamspace.
+
+        Args:
+            name: Name of the studio
+            teamspace: Name of the teamspace
+        """
+        if teamspace:
+            ts_splits = teamspace.split("/")
+            if len(ts_splits) != 2:
+                raise ValueError(f"Teamspace should be of format <OWNER>/<TEAMSPACE_NAME> but got {teamspace}")
+            owner, teamspace = ts_splits
+        else:
+            owner, teamspace = None, None
+
+        try:
+            studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False)
+        except (RuntimeError, ValueError):
+            studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
+        return studio

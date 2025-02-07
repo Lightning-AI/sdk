@@ -22,6 +22,9 @@ GROUPS
      aihub
        Interact with Lightning Studio - AI Hub.
 
+     connect
+       Connect to lightning products.
+
      delete
        Delete resources on the Lightning AI platform.
 
