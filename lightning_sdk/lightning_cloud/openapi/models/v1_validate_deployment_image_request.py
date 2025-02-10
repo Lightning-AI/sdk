@@ -42,21 +42,26 @@ class V1ValidateDeploymentImageRequest(object):
     """
     swagger_types = {
         'image': 'str',
+        'project_id': 'str',
         'secret': 'str'
     }
 
     attribute_map = {
         'image': 'image',
+        'project_id': 'projectId',
         'secret': 'secret'
     }
 
-    def __init__(self, image: 'str' =None, secret: 'str' =None):  # noqa: E501
+    def __init__(self, image: 'str' =None, project_id: 'str' =None, secret: 'str' =None):  # noqa: E501
         """V1ValidateDeploymentImageRequest - a model defined in Swagger"""  # noqa: E501
         self._image = None
+        self._project_id = None
         self._secret = None
         self.discriminator = None
         if image is not None:
             self.image = image
+        if project_id is not None:
+            self.project_id = project_id
         if secret is not None:
             self.secret = secret
 
@@ -80,6 +85,27 @@ class V1ValidateDeploymentImageRequest(object):
         """
 
         self._image = image
+
+    @property
+    def project_id(self) -> 'str':
+        """Gets the project_id of this V1ValidateDeploymentImageRequest.  # noqa: E501
+
+
+        :return: The project_id of this V1ValidateDeploymentImageRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, project_id: 'str'):
+        """Sets the project_id of this V1ValidateDeploymentImageRequest.
+
+
+        :param project_id: The project_id of this V1ValidateDeploymentImageRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._project_id = project_id
 
     @property
     def secret(self) -> 'str':
