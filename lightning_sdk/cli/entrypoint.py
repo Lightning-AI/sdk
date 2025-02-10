@@ -9,6 +9,7 @@ from rich.panel import Panel
 
 from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.ai_hub import _AIHub
+from lightning_sdk.cli.configure import _Configure
 from lightning_sdk.cli.connect import _Connect
 from lightning_sdk.cli.delete import _Delete
 from lightning_sdk.cli.download import _Downloads
@@ -45,6 +46,7 @@ class StudioCLI:
         self.switch = _Switch()
         self.generate = _Generate()
         self.connect = _Connect()
+        self.configure = _Configure()
 
         sys.excepthook = _notify_exception
 

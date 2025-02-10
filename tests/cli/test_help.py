@@ -22,6 +22,9 @@ GROUPS
      aihub
        Interact with Lightning Studio - AI Hub.
 
+     configure
+       Configure lightning products.
+
      connect
        Connect to lightning products.
 
