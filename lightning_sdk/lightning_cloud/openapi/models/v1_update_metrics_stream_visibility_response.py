@@ -41,14 +41,40 @@ class V1UpdateMetricsStreamVisibilityResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'visibility': 'V1ResourceVisibility'
     }
 
     attribute_map = {
+        'visibility': 'visibility'
     }
 
-    def __init__(self):  # noqa: E501
+    def __init__(self, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1UpdateMetricsStreamVisibilityResponse - a model defined in Swagger"""  # noqa: E501
+        self._visibility = None
         self.discriminator = None
+        if visibility is not None:
+            self.visibility = visibility
+
+    @property
+    def visibility(self) -> 'V1ResourceVisibility':
+        """Gets the visibility of this V1UpdateMetricsStreamVisibilityResponse.  # noqa: E501
+
+
+        :return: The visibility of this V1UpdateMetricsStreamVisibilityResponse.  # noqa: E501
+        :rtype: V1ResourceVisibility
+        """
+        return self._visibility
+
+    @visibility.setter
+    def visibility(self, visibility: 'V1ResourceVisibility'):
+        """Sets the visibility of this V1UpdateMetricsStreamVisibilityResponse.
+
+
+        :param visibility: The visibility of this V1UpdateMetricsStreamVisibilityResponse.  # noqa: E501
+        :type: V1ResourceVisibility
+        """
+
+        self._visibility = visibility
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

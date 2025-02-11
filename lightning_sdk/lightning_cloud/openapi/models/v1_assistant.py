@@ -44,6 +44,9 @@ class V1Assistant(object):
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'deployment_name': 'str',
+        'deployment_org_name': 'str',
+        'deployment_project_name': 'str',
         'description': 'str',
         'endpoint_id': 'str',
         'expected_cold_start_time': 'str',
@@ -70,6 +73,9 @@ class V1Assistant(object):
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'deployment_name': 'deploymentName',
+        'deployment_org_name': 'deploymentOrgName',
+        'deployment_project_name': 'deploymentProjectName',
         'description': 'description',
         'endpoint_id': 'endpointId',
         'expected_cold_start_time': 'expectedColdStartTime',
@@ -92,11 +98,14 @@ class V1Assistant(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, endpoint_id: 'str' =None, expected_cold_start_time: 'str' =None, file_uploads_enabled: 'bool' =None, id: 'str' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, deployment_name: 'str' =None, deployment_org_name: 'str' =None, deployment_project_name: 'str' =None, description: 'str' =None, endpoint_id: 'str' =None, expected_cold_start_time: 'str' =None, file_uploads_enabled: 'bool' =None, id: 'str' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Assistant - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._created_at = None
+        self._deployment_name = None
+        self._deployment_org_name = None
+        self._deployment_project_name = None
         self._description = None
         self._endpoint_id = None
         self._expected_cold_start_time = None
@@ -124,6 +133,12 @@ class V1Assistant(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if deployment_name is not None:
+            self.deployment_name = deployment_name
+        if deployment_org_name is not None:
+            self.deployment_org_name = deployment_org_name
+        if deployment_project_name is not None:
+            self.deployment_project_name = deployment_project_name
         if description is not None:
             self.description = description
         if endpoint_id is not None:
@@ -227,6 +242,69 @@ class V1Assistant(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def deployment_name(self) -> 'str':
+        """Gets the deployment_name of this V1Assistant.  # noqa: E501
+
+
+        :return: The deployment_name of this V1Assistant.  # noqa: E501
+        :rtype: str
+        """
+        return self._deployment_name
+
+    @deployment_name.setter
+    def deployment_name(self, deployment_name: 'str'):
+        """Sets the deployment_name of this V1Assistant.
+
+
+        :param deployment_name: The deployment_name of this V1Assistant.  # noqa: E501
+        :type: str
+        """
+
+        self._deployment_name = deployment_name
+
+    @property
+    def deployment_org_name(self) -> 'str':
+        """Gets the deployment_org_name of this V1Assistant.  # noqa: E501
+
+
+        :return: The deployment_org_name of this V1Assistant.  # noqa: E501
+        :rtype: str
+        """
+        return self._deployment_org_name
+
+    @deployment_org_name.setter
+    def deployment_org_name(self, deployment_org_name: 'str'):
+        """Sets the deployment_org_name of this V1Assistant.
+
+
+        :param deployment_org_name: The deployment_org_name of this V1Assistant.  # noqa: E501
+        :type: str
+        """
+
+        self._deployment_org_name = deployment_org_name
+
+    @property
+    def deployment_project_name(self) -> 'str':
+        """Gets the deployment_project_name of this V1Assistant.  # noqa: E501
+
+
+        :return: The deployment_project_name of this V1Assistant.  # noqa: E501
+        :rtype: str
+        """
+        return self._deployment_project_name
+
+    @deployment_project_name.setter
+    def deployment_project_name(self, deployment_project_name: 'str'):
+        """Sets the deployment_project_name of this V1Assistant.
+
+
+        :param deployment_project_name: The deployment_project_name of this V1Assistant.  # noqa: E501
+        :type: str
+        """
+
+        self._deployment_project_name = deployment_project_name
 
     @property
     def description(self) -> 'str':

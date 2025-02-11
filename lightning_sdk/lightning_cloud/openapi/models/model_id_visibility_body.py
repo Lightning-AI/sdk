@@ -41,19 +41,45 @@ class ModelIdVisibilityBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'emails': 'list[str]',
         'visibility': 'V1ResourceVisibility'
     }
 
     attribute_map = {
+        'emails': 'emails',
         'visibility': 'visibility'
     }
 
-    def __init__(self, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, emails: 'list[str]' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """ModelIdVisibilityBody - a model defined in Swagger"""  # noqa: E501
+        self._emails = None
         self._visibility = None
         self.discriminator = None
+        if emails is not None:
+            self.emails = emails
         if visibility is not None:
             self.visibility = visibility
+
+    @property
+    def emails(self) -> 'list[str]':
+        """Gets the emails of this ModelIdVisibilityBody.  # noqa: E501
+
+
+        :return: The emails of this ModelIdVisibilityBody.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._emails
+
+    @emails.setter
+    def emails(self, emails: 'list[str]'):
+        """Sets the emails of this ModelIdVisibilityBody.
+
+
+        :param emails: The emails of this ModelIdVisibilityBody.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._emails = emails
 
     @property
     def visibility(self) -> 'V1ResourceVisibility':
