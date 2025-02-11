@@ -520,6 +520,8 @@ def _download_model_files(
             total=float(response.size_bytes),
             unit_scale=True,
             unit_divisor=1000,
+            position=-1,
+            mininterval=1,
         )
 
     with ThreadPoolExecutor(max_workers=min(num_workers, len(response.filepaths))) as file_executor, ThreadPoolExecutor(
