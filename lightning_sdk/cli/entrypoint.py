@@ -13,7 +13,7 @@ from lightning_sdk.cli.ai_hub import _AIHub, aihub
 from lightning_sdk.cli.configure import _Configure, configure
 from lightning_sdk.cli.connect import _Connect, connect
 from lightning_sdk.cli.delete import _Delete, delete
-from lightning_sdk.cli.download import _Downloads
+from lightning_sdk.cli.download import _Downloads, download
 from lightning_sdk.cli.generate import _Generate, generate
 from lightning_sdk.cli.inspect import _Inspect
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
@@ -95,10 +95,12 @@ def logout() -> None:
     auth.clear()
 
 
+# TODO: handle exception hook registration
 main_cli_click.add_command(aihub)
 main_cli_click.add_command(configure)
 main_cli_click.add_command(connect)
 main_cli_click.add_command(delete)
+main_cli_click.add_command(download)
 main_cli_click.add_command(generate)
 
 
