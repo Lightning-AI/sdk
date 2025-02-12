@@ -14,7 +14,7 @@ from lightning_sdk.cli.configure import _Configure
 from lightning_sdk.cli.connect import _Connect
 from lightning_sdk.cli.delete import _Delete
 from lightning_sdk.cli.download import _Downloads
-from lightning_sdk.cli.generate import _Generate
+from lightning_sdk.cli.generate import _Generate, generate
 from lightning_sdk.cli.inspect import _Inspect
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
 from lightning_sdk.cli.list import _List
@@ -96,6 +96,7 @@ def logout() -> None:
 
 
 main_cli_click.add_command(aihub)
+main_cli_click.add_command(generate)
 
 
 if __name__ == "__main__":
