@@ -1,7 +1,7 @@
 from lightning_sdk.agents import Agent
 from lightning_sdk.ai_hub import AIHub
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noqa: F401
-from lightning_sdk.helpers import _check_version_and_prompt_upgrade
+from lightning_sdk.helpers import _check_version_and_prompt_upgrade, _set_tqdm_envvars_noninteractive
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
 from lightning_sdk.mmt import MMT
@@ -31,3 +31,4 @@ __all__ = [
 
 __version__ = "0.1.56"
 _check_version_and_prompt_upgrade(__version__)
+_set_tqdm_envvars_noninteractive()

@@ -1,8 +1,13 @@
 import functools
+import importlib
+import os
+import sys
 import warnings
 from typing import Optional
 
 import requests
+import tqdm
+import tqdm.std
 from packaging import version as packaging_version
 
 __package_name__ = "lightning-sdk"
@@ -47,3 +52,18 @@ def _check_version_and_prompt_upgrade(curr_version: str) -> None:
             UserWarning,
         )
     return
+
+
+def _set_tqdm_envvars_noninteractive() -> None:
+    # note: stderr is the default stream tqdm writes progressbars to
+    # so we check that one.
+    if os.isatty(sys.stderr.fileno()):
+        os.unsetenv("TQDM_POSITION")
+        os.unsetenv("TQDM_MININTERVAL")
+    else:
+        # makes use of https://github.com/tqdm/tqdm/blob/master/tqdm/utils.py#L34 to set defaults
+        os.environ.update({"TQDM_POSITION": "-1", "TQDM_MININTERVAL": "1"})
+
+    # reload to make sure env vars are parsed again
+    importlib.reload(tqdm.std)
+    importlib.reload(tqdm)
