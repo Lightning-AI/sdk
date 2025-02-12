@@ -1,9 +1,10 @@
-from typing import Optional
+from typing import Callable, Optional
 
 from rich.console import Console
 from rich.table import Table
+from typing_extensions import Literal
 
-from lightning_sdk import Machine, Teamspace
+from lightning_sdk import Machine, Studio, Teamspace
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.utils.resolve import _get_authed_user
@@ -12,13 +13,32 @@ from lightning_sdk.utils.resolve import _get_authed_user
 class _List(_TeamspacesMenu):
     """List resources on the Lightning AI platform."""
 
-    def studios(self, teamspace: Optional[str] = None, all: bool = False) -> None:  # noqa: A002
+    @staticmethod
+    def _sort_studios_key(sort_by: str) -> Callable[[Studio], str]:
+        """Return a key function to sort studios by a given attribute."""
+        sort_key_map = {
+            "name": lambda s: str(s.name),
+            "teamspace": lambda s: str(s.teamspace.name),
+            "status": lambda s: str(s.status),
+            "machine": lambda s: str(s.machine),
+            "cloud-account": lambda s: str(s.cloud_account),
+        }
+        return sort_key_map.get(sort_by, lambda s: s.name)
+
+    def studios(
+        self,
+        teamspace: Optional[str] = None,
+        all: bool = False,  # noqa: A002
+        sort_by: Optional[Literal["name", "teamspace", "status", "machine", "cloud-account"]] = None,
+    ) -> None:
         """List studios for a given teamspace.
 
         Args:
             teamspace: the teamspace to list studios from. Should be specified as {owner}/{name}
                 If not provided, can be selected in an interactive menu.
             all: if teamspece is not provided, list all studios in all teamspaces.
+            sort_by: the attribute to sort the studios by.
+                Can be one of "name", "teamspace", "status", "machine", "cloud-account".
 
         """
         studios = []
@@ -40,12 +60,12 @@ class _List(_TeamspacesMenu):
         table.add_column("Status")
         table.add_column("Machine")
         table.add_column("Cloud account")
-        for studio in studios:
+        for studio in sorted(studios, key=self._sort_studios_key(sort_by)):
             table.add_row(
                 studio.name,
                 f"{studio.teamspace.owner.name}/{studio.teamspace.name}",
                 str(studio.status),
-                str(studio.machine) if studio.machine is not None else None,
+                str(studio.machine) if studio.machine is not None else None,  # when None the cell is empty
                 str(studio.cloud_account),
             )
 
