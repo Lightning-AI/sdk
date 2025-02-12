@@ -18,11 +18,11 @@ class _List(_TeamspacesMenu):
     def _sort_studios_key(sort_by: str) -> Callable[[Studio], str]:
         """Return a key function to sort studios by a given attribute."""
         sort_key_map = {
-            "name": lambda s: str(s.name),
-            "teamspace": lambda s: str(s.teamspace.name),
-            "status": lambda s: str(s.status),
-            "machine": lambda s: str(s.machine),
-            "cloud-account": lambda s: str(s.cloud_account),
+            "name": lambda s: str(s.name or ""),
+            "teamspace": lambda s: str(s.teamspace.name or ""),
+            "status": lambda s: str(s.status or ""),
+            "machine": lambda s: str(s.machine or ""),
+            "cloud-account": lambda s: str(s.cloud_account or ""),
         }
         return sort_key_map.get(sort_by, lambda s: s.name)
 
