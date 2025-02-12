@@ -3,25 +3,34 @@ from typing import Optional
 from rich.console import Console
 from rich.table import Table
 
-from lightning_sdk import Machine
+from lightning_sdk import Machine, Teamspace
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lit_container import LitContainer
+from lightning_sdk.utils.resolve import _get_authed_user
 
 
 class _List(_TeamspacesMenu):
     """List resources on the Lightning AI platform."""
 
-    def studios(self, teamspace: Optional[str] = None) -> None:
+    def studios(self, teamspace: Optional[str] = None, all: bool = False) -> None:  # noqa: A002
         """List studios for a given teamspace.
 
         Args:
             teamspace: the teamspace to list studios from. Should be specified as {owner}/{name}
                 If not provided, can be selected in an interactive menu.
+            all: if teamspece is not provided, list all studios in all teamspaces.
 
         """
-        resolved_teamspace = self._resolve_teamspace(teamspace=teamspace)
-
-        studios = resolved_teamspace.studios
+        studios = []
+        if all and not teamspace:
+            user = _get_authed_user()
+            possible_teamspaces = self._get_possible_teamspaces(user)
+            for ts in possible_teamspaces.values():
+                teamspace = Teamspace(**ts)
+                studios.extend(teamspace.studios)
+        else:
+            resolved_teamspace = self._resolve_teamspace(teamspace=teamspace)
+            studios = resolved_teamspace.studios
 
         table = Table(
             pad_edge=True,
