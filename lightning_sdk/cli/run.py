@@ -162,9 +162,6 @@ class _Run:
 
         resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
 
-        if cloud_account is None:
-            cloud_account = resolved_teamspace.default_cloud_account
-
         path_mappings_dict = self._resolve_path_mapping(path_mappings=path_mappings)
 
         Job.run(
@@ -226,8 +223,6 @@ class _Run:
             machine_enum = machine
 
         resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
-        if cloud_account is None:
-            cloud_account = resolved_teamspace.default_cloud_account
 
         if image is None:
             raise RuntimeError("Image needs to be specified to run a multi-machine job")
