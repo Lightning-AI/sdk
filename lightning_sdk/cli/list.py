@@ -7,6 +7,7 @@ from typing_extensions import Literal
 
 from lightning_sdk import Job, Machine, Studio, Teamspace
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.lightning_cloud.openapi import V1MultiMachineJob
 from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.utils.resolve import _get_authed_user
 
@@ -140,17 +141,45 @@ class _List(_TeamspacesMenu):
 
         Console().print(table)
 
-    def mmts(self, teamspace: Optional[str] = None) -> None:
+    def _sort_mmts_key(self, sort_by: str) -> Callable[[V1MultiMachineJob], str]:
+        """Return a key function to sort multi-machine jobs by a given attribute."""
+        sort_key_map = {
+            "name": lambda j: str(j.name or ""),
+            "teamspace": lambda j: str(j.teamspace.name or ""),
+            "studio": lambda j: str(j.studio.name or ""),
+            "image": lambda j: str(j.image or ""),
+            "status": lambda j: str(j.status or ""),
+            "machine": lambda j: str(j.machine or ""),
+            "cloud-account": lambda j: str(j.cloud_account or ""),
+        }
+        return sort_key_map.get(sort_by, lambda j: j.name)
+
+    def mmts(
+        self,
+        teamspace: Optional[str] = None,
+        all: bool = False,  # noqa: A002
+        sort_by: Optional[Literal["name", "teamspace", "studio", "image", "status", "machine", "cloud-account"]] = None,
+    ) -> None:
         """List multi-machine jobs for a given teamspace.
 
         Args:
             teamspace: the teamspace to list jobs from. Should be specified as {owner}/{name}
                 If not provided, can be selected in an interactive menu.
+            all: if teamspece is not provided, list all multi-machine jobs in all teamspaces.
+            sort_by: the attribute to sort the multi-machine jobs by.
+                Can be one of "name", "teamspace", "studio", "image", "status", "machine", "cloud-account".
 
         """
-        resolved_teamspace = self._resolve_teamspace(teamspace=teamspace)
-
-        jobs = resolved_teamspace.multi_machine_jobs
+        jobs = []
+        if all and not teamspace:
+            user = _get_authed_user()
+            possible_teamspaces = self._get_possible_teamspaces(user)
+            for ts in possible_teamspaces.values():
+                teamspace = Teamspace(**ts)
+                jobs.extend(teamspace.multi_machine_jobs)
+        else:
+            resolved_teamspace = self._resolve_teamspace(teamspace=teamspace)
+            jobs = resolved_teamspace.multi_machine_jobs
 
         table = Table(pad_edge=True)
         table.add_column("Name")
@@ -161,7 +190,7 @@ class _List(_TeamspacesMenu):
         table.add_column("Machine")
         table.add_column("Num Machines")
         table.add_column("Total Cost")
-        for j in jobs:
+        for j in sorted(jobs, key=self._sort_mmts_key(sort_by)):
             # we know we just fetched these, so no need to refetch
             j._prevent_refetch_latest = True
             j._internal_job._prevent_refetch_latest = True
