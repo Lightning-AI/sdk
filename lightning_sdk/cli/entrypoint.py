@@ -11,7 +11,7 @@ from rich.panel import Panel
 from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.ai_hub import _AIHub, aihub
 from lightning_sdk.cli.configure import _Configure, configure
-from lightning_sdk.cli.connect import _Connect
+from lightning_sdk.cli.connect import _Connect, connect
 from lightning_sdk.cli.delete import _Delete
 from lightning_sdk.cli.download import _Downloads
 from lightning_sdk.cli.generate import _Generate, generate
@@ -97,6 +97,7 @@ def logout() -> None:
 
 main_cli_click.add_command(aihub)
 main_cli_click.add_command(configure)
+main_cli_click.add_command(connect)
 main_cli_click.add_command(generate)
 
 
