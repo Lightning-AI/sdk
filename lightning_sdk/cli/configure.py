@@ -51,7 +51,12 @@ def configure() -> None:
 #         "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
 #     ),
 # )
-# @click.option("--overwrite", is_flag=True, help="Whether to overwrite the SSH key and config if they already exist.")
+# @click.option(
+#     "--overwrite",
+#     is_flag=True,
+#     flag_value=True,
+#     help="Whether to overwrite the SSH key and config if they already exist.",
+# )
 def ssh(name: Optional[str] = None, teamspace: Optional[str] = None, overwrite: bool = False) -> None:
     """Get SSH config entry for a studio."""
     auth = Auth()
