@@ -15,7 +15,7 @@ from lightning_sdk.cli.connect import _Connect, connect
 from lightning_sdk.cli.delete import _Delete, delete
 from lightning_sdk.cli.download import _Downloads, download
 from lightning_sdk.cli.generate import _Generate, generate
-from lightning_sdk.cli.inspect import _Inspect
+from lightning_sdk.cli.inspect import _Inspect, inspect
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
 from lightning_sdk.cli.list import _List
 from lightning_sdk.cli.run import _Run
@@ -102,6 +102,7 @@ main_cli_click.add_command(connect)
 main_cli_click.add_command(delete)
 main_cli_click.add_command(download)
 main_cli_click.add_command(generate)
+main_cli_click.add_command(inspect)
 
 
 if __name__ == "__main__":
