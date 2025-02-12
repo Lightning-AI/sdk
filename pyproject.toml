@@ -33,6 +33,7 @@ dependencies = [
     "lightning-utilities", # for legacy CLI
     "docker", # for lit-container-registry
     "wget", # for CLI
+    "click", # for CLI
 ]
 
 dynamic = ["version"]

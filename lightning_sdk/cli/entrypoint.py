@@ -9,7 +9,7 @@ from rich.console import Console
 from rich.panel import Panel
 
 from lightning_sdk.api.studio_api import _cloud_url
-from lightning_sdk.cli.ai_hub import _AIHub
+from lightning_sdk.cli.ai_hub import _AIHub, aihub
 from lightning_sdk.cli.configure import _Configure
 from lightning_sdk.cli.connect import _Connect
 from lightning_sdk.cli.delete import _Delete
@@ -76,7 +76,7 @@ def main_cli_click() -> None:
     pass
 
 
-@main_cli_click.command
+# @main_cli_click.command
 def login() -> None:
     """Login to Lightning AI Studios."""
     auth = Auth()
@@ -88,11 +88,14 @@ def login() -> None:
         raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
 
 
-@main_cli_click.command
+# @main_cli_click.command
 def logout() -> None:
     """Logout from Lightning AI Studios."""
     auth = Auth()
     auth.clear()
+
+
+main_cli_click.add_command(aihub)
 
 
 if __name__ == "__main__":
