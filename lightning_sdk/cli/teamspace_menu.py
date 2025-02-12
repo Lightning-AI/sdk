@@ -27,7 +27,7 @@ class _TeamspacesMenu:
             if ts["name"] == name and (ts["user"] == owner or ts["org"] == owner):
                 return ts
 
-        Console().print("Could not find Teamspace {teamspace}, please select it from the list:")
+        Console().print(f"Could not find Teamspace {teamspace}, please select it from the list:")
         return self._get_teamspace_from_interactive_menu(possible_teamspaces)
 
     @staticmethod
