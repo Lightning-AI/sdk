@@ -164,7 +164,6 @@ class _Run:
 
         if cloud_account is None:
             cloud_account = resolved_teamspace.default_cloud_account
-        machine_enum = Machine(machine.upper())
 
         path_mappings_dict = self._resolve_path_mapping(path_mappings=path_mappings)
 
