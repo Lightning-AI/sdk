@@ -193,19 +193,21 @@ class _List(_TeamspacesMenu):
         for j in sorted(jobs, key=self._sort_mmts_key(sort_by)):
             # we know we just fetched these, so no need to refetch
             j._prevent_refetch_latest = True
-            j._internal_job._prevent_refetch_latest = True
+            with suppress(AttributeError):
+                j._internal_job._prevent_refetch_latest = True
 
             studio = j.studio
-            table.add_row(
-                j.name,
-                f"{j.teamspace.owner.name}/{j.teamspace.name}",
-                studio.name if studio else None,
-                j.image,
-                str(j.status),
-                str(j.machine),
-                str(j.num_machines),
-                str(j.total_cost),
-            )
+            with suppress(RuntimeError):
+                table.add_row(
+                    j.name,
+                    f"{j.teamspace.owner.name}/{j.teamspace.name}",
+                    studio.name if studio else None,
+                    j.image,
+                    str(j.status),
+                    str(j.machine),
+                    str(j.num_machines),
+                    str(j.total_cost),
+                )
 
         Console().print(table)
 
