@@ -2,6 +2,7 @@ import sys
 from types import TracebackType
 from typing import Type
 
+import click
 from fire import Fire
 from lightning_utilities.core.imports import RequirementCache
 from rich.console import Console
@@ -52,18 +53,11 @@ class StudioCLI:
 
     def login(self) -> None:
         """Login to Lightning AI Studios."""
-        auth = Auth()
-        auth.clear()
-
-        try:
-            auth.authenticate()
-        except ConnectionError:
-            raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
+        return login()
 
     def logout(self) -> None:
         """Logout from Lightning AI Studios."""
-        auth = Auth()
-        auth.clear()
+        return logout()
 
 
 def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:  # No
@@ -75,6 +69,30 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
 def main_cli() -> None:
     """CLI entrypoint."""
     Fire(StudioCLI(), name="lightning")
+
+
+@click.group(name="lightning", help="Command line interface (CLI) to interact with/manage Lightning AI Studios.")
+def main_cli_click() -> None:
+    pass
+
+
+@main_cli_click.command
+def login() -> None:
+    """Login to Lightning AI Studios."""
+    auth = Auth()
+    auth.clear()
+
+    try:
+        auth.authenticate()
+    except ConnectionError:
+        raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
+
+
+@main_cli_click.command
+def logout() -> None:
+    """Logout from Lightning AI Studios."""
+    auth = Auth()
+    auth.clear()
 
 
 if __name__ == "__main__":
