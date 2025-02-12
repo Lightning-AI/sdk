@@ -235,7 +235,7 @@ class Job(_BaseJob):
         return self._internal_job.delete()
 
     @property
-    def status(self) -> "Status":
+    def status(self) -> Optional["Status"]:
         """The current status of the job."""
         return self._internal_job.status
 

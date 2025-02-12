@@ -1,3 +1,4 @@
+from contextlib import suppress
 from typing import Callable, Optional
 
 from rich.console import Console
@@ -83,9 +84,7 @@ class _List(_TeamspacesMenu):
 
         jobs = resolved_teamspace.jobs
 
-        table = Table(
-            pad_edge=True,
-        )
+        table = Table(pad_edge=True)
         table.add_column("Name")
         table.add_column("Teamspace")
         table.add_column("Studio")
@@ -99,15 +98,16 @@ class _List(_TeamspacesMenu):
             j._internal_job._prevent_refetch_latest = True
 
             studio = j.studio
-            table.add_row(
-                j.name,
-                f"{j.teamspace.owner.name}/{j.teamspace.name}",
-                studio.name if studio else None,
-                j.image,
-                str(j.status),
-                str(j.machine),
-                f"{j.total_cost:.3f}",
-            )
+            with suppress(RuntimeError):
+                table.add_row(
+                    j.name,
+                    f"{j.teamspace.owner.name}/{j.teamspace.name}",
+                    studio.name if studio else None,
+                    j.image,
+                    str(j.status) if j.status is not None else None,
+                    str(j.machine),
+                    f"{j.total_cost:.3f}",
+                )
 
         Console().print(table)
 
