@@ -1,3 +1,4 @@
+import os
 import platform
 import uuid
 from pathlib import Path
@@ -6,6 +7,7 @@ from typing import Optional, Union
 from rich.console import Console
 
 from lightning_sdk.cli.generate import _Generate
+from lightning_sdk.cli.studios_menu import _StudiosMenu
 from lightning_sdk.lightning_cloud.login import Auth
 
 
@@ -26,7 +28,7 @@ def _download_file(url: str, local_path: Path, overwrite: bool = True, chmod: Op
         local_path.chmod(0o600)
 
 
-class _Configure(_Generate):
+class _Configure(_StudiosMenu):
     """Configure lightning products."""
 
     @staticmethod
@@ -56,12 +58,15 @@ class _Configure(_Generate):
         )
         _download_file(f"https://lightning.ai/setup/ssh-public?t={api_key}&id={key_id}", path_pub, overwrite=overwrite)
 
-    def ssh(self, overwrite: bool = False, ssh_key_name: str = "lightning_rsa") -> None:
+    def ssh(self, name: Optional[str] = None, teamspace: Optional[str] = None, overwrite: bool = False) -> None:
         """Get SSH config entry for a studio.
 
         Args:
+            name: The name of the studio to obtain SSH config.
+                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
+            teamspace: The teamspace the studio is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.
+                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
             overwrite: Whether to overwrite the SSH key and config if they already exist.
-            ssh_key_name: The name of the SSH key to generate
         """
         auth = Auth()
         auth.authenticate()
@@ -69,24 +74,30 @@ class _Configure(_Generate):
         ssh_dir = Path.home() / ".ssh"
         ssh_dir.mkdir(parents=True, exist_ok=True)
 
-        key_path = ssh_dir / ssh_key_name
+        key_path = ssh_dir / "lightning_rsa"
         config_path = ssh_dir / "config"
 
         # Check if the SSH key already exists
         if key_path.exists() and (key_path.with_suffix(".pub")).exists() and not overwrite:
             console.print(f"SSH key already exists at {key_path}")
         else:
-            self._download_ssh_keys(auth.api_key, ssh_home=ssh_dir, ssh_key_name=ssh_key_name, overwrite=overwrite)
+            self._download_ssh_keys(auth.api_key, ssh_home=ssh_dir, ssh_key_name="lightning_rsa", overwrite=overwrite)
             console.print(f"SSH key generated and saved to {key_path}")
 
         # Check if the SSH config already contains the required configuration
-        config_content = self._generate_ssh_config(str(key_path))
+        studio = self._get_studio(name=name, teamspace=teamspace)
+        config_content = _Generate._generate_ssh_config(
+            key_path=str(key_path), user=f"s_{studio._studio.id}", host=studio.name
+        )
         if config_path.exists():
             with config_path.open("r") as config_file:
-                if config_content.strip() in config_file.read():
+                # check if the host already exists in the config
+                if f"Host {studio.name}" in config_file.read():
                     console.print("SSH config already contains the required configuration.")
                     return
 
         with config_path.open("a") as config_file:
+            config_file.write(os.linesep)
             config_file.write(config_content)
+            config_file.write(os.linesep)
             console.print(f"SSH config updated at {config_path}")

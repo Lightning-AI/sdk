@@ -9,8 +9,10 @@ class _Generate(_StudiosMenu):
     """Generate configs (such as ssh for studio) and print them to commandline."""
 
     @staticmethod
-    def _generate_ssh_config(key_path: str) -> str:
-        return f"""Host ssh.lightning.ai
+    def _generate_ssh_config(key_path: str, host: str, user: str) -> str:
+        return f"""Host {host}
+  User {user}
+  Hostname ssh.lightning.ai
   IdentityFile {key_path}
   IdentitiesOnly yes
   ServerAliveInterval 15
@@ -30,6 +32,8 @@ class _Generate(_StudiosMenu):
         """
         studio = self._get_studio(name=name, teamspace=teamspace)
 
+        conf = self._generate_ssh_config(
+            key_path="~/.ssh/lightning_rsa", user=f"s_{studio._studio.id}", host=studio.name
+        )
         # Print the SSH config
-        conf = f"# ssh s_{studio._studio.id}@ssh.lightning.ai\n\n" + self._generate_ssh_config("~/.ssh/lightning_rsa")
-        Console().print(conf)
+        Console().print(f"# ssh s_{studio._studio.id}@ssh.lightning.ai\n\n" + conf)

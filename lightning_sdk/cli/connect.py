@@ -3,7 +3,6 @@ import sys
 from typing import Optional
 
 from lightning_sdk.cli.configure import _Configure
-from lightning_sdk.lightning_cloud.login import Auth
 
 
 class _Connect(_Configure):
@@ -16,16 +15,11 @@ class _Connect(_Configure):
             name: The name of the studio to connect to.
             teamspace: The teamspace the studio is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.
         """
-        auth = Auth()
-        auth.authenticate()  # this is maybe not needed
+        self.ssh(name=name, teamspace=teamspace, overwrite=False)
         studio = self._get_studio(name=name, teamspace=teamspace)
-        host = "ssh.lightning.ai"
-        username = f"s_{studio._studio.id}"
-
-        self.ssh(overwrite=False)
 
         try:
-            subprocess.run(["ssh", f"{username}@{host}"])
+            subprocess.run(["ssh", studio.name])
         except Exception as ex:
             print(f"Failed to establish SSH connection: {ex}")
             sys.exit(1)
