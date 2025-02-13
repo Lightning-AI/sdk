@@ -335,6 +335,14 @@ class Deployment:
         return None
 
     @property
+    def release_id(self) -> Optional[str]:
+        """The cloud_account of the replicas."""
+        if self._deployment:
+            self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
+            return self._deployment.release_id
+        return None
+
+    @property
     def user(self) -> Optional[User]:
         """The teamspace of the deployment."""
         return self._user

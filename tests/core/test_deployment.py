@@ -8,6 +8,7 @@ from lightning_sdk.deployment import deployment as deployment_module
 from lightning_sdk.deployment.deployment import AutoScaleConfig, HttpHealthCheck
 from lightning_sdk.lightning_cloud.openapi import (
     V1AutoscalingSpec,
+    V1AutoscalingTargetMetric,
     V1Deployment,
     V1DeploymentStatus,
     V1Endpoint,
@@ -176,6 +177,8 @@ def test_to_autoscaling():
         replicas=1,
     )
 
+    assert isinstance(autoscaling_with_multiple_metrics.target_metric[0], V1AutoscalingTargetMetric)
+
     assert autoscaling_with_multiple_metrics.min_replicas == 2
     assert autoscaling_with_multiple_metrics.max_replicas == 2
     assert len(autoscaling_with_multiple_metrics.target_metric) == 2
@@ -306,6 +309,7 @@ def test_deployment_update(monkeypatch):
         spec=V1JobSpec(),
         endpoint=V1Endpoint(),
         strategy=None,
+        release_id="release-id",
     )
 
     monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
@@ -325,6 +329,7 @@ def test_deployment_update(monkeypatch):
     readiness_probe = client.jobs_service_update_deployment._mock_mock_calls[0].kwargs["body"].spec.readiness_probe
     assert readiness_probe.http_get.path == "/health"
     assert readiness_probe.http_get.port == 8000
+    assert deployment.release_id == "release-id"
 
 
 def test_deployment_stop(monkeypatch):

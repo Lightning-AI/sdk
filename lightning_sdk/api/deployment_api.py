@@ -459,7 +459,7 @@ def to_autoscaling(
             target_metric.target = str(target_metric.target)
 
     metrics = (
-        target_metrics
+        [V1AutoscalingTargetMetric(name=t.name, target=t.target) for t in target_metrics]
         if target_metrics is not None
         else [V1AutoscalingTargetMetric(name=metric, target=str(threshold))]
     )
