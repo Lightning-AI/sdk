@@ -18,7 +18,7 @@ from lightning_sdk.cli.generate import _Generate, generate
 from lightning_sdk.cli.inspect import _Inspect, inspect
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
 from lightning_sdk.cli.list import _List, list_cli
-from lightning_sdk.cli.run import _Run
+from lightning_sdk.cli.run import _Run, run
 from lightning_sdk.cli.serve import _Docker, _LitServe
 from lightning_sdk.cli.start import _Start
 from lightning_sdk.cli.stop import _Stop
@@ -104,6 +104,7 @@ main_cli_click.add_command(download)
 main_cli_click.add_command(generate)
 main_cli_click.add_command(inspect)
 main_cli_click.add_command(list_cli)
+main_cli_click.add_command(run)
 
 
 if __name__ == "__main__":
