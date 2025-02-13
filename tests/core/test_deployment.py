@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from lightning_sdk import teamspace, user
 from lightning_sdk.api import deployment_api as deployment_api_module
 from lightning_sdk.deployment import deployment as deployment_module
 from lightning_sdk.deployment.deployment import AutoScaleConfig, HttpHealthCheck
@@ -17,6 +18,22 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
+
+
+def test_deployment_resolve_teamspace(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
+    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "_get_cluster", MagicMock())
+    monkeypatch.setattr(deployment_module, "DeploymentApi", MagicMock())
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", resolve_teamspace_mock)
+
+    deployment_module.Deployment(name="name", teamspace="teamspace", org="org", user="user")
+    kwargs = resolve_teamspace_mock._mock_mock_calls[0].kwargs
+    assert kwargs["teamspace"] == "teamspace"
+    assert kwargs["org"].name == "org"
+    assert isinstance(kwargs["user"], user.User)
 
 
 def test_to_autoscaling():
@@ -280,6 +297,7 @@ def test_deployment_start_already_exist(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
 
     teamspace_mock = MagicMock()
     teamspace_mock.id = "project_id"
@@ -298,6 +316,7 @@ def test_deployment_update(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
 
     teamspace_mock = MagicMock()
     teamspace_mock.id = "project_id"
@@ -336,6 +355,7 @@ def test_deployment_stop(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
 
     teamspace_mock = MagicMock()
     teamspace_mock.id = "project_id"
@@ -381,6 +401,7 @@ def test_deployment_get(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
     monkeypatch.setattr(deployment_module, "requests", requests_mock)
 
@@ -416,6 +437,7 @@ def test_deployment_post(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
     monkeypatch.setattr(deployment_module, "requests", requests_mock)
 
@@ -451,6 +473,7 @@ def test_deployment_put(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
     monkeypatch.setattr(deployment_module, "requests", requests_mock)
 
@@ -485,6 +508,7 @@ def test_deployment_delete(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
     monkeypatch.setattr(deployment_module, "requests", requests_mock)
 

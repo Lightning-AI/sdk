@@ -63,6 +63,7 @@ class Deployment:
         self._request_session = None
 
         self._auth = login.Auth()
+        self._user = None
 
         try:
             self._auth.authenticate()
@@ -73,10 +74,8 @@ class Deployment:
 
         self._name = name
         self._org = _resolve_org(org)
-        self._user = _resolve_user(user)
-        self._teamspace = _resolve_teamspace(
-            teamspace=teamspace, org=self._org, user=self._user if self._org is None else None
-        )
+        self._user = _resolve_user(self._user or user)
+        self._teamspace = _resolve_teamspace(teamspace=teamspace, org=self._org, user=self._user)
         if self._teamspace is None:
             raise ValueError("You need to pass a teamspace or an org for your deployment.")
 
