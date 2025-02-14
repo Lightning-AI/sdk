@@ -5,7 +5,8 @@ from unittest.mock import call, patch
 
 import pytest
 
-from lightning_sdk.cli.serve import _Docker, _LitServe
+from lightning_sdk.cli.docker import _Docker
+from lightning_sdk.cli.serve import _LitServe
 
 
 @pytest.fixture()

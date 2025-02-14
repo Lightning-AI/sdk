@@ -13,13 +13,14 @@ from lightning_sdk.cli.ai_hub import _AIHub, aihub
 from lightning_sdk.cli.configure import _Configure, configure
 from lightning_sdk.cli.connect import _Connect, connect
 from lightning_sdk.cli.delete import _Delete, delete
+from lightning_sdk.cli.docker import _Docker, dockerize
 from lightning_sdk.cli.download import _Downloads, download
 from lightning_sdk.cli.generate import _Generate, generate
 from lightning_sdk.cli.inspect import _Inspect, inspect
 from lightning_sdk.cli.legacy import _LegacyLightningCLI
 from lightning_sdk.cli.list import _List, list_cli
 from lightning_sdk.cli.run import _Run, run
-from lightning_sdk.cli.serve import _Docker, _LitServe
+from lightning_sdk.cli.serve import _LitServe, serve
 from lightning_sdk.cli.start import _Start
 from lightning_sdk.cli.stop import _Stop
 from lightning_sdk.cli.switch import _Switch
@@ -100,11 +101,13 @@ main_cli_click.add_command(aihub)
 main_cli_click.add_command(configure)
 main_cli_click.add_command(connect)
 main_cli_click.add_command(delete)
+main_cli_click.add_command(dockerize)
 main_cli_click.add_command(download)
 main_cli_click.add_command(generate)
 main_cli_click.add_command(inspect)
 main_cli_click.add_command(list_cli)
 main_cli_click.add_command(run)
+main_cli_click.add_command(serve)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ from typing import Dict
 
 import pytest
 
-from lightning_sdk.cli.run import _Run
+from lightning_sdk.cli.run import _resolve_path_mapping
 
 
 @pytest.mark.parametrize(
@@ -21,4 +21,4 @@ from lightning_sdk.cli.run import _Run
     ],
 )
 def test_parse_run_path_mapping(input_mappings: str, expected: Dict[str, str]):
-    assert _Run._resolve_path_mapping(input_mappings) == expected
+    assert _resolve_path_mapping(input_mappings) == expected
