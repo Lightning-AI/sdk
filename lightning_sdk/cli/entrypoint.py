@@ -22,7 +22,7 @@ from lightning_sdk.cli.list import _List, list_cli
 from lightning_sdk.cli.run import _Run, run
 from lightning_sdk.cli.serve import _LitServe, serve
 from lightning_sdk.cli.start import _Start, start
-from lightning_sdk.cli.stop import _Stop
+from lightning_sdk.cli.stop import _Stop, stop
 from lightning_sdk.cli.switch import _Switch
 from lightning_sdk.cli.upload import _Uploads
 from lightning_sdk.lightning_cloud.login import Auth
@@ -109,6 +109,7 @@ main_cli_click.add_command(list_cli)
 main_cli_click.add_command(run)
 main_cli_click.add_command(serve)
 main_cli_click.add_command(start)
+main_cli_click.add_command(stop)
 
 
 if __name__ == "__main__":
