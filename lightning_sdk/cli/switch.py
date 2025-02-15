@@ -1,14 +1,16 @@
 from typing import Optional
 
+import click
+
 from lightning_sdk import Machine, Studio
+
+_MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
 
 class _Switch:
     """Switch machines for resources on the Lightning AI platform."""
 
     def __init__(self) -> None:
-        _machine_values = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
-
         docstr_studio = f"""Switch a studio to a given machine.
 
         Args:
@@ -16,28 +18,63 @@ class _Switch:
                 If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
             teamspace: The teamspace the studio is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.
                 If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
-            machine: The machine type to switch to. One of {", ".join(_machine_values)}.
+            machine: The machine type to switch to. One of {", ".join(_MACHINE_VALUES)}.
                 Defaults to the CPU Machine.
         """
         self.studio.__func__.__doc__ = docstr_studio
 
     def studio(self, name: Optional[str] = None, teamspace: Optional[str] = None, machine: str = "CPU") -> None:
-        if teamspace is not None:
-            ts_splits = teamspace.split("/")
-            if len(ts_splits) != 2:
-                raise ValueError(f"Teamspace should be of format <OWNER>/<TEAMSPACE_NAME> but got {teamspace}")
-            owner, teamspace = ts_splits
-        else:
-            owner, teamspace = None, None
+        studio(name=name, teamspace=teamspace, machine=machine)
 
-        try:
-            studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False)
-        except (RuntimeError, ValueError):
-            studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
 
-        try:
-            resolved_machine = getattr(Machine, machine.upper(), Machine(machine, machine))
-        except KeyError:
-            resolved_machine = machine
+@click.group("switch")
+def switch() -> None:
+    """Switch machines for resources on the Lightning AI platform."""
 
-        studio.switch_machine(resolved_machine)
+
+# @switch.command("studio")
+# @click.option(
+#     "--name",
+#     default=None,
+#     help=(
+#         "The name of the studio to start. "
+#         "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
+#     ),
+# )
+# @click.option(
+#     "--teamspace",
+#     default=None,
+#     help=(
+#         "The teamspace the studio is part of. "
+#         "Should be of format <OWNER>/<TEAMSPACE_NAME>. "
+#         "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
+#     ),
+# )
+# @click.option(
+#     "--machine",
+#     default="CPU",
+#     show_default=True,
+#     type=click.Choice(_MACHINE_VALUES),
+#     help="The machine type to switch to.",
+# )
+def studio(name: Optional[str] = None, teamspace: Optional[str] = None, machine: str = "CPU") -> None:
+    """Switch a studio to a given machine."""
+    if teamspace is not None:
+        ts_splits = teamspace.split("/")
+        if len(ts_splits) != 2:
+            raise ValueError(f"Teamspace should be of format <OWNER>/<TEAMSPACE_NAME> but got {teamspace}")
+        owner, teamspace = ts_splits
+    else:
+        owner, teamspace = None, None
+
+    try:
+        studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False)
+    except (RuntimeError, ValueError):
+        studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
+
+    try:
+        resolved_machine = getattr(Machine, machine.upper(), Machine(machine, machine))
+    except KeyError:
+        resolved_machine = machine
+
+    studio.switch_machine(resolved_machine)
