@@ -24,7 +24,7 @@ from lightning_sdk.cli.serve import _LitServe, serve
 from lightning_sdk.cli.start import _Start, start
 from lightning_sdk.cli.stop import _Stop, stop
 from lightning_sdk.cli.switch import _Switch, switch
-from lightning_sdk.cli.upload import _Uploads
+from lightning_sdk.cli.upload import _Uploads, upload
 from lightning_sdk.lightning_cloud.login import Auth
 
 _LIGHTNING_AVAILABLE = RequirementCache("lightning")
@@ -111,6 +111,7 @@ main_cli_click.add_command(serve)
 main_cli_click.add_command(start)
 main_cli_click.add_command(stop)
 main_cli_click.add_command(switch)
+main_cli_click.add_command(upload)
 
 
 if __name__ == "__main__":
