@@ -13,104 +13,33 @@ from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.utils.resolve import _get_authed_user
 
 
-class _List(_TeamspacesMenu):
-    """List resources on the Lightning AI platform."""
-
-    def studios(
-        self,
-        teamspace: Optional[str] = None,
-        all: bool = False,  # noqa: A002
-        sort_by: Optional[Literal["name", "teamspace", "status", "machine", "cloud-account"]] = None,
-    ) -> None:
-        """List studios for a given teamspace.
-
-        Args:
-            teamspace: the teamspace to list studios from. Should be specified as {owner}/{name}
-                If not provided, can be selected in an interactive menu.
-            all: if teamspace is not provided, list all studios in all teamspaces.
-            sort_by: the attribute to sort the studios by.
-                Can be one of "name", "teamspace", "status", "machine", "cloud-account".
-
-        """
-        studios(teamspace=teamspace, all=all, sort_by=sort_by)
-
-    def jobs(
-        self,
-        teamspace: Optional[str] = None,
-        all: bool = False,  # noqa: A002
-        sort_by: Optional[Literal["name", "teamspace", "status", "studio", "machine", "image", "cloud-account"]] = None,
-    ) -> None:
-        """List jobs for a given teamspace.
-
-        Args:
-            teamspace: the teamspace to list jobs from. Should be specified as {owner}/{name}
-                If not provided, can be selected in an interactive menu.
-            all: if teamspece is not provided, list all jobs in all teamspaces.
-            sort_by: the attribute to sort the jobs by.
-                Can be one of "name", "teamspace", "status", "studio", "machine", "image", "cloud-account".
-
-        """
-        jobs(teamspace=teamspace, all=all, sort_by=sort_by)
-
-    def mmts(
-        self,
-        teamspace: Optional[str] = None,
-        all: bool = False,  # noqa: A002
-        sort_by: Optional[Literal["name", "teamspace", "studio", "image", "status", "machine", "cloud-account"]] = None,
-    ) -> None:
-        """List multi-machine jobs for a given teamspace.
-
-        Args:
-            teamspace: the teamspace to list jobs from. Should be specified as {owner}/{name}
-                If not provided, can be selected in an interactive menu.
-            all: if teamspece is not provided, list all multi-machine jobs in all teamspaces.
-            sort_by: the attribute to sort the multi-machine jobs by.
-                Can be one of "name", "teamspace", "studio", "image", "status", "machine", "cloud-account".
-
-        """
-        mmts(teamspace=teamspace, all=all, sort_by=sort_by)
-
-    def containers(self, teamspace: Optional[str] = None) -> None:
-        """Display the list of available containers.
-
-        Args:
-            teamspace: The teamspace to list containers from. Should be specified as {owner}/{name}
-                If not provided, can be selected in an interactive menu.
-        """
-        containers(teamspace=teamspace)
-
-    def machines(self) -> None:
-        """Display the list of available machines."""
-        machines()
-
-
 @click.group(name="list")
 def list_cli() -> None:
     """List resources on the Lightning AI platform."""
 
 
-# @list_cli.command(name="studios")
-# @click.option(
-#     "--teamspace",
-#     default=None,
-#     help=(
-#         "the teamspace to list studios from. Should be specified as {owner}/{name}"
-#         "If not provided, can be selected in an interactive menu."
-#     ),
-# )
-# @click.option(
-#     "--all",
-#     is_flag=True,
-#     flag_value=True,
-#     default=False,
-#     help="if teamspace is not provided, list all studios in all teamspaces.",
-# )
-# @click.option(
-#     "--sort-by",
-#     default=None,
-#     type=click.Choice(["name", "teamspace", "status", "machine", "cloud-account"], case_sensitive=False),
-#     help="the attribute to sort the studios by.",
-# )
+@list_cli.command(name="studios")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "the teamspace to list studios from. Should be specified as {owner}/{name}"
+        "If not provided, can be selected in an interactive menu."
+    ),
+)
+@click.option(
+    "--all",
+    is_flag=True,
+    flag_value=True,
+    default=False,
+    help="if teamspace is not provided, list all studios in all teamspaces.",
+)
+@click.option(
+    "--sort-by",
+    default=None,
+    type=click.Choice(["name", "teamspace", "status", "machine", "cloud-account"], case_sensitive=False),
+    help="the attribute to sort the studios by.",
+)
 def studios(
     teamspace: Optional[str] = None,
     all: bool = False,  # noqa: A002
@@ -149,30 +78,31 @@ def studios(
     Console().print(table)
 
 
-# @list_cli.command(name="jobs")
-# @click.option(
-#     "--teamspace",
-#     default=None,
-#     help=(
-#         "the teamspace to list jobs from. Should be specified as {owner}/{name}"
-#         "If not provided, can be selected in an interactive menu."
-#     ),
-# )
-# @click.option(
-#     "--all",
-#     is_flag=True,
-#     flag_value=True,
-#     default=False,
-#     help="if teamspace is not provided, list all jobs in all teamspaces.",
-# )
-# @click.option(
-#     "--sort-by",
-#     default=None,
-#     type=click.Choice(
-#         ["name", "teamspace", "status", "studio", "machine", "image", "cloud-account"], case_sensitive=False
-#     ),
-#     help="the attribute to sort the jobs by.",
-# )
+@list_cli.command(name="jobs")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "the teamspace to list jobs from. Should be specified as {owner}/{name}"
+        "If not provided, can be selected in an interactive menu."
+    ),
+)
+@click.option(
+    "--all",
+    is_flag=True,
+    flag_value=True,
+    default=False,
+    help="if teamspace is not provided, list all jobs in all teamspaces.",
+)
+@click.option(
+    "--sort-by",
+    "--sort_by",
+    default=None,
+    type=click.Choice(
+        ["name", "teamspace", "status", "studio", "machine", "image", "cloud-account"], case_sensitive=False
+    ),
+    help="the attribute to sort the jobs by.",
+)
 def jobs(
     teamspace: Optional[str] = None,
     all: bool = False,  # noqa: A002
@@ -219,30 +149,31 @@ def jobs(
     Console().print(table)
 
 
-# @list_cli.command(name="mmts")
-# @click.option(
-#     "--teamspace",
-#     default=None,
-#     help=(
-#         "the teamspace to list multi-machine jobs from. Should be specified as {owner}/{name}"
-#         "If not provided, can be selected in an interactive menu."
-#     ),
-# )
-# @click.option(
-#     "--all",
-#     is_flag=True,
-#     flag_value=True,
-#     default=False,
-#     help="if teamspace is not provided, list all multi-machine jobs in all teamspaces.",
-# )
-# @click.option(
-#     "--sort-by",
-#     default=None,
-#     type=click.Choice(
-#         ["name", "teamspace", "studio", "image", "status", "machine", "cloud-account"], case_sensitive=False
-#     ),
-#     help="the attribute to sort the multi-machine jobs by.",
-# )
+@list_cli.command(name="mmts")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "the teamspace to list multi-machine jobs from. Should be specified as {owner}/{name}"
+        "If not provided, can be selected in an interactive menu."
+    ),
+)
+@click.option(
+    "--all",
+    is_flag=True,
+    flag_value=True,
+    default=False,
+    help="if teamspace is not provided, list all multi-machine jobs in all teamspaces.",
+)
+@click.option(
+    "--sort-by",
+    "--sort_by",
+    default=None,
+    type=click.Choice(
+        ["name", "teamspace", "studio", "image", "status", "machine", "cloud-account"], case_sensitive=False
+    ),
+    help="the attribute to sort the multi-machine jobs by.",
+)
 def mmts(
     teamspace: Optional[str] = None,
     all: bool = False,  # noqa: A002
@@ -292,15 +223,15 @@ def mmts(
     Console().print(table)
 
 
-# @list_cli.command(name="containers")
-# @click.option(
-#     "--teamspace",
-#     default=None,
-#     help=(
-#         "the teamspace to list containers from. Should be specified as {owner}/{name}"
-#         "If not provided, can be selected in an interactive menu."
-#     ),
-# )
+@list_cli.command(name="containers")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "the teamspace to list containers from. Should be specified as {owner}/{name}"
+        "If not provided, can be selected in an interactive menu."
+    ),
+)
 def containers(teamspace: Optional[str] = None) -> None:
     """Display the list of available containers."""
     api = LitContainer()
@@ -316,7 +247,7 @@ def containers(teamspace: Optional[str] = None) -> None:
     Console().print(table)
 
 
-# @list_cli.command(name="machines")
+@list_cli.command(name="machines")
 def machines() -> None:
     """Display the list of available machines."""
     table = Table(pad_edge=True)

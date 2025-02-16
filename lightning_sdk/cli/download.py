@@ -15,74 +15,24 @@ from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 
 
-class _Downloads(_StudiosMenu, _TeamspacesMenu):
-    """Download files and folders from Lightning AI."""
-
-    def model(self, name: str, download_dir: str = ".") -> None:
-        """Download a Model.
-
-        Args:
-          name: The name of the Model you want to download.
-            This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
-          download_dir: The directory where the Model should be downloaded.
-        """
-        model(name=name, download_dir=download_dir)
-
-    def folder(self, path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
-        """Download a folder from a Studio.
-
-        Args:
-          path: The relative path within the Studio you want to download.
-            If you leave it empty it will download whole studio and locally creates a new folder
-            with the same name as the selected studio.
-          studio: The name of the studio to upload to. Will show a menu with user's owned studios for selection
-            if not specified. If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names
-            are case-sensitive. The teamspace and studio names can be regular expressions to match, then a menu
-            with filtered studios will be shown for final selection.
-          local_path: The path to the directory you want to download the folder to.
-        """
-        folder(path=path, studio=studio, local_path=local_path)
-
-    def file(self, path: str, studio: Optional[str] = None, local_path: str = ".") -> None:
-        """Download a file from a Studio.
-
-        Args:
-          path: The relative path within the Studio you want to download.
-          studio: The name of the studio to upload to. Will show a menu with user's owned studios for selection
-            if not specified. If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names
-            are case-sensitive. The teamspace and studio names can be regular expressions to match, then a menu
-            with filtered studios will be shown for final selection.
-          local_path: The path to the directory you want to download the file to.
-        """
-        file(path=path, studio=studio, local_path=local_path)
-
-    def container(self, container: str, teamspace: Optional[str] = None, tag: str = "latest") -> None:
-        """Download a docker container from a teamspace.
-
-        Args:
-          container: The name of the container to download.
-          teamspace: The name of the teamspace to download the container from.
-          tag: The tag of the container to download.
-        """
-        download_container(container=container, teamspace=teamspace, tag=tag)
-
-
 @click.group(name="download")
 def download() -> None:
     """Download resources from Lightning AI."""
 
 
-# @download.command(name="model")
-# @click.option(
-#     "--name",
-#     help=(
-#         "The name of the Model you want to download. "
-#         "This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>."
-#     ),
-# )
-# @click.option("--download-dir", default=".", help="The directory where the Model should be downloaded.")
+@download.command(name="model")
+@click.argument("name")
+@click.option(
+    "--download-dir", "--download_dir", default=".", help="The directory where the Model should be downloaded."
+)
 def model(name: str, download_dir: str = ".") -> None:
-    """Download a Model."""
+    """Download a model from a teamspace.
+
+    Example:
+      lightning download model NAME
+
+    NAME: The name of the model to download in the format of <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
+    """
     download_model(
         name=name,
         download_dir=download_dir,
@@ -90,28 +40,30 @@ def model(name: str, download_dir: str = ".") -> None:
     )
 
 
-# @download.command(name="folder")
-# @click.option(
-#     "--path",
-#     default="",
-#     help=(
-#         "The relative path within the Studio you want to download. "
-#         "If you leave it empty it will download whole studio and locally creates a "
-#         "new folder with the same name as the selected studio."
-#     ),
-# )
-# @click.option(
-#     "--studio",
-#     default=None,
-#     help=(
-#         "The name of the studio to upload to. "
-#         "Will show a menu with user's owned studios for selection if not specified. "
-#         "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names are case-sensitive. "
-#         "The teamspace and studio names can be regular expressions to match, "
-#         "a menu filtered studios will be shown for final selection."
-#     ),
-# )
-# @click.option("--local-path", default=".", help="The path to the directory you want to download the folder to.")
+@download.command(name="folder")
+@click.option(
+    "--path",
+    default="",
+    help=(
+        "The relative path within the Studio you want to download. "
+        "If you leave it empty it will download whole studio and locally creates a "
+        "new folder with the same name as the selected studio."
+    ),
+)
+@click.option(
+    "--studio",
+    default=None,
+    help=(
+        "The name of the studio to upload to. "
+        "Will show a menu with user's owned studios for selection if not specified. "
+        "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names are case-sensitive. "
+        "The teamspace and studio names can be regular expressions to match, "
+        "a menu filtered studios will be shown for final selection."
+    ),
+)
+@click.option(
+    "--local-path", "--local_path", default=".", help="The path to the directory you want to download the folder to."
+)
 def folder(path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
     """Download a folder from a Studio."""
     local_path = Path(local_path)
@@ -136,28 +88,30 @@ def folder(path: str = "", studio: Optional[str] = None, local_path: str = ".") 
         ) from e
 
 
-# @download.command(name="file")
-# @click.option(
-#     "--path",
-#     default="",
-#     help=(
-#         "The relative path within the Studio you want to download. "
-#         "If you leave it empty it will download whole studio and locally creates a new folder "
-#         "with the same name as the selected studio."
-#     ),
-# )
-# @click.option(
-#     "--studio",
-#     default=None,
-#     help=(
-#         "The name of the studio to upload to. "
-#         "Will show a menu with user's owned studios for selection if not specified. "
-#         "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names are case-sensitive. "
-#         "The teamspace and studio names can be regular expressions to match, "
-#         "a menu filtered studios will be shown for final selection."
-#     ),
-# )
-# @click.option("--local-path", default=".", help="The path to the directory you want to download the folder to.")
+@download.command(name="file")
+@click.option(
+    "--path",
+    default="",
+    help=(
+        "The relative path within the Studio you want to download. "
+        "If you leave it empty it will download whole studio and locally creates a new folder "
+        "with the same name as the selected studio."
+    ),
+)
+@click.option(
+    "--studio",
+    default=None,
+    help=(
+        "The name of the studio to upload to. "
+        "Will show a menu with user's owned studios for selection if not specified. "
+        "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names are case-sensitive. "
+        "The teamspace and studio names can be regular expressions to match, "
+        "a menu filtered studios will be shown for final selection."
+    ),
+)
+@click.option(
+    "--local-path", "--local_path", default=".", help="The path to the directory you want to download the folder to."
+)
 def file(path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
     """Download a file from a Studio."""
     local_path = Path(local_path)
@@ -181,12 +135,18 @@ def file(path: str = "", studio: Optional[str] = None, local_path: str = ".") ->
         ) from e
 
 
-# @download.command(name="container")
-# @click.argument("container")
-# @click.argument("teamspace", default=None, help="The name of the teamspace to download the container from")
-# @click.argument("tag", default="latest", show_default=True, help="The tag of the container to download.")
+@download.command(name="container")
+@click.argument("container")
+@click.option("--teamspace", default=None, help="The name of the teamspace to download the container from")
+@click.option("--tag", default="latest", show_default=True, help="The tag of the container to download.")
 def download_container(container: str, teamspace: Optional[str] = None, tag: str = "latest") -> None:
-    """Download the docker container CONTAINER from a teamspace."""
+    """Download a docker container from a teamspace.
+
+    Example:
+      lightning download container CONTAINER
+
+    CONTAINER: The name of the container to download.
+    """
     console = Console()
     menu = _TeamspacesMenu()
     resolved_teamspace = menu._resolve_teamspace(teamspace)

@@ -3,62 +3,26 @@ from types import TracebackType
 from typing import Type
 
 import click
-from fire import Fire
-from lightning_utilities.core.imports import RequirementCache
 from rich.console import Console
 from rich.panel import Panel
 
 from lightning_sdk.api.studio_api import _cloud_url
-from lightning_sdk.cli.ai_hub import _AIHub, aihub
-from lightning_sdk.cli.configure import _Configure, configure
-from lightning_sdk.cli.connect import _Connect, connect
-from lightning_sdk.cli.delete import _Delete, delete
-from lightning_sdk.cli.docker import _Docker, dockerize
-from lightning_sdk.cli.download import _Downloads, download
-from lightning_sdk.cli.generate import _Generate, generate
-from lightning_sdk.cli.inspect import _Inspect, inspect
-from lightning_sdk.cli.legacy import _LegacyLightningCLI
-from lightning_sdk.cli.list import _List, list_cli
-from lightning_sdk.cli.run import _Run, run
-from lightning_sdk.cli.serve import _LitServe, serve
-from lightning_sdk.cli.start import _Start, start
-from lightning_sdk.cli.stop import _Stop, stop
-from lightning_sdk.cli.switch import _Switch, switch
-from lightning_sdk.cli.upload import _Uploads, upload
+from lightning_sdk.cli.ai_hub import aihub
+from lightning_sdk.cli.configure import configure
+from lightning_sdk.cli.connect import connect
+from lightning_sdk.cli.delete import delete
+from lightning_sdk.cli.docker import dockerize
+from lightning_sdk.cli.download import download
+from lightning_sdk.cli.generate import generate
+from lightning_sdk.cli.inspect import inspect
+from lightning_sdk.cli.list import list_cli
+from lightning_sdk.cli.run import run
+from lightning_sdk.cli.serve import serve
+from lightning_sdk.cli.start import start
+from lightning_sdk.cli.stop import stop
+from lightning_sdk.cli.switch import switch
+from lightning_sdk.cli.upload import upload
 from lightning_sdk.lightning_cloud.login import Auth
-
-_LIGHTNING_AVAILABLE = RequirementCache("lightning")
-
-
-class StudioCLI:
-    """Command line interface (CLI) to interact with/manage Lightning AI Studios."""
-
-    def __init__(self) -> None:
-        self.download = _Downloads()
-        self.upload = _Uploads()
-        self.aihub = _AIHub()
-        self.run = _Run(legacy_run=_LegacyLightningCLI() if _LIGHTNING_AVAILABLE else None)
-        self.serve = _LitServe()
-        self.dockerize = _Docker()
-        self.list = _List()
-        self.delete = _Delete()
-        self.inspect = _Inspect()
-        self.stop = _Stop()
-        self.start = _Start()
-        self.switch = _Switch()
-        self.generate = _Generate()
-        self.connect = _Connect()
-        self.configure = _Configure()
-
-        sys.excepthook = _notify_exception
-
-    def login(self) -> None:
-        """Login to Lightning AI Studios."""
-        return login()
-
-    def logout(self) -> None:
-        """Logout from Lightning AI Studios."""
-        return logout()
 
 
 def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:  # No
@@ -67,17 +31,12 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
     console.print(Panel(value))
 
 
-def main_cli() -> None:
-    """CLI entrypoint."""
-    Fire(StudioCLI(), name="lightning")
-
-
 @click.group(name="lightning", help="Command line interface (CLI) to interact with/manage Lightning AI Studios.")
-def main_cli_click() -> None:
-    pass
+def main_cli() -> None:
+    sys.excepthook = _notify_exception
 
 
-# @main_cli_click.command
+@main_cli.command
 def login() -> None:
     """Login to Lightning AI Studios."""
     auth = Auth()
@@ -89,29 +48,28 @@ def login() -> None:
         raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
 
 
-# @main_cli_click.command
+@main_cli.command
 def logout() -> None:
     """Logout from Lightning AI Studios."""
     auth = Auth()
     auth.clear()
 
 
-# TODO: handle exception hook registration
-main_cli_click.add_command(aihub)
-main_cli_click.add_command(configure)
-main_cli_click.add_command(connect)
-main_cli_click.add_command(delete)
-main_cli_click.add_command(dockerize)
-main_cli_click.add_command(download)
-main_cli_click.add_command(generate)
-main_cli_click.add_command(inspect)
-main_cli_click.add_command(list_cli)
-main_cli_click.add_command(run)
-main_cli_click.add_command(serve)
-main_cli_click.add_command(start)
-main_cli_click.add_command(stop)
-main_cli_click.add_command(switch)
-main_cli_click.add_command(upload)
+main_cli.add_command(aihub)
+main_cli.add_command(configure)
+main_cli.add_command(connect)
+main_cli.add_command(delete)
+main_cli.add_command(dockerize)
+main_cli.add_command(download)
+main_cli.add_command(generate)
+main_cli.add_command(inspect)
+main_cli.add_command(list_cli)
+main_cli.add_command(run)
+main_cli.add_command(serve)
+main_cli.add_command(start)
+main_cli.add_command(stop)
+main_cli.add_command(switch)
+main_cli.add_command(upload)
 
 
 if __name__ == "__main__":

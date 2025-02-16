@@ -6,31 +6,16 @@ import click
 from rich.console import Console
 
 
-class _Docker:
-    """Generate a Dockerfile for a LitServe model."""
-
-    def api(self, server_filename: str, port: int = 8000, gpu: bool = False, tag: str = "litserve-model") -> str:
-        """Generate a Dockerfile for the given server code.
-
-        Args:
-            server_filename: The path to the server file. Example sever.py or app.py.
-            port: The port to expose in the Docker container.
-            gpu: Whether to use a GPU-enabled Docker image.
-            tag: Docker image tag to use in examples.
-        """
-        _api(server_filename=server_filename, port=port, gpu=gpu, tag=tag)
-
-
 @click.group(name="dockerize")
 def dockerize() -> None:
     """Generate a Dockerfile for a LitServe model."""
 
 
-# @dockerize.command("api")
-# @click.argument("server-filename")
-# @click.option("--port", type=int, default=8000, help="Port to expose in the Docker container.")
-# @click.option("--gpu", is_flag=True, default=False, flag_value=True, help="Use a GPU-enabled Docker image.")
-# @click.option("--tag", default="litserve-model", help="Docker image tag to use in examples.")
+@dockerize.command("api")
+@click.argument("server-filename")
+@click.option("--port", type=int, default=8000, help="Port to expose in the Docker container.")
+@click.option("--gpu", is_flag=True, default=False, flag_value=True, help="Use a GPU-enabled Docker image.")
+@click.option("--tag", default="litserve-model", help="Docker image tag to use in examples.")
 def api(server_filename: str, port: int = 8000, gpu: bool = False, tag: str = "litserve-model") -> None:
     """Generate a Dockerfile for the given server code."""
     _api(server_filename=server_filename, port=port, gpu=gpu, tag=tag)

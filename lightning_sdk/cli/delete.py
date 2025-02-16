@@ -10,66 +10,22 @@ from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.studio import Studio
 
 
-class _Delete(_JobAndMMTAction, _TeamspacesMenu):
-    """Delete resources on the Lightning AI platform."""
-
-    def container(self, container: str, teamspace: Optional[str] = None) -> None:
-        """Delete a docker container.
-
-        Args:
-            container: The name of the container to delete.
-            teamspace: The teamspace to delete the container from. Should be specified as {owner}/{name}
-                If not provided, can be selected in an interactive menu.
-        """
-        delete_container(container=container, teamspace=teamspace)
-
-    def job(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-        """Delete a job.
-
-        Args:
-            name: the name of the job. If not specified can be selected interactively.
-            teamspace: the name of the teamspace the job lives in.
-                Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace).
-                If not specified can be selected interactively.
-
-        """
-        job(name=name, teamspace=teamspace)
-
-    def mmt(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-        """Delete a multi-machine job.
-
-        Args:
-            name: the name of the job. If not specified can be selected interactively.
-            teamspace: the name of the teamspace the job lives in.
-                Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace).
-                If not specified can be selected interactively.
-
-        """
-        mmt(name=name, teamspace=teamspace)
-
-    def studio(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-        """Delete an existing studio.
-
-        Args:
-            name: The name of the studio to delete.
-                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
-                Note: This could delete your current studio if run without arguments.
-            teamspace: The teamspace the studio is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.
-                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
-        """
-        studio(name=name, teamspace=teamspace)
-
-
 @click.group()
 def delete() -> None:
     """Delete resources on the Lightning AI platform."""
 
 
-# @delete.command(name="container")
-# @click.option("--container", help="The name of the container to delete.")
-# @click.option("--teamspace", default=None, help=("The teamspace to delete the container from. "
-#                                                  "Should be specified as {owner}/{name} "
-#                                                  "If not provided, can be selected in an interactive menu."),)
+@delete.command(name="container")
+@click.argument("container")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "The teamspace to delete the container from. "
+        "Should be specified as {owner}/{name} "
+        "If not provided, can be selected in an interactive menu."
+    ),
+)
 def delete_container(container: str, teamspace: Optional[str] = None) -> None:
     """Delete the docker container CONTAINER."""
     api = LitContainer()
@@ -84,11 +40,17 @@ def delete_container(container: str, teamspace: Optional[str] = None) -> None:
         ) from None
 
 
-# @delete.command(name="job")
-# @click.option("--name", help="The name of the job to delete.")
-# @click.option("--teamspace", default=None, help=("The teamspace to delete the job from. "
-#                                                  "Should be specified as {owner}/{name} "
-#                                                  "If not provided, can be selected in an interactive menu."),)
+@delete.command(name="job")
+@click.option("--name", help="The name of the job to delete.")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "The teamspace to delete the job from. "
+        "Should be specified as {owner}/{name} "
+        "If not provided, can be selected in an interactive menu."
+    ),
+)
 def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     """Delete a job."""
     menu = _JobAndMMTAction()
@@ -98,11 +60,17 @@ def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     Console().print(f"Successfully deleted {job.name}!")
 
 
-# @delete.command(name="mmt")
-# @click.option("--name", help="The name of the multi-machine job to delete.")
-# @click.option("--teamspace", default=None, help=("The teamspace to delete the job from. "
-#                                                  "Should be specified as {owner}/{name} "
-#                                                  "If not provided, can be selected in an interactive menu."),)
+@delete.command(name="mmt")
+@click.option("--name", help="The name of the multi-machine job to delete.")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "The teamspace to delete the job from. "
+        "Should be specified as {owner}/{name} "
+        "If not provided, can be selected in an interactive menu."
+    ),
+)
 def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     """Delete a multi-machine job."""
     menu = _JobAndMMTAction()
@@ -112,11 +80,17 @@ def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     Console().print(f"Successfully deleted {mmt.name}!")
 
 
-# @delete.command(name="studio")
-# @click.option("--name", help="The name of the studio to delete.")
-# @click.option("--teamspace", default=None, help=("The teamspace to delete the studio from. "
-#                                                  "Should be specified as {owner}/{name} "
-#                                                  "If not provided, can be selected in an interactive menu."),)
+@delete.command(name="studio")
+@click.option("--name", help="The name of the studio to delete.")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "The teamspace to delete the studio from. "
+        "Should be specified as {owner}/{name} "
+        "If not provided, can be selected in an interactive menu."
+    ),
+)
 def studio(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     """Delete an existing studio."""
     if teamspace is not None:

@@ -23,92 +23,127 @@ from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 _STUDIO_UPLOAD_STATUS_PATH = "~/.lightning/studios/uploads"
 
 
-class _Uploads(_StudiosMenu, _TeamspacesMenu):
-    """Upload files and folders to Lightning AI."""
-
-    def model(self, name: str, path: str = ".", cloud_account: Optional[str] = None) -> None:
-        """Upload a Model.
-
-        Args:
-          name: The name of the Model you want to upload.
-            This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
-          path: The path to the file or directory you want to upload. Defaults to the current directory.
-          cloud_account: The name of the cloud account to store the Model in.
-        """
-        _upload_model(name, path, cloud_account=cloud_account)
-
-    def folder(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
-        """Upload a file or folder to a Studio.
-
-        Args:
-          path: The path to the file or directory you want to upload
-          studio: The name of the studio to upload to. Will show a menu for selection if not specified.
-            If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>
-          remote_path: The path where the uploaded file should appear on your Studio.
-            Has to be within your Studio's home directory and will be relative to that.
-            If not specified, will use the file or directory name of the path you want to upload
-            and place it in your home directory.
-        """
-        folder(path=path, studio=studio, remote_path=remote_path)
-
-    def file(self, path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
-        """Upload a file to a Studio.
-
-        Args:
-          path: The path to the file you want to upload
-          studio: The name of the studio to upload to. Will show a menu for selection if not specified.
-            If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>
-          remote_path: The path where the uploaded file should appear on your Studio.
-            Has to be within your Studio's home directory and will be relative to that.
-            If not specified, will use the name of the file you want to upload
-            and place it in your home directory.
-        """
-        file(path, studio=studio, remote_path=remote_path)
-
-    def container(self, container: str, tag: str = "latest", teamspace: Optional[str] = None) -> None:
-        """Upload a container to Lightning AI's container registry."""
-        upload_container(container, tag, teamspace)
-
-
 @click.group("upload")
 def upload() -> None:
     """Upload assets to Lightning AI."""
 
 
-# @upload.command("model")
-# @click.argument("model")
-# @click.option(
-#     "--path",
-#     default=".",
-#     help="The path to the file or directory you want to upload. Defaults to the current directory.",
-# )
-# @click.option("--cloud-account", default=None, help="The name of the cloud account to store the Model in.")
+@upload.command("model")
+@click.argument("model")
+@click.option(
+    "--path",
+    default=".",
+    help="The path to the file or directory you want to upload. Defaults to the current directory.",
+)
+@click.option(
+    "--cloud-account",
+    "--cloud_account",
+    default=None,
+    help="The name of the cloud account to store the Model in.",
+)
 def model(name: str, path: str = ".", cloud_account: Optional[str] = None) -> None:
-    """Upload a Model to MODEL of the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>."""
+    """Upload a model a teamspace.
+
+    Example:
+        lightning upload model MODEL
+
+    MODEL: the name of the model to upload (Should be of format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>).
+    """
     _upload_model(name, path, cloud_account=cloud_account)
 
 
-# @upload.command("folder")
-# @click.argument("path", type=click.Path(exists=True))
-# @click.option(
-#     "--studio",
-#     default=None,
-#     help=(
-#         "The name of the studio to upload to. "
-#         "Will show a menu for selection if not specified. "
-#         "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>"
-#     ),
-# )
-# @click.option(
-#     "--remote-path",
-#     default=None,
-#     help=(
-#         "The path where the uploaded file should appear on your Studio. "
-#         "Has to be within your Studio's home directory and will be relative to that. "
-#         "If not specified, will use the name of the folder you want to upload and place it in your home directory."
-#     ),
-# )
-def folder(path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
+@upload.command("folder")
+@click.argument("path", type=click.Path(exists=True))
+@click.option(
+    "--studio",
+    default=None,
+    help=(
+        "The name of the studio to upload to. "
+        "Will show a menu for selection if not specified. "
+        "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>"
+    ),
+)
+@click.option(
+    "--remote-path",
+    "--remote_path",
+    default=None,
+    help=(
+        "The path where the uploaded file should appear on your Studio. "
+        "Has to be within your Studio's home directory and will be relative to that. "
+        "If not specified, will use the name of the folder you want to upload and place it in your home directory."
+    ),
+)
+def folder(path: str, studio: Optional[str], remote_path: Optional[str]) -> None:
+    """Upload a folder to a Studio."""
+    _folder(path=path, studio=studio, remote_path=remote_path)
+
+
+@upload.command("file")
+@click.argument("path", type=click.Path(exists=True))
+@click.option(
+    "--studio",
+    default=None,
+    help=(
+        "The name of the studio to upload to. "
+        "Will show a menu for selection if not specified. "
+        "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>"
+    ),
+)
+@click.option(
+    "--remote-path",
+    "--remote_path",
+    default=None,
+    help=(
+        "The path where the uploaded file should appear on your Studio. "
+        "Has to be within your Studio's home directory and will be relative to that. "
+        "If not specified, will use the name of the file you want to upload and place it in your home directory."
+    ),
+)
+def file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
+    """Upload a file to a Studio."""
+    _file(path=path, studio=studio, remote_path=remote_path)
+
+
+@upload.command("container")
+@click.argument("container")
+@click.option("--tag", default="latest", help="The tag of the container to upload.")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "The teamspace the studio is part of. "
+        "Should be of format <OWNER>/<TEAMSPACE_NAME>. "
+        "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
+    ),
+)
+def upload_container(container: str, tag: str = "latest", teamspace: Optional[str] = None) -> None:
+    """Upload a container to Lightning AI's container registry."""
+    menu = _TeamspacesMenu()
+    teamspace = menu._resolve_teamspace(teamspace)
+    api = LitContainerApi()
+    console = Console()
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        TimeElapsedColumn(),
+        console=console,
+        transient=False,
+    ) as progress:
+        push_task = progress.add_task("Pushing Docker image", total=None)
+        try:
+            lines = api.upload_container(container, teamspace, tag)
+            _print_docker_push(lines, console, progress, push_task)
+        except LCRAuthFailedError:
+            console.print("Authenticating with Lightning Container Registry...")
+            if not api.authenticate():
+                raise StudioCliError("Failed to authenticate with Lightning Container Registry") from None
+            console.print("Authenticated with Lightning Container Registry", style="green")
+            lines = api.upload_container(container, teamspace, tag)
+            _print_docker_push(lines, console, progress, push_task)
+        progress.update(push_task, description="[green]Container pushed![/green]")
+
+
+def _folder(path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
     """Upload a folder to a Studio."""
     console = Console()
     if remote_path is None:
@@ -154,27 +189,7 @@ def folder(path: str, studio: Optional[str] = None, remote_path: Optional[str] =
     console.print(f"See your files at {studio_url}")
 
 
-# @upload.command("file")
-# @click.argument("path", type=click.Path(exists=True))
-# @click.option(
-#     "--studio",
-#     default=None,
-#     help=(
-#         "The name of the studio to upload to. "
-#         "Will show a menu for selection if not specified. "
-#         "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>"
-#     ),
-# )
-# @click.option(
-#     "--remote-path",
-#     default=None,
-#     help=(
-#         "The path where the uploaded file should appear on your Studio. "
-#         "Has to be within your Studio's home directory and will be relative to that. "
-#         "If not specified, will use the name of the file you want to upload and place it in your home directory."
-#     ),
-# )
-def file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
+def _file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
     """Upload a file to a Studio."""
     console = Console()
     if remote_path is None:
@@ -202,45 +217,6 @@ def file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = N
         + selected_studio.name
     )
     console.print(f"See your file at {studio_url}")
-
-
-# @upload.command("container")
-# @click.argument("container")
-# @click.option("--tag", default="latest", help="The tag of the container to upload.")
-# @click.option(
-#     "--teamspace",
-#     default=None,
-#     help=(
-#         "The teamspace the studio is part of. "
-#         "Should be of format <OWNER>/<TEAMSPACE_NAME>. "
-#         "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
-#     ),
-# )
-def upload_container(container: str, tag: str = "latest", teamspace: Optional[str] = None) -> None:
-    """Upload a container to Lightning AI's container registry."""
-    menu = _TeamspacesMenu()
-    teamspace = menu._resolve_teamspace(teamspace)
-    api = LitContainerApi()
-    console = Console()
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        TimeElapsedColumn(),
-        console=console,
-        transient=False,
-    ) as progress:
-        push_task = progress.add_task("Pushing Docker image", total=None)
-        try:
-            lines = api.upload_container(container, teamspace, tag)
-            _print_docker_push(lines, console, progress, push_task)
-        except LCRAuthFailedError:
-            console.print("Authenticating with Lightning Container Registry...")
-            if not api.authenticate():
-                raise StudioCliError("Failed to authenticate with Lightning Container Registry") from None
-            console.print("Authenticated with Lightning Container Registry", style="green")
-            lines = api.upload_container(container, teamspace, tag)
-            _print_docker_push(lines, console, progress, push_task)
-        progress.update(push_task, description="[green]Container pushed![/green]")
 
 
 def _resolve_studio(studio: Optional[str]) -> Studio:

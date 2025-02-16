@@ -7,56 +7,36 @@ from lightning_sdk import Machine, Studio
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
 
-class _Switch:
-    """Switch machines for resources on the Lightning AI platform."""
-
-    def __init__(self) -> None:
-        docstr_studio = f"""Switch a studio to a given machine.
-
-        Args:
-            name: The name of the studio to start.
-                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
-            teamspace: The teamspace the studio is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.
-                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
-            machine: The machine type to switch to. One of {", ".join(_MACHINE_VALUES)}.
-                Defaults to the CPU Machine.
-        """
-        self.studio.__func__.__doc__ = docstr_studio
-
-    def studio(self, name: Optional[str] = None, teamspace: Optional[str] = None, machine: str = "CPU") -> None:
-        studio(name=name, teamspace=teamspace, machine=machine)
-
-
 @click.group("switch")
 def switch() -> None:
     """Switch machines for resources on the Lightning AI platform."""
 
 
-# @switch.command("studio")
-# @click.option(
-#     "--name",
-#     default=None,
-#     help=(
-#         "The name of the studio to start. "
-#         "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
-#     ),
-# )
-# @click.option(
-#     "--teamspace",
-#     default=None,
-#     help=(
-#         "The teamspace the studio is part of. "
-#         "Should be of format <OWNER>/<TEAMSPACE_NAME>. "
-#         "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
-#     ),
-# )
-# @click.option(
-#     "--machine",
-#     default="CPU",
-#     show_default=True,
-#     type=click.Choice(_MACHINE_VALUES),
-#     help="The machine type to switch to.",
-# )
+@switch.command("studio")
+@click.option(
+    "--name",
+    default=None,
+    help=(
+        "The name of the studio to start. "
+        "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
+    ),
+)
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "The teamspace the studio is part of. "
+        "Should be of format <OWNER>/<TEAMSPACE_NAME>. "
+        "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
+    ),
+)
+@click.option(
+    "--machine",
+    default="CPU",
+    show_default=True,
+    type=click.Choice(_MACHINE_VALUES),
+    help="The machine type to switch to.",
+)
 def studio(name: Optional[str] = None, teamspace: Optional[str] = None, machine: str = "CPU") -> None:
     """Switch a studio to a given machine."""
     if teamspace is not None:

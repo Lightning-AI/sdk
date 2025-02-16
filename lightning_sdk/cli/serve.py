@@ -12,49 +12,14 @@ from rich.prompt import Confirm
 from lightning_sdk.cli.docker import _api as dockerize_api
 
 
-class _LitServe:
-    """Serve a LitServe model.
-
-    Example:
-        lightning serve api server.py  # serve locally
-        lightning serve api server.py --cloud  # deploy to the cloud
-
-    You can deploy the API to the cloud by running `lightning serve api server.py --cloud`.
-    This will generate a Dockerfile, build the image, and push it to the image registry.
-    Deploying to the cloud requires pre-login to the docker registry.
-    """
-
-    def api(
-        self,
-        script_path: Union[str, Path],
-        easy: bool = False,
-        cloud: bool = False,
-        repository: Optional[str] = None,
-        non_interactive: bool = False,
-    ) -> None:
-        """Deploy a LitServe model script.
-
-        Args:
-            script_path: Path to the script to serve
-            easy: If True, generates a client for the model
-            cloud: If True, deploy the model to the Lightning Studio
-            repository: Optional Docker repository name (e.g., 'username/model-name')
-            non_interactive: If True, do not prompt for confirmation
-        Raises:
-            FileNotFoundError: If script_path doesn't exist
-            ImportError: If litserve is not installed
-            subprocess.CalledProcessError: If the script fails to run
-            IOError: If client.py generation fails
-        """
-        api(script_path=script_path, easy=easy, cloud=cloud, repository=repository, non_interactive=non_interactive)
-
-
 @click.group("serve")
 def serve() -> None:
     """Serve a LitServe model.
 
     Example:
         lightning serve api server.py  # serve locally
+
+    Example:
         lightning serve api server.py --cloud  # deploy to the cloud
 
     You can deploy the API to the cloud by running `lightning serve api server.py --cloud`.
@@ -63,31 +28,45 @@ def serve() -> None:
     """
 
 
-# @serve.command("api")
-# @click.argument("script-path", type=click.Path(exists=True))
-# @click.option(
-#     "--easy",
-#     is_flag=True,
-#     default=False,
-#     flag_value=True,
-#     help="Generate a client for the model",
-# )
-# @click.option(
-#     "--cloud",
-#     is_flag=True,
-#     default=False,
-#     flag_value=True,
-#     help="Deploy the model to the Lightning AI platform",
-# )
-# @click.option("--repository", default=None, help="Docker repository name (e.g., 'username/model-name')")
-# @click.option(
-#     "--non-interactive",
-#     is_flag=True,
-#     default=False,
-#     flag_value=True,
-#     help="Do not prompt for confirmation",
-# )
+@serve.command("api")
+@click.argument("script-path", type=click.Path(exists=True))
+@click.option(
+    "--easy",
+    is_flag=True,
+    default=False,
+    flag_value=True,
+    help="Generate a client for the model",
+)
+@click.option(
+    "--cloud",
+    is_flag=True,
+    default=False,
+    flag_value=True,
+    help="Deploy the model to the Lightning AI platform",
+)
+@click.option("--repository", default=None, help="Docker repository name (e.g., 'username/model-name')")
+@click.option(
+    "--non-interactive",
+    "--non_interactive",
+    is_flag=True,
+    default=False,
+    flag_value=True,
+    help="Do not prompt for confirmation",
+)
 def api(
+    script_path: str,
+    easy: bool,
+    cloud: bool,
+    repository: str,
+    non_interactive: bool,
+) -> None:
+    """Deploy a LitServe model script."""
+    return api_impl(
+        script_path=script_path, easy=easy, cloud=cloud, repository=repository, non_interactive=non_interactive
+    )
+
+
+def api_impl(
     script_path: Union[str, Path],
     easy: bool = False,
     cloud: bool = False,

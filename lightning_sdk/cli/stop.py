@@ -7,65 +7,26 @@ from lightning_sdk.cli.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.studio import Studio
 
 
-class _Stop:
-    """Stop resources on the Lightning AI platform."""
-
-    def job(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-        """Stop a job.
-
-        Args:
-            name: the name of the job. If not specified can be selected interactively.
-            teamspace: the name of the teamspace the job lives in.
-                Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace).
-                If not specified can be selected interactively.
-
-        """
-        job(name=name, teamspace=teamspace)
-
-    def mmt(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-        """Stop a multi-machine job.
-
-        Args:
-            name: the name of the job. If not specified can be selected interactively.
-            teamspace: the name of the teamspace the job lives in.
-                Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace).
-                If not specified can be selected interactively.
-
-        """
-        mmt(name=name, teamspace=teamspace)
-
-    def studio(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-        """Stop a running studio.
-
-        Args:
-            name: The name of the studio to stop.
-                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
-            teamspace: The teamspace the studio is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.
-                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
-        """
-        studio(name=name, teamspace=teamspace)
-
-
 @click.group("stop")
 def stop() -> None:
     """Stop resources on the Lightning AI platform."""
 
 
-# @stop.command("job")
-# @click.option(
-#     "--name",
-#     default=None,
-#     help="the name of the job. If not specified can be selected interactively.",
-# )
-# @click.option(
-#     "--teamspace",
-#     default=None,
-#     help=(
-#         "the name of the teamspace the job lives in. "
-#         "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
-#         "If not specified can be selected interactively."
-#     ),
-# )
+@stop.command("job")
+@click.option(
+    "--name",
+    default=None,
+    help="the name of the job. If not specified can be selected interactively.",
+)
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "the name of the teamspace the job lives in. "
+        "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
+        "If not specified can be selected interactively."
+    ),
+)
 def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     """Stop a job."""
     menu = _JobAndMMTAction()
@@ -75,21 +36,21 @@ def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     Console().print(f"Successfully stopped {job.name}!")
 
 
-# @stop.command("mmt")
-# @click.option(
-#     "--name",
-#     default=None,
-#     help="the name of the multi-machine job. If not specified can be selected interactively.",
-# )
-# @click.option(
-#     "--teamspace",
-#     default=None,
-#     help=(
-#         "the name of the teamspace the multi-machine job lives in. "
-#         "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
-#         "If not specified can be selected interactively."
-#     ),
-# )
+@stop.command("mmt")
+@click.option(
+    "--name",
+    default=None,
+    help="the name of the multi-machine job. If not specified can be selected interactively.",
+)
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "the name of the teamspace the multi-machine job lives in. "
+        "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
+        "If not specified can be selected interactively."
+    ),
+)
 def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     """Stop a multi-machine job."""
     menu = _JobAndMMTAction()
@@ -99,21 +60,21 @@ def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     Console().print(f"Successfully stopped {mmt.name}!")
 
 
-# @stop.command("studio")
-# @click.option(
-#     "--name",
-#     default=None,
-#     help="the name of the studio. If not specified can be selected interactively.",
-# )
-# @click.option(
-#     "--teamspace",
-#     default=None,
-#     help=(
-#         "the name of the teamspace the studio lives in. "
-#         "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
-#         "If not specified can be selected interactively."
-#     ),
-# )
+@stop.command("studio")
+@click.option(
+    "--name",
+    default=None,
+    help="the name of the studio. If not specified can be selected interactively.",
+)
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "the name of the teamspace the studio lives in. "
+        "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
+        "If not specified can be selected interactively."
+    ),
+)
 def studio(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     """Stop a running studio."""
     if teamspace is not None:

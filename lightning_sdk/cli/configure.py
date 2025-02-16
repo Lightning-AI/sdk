@@ -12,51 +12,36 @@ from lightning_sdk.cli.studios_menu import _StudiosMenu
 from lightning_sdk.lightning_cloud.login import Auth
 
 
-class _Configure(_StudiosMenu):
-    """Configure lightning products."""
-
-    def ssh(self, name: Optional[str] = None, teamspace: Optional[str] = None, overwrite: bool = False) -> None:
-        """Get SSH config entry for a studio.
-
-        Args:
-            name: The name of the studio to obtain SSH config.
-                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
-            teamspace: The teamspace the studio is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.
-                If not specified, tries to infer from the environment (e.g. when run from within a Studio.)
-            overwrite: Whether to overwrite the SSH key and config if they already exist.
-        """
-        ssh(name=name, teamspace=teamspace, overwrite=overwrite)
-
-
 @click.group(name="configure")
 def configure() -> None:
     """Configure access to resources on the Lightning AI platform."""
 
 
-# @configure.command(name="ssh")
-# @click.option(
-#     "--name",
-#     default=None,
-#     help=(
-#         "The name of the studio to obtain SSH config. "
-#         "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
-#     ),
-# )
-# @click.option(
-#     "--teamspace",
-#     default=None,
-#     help=(
-#         "The teamspace the studio is part of. "
-#         "Should be of format <OWNER>/<TEAMSPACE_NAME>. "
-#         "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
-#     ),
-# )
-# @click.option(
-#     "--overwrite",
-#     is_flag=True,
-#     flag_value=True,
-#     help="Whether to overwrite the SSH key and config if they already exist.",
-# )
+@configure.command(name="ssh")
+@click.option(
+    "--name",
+    default=None,
+    help=(
+        "The name of the studio to obtain SSH config. "
+        "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
+    ),
+)
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "The teamspace the studio is part of. "
+        "Should be of format <OWNER>/<TEAMSPACE_NAME>. "
+        "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
+    ),
+)
+@click.option(
+    "--overwrite",
+    is_flag=True,
+    flag_value=True,
+    default=False,
+    help="Whether to overwrite the SSH key and config if they already exist.",
+)
 def ssh(name: Optional[str] = None, teamspace: Optional[str] = None, overwrite: bool = False) -> None:
     """Get SSH config entry for a studio."""
     auth = Auth()
