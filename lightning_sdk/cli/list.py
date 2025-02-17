@@ -254,7 +254,7 @@ def machines() -> None:
     table.add_column("Name")
 
     # Get all machine types from the enum
-    machine_types = [name for name in dir(Machine) if not name.startswith("_")]
+    machine_types = [name for name in dir(Machine) if isinstance(getattr(Machine, name), Machine)]
 
     # Add rows to table
     for name in sorted(machine_types):

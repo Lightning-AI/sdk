@@ -88,33 +88,29 @@ def test_machines_output():
 
     assert (
         result_text
-        == """┏━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Name                    ┃
-┡━━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ A100_X_8                │
-│ A10G                    │
-│ A10G_X_4                │
-│ A10G_X_8                │
-│ CPU                     │
-│ CPU_SMALL               │
-│ DATA_PREP               │
-│ DATA_PREP_MAX           │
-│ DATA_PREP_ULTRA         │
-│ H100_X_8                │
-│ H200_X_8                │
-│ L4                      │
-│ L40S                    │
-│ L40S_X_4                │
-│ L40S_X_8                │
-│ L4_X_4                  │
-│ L4_X_8                  │
-│ T4                      │
-│ T4_X_4                  │
-│ cost                    │
-│ interruptible_cost      │
-│ interruptible_wait_time │
-│ wait_time               │
-└─────────────────────────┘
+        == """┏━━━━━━━━━━━━━━━━━┓
+┃ Name            ┃
+┡━━━━━━━━━━━━━━━━━┩
+│ A100_X_8        │
+│ A10G            │
+│ A10G_X_4        │
+│ A10G_X_8        │
+│ CPU             │
+│ CPU_SMALL       │
+│ DATA_PREP       │
+│ DATA_PREP_MAX   │
+│ DATA_PREP_ULTRA │
+│ H100_X_8        │
+│ H200_X_8        │
+│ L4              │
+│ L40S            │
+│ L40S_X_4        │
+│ L40S_X_8        │
+│ L4_X_4          │
+│ L4_X_8          │
+│ T4              │
+│ T4_X_4          │
+└─────────────────┘
 """
     )
 
