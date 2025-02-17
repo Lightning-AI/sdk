@@ -88,12 +88,15 @@ def test_studio_help():
 
     assert (
         result_text
-        == """Usage: lightning delete studio [OPTIONS]
+        == """Usage: lightning delete studio [OPTIONS] NAME
 
   Delete an existing studio.
 
+  Example:   lightning delete studio NAME
+
+  NAME: the name of the studio to delete
+
 Options:
-  --name TEXT       The name of the studio to delete.
   --teamspace TEXT  The teamspace to delete the studio from. Should be
                     specified as {owner}/{name} If not provided, can be
                     selected in an interactive menu.

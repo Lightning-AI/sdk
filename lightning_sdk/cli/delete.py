@@ -81,7 +81,7 @@ def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
 
 
 @delete.command(name="studio")
-@click.option("--name", help="The name of the studio to delete.")
+@click.argument("name")
 @click.option(
     "--teamspace",
     default=None,
@@ -91,8 +91,14 @@ def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
         "If not provided, can be selected in an interactive menu."
     ),
 )
-def studio(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-    """Delete an existing studio."""
+def studio(name: str, teamspace: Optional[str] = None) -> None:
+    """Delete an existing studio.
+
+    Example:
+      lightning delete studio NAME
+
+    NAME: the name of the studio to delete
+    """
     if teamspace is not None:
         ts_splits = teamspace.split("/")
         if len(ts_splits) != 2:
