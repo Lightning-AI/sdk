@@ -8,6 +8,7 @@ from rich.panel import Panel
 
 from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.ai_hub import aihub
+from lightning_sdk.cli.coloring import CustomHelpFormatter
 from lightning_sdk.cli.configure import configure
 from lightning_sdk.cli.connect import connect
 from lightning_sdk.cli.delete import delete
@@ -36,6 +37,10 @@ def main_cli() -> None:
     sys.excepthook = _notify_exception
 
 
+# colorful help messages
+main_cli.context_class.formatter_class = CustomHelpFormatter
+
+
 @main_cli.command
 def login() -> None:
     """Login to Lightning AI Studios."""
@@ -55,6 +60,7 @@ def logout() -> None:
     auth.clear()
 
 
+# additional commands
 main_cli.add_command(aihub)
 main_cli.add_command(configure)
 main_cli.add_command(connect)
