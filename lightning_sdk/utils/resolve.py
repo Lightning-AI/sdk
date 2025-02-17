@@ -5,10 +5,12 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
+from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.machine import Machine
 
 if TYPE_CHECKING:
     from lightning_sdk.organization import Organization
+    from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
 
@@ -194,3 +196,12 @@ def in_studio() -> bool:
     has_cloudspace_id = bool(os.getenv("LIGHTNING_CLOUD_SPACE_ID", None))
     is_interactive = os.getenv("LIGHTNING_INTERACTIVE", "false") == "true"
     return has_cloudspace_id and is_interactive
+
+
+def _get_studio_url(studio: "Studio", turn_on: bool = False) -> str:
+    cloud_url = _get_cloud_url().replace(":443", "")
+    base_url = f"{cloud_url}/{studio.owner.name}/{studio.teamspace.name}/studios/{studio.name}/code"
+
+    if turn_on:
+        return f"{base_url}?turnOn=true"
+    return base_url

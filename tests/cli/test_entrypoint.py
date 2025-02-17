@@ -27,6 +27,7 @@ Commands:
   list       List resources on the Lightning AI platform.
   login      Login to Lightning AI Studios.
   logout     Logout from Lightning AI Studios.
+  open       Open a local file or folder in a Lightning Studio.
   run        Run async workloads on the Lightning AI platform.
   serve      Serve a LitServe model.
   start      Start resources on the Lightning AI platform.

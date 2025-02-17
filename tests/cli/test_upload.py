@@ -108,13 +108,13 @@ def test_model_help():
 
     assert (
         result_text
-        == """Usage: lightning upload model [OPTIONS] MODEL
+        == """Usage: lightning upload model [OPTIONS] NAME
 
   Upload a model a teamspace.
 
-  Example:     lightning upload model MODEL
+  Example:     lightning upload model NAME
 
-  MODEL: the name of the model to upload (Should be of format <ORGANIZATION-
+  NAME: the name of the model to upload (Should be of format <ORGANIZATION-
   NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>).
 
 Options:

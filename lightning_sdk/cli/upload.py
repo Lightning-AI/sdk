@@ -29,7 +29,7 @@ def upload() -> None:
 
 
 @upload.command("model")
-@click.argument("model")
+@click.argument("name")
 @click.option(
     "--path",
     default=".",
@@ -45,9 +45,9 @@ def model(name: str, path: str = ".", cloud_account: Optional[str] = None) -> No
     """Upload a model a teamspace.
 
     Example:
-        lightning upload model MODEL
+        lightning upload model NAME
 
-    MODEL: the name of the model to upload (Should be of format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>).
+    NAME: the name of the model to upload (Should be of format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>).
     """
     _upload_model(name, path, cloud_account=cloud_account)
 
@@ -159,23 +159,7 @@ def _folder(path: str, studio: Optional[str] = None, remote_path: Optional[str] 
 
     console.print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
 
-    pairs = {}
-    for root, _, files in os.walk(path):
-        rel_root = os.path.relpath(root, path)
-        for f in files:
-            pairs[os.path.join(root, f)] = os.path.join(remote_path, rel_root, f)
-
-    upload_state = _resolve_previous_upload_state(selected_studio, remote_path, pairs)
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        futures = _start_parallel_upload(executor, selected_studio, upload_state)
-
-        update_fn = tqdm(total=len(upload_state)).update if _global_upload_progress(upload_state) else lambda x: None
-
-        for f in concurrent.futures.as_completed(futures):
-            upload_state.pop(f.result())
-            _dump_current_upload_state(selected_studio, remote_path, upload_state)
-            update_fn(1)
+    _upload_folder(path, remote_path, selected_studio)
 
     studio_url = (
         _get_cloud_url().replace(":443", "")
@@ -187,6 +171,26 @@ def _folder(path: str, studio: Optional[str] = None, remote_path: Optional[str] 
         + selected_studio.name
     )
     console.print(f"See your files at {studio_url}")
+
+
+def _upload_folder(path: str, remote_path: str, studio: Studio) -> None:
+    pairs = {}
+    for root, _, files in os.walk(path):
+        rel_root = os.path.relpath(root, path)
+        for f in files:
+            pairs[os.path.join(root, f)] = os.path.join(remote_path, rel_root, f)
+
+    upload_state = _resolve_previous_upload_state(studio, remote_path, pairs)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        futures = _start_parallel_upload(executor, studio, upload_state)
+
+        update_fn = tqdm(total=len(upload_state)).update if _global_upload_progress(upload_state) else lambda x: None
+
+        for f in concurrent.futures.as_completed(futures):
+            upload_state.pop(f.result())
+            _dump_current_upload_state(studio, remote_path, upload_state)
+            update_fn(1)
 
 
 def _file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:

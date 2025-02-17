@@ -18,6 +18,7 @@ from lightning_sdk.cli.download import download
 from lightning_sdk.cli.generate import generate
 from lightning_sdk.cli.inspect import inspect
 from lightning_sdk.cli.list import list_cli
+from lightning_sdk.cli.open import open
 from lightning_sdk.cli.run import run
 from lightning_sdk.cli.serve import serve
 from lightning_sdk.cli.start import start
@@ -78,6 +79,7 @@ main_cli.add_command(start)
 main_cli.add_command(stop)
 main_cli.add_command(switch)
 main_cli.add_command(upload)
+main_cli.add_command(open)
 
 
 if __name__ == "__main__":

@@ -4,9 +4,11 @@ from unittest import mock
 import pytest
 
 from lightning_sdk.organization import Organization
+from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import (
+    _get_studio_url,
     _parse_model_and_version,
     _resolve_org,
     _resolve_org_name,
@@ -205,3 +207,21 @@ def test_parse_model_and_version():
         _parse_model_and_version("user/modelname:v1:")
     with pytest.raises(ValueError, match="Model version is expected to be in the format"):
         _parse_model_and_version("user/modelname:v1:v2")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
+def test_get_studio_url(internal_studio_init_mocker):
+    studio = Studio("st-abc", "ts-abc", org="org-abc")
+
+    url = _get_studio_url(studio)
+
+    assert url == "lightning.ai/org-abc/ts-abc/studios/st-abc/code"
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
+def test_get_studio_url_turn_on(internal_studio_init_mocker):
+    studio = Studio("st-abc", "ts-abc", org="org-abc")
+
+    url = _get_studio_url(studio, turn_on=True)
+
+    assert url == "lightning.ai/org-abc/ts-abc/studios/st-abc/code?turnOn=true"
