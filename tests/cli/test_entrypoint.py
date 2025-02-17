@@ -12,7 +12,8 @@ def test_help():
   Command line interface (CLI) to interact with/manage Lightning AI Studios.
 
 Options:
-  --help  Show this message and exit.
+  --version  Show the version and exit.
+  --help     Show this message and exit.
 
 Commands:
   aihub      Interact with Lightning Studio - AI Hub.

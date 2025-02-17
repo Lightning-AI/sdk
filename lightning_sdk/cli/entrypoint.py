@@ -6,6 +6,7 @@ import click
 from rich.console import Console
 from rich.panel import Panel
 
+from lightning_sdk import __version__
 from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.ai_hub import aihub
 from lightning_sdk.cli.coloring import CustomHelpFormatter
@@ -35,6 +36,7 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
 
 
 @click.group(name="lightning", help="Command line interface (CLI) to interact with/manage Lightning AI Studios.")
+@click.version_option(__version__, message="Lightning CLI version %(version)s")
 def main_cli() -> None:
     sys.excepthook = _notify_exception
 
