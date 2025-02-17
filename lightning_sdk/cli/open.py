@@ -1,4 +1,5 @@
 import webbrowser
+from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
@@ -46,7 +47,10 @@ def open(path: str = ".", teamspace: Optional[str] = None) -> None:  # noqa: A00
         f"[bold]Uploading {path} to {new_studio.owner.name}/{new_studio.teamspace.name}/{new_studio.name}[/bold]"
     )
 
-    _upload_folder(path, remote_path=".", studio=new_studio)
+    if Path(path).is_dir():
+        _upload_folder(path, remote_path=".", studio=new_studio)
+    else:
+        new_studio.upload_file(path)
 
     studio_url = _get_studio_url(new_studio, turn_on=True)
 
