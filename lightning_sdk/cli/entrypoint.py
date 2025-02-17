@@ -11,6 +11,7 @@ from lightning_sdk.cli.ai_hub import aihub
 from lightning_sdk.cli.coloring import CustomHelpFormatter
 from lightning_sdk.cli.configure import configure
 from lightning_sdk.cli.connect import connect
+from lightning_sdk.cli.create import create
 from lightning_sdk.cli.delete import delete
 from lightning_sdk.cli.docker import dockerize
 from lightning_sdk.cli.download import download
@@ -64,6 +65,7 @@ def logout() -> None:
 main_cli.add_command(aihub)
 main_cli.add_command(configure)
 main_cli.add_command(connect)
+main_cli.add_command(create)
 main_cli.add_command(delete)
 main_cli.add_command(dockerize)
 main_cli.add_command(download)

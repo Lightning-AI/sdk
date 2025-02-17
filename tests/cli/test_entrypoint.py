@@ -18,6 +18,7 @@ Commands:
   aihub      Interact with Lightning Studio - AI Hub.
   configure  Configure access to resources on the Lightning AI platform.
   connect    Connect to lightning products.
+  create     Create new resources on the Lightning AI platform.
   delete     Delete resources on the Lightning AI platform.
   dockerize  Generate a Dockerfile for a LitServe model.
   download   Download resources from Lightning AI.
