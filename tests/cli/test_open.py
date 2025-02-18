@@ -13,13 +13,18 @@ from lightning_sdk.cli.open import open
 @mock.patch("lightning_sdk.cli.open.Teamspace")
 @mock.patch("lightning_sdk.cli.open._upload_folder")
 def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
-    mock_studio().owner.name = "owner-name"
-    mock_studio().teamspace.name = "teamspace-name"
-    mock_studio().name = "studio-name"
+    mock_studio.return_value.owner.name = "owner-name"
+    mock_studio.return_value.teamspace.name = "teamspace-name"
+    mock_studio.return_value.name = "studio-name"
+
+    (Path(tmpdir) / "folder").mkdir()
+    (Path(tmpdir) / "folder" / "file.txt").touch()
 
     runner = CliRunner()
-    result = runner.invoke(open, [f"{tmpdir}"])
+    result = runner.invoke(open, [f"{tmpdir}/folder"])
     assert result.exit_code == 0, result.output
+
+    mock_studio.assert_called_once_with(name="folder", teamspace=mock_teamspace())
 
     mock_upload_folder.assert_called_once()
 
@@ -34,15 +39,17 @@ def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, mock_webbr
 @mock.patch("lightning_sdk.cli.open.Teamspace")
 @mock.patch("lightning_sdk.cli.open._upload_folder")
 def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
-    mock_studio().owner.name = "owner-name"
-    mock_studio().teamspace.name = "teamspace-name"
-    mock_studio().name = "studio-name"
+    mock_studio.return_value.owner.name = "owner-name"
+    mock_studio.return_value.teamspace.name = "teamspace-name"
+    mock_studio.return_value.name = "studio-name"
 
     (Path(tmpdir) / "file.txt").touch()
 
     runner = CliRunner()
     result = runner.invoke(open, [f"{tmpdir}/file.txt"])
     assert result.exit_code == 0, result.output
+
+    mock_studio.assert_called_once_with(name="file", teamspace=mock_teamspace())
 
     mock_upload_folder.assert_not_called()
     mock_studio().upload_file.assert_called_once()

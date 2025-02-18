@@ -1,7 +1,6 @@
 import webbrowser
 from pathlib import Path
 from typing import Optional
-from uuid import uuid4
 
 import click
 from rich.console import Console
@@ -34,20 +33,21 @@ def open(path: str = ".", teamspace: Optional[str] = None) -> None:  # noqa: A00
     """
     console = Console()
 
+    pathlib_path = Path(path).resolve()
+
     try:
         resolved_teamspace = Teamspace()
     except ValueError:
         menu = _TeamspacesMenu()
         resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
 
-    # TODO: Better names, maybe borrow the name generation from the UI or use the name of the folder / file?
-    new_studio = Studio(name=uuid4().hex, teamspace=resolved_teamspace)
+    new_studio = Studio(name=pathlib_path.stem, teamspace=resolved_teamspace)
 
     console.print(
         f"[bold]Uploading {path} to {new_studio.owner.name}/{new_studio.teamspace.name}/{new_studio.name}[/bold]"
     )
 
-    if Path(path).is_dir():
+    if pathlib_path.is_dir():
         _upload_folder(path, remote_path=".", studio=new_studio)
     else:
         new_studio.upload_file(path)
