@@ -15,7 +15,7 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  studio
+  studio  Start a studio on a given machine.
 """
     )
 
@@ -26,13 +26,15 @@ def test_studio_help():
 
     assert (
         result_text
-        == """Usage: lightning start studio [OPTIONS]
+        == """Usage: lightning start studio [OPTIONS] NAME
+
+  Start a studio on a given machine.
+
+  Example:   lightning start studio NAME
+
+  NAME: the name of the studio to start
 
 Options:
-  --name TEXT                     The name of the studio to start. If not
-                                  specified, tries to infer from the
-                                  environment (e.g. when run from within a
-                                  Studio.)
   --teamspace TEXT                The teamspace the studio is part of. Should
                                   be of format <OWNER>/<TEAMSPACE_NAME>. If
                                   not specified, tries to infer from the

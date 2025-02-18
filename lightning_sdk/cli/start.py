@@ -13,13 +13,8 @@ def start() -> None:
 
 
 @start.command("studio")
-@click.option(
-    "--name",
-    default=None,
-    help=(
-        "The name of the studio to start. "
-        "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
-    ),
+@click.argument(
+    "name",
 )
 @click.option(
     "--teamspace",
@@ -37,7 +32,14 @@ def start() -> None:
     type=click.Choice(_MACHINE_VALUES),
     help="The machine type to start the studio on.",
 )
-def studio(name: Optional[str] = None, teamspace: Optional[str] = None, machine: str = "CPU") -> None:
+def studio(name: str, teamspace: Optional[str] = None, machine: str = "CPU") -> None:
+    """Start a studio on a given machine.
+
+    Example:
+      lightning start studio NAME
+
+    NAME: the name of the studio to start
+    """
     if teamspace is not None:
         ts_splits = teamspace.split("/")
         if len(ts_splits) != 2:
