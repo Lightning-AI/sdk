@@ -75,7 +75,12 @@ class Deployment:
         self._name = name
         self._org = _resolve_org(org)
         self._user = _resolve_user(self._user or user)
-        self._teamspace = _resolve_teamspace(teamspace=teamspace, org=self._org, user=self._user)
+
+        self._teamspace = _resolve_teamspace(
+            teamspace=teamspace,
+            org=self._org,
+            user=self._user,
+        )
         if self._teamspace is None:
             raise ValueError("You need to pass a teamspace or an org for your deployment.")
 
@@ -110,6 +115,7 @@ class Deployment:
         cloud_account: Optional[str] = None,
         custom_domain: Optional[str] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
+        quantity: Optional[int] = None,
     ) -> None:
         """The Lightning AI Deployment.
 
@@ -133,6 +139,7 @@ class Deployment:
             cloud_account: The name of the cloud account, the studio should be created on.
                 Doesn't matter when the studio already exists.
             custom_domain: Whether your service would be referenced under a custom doamin.
+            quantity: The number of machines per replica to deploy.
 
         Note:
             Since a teamspace can either be owned by an org or by a user directly,
@@ -164,6 +171,7 @@ class Deployment:
                     spot=spot,
                     machine=machine,
                     health_check=health_check,
+                    quantity=quantity,
                 ),
                 strategy=to_strategy(release_strategy),
             )
@@ -194,6 +202,7 @@ class Deployment:
         auth: Optional[Union[BasicAuth, TokenAuth]] = None,
         custom_domain: Optional[str] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
+        quantity: Optional[int] = None,
     ) -> None:
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
@@ -215,6 +224,7 @@ class Deployment:
             env=env,
             health_check=health_check,
             release_strategy=release_strategy,
+            quantity=quantity,
         )
 
     def stop(self) -> None:
@@ -335,10 +345,18 @@ class Deployment:
 
     @property
     def release_id(self) -> Optional[str]:
-        """The cloud_account of the replicas."""
+        """The release id of the deployment."""
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return self._deployment.release_id
+        return None
+
+    @property
+    def quantity(self) -> Optional[str]:
+        """The number of machines per replica."""
+        if self._deployment:
+            self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
+            return self._deployment.spec.quantity
         return None
 
     @property

@@ -257,6 +257,7 @@ class DeploymentApi:
         health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
         auth: Optional[Union[BasicAuth, TokenAuth]] = None,
         custom_domain: Optional[str] = None,
+        quantity: Optional[int] = None,
     ) -> V1Deployment:
         # Update the deployment in place
 
@@ -281,6 +282,7 @@ class DeploymentApi:
         requires_release |= apply_change(deployment.spec, "readiness_probe", to_health_check(health_check))
         requires_release |= apply_change(deployment.spec, "cluster_id", cloud_account)
         requires_release |= apply_change(deployment.spec, "spot", spot)
+        requires_release |= apply_change(deployment.spec, "quantity", quantity)
 
         if requires_release:
             if deployment.strategy is None:
@@ -538,6 +540,7 @@ def to_spec(
     spot: Optional[bool] = False,
     env: Optional[List[Union[Secret, Env]]] = None,
     health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
+    quantity: Optional[int] = None,
 ) -> V1JobSpec:
     if cloud_account is None:
         raise ValueError("The cloud account should be defined.")
@@ -557,6 +560,7 @@ def to_spec(
         spot=spot,
         instance_name=_machine_to_compute_name(machine),
         readiness_probe=to_health_check(health_check),
+        quantity=quantity,
     )
 
 

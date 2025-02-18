@@ -286,6 +286,7 @@ def test_deployment_start_first_time(monkeypatch):
         cloud_account="cluster_id",
         machine=Machine.A10G,
         environment="ollama/ollama:latest",
+        quantity=2,
     )
     client.jobs_service_create_deployment.assert_called()
 
@@ -325,7 +326,7 @@ def test_deployment_update(monkeypatch):
     client = MagicMock()
     client.jobs_service_get_deployment_by_name.return_value = V1Deployment(
         name="ollama",
-        spec=V1JobSpec(),
+        spec=V1JobSpec(quantity=2),
         endpoint=V1Endpoint(),
         strategy=None,
         release_id="release-id",
@@ -349,6 +350,7 @@ def test_deployment_update(monkeypatch):
     assert readiness_probe.http_get.path == "/health"
     assert readiness_probe.http_get.port == 8000
     assert deployment.release_id == "release-id"
+    assert deployment.quantity == 2
 
 
 def test_deployment_stop(monkeypatch):
