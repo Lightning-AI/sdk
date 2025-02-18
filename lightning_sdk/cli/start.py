@@ -3,6 +3,7 @@ from typing import Optional
 import click
 
 from lightning_sdk import Machine, Studio
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
@@ -50,7 +51,7 @@ def studio(name: str, teamspace: Optional[str] = None, machine: str = "CPU") -> 
 
     try:
         studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False)
-    except (RuntimeError, ValueError):
+    except (RuntimeError, ValueError, ApiException):
         studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
 
     try:

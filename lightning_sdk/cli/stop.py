@@ -4,6 +4,7 @@ import click
 from rich.console import Console
 
 from lightning_sdk.cli.job_and_mmt_action import _JobAndMMTAction
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.studio import Studio
 
 
@@ -87,7 +88,7 @@ def studio(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
 
     try:
         studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False)
-    except (RuntimeError, ValueError):
+    except (RuntimeError, ValueError, ApiException):
         studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
 
     studio.stop()
