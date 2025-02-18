@@ -1,5 +1,5 @@
 from time import sleep
-from typing import Any, List, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.lightning_cloud.openapi import (
@@ -384,13 +384,21 @@ def restore_env(env: List[V1EnvVar]) -> List[Union[Secret, Env]]:
     return [Secret(name=e.from_secret) if e.from_secret else Env(name=e.name, value=e.value) for e in env]
 
 
-def to_env(env: Optional[List[Union[Secret, Env]]] = None) -> Optional[List[V1EnvVar]]:
+def to_env(env: Union[List[Union[Secret, Env]], Dict[str, str], None] = None) -> Optional[List[V1EnvVar]]:
     if not env:
         return None
 
+    env_list = []
+
+    if isinstance(env, dict):
+        for k, v in env.items():
+            env_list.append(Env(name=k, value=v))
+    else:
+        env_list = env
+
     return [
         V1EnvVar(name=env.name, value=env.value) if isinstance(env, Env) else V1EnvVar(from_secret=env.name)
-        for env in env
+        for env in env_list
     ]
 
 
@@ -538,7 +546,7 @@ def to_spec(
     entrypoint: Optional[str],
     command: Optional[str],
     spot: Optional[bool] = False,
-    env: Optional[List[Union[Secret, Env]]] = None,
+    env: Union[List[Union[Secret, Env]], Dict[str, str], None] = None,
     health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
     quantity: Optional[int] = None,
 ) -> V1JobSpec:

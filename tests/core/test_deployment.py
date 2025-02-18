@@ -6,7 +6,7 @@ import pytest
 from lightning_sdk import teamspace, user
 from lightning_sdk.api import deployment_api as deployment_api_module
 from lightning_sdk.deployment import deployment as deployment_module
-from lightning_sdk.deployment.deployment import AutoScaleConfig, HttpHealthCheck
+from lightning_sdk.deployment.deployment import AutoScaleConfig, Env, HttpHealthCheck, Secret
 from lightning_sdk.lightning_cloud.openapi import (
     V1AutoscalingSpec,
     V1AutoscalingTargetMetric,
@@ -14,6 +14,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1DeploymentStatus,
     V1Endpoint,
     V1EndpointAuth,
+    V1EnvVar,
     V1JobSpec,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -205,6 +206,14 @@ def test_to_autoscaling():
     second_metric = autoscaling_with_multiple_metrics.target_metric[1]
     assert second_metric.name == "GPU"
     assert second_metric.target == "75"
+
+
+def test_to_env():
+    env = deployment_api_module.to_env({"key": "value"})
+    assert env == [V1EnvVar(name="key", value="value")]
+
+    env = deployment_api_module.to_env([Env("key", "value"), Secret("secret")])
+    assert env == [V1EnvVar(name="key", value="value"), V1EnvVar(from_secret="secret")]
 
 
 def test_to_endpoint():

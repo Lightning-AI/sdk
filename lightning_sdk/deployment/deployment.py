@@ -107,7 +107,7 @@ class Deployment:
         release_strategy: Optional[ReleaseStrategy] = None,
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
-        env: Optional[List[Union[Env, Secret]]] = None,
+        env: Union[List[Union[Secret, Env]], Dict[str, str], None] = None,
         spot: Optional[bool] = None,
         replicas: Optional[int] = None,
         health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
