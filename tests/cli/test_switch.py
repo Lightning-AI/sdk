@@ -26,15 +26,15 @@ def test_studio_help():
 
     assert (
         result_text
-        == """Usage: lightning switch studio [OPTIONS]
+        == """Usage: lightning switch studio [OPTIONS] NAME
 
   Switch a studio to a given machine.
 
+  Example:   lightning switch studio NAME --machine=CPU
+
+  NAME: the name of the studio to switch machine for.
+
 Options:
-  --name TEXT                     The name of the studio to start. If not
-                                  specified, tries to infer from the
-                                  environment (e.g. when run from within a
-                                  Studio.)
   --teamspace TEXT                The teamspace the studio is part of. Should
                                   be of format <OWNER>/<TEAMSPACE_NAME>. If
                                   not specified, tries to infer from the

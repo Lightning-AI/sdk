@@ -13,14 +13,7 @@ def switch() -> None:
 
 
 @switch.command("studio")
-@click.option(
-    "--name",
-    default=None,
-    help=(
-        "The name of the studio to start. "
-        "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
-    ),
-)
+@click.argument("name")
 @click.option(
     "--teamspace",
     default=None,
@@ -37,8 +30,14 @@ def switch() -> None:
     type=click.Choice(_MACHINE_VALUES),
     help="The machine type to switch to.",
 )
-def studio(name: Optional[str] = None, teamspace: Optional[str] = None, machine: str = "CPU") -> None:
-    """Switch a studio to a given machine."""
+def studio(name: str, teamspace: Optional[str] = None, machine: str = "CPU") -> None:
+    """Switch a studio to a given machine.
+
+    Example:
+      lightning switch studio NAME --machine=CPU
+
+    NAME: the name of the studio to switch machine for.
+    """
     if teamspace is not None:
         ts_splits = teamspace.split("/")
         if len(ts_splits) != 2:
