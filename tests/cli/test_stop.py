@@ -72,13 +72,15 @@ def test_studio_help():
 
     assert (
         result_text
-        == """Usage: lightning stop studio [OPTIONS]
+        == """Usage: lightning stop studio [OPTIONS] NAME
 
   Stop a running studio.
 
+  Example:   lightning stop studio NAME
+
+  NAME: the name of the studio to stop.
+
 Options:
-  --name TEXT       the name of the studio. If not specified can be selected
-                    interactively.
   --teamspace TEXT  the name of the teamspace the studio lives in. Should be
                     specified as {teamspace_owner}/{teamspace_name} (e.g my-
                     org/my-teamspace). If not specified can be selected

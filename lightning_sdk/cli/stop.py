@@ -62,10 +62,8 @@ def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
 
 
 @stop.command("studio")
-@click.option(
-    "--name",
-    default=None,
-    help="the name of the studio. If not specified can be selected interactively.",
+@click.argument(
+    "name",
 )
 @click.option(
     "--teamspace",
@@ -76,8 +74,14 @@ def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
         "If not specified can be selected interactively."
     ),
 )
-def studio(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-    """Stop a running studio."""
+def studio(name: str, teamspace: Optional[str] = None) -> None:
+    """Stop a running studio.
+
+    Example:
+      lightning stop studio NAME
+
+    NAME: the name of the studio to stop.
+    """
     if teamspace is not None:
         ts_splits = teamspace.split("/")
         if len(ts_splits) != 2:
