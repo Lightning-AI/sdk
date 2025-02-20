@@ -37,8 +37,10 @@ class LitContainerApi:
         try:
             self._docker_client = docker.from_env()
             self._docker_client.ping()
-        except docker.errors.DockerException as e:
-            raise RuntimeError(f"Failed to connect to Docker daemon: {e!s}. Is Docker running?") from None
+        except docker.errors.DockerException:
+            raise RuntimeError(
+                "Failed to connect to Docker, follow these steps to start it: https://docs.docker.com/engine/daemon/start/"
+            ) from None
 
     def authenticate(self) -> bool:
         authed_user = self._client.auth_service_get_user()
