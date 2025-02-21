@@ -41,6 +41,7 @@ class V1LitRegistryArtifact(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'exposed_ports': 'list[str]',
         'full_hash_digest': 'str',
         'location': 'str',
         'pull_time': 'datetime',
@@ -51,6 +52,7 @@ class V1LitRegistryArtifact(object):
     }
 
     attribute_map = {
+        'exposed_ports': 'exposedPorts',
         'full_hash_digest': 'fullHashDigest',
         'location': 'location',
         'pull_time': 'pullTime',
@@ -60,8 +62,9 @@ class V1LitRegistryArtifact(object):
         'tag_name': 'tagName'
     }
 
-    def __init__(self, full_hash_digest: 'str' =None, location: 'str' =None, pull_time: 'datetime' =None, push_time: 'datetime' =None, short_hash_digest: 'str' =None, size: 'str' =None, tag_name: 'str' =None):  # noqa: E501
+    def __init__(self, exposed_ports: 'list[str]' =None, full_hash_digest: 'str' =None, location: 'str' =None, pull_time: 'datetime' =None, push_time: 'datetime' =None, short_hash_digest: 'str' =None, size: 'str' =None, tag_name: 'str' =None):  # noqa: E501
         """V1LitRegistryArtifact - a model defined in Swagger"""  # noqa: E501
+        self._exposed_ports = None
         self._full_hash_digest = None
         self._location = None
         self._pull_time = None
@@ -70,6 +73,8 @@ class V1LitRegistryArtifact(object):
         self._size = None
         self._tag_name = None
         self.discriminator = None
+        if exposed_ports is not None:
+            self.exposed_ports = exposed_ports
         if full_hash_digest is not None:
             self.full_hash_digest = full_hash_digest
         if location is not None:
@@ -84,6 +89,27 @@ class V1LitRegistryArtifact(object):
             self.size = size
         if tag_name is not None:
             self.tag_name = tag_name
+
+    @property
+    def exposed_ports(self) -> 'list[str]':
+        """Gets the exposed_ports of this V1LitRegistryArtifact.  # noqa: E501
+
+
+        :return: The exposed_ports of this V1LitRegistryArtifact.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._exposed_ports
+
+    @exposed_ports.setter
+    def exposed_ports(self, exposed_ports: 'list[str]'):
+        """Sets the exposed_ports of this V1LitRegistryArtifact.
+
+
+        :param exposed_ports: The exposed_ports of this V1LitRegistryArtifact.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._exposed_ports = exposed_ports
 
     @property
     def full_hash_digest(self) -> 'str':

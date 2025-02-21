@@ -43,25 +43,30 @@ class V1RestartTiming(object):
     swagger_types = {
         'counter': 'int',
         'end': 'datetime',
+        'rank': 'int',
         'start': 'datetime'
     }
 
     attribute_map = {
         'counter': 'counter',
         'end': 'end',
+        'rank': 'rank',
         'start': 'start'
     }
 
-    def __init__(self, counter: 'int' =None, end: 'datetime' =None, start: 'datetime' =None):  # noqa: E501
+    def __init__(self, counter: 'int' =None, end: 'datetime' =None, rank: 'int' =None, start: 'datetime' =None):  # noqa: E501
         """V1RestartTiming - a model defined in Swagger"""  # noqa: E501
         self._counter = None
         self._end = None
+        self._rank = None
         self._start = None
         self.discriminator = None
         if counter is not None:
             self.counter = counter
         if end is not None:
             self.end = end
+        if rank is not None:
+            self.rank = rank
         if start is not None:
             self.start = start
 
@@ -106,6 +111,27 @@ class V1RestartTiming(object):
         """
 
         self._end = end
+
+    @property
+    def rank(self) -> 'int':
+        """Gets the rank of this V1RestartTiming.  # noqa: E501
+
+
+        :return: The rank of this V1RestartTiming.  # noqa: E501
+        :rtype: int
+        """
+        return self._rank
+
+    @rank.setter
+    def rank(self, rank: 'int'):
+        """Sets the rank of this V1RestartTiming.
+
+
+        :param rank: The rank of this V1RestartTiming.  # noqa: E501
+        :type: int
+        """
+
+        self._rank = rank
 
     @property
     def start(self) -> 'datetime':

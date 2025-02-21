@@ -25,6 +25,7 @@ from lightning_sdk.lightning_cloud.openapi.api.lit_page_service_api import LitPa
 from lightning_sdk.lightning_cloud.openapi.api.lit_registry_service_api import LitRegistryServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.models_store_api import ModelsStoreApi
 from lightning_sdk.lightning_cloud.openapi.api.organizations_service_api import OrganizationsServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.pipelines_service_api import PipelinesServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.profiler_service_api import ProfilerServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.projects_service_api import ProjectsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.quest_service_api import QuestServiceApi

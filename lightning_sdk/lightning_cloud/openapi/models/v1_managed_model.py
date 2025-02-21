@@ -43,6 +43,7 @@ class V1ManagedModel(object):
     swagger_types = {
         'abilities': 'V1ManagedModelAbilities',
         'completion_token_price': 'float',
+        'deployment_details': 'V1DeploymentDetails',
         'description': 'str',
         'endpoint_id': 'str',
         'id': 'str',
@@ -54,6 +55,7 @@ class V1ManagedModel(object):
     attribute_map = {
         'abilities': 'abilities',
         'completion_token_price': 'completionTokenPrice',
+        'deployment_details': 'deploymentDetails',
         'description': 'description',
         'endpoint_id': 'endpointId',
         'id': 'id',
@@ -62,10 +64,11 @@ class V1ManagedModel(object):
         'status': 'status'
     }
 
-    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, completion_token_price: 'float' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, status: 'V1AssistantModelStatus' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, completion_token_price: 'float' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, status: 'V1AssistantModelStatus' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._abilities = None
         self._completion_token_price = None
+        self._deployment_details = None
         self._description = None
         self._endpoint_id = None
         self._id = None
@@ -77,6 +80,8 @@ class V1ManagedModel(object):
             self.abilities = abilities
         if completion_token_price is not None:
             self.completion_token_price = completion_token_price
+        if deployment_details is not None:
+            self.deployment_details = deployment_details
         if description is not None:
             self.description = description
         if endpoint_id is not None:
@@ -131,6 +136,27 @@ class V1ManagedModel(object):
         """
 
         self._completion_token_price = completion_token_price
+
+    @property
+    def deployment_details(self) -> 'V1DeploymentDetails':
+        """Gets the deployment_details of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The deployment_details of this V1ManagedModel.  # noqa: E501
+        :rtype: V1DeploymentDetails
+        """
+        return self._deployment_details
+
+    @deployment_details.setter
+    def deployment_details(self, deployment_details: 'V1DeploymentDetails'):
+        """Sets the deployment_details of this V1ManagedModel.
+
+
+        :param deployment_details: The deployment_details of this V1ManagedModel.  # noqa: E501
+        :type: V1DeploymentDetails
+        """
+
+        self._deployment_details = deployment_details
 
     @property
     def description(self) -> 'str':

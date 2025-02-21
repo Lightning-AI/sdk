@@ -35,4 +35,3 @@ def test_user_api_get_feature_flags(mocker):
     # If this test fails because they were removed, it needs to be updated to new flags here and in the mock above
     assert feature_flags.plugin_sweeps
     assert feature_flags.jobs_v2
-    assert not feature_flags.enable_efs

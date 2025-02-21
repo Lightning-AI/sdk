@@ -52,6 +52,7 @@ class V1Deployment(object):
         'is_published': 'bool',
         'name': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
+        'pipeline_id': 'str',
         'project_id': 'str',
         'release_id': 'str',
         'replicas': 'int',
@@ -77,6 +78,7 @@ class V1Deployment(object):
         'is_published': 'isPublished',
         'name': 'name',
         'parameter_spec': 'parameterSpec',
+        'pipeline_id': 'pipelineId',
         'project_id': 'projectId',
         'release_id': 'releaseId',
         'replicas': 'replicas',
@@ -90,7 +92,7 @@ class V1Deployment(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
         self._apis = None
         self._autoscaling = None
@@ -103,6 +105,7 @@ class V1Deployment(object):
         self._is_published = None
         self._name = None
         self._parameter_spec = None
+        self._pipeline_id = None
         self._project_id = None
         self._release_id = None
         self._replicas = None
@@ -137,6 +140,8 @@ class V1Deployment(object):
             self.name = name
         if parameter_spec is not None:
             self.parameter_spec = parameter_spec
+        if pipeline_id is not None:
+            self.pipeline_id = pipeline_id
         if project_id is not None:
             self.project_id = project_id
         if release_id is not None:
@@ -390,6 +395,27 @@ class V1Deployment(object):
         """
 
         self._parameter_spec = parameter_spec
+
+    @property
+    def pipeline_id(self) -> 'str':
+        """Gets the pipeline_id of this V1Deployment.  # noqa: E501
+
+
+        :return: The pipeline_id of this V1Deployment.  # noqa: E501
+        :rtype: str
+        """
+        return self._pipeline_id
+
+    @pipeline_id.setter
+    def pipeline_id(self, pipeline_id: 'str'):
+        """Sets the pipeline_id of this V1Deployment.
+
+
+        :param pipeline_id: The pipeline_id of this V1Deployment.  # noqa: E501
+        :type: str
+        """
+
+        self._pipeline_id = pipeline_id
 
     @property
     def project_id(self) -> 'str':

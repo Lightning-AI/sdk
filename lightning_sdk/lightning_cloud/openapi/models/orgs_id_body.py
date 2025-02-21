@@ -41,9 +41,13 @@ class OrgsIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allow_aws_saas': 'bool',
+        'allow_gcp_saas': 'bool',
         'allow_guest': 'bool',
+        'allow_lambda_saas': 'bool',
         'allow_member_invitations': 'bool',
         'allow_member_teamspace_creation': 'bool',
+        'allow_vultr_saas': 'bool',
         'auto_invite_by_domain': 'bool',
         'auto_join_domains': 'list[str]',
         'description': 'str',
@@ -59,9 +63,13 @@ class OrgsIdBody(object):
     }
 
     attribute_map = {
+        'allow_aws_saas': 'allowAwsSaas',
+        'allow_gcp_saas': 'allowGcpSaas',
         'allow_guest': 'allowGuest',
+        'allow_lambda_saas': 'allowLambdaSaas',
         'allow_member_invitations': 'allowMemberInvitations',
         'allow_member_teamspace_creation': 'allowMemberTeamspaceCreation',
+        'allow_vultr_saas': 'allowVultrSaas',
         'auto_invite_by_domain': 'autoInviteByDomain',
         'auto_join_domains': 'autoJoinDomains',
         'description': 'description',
@@ -76,11 +84,15 @@ class OrgsIdBody(object):
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, allow_guest: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
+        self._allow_aws_saas = None
+        self._allow_gcp_saas = None
         self._allow_guest = None
+        self._allow_lambda_saas = None
         self._allow_member_invitations = None
         self._allow_member_teamspace_creation = None
+        self._allow_vultr_saas = None
         self._auto_invite_by_domain = None
         self._auto_join_domains = None
         self._description = None
@@ -94,12 +106,20 @@ class OrgsIdBody(object):
         self._teamspace_default_credits = None
         self._twitter_username = None
         self.discriminator = None
+        if allow_aws_saas is not None:
+            self.allow_aws_saas = allow_aws_saas
+        if allow_gcp_saas is not None:
+            self.allow_gcp_saas = allow_gcp_saas
         if allow_guest is not None:
             self.allow_guest = allow_guest
+        if allow_lambda_saas is not None:
+            self.allow_lambda_saas = allow_lambda_saas
         if allow_member_invitations is not None:
             self.allow_member_invitations = allow_member_invitations
         if allow_member_teamspace_creation is not None:
             self.allow_member_teamspace_creation = allow_member_teamspace_creation
+        if allow_vultr_saas is not None:
+            self.allow_vultr_saas = allow_vultr_saas
         if auto_invite_by_domain is not None:
             self.auto_invite_by_domain = auto_invite_by_domain
         if auto_join_domains is not None:
@@ -126,6 +146,48 @@ class OrgsIdBody(object):
             self.twitter_username = twitter_username
 
     @property
+    def allow_aws_saas(self) -> 'bool':
+        """Gets the allow_aws_saas of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The allow_aws_saas of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_aws_saas
+
+    @allow_aws_saas.setter
+    def allow_aws_saas(self, allow_aws_saas: 'bool'):
+        """Sets the allow_aws_saas of this OrgsIdBody.
+
+
+        :param allow_aws_saas: The allow_aws_saas of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_aws_saas = allow_aws_saas
+
+    @property
+    def allow_gcp_saas(self) -> 'bool':
+        """Gets the allow_gcp_saas of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The allow_gcp_saas of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_gcp_saas
+
+    @allow_gcp_saas.setter
+    def allow_gcp_saas(self, allow_gcp_saas: 'bool'):
+        """Sets the allow_gcp_saas of this OrgsIdBody.
+
+
+        :param allow_gcp_saas: The allow_gcp_saas of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_gcp_saas = allow_gcp_saas
+
+    @property
     def allow_guest(self) -> 'bool':
         """Gets the allow_guest of this OrgsIdBody.  # noqa: E501
 
@@ -145,6 +207,27 @@ class OrgsIdBody(object):
         """
 
         self._allow_guest = allow_guest
+
+    @property
+    def allow_lambda_saas(self) -> 'bool':
+        """Gets the allow_lambda_saas of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The allow_lambda_saas of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_lambda_saas
+
+    @allow_lambda_saas.setter
+    def allow_lambda_saas(self, allow_lambda_saas: 'bool'):
+        """Sets the allow_lambda_saas of this OrgsIdBody.
+
+
+        :param allow_lambda_saas: The allow_lambda_saas of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_lambda_saas = allow_lambda_saas
 
     @property
     def allow_member_invitations(self) -> 'bool':
@@ -187,6 +270,27 @@ class OrgsIdBody(object):
         """
 
         self._allow_member_teamspace_creation = allow_member_teamspace_creation
+
+    @property
+    def allow_vultr_saas(self) -> 'bool':
+        """Gets the allow_vultr_saas of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The allow_vultr_saas of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_vultr_saas
+
+    @allow_vultr_saas.setter
+    def allow_vultr_saas(self, allow_vultr_saas: 'bool'):
+        """Sets the allow_vultr_saas of this OrgsIdBody.
+
+
+        :param allow_vultr_saas: The allow_vultr_saas of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_vultr_saas = allow_vultr_saas
 
     @property
     def auto_invite_by_domain(self) -> 'bool':

@@ -42,14 +42,18 @@ class V1Job(object):
     """
     swagger_types = {
         'created_at': 'datetime',
+        'deleted_at': 'datetime',
         'deployment_id': 'str',
         'endpoint': 'V1Endpoint',
         'id': 'str',
+        'interruption_notice_received': 'bool',
+        'interruption_notice_received_at': 'datetime',
         'is_healthy': 'bool',
         'message': 'str',
         'multi_machine_job_id': 'str',
         'name': 'str',
         'overprovisioned': 'bool',
+        'pipeline_id': 'str',
         'project_id': 'str',
         'ready_at': 'datetime',
         'release_id': 'str',
@@ -71,14 +75,18 @@ class V1Job(object):
 
     attribute_map = {
         'created_at': 'createdAt',
+        'deleted_at': 'deletedAt',
         'deployment_id': 'deploymentId',
         'endpoint': 'endpoint',
         'id': 'id',
+        'interruption_notice_received': 'interruptionNoticeReceived',
+        'interruption_notice_received_at': 'interruptionNoticeReceivedAt',
         'is_healthy': 'isHealthy',
         'message': 'message',
         'multi_machine_job_id': 'multiMachineJobId',
         'name': 'name',
         'overprovisioned': 'overprovisioned',
+        'pipeline_id': 'pipelineId',
         'project_id': 'projectId',
         'ready_at': 'readyAt',
         'release_id': 'releaseId',
@@ -98,17 +106,21 @@ class V1Job(object):
         'user_logs_started_at': 'userLogsStartedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
+        self._deleted_at = None
         self._deployment_id = None
         self._endpoint = None
         self._id = None
+        self._interruption_notice_received = None
+        self._interruption_notice_received_at = None
         self._is_healthy = None
         self._message = None
         self._multi_machine_job_id = None
         self._name = None
         self._overprovisioned = None
+        self._pipeline_id = None
         self._project_id = None
         self._ready_at = None
         self._release_id = None
@@ -129,12 +141,18 @@ class V1Job(object):
         self.discriminator = None
         if created_at is not None:
             self.created_at = created_at
+        if deleted_at is not None:
+            self.deleted_at = deleted_at
         if deployment_id is not None:
             self.deployment_id = deployment_id
         if endpoint is not None:
             self.endpoint = endpoint
         if id is not None:
             self.id = id
+        if interruption_notice_received is not None:
+            self.interruption_notice_received = interruption_notice_received
+        if interruption_notice_received_at is not None:
+            self.interruption_notice_received_at = interruption_notice_received_at
         if is_healthy is not None:
             self.is_healthy = is_healthy
         if message is not None:
@@ -145,6 +163,8 @@ class V1Job(object):
             self.name = name
         if overprovisioned is not None:
             self.overprovisioned = overprovisioned
+        if pipeline_id is not None:
+            self.pipeline_id = pipeline_id
         if project_id is not None:
             self.project_id = project_id
         if ready_at is not None:
@@ -200,6 +220,27 @@ class V1Job(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def deleted_at(self) -> 'datetime':
+        """Gets the deleted_at of this V1Job.  # noqa: E501
+
+
+        :return: The deleted_at of this V1Job.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._deleted_at
+
+    @deleted_at.setter
+    def deleted_at(self, deleted_at: 'datetime'):
+        """Sets the deleted_at of this V1Job.
+
+
+        :param deleted_at: The deleted_at of this V1Job.  # noqa: E501
+        :type: datetime
+        """
+
+        self._deleted_at = deleted_at
 
     @property
     def deployment_id(self) -> 'str':
@@ -263,6 +304,48 @@ class V1Job(object):
         """
 
         self._id = id
+
+    @property
+    def interruption_notice_received(self) -> 'bool':
+        """Gets the interruption_notice_received of this V1Job.  # noqa: E501
+
+
+        :return: The interruption_notice_received of this V1Job.  # noqa: E501
+        :rtype: bool
+        """
+        return self._interruption_notice_received
+
+    @interruption_notice_received.setter
+    def interruption_notice_received(self, interruption_notice_received: 'bool'):
+        """Sets the interruption_notice_received of this V1Job.
+
+
+        :param interruption_notice_received: The interruption_notice_received of this V1Job.  # noqa: E501
+        :type: bool
+        """
+
+        self._interruption_notice_received = interruption_notice_received
+
+    @property
+    def interruption_notice_received_at(self) -> 'datetime':
+        """Gets the interruption_notice_received_at of this V1Job.  # noqa: E501
+
+
+        :return: The interruption_notice_received_at of this V1Job.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._interruption_notice_received_at
+
+    @interruption_notice_received_at.setter
+    def interruption_notice_received_at(self, interruption_notice_received_at: 'datetime'):
+        """Sets the interruption_notice_received_at of this V1Job.
+
+
+        :param interruption_notice_received_at: The interruption_notice_received_at of this V1Job.  # noqa: E501
+        :type: datetime
+        """
+
+        self._interruption_notice_received_at = interruption_notice_received_at
 
     @property
     def is_healthy(self) -> 'bool':
@@ -370,6 +453,27 @@ class V1Job(object):
         """
 
         self._overprovisioned = overprovisioned
+
+    @property
+    def pipeline_id(self) -> 'str':
+        """Gets the pipeline_id of this V1Job.  # noqa: E501
+
+
+        :return: The pipeline_id of this V1Job.  # noqa: E501
+        :rtype: str
+        """
+        return self._pipeline_id
+
+    @pipeline_id.setter
+    def pipeline_id(self, pipeline_id: 'str'):
+        """Sets the pipeline_id of this V1Job.
+
+
+        :param pipeline_id: The pipeline_id of this V1Job.  # noqa: E501
+        :type: str
+        """
+
+        self._pipeline_id = pipeline_id
 
     @property
     def project_id(self) -> 'str':

@@ -82,7 +82,7 @@ def test_file_uploader(_, tmp_path, monkeypatch):
         project_id="test-project-id",
     )
     uploader.client.storage_service_upload_project_artifact_parts.assert_called_once_with(
-        UploadsUploadIdBody(filename="path/to/file/on/remote", parts=[1], cluster_id="test-cluster-id"),
+        UploadsUploadIdBody(filename="path/to/file/on/remote", parts=[1]),
         "test-project-id",
         "test-upload-id",
     )

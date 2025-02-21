@@ -49,6 +49,7 @@ class V1MultiMachineJob(object):
         'machines': 'int',
         'message': 'str',
         'name': 'str',
+        'pipeline_id': 'str',
         'project_id': 'str',
         'spec': 'V1JobSpec',
         'state': 'V1MultiMachineJobState',
@@ -67,6 +68,7 @@ class V1MultiMachineJob(object):
         'machines': 'machines',
         'message': 'message',
         'name': 'name',
+        'pipeline_id': 'pipelineId',
         'project_id': 'projectId',
         'spec': 'spec',
         'state': 'state',
@@ -76,7 +78,7 @@ class V1MultiMachineJob(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, id: 'str' =None, machines: 'int' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, id: 'str' =None, machines: 'int' =None, message: 'str' =None, name: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1MultiMachineJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._created_at = None
@@ -86,6 +88,7 @@ class V1MultiMachineJob(object):
         self._machines = None
         self._message = None
         self._name = None
+        self._pipeline_id = None
         self._project_id = None
         self._spec = None
         self._state = None
@@ -110,6 +113,8 @@ class V1MultiMachineJob(object):
             self.message = message
         if name is not None:
             self.name = name
+        if pipeline_id is not None:
+            self.pipeline_id = pipeline_id
         if project_id is not None:
             self.project_id = project_id
         if spec is not None:
@@ -292,6 +297,27 @@ class V1MultiMachineJob(object):
         """
 
         self._name = name
+
+    @property
+    def pipeline_id(self) -> 'str':
+        """Gets the pipeline_id of this V1MultiMachineJob.  # noqa: E501
+
+
+        :return: The pipeline_id of this V1MultiMachineJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._pipeline_id
+
+    @pipeline_id.setter
+    def pipeline_id(self, pipeline_id: 'str'):
+        """Sets the pipeline_id of this V1MultiMachineJob.
+
+
+        :param pipeline_id: The pipeline_id of this V1MultiMachineJob.  # noqa: E501
+        :type: str
+        """
+
+        self._pipeline_id = pipeline_id
 
     @property
     def project_id(self) -> 'str':

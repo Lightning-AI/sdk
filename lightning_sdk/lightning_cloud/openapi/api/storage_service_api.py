@@ -148,6 +148,103 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def storage_service_complete_upload_temporary_artifact(self, body: 'V1CompleteUploadTemporaryArtifactRequest', **kwargs) -> 'V1CompleteUploadProjectArtifactResponse':  # noqa: E501
+        """storage_service_complete_upload_temporary_artifact  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_complete_upload_temporary_artifact(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1CompleteUploadTemporaryArtifactRequest body: (required)
+        :return: V1CompleteUploadProjectArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.storage_service_complete_upload_temporary_artifact_with_http_info(body, **kwargs)  # noqa: E501
+        else:
+            (data) = self.storage_service_complete_upload_temporary_artifact_with_http_info(body, **kwargs)  # noqa: E501
+            return data
+
+    def storage_service_complete_upload_temporary_artifact_with_http_info(self, body: 'V1CompleteUploadTemporaryArtifactRequest', **kwargs) -> 'V1CompleteUploadProjectArtifactResponse':  # noqa: E501
+        """storage_service_complete_upload_temporary_artifact  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_complete_upload_temporary_artifact_with_http_info(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1CompleteUploadTemporaryArtifactRequest body: (required)
+        :return: V1CompleteUploadProjectArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method storage_service_complete_upload_temporary_artifact" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `storage_service_complete_upload_temporary_artifact`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/temporary_storage/complete', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CompleteUploadProjectArtifactResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def storage_service_delete_project_artifact(self, project_id: 'str', **kwargs) -> 'V1DeleteProjectArtifactResponse':  # noqa: E501
         """storage_service_delete_project_artifact  # noqa: E501
 
@@ -1081,7 +1178,7 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def storage_service_upload_project_artifact_parts(self, body: 'UploadsUploadIdBody', project_id: 'str', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
+    def storage_service_upload_project_artifact_parts(self, body: 'UploadsUploadIdBody1', project_id: 'str', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
         """storage_service_upload_project_artifact_parts  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1090,7 +1187,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadsUploadIdBody body: (required)
+        :param UploadsUploadIdBody1 body: (required)
         :param str project_id: (required)
         :param str upload_id: (required)
         :return: V1UploadProjectArtifactPartsResponse
@@ -1104,7 +1201,7 @@ class StorageServiceApi(object):
             (data) = self.storage_service_upload_project_artifact_parts_with_http_info(body, project_id, upload_id, **kwargs)  # noqa: E501
             return data
 
-    def storage_service_upload_project_artifact_parts_with_http_info(self, body: 'UploadsUploadIdBody', project_id: 'str', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
+    def storage_service_upload_project_artifact_parts_with_http_info(self, body: 'UploadsUploadIdBody1', project_id: 'str', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
         """storage_service_upload_project_artifact_parts  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1113,7 +1210,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadsUploadIdBody body: (required)
+        :param UploadsUploadIdBody1 body: (required)
         :param str project_id: (required)
         :param str upload_id: (required)
         :return: V1UploadProjectArtifactPartsResponse
@@ -1180,6 +1277,208 @@ class StorageServiceApi(object):
 
         return self.api_client.call_api(
             '/v1/projects/{projectId}/storage/uploads/{uploadId}', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1UploadProjectArtifactPartsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def storage_service_upload_temporary_artifact(self, body: 'V1UploadTemporaryArtifactRequest', **kwargs) -> 'V1UploadProjectArtifactResponse':  # noqa: E501
+        """storage_service_upload_temporary_artifact  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_upload_temporary_artifact(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1UploadTemporaryArtifactRequest body: (required)
+        :return: V1UploadProjectArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.storage_service_upload_temporary_artifact_with_http_info(body, **kwargs)  # noqa: E501
+        else:
+            (data) = self.storage_service_upload_temporary_artifact_with_http_info(body, **kwargs)  # noqa: E501
+            return data
+
+    def storage_service_upload_temporary_artifact_with_http_info(self, body: 'V1UploadTemporaryArtifactRequest', **kwargs) -> 'V1UploadProjectArtifactResponse':  # noqa: E501
+        """storage_service_upload_temporary_artifact  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_upload_temporary_artifact_with_http_info(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1UploadTemporaryArtifactRequest body: (required)
+        :return: V1UploadProjectArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method storage_service_upload_temporary_artifact" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `storage_service_upload_temporary_artifact`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/temporary_storage', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1UploadProjectArtifactResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def storage_service_upload_temporary_artifact_parts(self, body: 'UploadsUploadIdBody', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
+        """storage_service_upload_temporary_artifact_parts  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_upload_temporary_artifact_parts(body, upload_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param UploadsUploadIdBody body: (required)
+        :param str upload_id: (required)
+        :return: V1UploadProjectArtifactPartsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.storage_service_upload_temporary_artifact_parts_with_http_info(body, upload_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.storage_service_upload_temporary_artifact_parts_with_http_info(body, upload_id, **kwargs)  # noqa: E501
+            return data
+
+    def storage_service_upload_temporary_artifact_parts_with_http_info(self, body: 'UploadsUploadIdBody', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
+        """storage_service_upload_temporary_artifact_parts  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_upload_temporary_artifact_parts_with_http_info(body, upload_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param UploadsUploadIdBody body: (required)
+        :param str upload_id: (required)
+        :return: V1UploadProjectArtifactPartsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'upload_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method storage_service_upload_temporary_artifact_parts" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `storage_service_upload_temporary_artifact_parts`")  # noqa: E501
+        # verify the required parameter 'upload_id' is set
+        if ('upload_id' not in params or
+                params['upload_id'] is None):
+            raise ValueError("Missing the required parameter `upload_id` when calling `storage_service_upload_temporary_artifact_parts`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'upload_id' in params:
+            path_params['uploadId'] = params['upload_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/temporary_storage/uploads/{uploadId}', 'POST',
             path_params,
             query_params,
             header_params,

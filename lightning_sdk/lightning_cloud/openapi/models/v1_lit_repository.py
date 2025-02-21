@@ -42,6 +42,7 @@ class V1LitRepository(object):
     """
     swagger_types = {
         'artifact_count': 'str',
+        'artifacts': 'list[V1LitRegistryArtifact]',
         'creation_time': 'datetime',
         'description': 'str',
         'id': 'str',
@@ -53,6 +54,7 @@ class V1LitRepository(object):
 
     attribute_map = {
         'artifact_count': 'artifactCount',
+        'artifacts': 'artifacts',
         'creation_time': 'creationTime',
         'description': 'description',
         'id': 'id',
@@ -62,9 +64,10 @@ class V1LitRepository(object):
         'update_time': 'updateTime'
     }
 
-    def __init__(self, artifact_count: 'str' =None, creation_time: 'datetime' =None, description: 'str' =None, id: 'str' =None, latest_artifact: 'V1LitRegistryArtifact' =None, name: 'str' =None, pull_count: 'str' =None, update_time: 'datetime' =None):  # noqa: E501
+    def __init__(self, artifact_count: 'str' =None, artifacts: 'list[V1LitRegistryArtifact]' =None, creation_time: 'datetime' =None, description: 'str' =None, id: 'str' =None, latest_artifact: 'V1LitRegistryArtifact' =None, name: 'str' =None, pull_count: 'str' =None, update_time: 'datetime' =None):  # noqa: E501
         """V1LitRepository - a model defined in Swagger"""  # noqa: E501
         self._artifact_count = None
+        self._artifacts = None
         self._creation_time = None
         self._description = None
         self._id = None
@@ -75,6 +78,8 @@ class V1LitRepository(object):
         self.discriminator = None
         if artifact_count is not None:
             self.artifact_count = artifact_count
+        if artifacts is not None:
+            self.artifacts = artifacts
         if creation_time is not None:
             self.creation_time = creation_time
         if description is not None:
@@ -110,6 +115,29 @@ class V1LitRepository(object):
         """
 
         self._artifact_count = artifact_count
+
+    @property
+    def artifacts(self) -> 'list[V1LitRegistryArtifact]':
+        """Gets the artifacts of this V1LitRepository.  # noqa: E501
+
+        All artifacts for this repo, this plus lit registry are coming from behind the scenes listLitRegistryRepositoryImageArtifactVersions. We'll use these for a complete view of all registry container artifacts vs the UI having to make the calls separately.  # noqa: E501
+
+        :return: The artifacts of this V1LitRepository.  # noqa: E501
+        :rtype: list[V1LitRegistryArtifact]
+        """
+        return self._artifacts
+
+    @artifacts.setter
+    def artifacts(self, artifacts: 'list[V1LitRegistryArtifact]'):
+        """Sets the artifacts of this V1LitRepository.
+
+        All artifacts for this repo, this plus lit registry are coming from behind the scenes listLitRegistryRepositoryImageArtifactVersions. We'll use these for a complete view of all registry container artifacts vs the UI having to make the calls separately.  # noqa: E501
+
+        :param artifacts: The artifacts of this V1LitRepository.  # noqa: E501
+        :type: list[V1LitRegistryArtifact]
+        """
+
+        self._artifacts = artifacts
 
     @property
     def creation_time(self) -> 'datetime':

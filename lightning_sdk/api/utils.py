@@ -138,7 +138,7 @@ class _FileUploader:
 
     def _request_urls(self, parts: List[int], upload_id: str) -> List[V1PresignedUrl]:
         """Requests urls for a batch of parts."""
-        body = UploadsUploadIdBody(cluster_id=self.cloud_account, filename=self.remote_path, parts=parts)
+        body = UploadsUploadIdBody(filename=self.remote_path, parts=parts)
         resp: V1UploadProjectArtifactPartsResponse = self.client.storage_service_upload_project_artifact_parts(
             body, self.teamspace_id, upload_id
         )

@@ -57,7 +57,9 @@ class V1JobSpec(object):
         'instance_type': 'str',
         'modified_volume': 'bool',
         'path_mappings': 'list[V1PathMapping]',
+        'pipeline_id': 'str',
         'quantity': 'int',
+        'rank': 'int',
         'readiness_probe': 'V1JobHealthCheckConfig',
         'regions': 'list[str]',
         'requested_run_duration_seconds': 'str',
@@ -85,7 +87,9 @@ class V1JobSpec(object):
         'instance_type': 'instanceType',
         'modified_volume': 'modifiedVolume',
         'path_mappings': 'pathMappings',
+        'pipeline_id': 'pipelineId',
         'quantity': 'quantity',
+        'rank': 'rank',
         'readiness_probe': 'readinessProbe',
         'regions': 'regions',
         'requested_run_duration_seconds': 'requestedRunDurationSeconds',
@@ -96,7 +100,7 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, quantity: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, spot: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
@@ -114,7 +118,9 @@ class V1JobSpec(object):
         self._instance_type = None
         self._modified_volume = None
         self._path_mappings = None
+        self._pipeline_id = None
         self._quantity = None
+        self._rank = None
         self._readiness_probe = None
         self._regions = None
         self._requested_run_duration_seconds = None
@@ -156,8 +162,12 @@ class V1JobSpec(object):
             self.modified_volume = modified_volume
         if path_mappings is not None:
             self.path_mappings = path_mappings
+        if pipeline_id is not None:
+            self.pipeline_id = pipeline_id
         if quantity is not None:
             self.quantity = quantity
+        if rank is not None:
+            self.rank = rank
         if readiness_probe is not None:
             self.readiness_probe = readiness_probe
         if regions is not None:
@@ -512,6 +522,27 @@ class V1JobSpec(object):
         self._path_mappings = path_mappings
 
     @property
+    def pipeline_id(self) -> 'str':
+        """Gets the pipeline_id of this V1JobSpec.  # noqa: E501
+
+
+        :return: The pipeline_id of this V1JobSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._pipeline_id
+
+    @pipeline_id.setter
+    def pipeline_id(self, pipeline_id: 'str'):
+        """Sets the pipeline_id of this V1JobSpec.
+
+
+        :param pipeline_id: The pipeline_id of this V1JobSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._pipeline_id = pipeline_id
+
+    @property
     def quantity(self) -> 'int':
         """Gets the quantity of this V1JobSpec.  # noqa: E501
 
@@ -531,6 +562,27 @@ class V1JobSpec(object):
         """
 
         self._quantity = quantity
+
+    @property
+    def rank(self) -> 'int':
+        """Gets the rank of this V1JobSpec.  # noqa: E501
+
+
+        :return: The rank of this V1JobSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._rank
+
+    @rank.setter
+    def rank(self, rank: 'int'):
+        """Sets the rank of this V1JobSpec.
+
+
+        :param rank: The rank of this V1JobSpec.  # noqa: E501
+        :type: int
+        """
+
+        self._rank = rank
 
     @property
     def readiness_probe(self) -> 'V1JobHealthCheckConfig':

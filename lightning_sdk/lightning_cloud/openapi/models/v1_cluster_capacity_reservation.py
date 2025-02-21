@@ -49,6 +49,7 @@ class V1ClusterCapacityReservation(object):
         'instance_type': 'str',
         'match_pattern': 'str',
         'project_id': 'str',
+        'region': 'str',
         'start_time': 'datetime'
     }
 
@@ -61,10 +62,11 @@ class V1ClusterCapacityReservation(object):
         'instance_type': 'instanceType',
         'match_pattern': 'matchPattern',
         'project_id': 'projectId',
+        'region': 'region',
         'start_time': 'startTime'
     }
 
-    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, project_id: 'str' =None, start_time: 'datetime' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None):  # noqa: E501
         """V1ClusterCapacityReservation - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_type = None
         self._cloud_provider_capacity_reservation_id = None
@@ -74,6 +76,7 @@ class V1ClusterCapacityReservation(object):
         self._instance_type = None
         self._match_pattern = None
         self._project_id = None
+        self._region = None
         self._start_time = None
         self.discriminator = None
         if capacity_reservation_type is not None:
@@ -92,6 +95,8 @@ class V1ClusterCapacityReservation(object):
             self.match_pattern = match_pattern
         if project_id is not None:
             self.project_id = project_id
+        if region is not None:
+            self.region = region
         if start_time is not None:
             self.start_time = start_time
 
@@ -262,6 +267,27 @@ class V1ClusterCapacityReservation(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def region(self) -> 'str':
+        """Gets the region of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The region of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: str
+        """
+        return self._region
+
+    @region.setter
+    def region(self, region: 'str'):
+        """Sets the region of this V1ClusterCapacityReservation.
+
+
+        :param region: The region of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: str
+        """
+
+        self._region = region
 
     @property
     def start_time(self) -> 'datetime':
