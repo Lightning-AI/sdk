@@ -215,6 +215,43 @@ class JobApiV2:
         artifacts_local: Optional[str],  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str],  # deprecated in favor of path_mappings
     ) -> V1Job:
+        body = self._create_job_body(
+            name=name,
+            command=command,
+            cloud_account=cloud_account,
+            studio_id=studio_id,
+            image=image,
+            machine=machine,
+            interruptible=interruptible,
+            env=env,
+            image_credentials=image_credentials,
+            cloud_account_auth=cloud_account_auth,
+            entrypoint=entrypoint,
+            path_mappings=path_mappings,
+            artifacts_local=artifacts_local,
+            artifacts_remote=artifacts_remote,
+        )
+
+        job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
+        return job
+
+    @staticmethod
+    def _create_job_body(
+        name: str,
+        command: Optional[str],
+        cloud_account: Optional[str],
+        studio_id: Optional[str],
+        image: Optional[str],
+        machine: Union[Machine, str],
+        interruptible: bool,
+        env: Optional[Dict[str, str]],
+        image_credentials: Optional[str],
+        cloud_account_auth: bool,
+        entrypoint: str,
+        path_mappings: Optional[Dict[str, str]],
+        artifacts_local: Optional[str],  # deprecated in favor of path_mappings
+        artifacts_remote: Optional[str],  # deprecated in favor of path_mappings)
+    ) -> ProjectIdJobsBody:
         env_vars = []
         if env is not None:
             for k, v in env.items():
@@ -244,10 +281,7 @@ class JobApiV2:
             image_secret_ref=image_credentials or "",
             path_mappings=path_mappings_list,
         )
-        body = ProjectIdJobsBody(name=name, spec=spec)
-
-        job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
-        return job
+        return ProjectIdJobsBody(name=name, spec=spec)
 
     def get_job_by_name(self, name: str, teamspace_id: str) -> V1Job:
         job: V1Job = self._client.jobs_service_find_job(project_id=teamspace_id, name=name)
