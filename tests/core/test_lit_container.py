@@ -1,9 +1,11 @@
 from datetime import datetime
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
+import docker.errors
 import pytest
 
 from lightning_sdk.api.lit_container_api import LitContainerApi
+from lightning_sdk.api.utils import _get_registry_url
 from lightning_sdk.lit_container import LitContainer
 
 
@@ -12,6 +14,7 @@ def mock_teamspace():
     teamspace = MagicMock()
     teamspace.id = "test-project-id"
     teamspace.owner.name = "test-org"
+    teamspace.name = "test-team"
     return teamspace
 
 
@@ -95,6 +98,36 @@ def test_upload_container_success(lit_container, mock_teamspace):
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
         mock_upload.assert_called_once_with("my-container", mock_teamspace, "v1.0")
+
+
+def test_upload_container_pull_then_push(lit_container, mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
+        lit_container._api, "_docker_client"
+    ) as mock_docker_client:
+        mock_resolve.return_value = mock_teamspace
+
+        mock_docker_client.images.get.side_effect = [
+            docker.errors.ImageNotFound("This will trigger images.pull()"),
+            MagicMock(id="my-container"),
+        ]
+        mock_docker_client.images.pull.return_value = MagicMock(id="my-container")
+        mock_docker_client.api.tag.return_value = True
+        mock_docker_client.api.push.return_value = [{"status": "Pushing"}, {"status": "Complete"}]
+
+        lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
+
+        mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
+
+        # Assert that we call get(my-container) on the first attempt
+        # Assert that we call get(my-container) on the second attempt after pull
+        mock_docker_client.images.get.assert_has_calls([call("my-container"), call("my-container")])
+
+        # Assert we fallback to pulling when the first get(...) fails.
+        mock_docker_client.images.pull.assert_called_once_with("my-container", "v1.0")
+
+        repository = f"{_get_registry_url()}/lit-container/test-org/test-team/my-container"
+        mock_docker_client.api.tag.assert_called_once_with("my-container", repository, "v1.0")
+        mock_docker_client.api.push.assert_called_once_with(repository, stream=True, decode=True)
 
 
 def test_upload_container_teamspace_resolution_error(lit_container):

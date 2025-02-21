@@ -63,7 +63,15 @@ class LitContainerApi:
         try:
             self._docker_client.images.get(container)
         except docker.errors.ImageNotFound:
-            raise ValueError(f"Container {container} does not exist") from None
+            try:
+                self._docker_client.images.pull(container, tag)
+                self._docker_client.images.get(container)
+            except docker.errors.APIError as e:
+                raise ValueError(f"Could not pull container {container}") from e
+            except docker.errors.ImageNotFound as e:
+                raise ValueError(f"Container {container} does not exist") from e
+            except Exception as e:
+                raise ValueError(f"Unable to upload {container}") from e
 
         registry_url = _get_registry_url()
         container_basename = container.split("/")[-1]
