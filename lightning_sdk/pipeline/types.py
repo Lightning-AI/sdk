@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from lightning_sdk.user import User
 
 
-from lightning_sdk.pipeline.utils import NEEDS_DEFAULT
+from lightning_sdk.pipeline.utils import DEFAULT
 
 
 class Deployment:
@@ -53,7 +53,7 @@ class Deployment:
         cloud_account: Optional[str] = None,
         custom_domain: Optional[str] = None,
         quantity: Optional[int] = None,
-        needs: Union[str, List[str]] = NEEDS_DEFAULT,
+        needs: Union[str, List[str]] = DEFAULT,
     ) -> None:
         self.name = name
         self.machine = machine
@@ -77,7 +77,7 @@ class Deployment:
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.DEPLOYMENT,
-            needs=self.needs if isinstance(self.needs, list) else [self.needs],
+            needs=to_needs(self.needs),
             deployment=V1CreateDeploymentRequest(
                 autoscaling=to_autoscaling(self.autoscale, self.replicas),
                 endpoint=to_endpoint(self.ports, self.auth, self.custom_domain),
@@ -120,7 +120,7 @@ class Job:
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
-        needs: Union[str, List[str]] = NEEDS_DEFAULT,
+        needs: Union[str, List[str]] = DEFAULT,
     ) -> None:
         self.name = name
         self.machine = machine
@@ -160,7 +160,7 @@ class Job:
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.JOB,
-            needs=self.needs if isinstance(self.needs, list) else [self.needs],
+            needs=to_needs(self.needs),
             job=body,
         )
 
@@ -186,7 +186,7 @@ class MMT:
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
-        needs: Union[str, List[str]] = NEEDS_DEFAULT,
+        needs: Union[str, List[str]] = DEFAULT,
     ) -> None:
         self.machine = machine
         self.num_machines = num_machines
@@ -205,3 +205,13 @@ class MMT:
         self.entrypoint = entrypoint
         self.path_mappings = path_mappings
         self.needs = needs
+
+
+def to_needs(needs: Optional[Union[str, List[str]]]) -> Optional[List[str]]:
+    if needs == DEFAULT:
+        return needs
+
+    if needs is None:
+        return []
+
+    return needs if isinstance(needs, list) else [needs]

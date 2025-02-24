@@ -1,4 +1,4 @@
-from lightning_sdk.pipeline import Pipeline, Job
+from lightning_sdk.pipeline import Pipeline, Job, Deployment
 from lightning_sdk.machine import Machine
 
 pipeline = Pipeline(name='first-pipeline')
@@ -9,7 +9,30 @@ pipeline.run(
             image="ubuntu:latest",
             machine=Machine.CPU,
             command="echo 'Hello, World!'",
-            cloud_account="test-8"
+        ),
+        Job(
+            name='job-2',
+            image="ubuntu:latest",
+            machine=Machine.CPU,
+            command="echo 'Hello, World!'",
+            needs=None,
+        ),
+        Job(
+            name='job-3',
+            image="ubuntu:latest",
+            machine=Machine.CPU,
+            command="echo 'Hello, World!'",
+        ),
+    ]
+)
+
+pipeline = Pipeline(name='second-pipeline')
+pipeline.run(
+    steps=[
+        Deployment(
+            name='deployment-1',
+            image="nginx",
+            machine=Machine.CPU,
         ),
     ]
 )

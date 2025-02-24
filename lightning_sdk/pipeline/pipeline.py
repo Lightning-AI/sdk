@@ -67,4 +67,4 @@ class Pipeline:
 
         steps = [step.to_proto() for step in steps]
 
-        self._pipeline = self._pipeline_api.create_pipeline(self._name, self._teamspace, prepare_steps(steps))
+        self._pipeline = self._pipeline_api.create_pipeline(self._name, self._teamspace.id, prepare_steps(steps))

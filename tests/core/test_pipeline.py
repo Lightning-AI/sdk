@@ -13,6 +13,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
 from lightning_sdk.machine import Machine
 from lightning_sdk.pipeline import Job, Pipeline
 from lightning_sdk.pipeline import pipeline as pipeline_module
+from lightning_sdk.pipeline.utils import DEFAULT, prepare_steps
 
 
 def test_pipeline_run(monkeypatch):
@@ -175,7 +176,7 @@ def test_pipeline_run(monkeypatch):
     step_3 = V1PipelineStep(
         name="job-2",
         type=V1PipelineStepType.JOB,
-        needs=["job-1"],
+        needs=["job-0", "job-1"],
         job=ProjectIdJobsBody(
             name="job-2",
             spec=V1JobSpec(
@@ -215,3 +216,47 @@ def test_job_parameters_stay_in_sync():
     job_type_keys = [key for key in job_type_keys if key not in ["needs", "self"]]
 
     assert sorted(job_keys) == sorted(job_type_keys)
+
+
+def test_prepare_steps():
+    steps = [
+        V1PipelineStep(name="a", needs=DEFAULT),
+        V1PipelineStep(name="b", needs=DEFAULT),
+        V1PipelineStep(name="c", needs=DEFAULT),
+        V1PipelineStep(name="d", needs=DEFAULT),
+        V1PipelineStep(name="e", needs=DEFAULT),
+    ]
+    steps = prepare_steps(steps)
+    assert steps[0].needs == []
+    assert steps[1].needs == ["a"]
+    assert steps[2].needs == ["b"]
+    assert steps[3].needs == ["c"]
+    assert steps[4].needs == ["d"]
+
+    steps = [
+        V1PipelineStep(name="a", needs=DEFAULT),
+        V1PipelineStep(name="b", needs=[]),
+        V1PipelineStep(name="c", needs=DEFAULT),
+        V1PipelineStep(name="d", needs=DEFAULT),
+        V1PipelineStep(name="e", needs=DEFAULT),
+    ]
+    steps = prepare_steps(steps)
+    assert steps[0].needs == []
+    assert steps[1].needs == []
+    assert steps[2].needs == ["a", "b"]
+    assert steps[3].needs == ["c"]
+    assert steps[4].needs == ["d"]
+
+    steps = [
+        V1PipelineStep(name="a", needs=DEFAULT),
+        V1PipelineStep(name="b", needs=[]),
+        V1PipelineStep(name="c", needs=DEFAULT),
+        V1PipelineStep(name="d", needs=[]),
+        V1PipelineStep(name="e", needs=[]),
+    ]
+    steps = prepare_steps(steps)
+    assert steps[0].needs == []
+    assert steps[1].needs == []
+    assert steps[2].needs == ["a", "b"]
+    assert steps[3].needs == ["c"]
+    assert steps[4].needs == ["c"]

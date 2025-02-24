@@ -2,7 +2,7 @@ from typing import List
 
 from lightning_sdk.lightning_cloud.openapi.models import V1PipelineStep
 
-NEEDS_DEFAULT = "DEFAULT"
+DEFAULT = "DEFAULT"
 
 
 def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
@@ -13,36 +13,50 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
     name_to_step = {}
     name_to_idx = {}
 
-    for step_idx, step in enumerate(steps):
-        if step.name not in name_to_step:
-            name_to_step[step.name] = step
-            name_to_idx[step.name] = step_idx
+    for current_step_idx, current_step in enumerate(steps):
+        if current_step.name not in name_to_step:
+            name_to_step[current_step.name] = current_step
+            name_to_idx[current_step.name] = current_step_idx
         else:
-            raise ValueError(f"A step with the name {step.name} already exists.")
+            raise ValueError(f"A step with the name {current_step.name} already exists.")
+
+    if steps[0].needs != DEFAULT:
+        raise ValueError("The first step isn't allowed to receive `needs=...`.")
+
+    steps[0].needs = []
 
     # This implements a linear dependency between the steps as the default behaviour
-    for step_idx, step in enumerate(steps):
-        # Overidde the first step with its default behaviour
-        if step_idx == 0:
-            if step.needs != [NEEDS_DEFAULT]:
-                raise ValueError("The first step isn't allowed to receive `needs=...`.")
-
-            step.needs = []
+    for current_step_idx, current_step in reversed(list(enumerate(steps))):
+        if current_step_idx == 0:
             continue
 
-        if step.needs == [NEEDS_DEFAULT]:
-            step.needs = [steps[step_idx - 1].name]
-        elif step.needs is None or step.needs == [None]:
-            step.needs = []
+        if current_step.needs == DEFAULT:
+            prev_step_idx = current_step_idx - 1
+            needs = []
+            while prev_step_idx > -1:
+                prev_step = steps[prev_step_idx]
+                needs.insert(0, steps[prev_step_idx].name)
+                if prev_step.needs != []:
+                    break
+                prev_step_idx -= 1
+            current_step.needs = needs
+        elif current_step.needs == []:
+            prev_step_idx = current_step_idx - 1
+            needs = []
+            while prev_step_idx > -1:
+                prev_step = steps[prev_step_idx]
+                if prev_step.needs != []:
+                    break
+                prev_step_idx -= 1
+            current_step.needs = [] if prev_step_idx == -1 else [prev_step.name]
         else:
-            for name in step.needs:
-                if step.name == name:
+            for name in current_step.needs:
+                if current_step.name == name:
                     raise ValueError("You can only reference prior steps")
 
                 if name not in name_to_step:
-                    raise ValueError(f"The step {step_idx} doesn't have a valid needs. Found {name}")
+                    raise ValueError(f"The step {current_step_idx} doesn't have a valid needs. Found {name}")
 
-                if name_to_idx[name] >= name_to_idx[step.name]:
+                if name_to_idx[name] >= name_to_idx[current_step.name]:
                     raise ValueError("You can only reference prior steps")
-
     return steps
