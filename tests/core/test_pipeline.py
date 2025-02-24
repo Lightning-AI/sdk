@@ -129,7 +129,7 @@ def test_pipeline_run(monkeypatch):
     step_1 = V1PipelineStep(
         name="job-0",
         type=V1PipelineStepType.JOB,
-        required=[],
+        needs=[],
         job=ProjectIdJobsBody(
             name="job-0",
             spec=V1JobSpec(
@@ -152,7 +152,7 @@ def test_pipeline_run(monkeypatch):
     step_2 = V1PipelineStep(
         name="job-1",
         type=V1PipelineStepType.JOB,
-        required=[],
+        needs=[],
         job=ProjectIdJobsBody(
             name="job-1",
             spec=V1JobSpec(
@@ -175,7 +175,7 @@ def test_pipeline_run(monkeypatch):
     step_3 = V1PipelineStep(
         name="job-2",
         type=V1PipelineStepType.JOB,
-        required=["job-1"],
+        needs=["job-1"],
         job=ProjectIdJobsBody(
             name="job-2",
             spec=V1JobSpec(

@@ -41,6 +41,7 @@ class V1PipelineStepStatus(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'error': 'str',
         'message': 'str',
         'name': 'str',
         'resource_id': 'str',
@@ -51,6 +52,7 @@ class V1PipelineStepStatus(object):
     }
 
     attribute_map = {
+        'error': 'error',
         'message': 'message',
         'name': 'name',
         'resource_id': 'resourceId',
@@ -60,8 +62,9 @@ class V1PipelineStepStatus(object):
         'type': 'type'
     }
 
-    def __init__(self, message: 'str' =None, name: 'str' =None, resource_id: 'str' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, type: 'V1PipelineStepType' =None):  # noqa: E501
+    def __init__(self, error: 'str' =None, message: 'str' =None, name: 'str' =None, resource_id: 'str' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, type: 'V1PipelineStepType' =None):  # noqa: E501
         """V1PipelineStepStatus - a model defined in Swagger"""  # noqa: E501
+        self._error = None
         self._message = None
         self._name = None
         self._resource_id = None
@@ -70,6 +73,8 @@ class V1PipelineStepStatus(object):
         self._stopped_at = None
         self._type = None
         self.discriminator = None
+        if error is not None:
+            self.error = error
         if message is not None:
             self.message = message
         if name is not None:
@@ -84,6 +89,27 @@ class V1PipelineStepStatus(object):
             self.stopped_at = stopped_at
         if type is not None:
             self.type = type
+
+    @property
+    def error(self) -> 'str':
+        """Gets the error of this V1PipelineStepStatus.  # noqa: E501
+
+
+        :return: The error of this V1PipelineStepStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._error
+
+    @error.setter
+    def error(self, error: 'str'):
+        """Sets the error of this V1PipelineStepStatus.
+
+
+        :param error: The error of this V1PipelineStepStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._error = error
 
     @property
     def message(self) -> 'str':

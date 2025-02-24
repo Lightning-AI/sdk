@@ -24,18 +24,18 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
     for step_idx, step in enumerate(steps):
         # Overidde the first step with its default behaviour
         if step_idx == 0:
-            if step.required != [NEEDS_DEFAULT]:
+            if step.needs != [NEEDS_DEFAULT]:
                 raise ValueError("The first step isn't allowed to receive `needs=...`.")
 
-            step.required = []
+            step.needs = []
             continue
 
-        if step.required == [NEEDS_DEFAULT]:
-            step.required = [steps[step_idx - 1].name]
-        elif step.required is None or step.required == [None]:
-            step.required = []
+        if step.needs == [NEEDS_DEFAULT]:
+            step.needs = [steps[step_idx - 1].name]
+        elif step.needs is None or step.needs == [None]:
+            step.needs = []
         else:
-            for name in step.required:
+            for name in step.needs:
                 if step.name == name:
                     raise ValueError("You can only reference prior steps")
 

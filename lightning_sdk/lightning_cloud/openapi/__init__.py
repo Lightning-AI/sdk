@@ -152,6 +152,7 @@ from lightning_sdk.lightning_cloud.openapi.models.multipartuploads_upload_id_bod
 from lightning_sdk.lightning_cloud.openapi.models.org_id_memberships_body import OrgIdMembershipsBody
 from lightning_sdk.lightning_cloud.openapi.models.org_id_roles_body import OrgIdRolesBody
 from lightning_sdk.lightning_cloud.openapi.models.orgs_id_body import OrgsIdBody
+from lightning_sdk.lightning_cloud.openapi.models.pipelines_id_body import PipelinesIdBody
 from lightning_sdk.lightning_cloud.openapi.models.profiler_captures_body import ProfilerCapturesBody
 from lightning_sdk.lightning_cloud.openapi.models.profiler_enabled_body import ProfilerEnabledBody
 from lightning_sdk.lightning_cloud.openapi.models.project_id_agentmanagedendpoints_body import ProjectIdAgentmanagedendpointsBody

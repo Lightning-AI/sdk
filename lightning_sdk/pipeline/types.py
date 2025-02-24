@@ -77,7 +77,7 @@ class Deployment:
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.DEPLOYMENT,
-            required=self.needs if isinstance(self.needs, list) else [self.needs],
+            needs=self.needs if isinstance(self.needs, list) else [self.needs],
             deployment=V1CreateDeploymentRequest(
                 autoscaling=to_autoscaling(self.autoscale, self.replicas),
                 endpoint=to_endpoint(self.ports, self.auth, self.custom_domain),
@@ -160,7 +160,7 @@ class Job:
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.JOB,
-            required=self.needs if isinstance(self.needs, list) else [self.needs],
+            needs=self.needs if isinstance(self.needs, list) else [self.needs],
             job=body,
         )
 

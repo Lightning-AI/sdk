@@ -45,7 +45,7 @@ class V1PipelineStep(object):
         'job': 'V1CreateJobRequest',
         'mmt': 'V1CreateMultiMachineJobRequest',
         'name': 'str',
-        'required': 'list[str]',
+        'needs': 'list[str]',
         'type': 'V1PipelineStepType'
     }
 
@@ -54,17 +54,17 @@ class V1PipelineStep(object):
         'job': 'job',
         'mmt': 'mmt',
         'name': 'name',
-        'required': 'required',
+        'needs': 'needs',
         'type': 'type'
     }
 
-    def __init__(self, deployment: 'V1CreateDeploymentRequest' =None, job: 'V1CreateJobRequest' =None, mmt: 'V1CreateMultiMachineJobRequest' =None, name: 'str' =None, required: 'list[str]' =None, type: 'V1PipelineStepType' =None):  # noqa: E501
+    def __init__(self, deployment: 'V1CreateDeploymentRequest' =None, job: 'V1CreateJobRequest' =None, mmt: 'V1CreateMultiMachineJobRequest' =None, name: 'str' =None, needs: 'list[str]' =None, type: 'V1PipelineStepType' =None):  # noqa: E501
         """V1PipelineStep - a model defined in Swagger"""  # noqa: E501
         self._deployment = None
         self._job = None
         self._mmt = None
         self._name = None
-        self._required = None
+        self._needs = None
         self._type = None
         self.discriminator = None
         if deployment is not None:
@@ -75,8 +75,8 @@ class V1PipelineStep(object):
             self.mmt = mmt
         if name is not None:
             self.name = name
-        if required is not None:
-            self.required = required
+        if needs is not None:
+            self.needs = needs
         if type is not None:
             self.type = type
 
@@ -165,25 +165,25 @@ class V1PipelineStep(object):
         self._name = name
 
     @property
-    def required(self) -> 'list[str]':
-        """Gets the required of this V1PipelineStep.  # noqa: E501
+    def needs(self) -> 'list[str]':
+        """Gets the needs of this V1PipelineStep.  # noqa: E501
 
 
-        :return: The required of this V1PipelineStep.  # noqa: E501
+        :return: The needs of this V1PipelineStep.  # noqa: E501
         :rtype: list[str]
         """
-        return self._required
+        return self._needs
 
-    @required.setter
-    def required(self, required: 'list[str]'):
-        """Sets the required of this V1PipelineStep.
+    @needs.setter
+    def needs(self, needs: 'list[str]'):
+        """Sets the needs of this V1PipelineStep.
 
 
-        :param required: The required of this V1PipelineStep.  # noqa: E501
+        :param needs: The needs of this V1PipelineStep.  # noqa: E501
         :type: list[str]
         """
 
-        self._required = required
+        self._needs = needs
 
     @property
     def type(self) -> 'V1PipelineStepType':
