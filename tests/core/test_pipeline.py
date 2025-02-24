@@ -11,7 +11,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1PipelineStepType,
 )
 from lightning_sdk.machine import Machine
-from lightning_sdk.pipeline import Job, Pipeline
+from lightning_sdk.pipeline import Deployment, Job, Pipeline
 from lightning_sdk.pipeline import pipeline as pipeline_module
 from lightning_sdk.pipeline.utils import DEFAULT, prepare_steps
 
@@ -276,3 +276,15 @@ def test_prepare_steps():
     assert steps[3].needs == []
     assert steps[4].needs == []
     assert steps[5].needs == ["c", "d", "e"]
+
+
+def test_deployment_default():
+    deployment = Deployment(machine=Machine.CPU)
+    assert deployment.replicas == 1
+    assert deployment.autoscale.min_replicas == 0
+    assert deployment.autoscale.max_replicas == 1
+    assert deployment.autoscale.target_metrics[0].name == "CPU"
+    assert deployment.autoscale.target_metrics[0].target == 80
+
+    deployment = Deployment(machine=Machine.A10G)
+    assert deployment.autoscale.target_metrics[0].name == "GPU"

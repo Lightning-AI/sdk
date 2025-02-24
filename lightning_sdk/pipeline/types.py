@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from lightning_sdk.api.deployment_api import (
     AutoScaleConfig,
+    AutoScalingMetric,
     BasicAuth,
     Env,
     ExecHealthCheck,
@@ -58,14 +59,23 @@ class Deployment:
         self.name = name
         self.machine = machine
         self.image = image
-        self.autoscale = autoscale
+        self.autoscale = autoscale or AutoScaleConfig(
+            min_replicas=0,
+            max_replicas=1,
+            target_metrics=[
+                AutoScalingMetric(
+                    name="CPU" if machine.is_cpu() else "GPU",
+                    target=80,
+                )
+            ],
+        )
         self.ports = ports
         self.release_strategy = release_strategy
         self.entrypoint = entrypoint
         self.command = command
         self.env = env
         self.spot = spot
-        self.replicas = replicas
+        self.replicas = replicas or 1
         self.health_check = health_check
         self.auth = auth
         self.cloud_account = cloud_account

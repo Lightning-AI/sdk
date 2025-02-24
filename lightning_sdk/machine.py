@@ -42,6 +42,16 @@ class Machine:
             return self.instance_type == other.instance_type
         return False
 
+    def is_cpu(self) -> bool:
+        """Whether the machine is a CPU."""
+        return (
+            self == Machine.CPU_SMALL
+            or self == Machine.CPU
+            or self == Machine.DATA_PREP
+            or self == Machine.DATA_PREP_MAX
+            or self == Machine.DATA_PREP_ULTRA
+        )
+
 
 Machine.CPU_SMALL = Machine(name="CPU_SMALL", instance_type="m3.medium")
 Machine.CPU = Machine(name="CPU", instance_type="cpu-4")

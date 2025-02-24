@@ -40,19 +40,7 @@ pipeline.run(
             name='deployment-1',
             image="nginx",
             machine=Machine.CPU,
-            replicas=1,
-            autoscale=AutoScaleConfig(
-                min_replicas=1,
-                max_replicas=1,
-                target_metrics=[
-                    AutoScalingMetric(
-                        name="CPU",
-                        target=70,
-                    )
-                ]
-            ),
             ports=[8000],
-            cloud_account="test-8",
         ),
     ]
 )
