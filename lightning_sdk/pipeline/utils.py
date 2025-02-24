@@ -40,15 +40,6 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
                     break
                 prev_step_idx -= 1
             current_step.needs = needs
-        elif current_step.needs == []:
-            prev_step_idx = current_step_idx - 1
-            needs = []
-            while prev_step_idx > -1:
-                prev_step = steps[prev_step_idx]
-                if prev_step.needs != []:
-                    break
-                prev_step_idx -= 1
-            current_step.needs = [] if prev_step_idx == -1 else [prev_step.name]
         else:
             for name in current_step.needs:
                 if current_step.name == name:
@@ -59,4 +50,12 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
 
                 if name_to_idx[name] >= name_to_idx[current_step.name]:
                     raise ValueError("You can only reference prior steps")
+
+    print()
+    print("===== Generated Pipeline =====")
+    for step in steps:
+        print(f"[{step.name}] needs {'nothing' if len(step.needs) == 0 else step.needs}")
+    print("===== ================== =====")
+    print()
+
     return steps

@@ -101,7 +101,7 @@ class Deployment:
     def start(
         self,
         machine: Optional[Machine] = None,
-        environment: Optional[str] = None,
+        image: Optional[str] = None,
         autoscale: Optional[AutoScaleConfig] = None,
         ports: Optional[List[float]] = None,
         release_strategy: Optional[ReleaseStrategy] = None,
@@ -127,7 +127,7 @@ class Deployment:
             machine: The machine used by the deployment replicas.
             autoscale: The list of the metrics to autoscale on.
             ports: The ports to reach your replica services.
-            environment: The environement used by the deployment. Currentely, only docker images.
+            image: The environement used by the deployment. Currentely, only docker images.
             release_strategy: The release strategy to use when changing core deployment specs.
             entrypoint: The docker container entrypoint.
             command: The docker container command.
@@ -167,7 +167,7 @@ class Deployment:
                     command=command,
                     entrypoint=entrypoint,
                     env=env,
-                    environment=environment,
+                    image=image,
                     spot=spot,
                     machine=machine,
                     health_check=health_check,
@@ -185,7 +185,7 @@ class Deployment:
         self,
         # Changing those arguments create a new release
         machine: Optional[Machine] = None,
-        environment: Optional[str] = None,
+        image: Optional[str] = None,
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
         env: Optional[List[Union[Env, Secret]]] = None,
@@ -215,7 +215,7 @@ class Deployment:
             max_replicas=max_replicas,
             cloud_account=cloud_account,
             machine=machine,
-            environment=environment,
+            image=image,
             entrypoint=entrypoint,
             command=command,
             ports=ports,

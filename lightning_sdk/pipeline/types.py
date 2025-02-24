@@ -89,7 +89,7 @@ class Deployment:
                     command=self.command,
                     entrypoint=self.entrypoint,
                     env=self.env,
-                    environment=self.environment,
+                    image=self.image,
                     spot=self.spot,
                     machine=self.machine,
                     health_check=self.health_check,
@@ -139,7 +139,7 @@ class Job:
         self.path_mappings = path_mappings
         self.needs = needs
 
-    def to_proto(self) -> V1PipelineStep:
+    def to_proto(self, teamspace: "Teamspace") -> V1PipelineStep:
         body = JobApiV2._create_job_body(
             name=self.name,
             command=self.command,

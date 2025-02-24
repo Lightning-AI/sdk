@@ -242,7 +242,7 @@ class DeploymentApi:
         self,
         deployment: V1Deployment,
         machine: Optional[Machine] = None,
-        environment: Optional[str] = None,
+        image: Optional[str] = None,
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
         env: Optional[List[Union[Env, Secret]]] = None,
@@ -275,7 +275,7 @@ class DeploymentApi:
             apply_change(deployment.spec, "instance_type", _machine_to_compute_name(machine))
 
         requires_release = False
-        requires_release |= apply_change(deployment.spec, "image", environment)
+        requires_release |= apply_change(deployment.spec, "image", image)
         requires_release |= apply_change(deployment.spec, "entrypoint", entrypoint)
         requires_release |= apply_change(deployment.spec, "command", command)
         requires_release |= apply_change(deployment.spec, "env", to_env(env))
@@ -542,7 +542,7 @@ def to_health_check(
 def to_spec(
     cloud_account: Optional[str],
     machine: Optional[Machine],
-    environment: Optional[str],
+    image: Optional[str],
     entrypoint: Optional[str],
     command: Optional[str],
     spot: Optional[bool] = False,
@@ -556,15 +556,15 @@ def to_spec(
     if machine is None:
         raise ValueError("The machine should be defined.")
 
-    if environment is None:
-        raise ValueError("The environment should be defined.")
+    if image is None:
+        raise ValueError("The image should be defined.")
 
     return V1JobSpec(
         cluster_id=cloud_account,
         command=command,
         entrypoint=entrypoint,
         env=to_env(env),
-        image=environment,
+        image=image,
         spot=spot,
         instance_name=_machine_to_compute_name(machine),
         readiness_probe=to_health_check(health_check),

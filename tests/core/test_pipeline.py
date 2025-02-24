@@ -258,5 +258,21 @@ def test_prepare_steps():
     assert steps[0].needs == []
     assert steps[1].needs == []
     assert steps[2].needs == ["a", "b"]
-    assert steps[3].needs == ["c"]
-    assert steps[4].needs == ["c"]
+    assert steps[3].needs == []
+    assert steps[4].needs == []
+
+    steps = [
+        V1PipelineStep(name="a", needs=DEFAULT),
+        V1PipelineStep(name="b", needs=[]),
+        V1PipelineStep(name="c", needs=DEFAULT),
+        V1PipelineStep(name="d", needs=[]),
+        V1PipelineStep(name="e", needs=[]),
+        V1PipelineStep(name="f", needs=DEFAULT),
+    ]
+    steps = prepare_steps(steps)
+    assert steps[0].needs == []
+    assert steps[1].needs == []
+    assert steps[2].needs == ["a", "b"]
+    assert steps[3].needs == []
+    assert steps[4].needs == []
+    assert steps[5].needs == ["c", "d", "e"]

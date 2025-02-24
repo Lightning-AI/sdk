@@ -65,6 +65,6 @@ class Pipeline:
             if step.name in [None, ""]:
                 raise ValueError(f"The step {step_idx} requires a name")
 
-        steps = [step.to_proto() for step in steps]
+        steps = [step.to_proto(self._teamspace) for step in steps]
 
         self._pipeline = self._pipeline_api.create_pipeline(self._name, self._teamspace.id, prepare_steps(steps))

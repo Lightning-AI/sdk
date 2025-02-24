@@ -294,7 +294,7 @@ def test_deployment_start_first_time(monkeypatch):
         ports=[50],
         cloud_account="cluster_id",
         machine=Machine.A10G,
-        environment="ollama/ollama:latest",
+        image="ollama/ollama:latest",
         quantity=2,
     )
     client.jobs_service_create_deployment.assert_called()
