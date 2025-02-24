@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, call, patch
 import docker.errors
 import pytest
 
-from lightning_sdk.api.lit_container_api import LitContainerApi
+from lightning_sdk.api.lit_container_api import DockerPushError, LitContainerApi
 from lightning_sdk.api.utils import _get_registry_url
 from lightning_sdk.lit_container import LitContainer
 
@@ -138,6 +138,145 @@ def test_upload_container_teamspace_resolution_error(lit_container):
         # Verify that the correct exception is raised
         with pytest.raises(ValueError, match="Could not resolve teamspace: Invalid teamspace"):
             lit_container.upload_container(container="my-container", teamspace="invalid-team")
+
+
+def test_upload_container_auth_retry_success(lit_container, mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
+        lit_container._api, "_docker_client"
+    ) as mock_docker_client, patch.object(lit_container._api, "authenticate") as mock_authenticate, patch(
+        "time.sleep"
+    ) as mock_sleep:
+        mock_resolve.return_value = mock_teamspace
+        mock_docker_client.images.get.return_value = MagicMock(id="my-container")
+        mock_docker_client.api.tag.return_value = True
+
+        mock_docker_client.api.push.side_effect = [
+            [
+                {"status": "Pushing"},
+                {
+                    "errorDetail": {
+                        "message": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout"
+                    },
+                    "error": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+                },
+            ],
+            [
+                {"status": "Pushing"},
+                {
+                    "errorDetail": {
+                        "message": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout"
+                    },
+                    "error": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+                },
+            ],
+            [{"status": "Pushing"}, {"status": "Complete"}],
+        ]
+
+        lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
+        assert mock_docker_client.api.push.call_count == 3
+        assert mock_authenticate.call_count == 2
+        mock_authenticate.assert_called_with(reauth=True)
+        assert mock_sleep.call_count == 2
+        mock_sleep.assert_called_with(2)
+
+
+def test_upload_container_timeout_retry_success(lit_container, mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
+        lit_container._api, "_docker_client"
+    ) as mock_docker_client, patch.object(lit_container._api, "authenticate") as mock_authenticate, patch(
+        "time.sleep"
+    ) as mock_sleep:
+        mock_resolve.return_value = mock_teamspace
+        mock_docker_client.images.get.return_value = MagicMock(id="my-container")
+        mock_docker_client.api.tag.return_value = True
+
+        mock_docker_client.api.push.side_effect = [
+            [{"error": "unauthorized"}],
+            [{"status": "Pushing"}, {"status": "Complete"}],
+        ]
+
+        lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
+        assert mock_docker_client.api.push.call_count == 2
+        mock_authenticate.assert_called_once_with(reauth=True)
+        mock_sleep.assert_called_once_with(2)
+
+
+def test_upload_container_auth_retry_max_attempts(lit_container, mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
+        lit_container._api, "_docker_client"
+    ) as mock_docker_client, patch.object(lit_container._api, "authenticate") as mock_authenticate, patch(
+        "time.sleep"
+    ) as mock_sleep:
+        mock_resolve.return_value = mock_teamspace
+        mock_docker_client.images.get.return_value = MagicMock(id="my-container")
+        mock_docker_client.api.tag.return_value = True
+
+        mock_docker_client.api.push.side_effect = [
+            [{"error": "unauthorized"}],
+            [{"error": "unauthorized"}],
+            [{"error": "unauthorized"}],
+        ]
+
+        with pytest.raises(DockerPushError, match="Max retries reached"):
+            lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
+
+        assert mock_docker_client.api.push.call_count == 3
+        assert mock_authenticate.call_count == 2
+        mock_authenticate.assert_called_with(reauth=True)
+        mock_sleep.assert_called_with(2)
+        assert mock_sleep.call_count == 2
+
+
+def test_upload_container_timeout_retry_max_attempts(lit_container, mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
+        lit_container._api, "_docker_client"
+    ) as mock_docker_client, patch.object(lit_container._api, "authenticate") as mock_authenticate, patch(
+        "time.sleep"
+    ) as mock_sleep:
+        mock_resolve.return_value = mock_teamspace
+        mock_docker_client.images.get.return_value = MagicMock(id="my-container")
+        mock_docker_client.api.tag.return_value = True
+
+        mock_docker_client.api.push.side_effect = [
+            [
+                {"status": "Pushing"},
+                {
+                    "errorDetail": {
+                        "message": "something something something proxyconnect \
+                            tcp: dial tcp 192.168.65.1:3128: i/o timeout"
+                    },
+                    "error": "something something something proxyconnect tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+                },
+            ],
+            [
+                {"status": "Pushing"},
+                {
+                    "errorDetail": {
+                        "message": "something something something \
+                            proxyconnect tcp: dial tcp 192.168.65.1:3128: i/o timeout"
+                    },
+                    "error": "something something something proxyconnect tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+                },
+            ],
+            [
+                {"status": "Pushing"},
+                {
+                    "errorDetail": {
+                        "message": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout"
+                    },
+                    "error": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+                },
+            ],
+        ]
+
+        with pytest.raises(DockerPushError, match="Max retries reached"):
+            lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
+
+        assert mock_docker_client.api.push.call_count == 3
+        assert mock_authenticate.call_count == 2
+        mock_authenticate.assert_called_with(reauth=True)
+        mock_sleep.assert_called_with(2)
+        assert mock_sleep.call_count == 2
 
 
 def test_upload_container_with_org(lit_container, mock_teamspace):

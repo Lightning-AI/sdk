@@ -131,11 +131,19 @@ def upload_container(container: str, tag: str = "latest", teamspace: Optional[st
     ) as progress:
         push_task = progress.add_task("Pushing Docker image", total=None)
         try:
+            console.print("Authenticating with Lightning Container Registry...")
+            try:
+                api.authenticate()
+                console.print("Authenticated with Lightning Container Registry", style="green")
+            except Exception:
+                # let the push with retry take control of auth moving forward
+                pass
+
             lines = api.upload_container(container, teamspace, tag)
             _print_docker_push(lines, console, progress, push_task)
         except LCRAuthFailedError:
-            console.print("Authenticating with Lightning Container Registry...")
-            if not api.authenticate():
+            console.print("Re-authenticating with Lightning Container Registry...")
+            if not api.authenticate(reauth=True):
                 raise StudioCliError("Failed to authenticate with Lightning Container Registry") from None
             console.print("Authenticated with Lightning Container Registry", style="green")
             lines = api.upload_container(container, teamspace, tag)

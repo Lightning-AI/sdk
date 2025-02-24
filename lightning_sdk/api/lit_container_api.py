@@ -1,4 +1,5 @@
-from typing import Any, Callable, Generator, List
+import time
+from typing import Any, Callable, Dict, Generator, Iterator, List
 
 import docker
 import requests
@@ -12,11 +13,11 @@ from lightning_sdk.teamspace import Teamspace
 
 class LCRAuthFailedError(Exception):
     def __init__(self) -> None:
-        super().__init__(
-            "Failed to authenticate with Lightning Container Registry. Please login manually "
-            "using the following command:\n  "
-            "echo $LIGHTNING_API_KEY | docker login litcr.io --username=LIGHTNING_USERNAME --password-stdin"
-        )
+        super().__init__("Failed to authenticate with Lightning Container Registry. Please try again.")
+
+
+class DockerPushError(Exception):
+    pass
 
 
 def retry_on_lcr_auth_failure(func: Callable) -> Callable:
@@ -24,7 +25,7 @@ def retry_on_lcr_auth_failure(func: Callable) -> Callable:
         try:
             return func(self, *args, **kwargs)
         except LCRAuthFailedError:
-            self.authenticate()
+            self.authenticate(reauth=True)
             return func(self, *args, **kwargs)
 
     return wrapper
@@ -42,12 +43,29 @@ class LitContainerApi:
                 "Failed to connect to Docker, follow these steps to start it: https://docs.docker.com/engine/daemon/start/"
             ) from None
 
-    def authenticate(self) -> bool:
-        authed_user = self._client.auth_service_get_user()
-        username = authed_user.username
-        api_key = authed_user.api_key
-        resp = self._docker_client.login(username, password=api_key, registry=_get_registry_url())
-        return resp["Status"] == "Login Succeeded"
+    def authenticate(self, reauth: bool = False) -> bool:
+        try:
+            authed_user = self._client.auth_service_get_user()
+            username = authed_user.username
+            api_key = authed_user.api_key
+            registry = _get_registry_url()
+            resp = self._docker_client.login(username, password=api_key, registry=registry, reauth=reauth)
+
+            if (
+                resp.get("username", None) == username
+                and resp.get("password", None) == api_key
+                and resp.get("serveraddress", None) == registry
+            ):
+                return True
+
+            # This is a new 200 response auth attempt from the client.
+            if "Status" in resp and resp["Status"] == "Login Succeeded":
+                return True
+
+            return False
+        except Exception as e:
+            print(f"Authentication error: {e} resp: {resp}")
+            return False
 
     def list_containers(self, project_id: str) -> List:
         project = self._client.lit_registry_service_get_lit_project_registry(project_id)
@@ -79,15 +97,48 @@ class LitContainerApi:
         tagged = self._docker_client.api.tag(container, repository, tag)
         if not tagged:
             raise ValueError(f"Could not tag container {container} with {repository}:{tag}")
-        lines = self._docker_client.api.push(repository, stream=True, decode=True)
-        for line in lines:
-            if "errorDetail" in line and ("authorization failed" in line["error"] or "unauth" in line["error"]):
-                raise LCRAuthFailedError()
-            yield line
+        yield from self._push_with_retry(repository)
         yield {
             "finish": True,
             "url": f"{LIGHTNING_CLOUD_URL}/{teamspace.owner.name}/{teamspace.name}/containers/{container_basename}",
         }
+
+    def _push_with_retry(self, repository: str, max_retries: int = 3) -> Iterator[Dict[str, Any]]:
+        def is_auth_error(error_msg: str) -> bool:
+            auth_errors = ["unauthorized", "authentication required", "unauth"]
+            return any(err in error_msg.lower() for err in auth_errors)
+
+        def is_timeout_error(error_msg: str) -> bool:
+            timeout_errors = ["proxyconnect tcp", "i/o timeout"]
+            return any(err in error_msg.lower() for err in timeout_errors)
+
+        for attempt in range(max_retries):
+            try:
+                if attempt > 0:
+                    # This is important, if we don't set reauth here then we just keep using the
+                    # same authentication context that we know just failed.
+                    self.authenticate(reauth=True)
+                    time.sleep(2)
+
+                lines = self._docker_client.api.push(repository, stream=True, decode=True)
+                for line in lines:
+                    if isinstance(line, dict) and "error" in line:
+                        error = line["error"]
+                        if is_auth_error(error) or is_timeout_error(error):
+                            if attempt < max_retries - 1:
+                                break
+                            raise DockerPushError(f"Max retries reached: {error}")
+                        raise DockerPushError(f"Push error: {error}")
+                    yield line
+                else:
+                    return
+
+            except docker.errors.APIError as e:
+                if (is_auth_error(str(e)) or is_timeout_error(str(e))) and attempt < max_retries - 1:
+                    continue
+                raise DockerPushError(f"Push failed: {e}") from e
+
+        raise DockerPushError("Max push retries reached")
 
     @retry_on_lcr_auth_failure
     def download_container(self, container: str, teamspace: Teamspace, tag: str) -> Generator[str, None, None]:
