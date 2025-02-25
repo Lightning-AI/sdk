@@ -16,13 +16,17 @@ from lightning_sdk.api.utils import (
 from lightning_sdk.lightning_cloud.openapi import (
     ProjectIdStorageBody,
     UploadIdPartsBody,
-    UploadsUploadIdBody,
     V1PathMapping,
     V1PresignedUrl,
     V1SignedUrl,
     V1UploadProjectArtifactPartsResponse,
     VersionUploadsBody,
 )
+
+try:
+    from lightning_sdk.lightning_cloud.openapi import UploadsUploadIdBody1 as UploadsUploadIdBody
+except ImportError:
+    from lightning_sdk.lightning_cloud.openapi import UploadsUploadIdBody
 from lightning_sdk.machine import Machine
 
 
@@ -82,7 +86,7 @@ def test_file_uploader(_, tmp_path, monkeypatch):
         project_id="test-project-id",
     )
     uploader.client.storage_service_upload_project_artifact_parts.assert_called_once_with(
-        UploadsUploadIdBody(filename="path/to/file/on/remote", parts=[1]),
+        UploadsUploadIdBody(filename="path/to/file/on/remote", parts=[1], cluster_id="test-cluster-id"),
         "test-project-id",
         "test-upload-id",
     )

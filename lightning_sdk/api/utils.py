@@ -21,7 +21,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     StorageCompleteBody,
     UploadIdCompleteBody,
     UploadIdPartsBody,
-    UploadsUploadIdBody,
     V1CompletedPart,
     V1CompleteUpload,
     V1PathMapping,
@@ -37,6 +36,12 @@ try:
     from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
 except ImportError:
     from lightning_sdk.lightning_cloud.openapi import AppsIdBody
+
+try:
+    from lightning_sdk.lightning_cloud.openapi import UploadsUploadIdBody1 as UploadsUploadIdBody
+except ImportError:
+    from lightning_sdk.lightning_cloud.openapi import UploadsUploadIdBody
+
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
@@ -138,7 +143,7 @@ class _FileUploader:
 
     def _request_urls(self, parts: List[int], upload_id: str) -> List[V1PresignedUrl]:
         """Requests urls for a batch of parts."""
-        body = UploadsUploadIdBody(filename=self.remote_path, parts=parts)
+        body = UploadsUploadIdBody(filename=self.remote_path, parts=parts, cluster_id=self.cloud_account)
         resp: V1UploadProjectArtifactPartsResponse = self.client.storage_service_upload_project_artifact_parts(
             body, self.teamspace_id, upload_id
         )
