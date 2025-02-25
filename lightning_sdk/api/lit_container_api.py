@@ -38,6 +38,7 @@ class LitContainerApi:
         try:
             self._docker_client = docker.from_env()
             self._docker_client.ping()
+            self._docker_auth_config = {}
         except docker.errors.DockerException:
             raise RuntimeError(
                 "Failed to connect to Docker, follow these steps to start it: https://docs.docker.com/engine/daemon/start/"
@@ -56,10 +57,12 @@ class LitContainerApi:
                 and resp.get("password", None) == api_key
                 and resp.get("serveraddress", None) == registry
             ):
+                self._docker_auth_config = {"username": username, "password": api_key}
                 return True
 
             # This is a new 200 response auth attempt from the client.
             if "Status" in resp and resp["Status"] == "Login Succeeded":
+                self._docker_auth_config = {"username": username, "password": api_key}
                 return True
 
             return False
@@ -120,7 +123,9 @@ class LitContainerApi:
                     self.authenticate(reauth=True)
                     time.sleep(2)
 
-                lines = self._docker_client.api.push(repository, stream=True, decode=True)
+                lines = self._docker_client.api.push(
+                    repository, stream=True, decode=True, auth_config=self._docker_auth_config
+                )
                 for line in lines:
                     if isinstance(line, dict) and "error" in line:
                         error = line["error"]
@@ -145,7 +150,7 @@ class LitContainerApi:
         registry_url = _get_registry_url()
         repository = f"{registry_url}/lit-container/{teamspace.owner.name}/{teamspace.name}/{container}"
         try:
-            self._docker_client.images.pull(repository, tag=tag)
+            self._docker_client.images.pull(repository, tag=tag, auth_config=self._docker_auth_config)
         except requests.exceptions.HTTPError as e:
             if "unauthorized" in e.response.text:
                 raise LCRAuthFailedError() from e

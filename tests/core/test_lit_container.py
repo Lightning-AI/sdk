@@ -106,6 +106,7 @@ def test_upload_container_pull_then_push(lit_container, mock_teamspace):
     ) as mock_docker_client:
         mock_resolve.return_value = mock_teamspace
 
+        lit_container._api._docker_auth_config = {"username": "admin", "api_key": "grid"}
         mock_docker_client.images.get.side_effect = [
             docker.errors.ImageNotFound("This will trigger images.pull()"),
             MagicMock(id="my-container"),
@@ -127,7 +128,9 @@ def test_upload_container_pull_then_push(lit_container, mock_teamspace):
 
         repository = f"{_get_registry_url()}/lit-container/test-org/test-team/my-container"
         mock_docker_client.api.tag.assert_called_once_with("my-container", repository, "v1.0")
-        mock_docker_client.api.push.assert_called_once_with(repository, stream=True, decode=True)
+        mock_docker_client.api.push.assert_called_once_with(
+            repository, stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
+        )
 
 
 def test_upload_container_teamspace_resolution_error(lit_container):
@@ -211,6 +214,8 @@ def test_upload_container_auth_retry_max_attempts(lit_container, mock_teamspace)
         mock_docker_client.images.get.return_value = MagicMock(id="my-container")
         mock_docker_client.api.tag.return_value = True
 
+        lit_container._api._docker_auth_config = {"username": "admin", "api_key": "grid"}
+
         mock_docker_client.api.push.side_effect = [
             [{"error": "unauthorized"}],
             [{"error": "unauthorized"}],
@@ -221,6 +226,10 @@ def test_upload_container_auth_retry_max_attempts(lit_container, mock_teamspace)
             lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
 
         assert mock_docker_client.api.push.call_count == 3
+        repository = f"{_get_registry_url()}/lit-container/test-org/test-team/my-container"
+        mock_docker_client.api.push.assert_called_with(
+            repository, stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
+        )
         assert mock_authenticate.call_count == 2
         mock_authenticate.assert_called_with(reauth=True)
         mock_sleep.assert_called_with(2)
@@ -299,10 +308,17 @@ def test_download_container(lit_container, mock_teamspace):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
         lit_container._api, "_docker_client"
     ) as mock_docker_client:
+        lit_container._api._docker_auth_config = {"username": "admin", "api_key": "grid"}
         mock_resolve.return_value = mock_teamspace
 
         lit_container.download_container(container="my-container", teamspace="test-team", tag="latest")
-        mock_docker_client.images.pull.assert_called_once(), "Docker pull was not called"
+        repository = f"{_get_registry_url()}/lit-container/test-org/test-team/my-container"
+        (
+            mock_docker_client.images.pull.assert_called_once_with(
+                repository, tag="latest", auth_config={"username": "admin", "api_key": "grid"}
+            ),
+            "Docker pull was not called",
+        )
 
 
 @patch("lightning_sdk.api.lit_container_api.docker")
