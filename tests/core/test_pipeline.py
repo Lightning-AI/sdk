@@ -11,7 +11,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1PipelineStepType,
 )
 from lightning_sdk.machine import Machine
-from lightning_sdk.pipeline import Deployment, Job, Pipeline
+from lightning_sdk.pipeline import MMT, Deployment, Job, Pipeline
 from lightning_sdk.pipeline import pipeline as pipeline_module
 from lightning_sdk.pipeline.utils import DEFAULT, prepare_steps
 
@@ -288,3 +288,15 @@ def test_deployment_default():
 
     deployment = Deployment(machine=Machine.A10G)
     assert deployment.autoscale.target_metrics[0].name == "GPU"
+
+
+def test_mmt():
+    mmt = MMT(name="mmt-0", machine=Machine.CPU)
+    proto = mmt.to_proto(teamspace=MagicMock())
+    assert proto.type == V1PipelineStepType.MMT
+    assert proto.name == "mmt-0"
+    assert proto.mmt is not None
+    assert proto.job is None
+    assert proto.deployment is None
+    assert proto.mmt.machines == 2
+    assert proto.mmt.spec.instance_name == "cpu-4"

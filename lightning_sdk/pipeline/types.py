@@ -21,11 +21,12 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1PipelineStep,
     V1PipelineStepType,
 )
+from lightning_sdk.mmt.v2 import MMTApiV2
+from lightning_sdk.studio import Studio
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import Machine
     from lightning_sdk.organization import Organization
-    from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
 
@@ -180,9 +181,9 @@ class MMT:
 
     def __init__(
         self,
+        name: str,
         machine: Union["Machine", str],
         num_machines: Optional[int] = 2,
-        name: Optional[str] = None,
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
         image: Optional[str] = None,
@@ -215,6 +216,32 @@ class MMT:
         self.entrypoint = entrypoint
         self.path_mappings = path_mappings
         self.needs = needs
+
+    def to_proto(self, teamspace: "Teamspace") -> V1PipelineStep:
+        body = MMTApiV2._create_mmt_body(
+            name=self.name,
+            num_machines=self.num_machines,
+            command=self.command,
+            cloud_account=self.cloud_account,
+            studio_id=self.studio.studio_id if isinstance(self.studio, Studio) else None,
+            image=self.image,
+            machine=self.machine,
+            interruptible=self.interruptible,
+            env=self.env,
+            image_credentials=self.image_credentials,
+            cloud_account_auth=self.cloud_account_auth,
+            entrypoint=self.entrypoint,
+            path_mappings=self.path_mappings,
+            artifacts_local=None,  # deprecated in favor of path_mappings
+            artifacts_remote=None,  # deprecated in favor of path_mappings
+        )
+
+        return V1PipelineStep(
+            name=self.name,
+            type=V1PipelineStepType.MMT,
+            needs=to_needs(self.needs),
+            mmt=body,
+        )
 
 
 def to_needs(needs: Optional[Union[str, List[str]]]) -> Optional[List[str]]:

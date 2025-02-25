@@ -88,6 +88,45 @@ class MMTApiV2:
         artifacts_local: Optional[str],  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str],  # deprecated in favor of path_mappings
     ) -> V1MultiMachineJob:
+        body = self._create_mmt_body(
+            name=name,
+            num_machines=num_machines,
+            command=command,
+            cloud_account=cloud_account,
+            studio_id=studio_id,
+            image=image,
+            machine=machine,
+            interruptible=interruptible,
+            env=env,
+            image_credentials=image_credentials,
+            cloud_account_auth=cloud_account_auth,
+            entrypoint=entrypoint,
+            path_mappings=path_mappings,
+            artifacts_local=artifacts_local,  # deprecated in favor of path_mappings
+            artifacts_remote=artifacts_remote,  # deprecated in favor of path_mappings
+        )
+
+        job: V1MultiMachineJob = self._client.jobs_service_create_multi_machine_job(project_id=teamspace_id, body=body)
+        return job
+
+    @staticmethod
+    def _create_mmt_body(
+        name: str,
+        num_machines: int,
+        command: Optional[str],
+        cloud_account: Optional[str],
+        studio_id: Optional[str],
+        image: Optional[str],
+        machine: Union[Machine, str],
+        interruptible: bool,
+        env: Optional[Dict[str, str]],
+        image_credentials: Optional[str],
+        cloud_account_auth: bool,
+        entrypoint: str,
+        path_mappings: Optional[Dict[str, str]],
+        artifacts_local: Optional[str],  # deprecated in favor of path_mappings
+        artifacts_remote: Optional[str],  # deprecated in favor of path_mappings
+    ) -> ProjectIdMultimachinejobsBody:
         env_vars = []
         if env is not None:
             for k, v in env.items():
@@ -117,12 +156,9 @@ class MMTApiV2:
             image_secret_ref=image_credentials or "",
             path_mappings=path_mappings_list,
         )
-        body = ProjectIdMultimachinejobsBody(
+        return ProjectIdMultimachinejobsBody(
             name=name, spec=spec, cluster_id=cloud_account or "", machines=num_machines
         )
-
-        job: V1MultiMachineJob = self._client.jobs_service_create_multi_machine_job(project_id=teamspace_id, body=body)
-        return job
 
     def get_job_by_name(self, name: str, teamspace_id: str) -> V1MultiMachineJob:
         job: V1MultiMachineJob = self._client.jobs_service_get_multi_machine_job_by_name(

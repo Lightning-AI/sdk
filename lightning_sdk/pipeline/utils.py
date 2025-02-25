@@ -1,6 +1,6 @@
 from typing import List
 
-from lightning_sdk.lightning_cloud.openapi.models import V1PipelineStep
+from lightning_sdk.lightning_cloud.openapi.models import V1PipelineStep, V1PipelineStepType
 
 DEFAULT = "DEFAULT"
 
@@ -53,8 +53,15 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
 
     print()
     print("===== Generated Pipeline =====")
-    for step in steps:
-        print(f"[{step.name}] needs {'nothing' if len(step.needs) == 0 else step.needs}")
+    for step_idx, step in enumerate(steps):
+        step_type = ""
+        if step.type == V1PipelineStepType.DEPLOYMENT:
+            step_type = "Deployment"
+        elif step.type == V1PipelineStepType.JOB:
+            step_type = "Job"
+        else:
+            step_type = "MMT"
+        print(f"{step_idx} - {step_type}['{step.name}'] needs {'nothing' if len(step.needs) == 0 else step.needs}")
     print("===== ================== =====")
     print()
 
