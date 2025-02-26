@@ -1,4 +1,5 @@
-from typing import Dict, Optional, Sequence, Union
+import json
+from typing import Dict, Mapping, Optional, Sequence, Union
 
 import click
 
@@ -57,7 +58,13 @@ def run() -> None:
         "If not provided will fall back to the teamspaces default cloud account."
     ),
 )
-@click.option("--env", default=None, help="Environment variables to set inside the job.")
+@click.option(
+    "--env",
+    "-e",
+    default=[""],
+    help=("Environment variable to set inside the job. Should be of format KEY=VALUE"),
+    multiple=True,
+)
 @click.option(
     "--interruptible",
     is_flag=True,
@@ -133,7 +140,7 @@ def job(
     org: Optional[str] = None,
     user: Optional[str] = None,
     cloud_account: Optional[str] = None,
-    env: Optional[Dict[str, str]] = None,
+    env: Sequence[str] = (),
     interruptible: bool = False,
     image_credentials: Optional[str] = None,
     cloud_account_auth: bool = False,
@@ -162,6 +169,10 @@ def job(
     for mapping in path_mapping:
         path_mappings_dict.update(_resolve_path_mapping(path_mappings=mapping))
 
+    env_dict = {}
+    for e in env:
+        env_dict.update(_resolve_envs(e))
+
     Job.run(
         name=name,
         machine=machine_enum,
@@ -172,7 +183,7 @@ def job(
         org=org,
         user=user,
         cloud_account=cloud_account,
-        env=env,
+        env=env_dict,
         interruptible=interruptible,
         image_credentials=image_credentials,
         cloud_account_auth=cloud_account_auth,
@@ -232,7 +243,13 @@ def job(
         "If not provided will fall back to the teamspaces default cloud account."
     ),
 )
-@click.option("--env", default=None, help="Environment variables to set inside the job.")
+@click.option(
+    "--env",
+    "-e",
+    default=[""],
+    help=("Environment variable to set inside the job. Should be of format KEY=VALUE"),
+    multiple=True,
+)
 @click.option(
     "--interruptible",
     is_flag=True,
@@ -308,7 +325,7 @@ def mmt(
     org: Optional[str] = None,
     user: Optional[str] = None,
     cloud_account: Optional[str] = None,
-    env: Optional[Dict[str, str]] = None,
+    env: Sequence[str] = (),
     interruptible: bool = False,
     image_credentials: Optional[str] = None,
     cloud_account_auth: bool = False,
@@ -343,6 +360,10 @@ def mmt(
     for mapping in path_mapping:
         path_mappings_dict.update(_resolve_path_mapping(path_mappings=mapping))
 
+    env_dict = {}
+    for e in env:
+        env_dict.update(_resolve_envs(e))
+
     MMT.run(
         name=name,
         num_machines=num_machines,
@@ -354,7 +375,7 @@ def mmt(
         org=org,
         user=user,
         cloud_account=cloud_account,
-        env=env,
+        env=env_dict,
         interruptible=interruptible,
         image_credentials=image_credentials,
         cloud_account_auth=cloud_account_auth,
@@ -386,3 +407,29 @@ def _resolve_path_mapping(path_mappings: str) -> Dict[str, str]:
         path_mappings_dict[splits[0].strip()] = splits[1].strip()
 
     return path_mappings_dict
+
+
+def _resolve_envs(envs: str) -> Dict[str, str]:
+    if not envs:
+        return {}
+
+    # backwards compatibility for supporting env as json dict
+    try:
+        env_dict = json.loads(envs)
+        if isinstance(env_dict, Mapping):
+            return dict(env_dict)
+
+        raise ValueError(f"Env {envs} cannot be parsed as environment variable")
+    except json.decoder.JSONDecodeError as e:
+        # resolve individual env vars
+        env_dict = {}
+        splits = envs.split("=", 1)
+        if len(splits) == 2:
+            key, value = splits
+            env_dict.update({key: value})
+
+            return env_dict
+
+        raise ValueError(f"Env {envs} cannot be parsed as environment variable: {e!s}") from e
+
+    return {}

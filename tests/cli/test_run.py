@@ -3,7 +3,7 @@ from typing import Dict
 
 import pytest
 
-from lightning_sdk.cli.run import _resolve_path_mapping
+from lightning_sdk.cli.run import _resolve_envs, _resolve_path_mapping
 
 
 def test_run_help():
@@ -63,7 +63,8 @@ Options:
                                   running with studio compute env. If not
                                   provided will fall back to the teamspaces
                                   default cloud account.
-  --env TEXT                      Environment variables to set inside the job.
+  -e, --env TEXT                  Environment variable to set inside the job.
+                                  Should be of format KEY=VALUE
   --interruptible                 Whether the job should run on interruptible
                                   instances. They are cheaper but can be
                                   preempted.
@@ -148,7 +149,8 @@ Options:
                                   running with studio compute env. If not
                                   provided will fall back to the teamspaces
                                   default cloud account.
-  --env TEXT                      Environment variables to set inside the job.
+  -e, --env TEXT                  Environment variable to set inside the job.
+                                  Should be of format KEY=VALUE
   --interruptible                 Whether the job should run on interruptible
                                   instances. They are cheaper but can be
                                   preempted.
@@ -210,3 +212,18 @@ Options:
 )
 def test_parse_run_path_mapping(input_mappings: str, expected: Dict[str, str]):
     assert _resolve_path_mapping(input_mappings) == expected
+
+
+@pytest.mark.parametrize(
+    ("input_env", "expected"),
+    [
+        ("", {}),
+        ("SOME_KEY=SOME_VAL", {"SOME_KEY": "SOME_VAL"}),
+        (
+            '{"some_key":"some_val", "some_other_key":"some_other_val"}',
+            {"some_key": "some_val", "some_other_key": "some_other_val"},
+        ),
+    ],
+)
+def test_parse_env(input_env, expected):
+    assert _resolve_envs(input_env) == expected
