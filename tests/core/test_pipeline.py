@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from lightning_sdk import teamspace, user
+from lightning_sdk.api import pipeline_api
 from lightning_sdk.lightning_cloud.openapi.models import (
     ProjectIdJobsBody,
     V1JobSpec,
@@ -300,3 +301,43 @@ def test_mmt():
     assert proto.deployment is None
     assert proto.mmt.machines == 2
     assert proto.mmt.spec.instance_name == "cpu-4"
+
+
+def test_stop(monkeypatch):
+    monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
+    monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
+    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
+    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
+
+    mock_client = MagicMock()
+    monkeypatch.setattr(pipeline_api, "LightningClient", mock_client)
+
+    pipeline_spec = MagicMock()
+    pipeline_spec.id = "pipeline_id"
+    pipeline = Pipeline(name="first-pipeline")
+    pipeline._pipeline = MagicMock(return_value=pipeline_spec)
+    pipeline.stop()
+    mock_client().pipelines_service_update_pipeline.assert_called()
+
+
+def test_delete(monkeypatch):
+    monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
+    monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
+    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
+    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
+
+    mock_client = MagicMock()
+    monkeypatch.setattr(pipeline_api, "LightningClient", mock_client)
+
+    pipeline_spec = MagicMock()
+    pipeline_spec.id = "pipeline_id"
+    pipeline = Pipeline(name="first-pipeline")
+    pipeline._pipeline = MagicMock(return_value=pipeline_spec)
+    pipeline.delete()
+    mock_client().pipelines_service_delete_pipeline.assert_called()

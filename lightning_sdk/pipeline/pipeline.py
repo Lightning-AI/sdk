@@ -68,3 +68,15 @@ class Pipeline:
         steps = [step.to_proto(self._teamspace) for step in steps]
 
         self._pipeline = self._pipeline_api.create_pipeline(self._name, self._teamspace.id, prepare_steps(steps))
+
+    def stop(self) -> None:
+        if self._pipeline is None:
+            return
+
+        self._pipeline_api.stop(self._pipeline)
+
+    def delete(self) -> None:
+        if self._pipeline is None:
+            return
+
+        self._pipeline_api.delete(self._teamspace.id, self._pipeline.id)

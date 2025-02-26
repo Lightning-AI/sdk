@@ -79,7 +79,7 @@ class Deployment:
         self.replicas = replicas or 1
         self.health_check = health_check
         self.auth = auth
-        self.cloud_account = cloud_account
+        self.cloud_account = cloud_account or ""
         self.custom_domain = custom_domain
         self.quantity = quantity
         self.needs = needs

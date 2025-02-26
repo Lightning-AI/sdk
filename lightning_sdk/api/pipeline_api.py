@@ -2,6 +2,7 @@ from typing import List
 
 from lightning_sdk.lightning_cloud.openapi.models import (
     ProjectIdPipelinesBody,
+    V1DeletePipelineResponse,
     V1Pipeline,
     V1PipelineStep,
 )
@@ -34,3 +35,11 @@ class PipelineApi:
             steps=steps,
         )
         return self._client.pipelines_service_create_pipeline(body, project_id)
+
+    def stop(self, pipeline: V1Pipeline) -> V1Pipeline:
+        body = pipeline
+        body.state = "stop"
+        return self._client.pipelines_service_update_pipeline(body)
+
+    def delete(self, project_id: str, pipeline_id: str) -> V1DeletePipelineResponse:
+        return self._client.pipelines_service_delete_pipeline(project_id, pipeline_id)
