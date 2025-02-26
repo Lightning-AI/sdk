@@ -48,12 +48,15 @@ def test_job_help():
 
     assert (
         result_text
-        == """Usage: lightning delete job [OPTIONS]
+        == """Usage: lightning delete job [OPTIONS] NAME
 
   Delete a job.
 
+  Example:   lightning delete job NAME
+
+  NAME: the name of the job to delete.
+
 Options:
-  --name TEXT       The name of the job to delete.
   --teamspace TEXT  The teamspace to delete the job from. Should be specified
                     as {owner}/{name} If not provided, can be selected in an
                     interactive menu.
@@ -68,12 +71,15 @@ def test_mmt_help():
 
     assert (
         result_text
-        == """Usage: lightning delete mmt [OPTIONS]
+        == """Usage: lightning delete mmt [OPTIONS] NAME
 
   Delete a multi-machine job.
 
+  Example:   lightning delete mmt NAME
+
+  NAME: the name of the multi-machine job to delete.
+
 Options:
-  --name TEXT       The name of the multi-machine job to delete.
   --teamspace TEXT  The teamspace to delete the job from. Should be specified
                     as {owner}/{name} If not provided, can be selected in an
                     interactive menu.

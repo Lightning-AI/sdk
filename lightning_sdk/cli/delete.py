@@ -42,7 +42,9 @@ def delete_container(container: str, teamspace: Optional[str] = None) -> None:
 
 
 @delete.command(name="job")
-@click.option("--name", help="The name of the job to delete.")
+@click.argument(
+    "name",
+)
 @click.option(
     "--teamspace",
     default=None,
@@ -53,7 +55,13 @@ def delete_container(container: str, teamspace: Optional[str] = None) -> None:
     ),
 )
 def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-    """Delete a job."""
+    """Delete a job.
+
+    Example:
+      lightning delete job NAME
+
+    NAME: the name of the job to delete.
+    """
     menu = _JobAndMMTAction()
     job = menu.job(name=name, teamspace=teamspace)
 
@@ -62,7 +70,9 @@ def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
 
 
 @delete.command(name="mmt")
-@click.option("--name", help="The name of the multi-machine job to delete.")
+@click.argument(
+    "name",
+)
 @click.option(
     "--teamspace",
     default=None,
@@ -73,7 +83,13 @@ def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     ),
 )
 def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-    """Delete a multi-machine job."""
+    """Delete a multi-machine job.
+
+    Example:
+      lightning delete mmt NAME
+
+    NAME: the name of the multi-machine job to delete.
+    """
     menu = _JobAndMMTAction()
     mmt = menu.mmt(name=name, teamspace=teamspace)
 

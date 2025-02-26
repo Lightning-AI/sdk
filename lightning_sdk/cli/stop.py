@@ -14,10 +14,8 @@ def stop() -> None:
 
 
 @stop.command("job")
-@click.option(
-    "--name",
-    default=None,
-    help="the name of the job. If not specified can be selected interactively.",
+@click.argument(
+    "name",
 )
 @click.option(
     "--teamspace",
@@ -28,8 +26,14 @@ def stop() -> None:
         "If not specified can be selected interactively."
     ),
 )
-def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-    """Stop a job."""
+def job(name: str, teamspace: Optional[str] = None) -> None:
+    """Stop a job.
+
+    Example:
+      lightning stop job NAME
+
+    NAME: the name of the job to stop.
+    """
     menu = _JobAndMMTAction()
     job = menu.job(name=name, teamspace=teamspace)
 
@@ -38,10 +42,8 @@ def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
 
 
 @stop.command("mmt")
-@click.option(
-    "--name",
-    default=None,
-    help="the name of the multi-machine job. If not specified can be selected interactively.",
+@click.argument(
+    "name",
 )
 @click.option(
     "--teamspace",
@@ -52,8 +54,14 @@ def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
         "If not specified can be selected interactively."
     ),
 )
-def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-    """Stop a multi-machine job."""
+def mmt(name: str, teamspace: Optional[str] = None) -> None:
+    """Stop a multi-machine job.
+
+    Example:
+      lightning stop mmt NAME
+
+    NAME: the name of the multi-machine job to stop.
+    """
     menu = _JobAndMMTAction()
     mmt = menu.mmt(name=name, teamspace=teamspace)
 

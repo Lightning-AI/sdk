@@ -28,13 +28,15 @@ def test_job_help():
 
     assert (
         result_text
-        == """Usage: lightning stop job [OPTIONS]
+        == """Usage: lightning stop job [OPTIONS] NAME
 
   Stop a job.
 
+  Example:   lightning stop job NAME
+
+  NAME: the name of the job to stop.
+
 Options:
-  --name TEXT       the name of the job. If not specified can be selected
-                    interactively.
   --teamspace TEXT  the name of the teamspace the job lives in. Should be
                     specified as {teamspace_owner}/{teamspace_name} (e.g my-
                     org/my-teamspace). If not specified can be selected
@@ -50,13 +52,15 @@ def test_mmt_help():
 
     assert (
         result_text
-        == """Usage: lightning stop mmt [OPTIONS]
+        == """Usage: lightning stop mmt [OPTIONS] NAME
 
   Stop a multi-machine job.
 
+  Example:   lightning stop mmt NAME
+
+  NAME: the name of the multi-machine job to stop.
+
 Options:
-  --name TEXT       the name of the multi-machine job. If not specified can be
-                    selected interactively.
   --teamspace TEXT  the name of the teamspace the multi-machine job lives in.
                     Should be specified as {teamspace_owner}/{teamspace_name}
                     (e.g my-org/my-teamspace). If not specified can be
