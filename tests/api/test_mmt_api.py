@@ -217,7 +217,7 @@ def test_translate_state(internal_state, expected_state):
         ("p4d.24xlarge", "p4d.24xlarge", Machine.A100_X_8),
         ("unknown", "p4d.24xlarge", Machine.A100_X_8),
         ("unknown", "", Machine("unknown", "unknown")),
-        ("", "unknown", Machine("", "unknown")),
+        ("", "unknown", Machine("unknown", "unknown")),
     ],
 )
 def test_machine_translate(instance_name, instance_type, expected_machine):

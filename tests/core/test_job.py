@@ -637,7 +637,7 @@ def test_job_v2_dict_json(internal_studio_init_mocker):
     assert job_dict["total_cost"] == 3.51
 
     assert job.json() == (
-        '{\n    "command": "some command",\n    "image": null,\n    "machine": "cpu-4",\n    '
+        '{\n    "command": "some command",\n    "image": null,\n    "machine": "CPU",\n    '
         '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc",\n    '
         '"total_cost": 3.51\n}'
     )
@@ -685,7 +685,7 @@ def test_job_v1_dict_json(internal_studio_init_mocker, internal_job_api_mocker_g
     assert job_dict["total_cost"] == 3.51
 
     assert job.json() == (
-        '{\n    "command": "some command",\n    "image": null,\n    "machine": "g4dn.12xlarge",\n    '
+        '{\n    "command": "some command",\n    "image": null,\n    "machine": "T4_X_4",\n    '
         '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc",\n    '
         '"total_cost": 3.51\n}'
     )

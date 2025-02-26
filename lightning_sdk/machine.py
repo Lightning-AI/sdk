@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import ClassVar, Optional
+from typing import Any, ClassVar, Optional, Tuple
 
 
 @dataclass(frozen=True)
@@ -51,6 +51,20 @@ class Machine:
             or self == Machine.DATA_PREP_MAX
             or self == Machine.DATA_PREP_ULTRA
         )
+
+    @classmethod
+    def from_str(cls, machine: str, *additional_machine_ids: Any) -> "Machine":
+        possible_values: Tuple["Machine", ...] = tuple(
+            [machine for machine in cls.__dict__.values() if isinstance(machine, cls)]
+        )
+        for m in possible_values:
+            for machine_id in [machine, *additional_machine_ids]:
+                if machine_id in (getattr(m, "name", None), getattr(m, "instance_type", None)):
+                    return m
+
+        if additional_machine_ids:
+            return cls(machine, *additional_machine_ids)
+        return cls(machine, machine)
 
 
 Machine.CPU_SMALL = Machine(name="CPU_SMALL", instance_type="m3.medium")

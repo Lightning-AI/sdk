@@ -244,7 +244,7 @@ def test_mmtv2_status(mmt_api_get_job_by_name_mocker, internal_studio_init_mocke
         ("p4d.24xlarge", "p4d.24xlarge", Machine.A100_X_8),
         ("unknown", "p4d.24xlarge", Machine.A100_X_8),
         ("unknown", "", Machine("unknown", "unknown")),
-        ("", "unknown", Machine("", "unknown")),
+        ("", "unknown", Machine("unknown", "unknown")),
     ],
 )
 def test_mmtv2_machine(internal_studio_init_mocker, internal_instance_name, internal_instance_type, expected_machine):

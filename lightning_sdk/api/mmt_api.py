@@ -240,7 +240,7 @@ class MMTApiV2:
         instance_name = spec.instance_name
         instance_type = spec.instance_type
 
-        return Machine(instance_name, instance_type or instance_name)
+        return Machine.from_str(instance_name, instance_type or instance_name)
 
     def get_total_cost(self, job: V1MultiMachineJob) -> float:
         return job.total_cost
