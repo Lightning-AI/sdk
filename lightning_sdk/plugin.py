@@ -186,16 +186,15 @@ class MultiMachineTrainingPlugin(_Plugin):
 
         machine = _resolve_deprecated_cloud_compute(machine, cloud_compute)
 
-        with forced_v1(MMT) as v1mmt:
-            return v1mmt.run(
-                name=name,
-                num_machines=num_instances,
-                machine=machine,
-                command=command,
-                studio=self._studio,
-                teamspace=self._studio.teamspace,
-                interruptible=interruptible,
-            )
+        return MMT.run(
+            name=name,
+            num_machines=num_instances,
+            machine=machine,
+            command=command,
+            studio=self._studio,
+            teamspace=self._studio.teamspace,
+            interruptible=interruptible,
+        )
 
 
 class MultiMachineDataPrepPlugin(_Plugin):

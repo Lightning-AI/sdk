@@ -220,8 +220,16 @@ def job(
         "If not provided for images, will run the container entrypoint and default command."
     ),
 )
-@click.option("--studio", default=None, help="The studio env to run the job with. Mutually exclusive with image.")
-@click.option("--image", default=None, help="The docker image to run the job with. Mutually exclusive with studio.")
+@click.option(
+    "--studio",
+    default=None,
+    help="The studio env to run the multi-machine job with. Mutually exclusive with image.",
+)
+@click.option(
+    "--image",
+    default=None,
+    help="The docker image to run the multi-machine job with. Mutually exclusive with studio.",
+)
 @click.option(
     "--teamspace",
     default=None,
@@ -320,6 +328,7 @@ def mmt(
     num_machines: int = 2,
     machine: str = "CPU",
     command: Optional[str] = None,
+    studio: Optional[str] = None,
     image: Optional[str] = None,
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
@@ -353,9 +362,6 @@ def mmt(
 
     resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
 
-    if image is None:
-        raise RuntimeError("Image needs to be specified to run a multi-machine job")
-
     path_mappings_dict = _resolve_path_mapping(path_mappings=path_mappings)
     for mapping in path_mapping:
         path_mappings_dict.update(_resolve_path_mapping(path_mappings=mapping))
@@ -369,7 +375,7 @@ def mmt(
         num_machines=num_machines,
         machine=machine_enum,
         command=command,
-        studio=None,
+        studio=studio,
         image=image,
         teamspace=resolved_teamspace,
         org=org,

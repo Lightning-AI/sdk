@@ -21,7 +21,7 @@ class _MMTsMenu:
             if j.name == mmt:
                 return j
 
-        Console().print("Could not find Multi-Machine Job {mmt}, please select it from the list:")
+        Console().print(f"Could not find Multi-Machine Job {mmt}, please select it from the list:")
         return self._get_mmt_from_interactive_menu(possible_mmts)
 
     @staticmethod

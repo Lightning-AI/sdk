@@ -133,10 +133,10 @@ Options:
                                   image. If not provided for images, will run
                                   the container entrypoint and default
                                   command.
-  --studio TEXT                   The studio env to run the job with. Mutually
-                                  exclusive with image.
-  --image TEXT                    The docker image to run the job with.
-                                  Mutually exclusive with studio.
+  --studio TEXT                   The studio env to run the multi-machine job
+                                  with. Mutually exclusive with image.
+  --image TEXT                    The docker image to run the multi-machine
+                                  job with. Mutually exclusive with studio.
   --teamspace TEXT                The teamspace the job should be associated
                                   with. Defaults to the current teamspace.
   --org TEXT                      The organization owning the teamspace (if
