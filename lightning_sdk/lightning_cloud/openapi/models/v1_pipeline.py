@@ -41,12 +41,14 @@ class V1Pipeline(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cluster_id': 'bool',
         'created_at': 'datetime',
         'display_name': 'str',
         'id': 'str',
         'name': 'str',
         'parent_id': 'str',
         'project_id': 'str',
+        'shared_filesystem': 'V1SharedFilesystem',
         'state': 'str',
         'statuses': 'list[V1PipelineStepStatus]',
         'steps': 'list[V1PipelineStep]',
@@ -55,12 +57,14 @@ class V1Pipeline(object):
     }
 
     attribute_map = {
+        'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'display_name': 'displayName',
         'id': 'id',
         'name': 'name',
         'parent_id': 'parentId',
         'project_id': 'projectId',
+        'shared_filesystem': 'sharedFilesystem',
         'state': 'state',
         'statuses': 'statuses',
         'steps': 'steps',
@@ -68,20 +72,24 @@ class V1Pipeline(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, parent_id: 'str' =None, project_id: 'str' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'bool' =None, created_at: 'datetime' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, parent_id: 'str' =None, project_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Pipeline - a model defined in Swagger"""  # noqa: E501
+        self._cluster_id = None
         self._created_at = None
         self._display_name = None
         self._id = None
         self._name = None
         self._parent_id = None
         self._project_id = None
+        self._shared_filesystem = None
         self._state = None
         self._statuses = None
         self._steps = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
         if display_name is not None:
@@ -94,6 +102,8 @@ class V1Pipeline(object):
             self.parent_id = parent_id
         if project_id is not None:
             self.project_id = project_id
+        if shared_filesystem is not None:
+            self.shared_filesystem = shared_filesystem
         if state is not None:
             self.state = state
         if statuses is not None:
@@ -104,6 +114,27 @@ class V1Pipeline(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def cluster_id(self) -> 'bool':
+        """Gets the cluster_id of this V1Pipeline.  # noqa: E501
+
+
+        :return: The cluster_id of this V1Pipeline.  # noqa: E501
+        :rtype: bool
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'bool'):
+        """Sets the cluster_id of this V1Pipeline.
+
+
+        :param cluster_id: The cluster_id of this V1Pipeline.  # noqa: E501
+        :type: bool
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def created_at(self) -> 'datetime':
@@ -230,6 +261,27 @@ class V1Pipeline(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def shared_filesystem(self) -> 'V1SharedFilesystem':
+        """Gets the shared_filesystem of this V1Pipeline.  # noqa: E501
+
+
+        :return: The shared_filesystem of this V1Pipeline.  # noqa: E501
+        :rtype: V1SharedFilesystem
+        """
+        return self._shared_filesystem
+
+    @shared_filesystem.setter
+    def shared_filesystem(self, shared_filesystem: 'V1SharedFilesystem'):
+        """Sets the shared_filesystem of this V1Pipeline.
+
+
+        :param shared_filesystem: The shared_filesystem of this V1Pipeline.  # noqa: E501
+        :type: V1SharedFilesystem
+        """
+
+        self._shared_filesystem = shared_filesystem
 
     @property
     def state(self) -> 'str':

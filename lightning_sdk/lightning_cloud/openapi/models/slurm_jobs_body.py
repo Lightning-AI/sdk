@@ -45,6 +45,9 @@ class SlurmJobsBody(object):
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'command': 'str',
+        'entrypoint': 'str',
+        'image': 'str',
+        'image_secret_ref': 'str',
         'name': 'str',
         'num_gpus': 'str',
         'service_id': 'str',
@@ -57,6 +60,9 @@ class SlurmJobsBody(object):
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'command': 'command',
+        'entrypoint': 'entrypoint',
+        'image': 'image',
+        'image_secret_ref': 'imageSecretRef',
         'name': 'name',
         'num_gpus': 'numGpus',
         'service_id': 'serviceId',
@@ -64,12 +70,15 @@ class SlurmJobsBody(object):
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, service_id: 'str' =None, sync_env: 'bool' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, service_id: 'str' =None, sync_env: 'bool' =None, work_dir: 'str' =None):  # noqa: E501
         """SlurmJobsBody - a model defined in Swagger"""  # noqa: E501
         self._cache_id = None
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
+        self._entrypoint = None
+        self._image = None
+        self._image_secret_ref = None
         self._name = None
         self._num_gpus = None
         self._service_id = None
@@ -84,6 +93,12 @@ class SlurmJobsBody(object):
             self.cluster_id = cluster_id
         if command is not None:
             self.command = command
+        if entrypoint is not None:
+            self.entrypoint = entrypoint
+        if image is not None:
+            self.image = image
+        if image_secret_ref is not None:
+            self.image_secret_ref = image_secret_ref
         if name is not None:
             self.name = name
         if num_gpus is not None:
@@ -178,6 +193,69 @@ class SlurmJobsBody(object):
         """
 
         self._command = command
+
+    @property
+    def entrypoint(self) -> 'str':
+        """Gets the entrypoint of this SlurmJobsBody.  # noqa: E501
+
+
+        :return: The entrypoint of this SlurmJobsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._entrypoint
+
+    @entrypoint.setter
+    def entrypoint(self, entrypoint: 'str'):
+        """Sets the entrypoint of this SlurmJobsBody.
+
+
+        :param entrypoint: The entrypoint of this SlurmJobsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._entrypoint = entrypoint
+
+    @property
+    def image(self) -> 'str':
+        """Gets the image of this SlurmJobsBody.  # noqa: E501
+
+
+        :return: The image of this SlurmJobsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._image
+
+    @image.setter
+    def image(self, image: 'str'):
+        """Sets the image of this SlurmJobsBody.
+
+
+        :param image: The image of this SlurmJobsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._image = image
+
+    @property
+    def image_secret_ref(self) -> 'str':
+        """Gets the image_secret_ref of this SlurmJobsBody.  # noqa: E501
+
+
+        :return: The image_secret_ref of this SlurmJobsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._image_secret_ref
+
+    @image_secret_ref.setter
+    def image_secret_ref(self, image_secret_ref: 'str'):
+        """Sets the image_secret_ref of this SlurmJobsBody.
+
+
+        :param image_secret_ref: The image_secret_ref of this SlurmJobsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._image_secret_ref = image_secret_ref
 
     @property
     def name(self) -> 'str':

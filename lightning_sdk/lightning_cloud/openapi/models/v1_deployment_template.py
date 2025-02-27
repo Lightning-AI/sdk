@@ -43,6 +43,7 @@ class V1DeploymentTemplate(object):
     swagger_types = {
         'about_page_content': 'str',
         'about_page_id': 'str',
+        'api_standard': 'str',
         'categories': 'list[str]',
         'created_at': 'datetime',
         'deployment_id': 'str',
@@ -59,6 +60,7 @@ class V1DeploymentTemplate(object):
         'project_id': 'str',
         'spec': 'V1JobSpec',
         'spec_v2': 'V1DeploymentSpec',
+        'studio_url': 'str',
         'tags': 'list[V1ResourceTag]',
         'thumbnail_updated_at': 'datetime',
         'thumbnail_url': 'str',
@@ -70,6 +72,7 @@ class V1DeploymentTemplate(object):
     attribute_map = {
         'about_page_content': 'aboutPageContent',
         'about_page_id': 'aboutPageId',
+        'api_standard': 'apiStandard',
         'categories': 'categories',
         'created_at': 'createdAt',
         'deployment_id': 'deploymentId',
@@ -86,6 +89,7 @@ class V1DeploymentTemplate(object):
         'project_id': 'projectId',
         'spec': 'spec',
         'spec_v2': 'specV2',
+        'studio_url': 'studioUrl',
         'tags': 'tags',
         'thumbnail_updated_at': 'thumbnailUpdatedAt',
         'thumbnail_url': 'thumbnailUrl',
@@ -94,10 +98,11 @@ class V1DeploymentTemplate(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, metrics: 'V1DeploymentMetrics' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pricing: 'V1ApiPricingSpec' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, spec_v2: 'V1DeploymentSpec' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, about_page_content: 'str' =None, about_page_id: 'str' =None, api_standard: 'str' =None, categories: 'list[str]' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, featured: 'bool' =None, globally_visible: 'bool' =None, id: 'str' =None, image_url: 'str' =None, metrics: 'V1DeploymentMetrics' =None, name: 'str' =None, org_id: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pricing: 'V1ApiPricingSpec' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, spec_v2: 'V1DeploymentSpec' =None, studio_url: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, unpublished: 'bool' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1DeploymentTemplate - a model defined in Swagger"""  # noqa: E501
         self._about_page_content = None
         self._about_page_id = None
+        self._api_standard = None
         self._categories = None
         self._created_at = None
         self._deployment_id = None
@@ -114,6 +119,7 @@ class V1DeploymentTemplate(object):
         self._project_id = None
         self._spec = None
         self._spec_v2 = None
+        self._studio_url = None
         self._tags = None
         self._thumbnail_updated_at = None
         self._thumbnail_url = None
@@ -125,6 +131,8 @@ class V1DeploymentTemplate(object):
             self.about_page_content = about_page_content
         if about_page_id is not None:
             self.about_page_id = about_page_id
+        if api_standard is not None:
+            self.api_standard = api_standard
         if categories is not None:
             self.categories = categories
         if created_at is not None:
@@ -157,6 +165,8 @@ class V1DeploymentTemplate(object):
             self.spec = spec
         if spec_v2 is not None:
             self.spec_v2 = spec_v2
+        if studio_url is not None:
+            self.studio_url = studio_url
         if tags is not None:
             self.tags = tags
         if thumbnail_updated_at is not None:
@@ -211,6 +221,27 @@ class V1DeploymentTemplate(object):
         """
 
         self._about_page_id = about_page_id
+
+    @property
+    def api_standard(self) -> 'str':
+        """Gets the api_standard of this V1DeploymentTemplate.  # noqa: E501
+
+
+        :return: The api_standard of this V1DeploymentTemplate.  # noqa: E501
+        :rtype: str
+        """
+        return self._api_standard
+
+    @api_standard.setter
+    def api_standard(self, api_standard: 'str'):
+        """Sets the api_standard of this V1DeploymentTemplate.
+
+
+        :param api_standard: The api_standard of this V1DeploymentTemplate.  # noqa: E501
+        :type: str
+        """
+
+        self._api_standard = api_standard
 
     @property
     def categories(self) -> 'list[str]':
@@ -547,6 +578,27 @@ class V1DeploymentTemplate(object):
         """
 
         self._spec_v2 = spec_v2
+
+    @property
+    def studio_url(self) -> 'str':
+        """Gets the studio_url of this V1DeploymentTemplate.  # noqa: E501
+
+
+        :return: The studio_url of this V1DeploymentTemplate.  # noqa: E501
+        :rtype: str
+        """
+        return self._studio_url
+
+    @studio_url.setter
+    def studio_url(self, studio_url: 'str'):
+        """Sets the studio_url of this V1DeploymentTemplate.
+
+
+        :param studio_url: The studio_url of this V1DeploymentTemplate.  # noqa: E501
+        :type: str
+        """
+
+        self._studio_url = studio_url
 
     @property
     def tags(self) -> 'list[V1ResourceTag]':

@@ -47,6 +47,7 @@ class V1DataConnection(object):
         'cluster_id': 'str',
         'created_at': 'datetime',
         'efs': 'V1EfsConfig',
+        'filestore': 'V1FilestoreDataConnection',
         'gcp': 'V1GcpDataConnection',
         'gcs_folder': 'V1GCSFolderDataConnection',
         'id': 'str',
@@ -73,6 +74,7 @@ class V1DataConnection(object):
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'efs': 'efs',
+        'filestore': 'filestore',
         'gcp': 'gcp',
         'gcs_folder': 'gcsFolder',
         'id': 'id',
@@ -92,7 +94,7 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
@@ -100,6 +102,7 @@ class V1DataConnection(object):
         self._cluster_id = None
         self._created_at = None
         self._efs = None
+        self._filestore = None
         self._gcp = None
         self._gcs_folder = None
         self._id = None
@@ -130,6 +133,8 @@ class V1DataConnection(object):
             self.created_at = created_at
         if efs is not None:
             self.efs = efs
+        if filestore is not None:
+            self.filestore = filestore
         if gcp is not None:
             self.gcp = gcp
         if gcs_folder is not None:
@@ -290,6 +295,27 @@ class V1DataConnection(object):
         """
 
         self._efs = efs
+
+    @property
+    def filestore(self) -> 'V1FilestoreDataConnection':
+        """Gets the filestore of this V1DataConnection.  # noqa: E501
+
+
+        :return: The filestore of this V1DataConnection.  # noqa: E501
+        :rtype: V1FilestoreDataConnection
+        """
+        return self._filestore
+
+    @filestore.setter
+    def filestore(self, filestore: 'V1FilestoreDataConnection'):
+        """Sets the filestore of this V1DataConnection.
+
+
+        :param filestore: The filestore of this V1DataConnection.  # noqa: E501
+        :type: V1FilestoreDataConnection
+        """
+
+        self._filestore = filestore
 
     @property
     def gcp(self) -> 'V1GcpDataConnection':

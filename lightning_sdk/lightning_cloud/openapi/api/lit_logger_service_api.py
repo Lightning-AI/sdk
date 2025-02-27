@@ -1534,7 +1534,7 @@ class LitLoggerServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_logger_service_update_metrics_stream_visibility(self, body: 'IdVisibilityBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateMetricsStreamVisibilityResponse':  # noqa: E501
+    def lit_logger_service_update_metrics_stream_visibility(self, body: 'IdVisibilityBody2', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateMetricsStreamVisibilityResponse':  # noqa: E501
         """lit_logger_service_update_metrics_stream_visibility  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1543,7 +1543,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdVisibilityBody1 body: (required)
+        :param IdVisibilityBody2 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateMetricsStreamVisibilityResponse
@@ -1557,7 +1557,7 @@ class LitLoggerServiceApi(object):
             (data) = self.lit_logger_service_update_metrics_stream_visibility_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def lit_logger_service_update_metrics_stream_visibility_with_http_info(self, body: 'IdVisibilityBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateMetricsStreamVisibilityResponse':  # noqa: E501
+    def lit_logger_service_update_metrics_stream_visibility_with_http_info(self, body: 'IdVisibilityBody2', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateMetricsStreamVisibilityResponse':  # noqa: E501
         """lit_logger_service_update_metrics_stream_visibility  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1566,7 +1566,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdVisibilityBody1 body: (required)
+        :param IdVisibilityBody2 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateMetricsStreamVisibilityResponse

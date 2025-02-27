@@ -74,6 +74,7 @@ class V1RuleResource(object):
     SLURMJOB = "slurmJob"
     MULTIMACHINEJOB = "multiMachineJob"
     LITLOGGER = "litLogger"
+    PIPELINE = "pipeline"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

@@ -46,6 +46,7 @@ class V1ClusterSecurityOptions(object):
         'disable_public_ip': 'bool',
         'encrypt_cluster_bucket': 'bool',
         'encrypt_instance_volumes': 'bool',
+        'extra_policy': 'str',
         'kms_key_id': 'str',
         'protect_instance_metadata': 'bool',
         'rootless_docker': 'bool',
@@ -59,6 +60,7 @@ class V1ClusterSecurityOptions(object):
         'disable_public_ip': 'disablePublicIp',
         'encrypt_cluster_bucket': 'encryptClusterBucket',
         'encrypt_instance_volumes': 'encryptInstanceVolumes',
+        'extra_policy': 'extraPolicy',
         'kms_key_id': 'kmsKeyId',
         'protect_instance_metadata': 'protectInstanceMetadata',
         'rootless_docker': 'rootlessDocker',
@@ -66,13 +68,14 @@ class V1ClusterSecurityOptions(object):
         'ssh_disabled': 'sshDisabled'
     }
 
-    def __init__(self, bucket_kms_key: 'str' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
+    def __init__(self, bucket_kms_key: 'str' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, extra_policy: 'str' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
         self._bucket_kms_key = None
         self._containers_non_privileged = None
         self._disable_public_ip = None
         self._encrypt_cluster_bucket = None
         self._encrypt_instance_volumes = None
+        self._extra_policy = None
         self._kms_key_id = None
         self._protect_instance_metadata = None
         self._rootless_docker = None
@@ -89,6 +92,8 @@ class V1ClusterSecurityOptions(object):
             self.encrypt_cluster_bucket = encrypt_cluster_bucket
         if encrypt_instance_volumes is not None:
             self.encrypt_instance_volumes = encrypt_instance_volumes
+        if extra_policy is not None:
+            self.extra_policy = extra_policy
         if kms_key_id is not None:
             self.kms_key_id = kms_key_id
         if protect_instance_metadata is not None:
@@ -204,6 +209,27 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._encrypt_instance_volumes = encrypt_instance_volumes
+
+    @property
+    def extra_policy(self) -> 'str':
+        """Gets the extra_policy of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The extra_policy of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: str
+        """
+        return self._extra_policy
+
+    @extra_policy.setter
+    def extra_policy(self, extra_policy: 'str'):
+        """Sets the extra_policy of this V1ClusterSecurityOptions.
+
+
+        :param extra_policy: The extra_policy of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: str
+        """
+
+        self._extra_policy = extra_policy
 
     @property
     def kms_key_id(self) -> 'str':

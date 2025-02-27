@@ -41,35 +41,61 @@ class ProjectsIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allow_aws_saas': 'bool',
+        'allow_gcp_saas': 'bool',
+        'allow_lambda_saas': 'bool',
+        'allow_vultr_saas': 'bool',
         'description': 'str',
         'display_name': 'str',
         'name': 'str',
         'preferred_cluster': 'str',
+        'preferred_deployment_provider': 'str',
+        'preferred_studio_provider': 'str',
         'quotas': 'V1Quotas',
         'same_compute_on_resume': 'bool',
         'start_studio_on_spot_instance': 'bool'
     }
 
     attribute_map = {
+        'allow_aws_saas': 'allowAwsSaas',
+        'allow_gcp_saas': 'allowGcpSaas',
+        'allow_lambda_saas': 'allowLambdaSaas',
+        'allow_vultr_saas': 'allowVultrSaas',
         'description': 'description',
         'display_name': 'displayName',
         'name': 'name',
         'preferred_cluster': 'preferredCluster',
+        'preferred_deployment_provider': 'preferredDeploymentProvider',
+        'preferred_studio_provider': 'preferredStudioProvider',
         'quotas': 'quotas',
         'same_compute_on_resume': 'sameComputeOnResume',
         'start_studio_on_spot_instance': 'startStudioOnSpotInstance'
     }
 
-    def __init__(self, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
         """ProjectsIdBody - a model defined in Swagger"""  # noqa: E501
+        self._allow_aws_saas = None
+        self._allow_gcp_saas = None
+        self._allow_lambda_saas = None
+        self._allow_vultr_saas = None
         self._description = None
         self._display_name = None
         self._name = None
         self._preferred_cluster = None
+        self._preferred_deployment_provider = None
+        self._preferred_studio_provider = None
         self._quotas = None
         self._same_compute_on_resume = None
         self._start_studio_on_spot_instance = None
         self.discriminator = None
+        if allow_aws_saas is not None:
+            self.allow_aws_saas = allow_aws_saas
+        if allow_gcp_saas is not None:
+            self.allow_gcp_saas = allow_gcp_saas
+        if allow_lambda_saas is not None:
+            self.allow_lambda_saas = allow_lambda_saas
+        if allow_vultr_saas is not None:
+            self.allow_vultr_saas = allow_vultr_saas
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -78,12 +104,100 @@ class ProjectsIdBody(object):
             self.name = name
         if preferred_cluster is not None:
             self.preferred_cluster = preferred_cluster
+        if preferred_deployment_provider is not None:
+            self.preferred_deployment_provider = preferred_deployment_provider
+        if preferred_studio_provider is not None:
+            self.preferred_studio_provider = preferred_studio_provider
         if quotas is not None:
             self.quotas = quotas
         if same_compute_on_resume is not None:
             self.same_compute_on_resume = same_compute_on_resume
         if start_studio_on_spot_instance is not None:
             self.start_studio_on_spot_instance = start_studio_on_spot_instance
+
+    @property
+    def allow_aws_saas(self) -> 'bool':
+        """Gets the allow_aws_saas of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The allow_aws_saas of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_aws_saas
+
+    @allow_aws_saas.setter
+    def allow_aws_saas(self, allow_aws_saas: 'bool'):
+        """Sets the allow_aws_saas of this ProjectsIdBody.
+
+
+        :param allow_aws_saas: The allow_aws_saas of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_aws_saas = allow_aws_saas
+
+    @property
+    def allow_gcp_saas(self) -> 'bool':
+        """Gets the allow_gcp_saas of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The allow_gcp_saas of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_gcp_saas
+
+    @allow_gcp_saas.setter
+    def allow_gcp_saas(self, allow_gcp_saas: 'bool'):
+        """Sets the allow_gcp_saas of this ProjectsIdBody.
+
+
+        :param allow_gcp_saas: The allow_gcp_saas of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_gcp_saas = allow_gcp_saas
+
+    @property
+    def allow_lambda_saas(self) -> 'bool':
+        """Gets the allow_lambda_saas of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The allow_lambda_saas of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_lambda_saas
+
+    @allow_lambda_saas.setter
+    def allow_lambda_saas(self, allow_lambda_saas: 'bool'):
+        """Sets the allow_lambda_saas of this ProjectsIdBody.
+
+
+        :param allow_lambda_saas: The allow_lambda_saas of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_lambda_saas = allow_lambda_saas
+
+    @property
+    def allow_vultr_saas(self) -> 'bool':
+        """Gets the allow_vultr_saas of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The allow_vultr_saas of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_vultr_saas
+
+    @allow_vultr_saas.setter
+    def allow_vultr_saas(self, allow_vultr_saas: 'bool'):
+        """Sets the allow_vultr_saas of this ProjectsIdBody.
+
+
+        :param allow_vultr_saas: The allow_vultr_saas of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_vultr_saas = allow_vultr_saas
 
     @property
     def description(self) -> 'str':
@@ -168,6 +282,48 @@ class ProjectsIdBody(object):
         """
 
         self._preferred_cluster = preferred_cluster
+
+    @property
+    def preferred_deployment_provider(self) -> 'str':
+        """Gets the preferred_deployment_provider of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The preferred_deployment_provider of this ProjectsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._preferred_deployment_provider
+
+    @preferred_deployment_provider.setter
+    def preferred_deployment_provider(self, preferred_deployment_provider: 'str'):
+        """Sets the preferred_deployment_provider of this ProjectsIdBody.
+
+
+        :param preferred_deployment_provider: The preferred_deployment_provider of this ProjectsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._preferred_deployment_provider = preferred_deployment_provider
+
+    @property
+    def preferred_studio_provider(self) -> 'str':
+        """Gets the preferred_studio_provider of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The preferred_studio_provider of this ProjectsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._preferred_studio_provider
+
+    @preferred_studio_provider.setter
+    def preferred_studio_provider(self, preferred_studio_provider: 'str'):
+        """Sets the preferred_studio_provider of this ProjectsIdBody.
+
+
+        :param preferred_studio_provider: The preferred_studio_provider of this ProjectsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._preferred_studio_provider = preferred_studio_provider
 
     @property
     def quotas(self) -> 'V1Quotas':

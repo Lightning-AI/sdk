@@ -45,6 +45,7 @@ class V1PipelineStepStatus(object):
         'message': 'str',
         'name': 'str',
         'resource_id': 'str',
+        'resource_name': 'str',
         'started_at': 'datetime',
         'state': 'str',
         'stopped_at': 'datetime',
@@ -56,18 +57,20 @@ class V1PipelineStepStatus(object):
         'message': 'message',
         'name': 'name',
         'resource_id': 'resourceId',
+        'resource_name': 'resourceName',
         'started_at': 'startedAt',
         'state': 'state',
         'stopped_at': 'stoppedAt',
         'type': 'type'
     }
 
-    def __init__(self, error: 'str' =None, message: 'str' =None, name: 'str' =None, resource_id: 'str' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, type: 'V1PipelineStepType' =None):  # noqa: E501
+    def __init__(self, error: 'str' =None, message: 'str' =None, name: 'str' =None, resource_id: 'str' =None, resource_name: 'str' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, type: 'V1PipelineStepType' =None):  # noqa: E501
         """V1PipelineStepStatus - a model defined in Swagger"""  # noqa: E501
         self._error = None
         self._message = None
         self._name = None
         self._resource_id = None
+        self._resource_name = None
         self._started_at = None
         self._state = None
         self._stopped_at = None
@@ -81,6 +84,8 @@ class V1PipelineStepStatus(object):
             self.name = name
         if resource_id is not None:
             self.resource_id = resource_id
+        if resource_name is not None:
+            self.resource_name = resource_name
         if started_at is not None:
             self.started_at = started_at
         if state is not None:
@@ -173,6 +178,27 @@ class V1PipelineStepStatus(object):
         """
 
         self._resource_id = resource_id
+
+    @property
+    def resource_name(self) -> 'str':
+        """Gets the resource_name of this V1PipelineStepStatus.  # noqa: E501
+
+
+        :return: The resource_name of this V1PipelineStepStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_name
+
+    @resource_name.setter
+    def resource_name(self, resource_name: 'str'):
+        """Sets the resource_name of this V1PipelineStepStatus.
+
+
+        :param resource_name: The resource_name of this V1PipelineStepStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_name = resource_name
 
     @property
     def started_at(self) -> 'datetime':

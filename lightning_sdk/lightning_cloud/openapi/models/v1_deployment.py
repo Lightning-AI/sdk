@@ -41,7 +41,9 @@ class V1Deployment(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'api_standard': 'str',
         'apis': 'list[V1DeploymentAPI]',
+        'assistant_id': 'str',
         'autoscaling': 'V1AutoscalingSpec',
         'cloudspace_id': 'str',
         'created_at': 'datetime',
@@ -50,6 +52,7 @@ class V1Deployment(object):
         'endpoint': 'V1Endpoint',
         'id': 'str',
         'is_published': 'bool',
+        'managed_endpoint_id': 'str',
         'name': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
         'pipeline_id': 'str',
@@ -67,7 +70,9 @@ class V1Deployment(object):
     }
 
     attribute_map = {
+        'api_standard': 'apiStandard',
         'apis': 'apis',
+        'assistant_id': 'assistantId',
         'autoscaling': 'autoscaling',
         'cloudspace_id': 'cloudspaceId',
         'created_at': 'createdAt',
@@ -76,6 +81,7 @@ class V1Deployment(object):
         'endpoint': 'endpoint',
         'id': 'id',
         'is_published': 'isPublished',
+        'managed_endpoint_id': 'managedEndpointId',
         'name': 'name',
         'parameter_spec': 'parameterSpec',
         'pipeline_id': 'pipelineId',
@@ -92,9 +98,11 @@ class V1Deployment(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
+        self._api_standard = None
         self._apis = None
+        self._assistant_id = None
         self._autoscaling = None
         self._cloudspace_id = None
         self._created_at = None
@@ -103,6 +111,7 @@ class V1Deployment(object):
         self._endpoint = None
         self._id = None
         self._is_published = None
+        self._managed_endpoint_id = None
         self._name = None
         self._parameter_spec = None
         self._pipeline_id = None
@@ -118,8 +127,12 @@ class V1Deployment(object):
         self._user_id = None
         self._visibility = None
         self.discriminator = None
+        if api_standard is not None:
+            self.api_standard = api_standard
         if apis is not None:
             self.apis = apis
+        if assistant_id is not None:
+            self.assistant_id = assistant_id
         if autoscaling is not None:
             self.autoscaling = autoscaling
         if cloudspace_id is not None:
@@ -136,6 +149,8 @@ class V1Deployment(object):
             self.id = id
         if is_published is not None:
             self.is_published = is_published
+        if managed_endpoint_id is not None:
+            self.managed_endpoint_id = managed_endpoint_id
         if name is not None:
             self.name = name
         if parameter_spec is not None:
@@ -166,6 +181,27 @@ class V1Deployment(object):
             self.visibility = visibility
 
     @property
+    def api_standard(self) -> 'str':
+        """Gets the api_standard of this V1Deployment.  # noqa: E501
+
+
+        :return: The api_standard of this V1Deployment.  # noqa: E501
+        :rtype: str
+        """
+        return self._api_standard
+
+    @api_standard.setter
+    def api_standard(self, api_standard: 'str'):
+        """Sets the api_standard of this V1Deployment.
+
+
+        :param api_standard: The api_standard of this V1Deployment.  # noqa: E501
+        :type: str
+        """
+
+        self._api_standard = api_standard
+
+    @property
     def apis(self) -> 'list[V1DeploymentAPI]':
         """Gets the apis of this V1Deployment.  # noqa: E501
 
@@ -185,6 +221,27 @@ class V1Deployment(object):
         """
 
         self._apis = apis
+
+    @property
+    def assistant_id(self) -> 'str':
+        """Gets the assistant_id of this V1Deployment.  # noqa: E501
+
+
+        :return: The assistant_id of this V1Deployment.  # noqa: E501
+        :rtype: str
+        """
+        return self._assistant_id
+
+    @assistant_id.setter
+    def assistant_id(self, assistant_id: 'str'):
+        """Sets the assistant_id of this V1Deployment.
+
+
+        :param assistant_id: The assistant_id of this V1Deployment.  # noqa: E501
+        :type: str
+        """
+
+        self._assistant_id = assistant_id
 
     @property
     def autoscaling(self) -> 'V1AutoscalingSpec':
@@ -353,6 +410,27 @@ class V1Deployment(object):
         """
 
         self._is_published = is_published
+
+    @property
+    def managed_endpoint_id(self) -> 'str':
+        """Gets the managed_endpoint_id of this V1Deployment.  # noqa: E501
+
+
+        :return: The managed_endpoint_id of this V1Deployment.  # noqa: E501
+        :rtype: str
+        """
+        return self._managed_endpoint_id
+
+    @managed_endpoint_id.setter
+    def managed_endpoint_id(self, managed_endpoint_id: 'str'):
+        """Sets the managed_endpoint_id of this V1Deployment.
+
+
+        :param managed_endpoint_id: The managed_endpoint_id of this V1Deployment.  # noqa: E501
+        :type: str
+        """
+
+        self._managed_endpoint_id = managed_endpoint_id
 
     @property
     def name(self) -> 'str':

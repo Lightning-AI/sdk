@@ -42,21 +42,26 @@ class ProjectIdPipelinesBody(object):
     """
     swagger_types = {
         'name': 'str',
+        'shared_filesystem': 'V1SharedFilesystem',
         'steps': 'list[V1PipelineStep]'
     }
 
     attribute_map = {
         'name': 'name',
+        'shared_filesystem': 'sharedFilesystem',
         'steps': 'steps'
     }
 
-    def __init__(self, name: 'str' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
+    def __init__(self, name: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
         """ProjectIdPipelinesBody - a model defined in Swagger"""  # noqa: E501
         self._name = None
+        self._shared_filesystem = None
         self._steps = None
         self.discriminator = None
         if name is not None:
             self.name = name
+        if shared_filesystem is not None:
+            self.shared_filesystem = shared_filesystem
         if steps is not None:
             self.steps = steps
 
@@ -80,6 +85,27 @@ class ProjectIdPipelinesBody(object):
         """
 
         self._name = name
+
+    @property
+    def shared_filesystem(self) -> 'V1SharedFilesystem':
+        """Gets the shared_filesystem of this ProjectIdPipelinesBody.  # noqa: E501
+
+
+        :return: The shared_filesystem of this ProjectIdPipelinesBody.  # noqa: E501
+        :rtype: V1SharedFilesystem
+        """
+        return self._shared_filesystem
+
+    @shared_filesystem.setter
+    def shared_filesystem(self, shared_filesystem: 'V1SharedFilesystem'):
+        """Sets the shared_filesystem of this ProjectIdPipelinesBody.
+
+
+        :param shared_filesystem: The shared_filesystem of this ProjectIdPipelinesBody.  # noqa: E501
+        :type: V1SharedFilesystem
+        """
+
+        self._shared_filesystem = shared_filesystem
 
     @property
     def steps(self) -> 'list[V1PipelineStep]':

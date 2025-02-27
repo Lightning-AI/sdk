@@ -61,6 +61,8 @@ class V1Organization(object):
         'location': 'str',
         'name': 'str',
         'preferred_cluster': 'str',
+        'preferred_deployment_provider': 'str',
+        'preferred_studio_provider': 'str',
         'start_studios_on_spot_instance': 'bool',
         'teamspace_default_credits': 'float',
         'twitter_username': 'str',
@@ -88,13 +90,15 @@ class V1Organization(object):
         'location': 'location',
         'name': 'name',
         'preferred_cluster': 'preferredCluster',
+        'preferred_deployment_provider': 'preferredDeploymentProvider',
+        'preferred_studio_provider': 'preferredStudioProvider',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_gcp_saas = None
@@ -116,6 +120,8 @@ class V1Organization(object):
         self._location = None
         self._name = None
         self._preferred_cluster = None
+        self._preferred_deployment_provider = None
+        self._preferred_studio_provider = None
         self._start_studios_on_spot_instance = None
         self._teamspace_default_credits = None
         self._twitter_username = None
@@ -161,6 +167,10 @@ class V1Organization(object):
             self.name = name
         if preferred_cluster is not None:
             self.preferred_cluster = preferred_cluster
+        if preferred_deployment_provider is not None:
+            self.preferred_deployment_provider = preferred_deployment_provider
+        if preferred_studio_provider is not None:
+            self.preferred_studio_provider = preferred_studio_provider
         if start_studios_on_spot_instance is not None:
             self.start_studios_on_spot_instance = start_studios_on_spot_instance
         if teamspace_default_credits is not None:
@@ -589,6 +599,48 @@ class V1Organization(object):
         """
 
         self._preferred_cluster = preferred_cluster
+
+    @property
+    def preferred_deployment_provider(self) -> 'str':
+        """Gets the preferred_deployment_provider of this V1Organization.  # noqa: E501
+
+
+        :return: The preferred_deployment_provider of this V1Organization.  # noqa: E501
+        :rtype: str
+        """
+        return self._preferred_deployment_provider
+
+    @preferred_deployment_provider.setter
+    def preferred_deployment_provider(self, preferred_deployment_provider: 'str'):
+        """Sets the preferred_deployment_provider of this V1Organization.
+
+
+        :param preferred_deployment_provider: The preferred_deployment_provider of this V1Organization.  # noqa: E501
+        :type: str
+        """
+
+        self._preferred_deployment_provider = preferred_deployment_provider
+
+    @property
+    def preferred_studio_provider(self) -> 'str':
+        """Gets the preferred_studio_provider of this V1Organization.  # noqa: E501
+
+
+        :return: The preferred_studio_provider of this V1Organization.  # noqa: E501
+        :rtype: str
+        """
+        return self._preferred_studio_provider
+
+    @preferred_studio_provider.setter
+    def preferred_studio_provider(self, preferred_studio_provider: 'str'):
+        """Sets the preferred_studio_provider of this V1Organization.
+
+
+        :param preferred_studio_provider: The preferred_studio_provider of this V1Organization.  # noqa: E501
+        :type: str
+        """
+
+        self._preferred_studio_provider = preferred_studio_provider
 
     @property
     def start_studios_on_spot_instance(self) -> 'bool':

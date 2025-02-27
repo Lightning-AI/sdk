@@ -70,7 +70,8 @@ class V1Job(object):
         'updated_at': 'datetime',
         'urls': 'list[str]',
         'user_id': 'str',
-        'user_logs_started_at': 'datetime'
+        'user_logs_started_at': 'datetime',
+        'visibility': 'V1ResourceVisibility'
     }
 
     attribute_map = {
@@ -103,10 +104,11 @@ class V1Job(object):
         'updated_at': 'updatedAt',
         'urls': 'urls',
         'user_id': 'userId',
-        'user_logs_started_at': 'userLogsStartedAt'
+        'user_logs_started_at': 'userLogsStartedAt',
+        'visibility': 'visibility'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deleted_at = None
@@ -138,6 +140,7 @@ class V1Job(object):
         self._urls = None
         self._user_id = None
         self._user_logs_started_at = None
+        self._visibility = None
         self.discriminator = None
         if created_at is not None:
             self.created_at = created_at
@@ -199,6 +202,8 @@ class V1Job(object):
             self.user_id = user_id
         if user_logs_started_at is not None:
             self.user_logs_started_at = user_logs_started_at
+        if visibility is not None:
+            self.visibility = visibility
 
     @property
     def created_at(self) -> 'datetime':
@@ -831,6 +836,27 @@ class V1Job(object):
         """
 
         self._user_logs_started_at = user_logs_started_at
+
+    @property
+    def visibility(self) -> 'V1ResourceVisibility':
+        """Gets the visibility of this V1Job.  # noqa: E501
+
+
+        :return: The visibility of this V1Job.  # noqa: E501
+        :rtype: V1ResourceVisibility
+        """
+        return self._visibility
+
+    @visibility.setter
+    def visibility(self, visibility: 'V1ResourceVisibility'):
+        """Sets the visibility of this V1Job.
+
+
+        :param visibility: The visibility of this V1Job.  # noqa: E501
+        :type: V1ResourceVisibility
+        """
+
+        self._visibility = visibility
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

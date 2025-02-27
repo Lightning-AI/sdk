@@ -41,14 +41,66 @@ class V1DeletePipelineResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'id': 'str',
+        'project_id': 'str'
     }
 
     attribute_map = {
+        'id': 'id',
+        'project_id': 'projectId'
     }
 
-    def __init__(self):  # noqa: E501
+    def __init__(self, id: 'str' =None, project_id: 'str' =None):  # noqa: E501
         """V1DeletePipelineResponse - a model defined in Swagger"""  # noqa: E501
+        self._id = None
+        self._project_id = None
         self.discriminator = None
+        if id is not None:
+            self.id = id
+        if project_id is not None:
+            self.project_id = project_id
+
+    @property
+    def id(self) -> 'str':
+        """Gets the id of this V1DeletePipelineResponse.  # noqa: E501
+
+
+        :return: The id of this V1DeletePipelineResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: 'str'):
+        """Sets the id of this V1DeletePipelineResponse.
+
+
+        :param id: The id of this V1DeletePipelineResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._id = id
+
+    @property
+    def project_id(self) -> 'str':
+        """Gets the project_id of this V1DeletePipelineResponse.  # noqa: E501
+
+
+        :return: The project_id of this V1DeletePipelineResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, project_id: 'str'):
+        """Sets the project_id of this V1DeletePipelineResponse.
+
+
+        :param project_id: The project_id of this V1DeletePipelineResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._project_id = project_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

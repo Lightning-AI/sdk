@@ -45,6 +45,7 @@ class Validate(object):
         'check_is_public': 'bool',
         'cluster_ids': 'list[str]',
         'efs': 'V1EfsConfig',
+        'filestore': 'V1FilestoreDataConnection',
         'gcp': 'V1GcpDataConnection',
         'gcs_folder': 'V1GCSFolderDataConnection',
         's3_folder': 'V1S3FolderDataConnection'
@@ -55,17 +56,19 @@ class Validate(object):
         'check_is_public': 'checkIsPublic',
         'cluster_ids': 'clusterIds',
         'efs': 'efs',
+        'filestore': 'filestore',
         'gcp': 'gcp',
         'gcs_folder': 'gcsFolder',
         's3_folder': 's3Folder'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, check_is_public: 'bool' =None, cluster_ids: 'list[str]' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, s3_folder: 'V1S3FolderDataConnection' =None):  # noqa: E501
+    def __init__(self, aws: 'V1AwsDataConnection' =None, check_is_public: 'bool' =None, cluster_ids: 'list[str]' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, s3_folder: 'V1S3FolderDataConnection' =None):  # noqa: E501
         """Validate - a model defined in Swagger"""  # noqa: E501
         self._aws = None
         self._check_is_public = None
         self._cluster_ids = None
         self._efs = None
+        self._filestore = None
         self._gcp = None
         self._gcs_folder = None
         self._s3_folder = None
@@ -78,6 +81,8 @@ class Validate(object):
             self.cluster_ids = cluster_ids
         if efs is not None:
             self.efs = efs
+        if filestore is not None:
+            self.filestore = filestore
         if gcp is not None:
             self.gcp = gcp
         if gcs_folder is not None:
@@ -168,6 +173,27 @@ class Validate(object):
         """
 
         self._efs = efs
+
+    @property
+    def filestore(self) -> 'V1FilestoreDataConnection':
+        """Gets the filestore of this Validate.  # noqa: E501
+
+
+        :return: The filestore of this Validate.  # noqa: E501
+        :rtype: V1FilestoreDataConnection
+        """
+        return self._filestore
+
+    @filestore.setter
+    def filestore(self, filestore: 'V1FilestoreDataConnection'):
+        """Sets the filestore of this Validate.
+
+
+        :param filestore: The filestore of this Validate.  # noqa: E501
+        :type: V1FilestoreDataConnection
+        """
+
+        self._filestore = filestore
 
     @property
     def gcp(self) -> 'V1GcpDataConnection':

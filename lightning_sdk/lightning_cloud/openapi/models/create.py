@@ -47,6 +47,7 @@ class Create(object):
         'create_index': 'bool',
         'create_resources': 'bool',
         'efs': 'V1EfsConfig',
+        'filestore': 'V1FilestoreDataConnection',
         'force': 'bool',
         'gcp': 'V1GcpDataConnection',
         'gcs_folder': 'V1GCSFolderDataConnection',
@@ -65,6 +66,7 @@ class Create(object):
         'create_index': 'createIndex',
         'create_resources': 'createResources',
         'efs': 'efs',
+        'filestore': 'filestore',
         'force': 'force',
         'gcp': 'gcp',
         'gcs_folder': 'gcsFolder',
@@ -76,7 +78,7 @@ class Create(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsConfig' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, name: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, name: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Create - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._aws = None
@@ -84,6 +86,7 @@ class Create(object):
         self._create_index = None
         self._create_resources = None
         self._efs = None
+        self._filestore = None
         self._force = None
         self._gcp = None
         self._gcs_folder = None
@@ -106,6 +109,8 @@ class Create(object):
             self.create_resources = create_resources
         if efs is not None:
             self.efs = efs
+        if filestore is not None:
+            self.filestore = filestore
         if force is not None:
             self.force = force
         if gcp is not None:
@@ -250,6 +255,27 @@ class Create(object):
         """
 
         self._efs = efs
+
+    @property
+    def filestore(self) -> 'V1FilestoreDataConnection':
+        """Gets the filestore of this Create.  # noqa: E501
+
+
+        :return: The filestore of this Create.  # noqa: E501
+        :rtype: V1FilestoreDataConnection
+        """
+        return self._filestore
+
+    @filestore.setter
+    def filestore(self, filestore: 'V1FilestoreDataConnection'):
+        """Sets the filestore of this Create.
+
+
+        :param filestore: The filestore of this Create.  # noqa: E501
+        :type: V1FilestoreDataConnection
+        """
+
+        self._filestore = filestore
 
     @property
     def force(self) -> 'bool':

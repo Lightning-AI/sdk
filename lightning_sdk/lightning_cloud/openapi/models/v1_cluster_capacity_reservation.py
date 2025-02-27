@@ -46,8 +46,10 @@ class V1ClusterCapacityReservation(object):
         'cluster_id': 'str',
         'end_time': 'datetime',
         'id': 'str',
+        'in_use': 'str',
         'instance_type': 'str',
         'match_pattern': 'str',
+        'num_instances': 'str',
         'project_id': 'str',
         'region': 'str',
         'start_time': 'datetime'
@@ -59,22 +61,26 @@ class V1ClusterCapacityReservation(object):
         'cluster_id': 'clusterId',
         'end_time': 'endTime',
         'id': 'id',
+        'in_use': 'inUse',
         'instance_type': 'instanceType',
         'match_pattern': 'matchPattern',
+        'num_instances': 'numInstances',
         'project_id': 'projectId',
         'region': 'region',
         'start_time': 'startTime'
     }
 
-    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, id: 'str' =None, in_use: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None):  # noqa: E501
         """V1ClusterCapacityReservation - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_type = None
         self._cloud_provider_capacity_reservation_id = None
         self._cluster_id = None
         self._end_time = None
         self._id = None
+        self._in_use = None
         self._instance_type = None
         self._match_pattern = None
+        self._num_instances = None
         self._project_id = None
         self._region = None
         self._start_time = None
@@ -89,10 +95,14 @@ class V1ClusterCapacityReservation(object):
             self.end_time = end_time
         if id is not None:
             self.id = id
+        if in_use is not None:
+            self.in_use = in_use
         if instance_type is not None:
             self.instance_type = instance_type
         if match_pattern is not None:
             self.match_pattern = match_pattern
+        if num_instances is not None:
+            self.num_instances = num_instances
         if project_id is not None:
             self.project_id = project_id
         if region is not None:
@@ -206,6 +216,27 @@ class V1ClusterCapacityReservation(object):
         self._id = id
 
     @property
+    def in_use(self) -> 'str':
+        """Gets the in_use of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The in_use of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: str
+        """
+        return self._in_use
+
+    @in_use.setter
+    def in_use(self, in_use: 'str'):
+        """Sets the in_use of this V1ClusterCapacityReservation.
+
+
+        :param in_use: The in_use of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: str
+        """
+
+        self._in_use = in_use
+
+    @property
     def instance_type(self) -> 'str':
         """Gets the instance_type of this V1ClusterCapacityReservation.  # noqa: E501
 
@@ -246,6 +277,27 @@ class V1ClusterCapacityReservation(object):
         """
 
         self._match_pattern = match_pattern
+
+    @property
+    def num_instances(self) -> 'str':
+        """Gets the num_instances of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The num_instances of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: str
+        """
+        return self._num_instances
+
+    @num_instances.setter
+    def num_instances(self, num_instances: 'str'):
+        """Sets the num_instances of this V1ClusterCapacityReservation.
+
+
+        :param num_instances: The num_instances of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: str
+        """
+
+        self._num_instances = num_instances
 
     @property
     def project_id(self) -> 'str':

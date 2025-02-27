@@ -47,6 +47,7 @@ class V1SLURMJob(object):
         'command': 'str',
         'created_at': 'datetime',
         'id': 'str',
+        'image': 'str',
         'linked_project_id': 'str',
         'linked_user_id': 'str',
         'message': 'str',
@@ -72,6 +73,7 @@ class V1SLURMJob(object):
         'command': 'command',
         'created_at': 'createdAt',
         'id': 'id',
+        'image': 'image',
         'linked_project_id': 'linkedProjectId',
         'linked_user_id': 'linkedUserId',
         'message': 'message',
@@ -90,7 +92,7 @@ class V1SLURMJob(object):
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, user_id: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, image: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, user_id: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1SLURMJob - a model defined in Swagger"""  # noqa: E501
         self._cache_id = None
         self._cloudspace_id = None
@@ -98,6 +100,7 @@ class V1SLURMJob(object):
         self._command = None
         self._created_at = None
         self._id = None
+        self._image = None
         self._linked_project_id = None
         self._linked_user_id = None
         self._message = None
@@ -127,6 +130,8 @@ class V1SLURMJob(object):
             self.created_at = created_at
         if id is not None:
             self.id = id
+        if image is not None:
+            self.image = image
         if linked_project_id is not None:
             self.linked_project_id = linked_project_id
         if linked_user_id is not None:
@@ -285,6 +290,27 @@ class V1SLURMJob(object):
         """
 
         self._id = id
+
+    @property
+    def image(self) -> 'str':
+        """Gets the image of this V1SLURMJob.  # noqa: E501
+
+
+        :return: The image of this V1SLURMJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._image
+
+    @image.setter
+    def image(self, image: 'str'):
+        """Sets the image of this V1SLURMJob.
+
+
+        :param image: The image of this V1SLURMJob.  # noqa: E501
+        :type: str
+        """
+
+        self._image = image
 
     @property
     def linked_project_id(self) -> 'str':

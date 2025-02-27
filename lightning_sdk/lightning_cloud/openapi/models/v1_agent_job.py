@@ -49,6 +49,9 @@ class V1AgentJob(object):
         'conda_env_path': 'str',
         'created_at': 'datetime',
         'id': 'str',
+        'image': 'str',
+        'image_login_command': 'str',
+        'image_secret_ref': 'str',
         'linked_project_id': 'str',
         'linked_user_id': 'str',
         'message': 'str',
@@ -75,6 +78,9 @@ class V1AgentJob(object):
         'conda_env_path': 'condaEnvPath',
         'created_at': 'createdAt',
         'id': 'id',
+        'image': 'image',
+        'image_login_command': 'imageLoginCommand',
+        'image_secret_ref': 'imageSecretRef',
         'linked_project_id': 'linkedProjectId',
         'linked_user_id': 'linkedUserId',
         'message': 'message',
@@ -92,7 +98,7 @@ class V1AgentJob(object):
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, conda_checksum: 'str' =None, conda_env_path: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, conda_checksum: 'str' =None, conda_env_path: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, image: 'str' =None, image_login_command: 'str' =None, image_secret_ref: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1AgentJob - a model defined in Swagger"""  # noqa: E501
         self._cache_id = None
         self._cloudspace_id = None
@@ -102,6 +108,9 @@ class V1AgentJob(object):
         self._conda_env_path = None
         self._created_at = None
         self._id = None
+        self._image = None
+        self._image_login_command = None
+        self._image_secret_ref = None
         self._linked_project_id = None
         self._linked_user_id = None
         self._message = None
@@ -134,6 +143,12 @@ class V1AgentJob(object):
             self.created_at = created_at
         if id is not None:
             self.id = id
+        if image is not None:
+            self.image = image
+        if image_login_command is not None:
+            self.image_login_command = image_login_command
+        if image_secret_ref is not None:
+            self.image_secret_ref = image_secret_ref
         if linked_project_id is not None:
             self.linked_project_id = linked_project_id
         if linked_user_id is not None:
@@ -332,6 +347,69 @@ class V1AgentJob(object):
         """
 
         self._id = id
+
+    @property
+    def image(self) -> 'str':
+        """Gets the image of this V1AgentJob.  # noqa: E501
+
+
+        :return: The image of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._image
+
+    @image.setter
+    def image(self, image: 'str'):
+        """Sets the image of this V1AgentJob.
+
+
+        :param image: The image of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._image = image
+
+    @property
+    def image_login_command(self) -> 'str':
+        """Gets the image_login_command of this V1AgentJob.  # noqa: E501
+
+
+        :return: The image_login_command of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._image_login_command
+
+    @image_login_command.setter
+    def image_login_command(self, image_login_command: 'str'):
+        """Sets the image_login_command of this V1AgentJob.
+
+
+        :param image_login_command: The image_login_command of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._image_login_command = image_login_command
+
+    @property
+    def image_secret_ref(self) -> 'str':
+        """Gets the image_secret_ref of this V1AgentJob.  # noqa: E501
+
+
+        :return: The image_secret_ref of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._image_secret_ref
+
+    @image_secret_ref.setter
+    def image_secret_ref(self, image_secret_ref: 'str'):
+        """Sets the image_secret_ref of this V1AgentJob.
+
+
+        :param image_secret_ref: The image_secret_ref of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._image_secret_ref = image_secret_ref
 
     @property
     def linked_project_id(self) -> 'str':
