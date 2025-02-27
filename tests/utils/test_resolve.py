@@ -3,6 +3,7 @@ from unittest import mock
 
 import pytest
 
+from lightning_sdk.models import _parse_model_name_and_version
 from lightning_sdk.organization import Organization
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
@@ -207,6 +208,17 @@ def test_parse_model_and_version():
         _parse_model_and_version("user/modelname:v1:")
     with pytest.raises(ValueError, match="Model version is expected to be in the format"):
         _parse_model_and_version("user/modelname:v1:v2")
+
+
+def test_parse_model_name_and_version():
+    assert _parse_model_name_and_version("org/teamspace/model") == ("org", "teamspace", "model", "default")
+    assert _parse_model_name_and_version("org/teamspace/model:v1") == ("org", "teamspace", "model", "v1")
+    with pytest.raises(
+        ValueError, match="Model version is expected to be in the format `organization/teamspace/model_name:version`"
+    ):
+        _parse_model_name_and_version("org/teamspace/model:v1:v2")
+    with pytest.raises(ValueError, match="Model name must be in the format `organization/teamspace/model_name`"):
+        _parse_model_name_and_version("org_teamspace/model:v1")
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)

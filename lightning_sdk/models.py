@@ -76,20 +76,20 @@ def _parse_model_name_and_version(name: str) -> Tuple[str, str, str, str]:
     """Parse the name argument into its components."""
     try:
         org_name, teamspace_name, model_name = name.split("/")
-        parts = model_name.split(":")
-        if len(parts) == 1:
-            return org_name, teamspace_name, parts[0], "default"
-        if len(parts) == 2:
-            return org_name, teamspace_name, parts[0], parts[1]
-        # The rest of the validation for name and version happens in the backend
-        raise ValueError(
-            "Model version is expected to be in the format `entity/modelname:version` separated by a"
-            f" single colon, but got: {name}"
-        )
     except ValueError as err:
         raise ValueError(
-            f"Model name must be in the format 'organization/teamspace/model' but you provided '{name}'."
+            f"Model name must be in the format `organization/teamspace/model_name` but you provided '{name}'."
         ) from err
+    parts = model_name.split(":")
+    if len(parts) == 1:
+        return org_name, teamspace_name, parts[0], "default"
+    if len(parts) == 2:
+        return org_name, teamspace_name, parts[0], parts[1]
+    # The rest of the validation for name and version happens in the backend
+    raise ValueError(
+        "Model version is expected to be in the format `organization/teamspace/model_name:version`"
+        f" separated by a single colon, but got: {name}"
+    )
 
 
 def download_model(
