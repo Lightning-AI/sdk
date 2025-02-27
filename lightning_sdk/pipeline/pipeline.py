@@ -87,6 +87,7 @@ class Pipeline:
             self._name,
             self._teamspace.id,
             prepare_steps(steps),
+            self._shared_filesystem or False,
         )
 
     def stop(self) -> None:

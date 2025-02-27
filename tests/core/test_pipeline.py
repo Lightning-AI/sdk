@@ -376,6 +376,9 @@ def test_shared_filesystem(monkeypatch):
         ]
     )
 
+    assert len(pipeline_api_mock().create_pipeline._mock_mock_calls[0].args)
+    assert pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[-1] is False
+
     pipeline._shared_filesystem = True
 
     with pytest.raises(
