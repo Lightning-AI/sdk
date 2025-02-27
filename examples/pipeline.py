@@ -2,14 +2,6 @@ from lightning_sdk.pipeline import Pipeline, Job, Deployment, MMT
 from lightning_sdk.machine import Machine
 from time import time, sleep
 
-def delete_after(pipeline, duration):
-    t0 = time()
-
-    while time() - t0 < duration:
-        sleep(1)
-
-    pipeline.delete()
-
 pipeline = Pipeline(name='first-pipeline')
 pipeline.run(
     steps=[
@@ -35,8 +27,6 @@ pipeline.run(
     ]
 )
 
-delete_after(pipeline, 30)
-
 pipeline = Pipeline(name='second-pipeline')
 pipeline.run(
     steps=[
@@ -56,8 +46,6 @@ pipeline.run(
     ]
 )
 
-delete_after(pipeline, 30)
-
 pipeline = Pipeline(name='third-pipeline')
 pipeline.run(
     steps=[
@@ -69,5 +57,3 @@ pipeline.run(
         ),
     ]
 )
-
-delete_after(pipeline, 30)

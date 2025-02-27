@@ -37,10 +37,8 @@ class Pipeline:
         self._teamspace = _resolve_teamspace(
             teamspace=teamspace,
             org=self._org,
-            user=self._user if self._org is None else None,
+            user=self._user,
         )
-        if self._teamspace is None:
-            raise ValueError("You need to pass a teamspace or an org for your deployment.")
 
         self._pipeline_api = PipelineApi()
 
@@ -80,3 +78,9 @@ class Pipeline:
             return
 
         self._pipeline_api.delete(self._teamspace.id, self._pipeline.id)
+
+    @property
+    def name(self) -> str:
+        if self._pipeline:
+            return self._pipeline.name
+        return None

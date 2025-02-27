@@ -319,8 +319,10 @@ def test_stop(monkeypatch):
     pipeline_spec.id = "pipeline_id"
     pipeline = Pipeline(name="first-pipeline")
     pipeline._pipeline = MagicMock(return_value=pipeline_spec)
+    pipeline._pipeline.name = "something-else"
     pipeline.stop()
     mock_client().pipelines_service_update_pipeline.assert_called()
+    assert pipeline.name == "something-else"
 
 
 def test_delete(monkeypatch):
