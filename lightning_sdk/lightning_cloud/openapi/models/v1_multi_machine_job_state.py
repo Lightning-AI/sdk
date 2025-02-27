@@ -44,6 +44,8 @@ class V1MultiMachineJobState(object):
     DELETED = "MultiMachineJob_STATE_DELETED"
     FAILED = "MultiMachineJob_STATE_FAILED"
     COMPLETED = "MultiMachineJob_STATE_COMPLETED"
+    STOP = "MultiMachineJob_STATE_STOP"
+    DELETE = "MultiMachineJob_STATE_DELETE"
     """
     Attributes:
       swagger_types (dict): The key is attribute name
