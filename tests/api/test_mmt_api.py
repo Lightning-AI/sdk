@@ -280,7 +280,7 @@ def test_mmt_stop(job_states: List[str], total_calls_get_job: int, called_update
         update_job_mock.assert_called_once_with(
             id="test-job-id",
             project_id="ts-abc",
-            body=MultimachinejobsIdBody(desired_state="MultiMachineJob_STATE_STOPPED"),
+            body=MultimachinejobsIdBody(desired_state="MultiMachineJob_STATE_STOP"),
         )
     else:
         update_job_mock.assert_not_called()

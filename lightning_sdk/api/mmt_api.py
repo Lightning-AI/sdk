@@ -185,13 +185,13 @@ class MMTApiV2:
             return
 
         if current_state != Status.Stopped:
-            update_body = MultimachinejobsIdBody(desired_state=V1MultiMachineJobState.STOPPED)
+            update_body = MultimachinejobsIdBody(desired_state=V1MultiMachineJobState.STOP)
             self._client.jobs_service_update_multi_machine_job(body=update_body, project_id=teamspace_id, id=job_id)
 
         while True:
             current_job = self.get_job(job_id=job_id, teamspace_id=teamspace_id)
-            if self._job_state_to_external(current_job.desired_state) in (
-                Status.Stopped,
+            if self._job_state_to_external(current_job.state) in (
+                Status.Stopping,
                 Status.Completed,
                 Status.Stopped,
                 Status.Failed,
@@ -219,6 +219,8 @@ class MMTApiV2:
             return Status.Completed
         if str(state) == V1MultiMachineJobState.FAILED:
             return Status.Failed
+        if str(state) == V1MultiMachineJobState.STOP:
+            return Status.Stopping
         return Status.Pending
 
     def get_studio_name(self, job: V1MultiMachineJob) -> Optional[str]:

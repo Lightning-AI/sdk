@@ -220,6 +220,7 @@ def test_get_mmt_by_name_on_init(mmt_api_get_job_by_name_mocker, internal_studio
         ("MultiMachineJob_STATE_UNSPECIFIED", Status.Pending),
         ("MultiMachineJob_STATE_RUNNING", Status.Running),
         ("MultiMachineJob_STATE_STOPPED", Status.Stopped),
+        ("MultiMachineJob_STATE_STOP", Status.Stopping),
         ("MultiMachineJob_STATE_FAILED", Status.Failed),
         ("MultiMachineJob_STATE_COMPLETED", Status.Completed),
     ],
@@ -275,13 +276,13 @@ def test_mmtv2_stop(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker)
             i += 1
             return V1MultiMachineJob(
                 id="test-job-id",
-                desired_state="MultiMachineJob_STATE_RUNNING",
+                state="MultiMachineJob_STATE_RUNNING",
                 spec=V1JobSpec(cloudspace_id="cloudspace-id"),
             )
 
         return V1MultiMachineJob(
             id="test-job-id",
-            desired_state="MultiMachineJob_STATE_STOPPED",
+            state="MultiMachineJob_STATE_STOPPED",
             spec=V1JobSpec(cloudspace_id="cloudspace-id"),
         )
 
@@ -298,7 +299,7 @@ def test_mmtv2_stop(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker)
     update_job_mock.assert_called_once_with(
         id="test-job-id",
         project_id="ts-abc001",
-        body=MultimachinejobsIdBody(desired_state="MultiMachineJob_STATE_STOPPED"),
+        body=MultimachinejobsIdBody(desired_state="MultiMachineJob_STATE_STOP"),
     )
 
 
