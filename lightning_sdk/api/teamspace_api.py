@@ -203,8 +203,8 @@ class TeamspaceApi:
         model_id = models[0].id
         # decide if delete only version of whole model
         if version:
-            if version == "latest":
-                version = models[0].latest_version
+            if version == "default":
+                version = models[0].default_version
             self.models.models_store_delete_model_version(project_id=teamspace_id, model_id=model_id, version=version)
         else:
             self.models.models_store_delete_model(project_id=teamspace_id, model_id=model_id)

@@ -181,7 +181,7 @@ def skip_studio_init() -> Generator[None, None, None]:
 def _parse_model_and_version(name: str) -> Tuple[str, str]:
     parts = name.split(":")
     if len(parts) == 1:
-        return parts[0], "latest"
+        return parts[0], "default"
     if len(parts) == 2:
         return parts[0], parts[1]
     # The rest of the validation for name and version happens in the backend

@@ -494,8 +494,8 @@ def _get_model_version(client: LightningClient, teamspace_id: str, name: str, ve
         raise ValueError(f"Model `{name}` does not exist")
     elif len(models) > 1:
         raise ValueError("Multiple models with the same name found")
-    if version == "latest":
-        return models[0].latest_version
+    if version == ("default"):
+        return models[0].default_version
     versions = api.models_store_list_model_versions(project_id=teamspace_id, model_id=models[0].id).versions
     if not versions:
         raise ValueError(f"Model `{name}` does not have any versions")

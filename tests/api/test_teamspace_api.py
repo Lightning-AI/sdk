@@ -197,10 +197,10 @@ def test_create_delete_model_version():
 
     teamspace_api._models = mock.MagicMock(
         models_store_list_models=mock.MagicMock(
-            return_value=mock.MagicMock(models=[mock.MagicMock(id="model-id", latest_version="v1")])
+            return_value=mock.MagicMock(models=[mock.MagicMock(id="model-id", default_version="v1")])
         ),
     )
-    teamspace_api.delete_model(name="model-name", version="latest", teamspace_id="ts-abc")
+    teamspace_api.delete_model(name="model-name", version="default", teamspace_id="ts-abc")
     teamspace_api._models.models_store_delete_model_version.assert_called_with(
         project_id="ts-abc", model_id="model-id", version=version.version
     )

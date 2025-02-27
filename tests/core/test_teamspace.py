@@ -226,7 +226,7 @@ def test_upload_model_single_file(
     ts._teamspace_api.delete_model.assert_called_once_with(
         teamspace_id="ts-abc002",
         name="user/modelname",
-        version="latest",
+        version="default",
     )
 
 
@@ -314,7 +314,7 @@ def test_download_model(
         client=mock.ANY,
         teamspace_id="ts-abc002",
         name="user/modelname",
-        version="latest",
+        version="default",
     )
 
     download_model_files_mock.assert_called_with(
@@ -322,7 +322,7 @@ def test_download_model(
         teamspace_name="ts-abc",
         teamspace_owner_name="user-abc",
         name="user/modelname",
-        version="latest",
+        version="default",
         download_dir=Path(folder) if folder else tmp_path,
         progress_bar=True,
     )

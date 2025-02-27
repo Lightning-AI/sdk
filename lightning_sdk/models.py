@@ -78,7 +78,7 @@ def _parse_model_name_and_version(name: str) -> Tuple[str, str, str, str]:
         org_name, teamspace_name, model_name = name.split("/")
         parts = model_name.split(":")
         if len(parts) == 1:
-            return org_name, teamspace_name, parts[0], "latest"
+            return org_name, teamspace_name, parts[0], "default"
         if len(parts) == 2:
             return org_name, teamspace_name, parts[0], parts[1]
         # The rest of the validation for name and version happens in the backend
