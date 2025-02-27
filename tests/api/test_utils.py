@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, Mock, PropertyMock, mock_open
 import pytest
 
 import lightning_sdk.api.utils
+from lightning_sdk.api import utils
 from lightning_sdk.api.utils import (
     _download_model_files,
     _FileDownloader,
@@ -159,12 +160,16 @@ def test_model_file_uploader(_, tmp_path, monkeypatch):
 @mock.patch("lightning_sdk.api.utils.ModelsStoreApi")
 @mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
-def test_download_model_files(wait_mock, executor_mock, api_mock, tmp_path):
+def test_download_model_files(wait_mock, executor_mock, api_mock, tmp_path, monkeypatch):
+    tqdm_mock = MagicMock()
+    monkeypatch.setattr(utils, "tqdm", tqdm_mock)
+
     api_mock.return_value.models_store_get_model_files.return_value = Mock(
         model_id="test-model-id",
         project_id="test-project-id",
         version="latest",
         filepaths=["path/to/file1", "path/to/file2"],
+        size_bytes=10,
     )
 
     _download_model_files(
@@ -174,12 +179,22 @@ def test_download_model_files(wait_mock, executor_mock, api_mock, tmp_path):
         name="modelname",
         version="latest",
         download_dir=tmp_path,
-        progress_bar=False,
+        progress_bar=True,
     )
 
     api_mock.return_value.models_store_get_model_files.assert_called_once_with(
         project_name="test-project", project_owner_name="test-user", name="modelname", version="latest"
     )
+
+    assert tqdm_mock._mock_mock_calls[0].kwargs == {
+        "desc": "Downloading latest",
+        "unit": "B",
+        "total": 10.0,
+        "unit_scale": True,
+        "unit_divisor": 1000,
+        "position": -1,
+        "mininterval": 1,
+    }
 
 
 @mock.patch("lightning_sdk.api.utils.ModelsStoreApi")
