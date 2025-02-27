@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from lightning_sdk.api import UserApi
 from lightning_sdk.api.pipeline_api import PipelineApi
@@ -19,7 +19,20 @@ class Pipeline:
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
+        cloud_account: Optional[str] = None,
+        shared_filesystem: Optional[bool] = None,
     ) -> None:
+        """The Lightning Pipeline can be used to create complex DAG.
+
+        Arguments:
+            name: The desired name of the pipeline.
+            teamspace: The teamspace where the pipeline will be created.
+            org: The organization where the pipeline will be created.
+            user: The creator of the pipeline.
+            cloud_account: The cloud account to use for the entire pipeline.
+            shared_filesystem: Whether the pipeline should use a shared filesystem across all nodes.
+                Note: This forces the pipeline steps to be in the cloud_account and same region
+        """
         self._auth = Auth()
         self._user = None
 
@@ -41,8 +54,10 @@ class Pipeline:
         )
 
         self._pipeline_api = PipelineApi()
-
-        self._cloud_account = _get_cluster(client=self._pipeline_api._client, project_id=self._teamspace.id)
+        self._cloud_account = _get_cluster(
+            client=self._pipeline_api._client, project_id=self._teamspace.id, cluster_id=cloud_account
+        )
+        self._shared_filesystem = shared_filesystem
         self._is_created = False
 
         pipeline = None
@@ -63,9 +78,16 @@ class Pipeline:
             if step.name in [None, ""]:
                 raise ValueError(f"The step {step_idx} requires a name")
 
-        steps = [step.to_proto(self._teamspace) for step in steps]
+        steps = [
+            step.to_proto(self._teamspace, self._cloud_account.cluster_id or "", self._shared_filesystem)
+            for step in steps
+        ]
 
-        self._pipeline = self._pipeline_api.create_pipeline(self._name, self._teamspace.id, prepare_steps(steps))
+        self._pipeline = self._pipeline_api.create_pipeline(
+            self._name,
+            self._teamspace.id,
+            prepare_steps(steps),
+        )
 
     def stop(self) -> None:
         if self._pipeline is None:

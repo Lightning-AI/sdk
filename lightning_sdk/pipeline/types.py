@@ -84,7 +84,8 @@ class Deployment:
         self.quantity = quantity
         self.needs = needs
 
-    def to_proto(self, teamspace: "Teamspace") -> V1PipelineStep:
+    def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
+        _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.DEPLOYMENT,
@@ -96,7 +97,7 @@ class Deployment:
                 project_id=teamspace.id,
                 replicas=self.replicas,
                 spec=to_spec(
-                    cloud_account=self.cloud_account,
+                    cloud_account=self.cloud_account or cloud_account,
                     command=self.command,
                     entrypoint=self.entrypoint,
                     env=self.env,
@@ -150,11 +151,12 @@ class Job:
         self.path_mappings = path_mappings
         self.needs = needs
 
-    def to_proto(self, teamspace: "Teamspace") -> V1PipelineStep:
+    def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
+        _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
         body = JobApiV2._create_job_body(
             name=self.name,
             command=self.command,
-            cloud_account=self.cloud_account,
+            cloud_account=self.cloud_account or cloud_account,
             studio_id=None,
             image=self.image,
             machine=self.machine,
@@ -217,12 +219,13 @@ class MMT:
         self.path_mappings = path_mappings
         self.needs = needs
 
-    def to_proto(self, teamspace: "Teamspace") -> V1PipelineStep:
+    def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
+        _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
         body = MMTApiV2._create_mmt_body(
             name=self.name,
             num_machines=self.num_machines,
             command=self.command,
-            cloud_account=self.cloud_account,
+            cloud_account=self.cloud_account or cloud_account,
             studio_id=self.studio.studio_id if isinstance(self.studio, Studio) else None,
             image=self.image,
             machine=self.machine,
@@ -252,3 +255,14 @@ def to_needs(needs: Optional[Union[str, List[str]]]) -> Optional[List[str]]:
         return []
 
     return needs if isinstance(needs, list) else [needs]
+
+
+def _validate_cloud_account(pipeline_cloud_account: str, step_cloud_account: str, shared_filesystem: bool) -> None:
+    if not shared_filesystem:
+        return
+
+    if pipeline_cloud_account != "" and step_cloud_account != "" and pipeline_cloud_account != step_cloud_account:
+        raise ValueError(
+            "With shared filesystem enabled, all the pipeline steps needs to be on the same cluster."
+            f" Found {pipeline_cloud_account} and {step_cloud_account}"
+        )

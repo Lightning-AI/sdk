@@ -1,6 +1,5 @@
 from lightning_sdk.pipeline import Pipeline, Job, Deployment, MMT
 from lightning_sdk.machine import Machine
-from time import time, sleep
 
 pipeline = Pipeline(name='first-pipeline')
 pipeline.run(

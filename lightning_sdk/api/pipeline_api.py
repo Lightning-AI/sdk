@@ -5,6 +5,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1DeletePipelineResponse,
     V1Pipeline,
     V1PipelineStep,
+    V1SharedFilesystem,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -29,10 +30,14 @@ class PipelineApi:
         name: str,
         project_id: str,
         steps: List["V1PipelineStep"],
+        shared_filesystem: bool,
     ) -> V1Pipeline:
         body = ProjectIdPipelinesBody(
             name=name,
             steps=steps,
+            shared_filesystem=V1SharedFilesystem(
+                enabled=shared_filesystem,
+            ),
         )
         return self._client.pipelines_service_create_pipeline(body, project_id)
 

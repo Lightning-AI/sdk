@@ -29,6 +29,9 @@ def test_pipeline_run(monkeypatch):
     monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
 
     pipeline = Pipeline(name="first-pipeline")
+    cloud_account_mock = MagicMock()
+    cloud_account_mock.cluster_id = ""
+    pipeline._cloud_account = cloud_account_mock
 
     with pytest.raises(ValueError, match="The step 0 requires a name"):
         pipeline.run(
@@ -293,7 +296,7 @@ def test_deployment_default():
 
 def test_mmt():
     mmt = MMT(name="mmt-0", machine=Machine.CPU)
-    proto = mmt.to_proto(teamspace=MagicMock())
+    proto = mmt.to_proto(MagicMock(), "", False)
     assert proto.type == V1PipelineStepType.MMT
     assert proto.name == "mmt-0"
     assert proto.mmt is not None
@@ -343,3 +346,50 @@ def test_delete(monkeypatch):
     pipeline._pipeline = MagicMock(return_value=pipeline_spec)
     pipeline.delete()
     mock_client().pipelines_service_delete_pipeline.assert_called()
+
+
+def test_shared_filesystem(monkeypatch):
+    monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
+    monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
+    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
+    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
+    pipeline_api_mock = MagicMock()
+    monkeypatch.setattr(pipeline_module, "PipelineApi", pipeline_api_mock)
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
+
+    pipeline = Pipeline(name="first-pipeline")
+    cloud_account_mock = MagicMock()
+    cloud_account_mock.cluster_id = "cluster_id_1"
+    pipeline._cloud_account = cloud_account_mock
+
+    pipeline.run(
+        steps=[
+            Job(
+                name="job-0",
+                machine=Machine.CPU,
+                command="echo 'Hello, World!'",
+                image="ubuntu:latest",
+                cloud_account="cluster_id_2",
+            ),
+        ]
+    )
+
+    pipeline._shared_filesystem = True
+
+    with pytest.raises(
+        ValueError,
+        match="With shared filesystem enabled, all the pipeline steps needs to be on the same cluster. Found cluster_id_1 and cluster_id_2",  # noqa: E501
+    ):
+        pipeline.run(
+            steps=[
+                Job(
+                    name="job-0",
+                    machine=Machine.CPU,
+                    command="echo 'Hello, World!'",
+                    image="ubuntu:latest",
+                    cloud_account="cluster_id_2",
+                ),
+            ]
+        )

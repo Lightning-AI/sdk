@@ -6,7 +6,7 @@ import requests
 import urllib3
 
 from lightning_sdk.api.utils import _get_cloud_url
-from lightning_sdk.lightning_cloud.openapi import V1Membership
+from lightning_sdk.lightning_cloud.openapi import V1Membership, V1ProjectClusterBinding
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 _CHUNK_SIZE = 1024 * 1024
@@ -35,7 +35,7 @@ def _get_project(client: LightningClient, project_name: Optional[str] = None) ->
     raise ValueError("No valid projects found. Please reach out to lightning.ai team to create a project")
 
 
-def _get_cluster(client: LightningClient, project_id: str, cluster_id: Optional[str] = None) -> V1Membership:
+def _get_cluster(client: LightningClient, project_id: str, cluster_id: Optional[str] = None) -> V1ProjectClusterBinding:
     """Get a project membership for the user from the backend."""
     clusters = client.projects_service_list_project_cluster_bindings(project_id=project_id)
     if cluster_id:
