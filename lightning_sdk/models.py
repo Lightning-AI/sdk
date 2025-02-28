@@ -7,7 +7,7 @@ from lightning_sdk.api import OrgApi, TeamspaceApi, UserApi
 from lightning_sdk.lightning_cloud.openapi.models import V1Membership, V1OwnerType
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _get_authed_user
+from lightning_sdk.utils.resolve import _get_authed_user, _resolve_teamspace
 
 if TYPE_CHECKING:
     from lightning_sdk.teamspace import Teamspace
@@ -105,6 +105,9 @@ def download_model(
         download_dir: The directory where the Model should be downloaded.
         progress_bar: Whether to show a progress bar when downloading.
     """
+    if "/" not in name:  # do some magic if you run studio
+        teamspace = _resolve_teamspace(None, None, None)
+        name = f"{teamspace.owner.name}/{teamspace.name}/{name}"
     teamspace_owner_name, teamspace_name, model_name, version = _parse_model_name_and_version(name)
 
     download_dir = Path(download_dir)
@@ -144,6 +147,9 @@ def upload_model(
             If not provided, the default cloud account for the Teamspace will be used.
         progress_bar: Whether to show a progress bar for the upload.
     """
+    if "/" not in name:  # do some magic if you run studio
+        teamspace = _resolve_teamspace(None, None, None)
+        name = f"{teamspace.owner.name}/{teamspace.name}/{name}"
     org_name, teamspace_name, model_name, _ = _parse_model_name_and_version(name)
     teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
     return teamspace.upload_model(

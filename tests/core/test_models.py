@@ -1,3 +1,4 @@
+import os
 from unittest import mock
 
 import pytest
@@ -10,7 +11,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1SearchUser,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.models import _get_teamspace, download_model
+from lightning_sdk.models import _get_teamspace, download_model, upload_model
 from lightning_sdk.user import User
 
 
@@ -118,3 +119,69 @@ def test_download_model_errors(mock_teamspace_api):
 
     with pytest.raises(RuntimeError, match="Error downloading model. Status code: 500"):
         download_model("owner/teamspace/model")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_model_name_and_version")
+@mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
+def test_download_model_in_studio_with_org(
+    mock_org_api, mock_teamspace_api, mock_download_model_files, mock_parse_model_name_and_version
+):
+    mock_parse_model_name_and_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+
+    download_model("model_name")
+    mock_parse_model_name_and_version.assert_called_once_with("org-abc/ts-abc/model_name")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_model_name_and_version")
+@mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.user.UserApi")
+def test_download_model_in_studio_with_user(
+    mock_user_api, mock_teamspace_api, mock_download_model_files, mock_parse_model_name_and_version
+):
+    mock_parse_model_name_and_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
+
+    download_model("model_name")
+    mock_parse_model_name_and_version.assert_called_once_with("user-abc/ts-abc/model_name")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_model_name_and_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
+def test_upload_model_in_studio_with_org(
+    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_model_name_and_version
+):
+    mock_parse_model_name_and_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_get_teamspace.return_value = mock.MagicMock()
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+
+    upload_model("model_name")
+    mock_parse_model_name_and_version.assert_called_once_with("org-abc/ts-abc/model_name")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_model_name_and_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.user.UserApi")
+def test_upload_model_in_studio_with_user(
+    mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_model_name_and_version
+):
+    mock_parse_model_name_and_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_get_teamspace.return_value = mock.MagicMock()
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
+
+    upload_model("model_name")
+    mock_parse_model_name_and_version.assert_called_once_with("user-abc/ts-abc/model_name")
