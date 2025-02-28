@@ -160,7 +160,11 @@ class Studio:
         status = self.status
 
         if interruptible is None:
-            interruptible = self.teamspace.start_studions_on_interruptible
+            interruptible_override = os.environ.get("LIGHTNING_INTERRUPTIBLE_OVERRIDE", None)
+            if interruptible_override is not None:
+                interruptible = interruptible_override.lower() == "true"
+            else:
+                interruptible = self.teamspace.start_studios_on_interruptible
 
         if status == Status.Running:
             curr_machine = _machine_to_compute_name(self.machine) if self.machine is not None else None

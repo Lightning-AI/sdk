@@ -115,7 +115,7 @@ class Teamspace:
         return self._teamspace.project_settings.preferred_cluster
 
     @property
-    def start_studions_on_interruptible(self) -> bool:
+    def start_studios_on_interruptible(self) -> bool:
         return self._teamspace.project_settings.start_studio_on_spot_instance
 
     @property
