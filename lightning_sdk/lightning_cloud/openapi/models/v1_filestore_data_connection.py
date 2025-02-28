@@ -42,24 +42,29 @@ class V1FilestoreDataConnection(object):
     """
     swagger_types = {
         'capacity_gb': 'str',
+        'mount_ip': 'str',
         'region': 'str',
         'source': 'str'
     }
 
     attribute_map = {
         'capacity_gb': 'capacityGb',
+        'mount_ip': 'mountIp',
         'region': 'region',
         'source': 'source'
     }
 
-    def __init__(self, capacity_gb: 'str' =None, region: 'str' =None, source: 'str' =None):  # noqa: E501
+    def __init__(self, capacity_gb: 'str' =None, mount_ip: 'str' =None, region: 'str' =None, source: 'str' =None):  # noqa: E501
         """V1FilestoreDataConnection - a model defined in Swagger"""  # noqa: E501
         self._capacity_gb = None
+        self._mount_ip = None
         self._region = None
         self._source = None
         self.discriminator = None
         if capacity_gb is not None:
             self.capacity_gb = capacity_gb
+        if mount_ip is not None:
+            self.mount_ip = mount_ip
         if region is not None:
             self.region = region
         if source is not None:
@@ -85,6 +90,27 @@ class V1FilestoreDataConnection(object):
         """
 
         self._capacity_gb = capacity_gb
+
+    @property
+    def mount_ip(self) -> 'str':
+        """Gets the mount_ip of this V1FilestoreDataConnection.  # noqa: E501
+
+
+        :return: The mount_ip of this V1FilestoreDataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._mount_ip
+
+    @mount_ip.setter
+    def mount_ip(self, mount_ip: 'str'):
+        """Sets the mount_ip of this V1FilestoreDataConnection.
+
+
+        :param mount_ip: The mount_ip of this V1FilestoreDataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._mount_ip = mount_ip
 
     @property
     def region(self) -> 'str':

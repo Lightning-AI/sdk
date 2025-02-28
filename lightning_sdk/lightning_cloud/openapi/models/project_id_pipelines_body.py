@@ -41,29 +41,55 @@ class ProjectIdPipelinesBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cluster_id': 'str',
         'name': 'str',
         'shared_filesystem': 'V1SharedFilesystem',
         'steps': 'list[V1PipelineStep]'
     }
 
     attribute_map = {
+        'cluster_id': 'clusterId',
         'name': 'name',
         'shared_filesystem': 'sharedFilesystem',
         'steps': 'steps'
     }
 
-    def __init__(self, name: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, name: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
         """ProjectIdPipelinesBody - a model defined in Swagger"""  # noqa: E501
+        self._cluster_id = None
         self._name = None
         self._shared_filesystem = None
         self._steps = None
         self.discriminator = None
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if name is not None:
             self.name = name
         if shared_filesystem is not None:
             self.shared_filesystem = shared_filesystem
         if steps is not None:
             self.steps = steps
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this ProjectIdPipelinesBody.  # noqa: E501
+
+
+        :return: The cluster_id of this ProjectIdPipelinesBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this ProjectIdPipelinesBody.
+
+
+        :param cluster_id: The cluster_id of this ProjectIdPipelinesBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def name(self) -> 'str':

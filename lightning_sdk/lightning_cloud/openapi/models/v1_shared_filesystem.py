@@ -42,21 +42,31 @@ class V1SharedFilesystem(object):
     """
     swagger_types = {
         'enabled': 'bool',
+        'resource_id': 'str',
+        'resource_name': 'str',
         'state': 'str'
     }
 
     attribute_map = {
         'enabled': 'enabled',
+        'resource_id': 'resourceId',
+        'resource_name': 'resourceName',
         'state': 'state'
     }
 
-    def __init__(self, enabled: 'bool' =None, state: 'str' =None):  # noqa: E501
+    def __init__(self, enabled: 'bool' =None, resource_id: 'str' =None, resource_name: 'str' =None, state: 'str' =None):  # noqa: E501
         """V1SharedFilesystem - a model defined in Swagger"""  # noqa: E501
         self._enabled = None
+        self._resource_id = None
+        self._resource_name = None
         self._state = None
         self.discriminator = None
         if enabled is not None:
             self.enabled = enabled
+        if resource_id is not None:
+            self.resource_id = resource_id
+        if resource_name is not None:
+            self.resource_name = resource_name
         if state is not None:
             self.state = state
 
@@ -80,6 +90,48 @@ class V1SharedFilesystem(object):
         """
 
         self._enabled = enabled
+
+    @property
+    def resource_id(self) -> 'str':
+        """Gets the resource_id of this V1SharedFilesystem.  # noqa: E501
+
+
+        :return: The resource_id of this V1SharedFilesystem.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_id
+
+    @resource_id.setter
+    def resource_id(self, resource_id: 'str'):
+        """Sets the resource_id of this V1SharedFilesystem.
+
+
+        :param resource_id: The resource_id of this V1SharedFilesystem.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_id = resource_id
+
+    @property
+    def resource_name(self) -> 'str':
+        """Gets the resource_name of this V1SharedFilesystem.  # noqa: E501
+
+
+        :return: The resource_name of this V1SharedFilesystem.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_name
+
+    @resource_name.setter
+    def resource_name(self, resource_name: 'str'):
+        """Sets the resource_name of this V1SharedFilesystem.
+
+
+        :param resource_name: The resource_name of this V1SharedFilesystem.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_name = resource_name
 
     @property
     def state(self) -> 'str':

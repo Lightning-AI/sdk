@@ -41,10 +41,12 @@ class V1Pipeline(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'cluster_id': 'bool',
+        'cluster_id': 'str',
         'created_at': 'datetime',
         'display_name': 'str',
+        'error': 'str',
         'id': 'str',
+        'message': 'str',
         'name': 'str',
         'parent_id': 'str',
         'project_id': 'str',
@@ -60,7 +62,9 @@ class V1Pipeline(object):
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'display_name': 'displayName',
+        'error': 'error',
         'id': 'id',
+        'message': 'message',
         'name': 'name',
         'parent_id': 'parentId',
         'project_id': 'projectId',
@@ -72,12 +76,14 @@ class V1Pipeline(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'bool' =None, created_at: 'datetime' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, parent_id: 'str' =None, project_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, parent_id: 'str' =None, project_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Pipeline - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
         self._display_name = None
+        self._error = None
         self._id = None
+        self._message = None
         self._name = None
         self._parent_id = None
         self._project_id = None
@@ -94,8 +100,12 @@ class V1Pipeline(object):
             self.created_at = created_at
         if display_name is not None:
             self.display_name = display_name
+        if error is not None:
+            self.error = error
         if id is not None:
             self.id = id
+        if message is not None:
+            self.message = message
         if name is not None:
             self.name = name
         if parent_id is not None:
@@ -116,22 +126,22 @@ class V1Pipeline(object):
             self.user_id = user_id
 
     @property
-    def cluster_id(self) -> 'bool':
+    def cluster_id(self) -> 'str':
         """Gets the cluster_id of this V1Pipeline.  # noqa: E501
 
 
         :return: The cluster_id of this V1Pipeline.  # noqa: E501
-        :rtype: bool
+        :rtype: str
         """
         return self._cluster_id
 
     @cluster_id.setter
-    def cluster_id(self, cluster_id: 'bool'):
+    def cluster_id(self, cluster_id: 'str'):
         """Sets the cluster_id of this V1Pipeline.
 
 
         :param cluster_id: The cluster_id of this V1Pipeline.  # noqa: E501
-        :type: bool
+        :type: str
         """
 
         self._cluster_id = cluster_id
@@ -179,6 +189,27 @@ class V1Pipeline(object):
         self._display_name = display_name
 
     @property
+    def error(self) -> 'str':
+        """Gets the error of this V1Pipeline.  # noqa: E501
+
+
+        :return: The error of this V1Pipeline.  # noqa: E501
+        :rtype: str
+        """
+        return self._error
+
+    @error.setter
+    def error(self, error: 'str'):
+        """Sets the error of this V1Pipeline.
+
+
+        :param error: The error of this V1Pipeline.  # noqa: E501
+        :type: str
+        """
+
+        self._error = error
+
+    @property
     def id(self) -> 'str':
         """Gets the id of this V1Pipeline.  # noqa: E501
 
@@ -198,6 +229,27 @@ class V1Pipeline(object):
         """
 
         self._id = id
+
+    @property
+    def message(self) -> 'str':
+        """Gets the message of this V1Pipeline.  # noqa: E501
+
+
+        :return: The message of this V1Pipeline.  # noqa: E501
+        :rtype: str
+        """
+        return self._message
+
+    @message.setter
+    def message(self, message: 'str'):
+        """Sets the message of this V1Pipeline.
+
+
+        :param message: The message of this V1Pipeline.  # noqa: E501
+        :type: str
+        """
+
+        self._message = message
 
     @property
     def name(self) -> 'str':

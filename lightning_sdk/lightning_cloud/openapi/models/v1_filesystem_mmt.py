@@ -41,29 +41,55 @@ class V1FilesystemMMT(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cloud_space_id': 'str',
         'id': 'str',
         'jobs': 'list[V1FilesystemJob]',
         'name': 'str'
     }
 
     attribute_map = {
+        'cloud_space_id': 'cloudSpaceId',
         'id': 'id',
         'jobs': 'jobs',
         'name': 'name'
     }
 
-    def __init__(self, id: 'str' =None, jobs: 'list[V1FilesystemJob]' =None, name: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_space_id: 'str' =None, id: 'str' =None, jobs: 'list[V1FilesystemJob]' =None, name: 'str' =None):  # noqa: E501
         """V1FilesystemMMT - a model defined in Swagger"""  # noqa: E501
+        self._cloud_space_id = None
         self._id = None
         self._jobs = None
         self._name = None
         self.discriminator = None
+        if cloud_space_id is not None:
+            self.cloud_space_id = cloud_space_id
         if id is not None:
             self.id = id
         if jobs is not None:
             self.jobs = jobs
         if name is not None:
             self.name = name
+
+    @property
+    def cloud_space_id(self) -> 'str':
+        """Gets the cloud_space_id of this V1FilesystemMMT.  # noqa: E501
+
+
+        :return: The cloud_space_id of this V1FilesystemMMT.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloud_space_id
+
+    @cloud_space_id.setter
+    def cloud_space_id(self, cloud_space_id: 'str'):
+        """Sets the cloud_space_id of this V1FilesystemMMT.
+
+
+        :param cloud_space_id: The cloud_space_id of this V1FilesystemMMT.  # noqa: E501
+        :type: str
+        """
+
+        self._cloud_space_id = cloud_space_id
 
     @property
     def id(self) -> 'str':

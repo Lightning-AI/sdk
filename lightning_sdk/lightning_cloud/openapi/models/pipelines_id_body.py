@@ -41,9 +41,11 @@ class PipelinesIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'cluster_id': 'bool',
+        'cluster_id': 'str',
         'created_at': 'datetime',
         'display_name': 'str',
+        'error': 'str',
+        'message': 'str',
         'name': 'str',
         'parent_id': 'str',
         'shared_filesystem': 'V1SharedFilesystem',
@@ -58,6 +60,8 @@ class PipelinesIdBody(object):
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'display_name': 'displayName',
+        'error': 'error',
+        'message': 'message',
         'name': 'name',
         'parent_id': 'parentId',
         'shared_filesystem': 'sharedFilesystem',
@@ -68,11 +72,13 @@ class PipelinesIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'bool' =None, created_at: 'datetime' =None, display_name: 'str' =None, name: 'str' =None, parent_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, message: 'str' =None, name: 'str' =None, parent_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """PipelinesIdBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
         self._display_name = None
+        self._error = None
+        self._message = None
         self._name = None
         self._parent_id = None
         self._shared_filesystem = None
@@ -88,6 +94,10 @@ class PipelinesIdBody(object):
             self.created_at = created_at
         if display_name is not None:
             self.display_name = display_name
+        if error is not None:
+            self.error = error
+        if message is not None:
+            self.message = message
         if name is not None:
             self.name = name
         if parent_id is not None:
@@ -106,22 +116,22 @@ class PipelinesIdBody(object):
             self.user_id = user_id
 
     @property
-    def cluster_id(self) -> 'bool':
+    def cluster_id(self) -> 'str':
         """Gets the cluster_id of this PipelinesIdBody.  # noqa: E501
 
 
         :return: The cluster_id of this PipelinesIdBody.  # noqa: E501
-        :rtype: bool
+        :rtype: str
         """
         return self._cluster_id
 
     @cluster_id.setter
-    def cluster_id(self, cluster_id: 'bool'):
+    def cluster_id(self, cluster_id: 'str'):
         """Sets the cluster_id of this PipelinesIdBody.
 
 
         :param cluster_id: The cluster_id of this PipelinesIdBody.  # noqa: E501
-        :type: bool
+        :type: str
         """
 
         self._cluster_id = cluster_id
@@ -167,6 +177,48 @@ class PipelinesIdBody(object):
         """
 
         self._display_name = display_name
+
+    @property
+    def error(self) -> 'str':
+        """Gets the error of this PipelinesIdBody.  # noqa: E501
+
+
+        :return: The error of this PipelinesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._error
+
+    @error.setter
+    def error(self, error: 'str'):
+        """Sets the error of this PipelinesIdBody.
+
+
+        :param error: The error of this PipelinesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._error = error
+
+    @property
+    def message(self) -> 'str':
+        """Gets the message of this PipelinesIdBody.  # noqa: E501
+
+
+        :return: The message of this PipelinesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._message
+
+    @message.setter
+    def message(self, message: 'str'):
+        """Sets the message of this PipelinesIdBody.
+
+
+        :param message: The message of this PipelinesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._message = message
 
     @property
     def name(self) -> 'str':
