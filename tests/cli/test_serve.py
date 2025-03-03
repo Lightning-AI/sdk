@@ -51,6 +51,7 @@ Options:
   --easy                          Generate a client for the model
   --cloud                         Deploy the model to the Lightning AI
                                   platform
+  --gpu                           Use GPU for serving
   --repository TEXT               Docker repository name (e.g.,
                                   'username/model-name')
   --non-interactive, --non_interactive

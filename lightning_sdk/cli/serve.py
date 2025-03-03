@@ -44,6 +44,7 @@ def serve() -> None:
     flag_value=True,
     help="Deploy the model to the Lightning AI platform",
 )
+@click.option("--gpu", is_flag=True, default=False, flag_value=True, help="Use GPU for serving")
 @click.option("--repository", default=None, help="Docker repository name (e.g., 'username/model-name')")
 @click.option(
     "--non-interactive",
@@ -57,12 +58,13 @@ def api(
     script_path: str,
     easy: bool,
     cloud: bool,
+    gpu: bool,
     repository: str,
     non_interactive: bool,
 ) -> None:
     """Deploy a LitServe model script."""
     return api_impl(
-        script_path=script_path, easy=easy, cloud=cloud, repository=repository, non_interactive=non_interactive
+        script_path=script_path, easy=easy, cloud=cloud, gpu=gpu, repository=repository, non_interactive=non_interactive
     )
 
 
@@ -70,6 +72,7 @@ def api_impl(
     script_path: Union[str, Path],
     easy: bool = False,
     cloud: bool = False,
+    gpu: bool = False,
     repository: Optional[str] = None,
     non_interactive: bool = False,
 ) -> None:
@@ -81,27 +84,11 @@ def api_impl(
     if not script_path.is_file():
         raise ValueError(f"Path is not a file: {script_path}")
 
-    try:
-        from litserve.python_client import client_template
-    except ImportError:
-        raise ImportError(
-            "litserve is not installed. Please install it with `pip install lightning_sdk[serve]`"
-        ) from None
-
-    if easy:
-        client_path = Path("client.py")
-        if client_path.exists():
-            console.print("Skipping client generation: client.py already exists", style="blue")
-        else:
-            try:
-                client_path.write_text(client_template)
-                console.print("✅ Client generated at client.py", style="bold green")
-            except OSError as e:
-                raise OSError(f"Failed to generate client.py: {e!s}") from None
+    _generate_client(console) if easy else None
 
     if cloud:
         tag = repository if repository else "litserve-model"
-        return _handle_cloud(script_path, console, tag=tag, non_interactive=non_interactive)
+        return _handle_cloud(script_path, console, gpu=gpu, tag=tag, non_interactive=non_interactive)
 
     try:
         subprocess.run(
@@ -114,9 +101,29 @@ def api_impl(
         raise RuntimeError(error_msg) from None
 
 
+def _generate_client(console: Console) -> None:
+    try:
+        from litserve.python_client import client_template
+    except ImportError:
+        raise ImportError(
+            "litserve is not installed. Please install it with `pip install lightning_sdk[serve]`"
+        ) from None
+
+    client_path = Path("client.py")
+    if client_path.exists():
+        console.print("Skipping client generation: client.py already exists", style="blue")
+    else:
+        try:
+            client_path.write_text(client_template)
+            console.print("✅ Client generated at client.py", style="bold green")
+        except OSError as e:
+            raise OSError(f"Failed to generate client.py: {e!s}") from None
+
+
 def _handle_cloud(
     script_path: Union[str, Path],
     console: Console,
+    gpu: bool,
     tag: str = "litserve-model",
     non_interactive: bool = False,
 ) -> None:
@@ -126,7 +133,7 @@ def _handle_cloud(
     except docker.errors.DockerException as e:
         raise RuntimeError(f"Failed to connect to Docker daemon: {e!s}. Is Docker running?") from None
 
-    path = dockerize_api(script_path, port=8000, gpu=False, tag=tag)
+    path = dockerize_api(script_path, port=8000, gpu=gpu, tag=tag)
 
     console.clear()
     if non_interactive:
