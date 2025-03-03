@@ -22,6 +22,12 @@ def api(server_filename: str, port: int = 8000, gpu: bool = False, tag: str = "l
 
 
 def _api(server_filename: str, port: int = 8000, gpu: bool = False, tag: str = "litserve-model") -> str:
+    console = Console()
+
+    if os.path.exists("Dockerfile"):
+        console.print("Dockerfile already exists. Skipping generation.")
+        return os.path.abspath("Dockerfile")
+
     import litserve as ls
     from litserve import docker_builder
 
@@ -67,5 +73,5 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
 [bold]To push the container to a registry:[/bold]
 > [underline]docker push {tag}[/underline]
 """
-    Console().print(success_msg)
+    console.print(success_msg)
     return os.path.abspath("Dockerfile")

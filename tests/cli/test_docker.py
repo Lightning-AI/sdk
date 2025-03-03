@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -113,3 +113,15 @@ def test_docker_api_with_gpu(mock_cwd, temp_script):
     dockerfile_content = (mock_cwd / "Dockerfile").read_text()
     assert "FROM nvidia/cuda:" in dockerfile_content
     assert 'CMD ["python", "/app/server.py"]' in dockerfile_content
+
+
+@patch("lightning_sdk.cli.docker.Console")
+def test_skip_dockerfile_generation(mock_console, mock_cwd):
+    console_obj = MagicMock()
+    mock_console.return_value = console_obj
+    dockerfile_path = Path(mock_cwd) / "Dockerfile"
+    dockerfile_path.touch()
+
+    docker_api("server.py", port=8000, gpu=False)
+
+    console_obj.print.assert_called_once_with("Dockerfile already exists. Skipping generation.")
