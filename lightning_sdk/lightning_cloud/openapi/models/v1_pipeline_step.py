@@ -45,8 +45,8 @@ class V1PipelineStep(object):
         'job': 'V1CreateJobRequest',
         'mmt': 'V1CreateMultiMachineJobRequest',
         'name': 'str',
-        'needs': 'list[str]',
-        'type': 'V1PipelineStepType'
+        'type': 'V1PipelineStepType',
+        'wait_for': 'list[str]'
     }
 
     attribute_map = {
@@ -54,18 +54,18 @@ class V1PipelineStep(object):
         'job': 'job',
         'mmt': 'mmt',
         'name': 'name',
-        'needs': 'needs',
-        'type': 'type'
+        'type': 'type',
+        'wait_for': 'waitFor'
     }
 
-    def __init__(self, deployment: 'V1CreateDeploymentRequest' =None, job: 'V1CreateJobRequest' =None, mmt: 'V1CreateMultiMachineJobRequest' =None, name: 'str' =None, needs: 'list[str]' =None, type: 'V1PipelineStepType' =None):  # noqa: E501
+    def __init__(self, deployment: 'V1CreateDeploymentRequest' =None, job: 'V1CreateJobRequest' =None, mmt: 'V1CreateMultiMachineJobRequest' =None, name: 'str' =None, type: 'V1PipelineStepType' =None, wait_for: 'list[str]' =None):  # noqa: E501
         """V1PipelineStep - a model defined in Swagger"""  # noqa: E501
         self._deployment = None
         self._job = None
         self._mmt = None
         self._name = None
-        self._needs = None
         self._type = None
+        self._wait_for = None
         self.discriminator = None
         if deployment is not None:
             self.deployment = deployment
@@ -75,10 +75,10 @@ class V1PipelineStep(object):
             self.mmt = mmt
         if name is not None:
             self.name = name
-        if needs is not None:
-            self.needs = needs
         if type is not None:
             self.type = type
+        if wait_for is not None:
+            self.wait_for = wait_for
 
     @property
     def deployment(self) -> 'V1CreateDeploymentRequest':
@@ -165,27 +165,6 @@ class V1PipelineStep(object):
         self._name = name
 
     @property
-    def needs(self) -> 'list[str]':
-        """Gets the needs of this V1PipelineStep.  # noqa: E501
-
-
-        :return: The needs of this V1PipelineStep.  # noqa: E501
-        :rtype: list[str]
-        """
-        return self._needs
-
-    @needs.setter
-    def needs(self, needs: 'list[str]'):
-        """Sets the needs of this V1PipelineStep.
-
-
-        :param needs: The needs of this V1PipelineStep.  # noqa: E501
-        :type: list[str]
-        """
-
-        self._needs = needs
-
-    @property
     def type(self) -> 'V1PipelineStepType':
         """Gets the type of this V1PipelineStep.  # noqa: E501
 
@@ -205,6 +184,27 @@ class V1PipelineStep(object):
         """
 
         self._type = type
+
+    @property
+    def wait_for(self) -> 'list[str]':
+        """Gets the wait_for of this V1PipelineStep.  # noqa: E501
+
+
+        :return: The wait_for of this V1PipelineStep.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._wait_for
+
+    @wait_for.setter
+    def wait_for(self, wait_for: 'list[str]'):
+        """Sets the wait_for of this V1PipelineStep.
+
+
+        :param wait_for: The wait_for of this V1PipelineStep.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._wait_for = wait_for
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

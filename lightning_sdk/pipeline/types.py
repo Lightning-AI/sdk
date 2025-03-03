@@ -55,7 +55,7 @@ class Deployment:
         cloud_account: Optional[str] = None,
         custom_domain: Optional[str] = None,
         quantity: Optional[int] = None,
-        needs: Union[str, List[str]] = DEFAULT,
+        wait_for: Union[str, List[str]] = DEFAULT,
     ) -> None:
         self.name = name
         self.machine = machine
@@ -82,14 +82,14 @@ class Deployment:
         self.cloud_account = cloud_account or ""
         self.custom_domain = custom_domain
         self.quantity = quantity
-        self.needs = needs
+        self.wait_for = wait_for
 
     def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
         _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.DEPLOYMENT,
-            needs=to_needs(self.needs),
+            wait_for=to_wait_for(self.wait_for),
             deployment=V1CreateDeploymentRequest(
                 autoscaling=to_autoscaling(self.autoscale, self.replicas),
                 endpoint=to_endpoint(self.ports, self.auth, self.custom_domain),
@@ -132,7 +132,7 @@ class Job:
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
-        needs: Union[str, List[str]] = DEFAULT,
+        wait_for: Union[str, List[str]] = DEFAULT,
     ) -> None:
         self.name = name
         self.machine = machine
@@ -149,7 +149,7 @@ class Job:
         self.cloud_account_auth = cloud_account_auth
         self.entrypoint = entrypoint
         self.path_mappings = path_mappings
-        self.needs = needs
+        self.wait_for = wait_for
 
     def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
         _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
@@ -173,7 +173,7 @@ class Job:
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.JOB,
-            needs=to_needs(self.needs),
+            wait_for=to_wait_for(self.wait_for),
             job=body,
         )
 
@@ -199,7 +199,7 @@ class MMT:
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
-        needs: Union[str, List[str]] = DEFAULT,
+        wait_for: Union[str, List[str]] = DEFAULT,
     ) -> None:
         self.machine = machine
         self.num_machines = num_machines
@@ -217,7 +217,7 @@ class MMT:
         self.cloud_account_auth = cloud_account_auth
         self.entrypoint = entrypoint
         self.path_mappings = path_mappings
-        self.needs = needs
+        self.wait_for = wait_for
 
     def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
         _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
@@ -242,19 +242,19 @@ class MMT:
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.MMT,
-            needs=to_needs(self.needs),
+            wait_for=to_wait_for(self.wait_for),
             mmt=body,
         )
 
 
-def to_needs(needs: Optional[Union[str, List[str]]]) -> Optional[List[str]]:
-    if needs == DEFAULT:
-        return needs
+def to_wait_for(wait_for: Optional[Union[str, List[str]]]) -> Optional[List[str]]:
+    if wait_for == DEFAULT:
+        return wait_for
 
-    if needs is None:
+    if wait_for is None:
         return []
 
-    return needs if isinstance(needs, list) else [needs]
+    return wait_for if isinstance(wait_for, list) else [wait_for]
 
 
 def _validate_cloud_account(pipeline_cloud_account: str, step_cloud_account: str, shared_filesystem: bool) -> None:
@@ -263,6 +263,6 @@ def _validate_cloud_account(pipeline_cloud_account: str, step_cloud_account: str
 
     if pipeline_cloud_account != "" and step_cloud_account != "" and pipeline_cloud_account != step_cloud_account:
         raise ValueError(
-            "With shared filesystem enabled, all the pipeline steps needs to be on the same cluster."
+            "With shared filesystem enabled, all the pipeline steps wait_for to be on the same cluster."
             f" Found {pipeline_cloud_account} and {step_cloud_account}"
         )

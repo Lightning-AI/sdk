@@ -58,12 +58,12 @@ def test_pipeline_run(monkeypatch):
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
                     image="ubuntu:latest",
-                    needs=["job-1"],
+                    wait_for=["job-1"],
                 ),
             ]
         )
 
-    with pytest.raises(ValueError, match="The step 1 doesn't have a valid needs. Found job-3"):
+    with pytest.raises(ValueError, match="The step 1 doesn't have a valid wait_for. Found job-3"):
         pipeline.run(
             steps=[
                 Job(
@@ -77,7 +77,7 @@ def test_pipeline_run(monkeypatch):
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
                     image="ubuntu:latest",
-                    needs=["job-3"],
+                    wait_for=["job-3"],
                 ),
             ]
         )
@@ -96,7 +96,7 @@ def test_pipeline_run(monkeypatch):
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
                     image="ubuntu:latest",
-                    needs=["job-2"],
+                    wait_for=["job-2"],
                 ),
                 Job(
                     name="job-2",
@@ -115,7 +115,9 @@ def test_pipeline_run(monkeypatch):
                 command="echo 'Hello, World!'",
                 image="ubuntu:latest",
             ),
-            Job(name="job-1", machine=Machine.CPU, command="echo 'Hello, World!'", image="ubuntu:latest", needs=None),
+            Job(
+                name="job-1", machine=Machine.CPU, command="echo 'Hello, World!'", image="ubuntu:latest", wait_for=None
+            ),
             Job(
                 name="job-2",
                 machine=Machine.CPU,
@@ -134,7 +136,7 @@ def test_pipeline_run(monkeypatch):
     step_1 = V1PipelineStep(
         name="job-0",
         type=V1PipelineStepType.JOB,
-        needs=[],
+        wait_for=[],
         job=ProjectIdJobsBody(
             name="job-0",
             spec=V1JobSpec(
@@ -157,7 +159,7 @@ def test_pipeline_run(monkeypatch):
     step_2 = V1PipelineStep(
         name="job-1",
         type=V1PipelineStepType.JOB,
-        needs=[],
+        wait_for=[],
         job=ProjectIdJobsBody(
             name="job-1",
             spec=V1JobSpec(
@@ -180,7 +182,7 @@ def test_pipeline_run(monkeypatch):
     step_3 = V1PipelineStep(
         name="job-2",
         type=V1PipelineStepType.JOB,
-        needs=["job-0", "job-1"],
+        wait_for=["job-0", "job-1"],
         job=ProjectIdJobsBody(
             name="job-2",
             spec=V1JobSpec(
@@ -217,69 +219,69 @@ def test_job_parameters_stay_in_sync():
 
     # ignore the depreceated parameters
     job_keys = [key for key in job_keys if key not in ["artifacts_local", "artifacts_remote", "cluster"]]
-    job_type_keys = [key for key in job_type_keys if key not in ["needs", "self"]]
+    job_type_keys = [key for key in job_type_keys if key not in ["wait_for", "self"]]
 
     assert sorted(job_keys) == sorted(job_type_keys)
 
 
 def test_prepare_steps():
     steps = [
-        V1PipelineStep(name="a", needs=DEFAULT),
-        V1PipelineStep(name="b", needs=DEFAULT),
-        V1PipelineStep(name="c", needs=DEFAULT),
-        V1PipelineStep(name="d", needs=DEFAULT),
-        V1PipelineStep(name="e", needs=DEFAULT),
+        V1PipelineStep(name="a", wait_for=DEFAULT),
+        V1PipelineStep(name="b", wait_for=DEFAULT),
+        V1PipelineStep(name="c", wait_for=DEFAULT),
+        V1PipelineStep(name="d", wait_for=DEFAULT),
+        V1PipelineStep(name="e", wait_for=DEFAULT),
     ]
     steps = prepare_steps(steps)
-    assert steps[0].needs == []
-    assert steps[1].needs == ["a"]
-    assert steps[2].needs == ["b"]
-    assert steps[3].needs == ["c"]
-    assert steps[4].needs == ["d"]
+    assert steps[0].wait_for == []
+    assert steps[1].wait_for == ["a"]
+    assert steps[2].wait_for == ["b"]
+    assert steps[3].wait_for == ["c"]
+    assert steps[4].wait_for == ["d"]
 
     steps = [
-        V1PipelineStep(name="a", needs=DEFAULT),
-        V1PipelineStep(name="b", needs=[]),
-        V1PipelineStep(name="c", needs=DEFAULT),
-        V1PipelineStep(name="d", needs=DEFAULT),
-        V1PipelineStep(name="e", needs=DEFAULT),
+        V1PipelineStep(name="a", wait_for=DEFAULT),
+        V1PipelineStep(name="b", wait_for=[]),
+        V1PipelineStep(name="c", wait_for=DEFAULT),
+        V1PipelineStep(name="d", wait_for=DEFAULT),
+        V1PipelineStep(name="e", wait_for=DEFAULT),
     ]
     steps = prepare_steps(steps)
-    assert steps[0].needs == []
-    assert steps[1].needs == []
-    assert steps[2].needs == ["a", "b"]
-    assert steps[3].needs == ["c"]
-    assert steps[4].needs == ["d"]
+    assert steps[0].wait_for == []
+    assert steps[1].wait_for == []
+    assert steps[2].wait_for == ["a", "b"]
+    assert steps[3].wait_for == ["c"]
+    assert steps[4].wait_for == ["d"]
 
     steps = [
-        V1PipelineStep(name="a", needs=DEFAULT),
-        V1PipelineStep(name="b", needs=[]),
-        V1PipelineStep(name="c", needs=DEFAULT),
-        V1PipelineStep(name="d", needs=[]),
-        V1PipelineStep(name="e", needs=[]),
+        V1PipelineStep(name="a", wait_for=DEFAULT),
+        V1PipelineStep(name="b", wait_for=[]),
+        V1PipelineStep(name="c", wait_for=DEFAULT),
+        V1PipelineStep(name="d", wait_for=[]),
+        V1PipelineStep(name="e", wait_for=[]),
     ]
     steps = prepare_steps(steps)
-    assert steps[0].needs == []
-    assert steps[1].needs == []
-    assert steps[2].needs == ["a", "b"]
-    assert steps[3].needs == []
-    assert steps[4].needs == []
+    assert steps[0].wait_for == []
+    assert steps[1].wait_for == []
+    assert steps[2].wait_for == ["a", "b"]
+    assert steps[3].wait_for == []
+    assert steps[4].wait_for == []
 
     steps = [
-        V1PipelineStep(name="a", needs=DEFAULT),
-        V1PipelineStep(name="b", needs=[]),
-        V1PipelineStep(name="c", needs=DEFAULT),
-        V1PipelineStep(name="d", needs=[]),
-        V1PipelineStep(name="e", needs=[]),
-        V1PipelineStep(name="f", needs=DEFAULT),
+        V1PipelineStep(name="a", wait_for=DEFAULT),
+        V1PipelineStep(name="b", wait_for=[]),
+        V1PipelineStep(name="c", wait_for=DEFAULT),
+        V1PipelineStep(name="d", wait_for=[]),
+        V1PipelineStep(name="e", wait_for=[]),
+        V1PipelineStep(name="f", wait_for=DEFAULT),
     ]
     steps = prepare_steps(steps)
-    assert steps[0].needs == []
-    assert steps[1].needs == []
-    assert steps[2].needs == ["a", "b"]
-    assert steps[3].needs == []
-    assert steps[4].needs == []
-    assert steps[5].needs == ["c", "d", "e"]
+    assert steps[0].wait_for == []
+    assert steps[1].wait_for == []
+    assert steps[2].wait_for == ["a", "b"]
+    assert steps[3].wait_for == []
+    assert steps[4].wait_for == []
+    assert steps[5].wait_for == ["c", "d", "e"]
 
 
 def test_deployment_default():
@@ -383,7 +385,7 @@ def test_shared_filesystem(monkeypatch):
 
     with pytest.raises(
         ValueError,
-        match="With shared filesystem enabled, all the pipeline steps needs to be on the same cluster. Found cluster_id_1 and cluster_id_2",  # noqa: E501
+        match="With shared filesystem enabled, all the pipeline steps wait_for to be on the same cluster. Found cluster_id_1 and cluster_id_2",  # noqa: E501
     ):
         pipeline.run(
             steps=[
