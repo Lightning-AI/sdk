@@ -73,8 +73,7 @@ def folder(path: str = "", studio: Optional[str] = None, local_path: str = ".") 
     if not local_path.is_dir():
         raise NotADirectoryError(f"'{local_path}' is not a directory")
 
-    menu = _StudiosMenu()
-    resolved_studio = menu._resolve_studio(studio)
+    resolved_studio = _resolve_studio(studio)
 
     if not path:
         local_path /= resolved_studio.name
