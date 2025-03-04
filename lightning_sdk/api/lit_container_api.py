@@ -59,6 +59,7 @@ class LitContainerApi:
             ) from None
 
     def authenticate(self, reauth: bool = False) -> bool:
+        resp = None
         try:
             authed_user = self._client.auth_service_get_user()
             username = authed_user.username

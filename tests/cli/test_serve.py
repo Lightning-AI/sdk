@@ -97,7 +97,8 @@ def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
 @patch("docker.from_env")
 @patch("rich.prompt.Confirm.ask")
-def test_cloud_deployment(mock_confirm, mock_docker, mock_cwd, temp_script, capsys):
+@patch("lightning_sdk.cli.serve._TeamspacesMenu")
+def test_cloud_deployment(mock_teamspace, mock_confirm, mock_docker, mock_cwd, temp_script, capsys):
     mock_client = mock_docker.return_value
 
     # Mock Docker client responses
@@ -116,7 +117,7 @@ def test_cloud_deployment(mock_confirm, mock_docker, mock_cwd, temp_script, caps
     serve_api(temp_script, cloud=True, repository=test_tag)
 
     # Verify Docker operations
-    mock_client.ping.assert_called_once()
+    assert mock_client.ping.call_count == 3
     mock_client.api.build.assert_called_once()
     mock_client.api.push.assert_called_once()
 
@@ -132,7 +133,8 @@ def test_cloud_deployment(mock_confirm, mock_docker, mock_cwd, temp_script, caps
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
 @patch("docker.from_env")
 @patch("rich.prompt.Confirm.ask")
-def test_cloud_deployment_non_interactive(mock_confirm, mock_docker, mock_cwd, temp_script, capsys):
+@patch("lightning_sdk.cli.serve._TeamspacesMenu")
+def test_cloud_deployment_non_interactive(mock_teamspace, mock_confirm, mock_docker, mock_cwd, temp_script, capsys):
     mock_client = mock_docker.return_value
 
     # Mock Docker client responses
@@ -143,7 +145,7 @@ def test_cloud_deployment_non_interactive(mock_confirm, mock_docker, mock_cwd, t
     test_tag = "test-repo/model:latest"
     serve_api(temp_script, cloud=True, repository=test_tag, non_interactive=True)
 
-    mock_client.ping.assert_called_once()
+    assert mock_client.ping.call_count == 3
     mock_client.api.build.assert_called_once()
     mock_client.api.push.assert_called_once()
 

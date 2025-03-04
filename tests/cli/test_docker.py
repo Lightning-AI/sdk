@@ -115,7 +115,8 @@ def test_docker_api_with_gpu(mock_cwd, temp_script):
     assert 'CMD ["python", "/app/server.py"]' in dockerfile_content
 
 
-@patch("lightning_sdk.cli.docker.Console")
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@patch("lightning_sdk.serve.Console")
 def test_skip_dockerfile_generation(mock_console, mock_cwd):
     console_obj = MagicMock()
     mock_console.return_value = console_obj

@@ -1,4 +1,3 @@
-import os
 import subprocess
 from pathlib import Path
 from typing import Optional, Union
@@ -9,7 +8,9 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
 
-from lightning_sdk.cli.docker import _api as dockerize_api
+from lightning_sdk.api.lit_container_api import LitContainerApi
+from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.serve import _LitServeDeployer
 
 
 @click.group("serve")
@@ -84,7 +85,8 @@ def api_impl(
     if not script_path.is_file():
         raise ValueError(f"Path is not a file: {script_path}")
 
-    _generate_client(console) if easy else None
+    ls_deployer = _LitServeDeployer()
+    ls_deployer.generate_client() if easy else None
 
     if cloud:
         tag = repository if repository else "litserve-model"
@@ -101,30 +103,13 @@ def api_impl(
         raise RuntimeError(error_msg) from None
 
 
-def _generate_client(console: Console) -> None:
-    try:
-        from litserve.python_client import client_template
-    except ImportError:
-        raise ImportError(
-            "litserve is not installed. Please install it with `pip install lightning_sdk[serve]`"
-        ) from None
-
-    client_path = Path("client.py")
-    if client_path.exists():
-        console.print("Skipping client generation: client.py already exists", style="blue")
-    else:
-        try:
-            client_path.write_text(client_template)
-            console.print("✅ Client generated at client.py", style="bold green")
-        except OSError as e:
-            raise OSError(f"Failed to generate client.py: {e!s}") from None
-
-
 def _handle_cloud(
     script_path: Union[str, Path],
     console: Console,
     gpu: bool,
-    tag: str = "litserve-model",
+    repository: str = "litserve-model",
+    tag: Optional[str] = None,
+    teamspace: Optional[str] = None,
     non_interactive: bool = False,
 ) -> None:
     try:
@@ -133,8 +118,8 @@ def _handle_cloud(
     except docker.errors.DockerException as e:
         raise RuntimeError(f"Failed to connect to Docker daemon: {e!s}. Is Docker running?") from None
 
-    path = dockerize_api(script_path, port=8000, gpu=gpu, tag=tag)
-
+    ls_deployer = _LitServeDeployer()
+    path = ls_deployer.dockerize_api(script_path, port=8000, gpu=gpu, tag=tag)
     console.clear()
     if non_interactive:
         console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
@@ -145,6 +130,11 @@ def _handle_cloud(
         console.print("Please fix the Dockerfile and try again.", style="red")
         return
 
+    tag = tag if tag else "latest"
+
+    lit_cr = LitContainerApi()
+    menu = _TeamspacesMenu()
+    teamspace = menu._resolve_teamspace(teamspace)
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -152,35 +142,9 @@ def _handle_cloud(
         console=console,
         transient=False,
     ) as progress:
-        build_task = progress.add_task("Building Docker image", total=None)
-        build_status = client.api.build(path=os.path.dirname(path), dockerfile=path, tag=tag, decode=True, quiet=False)
-        for line in build_status:
-            if "error" in line:
-                progress.stop()
-                console.print(f"\n[red]{line}[/red]")
-                return
-            if "stream" in line and line["stream"].strip():
-                console.print(line["stream"].strip(), style="bright_black")
-                progress.update(build_task, description="Building Docker image")
-
-        progress.update(build_task, description="[green]Build completed![/green]")
-
-        push_task = progress.add_task("Pushing to registry", total=None)
-        console.print("\nPushing image...", style="bold blue")
-        push_status = client.api.push(tag, stream=True, decode=True)
-        for line in push_status:
-            if "error" in line:
-                progress.stop()
-                console.print(f"\n[red]{line}[/red]")
-                return
-            if "status" in line:
-                console.print(line["status"], style="bright_black")
-                progress.update(push_task, description="Pushing to registry")
-
-        progress.update(push_task, description="[green]Push completed![/green]")
-
+        ls_deployer._build_container(path, repository, tag, console, progress)
+        ls_deployer._push_container(repository, tag, teamspace, lit_cr, progress)
     console.print(f"\n✅ Image pushed to {tag}", style="bold green")
     console.print(
         "Soon you will be able to deploy this model to the Lightning Studio!",
     )
-    # TODO: Deploy to the cloud
