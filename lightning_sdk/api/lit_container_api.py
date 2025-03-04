@@ -1,3 +1,4 @@
+import inspect
 import time
 from typing import Any, Callable, Dict, Generator, Iterator, List
 
@@ -21,12 +22,25 @@ class DockerPushError(Exception):
 
 
 def retry_on_lcr_auth_failure(func: Callable) -> Callable:
+    def generator_wrapper(self: "LitContainerApi", *args: Any, **kwargs: Any) -> Callable:
+        try:
+            gen = func(self, *args, **kwargs)
+            yield from gen
+        except LCRAuthFailedError:
+            self.authenticate(reauth=True)
+            gen = func(self, *args, **kwargs)
+            yield from gen
+        return
+
     def wrapper(self: "LitContainerApi", *args: Any, **kwargs: Any) -> Callable:
         try:
             return func(self, *args, **kwargs)
         except LCRAuthFailedError:
             self.authenticate(reauth=True)
             return func(self, *args, **kwargs)
+
+    if inspect.isgeneratorfunction(func):
+        return generator_wrapper
 
     return wrapper
 
@@ -80,6 +94,7 @@ class LitContainerApi:
         except Exception as e:
             raise ValueError(f"Could not delete container {container} from project {project_id}: {e!s}") from e
 
+    @retry_on_lcr_auth_failure
     def upload_container(self, container: str, teamspace: Teamspace, tag: str) -> Generator[dict, None, None]:
         try:
             self._docker_client.images.get(container)
