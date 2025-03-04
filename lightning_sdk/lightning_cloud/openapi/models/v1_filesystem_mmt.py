@@ -41,6 +41,7 @@ class V1FilesystemMMT(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'artifacts_type': 'V1JobArtifactsType',
         'cloud_space_id': 'str',
         'id': 'str',
         'jobs': 'list[V1FilesystemJob]',
@@ -48,19 +49,23 @@ class V1FilesystemMMT(object):
     }
 
     attribute_map = {
+        'artifacts_type': 'artifactsType',
         'cloud_space_id': 'cloudSpaceId',
         'id': 'id',
         'jobs': 'jobs',
         'name': 'name'
     }
 
-    def __init__(self, cloud_space_id: 'str' =None, id: 'str' =None, jobs: 'list[V1FilesystemJob]' =None, name: 'str' =None):  # noqa: E501
+    def __init__(self, artifacts_type: 'V1JobArtifactsType' =None, cloud_space_id: 'str' =None, id: 'str' =None, jobs: 'list[V1FilesystemJob]' =None, name: 'str' =None):  # noqa: E501
         """V1FilesystemMMT - a model defined in Swagger"""  # noqa: E501
+        self._artifacts_type = None
         self._cloud_space_id = None
         self._id = None
         self._jobs = None
         self._name = None
         self.discriminator = None
+        if artifacts_type is not None:
+            self.artifacts_type = artifacts_type
         if cloud_space_id is not None:
             self.cloud_space_id = cloud_space_id
         if id is not None:
@@ -69,6 +74,27 @@ class V1FilesystemMMT(object):
             self.jobs = jobs
         if name is not None:
             self.name = name
+
+    @property
+    def artifacts_type(self) -> 'V1JobArtifactsType':
+        """Gets the artifacts_type of this V1FilesystemMMT.  # noqa: E501
+
+
+        :return: The artifacts_type of this V1FilesystemMMT.  # noqa: E501
+        :rtype: V1JobArtifactsType
+        """
+        return self._artifacts_type
+
+    @artifacts_type.setter
+    def artifacts_type(self, artifacts_type: 'V1JobArtifactsType'):
+        """Sets the artifacts_type of this V1FilesystemMMT.
+
+
+        :param artifacts_type: The artifacts_type of this V1FilesystemMMT.  # noqa: E501
+        :type: V1JobArtifactsType
+        """
+
+        self._artifacts_type = artifacts_type
 
     @property
     def cloud_space_id(self) -> 'str':

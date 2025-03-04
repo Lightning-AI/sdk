@@ -43,6 +43,7 @@ class ProjectIdPipelinesBody(object):
     swagger_types = {
         'cluster_id': 'str',
         'name': 'str',
+        'schedules': 'list[V1PipelineSchedule]',
         'shared_filesystem': 'V1SharedFilesystem',
         'steps': 'list[V1PipelineStep]'
     }
@@ -50,14 +51,16 @@ class ProjectIdPipelinesBody(object):
     attribute_map = {
         'cluster_id': 'clusterId',
         'name': 'name',
+        'schedules': 'schedules',
         'shared_filesystem': 'sharedFilesystem',
         'steps': 'steps'
     }
 
-    def __init__(self, cluster_id: 'str' =None, name: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, name: 'str' =None, schedules: 'list[V1PipelineSchedule]' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
         """ProjectIdPipelinesBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._name = None
+        self._schedules = None
         self._shared_filesystem = None
         self._steps = None
         self.discriminator = None
@@ -65,6 +68,8 @@ class ProjectIdPipelinesBody(object):
             self.cluster_id = cluster_id
         if name is not None:
             self.name = name
+        if schedules is not None:
+            self.schedules = schedules
         if shared_filesystem is not None:
             self.shared_filesystem = shared_filesystem
         if steps is not None:
@@ -111,6 +116,27 @@ class ProjectIdPipelinesBody(object):
         """
 
         self._name = name
+
+    @property
+    def schedules(self) -> 'list[V1PipelineSchedule]':
+        """Gets the schedules of this ProjectIdPipelinesBody.  # noqa: E501
+
+
+        :return: The schedules of this ProjectIdPipelinesBody.  # noqa: E501
+        :rtype: list[V1PipelineSchedule]
+        """
+        return self._schedules
+
+    @schedules.setter
+    def schedules(self, schedules: 'list[V1PipelineSchedule]'):
+        """Sets the schedules of this ProjectIdPipelinesBody.
+
+
+        :param schedules: The schedules of this ProjectIdPipelinesBody.  # noqa: E501
+        :type: list[V1PipelineSchedule]
+        """
+
+        self._schedules = schedules
 
     @property
     def shared_filesystem(self) -> 'V1SharedFilesystem':

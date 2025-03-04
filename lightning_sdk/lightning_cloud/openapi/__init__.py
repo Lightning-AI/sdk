@@ -509,6 +509,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_invalidate_cloud_space_inst
 from lightning_sdk.lightning_cloud.openapi.models.v1_invite_project_membership_response import V1InviteProjectMembershipResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_job import V1Job
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_action import V1JobAction
+from lightning_sdk.lightning_cloud.openapi.models.v1_job_artifacts_type import V1JobArtifactsType
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_file import V1JobFile
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_health_check_config import V1JobHealthCheckConfig
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_log_entry import V1JobLogEntry
@@ -685,6 +686,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_path_mapping import V1PathM
 from lightning_sdk.lightning_cloud.openapi.models.v1_path_telemetry import V1PathTelemetry
 from lightning_sdk.lightning_cloud.openapi.models.v1_phase_type import V1PhaseType
 from lightning_sdk.lightning_cloud.openapi.models.v1_pipeline import V1Pipeline
+from lightning_sdk.lightning_cloud.openapi.models.v1_pipeline_schedule import V1PipelineSchedule
 from lightning_sdk.lightning_cloud.openapi.models.v1_pipeline_step import V1PipelineStep
 from lightning_sdk.lightning_cloud.openapi.models.v1_pipeline_step_status import V1PipelineStepStatus
 from lightning_sdk.lightning_cloud.openapi.models.v1_pipeline_step_type import V1PipelineStepType
