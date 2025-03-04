@@ -51,16 +51,15 @@ def test_file_help():
 
     assert (
         result_text
-        == """Usage: lightning download file [OPTIONS]
+        == """Usage: lightning download file [OPTIONS] PATH
 
   Download a file from a Studio.
 
+  Example:   lightning download file PATH
+
+  PATH: The relative path to the file within the Studio you want to download.
+
 Options:
-  --path TEXT                     The relative path within the Studio you want
-                                  to download. If you leave it empty it will
-                                  download whole studio and locally creates a
-                                  new folder with the same name as the
-                                  selected studio.
   --studio TEXT                   The name of the studio to upload to. Will
                                   show a menu with user's owned studios for
                                   selection if not specified. If provided,
@@ -70,9 +69,9 @@ Options:
                                   names can be regular expressions to match, a
                                   menu filtered studios will be shown for
                                   final selection.
-  --local-path, --local_path TEXT
+  --local-path, --local_path DIRECTORY
                                   The path to the directory you want to
-                                  download the folder to.
+                                  download the file to.
   --help                          Show this message and exit.
 """
     )
@@ -84,16 +83,16 @@ def test_folder_help():
 
     assert (
         result_text
-        == """Usage: lightning download folder [OPTIONS]
+        == """Usage: lightning download folder [OPTIONS] PATH
 
   Download a folder from a Studio.
 
+  Example:   lightning download folder PATH
+
+  PATH: The relative path within the Studio you want to download. Defaults to
+  the entire studio.
+
 Options:
-  --path TEXT                     The relative path within the Studio you want
-                                  to download. If you leave it empty it will
-                                  download whole studio and locally creates a
-                                  new folder with the same name as the
-                                  selected studio.
   --studio TEXT                   The name of the studio to upload to. Will
                                   show a menu with user's owned studios for
                                   selection if not specified. If provided,
@@ -103,7 +102,7 @@ Options:
                                   names can be regular expressions to match, a
                                   menu filtered studios will be shown for
                                   final selection.
-  --local-path, --local_path TEXT
+  --local-path, --local_path DIRECTORY
                                   The path to the directory you want to
                                   download the folder to.
   --help                          Show this message and exit.

@@ -41,15 +41,7 @@ def model(name: str, download_dir: str = ".") -> None:
 
 
 @download.command(name="folder")
-@click.option(
-    "--path",
-    default="",
-    help=(
-        "The relative path within the Studio you want to download. "
-        "If you leave it empty it will download whole studio and locally creates a "
-        "new folder with the same name as the selected studio."
-    ),
-)
+@click.argument("path")
 @click.option(
     "--studio",
     default=None,
@@ -62,10 +54,21 @@ def model(name: str, download_dir: str = ".") -> None:
     ),
 )
 @click.option(
-    "--local-path", "--local_path", default=".", help="The path to the directory you want to download the folder to."
+    "--local-path",
+    "--local_path",
+    default=".",
+    type=click.Path(file_okay=False, dir_okay=True),
+    help="The path to the directory you want to download the folder to.",
 )
 def folder(path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
-    """Download a folder from a Studio."""
+    """Download a folder from a Studio.
+
+    Example:
+      lightning download folder PATH
+
+    PATH: The relative path within the Studio you want to download.
+    Defaults to the entire studio.
+    """
     local_path = Path(local_path)
     if not local_path.is_dir():
         raise NotADirectoryError(f"'{local_path}' is not a directory")
@@ -89,15 +92,7 @@ def folder(path: str = "", studio: Optional[str] = None, local_path: str = ".") 
 
 
 @download.command(name="file")
-@click.option(
-    "--path",
-    default="",
-    help=(
-        "The relative path within the Studio you want to download. "
-        "If you leave it empty it will download whole studio and locally creates a new folder "
-        "with the same name as the selected studio."
-    ),
-)
+@click.argument("path")
 @click.option(
     "--studio",
     default=None,
@@ -110,10 +105,20 @@ def folder(path: str = "", studio: Optional[str] = None, local_path: str = ".") 
     ),
 )
 @click.option(
-    "--local-path", "--local_path", default=".", help="The path to the directory you want to download the folder to."
+    "--local-path",
+    "--local_path",
+    default=".",
+    type=click.Path(file_okay=False, dir_okay=True),
+    help="The path to the directory you want to download the file to.",
 )
 def file(path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
-    """Download a file from a Studio."""
+    """Download a file from a Studio.
+
+    Example:
+      lightning download file PATH
+
+    PATH: The relative path to the file within the Studio you want to download.
+    """
     local_path = Path(local_path)
     if not local_path.is_dir():
         raise NotADirectoryError(f"'{local_path}' is not a directory")
