@@ -52,8 +52,8 @@ Options:
   --cloud                         Deploy the model to the Lightning AI
                                   platform
   --gpu                           Use GPU for serving
-  --repository TEXT               Docker repository name (e.g.,
-                                  'username/model-name')
+  --name TEXT                     Name of the deployed API (e.g.,
+                                  'classification-api', 'Llama-api')
   --non-interactive, --non_interactive
                                   Do not prompt for confirmation
   --help                          Show this message and exit.
@@ -98,7 +98,22 @@ def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
 @patch("docker.from_env")
 @patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.cli.serve._TeamspacesMenu")
-def test_cloud_deployment(mock_teamspace, mock_confirm, mock_docker, mock_cwd, temp_script, capsys):
+@patch("lightning_sdk.cli.serve.LitContainerApi")
+@patch("lightning_sdk.cli.serve.DeploymentApi")
+@patch("lightning_sdk.serve._LitServeDeployer._run_on_cloud")
+@patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
+def test_cloud_deployment(
+    mock_docker_build,
+    mock_run_on_cloud,
+    mock_deploy_api,
+    mock_litcr,
+    mock_teamspace,
+    mock_confirm,
+    mock_docker,
+    mock_cwd,
+    temp_script,
+    capsys,
+):
     mock_client = mock_docker.return_value
 
     # Mock Docker client responses
@@ -113,13 +128,17 @@ def test_cloud_deployment(mock_teamspace, mock_confirm, mock_docker, mock_cwd, t
     ]
 
     # Test with specific repository tag
-    test_tag = "test-repo/model:latest"
-    serve_api(temp_script, cloud=True, repository=test_tag)
+    repo = "test-repo/model"
+    tag = "latest"
+    mock_deploy_api.return_value.get_deployment_by_name.return_value = None
+    serve_api(temp_script, cloud=True, repository=repo, tag=tag)
+
+    mock_teamspace.return_value._resolve_teamspace.assert_called_once()
 
     # Verify Docker operations
-    assert mock_client.ping.call_count == 3
-    mock_client.api.build.assert_called_once()
-    mock_client.api.push.assert_called_once()
+    assert mock_client.ping.call_count == 1
+    mock_docker_build.assert_called_once()
+    mock_litcr.return_value.upload_container.assert_called_once()
 
     # Verify user was prompted twice
     assert mock_confirm.call_count == 1
@@ -127,14 +146,29 @@ def test_cloud_deployment(mock_teamspace, mock_confirm, mock_docker, mock_cwd, t
 
     # Capture and verify the output
     captured = capsys.readouterr()
-    assert f"✅ Image pushed to {test_tag}" in captured.out
+    assert f"✅ Image pushed to {repo}" in captured.out
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
 @patch("docker.from_env")
 @patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.cli.serve._TeamspacesMenu")
-def test_cloud_deployment_non_interactive(mock_teamspace, mock_confirm, mock_docker, mock_cwd, temp_script, capsys):
+@patch("lightning_sdk.cli.serve.LitContainerApi")
+@patch("lightning_sdk.cli.serve.DeploymentApi")
+@patch("lightning_sdk.serve._LitServeDeployer._run_on_cloud")
+@patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
+def test_cloud_deployment_non_interactive(
+    mock_docker_build,
+    mock_run_cloud,
+    mock_deployment_api,
+    mock_litcr,
+    mock_teamspace,
+    mock_confirm,
+    mock_docker,
+    mock_cwd,
+    temp_script,
+    capsys,
+):
     mock_client = mock_docker.return_value
 
     # Mock Docker client responses
@@ -142,22 +176,31 @@ def test_cloud_deployment_non_interactive(mock_teamspace, mock_confirm, mock_doc
     mock_client.api.build.return_value = [{"stream": "Step 1/10"}]
     mock_client.api.push.return_value = [{"status": "Pushing"}]
 
-    test_tag = "test-repo/model:latest"
-    serve_api(temp_script, cloud=True, repository=test_tag, non_interactive=True)
+    repo = "test-repo/model"
+    tag = "latest"
+    mock_deployment_api.return_value.get_deployment_by_name.return_value = None
+    serve_api(temp_script, cloud=True, repository=repo, tag=tag, non_interactive=True)
 
-    assert mock_client.ping.call_count == 3
-    mock_client.api.build.assert_called_once()
-    mock_client.api.push.assert_called_once()
+    mock_teamspace.return_value._resolve_teamspace.assert_called_once()
+
+    mock_deployment_api.return_value.get_deployment_by_name.assert_called_once()
+
+    assert mock_client.ping.call_count == 1
+    mock_docker_build.assert_called_once()
+    mock_litcr.return_value.upload_container.assert_called_once()
 
     assert mock_confirm.call_count == 0
     captured = capsys.readouterr()
-    assert f"✅ Image pushed to {test_tag}" in captured.out
+    assert f"✅ Image pushed to {repo}:{tag}" in captured.out
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
 @patch("docker.from_env")
-def test_cloud_deployment_no_docker(mock_docker, temp_script):
+@patch("lightning_sdk.cli.serve.LitContainerApi")
+@patch("lightning_sdk.cli.serve._TeamspacesMenu")
+def test_cloud_deployment_no_docker(mock_teamspace, mock_litcr, mock_docker, temp_script):
     mock_docker.side_effect = ImportError("docker-py is not installed")
 
     with pytest.raises(ImportError, match="docker-py is not installed"):
         serve_api(temp_script, cloud=True)
+    mock_teamspace.return_value._resolve_teamspace.assert_called_once()

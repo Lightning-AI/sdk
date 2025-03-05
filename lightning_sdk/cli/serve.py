@@ -1,3 +1,4 @@
+import os
 import subprocess
 from pathlib import Path
 from typing import Optional, Union
@@ -8,7 +9,9 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
 
+from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
+from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.serve import _LitServeDeployer
 
@@ -46,7 +49,7 @@ def serve() -> None:
     help="Deploy the model to the Lightning AI platform",
 )
 @click.option("--gpu", is_flag=True, default=False, flag_value=True, help="Use GPU for serving")
-@click.option("--repository", default=None, help="Docker repository name (e.g., 'username/model-name')")
+@click.option("--name", default=None, help="Name of the deployed API (e.g., 'classification-api', 'Llama-api')")
 @click.option(
     "--non-interactive",
     "--non_interactive",
@@ -60,12 +63,12 @@ def api(
     easy: bool,
     cloud: bool,
     gpu: bool,
-    repository: str,
+    name: str,
     non_interactive: bool,
 ) -> None:
     """Deploy a LitServe model script."""
     return api_impl(
-        script_path=script_path, easy=easy, cloud=cloud, gpu=gpu, repository=repository, non_interactive=non_interactive
+        script_path=script_path, easy=easy, cloud=cloud, gpu=gpu, repository=name, non_interactive=non_interactive
     )
 
 
@@ -74,7 +77,8 @@ def api_impl(
     easy: bool = False,
     cloud: bool = False,
     gpu: bool = False,
-    repository: Optional[str] = None,
+    repository: [str] = None,
+    tag: Optional[str] = None,
     non_interactive: bool = False,
 ) -> None:
     """Deploy a LitServe model script."""
@@ -85,12 +89,13 @@ def api_impl(
     if not script_path.is_file():
         raise ValueError(f"Path is not a file: {script_path}")
 
-    ls_deployer = _LitServeDeployer()
-    ls_deployer.generate_client() if easy else None
+    _LitServeDeployer.generate_client() if easy else None
 
     if cloud:
-        tag = repository if repository else "litserve-model"
-        return _handle_cloud(script_path, console, gpu=gpu, tag=tag, non_interactive=non_interactive)
+        repository = repository or "litserve-model"
+        return _handle_cloud(
+            script_path, console, gpu=gpu, repository=repository, tag=tag, non_interactive=non_interactive
+        )
 
     try:
         subprocess.run(
@@ -112,11 +117,13 @@ def _handle_cloud(
     teamspace: Optional[str] = None,
     non_interactive: bool = False,
 ) -> None:
+    menu = _TeamspacesMenu()
+    teamspace = menu._resolve_teamspace(teamspace)
     try:
         client = docker.from_env()
         client.ping()
     except docker.errors.DockerException as e:
-        raise RuntimeError(f"Failed to connect to Docker daemon: {e!s}. Is Docker running?") from None
+        raise StudioCliError(f"Failed to connect to Docker daemon: {e!s}. Is Docker running?") from None
 
     ls_deployer = _LitServeDeployer()
     path = ls_deployer.dockerize_api(script_path, port=8000, gpu=gpu, tag=tag)
@@ -133,18 +140,29 @@ def _handle_cloud(
     tag = tag if tag else "latest"
 
     lit_cr = LitContainerApi()
-    menu = _TeamspacesMenu()
-    teamspace = menu._resolve_teamspace(teamspace)
+    deployment_name = os.path.basename(repository)
+
+    if DeploymentApi().get_deployment_by_name(deployment_name, teamspace.id):
+        raise StudioCliError(f"Deployment {deployment_name} already exists. Please choose a different name.") from None
+
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
         TimeElapsedColumn(),
         console=console,
-        transient=False,
+        transient=True,
     ) as progress:
-        ls_deployer._build_container(path, repository, tag, console, progress)
-        ls_deployer._push_container(repository, tag, teamspace, lit_cr, progress)
-    console.print(f"\n✅ Image pushed to {tag}", style="bold green")
-    console.print(
-        "Soon you will be able to deploy this model to the Lightning Studio!",
+        try:
+            ls_deployer.build_container(path, repository, tag, console, progress)
+            push_status = ls_deployer.push_container(repository, tag, teamspace, lit_cr, progress)
+        except Exception as e:
+            console.print(f"❌ Deployment failed: {e}", style="red")
+            return
+    console.print(f"\n✅ Image pushed to {repository}:{tag}")
+    console.print(f"🔗 You can access the container at: [i]{push_status.get('url')}[/i]")
+    repository = push_status.get("repository")
+
+    deployment_status = ls_deployer._run_on_cloud(
+        deployment_name=deployment_name, image=repository, teamspace=teamspace, ports=[8000], gpu=gpu, metric=None
     )
+    console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")

@@ -1,13 +1,18 @@
 import os
+import shlex
+import subprocess
 import warnings
 from pathlib import Path
+from typing import Generator, List, Optional
 
 import docker
 from rich.console import Console
 from rich.progress import Progress
 
-from lightning_sdk import Teamspace
+from lightning_sdk import Deployment, Machine, Teamspace
+from lightning_sdk.api.deployment_api import AutoScaleConfig
 from lightning_sdk.api.lit_container_api import LitContainerApi
+from lightning_sdk.api.utils import _get_cloud_url
 
 
 class _LitServeDeployer:
@@ -17,6 +22,8 @@ class _LitServeDeployer:
 
     @property
     def client(self) -> docker.DockerClient:
+        os.environ["DOCKER_BUILDKIT"] = "1"
+
         if self._client is None:
             try:
                 self._client = docker.from_env()
@@ -80,8 +87,11 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         console.print(success_msg)
         return os.path.abspath("Dockerfile")
 
-    def generate_client(self) -> None:
-        console = self._console
+    @staticmethod
+    def generate_client() -> None:
+        from rich.console import Console
+
+        console = Console()
         try:
             from litserve.python_client import client_template
         except ImportError:
@@ -99,36 +109,113 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
             except OSError as e:
                 raise OSError(f"Failed to generate client.py: {e!s}") from None
 
-    def _build_container(self, path: str, repository: str, tag: str, console: Console, progress: Progress) -> None:
-        build_task = progress.add_task("Building Docker image", total=None)
-        build_status = self.client.api.build(
-            path=os.path.dirname(path), dockerfile=path, tag=f"{repository}:{tag}", decode=True, quiet=False
+    def _docker_build_with_logs(
+        self, path: str, repository: str, tag: str, platform: str = "linux/amd64"
+    ) -> Generator[str, None, None]:
+        """Build Docker image using CLI with real-time log streaming.
+
+        Returns:
+            Tuple: (image_id, logs generator)
+
+        Raises:
+            RuntimeError: On build failure
+        """
+        cmd = f"docker build --platform {platform} -t {repository}:{tag} ."
+        proc = subprocess.Popen(
+            shlex.split(cmd),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,  # Line buffered
         )
-        for line in build_status:
+
+        def log_generator() -> Generator[str, None, None]:
+            while True:
+                line = proc.stdout.readline()
+                if not line and proc.poll() is not None:
+                    break
+                yield line.strip()
+                if "error" in line.lower():
+                    proc.terminate()
+                    raise RuntimeError(f"Build failed: {line.strip()}")
+
+            if proc.returncode != 0:
+                raise RuntimeError(f"Build failed with exit code {proc.returncode}")
+
+        return log_generator()
+
+    def build_container(self, path: str, repository: str, tag: str, console: Console, progress: Progress) -> None:
+        build_task = progress.add_task("Building Docker image", total=None)
+        build_logs = self._docker_build_with_logs(path, repository, tag=tag)
+
+        for line in build_logs:
             if "error" in line:
                 progress.stop()
                 console.print(f"\n[red]{line}[/red]")
-                return
-            if "stream" in line and line["stream"].strip():
-                console.print(line["stream"].strip(), style="bright_black")
+                raise RuntimeError(f"Failed to build image: {line}")
+            else:
+                console.print(
+                    line.strip(),
+                )
                 progress.update(build_task, description="Building Docker image")
 
         progress.update(build_task, description="[green]Build completed![/green]")
 
-    def _push_container(
+    def push_container(
         self, repository: str, tag: str, teamspace: Teamspace, lit_cr: LitContainerApi, progress: Progress
-    ) -> None:
+    ) -> dict:
         console = self._console
         push_task = progress.add_task("Pushing to registry", total=None)
         console.print("\nPushing image...", style="bold blue")
         lit_cr.authenticate()
         push_status = lit_cr.upload_container(repository, teamspace, tag=tag)
+        last_status = {}
         for line in push_status:
+            last_status = line
             if "error" in line:
                 progress.stop()
                 console.print(f"\n[red]{line}[/red]")
-                return
+                raise RuntimeError(f"Failed to push image: {line}")
             if "status" in line:
-                console.print(line["status"], style="bright_black")
+                console.print(line["status"].strip())
                 progress.update(push_task, description="Pushing to registry")
         progress.update(push_task, description="[green]Push completed![/green]")
+        return last_status
+
+    def _run_on_cloud(
+        self,
+        deployment_name: str,
+        teamspace: Teamspace,
+        image: str,
+        ports: List[int],
+        gpu: bool = False,
+        metric: Optional[str] = None,
+        machine: Optional[Machine] = None,
+        min_replica: Optional[int] = 1,
+        max_replica: Optional[int] = 1,
+        spot: Optional[bool] = None,
+        replicas: Optional[int] = None,
+        cloud_account: Optional[str] = None,
+    ) -> dict:
+        machine = machine or Machine.CPU
+        metric = metric or "GPU" if gpu else "CPU"
+        url = f"{_get_cloud_url()}/{teamspace.owner.name}/{teamspace.name}/jobs/{deployment_name}"
+        deployment = Deployment(deployment_name, teamspace)
+        if deployment.is_started:
+            raise RuntimeError(
+                f"Deployment with name {deployment_name} already running. "
+                "Please stop the deployment before starting a new one.\n"
+                f"You can access the deployment at {url}"
+            )
+        autoscale = AutoScaleConfig(min_replicas=min_replica, max_replicas=max_replica, metric=metric, threshold=0.95)
+        deployment.start(
+            machine=machine,
+            image=image,
+            ports=ports,
+            autoscale=autoscale,
+            spot=spot,
+            replicas=replicas,
+            cloud_account=cloud_account,
+        )
+
+        return {"deployment": deployment, "url": url}

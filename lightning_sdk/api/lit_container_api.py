@@ -120,6 +120,7 @@ class LitContainerApi:
         yield {
             "finish": True,
             "url": f"{LIGHTNING_CLOUD_URL}/{teamspace.owner.name}/{teamspace.name}/containers/{container_basename}",
+            "repository": repository,
         }
 
     def _push_with_retry(self, repository: str, max_retries: int = 3) -> Iterator[Dict[str, Any]]:
