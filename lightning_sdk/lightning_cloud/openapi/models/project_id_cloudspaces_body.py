@@ -52,6 +52,7 @@ class ProjectIdCloudspacesBody(object):
         'name': 'str',
         'plugins': 'list[str]',
         'requested_run_duration_seconds': 'str',
+        'same_compute_on_resume': 'bool',
         'seed_files': 'list[V1CloudSpaceSeedFile]',
         'spot': 'bool'
     }
@@ -68,11 +69,12 @@ class ProjectIdCloudspacesBody(object):
         'name': 'name',
         'plugins': 'plugins',
         'requested_run_duration_seconds': 'requestedRunDurationSeconds',
+        'same_compute_on_resume': 'sameComputeOnResume',
         'seed_files': 'seedFiles',
         'spot': 'spot'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, spot: 'bool' =None):  # noqa: E501
         """ProjectIdCloudspacesBody - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cloud_space_instance_cpu_image_override = None
@@ -85,6 +87,7 @@ class ProjectIdCloudspacesBody(object):
         self._name = None
         self._plugins = None
         self._requested_run_duration_seconds = None
+        self._same_compute_on_resume = None
         self._seed_files = None
         self._spot = None
         self.discriminator = None
@@ -110,6 +113,8 @@ class ProjectIdCloudspacesBody(object):
             self.plugins = plugins
         if requested_run_duration_seconds is not None:
             self.requested_run_duration_seconds = requested_run_duration_seconds
+        if same_compute_on_resume is not None:
+            self.same_compute_on_resume = same_compute_on_resume
         if seed_files is not None:
             self.seed_files = seed_files
         if spot is not None:
@@ -345,6 +350,27 @@ class ProjectIdCloudspacesBody(object):
         """
 
         self._requested_run_duration_seconds = requested_run_duration_seconds
+
+    @property
+    def same_compute_on_resume(self) -> 'bool':
+        """Gets the same_compute_on_resume of this ProjectIdCloudspacesBody.  # noqa: E501
+
+
+        :return: The same_compute_on_resume of this ProjectIdCloudspacesBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._same_compute_on_resume
+
+    @same_compute_on_resume.setter
+    def same_compute_on_resume(self, same_compute_on_resume: 'bool'):
+        """Sets the same_compute_on_resume of this ProjectIdCloudspacesBody.
+
+
+        :param same_compute_on_resume: The same_compute_on_resume of this ProjectIdCloudspacesBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._same_compute_on_resume = same_compute_on_resume
 
     @property
     def seed_files(self) -> 'list[V1CloudSpaceSeedFile]':

@@ -61,6 +61,7 @@ class V1UserFeatures(object):
         'deployment_alerts': 'bool',
         'deployment_persistent_disk': 'bool',
         'deployment_reservations': 'bool',
+        'dgx_cloud': 'bool',
         'docs_agent': 'bool',
         'drive_v2': 'bool',
         'enable_crypto_crackdown': 'bool',
@@ -82,7 +83,6 @@ class V1UserFeatures(object):
         'open_api_in_studio': 'bool',
         'org_level_member_permissions': 'bool',
         'pipelines': 'bool',
-        'plugin_biz_chat': 'bool',
         'plugin_distributed': 'bool',
         'plugin_fiftyone': 'bool',
         'plugin_inference': 'bool',
@@ -139,6 +139,7 @@ class V1UserFeatures(object):
         'deployment_alerts': 'deploymentAlerts',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
         'deployment_reservations': 'deploymentReservations',
+        'dgx_cloud': 'dgxCloud',
         'docs_agent': 'docsAgent',
         'drive_v2': 'driveV2',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
@@ -160,7 +161,6 @@ class V1UserFeatures(object):
         'open_api_in_studio': 'openApiInStudio',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'pipelines': 'pipelines',
-        'plugin_biz_chat': 'pluginBizChat',
         'plugin_distributed': 'pluginDistributed',
         'plugin_fiftyone': 'pluginFiftyone',
         'plugin_inference': 'pluginInference',
@@ -196,7 +196,7 @@ class V1UserFeatures(object):
         'vultr': 'vultr'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, jobs_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mmt_v2: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, open_api_in_studio: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_biz_chat: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, jobs_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mmt_v2: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, open_api_in_studio: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -218,6 +218,7 @@ class V1UserFeatures(object):
         self._deployment_alerts = None
         self._deployment_persistent_disk = None
         self._deployment_reservations = None
+        self._dgx_cloud = None
         self._docs_agent = None
         self._drive_v2 = None
         self._enable_crypto_crackdown = None
@@ -239,7 +240,6 @@ class V1UserFeatures(object):
         self._open_api_in_studio = None
         self._org_level_member_permissions = None
         self._pipelines = None
-        self._plugin_biz_chat = None
         self._plugin_distributed = None
         self._plugin_fiftyone = None
         self._plugin_inference = None
@@ -314,6 +314,8 @@ class V1UserFeatures(object):
             self.deployment_persistent_disk = deployment_persistent_disk
         if deployment_reservations is not None:
             self.deployment_reservations = deployment_reservations
+        if dgx_cloud is not None:
+            self.dgx_cloud = dgx_cloud
         if docs_agent is not None:
             self.docs_agent = docs_agent
         if drive_v2 is not None:
@@ -356,8 +358,6 @@ class V1UserFeatures(object):
             self.org_level_member_permissions = org_level_member_permissions
         if pipelines is not None:
             self.pipelines = pipelines
-        if plugin_biz_chat is not None:
-            self.plugin_biz_chat = plugin_biz_chat
         if plugin_distributed is not None:
             self.plugin_distributed = plugin_distributed
         if plugin_fiftyone is not None:
@@ -846,6 +846,27 @@ class V1UserFeatures(object):
         self._deployment_reservations = deployment_reservations
 
     @property
+    def dgx_cloud(self) -> 'bool':
+        """Gets the dgx_cloud of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The dgx_cloud of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._dgx_cloud
+
+    @dgx_cloud.setter
+    def dgx_cloud(self, dgx_cloud: 'bool'):
+        """Sets the dgx_cloud of this V1UserFeatures.
+
+
+        :param dgx_cloud: The dgx_cloud of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._dgx_cloud = dgx_cloud
+
+    @property
     def docs_agent(self) -> 'bool':
         """Gets the docs_agent of this V1UserFeatures.  # noqa: E501
 
@@ -1285,27 +1306,6 @@ class V1UserFeatures(object):
         """
 
         self._pipelines = pipelines
-
-    @property
-    def plugin_biz_chat(self) -> 'bool':
-        """Gets the plugin_biz_chat of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_biz_chat of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_biz_chat
-
-    @plugin_biz_chat.setter
-    def plugin_biz_chat(self, plugin_biz_chat: 'bool'):
-        """Sets the plugin_biz_chat of this V1UserFeatures.
-
-
-        :param plugin_biz_chat: The plugin_biz_chat of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_biz_chat = plugin_biz_chat
 
     @property
     def plugin_distributed(self) -> 'bool':
