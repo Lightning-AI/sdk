@@ -32,7 +32,7 @@ from lightning_sdk.organization import Organization
 from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_org, _resolve_teamspace, _resolve_user
+from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace, _resolve_user
 
 
 class Deployment:
@@ -73,13 +73,12 @@ class Deployment:
             raise e
 
         self._name = name
-        self._org = _resolve_org(org)
         self._user = _resolve_user(self._user or user)
 
         self._teamspace = _resolve_teamspace(
             teamspace=teamspace,
-            org=self._org,
-            user=self._user,
+            org=org,
+            user=user,
         )
         if self._teamspace is None:
             raise ValueError("You need to pass a teamspace or an org for your deployment.")
