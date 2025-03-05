@@ -9,11 +9,14 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
 
+from lightning_sdk import Machine, Teamspace
 from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.serve import _LitServeDeployer
+
+_MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
 
 @click.group("serve")
@@ -24,11 +27,10 @@ def serve() -> None:
         lightning serve api server.py  # serve locally
 
     Example:
-        lightning serve api server.py --cloud  # deploy to the cloud
+        lightning serve api server.py --cloud --name litserve-api  # deploy to the cloud
 
     You can deploy the API to the cloud by running `lightning serve api server.py --cloud`.
-    This will generate a Dockerfile, build the image, and push it to the image registry.
-    Deploying to the cloud requires pre-login to the docker registry.
+    This will build a docker container for the server.py script and deploy it to the Lightning AI platform.
     """
 
 
@@ -48,7 +50,6 @@ def serve() -> None:
     flag_value=True,
     help="Deploy the model to the Lightning AI platform",
 )
-@click.option("--gpu", is_flag=True, default=False, flag_value=True, help="Use GPU for serving")
 @click.option("--name", default=None, help="Name of the deployed API (e.g., 'classification-api', 'Llama-api')")
 @click.option(
     "--non-interactive",
@@ -58,17 +59,70 @@ def serve() -> None:
     flag_value=True,
     help="Do not prompt for confirmation",
 )
+@click.option(
+    "--machine",
+    default="CPU",
+    show_default=True,
+    type=click.Choice(_MACHINE_VALUES),
+    help="The machine type to deploy the API on.",
+)
+@click.option(
+    "--interruptible",
+    is_flag=True,
+    default=False,
+    flag_value=True,
+    help="Whether the machine should be interruptible (spot) or not.",
+)
+@click.option(
+    "--teamspace",
+    default=None,
+    help="The teamspace the deployment should be associated with. Defaults to the current teamspace.",
+)
+@click.option(
+    "--org",
+    default=None,
+    help="The organization owning the teamspace (if any). Defaults to the current organization.",
+)
+@click.option("--user", default=None, help="The user owning the teamspace (if any). Defaults to the current user.")
+@click.option(
+    "--cloud-account",
+    "--cloud_account",
+    default=None,
+    help=(
+        "The cloud account to run the deployment on. "
+        "Defaults to the studio cloud account if running with studio compute env. "
+        "If not provided will fall back to the teamspaces default cloud account."
+    ),
+)
+@click.option("--port", default=8000, help="The port to expose the API on.")
 def api(
     script_path: str,
     easy: bool,
     cloud: bool,
-    gpu: bool,
     name: str,
     non_interactive: bool,
+    machine: str,
+    interruptible: bool,
+    teamspace: Optional[str],
+    org: Optional[str],
+    user: Optional[str],
+    cloud_account: Optional[str],
+    port: Optional[int],
 ) -> None:
     """Deploy a LitServe model script."""
     return api_impl(
-        script_path=script_path, easy=easy, cloud=cloud, gpu=gpu, repository=name, non_interactive=non_interactive
+        script_path=script_path,
+        easy=easy,
+        cloud=cloud,
+        repository=name,
+        non_interactive=non_interactive,
+        machine=machine,
+        interruptible=interruptible,
+        teamspace=teamspace,
+        org=org,
+        user=user,
+        cloud_account=cloud_account,
+        port=port,
     )
 
 
@@ -76,10 +130,16 @@ def api_impl(
     script_path: Union[str, Path],
     easy: bool = False,
     cloud: bool = False,
-    gpu: bool = False,
     repository: [str] = None,
     tag: Optional[str] = None,
     non_interactive: bool = False,
+    machine: str = "CPU",
+    interruptible: bool = False,
+    teamspace: Optional[str] = None,
+    org: Optional[str] = None,
+    user: Optional[str] = None,
+    cloud_account: Optional[str] = None,
+    port: Optional[int] = 8000,
 ) -> None:
     """Deploy a LitServe model script."""
     console = Console()
@@ -93,8 +153,20 @@ def api_impl(
 
     if cloud:
         repository = repository or "litserve-model"
+        machine = Machine.from_str(machine)
         return _handle_cloud(
-            script_path, console, gpu=gpu, repository=repository, tag=tag, non_interactive=non_interactive
+            script_path,
+            console,
+            repository=repository,
+            tag=tag,
+            non_interactive=non_interactive,
+            machine=machine,
+            interruptible=interruptible,
+            teamspace=teamspace,
+            org=org,
+            user=user,
+            cloud_account=cloud_account,
+            port=port,
         )
 
     try:
@@ -111,22 +183,32 @@ def api_impl(
 def _handle_cloud(
     script_path: Union[str, Path],
     console: Console,
-    gpu: bool,
     repository: str = "litserve-model",
     tag: Optional[str] = None,
-    teamspace: Optional[str] = None,
     non_interactive: bool = False,
+    machine: Machine = "CPU",
+    interruptible: bool = False,
+    teamspace: Optional[str] = None,
+    org: Optional[str] = None,
+    user: Optional[str] = None,
+    cloud_account: Optional[str] = None,
+    port: Optional[int] = 8000,
 ) -> None:
-    menu = _TeamspacesMenu()
-    teamspace = menu._resolve_teamspace(teamspace)
+    if teamspace is None:
+        menu = _TeamspacesMenu()
+        resolved_teamspace = menu._resolve_teamspace(teamspace)
+    else:
+        resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
+
     try:
         client = docker.from_env()
         client.ping()
     except docker.errors.DockerException as e:
         raise StudioCliError(f"Failed to connect to Docker daemon: {e!s}. Is Docker running?") from None
 
+    port = port or 8000
     ls_deployer = _LitServeDeployer()
-    path = ls_deployer.dockerize_api(script_path, port=8000, gpu=gpu, tag=tag)
+    path = ls_deployer.dockerize_api(script_path, port=port, gpu=not machine.is_cpu(), tag=tag)
     console.clear()
     if non_interactive:
         console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
@@ -142,7 +224,7 @@ def _handle_cloud(
     lit_cr = LitContainerApi()
     deployment_name = os.path.basename(repository)
 
-    if DeploymentApi().get_deployment_by_name(deployment_name, teamspace.id):
+    if DeploymentApi().get_deployment_by_name(deployment_name, resolved_teamspace.id):
         raise StudioCliError(f"Deployment {deployment_name} already exists. Please choose a different name.") from None
 
     with Progress(
@@ -154,7 +236,7 @@ def _handle_cloud(
     ) as progress:
         try:
             ls_deployer.build_container(path, repository, tag, console, progress)
-            push_status = ls_deployer.push_container(repository, tag, teamspace, lit_cr, progress)
+            push_status = ls_deployer.push_container(repository, tag, resolved_teamspace, lit_cr, progress)
         except Exception as e:
             console.print(f"❌ Deployment failed: {e}", style="red")
             return
@@ -163,6 +245,16 @@ def _handle_cloud(
     repository = push_status.get("repository")
 
     deployment_status = ls_deployer._run_on_cloud(
-        deployment_name=deployment_name, image=repository, teamspace=teamspace, ports=[8000], gpu=gpu, metric=None
+        deployment_name=deployment_name,
+        image=repository,
+        teamspace=resolved_teamspace,
+        ports=[8000],
+        metric=None,
+        machine=machine,
+        min_replica=1,
+        max_replica=1,
+        spot=interruptible,
+        cloud_account=cloud_account,
+        port=port,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")

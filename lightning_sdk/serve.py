@@ -188,7 +188,6 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         teamspace: Teamspace,
         image: str,
         ports: List[int],
-        gpu: bool = False,
         metric: Optional[str] = None,
         machine: Optional[Machine] = None,
         min_replica: Optional[int] = 1,
@@ -196,10 +195,11 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         spot: Optional[bool] = None,
         replicas: Optional[int] = None,
         cloud_account: Optional[str] = None,
+        port: Optional[int] = 8000,
     ) -> dict:
-        machine = machine or Machine.CPU
-        metric = metric or "GPU" if gpu else "CPU"
         url = f"{_get_cloud_url()}/{teamspace.owner.name}/{teamspace.name}/jobs/{deployment_name}"
+        machine = machine or Machine.CPU
+        metric = metric or ("CPU" if machine.is_cpu() else "GPU")
         deployment = Deployment(deployment_name, teamspace)
         if deployment.is_started:
             raise RuntimeError(
@@ -211,11 +211,11 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         deployment.start(
             machine=machine,
             image=image,
-            ports=ports,
             autoscale=autoscale,
             spot=spot,
             replicas=replicas,
             cloud_account=cloud_account,
+            ports=[port],
         )
 
         return {"deployment": deployment, "url": url}

@@ -21,12 +21,12 @@ def test_serve_help():
 
   Example:     lightning serve api server.py  # serve locally
 
-  Example:     lightning serve api server.py --cloud  # deploy to the cloud
+  Example:     lightning serve api server.py --cloud --name litserve-api  #
+  deploy to the cloud
 
   You can deploy the API to the cloud by running `lightning serve api
-  server.py --cloud`. This will generate a Dockerfile, build the image, and
-  push it to the image registry. Deploying to the cloud requires pre-login to
-  the docker registry.
+  server.py --cloud`. This will build a docker container for the server.py
+  script and deploy it to the Lightning AI platform.
 
 Options:
   --help  Show this message and exit.
@@ -51,13 +51,31 @@ Options:
   --easy                          Generate a client for the model
   --cloud                         Deploy the model to the Lightning AI
                                   platform
-  --gpu                           Use GPU for serving
   --name TEXT                     Name of the deployed API (e.g.,
                                   'classification-api', 'Llama-api')
   --non-interactive, --non_interactive
                                   Do not prompt for confirmation
+  --machine [CPU_SMALL|CPU|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_8|H100_X_8|H200_X_8]
+                                  The machine type to deploy the API on.
+                                  [default: CPU]
+  --interruptible                 Whether the machine should be interruptible
+                                  (spot) or not.
+  --teamspace TEXT                The teamspace the deployment should be
+                                  associated with. Defaults to the current
+                                  teamspace.
+  --org TEXT                      The organization owning the teamspace (if
+                                  any). Defaults to the current organization.
+  --user TEXT                     The user owning the teamspace (if any).
+                                  Defaults to the current user.
+  --cloud-account, --cloud_account TEXT
+                                  The cloud account to run the deployment on.
+                                  Defaults to the studio cloud account if
+                                  running with studio compute env. If not
+                                  provided will fall back to the teamspaces
+                                  default cloud account.
+  --port INTEGER                  The port to expose the API on.
   --help                          Show this message and exit.
-"""
+"""  # noqa: E501
     )
 
 
