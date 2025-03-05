@@ -27,7 +27,17 @@ def mock_api_list_containers():
     return repo
 
 
-def test_list_containers(mock_teamspace, mock_api_list_containers):
+@pytest.fixture()
+def mock_api_list_containers_string_creation():
+    repo = MagicMock()
+    repo.name = "test-docker-image"
+    repo.id = "test-image-id"
+    creation_time = datetime(2024, 1, 1, 12, 0, 0)
+    repo.creation_time = creation_time.isoformat()
+    return repo
+
+
+def test_list_containers(mock_teamspace, mock_api_list_containers, mock_api_list_containers_string_creation):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
         mock_resolve_teamspace.return_value = mock_teamspace
 
@@ -37,13 +47,26 @@ def test_list_containers(mock_teamspace, mock_api_list_containers):
 
         result = registry.list_containers(teamspace="test-teamspace")
 
-        mock_resolve_teamspace.assert_called_once_with(teamspace="test-teamspace", org=None, user=None)
-        registry._api.list_containers.assert_called_once_with("test-project-id")
+        expected_result = [
+            {"REPOSITORY": "test-docker-image", "IMAGE ID": "test-image-id", "CREATED": "2024-01-01 12:00:00"}
+        ]
+        assert result == expected_result
+
+        registry2 = LitContainer()
+        registry2._api = MagicMock(spec=LitContainerApi)
+        registry2._api.list_containers.return_value = [mock_api_list_containers_string_creation]
+
+        result = registry2.list_containers(teamspace="test-teamspace")
 
         expected_result = [
             {"REPOSITORY": "test-docker-image", "IMAGE ID": "test-image-id", "CREATED": "2024-01-01 12:00:00"}
         ]
         assert result == expected_result
+
+        mock_resolve_teamspace.assert_called_with(teamspace="test-teamspace", org=None, user=None)
+        assert mock_resolve_teamspace.call_count == 2
+
+        registry._api.list_containers.assert_called_once_with("test-project-id")
 
 
 def test_list_containers_with_org(mock_teamspace, mock_api_list_containers):

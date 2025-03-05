@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List, Optional
 
 from lightning_sdk.api.lit_container_api import LitContainerApi
@@ -29,11 +30,17 @@ class LitContainer:
         repositories = self._api.list_containers(project_id)
         table = []
         for repo in repositories:
+            created_date = repo.creation_time
+            if isinstance(repo.creation_time, str):
+                created_date = datetime.fromisoformat(created_date)
+
+            created = created_date.strftime("%Y-%m-%d %H:%M:%S")
+
             table.append(
                 {
                     "REPOSITORY": repo.name,
                     "IMAGE ID": repo.id,
-                    "CREATED": repo.creation_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "CREATED": created,
                 }
             )
         return table
