@@ -294,8 +294,15 @@ def test_deployment_start_first_time(monkeypatch):
         machine=Machine.A10G,
         image="ollama/ollama:latest",
         quantity=2,
+        include_credentials=False,
     )
     client.jobs_service_create_deployment.assert_called()
+
+    spec = client.jobs_service_create_deployment._mock_call_args_list[0].kwargs["body"].spec
+    assert spec.include_credentials is False
+    assert spec.quantity == 2
+    assert spec.image == "ollama/ollama:latest"
+    assert spec.cluster_id == "cluster_id"
 
     with pytest.raises(RuntimeError, match="This deployment has already been started."):
         deployment.start()
@@ -350,6 +357,7 @@ def test_deployment_update(monkeypatch):
         entrypoint="new_entrypoint",
         release_strategy=deployment_api_module.RollingUpdateReleaseStrategy(),
         health_check=HttpHealthCheck(path="/health", port=8000),
+        include_credentials=False,
     )
     client.jobs_service_update_deployment.assert_called()
     assert client.jobs_service_update_deployment._mock_mock_calls[0].kwargs["body"].spec.entrypoint == "new_entrypoint"
@@ -358,6 +366,7 @@ def test_deployment_update(monkeypatch):
     assert readiness_probe.http_get.port == 8000
     assert deployment.release_id == "release-id"
     assert deployment.quantity == 2
+    assert deployment.include_credentials is False
 
 
 def test_deployment_stop(monkeypatch):

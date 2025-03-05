@@ -115,6 +115,7 @@ class Deployment:
         custom_domain: Optional[str] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         quantity: Optional[int] = None,
+        include_credentials: Optional[bool] = None,
     ) -> None:
         """The Lightning AI Deployment.
 
@@ -139,6 +140,7 @@ class Deployment:
                 Doesn't matter when the studio already exists.
             custom_domain: Whether your service would be referenced under a custom doamin.
             quantity: The number of machines per replica to deploy.
+            include_credentials: Whether to include the environement variables for the SDK to authenticate
 
         Note:
             Since a teamspace can either be owned by an org or by a user directly,
@@ -171,6 +173,7 @@ class Deployment:
                     machine=machine,
                     health_check=health_check,
                     quantity=quantity,
+                    include_credentials=include_credentials if include_credentials is not None else True,
                 ),
                 strategy=to_strategy(release_strategy),
             )
@@ -202,6 +205,7 @@ class Deployment:
         custom_domain: Optional[str] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         quantity: Optional[int] = None,
+        include_credentials: Optional[bool] = None,
     ) -> None:
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
@@ -224,6 +228,7 @@ class Deployment:
             health_check=health_check,
             release_strategy=release_strategy,
             quantity=quantity,
+            include_credentials=include_credentials if include_credentials is not None else True,
         )
 
     def stop(self) -> None:
@@ -356,6 +361,14 @@ class Deployment:
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return self._deployment.spec.quantity
+        return None
+
+    @property
+    def include_credentials(self) -> Optional[bool]:
+        """The number of machines per replica."""
+        if self._deployment:
+            self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
+            return self._deployment.spec.include_credentials
         return None
 
     @property
