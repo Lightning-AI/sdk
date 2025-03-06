@@ -14,10 +14,9 @@ def test_run_on_cloud_already_started(mock_deployment):
     teamspace.owner.name = "owner"
     teamspace.name = "name"
     image = "scratch"
-    ports = [8000]
     mock_deployment.return_value.is_started = True
     with pytest.raises(RuntimeError, match="Deployment with name example already running."):
-        deployer._run_on_cloud("example", teamspace=teamspace, image=image, ports=ports)
+        deployer._run_on_cloud("example", teamspace=teamspace, image=image, port=8000)
 
 
 @patch("lightning_sdk.serve.AutoScaleConfig")
@@ -29,9 +28,8 @@ def test_run_on_cloud(mock_deployment, mock_autoscale):
     teamspace.owner.name = "owner"
     teamspace.name = "name"
     image = "scratch"
-    ports = [8000]
     mock_deployment.return_value.is_started = False
-    deployer._run_on_cloud("example", teamspace=teamspace, image=image, ports=ports)
+    deployer._run_on_cloud("example", teamspace=teamspace, image=image, port=8000)
     mock_deployment.assert_called_with("example", teamspace)
     mock_deployment.return_value.start.assert_called_with(
         machine=Machine.CPU,

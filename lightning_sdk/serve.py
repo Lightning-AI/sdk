@@ -3,7 +3,7 @@ import shlex
 import subprocess
 import warnings
 from pathlib import Path
-from typing import Generator, List, Optional
+from typing import Generator, Optional
 
 import docker
 from rich.console import Console
@@ -187,7 +187,6 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         deployment_name: str,
         teamspace: Teamspace,
         image: str,
-        ports: List[int],
         metric: Optional[str] = None,
         machine: Optional[Machine] = None,
         min_replica: Optional[int] = 1,
