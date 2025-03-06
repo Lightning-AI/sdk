@@ -72,6 +72,19 @@ def _get_teamspace(name: str, organization: str) -> "Teamspace":
     raise RuntimeError(f"Teamspace `{requested_teamspace}` not found. Available teamspaces: {os.linesep}\t{options}")
 
 
+def _extend_model_name_with_teamspace(name: str) -> str:
+    """Extend the model name with the teamspace if it can be determined from env. variables."""
+    if "/" in name:
+        return name
+    # do some magic if you run studio
+    teamspace = _resolve_teamspace(None, None, None)
+    if not teamspace:
+        raise ValueError(
+            f"Model name must be in the format `organization/teamspace/model_name` but you provided '{name}'."
+        )
+    return f"{teamspace.owner.name}/{teamspace.name}/{name}"
+
+
 def _parse_model_name_and_version(name: str) -> Tuple[str, str, str, str]:
     """Parse the name argument into its components."""
     try:
@@ -105,9 +118,7 @@ def download_model(
         download_dir: The directory where the Model should be downloaded.
         progress_bar: Whether to show a progress bar when downloading.
     """
-    if "/" not in name:  # do some magic if you run studio
-        teamspace = _resolve_teamspace(None, None, None)
-        name = f"{teamspace.owner.name}/{teamspace.name}/{name}"
+    name = _extend_model_name_with_teamspace(name)
     teamspace_owner_name, teamspace_name, model_name, version = _parse_model_name_and_version(name)
 
     download_dir = Path(download_dir)
@@ -147,9 +158,7 @@ def upload_model(
             If not provided, the default cloud account for the Teamspace will be used.
         progress_bar: Whether to show a progress bar for the upload.
     """
-    if "/" not in name:  # do some magic if you run studio
-        teamspace = _resolve_teamspace(None, None, None)
-        name = f"{teamspace.owner.name}/{teamspace.name}/{name}"
+    name = _extend_model_name_with_teamspace(name)
     org_name, teamspace_name, model_name, _ = _parse_model_name_and_version(name)
     teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
     return teamspace.upload_model(
