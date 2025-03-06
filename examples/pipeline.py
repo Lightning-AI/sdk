@@ -15,7 +15,7 @@ pipeline.run(
             image="ubuntu:latest",
             machine=Machine.CPU,
             command="echo 'Hello, World!'",
-            needs=None,
+            wait_for=None,
         ),
         Job(
             name='job-3',
@@ -40,7 +40,7 @@ pipeline.run(
             image="ubuntu:latest",
             machine=Machine.CPU,
             command="echo 'Hello, World!'",
-            needs=None,
+            wait_for=None,
         ),
     ]
 )

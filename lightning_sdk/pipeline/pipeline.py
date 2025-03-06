@@ -49,8 +49,8 @@ class Pipeline:
 
         self._teamspace = _resolve_teamspace(
             teamspace=teamspace,
-            org=self._org,
-            user=self._user,
+            org=org,
+            user=user,
         )
 
         self._pipeline_api = PipelineApi()

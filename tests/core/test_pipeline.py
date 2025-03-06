@@ -28,10 +28,13 @@ def test_pipeline_run(monkeypatch):
     resolve_teamspace_mock = MagicMock()
     monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
 
-    pipeline = Pipeline(name="first-pipeline")
+    pipeline = Pipeline(name="first-pipeline", org="org", user="user")
     cloud_account_mock = MagicMock()
     cloud_account_mock.cluster_id = ""
     pipeline._cloud_account = cloud_account_mock
+
+    assert resolve_teamspace_mock._mock_mock_calls[0].kwargs["org"] == "org"
+    assert resolve_teamspace_mock._mock_mock_calls[0].kwargs["user"] == "user"
 
     with pytest.raises(ValueError, match="The step 0 requires a name"):
         pipeline.run(
