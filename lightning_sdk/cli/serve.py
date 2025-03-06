@@ -95,6 +95,16 @@ def serve() -> None:
     ),
 )
 @click.option("--port", default=8000, help="The port to expose the API on.")
+@click.option("--min_replica", "--min-replica", default=0, help="Number of replicas to start with.")
+@click.option("--max_replica", "--max-replica", default=1, help="Number of replicas to scale up to.")
+@click.option(
+    "--no_credentials",
+    "--no-credentials",
+    is_flag=True,
+    default=False,
+    flag_value=True,
+    help="Whether to include credentials in the deployment.",
+)
 def api(
     script_path: str,
     easy: bool,
@@ -108,6 +118,9 @@ def api(
     user: Optional[str],
     cloud_account: Optional[str],
     port: Optional[int],
+    min_replica: Optional[int],
+    max_replica: Optional[int],
+    no_credentials: Optional[bool],
 ) -> None:
     """Deploy a LitServe model script."""
     return api_impl(
@@ -123,6 +136,9 @@ def api(
         user=user,
         cloud_account=cloud_account,
         port=port,
+        min_replica=min_replica,
+        max_replica=max_replica,
+        include_credentials=not no_credentials,
     )
 
 
@@ -140,6 +156,9 @@ def api_impl(
     user: Optional[str] = None,
     cloud_account: Optional[str] = None,
     port: Optional[int] = 8000,
+    min_replica: Optional[int] = 0,
+    max_replica: Optional[int] = 1,
+    include_credentials: Optional[bool] = True,
 ) -> None:
     """Deploy a LitServe model script."""
     console = Console()
@@ -167,6 +186,9 @@ def api_impl(
             user=user,
             cloud_account=cloud_account,
             port=port,
+            min_replica=min_replica,
+            max_replica=max_replica,
+            include_credentials=include_credentials,
         )
 
     try:
@@ -193,6 +215,9 @@ def _handle_cloud(
     user: Optional[str] = None,
     cloud_account: Optional[str] = None,
     port: Optional[int] = 8000,
+    min_replica: Optional[int] = 0,
+    max_replica: Optional[int] = 1,
+    include_credentials: Optional[bool] = True,
 ) -> None:
     if teamspace is None:
         menu = _TeamspacesMenu()
@@ -248,13 +273,13 @@ def _handle_cloud(
         deployment_name=deployment_name,
         image=repository,
         teamspace=resolved_teamspace,
-        ports=[8000],
         metric=None,
         machine=machine,
-        min_replica=1,
-        max_replica=1,
         spot=interruptible,
         cloud_account=cloud_account,
         port=port,
+        min_replica=min_replica,
+        max_replica=max_replica,
+        include_credentials=include_credentials,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")

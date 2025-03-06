@@ -189,12 +189,13 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         image: str,
         metric: Optional[str] = None,
         machine: Optional[Machine] = None,
-        min_replica: Optional[int] = 1,
+        min_replica: Optional[int] = 0,
         max_replica: Optional[int] = 1,
         spot: Optional[bool] = None,
         replicas: Optional[int] = None,
         cloud_account: Optional[str] = None,
         port: Optional[int] = 8000,
+        include_credentials: Optional[bool] = True,
     ) -> dict:
         url = f"{_get_cloud_url()}/{teamspace.owner.name}/{teamspace.name}/jobs/{deployment_name}"
         machine = machine or Machine.CPU
@@ -215,6 +216,7 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
             replicas=replicas,
             cloud_account=cloud_account,
             ports=[port],
+            include_credentials=include_credentials,
         )
 
         return {"deployment": deployment, "url": url}

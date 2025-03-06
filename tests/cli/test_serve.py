@@ -74,6 +74,13 @@ Options:
                                   provided will fall back to the teamspaces
                                   default cloud account.
   --port INTEGER                  The port to expose the API on.
+  --min_replica, --min-replica INTEGER
+                                  Number of replicas to start with.
+  --max_replica, --max-replica INTEGER
+                                  Number of replicas to scale up to.
+  --no_credentials, --no-credentials
+                                  Whether to include credentials in the
+                                  deployment.
   --help                          Show this message and exit.
 """  # noqa: E501
     )
