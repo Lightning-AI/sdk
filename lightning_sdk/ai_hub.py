@@ -3,6 +3,7 @@ from urllib.parse import quote
 
 from lightning_sdk.api import AIHubApi
 from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.lightning_cloud.openapi.models import V1Deployment
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _resolve_teamspace
 
@@ -109,7 +110,7 @@ class AIHub:
         org: Optional[Union[str, "Organization"]] = None,
         user: Optional[Union[str, "User"]] = None,
         machine: Optional[Union[str, "Machine"]] = None,
-    ) -> Dict[str, Union[str, bool]]:
+    ) -> V1Deployment:
         """Deploy an API from the AI Hub.
 
         Example:
@@ -133,7 +134,7 @@ class AIHub:
             machine: The machine to run the deployment on. Defaults to the first option set in the AI Hub template.
 
         Returns:
-            A dictionary containing the name of the deployed API,
+            A V1Deployment object containing the name of the deployed API,
             the URL to access it, and whether it is interruptible.
 
         Raises:
@@ -169,16 +170,9 @@ class AIHub:
 
         print("Deployment available at:", url)
 
-        return {
-            "id": deployment.id,
-            "name": deployment.name,
-            "deployment_url": url,
-            "api_endpoint": deployment.status.urls[0],
-            "interruptible": deployment.spec.spot,
-            "teamspace id": teamspace_id,
-        }
+        return deployment
 
-    def delete_deployment(self, deployment: Dict[str, Union[str, bool]]) -> None:
+    def delete_deployment(self, deployment: V1Deployment) -> None:
         """Delete a deployment from the AI Hub.
 
         Example:
@@ -188,9 +182,6 @@ class AIHub:
             hub.delete_deployment(deployment)
 
         Args:
-            deployment: The deployment dictionary returned by the run method.
+            deployment: The deployment object returned by the run method.
         """
-        if "teamspace id" not in deployment or "id" not in deployment:
-            raise ValueError("Deployment dictionary must contain 'teamspace id' and 'id' keys.")
-
-        self._api.delete_api(deployment["id"], deployment["teamspace id"])
+        self._api.delete_api(deployment.id, deployment.project_id)

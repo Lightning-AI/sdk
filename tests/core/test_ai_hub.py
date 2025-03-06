@@ -113,5 +113,5 @@ def test_run(mock_resolve_teamspace):
     mock_resolve_teamspace.return_value = FakeTeamspace()
 
     deployment = hub.run(template_id, cloud_account="public-prod", name="New API", teamspace="mock-ts", org="mock-org")
-    assert deployment["name"] == "New API", "Deployment name is New API"
-    assert deployment["api_endpoint"] == "http://lightning.ai/example", "base_url is decoded from the server response"
+    assert deployment.name == "New API", "Deployment name is New API"
+    assert deployment.status.urls[0] == "http://lightning.ai/example", "base_url is decoded from the server response"
