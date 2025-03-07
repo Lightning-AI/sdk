@@ -163,7 +163,6 @@ def test_cloud_deployment(
     mock_teamspace.return_value._resolve_teamspace.assert_called_once()
 
     # Verify Docker operations
-    assert mock_client.ping.call_count == 1
     mock_docker_build.assert_called_once()
     mock_litcr.return_value.upload_container.assert_called_once()
 
@@ -212,22 +211,9 @@ def test_cloud_deployment_non_interactive(
 
     mock_deployment_api.return_value.get_deployment_by_name.assert_called_once()
 
-    assert mock_client.ping.call_count == 1
     mock_docker_build.assert_called_once()
     mock_litcr.return_value.upload_container.assert_called_once()
 
     assert mock_confirm.call_count == 0
     captured = capsys.readouterr()
     assert f"✅ Image pushed to {repo}:{tag}" in captured.out
-
-
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
-@patch("docker.from_env")
-@patch("lightning_sdk.cli.serve.LitContainerApi")
-@patch("lightning_sdk.cli.serve._TeamspacesMenu")
-def test_cloud_deployment_no_docker(mock_teamspace, mock_litcr, mock_docker, temp_script):
-    mock_docker.side_effect = ImportError("docker-py is not installed")
-
-    with pytest.raises(ImportError, match="docker-py is not installed"):
-        serve_api(temp_script, cloud=True)
-    mock_teamspace.return_value._resolve_teamspace.assert_called_once()

@@ -1,7 +1,6 @@
 import os
 import shlex
 import subprocess
-import warnings
 from pathlib import Path
 from typing import Generator, Optional
 from urllib.parse import urlencode
@@ -16,6 +15,12 @@ from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
+
+_DOCKER_NOT_RUNNING_MSG = (
+    "Deploying LitServe requires Docker to be running on the machine. "
+    "If Docker is not installed, please install it from https://docs.docker.com/get-docker/ "
+    "and start the Docker daemon before running this command."
+)
 
 
 class _AuthServer(AuthServer):
@@ -47,30 +52,37 @@ class _LitServeDeployer:
                 os.environ["DOCKER_BUILDKIT"] = "1"
                 self._client = docker.from_env()
                 self._client.ping()
-            except docker.errors.DockerException as e:
-                raise RuntimeError(f"Failed to connect to Docker daemon: {e!s}. Is Docker running?") from None
+            except docker.errors.DockerException:
+                raise RuntimeError(_DOCKER_NOT_RUNNING_MSG) from None
         return self._client
 
     def dockerize_api(
-        self, server_filename: str, port: int = 8000, gpu: bool = False, tag: str = "litserve-model"
+        self,
+        server_filename: str,
+        port: int = 8000,
+        gpu: bool = False,
+        tag: str = "litserve-model",
+        print_success: bool = True,
     ) -> str:
         import litserve as ls
         from litserve import docker_builder
 
         console = self._console
-        if os.path.exists("Dockerfile"):
-            console.print("Dockerfile already exists. Skipping generation.")
-            return os.path.abspath("Dockerfile")
-
         requirements = ""
         if os.path.exists("requirements.txt"):
             requirements = "-r requirements.txt"
         else:
-            warnings.warn(
+            console.print(
                 f"requirements.txt not found at {os.getcwd()}. "
                 f"Make sure to install the required packages in the Dockerfile.",
-                UserWarning,
+                style="yellow",
             )
+
+        if os.path.exists("Dockerfile"):
+            console.print(
+                "Dockerfile already exists in the current directory, we will use it for building the container."
+            )
+            return os.path.abspath("Dockerfile")
         current_dir = Path.cwd()
         if not (current_dir / server_filename).is_file():
             raise FileNotFoundError(f"Server file `{server_filename}` must be in the current directory: {os.getcwd()}")
@@ -91,7 +103,8 @@ class _LitServeDeployer:
         with open("Dockerfile", "w") as f:
             f.write(dockerfile_content)
 
-        success_msg = f"""[bold]Dockerfile created successfully[/bold]
+        if print_success:
+            success_msg = f"""[bold]Dockerfile created successfully[/bold]
 Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additional dependencies or commands.
 
 [bold]Build the container with:[/bold]
@@ -103,7 +116,7 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
 [bold]To push the container to a registry:[/bold]
 > [underline]docker push {tag}[/underline]
 """
-        console.print(success_msg)
+            console.print(success_msg)
         return os.path.abspath("Dockerfile")
 
     @staticmethod

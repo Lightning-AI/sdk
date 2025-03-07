@@ -74,15 +74,16 @@ def test_docker_api_file_not_found(mock_cwd):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
-def test_docker_api_without_requirements(mock_cwd, temp_script):
-    with patch("litserve.__version__", "1.0.0"), patch("warnings.warn") as mock_warn:
+@patch("lightning_sdk.serve.Console")
+def test_docker_api_without_requirements(mock_console, mock_cwd, temp_script):
+    with patch("litserve.__version__", "1.0.0"):
         docker_api("server.py", port=8000, gpu=False)
-
-    mock_warn.assert_called_once()
-    assert "requirements.txt not found" in mock_warn.call_args[0][0]
-
-    assert (mock_cwd / "Dockerfile").exists(), "Dockerfile not generated"
     dockerfile_content = (mock_cwd / "Dockerfile").read_text()
+
+    mock_console.assert_called_once()
+    assert mock_console.return_value.print.call_count == 2
+    assert "requirements.txt not found" in mock_console.return_value.print.call_args_list[0].args[0]
+    assert (mock_cwd / "Dockerfile").exists(), "Dockerfile should have been generated"
     assert "ARG PYTHON_VERSION=3.12" in dockerfile_content
     assert "FROM python:$PYTHON_VERSION-slim" in dockerfile_content
     assert 'CMD ["python", "/app/server.py"]' in dockerfile_content
@@ -125,4 +126,6 @@ def test_skip_dockerfile_generation(mock_console, mock_cwd):
 
     docker_api("server.py", port=8000, gpu=False)
 
-    console_obj.print.assert_called_once_with("Dockerfile already exists. Skipping generation.")
+    console_obj.print.assert_called_with(
+        "Dockerfile already exists in the current directory, we will use it for building the container."
+    )

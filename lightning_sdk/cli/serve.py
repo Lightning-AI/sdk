@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Optional, Union
 
 import click
-import docker
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
@@ -230,15 +229,9 @@ def _handle_cloud(
     else:
         resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
 
-    try:
-        client = docker.from_env()
-        client.ping()
-    except docker.errors.DockerException as e:
-        raise StudioCliError(f"Failed to connect to Docker daemon: {e!s}. Is Docker running?") from None
-
     port = port or 8000
     ls_deployer = _LitServeDeployer()
-    path = ls_deployer.dockerize_api(script_path, port=port, gpu=not machine.is_cpu(), tag=tag)
+    path = ls_deployer.dockerize_api(script_path, port=port, gpu=not machine.is_cpu(), tag=tag, print_success=False)
     console.clear()
     if non_interactive:
         console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
