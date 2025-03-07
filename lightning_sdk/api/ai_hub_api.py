@@ -95,15 +95,17 @@ class AIHubApi:
 
                 if p.type == V1DeploymentTemplateParameterType.CHECKBOX and p.checkbox:
                     api_arguments[p.name] = (
-                        (p.checkbox.true_value or "True")
-                        if p.checkbox.is_checked
-                        else (p.checkbox.false_value or "False")
+                        (p.checkbox.true_value or "") if p.checkbox.is_checked else (p.checkbox.false_value or "")
                     )
 
         for p in parameters:
             name = p.name
             pattern = f"${{{name}}}"
             if name in api_arguments:
+                if p.type == V1DeploymentTemplateParameterType.CHECKBOX and p.checkbox:
+                    api_arguments[p.name] = (
+                        (p.checkbox.true_value or "") if api_arguments[name] is True else (p.checkbox.false_value or "")
+                    )
                 AIHubApi._update_parameters(job, p.placements, pattern, api_arguments[name])
             elif not p.required:
                 AIHubApi._update_parameters(job, p.placements, pattern, "")

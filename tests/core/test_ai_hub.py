@@ -16,14 +16,21 @@ class FakeV1DeploymentTemplateParameter:
     type = V1DeploymentTemplateParameterType.INPUT
 
 
+class FakeV1DeploymentTemplateParameterCheckbox:
+    name = "ENABLE"
+    checkbox = MagicMock(true_value="--enable", is_checked=False, false_value="", value="")
+    placements = ["DEPLOYMENT_TEMPLATE_COMMAND"]  # noqa: RUF012
+    type = V1DeploymentTemplateParameterType.CHECKBOX
+
+
 class FakeDeploymentTemplate:
     class Job:
-        command = "--model ${Model}"
+        command = "--model ${Model} ${ENABLE}"
         env = [V1EnvVar(name="HF_TOKEN", value="${token}")]  # noqa: RUF012
 
     class ParameterSpec:
         command = "--model ${Model}"
-        parameters = [FakeV1DeploymentTemplateParameter()]  # noqa: RUF012
+        parameters = [FakeV1DeploymentTemplateParameter(), FakeV1DeploymentTemplateParameterCheckbox()]  # noqa: RUF012
 
     name = "My API"
     spec_v2 = MagicMock(job=Job())
@@ -32,18 +39,24 @@ class FakeDeploymentTemplate:
 
 def test_set_parameters():
     template = FakeDeploymentTemplate()
-    api_arguments = {"Model": "Llama"}
+    api_arguments = {"Model": "Llama", "ENABLE": False}
     job1 = AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
-    assert job1.command == "--model Llama", "User provided {model: Llama}"
+    assert job1.command == "--model Llama ", "User provided {model: Llama, ENABLE: False}"
+
+    template = FakeDeploymentTemplate()
+    template.spec_v2.job = FakeDeploymentTemplate.Job()
+    api_arguments = {"Model": "Llama", "ENABLE": True}
+    job2 = AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
+    assert job2.command == "--model Llama --enable", "User provided {model: Llama, ENABLE: True}"
 
     # Use default value
     template = FakeDeploymentTemplate()
     api_arguments = {}
     template.spec_v2.job = FakeDeploymentTemplate.Job()
-    job2 = AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
+    job3 = AIHubApi._set_parameters(template.spec_v2.job, template.parameter_spec.parameters, api_arguments)
     assert (
-        "lit/test-model" in job2.command
-    ), f"Parameter should use the default value 'lit/test-model' but is '{job2.command}'"
+        "lit/test-model" in job3.command
+    ), f"Parameter should use the default value 'lit/test-model' but is '{job3.command}'"
 
     template = FakeDeploymentTemplate()
     FakeV1DeploymentTemplateParameter.input = None
