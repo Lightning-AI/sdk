@@ -4,6 +4,7 @@ import subprocess
 import warnings
 from pathlib import Path
 from typing import Generator, Optional
+from urllib.parse import urlencode
 
 import docker
 from rich.console import Console
@@ -13,6 +14,20 @@ from lightning_sdk import Deployment, Machine, Teamspace
 from lightning_sdk.api.deployment_api import AutoScaleConfig
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.lightning_cloud import env
+from lightning_sdk.lightning_cloud.login import Auth, AuthServer
+
+
+class _AuthServer(AuthServer):
+    def get_auth_url(self, port: int) -> str:
+        redirect_uri = f"http://localhost:{port}/login-complete"
+        params = urlencode({"redirectTo": redirect_uri, "inviteCode": "litserve"})
+        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
+
+
+class _Auth(Auth):
+    def _run_server(self) -> None:
+        _AuthServer().login_with_browser(self)
 
 
 class _LitServeDeployer:
@@ -20,12 +35,16 @@ class _LitServeDeployer:
         self._console = Console()
         self._client = None
 
+    @staticmethod
+    def authenticate() -> None:
+        auth = _Auth()
+        auth.authenticate()
+
     @property
     def client(self) -> docker.DockerClient:
-        os.environ["DOCKER_BUILDKIT"] = "1"
-
         if self._client is None:
             try:
+                os.environ["DOCKER_BUILDKIT"] = "1"
                 self._client = docker.from_env()
                 self._client.ping()
             except docker.errors.DockerException as e:

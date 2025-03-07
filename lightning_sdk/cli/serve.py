@@ -249,6 +249,7 @@ def _handle_cloud(
     lit_cr = LitContainerApi()
     deployment_name = os.path.basename(repository)
 
+    ls_deployer.authenticate()
     if DeploymentApi().get_deployment_by_name(deployment_name, resolved_teamspace.id):
         raise StudioCliError(f"Deployment {deployment_name} already exists. Please choose a different name.") from None
 

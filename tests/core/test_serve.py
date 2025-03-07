@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from lightning_sdk import Machine
-from lightning_sdk.serve import _LitServeDeployer
+from lightning_sdk.serve import _Auth, _LitServeDeployer
 
 
 @patch("lightning_sdk.serve.Deployment")
@@ -41,3 +41,18 @@ def test_run_on_cloud(mock_deployment, mock_autoscale):
         cloud_account=None,
         include_credentials=True,
     )
+
+
+@patch("lightning_sdk.serve._AuthServer")
+@patch("lightning_sdk.lightning_cloud.login.Auth.auth_header")
+@patch("lightning_sdk.lightning_cloud.login.Auth.load")
+def test_authenticate(mock_load, mock_auth_header, mock_authserver):
+    mock_load.return_value = False
+
+    def fn(cls):
+        cls._with_env_var = False
+
+    with patch.object(_Auth, "__post_init__", lambda self: fn(self)):
+        deployer = _LitServeDeployer()
+        deployer.authenticate()
+        mock_authserver.return_value.login_with_browser.assert_called_once()
