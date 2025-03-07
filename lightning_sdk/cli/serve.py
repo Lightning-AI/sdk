@@ -97,6 +97,7 @@ def serve() -> None:
 @click.option("--port", default=8000, help="The port to expose the API on.")
 @click.option("--min_replica", "--min-replica", default=0, help="Number of replicas to start with.")
 @click.option("--max_replica", "--max-replica", default=1, help="Number of replicas to scale up to.")
+@click.option("--replicas", "--replicas", default=1, help="Deployment will start with this many replicas.")
 @click.option(
     "--no_credentials",
     "--no-credentials",
@@ -120,6 +121,7 @@ def api(
     port: Optional[int],
     min_replica: Optional[int],
     max_replica: Optional[int],
+    replicas: Optional[int],
     no_credentials: Optional[bool],
 ) -> None:
     """Deploy a LitServe model script."""
@@ -158,6 +160,7 @@ def api_impl(
     port: Optional[int] = 8000,
     min_replica: Optional[int] = 0,
     max_replica: Optional[int] = 1,
+    replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
 ) -> None:
     """Deploy a LitServe model script."""
@@ -188,6 +191,7 @@ def api_impl(
             port=port,
             min_replica=min_replica,
             max_replica=max_replica,
+            replicas=replicas,
             include_credentials=include_credentials,
         )
 
@@ -217,6 +221,7 @@ def _handle_cloud(
     port: Optional[int] = 8000,
     min_replica: Optional[int] = 0,
     max_replica: Optional[int] = 1,
+    replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
 ) -> None:
     if teamspace is None:
@@ -281,6 +286,7 @@ def _handle_cloud(
         port=port,
         min_replica=min_replica,
         max_replica=max_replica,
+        replicas=replicas,
         include_credentials=include_credentials,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")

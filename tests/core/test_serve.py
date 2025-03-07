@@ -36,7 +36,7 @@ def test_run_on_cloud(mock_deployment, mock_autoscale):
         image="scratch",
         ports=[8000],
         autoscale=mock_autoscale.return_value,
-        replicas=None,
+        replicas=1,
         spot=None,
         cloud_account=None,
         include_credentials=True,

@@ -78,6 +78,8 @@ Options:
                                   Number of replicas to start with.
   --max_replica, --max-replica INTEGER
                                   Number of replicas to scale up to.
+  --replicas, --replicas INTEGER  Deployment will start with this many
+                                  replicas.
   --no_credentials, --no-credentials
                                   Whether to include credentials in the
                                   deployment.

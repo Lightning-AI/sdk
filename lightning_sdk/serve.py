@@ -211,7 +211,7 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         min_replica: Optional[int] = 0,
         max_replica: Optional[int] = 1,
         spot: Optional[bool] = None,
-        replicas: Optional[int] = None,
+        replicas: Optional[int] = 1,
         cloud_account: Optional[str] = None,
         port: Optional[int] = 8000,
         include_credentials: Optional[bool] = True,
