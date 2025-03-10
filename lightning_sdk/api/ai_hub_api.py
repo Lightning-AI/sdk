@@ -141,6 +141,9 @@ class AIHubApi:
             apply_change(template.spec_v2.job, "instance_name", machine)
             apply_change(template.spec_v2.job, "instance_type", machine)
 
+        if len(cloud_account) > 0:
+            apply_change(template.spec_v2.job, "cluster_id", cloud_account)
+
         return self._client.jobs_service_create_deployment(
             project_id=project_id,
             body=CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(

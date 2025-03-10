@@ -27,6 +27,7 @@ class FakeDeploymentTemplate:
     class Job:
         command = "--model ${Model} ${ENABLE}"
         env = [V1EnvVar(name="HF_TOKEN", value="${token}")]  # noqa: RUF012
+        cluster_id = ""
 
     class ParameterSpec:
         command = "--model ${Model}"
@@ -103,7 +104,7 @@ def test_run(mock_resolve_teamspace):
         id = "dep_xxxxx"
         name = "New API"
         status = MagicMock(urls=["http://lightning.ai/example"])
-        spec = MagicMock(spot=True)
+        spec = MagicMock(spot=True, cluster_id="public-prod")
 
     class FakeOrg:
         name = "org-name"
@@ -128,3 +129,4 @@ def test_run(mock_resolve_teamspace):
     deployment = hub.run(template_id, cloud_account="public-prod", name="New API", teamspace="mock-ts", org="mock-org")
     assert deployment.name == "New API", "Deployment name is New API"
     assert deployment.status.urls[0] == "http://lightning.ai/example", "base_url is decoded from the server response"
+    assert deployment.spec.cluster_id == "public-prod", "Deployment cluster_id is public-prod"
