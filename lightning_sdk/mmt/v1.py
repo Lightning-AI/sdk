@@ -92,34 +92,7 @@ class _MMTV1(_BaseMMT):
             path_mappings: The mappings from data connection inside your container (not supported)
 
         """
-        if studio is None:
-            raise ValueError("Studio is required for submitting jobs")
-        if image is not None or image_credentials is not None or cloud_account_auth or entrypoint != "sh -c":
-            raise ValueError("Image is not supported for submitting jobs")
-
-        if artifacts_local is not None or artifacts_remote is not None:
-            raise ValueError("Specifying how to persist artifacts is not yet supported with jobs")
-
-        if env is not None:
-            raise ValueError("Environment variables are not supported for submitting jobs")
-        if command is None:
-            raise ValueError("Command is required for submitting multi-machine jobs")
-
-        _submitted = self._job_api.submit_job(
-            name=self._name,
-            num_machines=num_machines,
-            command=command,
-            studio_id=studio._studio.id,
-            teamspace_id=self._teamspace.id,
-            cloud_account=cloud_account or "",
-            machine=machine,
-            interruptible=interruptible,
-            strategy="parallel",
-        )
-
-        self._name = _submitted.name
-        self._job = _submitted
-        return self
+        raise NotImplementedError("Cannot submit new mmts with MMTV1!")
 
     def _update_internal_job(self) -> None:
         try:

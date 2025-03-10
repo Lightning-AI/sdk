@@ -1,7 +1,5 @@
-from functools import lru_cache
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
-from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.mmt.base import MMTMachine, _BaseMMT
 from lightning_sdk.mmt.v1 import _MMTV1
 from lightning_sdk.mmt.v2 import _MMTV2
@@ -16,21 +14,6 @@ if TYPE_CHECKING:
     from lightning_sdk.user import User
 
 _logger = _setup_logger(__name__)
-
-
-@lru_cache(maxsize=None)
-def _has_mmt_v2() -> bool:
-    api = UserApi()
-    try:
-        feature_flags = api._get_feature_flags()
-    except Exception:
-        return False
-
-    try:
-        return feature_flags.mmt_v2
-    except AttributeError:
-        # Feature flag doesn't exist anymore, so return True
-        return True
 
 
 class MMT(_BaseMMT):
@@ -60,7 +43,7 @@ class MMT(_BaseMMT):
         """
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
-        if _has_mmt_v2() and not self._force_v1:
+        if not self._force_v1:
             # try with v2 and fall back to v1
             try:
                 mmt = _MMTV2(

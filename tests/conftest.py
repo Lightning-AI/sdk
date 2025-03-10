@@ -1,4 +1,3 @@
-import importlib
 import json
 import os
 import time
@@ -14,6 +13,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1Lightningwork,
     IdCodeconfigBody,
     ProjectIdCloudspacesBody,
+    ProjectIdMultimachinejobsBody,
     V1Assistant,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
@@ -58,7 +58,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1SearchUsersResponse,
     V1SLURMJob,
     V1UpstreamOpenAI,
-    V1UserFeatures,
     V1UserRequestedComputeConfig,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -1448,28 +1447,27 @@ def internal_job_run_mocker(mocker):
 
 @pytest.fixture()
 def internal_mmt_run_mocker(mocker):
-    def side_effect(self, body, project_id, cloudspace_id, id):
+    def side_effect(self, body: ProjectIdMultimachinejobsBody, project_id):
         from lightning_sdk.machine import Machine
 
-        distributed_args = json.loads(body.plugin_arguments["distributedArguments"])
-        assert body.plugin_arguments["entrypoint"] == "python my-file.py"
-        assert body.plugin_arguments["name"] == "my-fancy-mmt-name"
-        assert distributed_args["num_instances"] == 42
-        assert distributed_args["strategy"] == "parallel"
-        assert distributed_args["cloud_compute"] in [
+        assert body.spec.command == "python my-file.py"
+        assert body.name == "my-fancy-mmt-name"
+        assert body.machines == 42
+        assert body.spec.instance_name in [
             machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
         ]
+        assert body.spec.cloudspace_id != ""
 
-        return V1CreateCloudSpaceAppInstanceResponse(
-            lightningappinstance=Externalv1LightningappInstance(
-                name=body.plugin_arguments["name"],
-                project_id="ts-abc",
-                spec=V1LightningappInstanceSpec(cloud_space_id="st-abc"),
-            )
+        return V1MultiMachineJob(
+            cloudspace_id="st-abc",
+            project_id="ts-abc",
+            name="my-fancy-mmt-name",
+            machines=42,
+            spec=body.spec,
         )
 
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_create_multi_machine_job",
         autospec=True,
         side_effect=side_effect,
     )
@@ -2162,23 +2160,6 @@ def available_aws_instance_types():
                 instance_types += [it["InstanceType"] for it in page["InstanceTypes"]]
 
     return set(instance_types)
-
-
-@pytest.fixture()
-def mmt_backend_selector_mocker_v2(mocker, internal_get_org_api_mocker, internal_teamspace_api_mocker):
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
-        autospec=True,
-        return_value=V1GetUserResponse(features=V1UserFeatures(mmt_v2=True, jobs_v2=True)),
-    )
-    import lightning_sdk
-
-    importlib.reload(lightning_sdk.mmt.mmt)
-    lightning_sdk.mmt.mmt._has_mmt_v2.cache_clear()
-    yield [mocker, *internal_get_org_api_mocker, *internal_teamspace_api_mocker]
-    mocker.resetall()
-    importlib.reload(lightning_sdk.mmt.mmt)
-    lightning_sdk.mmt.mmt._has_mmt_v2.cache_clear()
 
 
 @pytest.fixture()

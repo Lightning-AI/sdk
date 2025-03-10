@@ -57,6 +57,7 @@ def test_run_job(
     "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
 )
 def test_run_mmt(
+    internal_auth_mocker,
     internal_studio_init_mocker,
     internal_studio_status_mocker,
     internal_job_get_cloudspace_mocker,
@@ -68,9 +69,6 @@ def test_run_mmt(
     plugin = MultiMachineTrainingPlugin(
         "multi-machine-training", "Train a model across multiple cloud machines", studio
     )
-
-    with pytest.deprecated_call():
-        plugin.run(command="python my-file.py", name="my-fancy-mmt-name", num_instances=42, cloud_compute=cloud_compute)
 
     plugin.run(command="python my-file.py", name="my-fancy-mmt-name", num_instances=42, machine=cloud_compute)
 

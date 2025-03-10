@@ -338,6 +338,7 @@ def test_run_job(
     "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
 )
 def test_run_mmt(
+    internal_auth_mocker,
     internal_studio_init_mocker,
     internal_studio_status_mocker,
     internal_job_get_cloudspace_mocker,
@@ -351,15 +352,6 @@ def test_run_mmt(
             "multi-machine-training", "Train a model across multiple cloud machines", studio
         )
     }
-
-    with pytest.deprecated_call():
-        studio.run_plugin(
-            "multi-machine-training",
-            command="python my-file.py",
-            name="my-fancy-mmt-name",
-            num_instances=42,
-            cloud_compute=cloud_compute,
-        )
 
     studio.run_plugin(
         "multi-machine-training",
@@ -600,7 +592,6 @@ def test_submit_job_v2_studio(
 @pytest.mark.parametrize("interruptible", [True, False])
 def test_submit_mmt_v2_studio(
     internal_studio_init_mocker,
-    mmt_backend_selector_mocker_v2,
     mmt_api_get_job_by_name_mocker,
     machine,
     env,

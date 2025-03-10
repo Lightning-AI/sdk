@@ -319,9 +319,7 @@ def test_mmtv2_delete(mmt_api_get_job_by_name_mocker, internal_studio_init_mocke
     delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
 
 
-def test_mmt_instantiation_fallback_v2_to_v1(
-    internal_studio_init_mocker, mmt_backend_selector_mocker_v2, internal_mmt_fallback_mocker
-):
+def test_mmt_instantiation_fallback_v2_to_v1(internal_studio_init_mocker, internal_mmt_fallback_mocker):
     import lightning_sdk
     from lightning_sdk.mmt.v1 import _MMTV1
     from lightning_sdk.mmt.v2 import _MMTV2

@@ -393,7 +393,7 @@ def test_list_jobs(
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
-def test_list_mmts(list_mmts_mock, mmt_backend_selector_mocker_v2):
+def test_list_mmts(list_mmts_mock, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     from lightning_sdk.mmt.v1 import _MMTV1
     from lightning_sdk.mmt.v2 import _MMTV2
 
