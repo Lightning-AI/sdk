@@ -141,6 +141,7 @@ class AIHubApi:
             apply_change(template.spec_v2.job, "instance_name", machine)
             apply_change(template.spec_v2.job, "instance_type", machine)
 
+        # Override the cluster_id if a cloud account is provided
         if len(cloud_account) > 0:
             apply_change(template.spec_v2.job, "cluster_id", cloud_account)
 
