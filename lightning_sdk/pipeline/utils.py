@@ -43,7 +43,7 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
         else:
             for name in current_step.wait_for:
                 if current_step.name == name:
-                    raise ValueError("You can only reference prior steps")
+                    raise ValueError(f"You can only reference prior steps. Found {current_step.name}")
 
                 if name not in name_to_step:
                     raise ValueError(f"The step {current_step_idx} doesn't have a valid wait_for. Found {name}")

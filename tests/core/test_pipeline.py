@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from lightning_sdk import studio as studio_module
 from lightning_sdk import teamspace, user
 from lightning_sdk.api import pipeline_api
 from lightning_sdk.lightning_cloud.openapi.models import (
@@ -15,6 +16,7 @@ from lightning_sdk.machine import Machine
 from lightning_sdk.pipeline import MMT, Deployment, Job, Pipeline
 from lightning_sdk.pipeline import pipeline as pipeline_module
 from lightning_sdk.pipeline.utils import DEFAULT, prepare_steps
+from lightning_sdk.utils.resolve import skip_studio_init
 
 
 def test_pipeline_run(monkeypatch):
@@ -398,6 +400,50 @@ def test_shared_filesystem(monkeypatch):
                     command="echo 'Hello, World!'",
                     image="ubuntu:latest",
                     cloud_account="cluster_id_2",
+                ),
+            ]
+        )
+
+
+def test_pipeline_with_studio_job(monkeypatch):
+    with skip_studio_init():
+        monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
+        monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
+        monkeypatch.setattr(user, "UserApi", MagicMock())
+        monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
+        monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
+        pipeline_api_mock = MagicMock()
+        monkeypatch.setattr(pipeline_module, "PipelineApi", pipeline_api_mock)
+        resolve_teamspace_mock = MagicMock()
+        monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
+        monkeypatch.setattr(studio_module, "_resolve_teamspace", resolve_teamspace_mock)
+        monkeypatch.setattr(studio_module, "StudioApi", MagicMock())
+
+        pipeline = Pipeline(name="first-pipeline")
+        cloud_account_mock = MagicMock()
+        cloud_account_mock.cluster_id = "cluster_id_1"
+        pipeline._cloud_account = cloud_account_mock
+
+        with pytest.raises(ValueError, match="The provided cloud account doesn't match the studio"):
+            pipeline.run(
+                steps=[
+                    Job(
+                        name="job-0",
+                        machine=Machine.CPU,
+                        command="echo 'Hello, World!'",
+                        studio="my-studio",
+                        cloud_account="any_cloud_account",
+                    ),
+                ]
+            )
+
+        pipeline.run(
+            steps=[
+                Job(
+                    name="job-0",
+                    machine=Machine.CPU,
+                    command="echo 'Hello, World!'",
+                    studio="my-studio",
                 ),
             ]
         )

@@ -152,12 +152,20 @@ class Job:
         self.wait_for = wait_for
 
     def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
+        studio = _get_studio(self.studio)
+        if isinstance(studio, Studio):
+            if self.cloud_account is None:
+                self.cloud_account = studio.cloud_account
+            elif studio.cloud_account != self.cloud_account:
+                raise ValueError("The provided cloud account doesn't match the studio")
+
         _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
+
         body = JobApiV2._create_job_body(
             name=self.name,
             command=self.command,
             cloud_account=self.cloud_account or cloud_account,
-            studio_id=None,
+            studio_id=studio._studio.id if isinstance(studio, Studio) else None,
             image=self.image,
             machine=self.machine,
             interruptible=self.interruptible,
@@ -220,13 +228,21 @@ class MMT:
         self.wait_for = wait_for
 
     def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
+        studio = _get_studio(self.studio)
+        if isinstance(studio, Studio):
+            if self.cloud_account is None:
+                self.cloud_account = studio.cloud_account
+            elif studio.cloud_account != self.cloud_account:
+                raise ValueError("The provided cloud account doesn't match the studio")
+
         _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
+
         body = MMTApiV2._create_mmt_body(
             name=self.name,
             num_machines=self.num_machines,
             command=self.command,
             cloud_account=self.cloud_account or cloud_account,
-            studio_id=self.studio.studio_id if isinstance(self.studio, Studio) else None,
+            studio_id=studio._studio.id if isinstance(studio, Studio) else None,
             image=self.image,
             machine=self.machine,
             interruptible=self.interruptible,
@@ -266,3 +282,13 @@ def _validate_cloud_account(pipeline_cloud_account: str, step_cloud_account: str
             "With shared filesystem enabled, all the pipeline steps wait_for to be on the same cluster."
             f" Found {pipeline_cloud_account} and {step_cloud_account}"
         )
+
+
+def _get_studio(studio: Union["Studio", str, None]) -> Union[Studio, None]:
+    if studio is None:
+        return None
+
+    if isinstance(studio, Studio):
+        return studio
+
+    return Studio(studio)
