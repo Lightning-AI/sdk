@@ -43,43 +43,57 @@ class V1ManagedModel(object):
     swagger_types = {
         'abilities': 'V1ManagedModelAbilities',
         'completion_token_price': 'float',
+        'context_length': 'str',
         'deployment_details': 'V1DeploymentDetails',
         'description': 'str',
         'endpoint_id': 'str',
         'id': 'str',
+        'max_completion_tokens': 'str',
         'name': 'str',
         'prompt_token_price': 'float',
-        'status': 'V1AssistantModelStatus'
+        'status': 'V1AssistantModelStatus',
+        'temperature': 'float',
+        'top_k': 'str'
     }
 
     attribute_map = {
         'abilities': 'abilities',
         'completion_token_price': 'completionTokenPrice',
+        'context_length': 'contextLength',
         'deployment_details': 'deploymentDetails',
         'description': 'description',
         'endpoint_id': 'endpointId',
         'id': 'id',
+        'max_completion_tokens': 'maxCompletionTokens',
         'name': 'name',
         'prompt_token_price': 'promptTokenPrice',
-        'status': 'status'
+        'status': 'status',
+        'temperature': 'temperature',
+        'top_k': 'topK'
     }
 
-    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, completion_token_price: 'float' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, status: 'V1AssistantModelStatus' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, completion_token_price: 'float' =None, context_length: 'str' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, top_k: 'str' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._abilities = None
         self._completion_token_price = None
+        self._context_length = None
         self._deployment_details = None
         self._description = None
         self._endpoint_id = None
         self._id = None
+        self._max_completion_tokens = None
         self._name = None
         self._prompt_token_price = None
         self._status = None
+        self._temperature = None
+        self._top_k = None
         self.discriminator = None
         if abilities is not None:
             self.abilities = abilities
         if completion_token_price is not None:
             self.completion_token_price = completion_token_price
+        if context_length is not None:
+            self.context_length = context_length
         if deployment_details is not None:
             self.deployment_details = deployment_details
         if description is not None:
@@ -88,12 +102,18 @@ class V1ManagedModel(object):
             self.endpoint_id = endpoint_id
         if id is not None:
             self.id = id
+        if max_completion_tokens is not None:
+            self.max_completion_tokens = max_completion_tokens
         if name is not None:
             self.name = name
         if prompt_token_price is not None:
             self.prompt_token_price = prompt_token_price
         if status is not None:
             self.status = status
+        if temperature is not None:
+            self.temperature = temperature
+        if top_k is not None:
+            self.top_k = top_k
 
     @property
     def abilities(self) -> 'V1ManagedModelAbilities':
@@ -136,6 +156,27 @@ class V1ManagedModel(object):
         """
 
         self._completion_token_price = completion_token_price
+
+    @property
+    def context_length(self) -> 'str':
+        """Gets the context_length of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The context_length of this V1ManagedModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._context_length
+
+    @context_length.setter
+    def context_length(self, context_length: 'str'):
+        """Sets the context_length of this V1ManagedModel.
+
+
+        :param context_length: The context_length of this V1ManagedModel.  # noqa: E501
+        :type: str
+        """
+
+        self._context_length = context_length
 
     @property
     def deployment_details(self) -> 'V1DeploymentDetails':
@@ -222,6 +263,27 @@ class V1ManagedModel(object):
         self._id = id
 
     @property
+    def max_completion_tokens(self) -> 'str':
+        """Gets the max_completion_tokens of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The max_completion_tokens of this V1ManagedModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._max_completion_tokens
+
+    @max_completion_tokens.setter
+    def max_completion_tokens(self, max_completion_tokens: 'str'):
+        """Sets the max_completion_tokens of this V1ManagedModel.
+
+
+        :param max_completion_tokens: The max_completion_tokens of this V1ManagedModel.  # noqa: E501
+        :type: str
+        """
+
+        self._max_completion_tokens = max_completion_tokens
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this V1ManagedModel.  # noqa: E501
 
@@ -283,6 +345,48 @@ class V1ManagedModel(object):
         """
 
         self._status = status
+
+    @property
+    def temperature(self) -> 'float':
+        """Gets the temperature of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The temperature of this V1ManagedModel.  # noqa: E501
+        :rtype: float
+        """
+        return self._temperature
+
+    @temperature.setter
+    def temperature(self, temperature: 'float'):
+        """Sets the temperature of this V1ManagedModel.
+
+
+        :param temperature: The temperature of this V1ManagedModel.  # noqa: E501
+        :type: float
+        """
+
+        self._temperature = temperature
+
+    @property
+    def top_k(self) -> 'str':
+        """Gets the top_k of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The top_k of this V1ManagedModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._top_k
+
+    @top_k.setter
+    def top_k(self, top_k: 'str'):
+        """Sets the top_k of this V1ManagedModel.
+
+
+        :param top_k: The top_k of this V1ManagedModel.  # noqa: E501
+        :type: str
+        """
+
+        self._top_k = top_k
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

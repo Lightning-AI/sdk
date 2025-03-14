@@ -1319,7 +1319,7 @@ class ClusterServiceApi(object):
         :param datetime start_date:
         :param str timezone:
         :param str org_id:
-        :param int capacity_block_duration_days:
+        :param int capacity_block_duration_hours:
         :return: V1FindCapacityBlockOfferingResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1347,13 +1347,13 @@ class ClusterServiceApi(object):
         :param datetime start_date:
         :param str timezone:
         :param str org_id:
-        :param int capacity_block_duration_days:
+        :param int capacity_block_duration_hours:
         :return: V1FindCapacityBlockOfferingResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'instance_type', 'instance_count', 'start_date', 'timezone', 'org_id', 'capacity_block_duration_days']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'instance_type', 'instance_count', 'start_date', 'timezone', 'org_id', 'capacity_block_duration_hours']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1396,8 +1396,8 @@ class ClusterServiceApi(object):
             query_params.append(('timezone', params['timezone']))  # noqa: E501
         if 'org_id' in params:
             query_params.append(('orgId', params['org_id']))  # noqa: E501
-        if 'capacity_block_duration_days' in params:
-            query_params.append(('capacityBlockDurationDays', params['capacity_block_duration_days']))  # noqa: E501
+        if 'capacity_block_duration_hours' in params:
+            query_params.append(('capacityBlockDurationHours', params['capacity_block_duration_hours']))  # noqa: E501
 
         header_params = {}
 
@@ -2611,6 +2611,7 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param bool include_pricing:
         :param str cloud_provider:
+        :param str project_id:
         :return: V1ListDefaultClusterAcceleratorsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2633,12 +2634,13 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param bool include_pricing:
         :param str cloud_provider:
+        :param str project_id:
         :return: V1ListDefaultClusterAcceleratorsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['include_pricing', 'cloud_provider']  # noqa: E501
+        all_params = ['include_pricing', 'cloud_provider', 'project_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2663,6 +2665,8 @@ class ClusterServiceApi(object):
             query_params.append(('includePricing', params['include_pricing']))  # noqa: E501
         if 'cloud_provider' in params:
             query_params.append(('cloudProvider', params['cloud_provider']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
 
         header_params = {}
 

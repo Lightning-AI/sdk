@@ -41,24 +41,45 @@ class VersionDefaultBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'index': 'int',
-        'model_name': 'str'
+        'dataset_name': 'str',
+        'index': 'int'
     }
 
     attribute_map = {
-        'index': 'index',
-        'model_name': 'modelName'
+        'dataset_name': 'datasetName',
+        'index': 'index'
     }
 
-    def __init__(self, index: 'int' =None, model_name: 'str' =None):  # noqa: E501
+    def __init__(self, dataset_name: 'str' =None, index: 'int' =None):  # noqa: E501
         """VersionDefaultBody - a model defined in Swagger"""  # noqa: E501
+        self._dataset_name = None
         self._index = None
-        self._model_name = None
         self.discriminator = None
+        if dataset_name is not None:
+            self.dataset_name = dataset_name
         if index is not None:
             self.index = index
-        if model_name is not None:
-            self.model_name = model_name
+
+    @property
+    def dataset_name(self) -> 'str':
+        """Gets the dataset_name of this VersionDefaultBody.  # noqa: E501
+
+
+        :return: The dataset_name of this VersionDefaultBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._dataset_name
+
+    @dataset_name.setter
+    def dataset_name(self, dataset_name: 'str'):
+        """Sets the dataset_name of this VersionDefaultBody.
+
+
+        :param dataset_name: The dataset_name of this VersionDefaultBody.  # noqa: E501
+        :type: str
+        """
+
+        self._dataset_name = dataset_name
 
     @property
     def index(self) -> 'int':
@@ -80,27 +101,6 @@ class VersionDefaultBody(object):
         """
 
         self._index = index
-
-    @property
-    def model_name(self) -> 'str':
-        """Gets the model_name of this VersionDefaultBody.  # noqa: E501
-
-
-        :return: The model_name of this VersionDefaultBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._model_name
-
-    @model_name.setter
-    def model_name(self, model_name: 'str'):
-        """Sets the model_name of this VersionDefaultBody.
-
-
-        :param model_name: The model_name of this VersionDefaultBody.  # noqa: E501
-        :type: str
-        """
-
-        self._model_name = model_name
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

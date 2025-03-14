@@ -547,7 +547,6 @@ def internal_studio_api_mocker_duplicate_user(mocker):
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
                 ),
-                sync_in_progress=False,
             )
         ),
         autospec=True,
@@ -605,7 +604,6 @@ def internal_studio_api_mocker_duplicate_org(mocker):
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
                 ),
-                sync_in_progress=False,
             )
         ),
         autospec=True,
@@ -1034,7 +1032,6 @@ def internal_studio_duplicate_mocker(mocker):
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
                 ),
-                sync_in_progress=False,
             )
         ),
         autospec=True,
@@ -1741,7 +1738,6 @@ def internal_slurm_run_mocker(mocker, monkeypatch):
         assert "LIGHTNING_API_KEY" in body.command
         assert "LIGHTNING_SERVICE_EXECUTION_ID=service_id" in body.command
         assert "python my-file.py" in body.command
-        assert body.num_gpus == 2
         assert body.service_id == "service_id"
         assert body.sync_env is True
         assert body.work_dir == "/home/lightning_manager"

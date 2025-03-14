@@ -41,24 +41,81 @@ class V1GetCloudSpaceSizeResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'bytes_to_sync': 'str',
+        'files_to_sync': 'str',
         'number_of_files': 'str',
+        'sync_last_updated': 'datetime',
         'total_size_bytes': 'str'
     }
 
     attribute_map = {
+        'bytes_to_sync': 'bytesToSync',
+        'files_to_sync': 'filesToSync',
         'number_of_files': 'numberOfFiles',
+        'sync_last_updated': 'syncLastUpdated',
         'total_size_bytes': 'totalSizeBytes'
     }
 
-    def __init__(self, number_of_files: 'str' =None, total_size_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, bytes_to_sync: 'str' =None, files_to_sync: 'str' =None, number_of_files: 'str' =None, sync_last_updated: 'datetime' =None, total_size_bytes: 'str' =None):  # noqa: E501
         """V1GetCloudSpaceSizeResponse - a model defined in Swagger"""  # noqa: E501
+        self._bytes_to_sync = None
+        self._files_to_sync = None
         self._number_of_files = None
+        self._sync_last_updated = None
         self._total_size_bytes = None
         self.discriminator = None
+        if bytes_to_sync is not None:
+            self.bytes_to_sync = bytes_to_sync
+        if files_to_sync is not None:
+            self.files_to_sync = files_to_sync
         if number_of_files is not None:
             self.number_of_files = number_of_files
+        if sync_last_updated is not None:
+            self.sync_last_updated = sync_last_updated
         if total_size_bytes is not None:
             self.total_size_bytes = total_size_bytes
+
+    @property
+    def bytes_to_sync(self) -> 'str':
+        """Gets the bytes_to_sync of this V1GetCloudSpaceSizeResponse.  # noqa: E501
+
+
+        :return: The bytes_to_sync of this V1GetCloudSpaceSizeResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._bytes_to_sync
+
+    @bytes_to_sync.setter
+    def bytes_to_sync(self, bytes_to_sync: 'str'):
+        """Sets the bytes_to_sync of this V1GetCloudSpaceSizeResponse.
+
+
+        :param bytes_to_sync: The bytes_to_sync of this V1GetCloudSpaceSizeResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._bytes_to_sync = bytes_to_sync
+
+    @property
+    def files_to_sync(self) -> 'str':
+        """Gets the files_to_sync of this V1GetCloudSpaceSizeResponse.  # noqa: E501
+
+
+        :return: The files_to_sync of this V1GetCloudSpaceSizeResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._files_to_sync
+
+    @files_to_sync.setter
+    def files_to_sync(self, files_to_sync: 'str'):
+        """Sets the files_to_sync of this V1GetCloudSpaceSizeResponse.
+
+
+        :param files_to_sync: The files_to_sync of this V1GetCloudSpaceSizeResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._files_to_sync = files_to_sync
 
     @property
     def number_of_files(self) -> 'str':
@@ -80,6 +137,27 @@ class V1GetCloudSpaceSizeResponse(object):
         """
 
         self._number_of_files = number_of_files
+
+    @property
+    def sync_last_updated(self) -> 'datetime':
+        """Gets the sync_last_updated of this V1GetCloudSpaceSizeResponse.  # noqa: E501
+
+
+        :return: The sync_last_updated of this V1GetCloudSpaceSizeResponse.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._sync_last_updated
+
+    @sync_last_updated.setter
+    def sync_last_updated(self, sync_last_updated: 'datetime'):
+        """Sets the sync_last_updated of this V1GetCloudSpaceSizeResponse.
+
+
+        :param sync_last_updated: The sync_last_updated of this V1GetCloudSpaceSizeResponse.  # noqa: E501
+        :type: datetime
+        """
+
+        self._sync_last_updated = sync_last_updated
 
     @property
     def total_size_bytes(self) -> 'str':

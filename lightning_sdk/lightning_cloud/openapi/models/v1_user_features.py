@@ -47,6 +47,7 @@ class V1UserFeatures(object):
         'auto_fast_load': 'bool',
         'auto_join_orgs': 'bool',
         'b2c_experience': 'bool',
+        'byoc_litcr': 'bool',
         'cap_add': 'list[str]',
         'cap_drop': 'list[str]',
         'capacity_reservation_byoc': 'bool',
@@ -57,6 +58,7 @@ class V1UserFeatures(object):
         'cost_attribution_settings': 'bool',
         'custom_app_domain': 'bool',
         'custom_instance_types': 'bool',
+        'datasets': 'bool',
         'default_one_cluster': 'bool',
         'deployment_alerts': 'bool',
         'deployment_persistent_disk': 'bool',
@@ -77,10 +79,8 @@ class V1UserFeatures(object):
         'lit_logger': 'bool',
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
-        'mmt_v2': 'bool',
         'multicloud_saas': 'bool',
         'multiple_studio_versions': 'bool',
-        'open_api_in_studio': 'bool',
         'org_level_member_permissions': 'bool',
         'pipelines': 'bool',
         'plugin_distributed': 'bool',
@@ -100,6 +100,7 @@ class V1UserFeatures(object):
         'pricing_updates': 'bool',
         'product_generator': 'bool',
         'project_selector': 'bool',
+        'publish_pipelines': 'bool',
         'restartable_jobs': 'bool',
         'runnable_public_studio_page': 'bool',
         'security_docs': 'bool',
@@ -125,6 +126,7 @@ class V1UserFeatures(object):
         'auto_fast_load': 'autoFastLoad',
         'auto_join_orgs': 'autoJoinOrgs',
         'b2c_experience': 'b2cExperience',
+        'byoc_litcr': 'byocLitcr',
         'cap_add': 'capAdd',
         'cap_drop': 'capDrop',
         'capacity_reservation_byoc': 'capacityReservationByoc',
@@ -135,6 +137,7 @@ class V1UserFeatures(object):
         'cost_attribution_settings': 'costAttributionSettings',
         'custom_app_domain': 'customAppDomain',
         'custom_instance_types': 'customInstanceTypes',
+        'datasets': 'datasets',
         'default_one_cluster': 'defaultOneCluster',
         'deployment_alerts': 'deploymentAlerts',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
@@ -155,10 +158,8 @@ class V1UserFeatures(object):
         'lit_logger': 'litLogger',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
-        'mmt_v2': 'mmtV2',
         'multicloud_saas': 'multicloudSaas',
         'multiple_studio_versions': 'multipleStudioVersions',
-        'open_api_in_studio': 'openApiInStudio',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'pipelines': 'pipelines',
         'plugin_distributed': 'pluginDistributed',
@@ -178,6 +179,7 @@ class V1UserFeatures(object):
         'pricing_updates': 'pricingUpdates',
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
+        'publish_pipelines': 'publishPipelines',
         'restartable_jobs': 'restartableJobs',
         'runnable_public_studio_page': 'runnablePublicStudioPage',
         'security_docs': 'securityDocs',
@@ -196,7 +198,7 @@ class V1UserFeatures(object):
         'vultr': 'vultr'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, jobs_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, mmt_v2: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, open_api_in_studio: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, jobs_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, snowflake_connection: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -204,6 +206,7 @@ class V1UserFeatures(object):
         self._auto_fast_load = None
         self._auto_join_orgs = None
         self._b2c_experience = None
+        self._byoc_litcr = None
         self._cap_add = None
         self._cap_drop = None
         self._capacity_reservation_byoc = None
@@ -214,6 +217,7 @@ class V1UserFeatures(object):
         self._cost_attribution_settings = None
         self._custom_app_domain = None
         self._custom_instance_types = None
+        self._datasets = None
         self._default_one_cluster = None
         self._deployment_alerts = None
         self._deployment_persistent_disk = None
@@ -234,10 +238,8 @@ class V1UserFeatures(object):
         self._lit_logger = None
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
-        self._mmt_v2 = None
         self._multicloud_saas = None
         self._multiple_studio_versions = None
-        self._open_api_in_studio = None
         self._org_level_member_permissions = None
         self._pipelines = None
         self._plugin_distributed = None
@@ -257,6 +259,7 @@ class V1UserFeatures(object):
         self._pricing_updates = None
         self._product_generator = None
         self._project_selector = None
+        self._publish_pipelines = None
         self._restartable_jobs = None
         self._runnable_public_studio_page = None
         self._security_docs = None
@@ -286,6 +289,8 @@ class V1UserFeatures(object):
             self.auto_join_orgs = auto_join_orgs
         if b2c_experience is not None:
             self.b2c_experience = b2c_experience
+        if byoc_litcr is not None:
+            self.byoc_litcr = byoc_litcr
         if cap_add is not None:
             self.cap_add = cap_add
         if cap_drop is not None:
@@ -306,6 +311,8 @@ class V1UserFeatures(object):
             self.custom_app_domain = custom_app_domain
         if custom_instance_types is not None:
             self.custom_instance_types = custom_instance_types
+        if datasets is not None:
+            self.datasets = datasets
         if default_one_cluster is not None:
             self.default_one_cluster = default_one_cluster
         if deployment_alerts is not None:
@@ -346,14 +353,10 @@ class V1UserFeatures(object):
             self.mmt_fault_tolerance = mmt_fault_tolerance
         if mmt_strategy_selector is not None:
             self.mmt_strategy_selector = mmt_strategy_selector
-        if mmt_v2 is not None:
-            self.mmt_v2 = mmt_v2
         if multicloud_saas is not None:
             self.multicloud_saas = multicloud_saas
         if multiple_studio_versions is not None:
             self.multiple_studio_versions = multiple_studio_versions
-        if open_api_in_studio is not None:
-            self.open_api_in_studio = open_api_in_studio
         if org_level_member_permissions is not None:
             self.org_level_member_permissions = org_level_member_permissions
         if pipelines is not None:
@@ -392,6 +395,8 @@ class V1UserFeatures(object):
             self.product_generator = product_generator
         if project_selector is not None:
             self.project_selector = project_selector
+        if publish_pipelines is not None:
+            self.publish_pipelines = publish_pipelines
         if restartable_jobs is not None:
             self.restartable_jobs = restartable_jobs
         if runnable_public_studio_page is not None:
@@ -550,6 +555,27 @@ class V1UserFeatures(object):
         """
 
         self._b2c_experience = b2c_experience
+
+    @property
+    def byoc_litcr(self) -> 'bool':
+        """Gets the byoc_litcr of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The byoc_litcr of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._byoc_litcr
+
+    @byoc_litcr.setter
+    def byoc_litcr(self, byoc_litcr: 'bool'):
+        """Sets the byoc_litcr of this V1UserFeatures.
+
+
+        :param byoc_litcr: The byoc_litcr of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._byoc_litcr = byoc_litcr
 
     @property
     def cap_add(self) -> 'list[str]':
@@ -760,6 +786,27 @@ class V1UserFeatures(object):
         """
 
         self._custom_instance_types = custom_instance_types
+
+    @property
+    def datasets(self) -> 'bool':
+        """Gets the datasets of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The datasets of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._datasets
+
+    @datasets.setter
+    def datasets(self, datasets: 'bool'):
+        """Sets the datasets of this V1UserFeatures.
+
+
+        :param datasets: The datasets of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._datasets = datasets
 
     @property
     def default_one_cluster(self) -> 'bool':
@@ -1182,27 +1229,6 @@ class V1UserFeatures(object):
         self._mmt_strategy_selector = mmt_strategy_selector
 
     @property
-    def mmt_v2(self) -> 'bool':
-        """Gets the mmt_v2 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The mmt_v2 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._mmt_v2
-
-    @mmt_v2.setter
-    def mmt_v2(self, mmt_v2: 'bool'):
-        """Sets the mmt_v2 of this V1UserFeatures.
-
-
-        :param mmt_v2: The mmt_v2 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._mmt_v2 = mmt_v2
-
-    @property
     def multicloud_saas(self) -> 'bool':
         """Gets the multicloud_saas of this V1UserFeatures.  # noqa: E501
 
@@ -1243,27 +1269,6 @@ class V1UserFeatures(object):
         """
 
         self._multiple_studio_versions = multiple_studio_versions
-
-    @property
-    def open_api_in_studio(self) -> 'bool':
-        """Gets the open_api_in_studio of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The open_api_in_studio of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._open_api_in_studio
-
-    @open_api_in_studio.setter
-    def open_api_in_studio(self, open_api_in_studio: 'bool'):
-        """Sets the open_api_in_studio of this V1UserFeatures.
-
-
-        :param open_api_in_studio: The open_api_in_studio of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._open_api_in_studio = open_api_in_studio
 
     @property
     def org_level_member_permissions(self) -> 'bool':
@@ -1663,6 +1668,27 @@ class V1UserFeatures(object):
         """
 
         self._project_selector = project_selector
+
+    @property
+    def publish_pipelines(self) -> 'bool':
+        """Gets the publish_pipelines of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The publish_pipelines of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._publish_pipelines
+
+    @publish_pipelines.setter
+    def publish_pipelines(self, publish_pipelines: 'bool'):
+        """Sets the publish_pipelines of this V1UserFeatures.
+
+
+        :param publish_pipelines: The publish_pipelines of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._publish_pipelines = publish_pipelines
 
     @property
     def restartable_jobs(self) -> 'bool':

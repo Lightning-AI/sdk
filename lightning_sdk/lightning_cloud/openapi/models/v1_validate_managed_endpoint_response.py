@@ -41,19 +41,45 @@ class V1ValidateManagedEndpointResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'lai_resource_status': 'V1AssistantModelStatus',
         'valid': 'bool'
     }
 
     attribute_map = {
+        'lai_resource_status': 'laiResourceStatus',
         'valid': 'valid'
     }
 
-    def __init__(self, valid: 'bool' =None):  # noqa: E501
+    def __init__(self, lai_resource_status: 'V1AssistantModelStatus' =None, valid: 'bool' =None):  # noqa: E501
         """V1ValidateManagedEndpointResponse - a model defined in Swagger"""  # noqa: E501
+        self._lai_resource_status = None
         self._valid = None
         self.discriminator = None
+        if lai_resource_status is not None:
+            self.lai_resource_status = lai_resource_status
         if valid is not None:
             self.valid = valid
+
+    @property
+    def lai_resource_status(self) -> 'V1AssistantModelStatus':
+        """Gets the lai_resource_status of this V1ValidateManagedEndpointResponse.  # noqa: E501
+
+
+        :return: The lai_resource_status of this V1ValidateManagedEndpointResponse.  # noqa: E501
+        :rtype: V1AssistantModelStatus
+        """
+        return self._lai_resource_status
+
+    @lai_resource_status.setter
+    def lai_resource_status(self, lai_resource_status: 'V1AssistantModelStatus'):
+        """Sets the lai_resource_status of this V1ValidateManagedEndpointResponse.
+
+
+        :param lai_resource_status: The lai_resource_status of this V1ValidateManagedEndpointResponse.  # noqa: E501
+        :type: V1AssistantModelStatus
+        """
+
+        self._lai_resource_status = lai_resource_status
 
     @property
     def valid(self) -> 'bool':

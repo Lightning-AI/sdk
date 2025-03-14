@@ -49,7 +49,7 @@ class SlurmJobsBody(object):
         'image': 'str',
         'image_secret_ref': 'str',
         'name': 'str',
-        'num_gpus': 'str',
+        'partition': 'str',
         'service_id': 'str',
         'sync_env': 'bool',
         'work_dir': 'str'
@@ -64,13 +64,13 @@ class SlurmJobsBody(object):
         'image': 'image',
         'image_secret_ref': 'imageSecretRef',
         'name': 'name',
-        'num_gpus': 'numGpus',
+        'partition': 'partition',
         'service_id': 'serviceId',
         'sync_env': 'syncEnv',
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, service_id: 'str' =None, sync_env: 'bool' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, entrypoint: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, name: 'str' =None, partition: 'str' =None, service_id: 'str' =None, sync_env: 'bool' =None, work_dir: 'str' =None):  # noqa: E501
         """SlurmJobsBody - a model defined in Swagger"""  # noqa: E501
         self._cache_id = None
         self._cloudspace_id = None
@@ -80,7 +80,7 @@ class SlurmJobsBody(object):
         self._image = None
         self._image_secret_ref = None
         self._name = None
-        self._num_gpus = None
+        self._partition = None
         self._service_id = None
         self._sync_env = None
         self._work_dir = None
@@ -101,8 +101,8 @@ class SlurmJobsBody(object):
             self.image_secret_ref = image_secret_ref
         if name is not None:
             self.name = name
-        if num_gpus is not None:
-            self.num_gpus = num_gpus
+        if partition is not None:
+            self.partition = partition
         if service_id is not None:
             self.service_id = service_id
         if sync_env is not None:
@@ -281,25 +281,25 @@ class SlurmJobsBody(object):
         self._name = name
 
     @property
-    def num_gpus(self) -> 'str':
-        """Gets the num_gpus of this SlurmJobsBody.  # noqa: E501
+    def partition(self) -> 'str':
+        """Gets the partition of this SlurmJobsBody.  # noqa: E501
 
 
-        :return: The num_gpus of this SlurmJobsBody.  # noqa: E501
+        :return: The partition of this SlurmJobsBody.  # noqa: E501
         :rtype: str
         """
-        return self._num_gpus
+        return self._partition
 
-    @num_gpus.setter
-    def num_gpus(self, num_gpus: 'str'):
-        """Sets the num_gpus of this SlurmJobsBody.
+    @partition.setter
+    def partition(self, partition: 'str'):
+        """Sets the partition of this SlurmJobsBody.
 
 
-        :param num_gpus: The num_gpus of this SlurmJobsBody.  # noqa: E501
+        :param partition: The partition of this SlurmJobsBody.  # noqa: E501
         :type: str
         """
 
-        self._num_gpus = num_gpus
+        self._partition = partition
 
     @property
     def service_id(self) -> 'str':

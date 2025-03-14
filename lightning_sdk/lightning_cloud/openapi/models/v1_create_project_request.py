@@ -41,6 +41,7 @@ class V1CreateProjectRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'default_machine_image_version': 'str',
         'description': 'str',
         'display_name': 'str',
         'name': 'str',
@@ -50,6 +51,7 @@ class V1CreateProjectRequest(object):
     }
 
     attribute_map = {
+        'default_machine_image_version': 'defaultMachineImageVersion',
         'description': 'description',
         'display_name': 'displayName',
         'name': 'name',
@@ -58,8 +60,9 @@ class V1CreateProjectRequest(object):
         'quotas': 'quotas'
     }
 
-    def __init__(self, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
+    def __init__(self, default_machine_image_version: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
         """V1CreateProjectRequest - a model defined in Swagger"""  # noqa: E501
+        self._default_machine_image_version = None
         self._description = None
         self._display_name = None
         self._name = None
@@ -67,6 +70,8 @@ class V1CreateProjectRequest(object):
         self._preferred_cluster = None
         self._quotas = None
         self.discriminator = None
+        if default_machine_image_version is not None:
+            self.default_machine_image_version = default_machine_image_version
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -79,6 +84,27 @@ class V1CreateProjectRequest(object):
             self.preferred_cluster = preferred_cluster
         if quotas is not None:
             self.quotas = quotas
+
+    @property
+    def default_machine_image_version(self) -> 'str':
+        """Gets the default_machine_image_version of this V1CreateProjectRequest.  # noqa: E501
+
+
+        :return: The default_machine_image_version of this V1CreateProjectRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_machine_image_version
+
+    @default_machine_image_version.setter
+    def default_machine_image_version(self, default_machine_image_version: 'str'):
+        """Sets the default_machine_image_version of this V1CreateProjectRequest.
+
+
+        :param default_machine_image_version: The default_machine_image_version of this V1CreateProjectRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._default_machine_image_version = default_machine_image_version
 
     @property
     def description(self) -> 'str':

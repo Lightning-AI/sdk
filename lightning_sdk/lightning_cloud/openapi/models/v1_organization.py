@@ -52,6 +52,7 @@ class V1Organization(object):
         'auto_join_domain_validations': 'dict(str, V1AutoJoinDomainValidation)',
         'auto_join_domains': 'list[str]',
         'created_at': 'datetime',
+        'default_machine_image_version': 'str',
         'description': 'str',
         'display_name': 'str',
         'domain': 'str',
@@ -83,6 +84,7 @@ class V1Organization(object):
         'auto_join_domain_validations': 'autoJoinDomainValidations',
         'auto_join_domains': 'autoJoinDomains',
         'created_at': 'createdAt',
+        'default_machine_image_version': 'defaultMachineImageVersion',
         'description': 'description',
         'display_name': 'displayName',
         'domain': 'domain',
@@ -102,7 +104,7 @@ class V1Organization(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_gcp_saas = None
@@ -115,6 +117,7 @@ class V1Organization(object):
         self._auto_join_domain_validations = None
         self._auto_join_domains = None
         self._created_at = None
+        self._default_machine_image_version = None
         self._description = None
         self._display_name = None
         self._domain = None
@@ -155,6 +158,8 @@ class V1Organization(object):
             self.auto_join_domains = auto_join_domains
         if created_at is not None:
             self.created_at = created_at
+        if default_machine_image_version is not None:
+            self.default_machine_image_version = default_machine_image_version
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -420,6 +425,27 @@ class V1Organization(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def default_machine_image_version(self) -> 'str':
+        """Gets the default_machine_image_version of this V1Organization.  # noqa: E501
+
+
+        :return: The default_machine_image_version of this V1Organization.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_machine_image_version
+
+    @default_machine_image_version.setter
+    def default_machine_image_version(self, default_machine_image_version: 'str'):
+        """Sets the default_machine_image_version of this V1Organization.
+
+
+        :param default_machine_image_version: The default_machine_image_version of this V1Organization.  # noqa: E501
+        :type: str
+        """
+
+        self._default_machine_image_version = default_machine_image_version
 
     @property
     def description(self) -> 'str':

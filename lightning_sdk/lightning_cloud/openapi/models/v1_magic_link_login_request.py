@@ -42,6 +42,7 @@ class V1MagicLinkLoginRequest(object):
     """
     swagger_types = {
         'collab_session_id': 'str',
+        'discounted_pro_plan': 'bool',
         'email': 'str',
         'experimentation_id': 'str',
         'invite_code': 'str',
@@ -51,6 +52,7 @@ class V1MagicLinkLoginRequest(object):
 
     attribute_map = {
         'collab_session_id': 'collabSessionId',
+        'discounted_pro_plan': 'discountedProPlan',
         'email': 'email',
         'experimentation_id': 'experimentationId',
         'invite_code': 'inviteCode',
@@ -58,9 +60,10 @@ class V1MagicLinkLoginRequest(object):
         'referrer_params': 'referrerParams'
     }
 
-    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, invite_code: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None):  # noqa: E501
+    def __init__(self, collab_session_id: 'str' =None, discounted_pro_plan: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, invite_code: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None):  # noqa: E501
         """V1MagicLinkLoginRequest - a model defined in Swagger"""  # noqa: E501
         self._collab_session_id = None
+        self._discounted_pro_plan = None
         self._email = None
         self._experimentation_id = None
         self._invite_code = None
@@ -69,6 +72,8 @@ class V1MagicLinkLoginRequest(object):
         self.discriminator = None
         if collab_session_id is not None:
             self.collab_session_id = collab_session_id
+        if discounted_pro_plan is not None:
+            self.discounted_pro_plan = discounted_pro_plan
         if email is not None:
             self.email = email
         if experimentation_id is not None:
@@ -100,6 +105,27 @@ class V1MagicLinkLoginRequest(object):
         """
 
         self._collab_session_id = collab_session_id
+
+    @property
+    def discounted_pro_plan(self) -> 'bool':
+        """Gets the discounted_pro_plan of this V1MagicLinkLoginRequest.  # noqa: E501
+
+
+        :return: The discounted_pro_plan of this V1MagicLinkLoginRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._discounted_pro_plan
+
+    @discounted_pro_plan.setter
+    def discounted_pro_plan(self, discounted_pro_plan: 'bool'):
+        """Sets the discounted_pro_plan of this V1MagicLinkLoginRequest.
+
+
+        :param discounted_pro_plan: The discounted_pro_plan of this V1MagicLinkLoginRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._discounted_pro_plan = discounted_pro_plan
 
     @property
     def email(self) -> 'str':

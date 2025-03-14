@@ -46,13 +46,15 @@ class V1SLURMJob(object):
         'cluster_id': 'str',
         'command': 'str',
         'created_at': 'datetime',
+        'entrypoint': 'str',
         'id': 'str',
         'image': 'str',
         'linked_project_id': 'str',
         'linked_user_id': 'str',
         'message': 'str',
         'name': 'str',
-        'num_gpus': 'str',
+        'num_gpus': 'int',
+        'partition': 'str',
         'project_id': 'str',
         'run_id': 'str',
         'service_id': 'str',
@@ -72,6 +74,7 @@ class V1SLURMJob(object):
         'cluster_id': 'clusterId',
         'command': 'command',
         'created_at': 'createdAt',
+        'entrypoint': 'entrypoint',
         'id': 'id',
         'image': 'image',
         'linked_project_id': 'linkedProjectId',
@@ -79,6 +82,7 @@ class V1SLURMJob(object):
         'message': 'message',
         'name': 'name',
         'num_gpus': 'numGpus',
+        'partition': 'partition',
         'project_id': 'projectId',
         'run_id': 'runId',
         'service_id': 'serviceId',
@@ -92,13 +96,14 @@ class V1SLURMJob(object):
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, image: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, user_id: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, entrypoint: 'str' =None, id: 'str' =None, image: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'int' =None, partition: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, user_id: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1SLURMJob - a model defined in Swagger"""  # noqa: E501
         self._cache_id = None
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
         self._created_at = None
+        self._entrypoint = None
         self._id = None
         self._image = None
         self._linked_project_id = None
@@ -106,6 +111,7 @@ class V1SLURMJob(object):
         self._message = None
         self._name = None
         self._num_gpus = None
+        self._partition = None
         self._project_id = None
         self._run_id = None
         self._service_id = None
@@ -128,6 +134,8 @@ class V1SLURMJob(object):
             self.command = command
         if created_at is not None:
             self.created_at = created_at
+        if entrypoint is not None:
+            self.entrypoint = entrypoint
         if id is not None:
             self.id = id
         if image is not None:
@@ -142,6 +150,8 @@ class V1SLURMJob(object):
             self.name = name
         if num_gpus is not None:
             self.num_gpus = num_gpus
+        if partition is not None:
+            self.partition = partition
         if project_id is not None:
             self.project_id = project_id
         if run_id is not None:
@@ -271,6 +281,27 @@ class V1SLURMJob(object):
         self._created_at = created_at
 
     @property
+    def entrypoint(self) -> 'str':
+        """Gets the entrypoint of this V1SLURMJob.  # noqa: E501
+
+
+        :return: The entrypoint of this V1SLURMJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._entrypoint
+
+    @entrypoint.setter
+    def entrypoint(self, entrypoint: 'str'):
+        """Sets the entrypoint of this V1SLURMJob.
+
+
+        :param entrypoint: The entrypoint of this V1SLURMJob.  # noqa: E501
+        :type: str
+        """
+
+        self._entrypoint = entrypoint
+
+    @property
     def id(self) -> 'str':
         """Gets the id of this V1SLURMJob.  # noqa: E501
 
@@ -397,25 +428,46 @@ class V1SLURMJob(object):
         self._name = name
 
     @property
-    def num_gpus(self) -> 'str':
+    def num_gpus(self) -> 'int':
         """Gets the num_gpus of this V1SLURMJob.  # noqa: E501
 
 
         :return: The num_gpus of this V1SLURMJob.  # noqa: E501
-        :rtype: str
+        :rtype: int
         """
         return self._num_gpus
 
     @num_gpus.setter
-    def num_gpus(self, num_gpus: 'str'):
+    def num_gpus(self, num_gpus: 'int'):
         """Sets the num_gpus of this V1SLURMJob.
 
 
         :param num_gpus: The num_gpus of this V1SLURMJob.  # noqa: E501
-        :type: str
+        :type: int
         """
 
         self._num_gpus = num_gpus
+
+    @property
+    def partition(self) -> 'str':
+        """Gets the partition of this V1SLURMJob.  # noqa: E501
+
+
+        :return: The partition of this V1SLURMJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._partition
+
+    @partition.setter
+    def partition(self, partition: 'str'):
+        """Sets the partition of this V1SLURMJob.
+
+
+        :param partition: The partition of this V1SLURMJob.  # noqa: E501
+        :type: str
+        """
+
+        self._partition = partition
 
     @property
     def project_id(self) -> 'str':

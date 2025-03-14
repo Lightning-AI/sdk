@@ -44,6 +44,7 @@ class V1AssistantModelStatus(object):
     PENDING = "PENDING"
     ENDPOINT_DELETED = "ENDPOINT_DELETED"
     STOPPED = "STOPPED"
+    RESOURCE_DELETED = "RESOURCE_DELETED"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

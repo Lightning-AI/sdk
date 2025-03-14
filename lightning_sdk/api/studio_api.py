@@ -140,11 +140,6 @@ class StudioApi:
         startup_status = self.get_studio_status(studio_id, teamspace_id).in_use.startup_status
         return startup_status and startup_status.top_up_restore_finished
 
-    @backoff.on_exception(backoff.expo, AttributeError, max_tries=10)
-    def _check_code_status_sync_in_progress(self, studio_id: str, teamspace_id: str) -> bool:
-        """Retries checking the sync_in_progress value of the code status when there's an AttributeError."""
-        return self.get_studio_status(studio_id, teamspace_id).in_use.sync_in_progress
-
     def start_studio(
         self, studio_id: str, teamspace_id: str, machine: Union[Machine, str], interruptible: False
     ) -> None:
@@ -164,9 +159,6 @@ class StudioApi:
             teamspace_id,
             studio_id,
         )
-
-        while self._check_code_status_sync_in_progress(studio_id, teamspace_id):
-            time.sleep(1)
 
         while True:
             if self._check_code_status_top_up_restore_finished(studio_id, teamspace_id):

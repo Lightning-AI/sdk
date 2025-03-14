@@ -43,6 +43,7 @@ class V1CloudProvider(object):
     VULTR = "VULTR"
     LAMBDA_LABS = "LAMBDA_LABS"
     SLURM = "SLURM"
+    DGX = "DGX"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

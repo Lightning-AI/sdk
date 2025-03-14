@@ -41,194 +41,60 @@ class V1SlurmNode(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'address': 'str',
-        'alloc_cpus': 'int',
-        'alloc_memory': 'str',
-        'architecture': 'str',
-        'cores': 'int',
+        'count': 'int',
         'cpus': 'int',
-        'free_memory': 'str',
-        'gpu_type': 'str',
         'gpus': 'int',
-        'hostname': 'str',
-        'idle_cpus': 'int',
-        'name': 'str',
-        'operating_system': 'str',
-        'slurmd_version': 'str',
-        'state': 'str'
+        'memory_mb': 'int',
+        'name': 'str'
     }
 
     attribute_map = {
-        'address': 'address',
-        'alloc_cpus': 'allocCpus',
-        'alloc_memory': 'allocMemory',
-        'architecture': 'architecture',
-        'cores': 'cores',
+        'count': 'count',
         'cpus': 'cpus',
-        'free_memory': 'freeMemory',
-        'gpu_type': 'gpuType',
         'gpus': 'gpus',
-        'hostname': 'hostname',
-        'idle_cpus': 'idleCpus',
-        'name': 'name',
-        'operating_system': 'operatingSystem',
-        'slurmd_version': 'slurmdVersion',
-        'state': 'state'
+        'memory_mb': 'memoryMb',
+        'name': 'name'
     }
 
-    def __init__(self, address: 'str' =None, alloc_cpus: 'int' =None, alloc_memory: 'str' =None, architecture: 'str' =None, cores: 'int' =None, cpus: 'int' =None, free_memory: 'str' =None, gpu_type: 'str' =None, gpus: 'int' =None, hostname: 'str' =None, idle_cpus: 'int' =None, name: 'str' =None, operating_system: 'str' =None, slurmd_version: 'str' =None, state: 'str' =None):  # noqa: E501
+    def __init__(self, count: 'int' =None, cpus: 'int' =None, gpus: 'int' =None, memory_mb: 'int' =None, name: 'str' =None):  # noqa: E501
         """V1SlurmNode - a model defined in Swagger"""  # noqa: E501
-        self._address = None
-        self._alloc_cpus = None
-        self._alloc_memory = None
-        self._architecture = None
-        self._cores = None
+        self._count = None
         self._cpus = None
-        self._free_memory = None
-        self._gpu_type = None
         self._gpus = None
-        self._hostname = None
-        self._idle_cpus = None
+        self._memory_mb = None
         self._name = None
-        self._operating_system = None
-        self._slurmd_version = None
-        self._state = None
         self.discriminator = None
-        if address is not None:
-            self.address = address
-        if alloc_cpus is not None:
-            self.alloc_cpus = alloc_cpus
-        if alloc_memory is not None:
-            self.alloc_memory = alloc_memory
-        if architecture is not None:
-            self.architecture = architecture
-        if cores is not None:
-            self.cores = cores
+        if count is not None:
+            self.count = count
         if cpus is not None:
             self.cpus = cpus
-        if free_memory is not None:
-            self.free_memory = free_memory
-        if gpu_type is not None:
-            self.gpu_type = gpu_type
         if gpus is not None:
             self.gpus = gpus
-        if hostname is not None:
-            self.hostname = hostname
-        if idle_cpus is not None:
-            self.idle_cpus = idle_cpus
+        if memory_mb is not None:
+            self.memory_mb = memory_mb
         if name is not None:
             self.name = name
-        if operating_system is not None:
-            self.operating_system = operating_system
-        if slurmd_version is not None:
-            self.slurmd_version = slurmd_version
-        if state is not None:
-            self.state = state
 
     @property
-    def address(self) -> 'str':
-        """Gets the address of this V1SlurmNode.  # noqa: E501
+    def count(self) -> 'int':
+        """Gets the count of this V1SlurmNode.  # noqa: E501
 
 
-        :return: The address of this V1SlurmNode.  # noqa: E501
-        :rtype: str
-        """
-        return self._address
-
-    @address.setter
-    def address(self, address: 'str'):
-        """Sets the address of this V1SlurmNode.
-
-
-        :param address: The address of this V1SlurmNode.  # noqa: E501
-        :type: str
-        """
-
-        self._address = address
-
-    @property
-    def alloc_cpus(self) -> 'int':
-        """Gets the alloc_cpus of this V1SlurmNode.  # noqa: E501
-
-
-        :return: The alloc_cpus of this V1SlurmNode.  # noqa: E501
+        :return: The count of this V1SlurmNode.  # noqa: E501
         :rtype: int
         """
-        return self._alloc_cpus
+        return self._count
 
-    @alloc_cpus.setter
-    def alloc_cpus(self, alloc_cpus: 'int'):
-        """Sets the alloc_cpus of this V1SlurmNode.
+    @count.setter
+    def count(self, count: 'int'):
+        """Sets the count of this V1SlurmNode.
 
 
-        :param alloc_cpus: The alloc_cpus of this V1SlurmNode.  # noqa: E501
+        :param count: The count of this V1SlurmNode.  # noqa: E501
         :type: int
         """
 
-        self._alloc_cpus = alloc_cpus
-
-    @property
-    def alloc_memory(self) -> 'str':
-        """Gets the alloc_memory of this V1SlurmNode.  # noqa: E501
-
-
-        :return: The alloc_memory of this V1SlurmNode.  # noqa: E501
-        :rtype: str
-        """
-        return self._alloc_memory
-
-    @alloc_memory.setter
-    def alloc_memory(self, alloc_memory: 'str'):
-        """Sets the alloc_memory of this V1SlurmNode.
-
-
-        :param alloc_memory: The alloc_memory of this V1SlurmNode.  # noqa: E501
-        :type: str
-        """
-
-        self._alloc_memory = alloc_memory
-
-    @property
-    def architecture(self) -> 'str':
-        """Gets the architecture of this V1SlurmNode.  # noqa: E501
-
-
-        :return: The architecture of this V1SlurmNode.  # noqa: E501
-        :rtype: str
-        """
-        return self._architecture
-
-    @architecture.setter
-    def architecture(self, architecture: 'str'):
-        """Sets the architecture of this V1SlurmNode.
-
-
-        :param architecture: The architecture of this V1SlurmNode.  # noqa: E501
-        :type: str
-        """
-
-        self._architecture = architecture
-
-    @property
-    def cores(self) -> 'int':
-        """Gets the cores of this V1SlurmNode.  # noqa: E501
-
-
-        :return: The cores of this V1SlurmNode.  # noqa: E501
-        :rtype: int
-        """
-        return self._cores
-
-    @cores.setter
-    def cores(self, cores: 'int'):
-        """Sets the cores of this V1SlurmNode.
-
-
-        :param cores: The cores of this V1SlurmNode.  # noqa: E501
-        :type: int
-        """
-
-        self._cores = cores
+        self._count = count
 
     @property
     def cpus(self) -> 'int':
@@ -252,48 +118,6 @@ class V1SlurmNode(object):
         self._cpus = cpus
 
     @property
-    def free_memory(self) -> 'str':
-        """Gets the free_memory of this V1SlurmNode.  # noqa: E501
-
-
-        :return: The free_memory of this V1SlurmNode.  # noqa: E501
-        :rtype: str
-        """
-        return self._free_memory
-
-    @free_memory.setter
-    def free_memory(self, free_memory: 'str'):
-        """Sets the free_memory of this V1SlurmNode.
-
-
-        :param free_memory: The free_memory of this V1SlurmNode.  # noqa: E501
-        :type: str
-        """
-
-        self._free_memory = free_memory
-
-    @property
-    def gpu_type(self) -> 'str':
-        """Gets the gpu_type of this V1SlurmNode.  # noqa: E501
-
-
-        :return: The gpu_type of this V1SlurmNode.  # noqa: E501
-        :rtype: str
-        """
-        return self._gpu_type
-
-    @gpu_type.setter
-    def gpu_type(self, gpu_type: 'str'):
-        """Sets the gpu_type of this V1SlurmNode.
-
-
-        :param gpu_type: The gpu_type of this V1SlurmNode.  # noqa: E501
-        :type: str
-        """
-
-        self._gpu_type = gpu_type
-
-    @property
     def gpus(self) -> 'int':
         """Gets the gpus of this V1SlurmNode.  # noqa: E501
 
@@ -315,46 +139,25 @@ class V1SlurmNode(object):
         self._gpus = gpus
 
     @property
-    def hostname(self) -> 'str':
-        """Gets the hostname of this V1SlurmNode.  # noqa: E501
+    def memory_mb(self) -> 'int':
+        """Gets the memory_mb of this V1SlurmNode.  # noqa: E501
 
 
-        :return: The hostname of this V1SlurmNode.  # noqa: E501
-        :rtype: str
-        """
-        return self._hostname
-
-    @hostname.setter
-    def hostname(self, hostname: 'str'):
-        """Sets the hostname of this V1SlurmNode.
-
-
-        :param hostname: The hostname of this V1SlurmNode.  # noqa: E501
-        :type: str
-        """
-
-        self._hostname = hostname
-
-    @property
-    def idle_cpus(self) -> 'int':
-        """Gets the idle_cpus of this V1SlurmNode.  # noqa: E501
-
-
-        :return: The idle_cpus of this V1SlurmNode.  # noqa: E501
+        :return: The memory_mb of this V1SlurmNode.  # noqa: E501
         :rtype: int
         """
-        return self._idle_cpus
+        return self._memory_mb
 
-    @idle_cpus.setter
-    def idle_cpus(self, idle_cpus: 'int'):
-        """Sets the idle_cpus of this V1SlurmNode.
+    @memory_mb.setter
+    def memory_mb(self, memory_mb: 'int'):
+        """Sets the memory_mb of this V1SlurmNode.
 
 
-        :param idle_cpus: The idle_cpus of this V1SlurmNode.  # noqa: E501
+        :param memory_mb: The memory_mb of this V1SlurmNode.  # noqa: E501
         :type: int
         """
 
-        self._idle_cpus = idle_cpus
+        self._memory_mb = memory_mb
 
     @property
     def name(self) -> 'str':
@@ -376,69 +179,6 @@ class V1SlurmNode(object):
         """
 
         self._name = name
-
-    @property
-    def operating_system(self) -> 'str':
-        """Gets the operating_system of this V1SlurmNode.  # noqa: E501
-
-
-        :return: The operating_system of this V1SlurmNode.  # noqa: E501
-        :rtype: str
-        """
-        return self._operating_system
-
-    @operating_system.setter
-    def operating_system(self, operating_system: 'str'):
-        """Sets the operating_system of this V1SlurmNode.
-
-
-        :param operating_system: The operating_system of this V1SlurmNode.  # noqa: E501
-        :type: str
-        """
-
-        self._operating_system = operating_system
-
-    @property
-    def slurmd_version(self) -> 'str':
-        """Gets the slurmd_version of this V1SlurmNode.  # noqa: E501
-
-
-        :return: The slurmd_version of this V1SlurmNode.  # noqa: E501
-        :rtype: str
-        """
-        return self._slurmd_version
-
-    @slurmd_version.setter
-    def slurmd_version(self, slurmd_version: 'str'):
-        """Sets the slurmd_version of this V1SlurmNode.
-
-
-        :param slurmd_version: The slurmd_version of this V1SlurmNode.  # noqa: E501
-        :type: str
-        """
-
-        self._slurmd_version = slurmd_version
-
-    @property
-    def state(self) -> 'str':
-        """Gets the state of this V1SlurmNode.  # noqa: E501
-
-
-        :return: The state of this V1SlurmNode.  # noqa: E501
-        :rtype: str
-        """
-        return self._state
-
-    @state.setter
-    def state(self, state: 'str'):
-        """Sets the state of this V1SlurmNode.
-
-
-        :param state: The state of this V1SlurmNode.  # noqa: E501
-        :type: str
-        """
-
-        self._state = state
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

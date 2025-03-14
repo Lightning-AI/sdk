@@ -48,15 +48,18 @@ class V1AgentJob(object):
         'conda_checksum': 'str',
         'conda_env_path': 'str',
         'created_at': 'datetime',
+        'entrypoint': 'str',
         'id': 'str',
         'image': 'str',
-        'image_login_command': 'str',
+        'image_registry_password': 'str',
+        'image_registry_username': 'str',
         'image_secret_ref': 'str',
         'linked_project_id': 'str',
         'linked_user_id': 'str',
         'message': 'str',
         'name': 'str',
-        'num_gpus': 'str',
+        'num_gpus': 'int',
+        'partition': 'str',
         'project_id': 'str',
         'run_id': 'str',
         'service_id': 'str',
@@ -77,15 +80,18 @@ class V1AgentJob(object):
         'conda_checksum': 'condaChecksum',
         'conda_env_path': 'condaEnvPath',
         'created_at': 'createdAt',
+        'entrypoint': 'entrypoint',
         'id': 'id',
         'image': 'image',
-        'image_login_command': 'imageLoginCommand',
+        'image_registry_password': 'imageRegistryPassword',
+        'image_registry_username': 'imageRegistryUsername',
         'image_secret_ref': 'imageSecretRef',
         'linked_project_id': 'linkedProjectId',
         'linked_user_id': 'linkedUserId',
         'message': 'message',
         'name': 'name',
         'num_gpus': 'numGpus',
+        'partition': 'partition',
         'project_id': 'projectId',
         'run_id': 'runId',
         'service_id': 'serviceId',
@@ -98,7 +104,7 @@ class V1AgentJob(object):
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, conda_checksum: 'str' =None, conda_env_path: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, image: 'str' =None, image_login_command: 'str' =None, image_secret_ref: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, conda_checksum: 'str' =None, conda_env_path: 'str' =None, created_at: 'datetime' =None, entrypoint: 'str' =None, id: 'str' =None, image: 'str' =None, image_registry_password: 'str' =None, image_registry_username: 'str' =None, image_secret_ref: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'int' =None, partition: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1AgentJob - a model defined in Swagger"""  # noqa: E501
         self._cache_id = None
         self._cloudspace_id = None
@@ -107,15 +113,18 @@ class V1AgentJob(object):
         self._conda_checksum = None
         self._conda_env_path = None
         self._created_at = None
+        self._entrypoint = None
         self._id = None
         self._image = None
-        self._image_login_command = None
+        self._image_registry_password = None
+        self._image_registry_username = None
         self._image_secret_ref = None
         self._linked_project_id = None
         self._linked_user_id = None
         self._message = None
         self._name = None
         self._num_gpus = None
+        self._partition = None
         self._project_id = None
         self._run_id = None
         self._service_id = None
@@ -141,12 +150,16 @@ class V1AgentJob(object):
             self.conda_env_path = conda_env_path
         if created_at is not None:
             self.created_at = created_at
+        if entrypoint is not None:
+            self.entrypoint = entrypoint
         if id is not None:
             self.id = id
         if image is not None:
             self.image = image
-        if image_login_command is not None:
-            self.image_login_command = image_login_command
+        if image_registry_password is not None:
+            self.image_registry_password = image_registry_password
+        if image_registry_username is not None:
+            self.image_registry_username = image_registry_username
         if image_secret_ref is not None:
             self.image_secret_ref = image_secret_ref
         if linked_project_id is not None:
@@ -159,6 +172,8 @@ class V1AgentJob(object):
             self.name = name
         if num_gpus is not None:
             self.num_gpus = num_gpus
+        if partition is not None:
+            self.partition = partition
         if project_id is not None:
             self.project_id = project_id
         if run_id is not None:
@@ -328,6 +343,27 @@ class V1AgentJob(object):
         self._created_at = created_at
 
     @property
+    def entrypoint(self) -> 'str':
+        """Gets the entrypoint of this V1AgentJob.  # noqa: E501
+
+
+        :return: The entrypoint of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._entrypoint
+
+    @entrypoint.setter
+    def entrypoint(self, entrypoint: 'str'):
+        """Sets the entrypoint of this V1AgentJob.
+
+
+        :param entrypoint: The entrypoint of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._entrypoint = entrypoint
+
+    @property
     def id(self) -> 'str':
         """Gets the id of this V1AgentJob.  # noqa: E501
 
@@ -370,25 +406,46 @@ class V1AgentJob(object):
         self._image = image
 
     @property
-    def image_login_command(self) -> 'str':
-        """Gets the image_login_command of this V1AgentJob.  # noqa: E501
+    def image_registry_password(self) -> 'str':
+        """Gets the image_registry_password of this V1AgentJob.  # noqa: E501
 
 
-        :return: The image_login_command of this V1AgentJob.  # noqa: E501
+        :return: The image_registry_password of this V1AgentJob.  # noqa: E501
         :rtype: str
         """
-        return self._image_login_command
+        return self._image_registry_password
 
-    @image_login_command.setter
-    def image_login_command(self, image_login_command: 'str'):
-        """Sets the image_login_command of this V1AgentJob.
+    @image_registry_password.setter
+    def image_registry_password(self, image_registry_password: 'str'):
+        """Sets the image_registry_password of this V1AgentJob.
 
 
-        :param image_login_command: The image_login_command of this V1AgentJob.  # noqa: E501
+        :param image_registry_password: The image_registry_password of this V1AgentJob.  # noqa: E501
         :type: str
         """
 
-        self._image_login_command = image_login_command
+        self._image_registry_password = image_registry_password
+
+    @property
+    def image_registry_username(self) -> 'str':
+        """Gets the image_registry_username of this V1AgentJob.  # noqa: E501
+
+
+        :return: The image_registry_username of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._image_registry_username
+
+    @image_registry_username.setter
+    def image_registry_username(self, image_registry_username: 'str'):
+        """Sets the image_registry_username of this V1AgentJob.
+
+
+        :param image_registry_username: The image_registry_username of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._image_registry_username = image_registry_username
 
     @property
     def image_secret_ref(self) -> 'str':
@@ -496,25 +553,46 @@ class V1AgentJob(object):
         self._name = name
 
     @property
-    def num_gpus(self) -> 'str':
+    def num_gpus(self) -> 'int':
         """Gets the num_gpus of this V1AgentJob.  # noqa: E501
 
 
         :return: The num_gpus of this V1AgentJob.  # noqa: E501
-        :rtype: str
+        :rtype: int
         """
         return self._num_gpus
 
     @num_gpus.setter
-    def num_gpus(self, num_gpus: 'str'):
+    def num_gpus(self, num_gpus: 'int'):
         """Sets the num_gpus of this V1AgentJob.
 
 
         :param num_gpus: The num_gpus of this V1AgentJob.  # noqa: E501
-        :type: str
+        :type: int
         """
 
         self._num_gpus = num_gpus
+
+    @property
+    def partition(self) -> 'str':
+        """Gets the partition of this V1AgentJob.  # noqa: E501
+
+
+        :return: The partition of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._partition
+
+    @partition.setter
+    def partition(self, partition: 'str'):
+        """Sets the partition of this V1AgentJob.
+
+
+        :param partition: The partition of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._partition = partition
 
     @property
     def project_id(self) -> 'str':

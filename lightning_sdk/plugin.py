@@ -303,7 +303,6 @@ class SlurmJobsPlugin(_Plugin):
         name: Optional[str] = None,
         cluster_id: Optional[str] = None,
         work_dir: str = "/home/lightning_manager",
-        num_gpus: int = 1,
         sync_env: bool = True,
         cache_id: Optional[str] = None,
     ) -> "Externalv1LightningappInstance":
@@ -315,7 +314,6 @@ class SlurmJobsPlugin(_Plugin):
             cluster_id: The name of the SLURM Cluster to submit the job on.
                 If the cluster_id isn't provided, the oldest running SLURM cluster will be selected.
             work_dir: The position where the the files will be created on the SLURM cluster.
-            num_gpus: The number of GPUs requested.
             sync_env: Whether to force an environement sync.
             cache_id: A string to avoid re-downloading the Studio files to the SLURM cluster.
                 If you update your files and don't change the cache_id, they won't be used.
@@ -325,9 +323,6 @@ class SlurmJobsPlugin(_Plugin):
 
         if work_dir == "":
             raise ValueError("The argument `work_dir` needs to be a proper path on the SLURM Cluster.")
-
-        if num_gpus <= 0:
-            raise ValueError("The argument `num_gpus` needs to be strictly positive.")
 
         if name is None:
             name = _run_name("slurm")
@@ -392,7 +387,6 @@ class SlurmJobsPlugin(_Plugin):
                 sync_env=sync_env,
                 work_dir=work_dir,
                 service_id=service_id,
-                num_gpus=num_gpus,
                 cache_id=cache_id,
             ),
         )

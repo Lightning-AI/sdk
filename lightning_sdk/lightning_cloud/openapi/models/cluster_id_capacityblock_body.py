@@ -41,7 +41,7 @@ class ClusterIdCapacityblockBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'capacity_block_duration_days': 'int',
+        'capacity_block_duration_hours': 'int',
         'instance_count': 'int',
         'instance_type': 'str',
         'org_id': 'str',
@@ -50,7 +50,7 @@ class ClusterIdCapacityblockBody(object):
     }
 
     attribute_map = {
-        'capacity_block_duration_days': 'capacityBlockDurationDays',
+        'capacity_block_duration_hours': 'capacityBlockDurationHours',
         'instance_count': 'instanceCount',
         'instance_type': 'instanceType',
         'org_id': 'orgId',
@@ -58,17 +58,17 @@ class ClusterIdCapacityblockBody(object):
         'timezone': 'timezone'
     }
 
-    def __init__(self, capacity_block_duration_days: 'int' =None, instance_count: 'int' =None, instance_type: 'str' =None, org_id: 'str' =None, start_date: 'datetime' =None, timezone: 'str' =None):  # noqa: E501
+    def __init__(self, capacity_block_duration_hours: 'int' =None, instance_count: 'int' =None, instance_type: 'str' =None, org_id: 'str' =None, start_date: 'datetime' =None, timezone: 'str' =None):  # noqa: E501
         """ClusterIdCapacityblockBody - a model defined in Swagger"""  # noqa: E501
-        self._capacity_block_duration_days = None
+        self._capacity_block_duration_hours = None
         self._instance_count = None
         self._instance_type = None
         self._org_id = None
         self._start_date = None
         self._timezone = None
         self.discriminator = None
-        if capacity_block_duration_days is not None:
-            self.capacity_block_duration_days = capacity_block_duration_days
+        if capacity_block_duration_hours is not None:
+            self.capacity_block_duration_hours = capacity_block_duration_hours
         if instance_count is not None:
             self.instance_count = instance_count
         if instance_type is not None:
@@ -81,25 +81,25 @@ class ClusterIdCapacityblockBody(object):
             self.timezone = timezone
 
     @property
-    def capacity_block_duration_days(self) -> 'int':
-        """Gets the capacity_block_duration_days of this ClusterIdCapacityblockBody.  # noqa: E501
+    def capacity_block_duration_hours(self) -> 'int':
+        """Gets the capacity_block_duration_hours of this ClusterIdCapacityblockBody.  # noqa: E501
 
 
-        :return: The capacity_block_duration_days of this ClusterIdCapacityblockBody.  # noqa: E501
+        :return: The capacity_block_duration_hours of this ClusterIdCapacityblockBody.  # noqa: E501
         :rtype: int
         """
-        return self._capacity_block_duration_days
+        return self._capacity_block_duration_hours
 
-    @capacity_block_duration_days.setter
-    def capacity_block_duration_days(self, capacity_block_duration_days: 'int'):
-        """Sets the capacity_block_duration_days of this ClusterIdCapacityblockBody.
+    @capacity_block_duration_hours.setter
+    def capacity_block_duration_hours(self, capacity_block_duration_hours: 'int'):
+        """Sets the capacity_block_duration_hours of this ClusterIdCapacityblockBody.
 
 
-        :param capacity_block_duration_days: The capacity_block_duration_days of this ClusterIdCapacityblockBody.  # noqa: E501
+        :param capacity_block_duration_hours: The capacity_block_duration_hours of this ClusterIdCapacityblockBody.  # noqa: E501
         :type: int
         """
 
-        self._capacity_block_duration_days = capacity_block_duration_days
+        self._capacity_block_duration_hours = capacity_block_duration_hours
 
     @property
     def instance_count(self) -> 'int':

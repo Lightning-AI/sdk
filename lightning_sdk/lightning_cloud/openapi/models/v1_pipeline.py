@@ -48,9 +48,10 @@ class V1Pipeline(object):
         'id': 'str',
         'message': 'str',
         'name': 'str',
+        'parameters': 'list[V1PipelineParameter]',
         'parent_pipeline_id': 'str',
         'project_id': 'str',
-        'schedules': 'list[V1PipelineSchedule]',
+        'schedule_id': 'str',
         'shared_filesystem': 'V1SharedFilesystem',
         'state': 'str',
         'statuses': 'list[V1PipelineStepStatus]',
@@ -67,9 +68,10 @@ class V1Pipeline(object):
         'id': 'id',
         'message': 'message',
         'name': 'name',
+        'parameters': 'parameters',
         'parent_pipeline_id': 'parentPipelineId',
         'project_id': 'projectId',
-        'schedules': 'schedules',
+        'schedule_id': 'scheduleId',
         'shared_filesystem': 'sharedFilesystem',
         'state': 'state',
         'statuses': 'statuses',
@@ -78,7 +80,7 @@ class V1Pipeline(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, parent_pipeline_id: 'str' =None, project_id: 'str' =None, schedules: 'list[V1PipelineSchedule]' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, project_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Pipeline - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
@@ -87,9 +89,10 @@ class V1Pipeline(object):
         self._id = None
         self._message = None
         self._name = None
+        self._parameters = None
         self._parent_pipeline_id = None
         self._project_id = None
-        self._schedules = None
+        self._schedule_id = None
         self._shared_filesystem = None
         self._state = None
         self._statuses = None
@@ -111,12 +114,14 @@ class V1Pipeline(object):
             self.message = message
         if name is not None:
             self.name = name
+        if parameters is not None:
+            self.parameters = parameters
         if parent_pipeline_id is not None:
             self.parent_pipeline_id = parent_pipeline_id
         if project_id is not None:
             self.project_id = project_id
-        if schedules is not None:
-            self.schedules = schedules
+        if schedule_id is not None:
+            self.schedule_id = schedule_id
         if shared_filesystem is not None:
             self.shared_filesystem = shared_filesystem
         if state is not None:
@@ -278,6 +283,27 @@ class V1Pipeline(object):
         self._name = name
 
     @property
+    def parameters(self) -> 'list[V1PipelineParameter]':
+        """Gets the parameters of this V1Pipeline.  # noqa: E501
+
+
+        :return: The parameters of this V1Pipeline.  # noqa: E501
+        :rtype: list[V1PipelineParameter]
+        """
+        return self._parameters
+
+    @parameters.setter
+    def parameters(self, parameters: 'list[V1PipelineParameter]'):
+        """Sets the parameters of this V1Pipeline.
+
+
+        :param parameters: The parameters of this V1Pipeline.  # noqa: E501
+        :type: list[V1PipelineParameter]
+        """
+
+        self._parameters = parameters
+
+    @property
     def parent_pipeline_id(self) -> 'str':
         """Gets the parent_pipeline_id of this V1Pipeline.  # noqa: E501
 
@@ -320,25 +346,25 @@ class V1Pipeline(object):
         self._project_id = project_id
 
     @property
-    def schedules(self) -> 'list[V1PipelineSchedule]':
-        """Gets the schedules of this V1Pipeline.  # noqa: E501
+    def schedule_id(self) -> 'str':
+        """Gets the schedule_id of this V1Pipeline.  # noqa: E501
 
 
-        :return: The schedules of this V1Pipeline.  # noqa: E501
-        :rtype: list[V1PipelineSchedule]
+        :return: The schedule_id of this V1Pipeline.  # noqa: E501
+        :rtype: str
         """
-        return self._schedules
+        return self._schedule_id
 
-    @schedules.setter
-    def schedules(self, schedules: 'list[V1PipelineSchedule]'):
-        """Sets the schedules of this V1Pipeline.
+    @schedule_id.setter
+    def schedule_id(self, schedule_id: 'str'):
+        """Sets the schedule_id of this V1Pipeline.
 
 
-        :param schedules: The schedules of this V1Pipeline.  # noqa: E501
-        :type: list[V1PipelineSchedule]
+        :param schedule_id: The schedule_id of this V1Pipeline.  # noqa: E501
+        :type: str
         """
 
-        self._schedules = schedules
+        self._schedule_id = schedule_id
 
     @property
     def shared_filesystem(self) -> 'V1SharedFilesystem':
