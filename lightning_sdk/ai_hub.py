@@ -110,6 +110,7 @@ class AIHub:
         org: Optional[Union[str, "Organization"]] = None,
         user: Optional[Union[str, "User"]] = None,
         machine: Optional[Union[str, "Machine"]] = None,
+        quantity: Optional[int] = None,
     ) -> V1Deployment:
         """Deploy an API from the AI Hub.
 
@@ -127,7 +128,7 @@ class AIHub:
             api_arguments: Additional API argument, such as model name, or batch size.
             name: Name for the deployed API. Defaults to None.
             cloud_account: The cloud account where you want to run the template, such as "lightning-public-prod".
-                Defaults to None.
+                Defaults to None, which will use the cloud account of the teamspace.
             teamspace: The team or group for deployment. Defaults to None.
             org: The organization for deployment. Don't pass user with this. Defaults to None.
             user: The user for deployment. Don't pass org with this. Defaults to None.
@@ -158,6 +159,7 @@ class AIHub:
             name=name,
             api_arguments=api_arguments,
             machine=machine,
+            quantity=quantity,
         )
 
         url = (

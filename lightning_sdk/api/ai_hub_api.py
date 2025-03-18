@@ -1,4 +1,5 @@
 import traceback
+import warnings
 from typing import Dict, List, Optional, Tuple, Union
 
 import backoff
@@ -122,6 +123,7 @@ class AIHubApi:
         name: Optional[str],
         api_arguments: Dict[str, str],
         machine: Optional[Union[str, Machine]],
+        quantity: Optional[int],
     ) -> V1Deployment:
         template = self._client.deployment_templates_service_get_deployment_template(template_id)
         name = name or template.name
@@ -141,10 +143,19 @@ class AIHubApi:
             apply_change(template.spec_v2.job, "instance_name", machine)
             apply_change(template.spec_v2.job, "instance_type", machine)
 
-        # Override the cluster_id if a cloud account is provided
+        if quantity != template.spec_v2.job.quantity:
+            # If the quantity is different from the published template quantity, override it with warnging
+            warnings.warn(
+                "Overriding the quantity of the template with the provided quantity. "
+                "This may result in unexpected behavior. "
+                f"Please verify the template (https://lightning.ai/lightning-ai/ai-hub/{template_id}) "
+                "and asscoiated parameters before running."
+            )
+            apply_change(template.spec_v2.job, "quantity", quantity)
+
+        # Override the cluster_id with the cloud_account if it is provided
         if len(cloud_account) > 0:
             apply_change(template.spec_v2.job, "cluster_id", cloud_account)
-
         return self._client.jobs_service_create_deployment(
             project_id=project_id,
             body=CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(
