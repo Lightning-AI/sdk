@@ -9,6 +9,7 @@ from lightning_sdk.lightning_cloud.openapi.api.assistants_service_api import Ass
 from lightning_sdk.lightning_cloud.openapi.api.auth_service_api import AuthServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.billing_service_api import BillingServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import CloudSpaceServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.cloudspace_environment_template_service_api import CloudspaceEnvironmentTemplateServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.cluster_service_api import ClusterServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.data_connection_service_api import DataConnectionServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.dataset_service_api import DatasetServiceApi

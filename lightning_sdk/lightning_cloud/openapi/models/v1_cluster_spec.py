@@ -58,6 +58,7 @@ class V1ClusterSpec(object):
         'slurm_v1': 'V1SlurmV1',
         'tagging_options': 'V1ClusterTaggingOptions',
         'user_id': 'str',
+        'voltage_park_v1': 'V1VoltageParkDirectV1',
         'vultr_v1': 'V1VultrDirectV1'
     }
 
@@ -79,10 +80,11 @@ class V1ClusterSpec(object):
         'slurm_v1': 'slurmV1',
         'tagging_options': 'taggingOptions',
         'user_id': 'userId',
+        'voltage_park_v1': 'voltageParkV1',
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, monitor_deletion_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, monitor_deletion_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, pause_automation: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._aws_v1 = None
@@ -101,6 +103,7 @@ class V1ClusterSpec(object):
         self._slurm_v1 = None
         self._tagging_options = None
         self._user_id = None
+        self._voltage_park_v1 = None
         self._vultr_v1 = None
         self.discriminator = None
         if auth_token is not None:
@@ -137,6 +140,8 @@ class V1ClusterSpec(object):
             self.tagging_options = tagging_options
         if user_id is not None:
             self.user_id = user_id
+        if voltage_park_v1 is not None:
+            self.voltage_park_v1 = voltage_park_v1
         if vultr_v1 is not None:
             self.vultr_v1 = vultr_v1
 
@@ -498,6 +503,27 @@ class V1ClusterSpec(object):
         """
 
         self._user_id = user_id
+
+    @property
+    def voltage_park_v1(self) -> 'V1VoltageParkDirectV1':
+        """Gets the voltage_park_v1 of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The voltage_park_v1 of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1VoltageParkDirectV1
+        """
+        return self._voltage_park_v1
+
+    @voltage_park_v1.setter
+    def voltage_park_v1(self, voltage_park_v1: 'V1VoltageParkDirectV1'):
+        """Sets the voltage_park_v1 of this V1ClusterSpec.
+
+
+        :param voltage_park_v1: The voltage_park_v1 of this V1ClusterSpec.  # noqa: E501
+        :type: V1VoltageParkDirectV1
+        """
+
+        self._voltage_park_v1 = voltage_park_v1
 
     @property
     def vultr_v1(self) -> 'V1VultrDirectV1':

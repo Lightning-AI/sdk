@@ -43,6 +43,111 @@ class SlurmJobsUserServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
+    def slurm_jobs_user_service_create_slurm_cluster_user(self, body: 'ClusterIdSlurmusersBody', cluster_id: 'str', **kwargs) -> 'V1SlurmClusterUser':  # noqa: E501
+        """CreateSLURMClusterUser is used to create a new user on a SLURM cluster.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.slurm_jobs_user_service_create_slurm_cluster_user(body, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ClusterIdSlurmusersBody body: (required)
+        :param str cluster_id: (required)
+        :return: V1SlurmClusterUser
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.slurm_jobs_user_service_create_slurm_cluster_user_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.slurm_jobs_user_service_create_slurm_cluster_user_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def slurm_jobs_user_service_create_slurm_cluster_user_with_http_info(self, body: 'ClusterIdSlurmusersBody', cluster_id: 'str', **kwargs) -> 'V1SlurmClusterUser':  # noqa: E501
+        """CreateSLURMClusterUser is used to create a new user on a SLURM cluster.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.slurm_jobs_user_service_create_slurm_cluster_user_with_http_info(body, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ClusterIdSlurmusersBody body: (required)
+        :param str cluster_id: (required)
+        :return: V1SlurmClusterUser
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'cluster_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method slurm_jobs_user_service_create_slurm_cluster_user" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `slurm_jobs_user_service_create_slurm_cluster_user`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `slurm_jobs_user_service_create_slurm_cluster_user`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/clusters/{clusterId}/slurm-users', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1SlurmClusterUser',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def slurm_jobs_user_service_create_user_slurm_job(self, body: 'SlurmJobsBody', project_id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
         """CreateUserSLURMJob is used to create a new SLURM job for an authenticated user. For creating SLURM Jobs from an agent, please use the SLURMJobsAgentService.  # noqa: E501
 
@@ -452,6 +557,103 @@ class SlurmJobsUserServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1LogsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def slurm_jobs_user_service_list_slurm_cluster_users(self, cluster_id: 'str', **kwargs) -> 'V1ListSLURMClusterUsersResponse':  # noqa: E501
+        """ListSLURMClusterUsers is used to list all users on a SLURM cluster.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.slurm_jobs_user_service_list_slurm_cluster_users(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str organization_id:
+        :return: V1ListSLURMClusterUsersResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.slurm_jobs_user_service_list_slurm_cluster_users_with_http_info(cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.slurm_jobs_user_service_list_slurm_cluster_users_with_http_info(cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def slurm_jobs_user_service_list_slurm_cluster_users_with_http_info(self, cluster_id: 'str', **kwargs) -> 'V1ListSLURMClusterUsersResponse':  # noqa: E501
+        """ListSLURMClusterUsers is used to list all users on a SLURM cluster.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.slurm_jobs_user_service_list_slurm_cluster_users_with_http_info(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str organization_id:
+        :return: V1ListSLURMClusterUsersResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'organization_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method slurm_jobs_user_service_list_slurm_cluster_users" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `slurm_jobs_user_service_list_slurm_cluster_users`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+        if 'organization_id' in params:
+            query_params.append(('organizationId', params['organization_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/clusters/{clusterId}/slurm-users', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListSLURMClusterUsersResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

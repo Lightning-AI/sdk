@@ -43,6 +43,7 @@ class V1LitRepository(object):
     swagger_types = {
         'artifact_count': 'str',
         'artifacts': 'list[V1LitRegistryArtifact]',
+        'cluster_id': 'str',
         'creation_time': 'datetime',
         'description': 'str',
         'id': 'str',
@@ -55,6 +56,7 @@ class V1LitRepository(object):
     attribute_map = {
         'artifact_count': 'artifactCount',
         'artifacts': 'artifacts',
+        'cluster_id': 'clusterId',
         'creation_time': 'creationTime',
         'description': 'description',
         'id': 'id',
@@ -64,10 +66,11 @@ class V1LitRepository(object):
         'update_time': 'updateTime'
     }
 
-    def __init__(self, artifact_count: 'str' =None, artifacts: 'list[V1LitRegistryArtifact]' =None, creation_time: 'datetime' =None, description: 'str' =None, id: 'str' =None, latest_artifact: 'V1LitRegistryArtifact' =None, name: 'str' =None, pull_count: 'str' =None, update_time: 'datetime' =None):  # noqa: E501
+    def __init__(self, artifact_count: 'str' =None, artifacts: 'list[V1LitRegistryArtifact]' =None, cluster_id: 'str' =None, creation_time: 'datetime' =None, description: 'str' =None, id: 'str' =None, latest_artifact: 'V1LitRegistryArtifact' =None, name: 'str' =None, pull_count: 'str' =None, update_time: 'datetime' =None):  # noqa: E501
         """V1LitRepository - a model defined in Swagger"""  # noqa: E501
         self._artifact_count = None
         self._artifacts = None
+        self._cluster_id = None
         self._creation_time = None
         self._description = None
         self._id = None
@@ -80,6 +83,8 @@ class V1LitRepository(object):
             self.artifact_count = artifact_count
         if artifacts is not None:
             self.artifacts = artifacts
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if creation_time is not None:
             self.creation_time = creation_time
         if description is not None:
@@ -138,6 +143,27 @@ class V1LitRepository(object):
         """
 
         self._artifacts = artifacts
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1LitRepository.  # noqa: E501
+
+
+        :return: The cluster_id of this V1LitRepository.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1LitRepository.
+
+
+        :param cluster_id: The cluster_id of this V1LitRepository.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def creation_time(self) -> 'datetime':

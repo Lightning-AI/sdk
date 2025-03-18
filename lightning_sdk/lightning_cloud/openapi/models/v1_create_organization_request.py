@@ -41,6 +41,7 @@ class V1CreateOrganizationRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allow_marketplace': 'bool',
         'auto_invite_by_domain': 'bool',
         'auto_join_domains': 'list[str]',
         'description': 'str',
@@ -56,6 +57,7 @@ class V1CreateOrganizationRequest(object):
     }
 
     attribute_map = {
+        'allow_marketplace': 'allowMarketplace',
         'auto_invite_by_domain': 'autoInviteByDomain',
         'auto_join_domains': 'autoJoinDomains',
         'description': 'description',
@@ -70,8 +72,9 @@ class V1CreateOrganizationRequest(object):
         'type': 'type'
     }
 
-    def __init__(self, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, allow_marketplace: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
         """V1CreateOrganizationRequest - a model defined in Swagger"""  # noqa: E501
+        self._allow_marketplace = None
         self._auto_invite_by_domain = None
         self._auto_join_domains = None
         self._description = None
@@ -85,6 +88,8 @@ class V1CreateOrganizationRequest(object):
         self._twitter_username = None
         self._type = None
         self.discriminator = None
+        if allow_marketplace is not None:
+            self.allow_marketplace = allow_marketplace
         if auto_invite_by_domain is not None:
             self.auto_invite_by_domain = auto_invite_by_domain
         if auto_join_domains is not None:
@@ -109,6 +114,27 @@ class V1CreateOrganizationRequest(object):
             self.twitter_username = twitter_username
         if type is not None:
             self.type = type
+
+    @property
+    def allow_marketplace(self) -> 'bool':
+        """Gets the allow_marketplace of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The allow_marketplace of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_marketplace
+
+    @allow_marketplace.setter
+    def allow_marketplace(self, allow_marketplace: 'bool'):
+        """Sets the allow_marketplace of this V1CreateOrganizationRequest.
+
+
+        :param allow_marketplace: The allow_marketplace of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_marketplace = allow_marketplace
 
     @property
     def auto_invite_by_domain(self) -> 'bool':

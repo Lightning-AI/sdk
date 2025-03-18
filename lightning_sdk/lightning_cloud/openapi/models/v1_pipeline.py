@@ -46,6 +46,7 @@ class V1Pipeline(object):
         'display_name': 'str',
         'error': 'str',
         'id': 'str',
+        'is_published': 'bool',
         'message': 'str',
         'name': 'str',
         'parameters': 'list[V1PipelineParameter]',
@@ -66,6 +67,7 @@ class V1Pipeline(object):
         'display_name': 'displayName',
         'error': 'error',
         'id': 'id',
+        'is_published': 'isPublished',
         'message': 'message',
         'name': 'name',
         'parameters': 'parameters',
@@ -80,13 +82,14 @@ class V1Pipeline(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, project_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, project_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Pipeline - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
         self._display_name = None
         self._error = None
         self._id = None
+        self._is_published = None
         self._message = None
         self._name = None
         self._parameters = None
@@ -110,6 +113,8 @@ class V1Pipeline(object):
             self.error = error
         if id is not None:
             self.id = id
+        if is_published is not None:
+            self.is_published = is_published
         if message is not None:
             self.message = message
         if name is not None:
@@ -239,6 +244,27 @@ class V1Pipeline(object):
         """
 
         self._id = id
+
+    @property
+    def is_published(self) -> 'bool':
+        """Gets the is_published of this V1Pipeline.  # noqa: E501
+
+
+        :return: The is_published of this V1Pipeline.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_published
+
+    @is_published.setter
+    def is_published(self, is_published: 'bool'):
+        """Sets the is_published of this V1Pipeline.
+
+
+        :param is_published: The is_published of this V1Pipeline.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_published = is_published
 
     @property
     def message(self) -> 'str':

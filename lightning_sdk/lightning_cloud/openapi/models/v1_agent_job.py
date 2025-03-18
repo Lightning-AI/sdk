@@ -69,6 +69,7 @@ class V1AgentJob(object):
         'upload_eta_seconds': 'str',
         'upload_in_progress': 'bool',
         'upload_percentage': 'str',
+        'username': 'str',
         'work_dir': 'str'
     }
 
@@ -101,10 +102,11 @@ class V1AgentJob(object):
         'upload_eta_seconds': 'uploadEtaSeconds',
         'upload_in_progress': 'uploadInProgress',
         'upload_percentage': 'uploadPercentage',
+        'username': 'username',
         'work_dir': 'workDir'
     }
 
-    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, conda_checksum: 'str' =None, conda_env_path: 'str' =None, created_at: 'datetime' =None, entrypoint: 'str' =None, id: 'str' =None, image: 'str' =None, image_registry_password: 'str' =None, image_registry_username: 'str' =None, image_secret_ref: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'int' =None, partition: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, cache_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, conda_checksum: 'str' =None, conda_env_path: 'str' =None, created_at: 'datetime' =None, entrypoint: 'str' =None, id: 'str' =None, image: 'str' =None, image_registry_password: 'str' =None, image_registry_username: 'str' =None, image_secret_ref: 'str' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, message: 'str' =None, name: 'str' =None, num_gpus: 'int' =None, partition: 'str' =None, project_id: 'str' =None, run_id: 'str' =None, service_id: 'str' =None, slurm_v1_status: 'V1SlurmV1JobStatus' =None, state: 'str' =None, updated_at: 'datetime' =None, upload_eta_seconds: 'str' =None, upload_in_progress: 'bool' =None, upload_percentage: 'str' =None, username: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1AgentJob - a model defined in Swagger"""  # noqa: E501
         self._cache_id = None
         self._cloudspace_id = None
@@ -134,6 +136,7 @@ class V1AgentJob(object):
         self._upload_eta_seconds = None
         self._upload_in_progress = None
         self._upload_percentage = None
+        self._username = None
         self._work_dir = None
         self.discriminator = None
         if cache_id is not None:
@@ -192,6 +195,8 @@ class V1AgentJob(object):
             self.upload_in_progress = upload_in_progress
         if upload_percentage is not None:
             self.upload_percentage = upload_percentage
+        if username is not None:
+            self.username = username
         if work_dir is not None:
             self.work_dir = work_dir
 
@@ -782,6 +787,27 @@ class V1AgentJob(object):
         """
 
         self._upload_percentage = upload_percentage
+
+    @property
+    def username(self) -> 'str':
+        """Gets the username of this V1AgentJob.  # noqa: E501
+
+
+        :return: The username of this V1AgentJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._username
+
+    @username.setter
+    def username(self, username: 'str'):
+        """Sets the username of this V1AgentJob.
+
+
+        :param username: The username of this V1AgentJob.  # noqa: E501
+        :type: str
+        """
+
+        self._username = username
 
     @property
     def work_dir(self) -> 'str':

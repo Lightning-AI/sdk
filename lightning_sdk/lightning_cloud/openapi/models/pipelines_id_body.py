@@ -45,6 +45,7 @@ class PipelinesIdBody(object):
         'created_at': 'datetime',
         'display_name': 'str',
         'error': 'str',
+        'is_published': 'bool',
         'message': 'str',
         'name': 'str',
         'parameters': 'list[V1PipelineParameter]',
@@ -63,6 +64,7 @@ class PipelinesIdBody(object):
         'created_at': 'createdAt',
         'display_name': 'displayName',
         'error': 'error',
+        'is_published': 'isPublished',
         'message': 'message',
         'name': 'name',
         'parameters': 'parameters',
@@ -76,12 +78,13 @@ class PipelinesIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """PipelinesIdBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
         self._display_name = None
         self._error = None
+        self._is_published = None
         self._message = None
         self._name = None
         self._parameters = None
@@ -102,6 +105,8 @@ class PipelinesIdBody(object):
             self.display_name = display_name
         if error is not None:
             self.error = error
+        if is_published is not None:
+            self.is_published = is_published
         if message is not None:
             self.message = message
         if name is not None:
@@ -208,6 +213,27 @@ class PipelinesIdBody(object):
         """
 
         self._error = error
+
+    @property
+    def is_published(self) -> 'bool':
+        """Gets the is_published of this PipelinesIdBody.  # noqa: E501
+
+
+        :return: The is_published of this PipelinesIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_published
+
+    @is_published.setter
+    def is_published(self, is_published: 'bool'):
+        """Sets the is_published of this PipelinesIdBody.
+
+
+        :param is_published: The is_published of this PipelinesIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_published = is_published
 
     @property
     def message(self) -> 'str':

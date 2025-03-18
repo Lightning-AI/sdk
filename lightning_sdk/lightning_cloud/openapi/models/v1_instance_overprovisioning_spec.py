@@ -41,60 +41,49 @@ class V1InstanceOverprovisioningSpec(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'count': 'int',
         'instance_type': 'str',
         'is_spot': 'bool',
+        'maximum_count': 'int',
+        'minimum_count': 'int',
+        'region': 'str',
         'resource_type': 'str',
         'volume_size': 'int'
     }
 
     attribute_map = {
-        'count': 'count',
         'instance_type': 'instanceType',
         'is_spot': 'isSpot',
+        'maximum_count': 'maximumCount',
+        'minimum_count': 'minimumCount',
+        'region': 'region',
         'resource_type': 'resourceType',
         'volume_size': 'volumeSize'
     }
 
-    def __init__(self, count: 'int' =None, instance_type: 'str' =None, is_spot: 'bool' =None, resource_type: 'str' =None, volume_size: 'int' =None):  # noqa: E501
+    def __init__(self, instance_type: 'str' =None, is_spot: 'bool' =None, maximum_count: 'int' =None, minimum_count: 'int' =None, region: 'str' =None, resource_type: 'str' =None, volume_size: 'int' =None):  # noqa: E501
         """V1InstanceOverprovisioningSpec - a model defined in Swagger"""  # noqa: E501
-        self._count = None
         self._instance_type = None
         self._is_spot = None
+        self._maximum_count = None
+        self._minimum_count = None
+        self._region = None
         self._resource_type = None
         self._volume_size = None
         self.discriminator = None
-        if count is not None:
-            self.count = count
         if instance_type is not None:
             self.instance_type = instance_type
         if is_spot is not None:
             self.is_spot = is_spot
+        if maximum_count is not None:
+            self.maximum_count = maximum_count
+        if minimum_count is not None:
+            self.minimum_count = minimum_count
+        if region is not None:
+            self.region = region
         if resource_type is not None:
             self.resource_type = resource_type
         if volume_size is not None:
             self.volume_size = volume_size
-
-    @property
-    def count(self) -> 'int':
-        """Gets the count of this V1InstanceOverprovisioningSpec.  # noqa: E501
-
-
-        :return: The count of this V1InstanceOverprovisioningSpec.  # noqa: E501
-        :rtype: int
-        """
-        return self._count
-
-    @count.setter
-    def count(self, count: 'int'):
-        """Sets the count of this V1InstanceOverprovisioningSpec.
-
-
-        :param count: The count of this V1InstanceOverprovisioningSpec.  # noqa: E501
-        :type: int
-        """
-
-        self._count = count
 
     @property
     def instance_type(self) -> 'str':
@@ -137,6 +126,69 @@ class V1InstanceOverprovisioningSpec(object):
         """
 
         self._is_spot = is_spot
+
+    @property
+    def maximum_count(self) -> 'int':
+        """Gets the maximum_count of this V1InstanceOverprovisioningSpec.  # noqa: E501
+
+
+        :return: The maximum_count of this V1InstanceOverprovisioningSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._maximum_count
+
+    @maximum_count.setter
+    def maximum_count(self, maximum_count: 'int'):
+        """Sets the maximum_count of this V1InstanceOverprovisioningSpec.
+
+
+        :param maximum_count: The maximum_count of this V1InstanceOverprovisioningSpec.  # noqa: E501
+        :type: int
+        """
+
+        self._maximum_count = maximum_count
+
+    @property
+    def minimum_count(self) -> 'int':
+        """Gets the minimum_count of this V1InstanceOverprovisioningSpec.  # noqa: E501
+
+
+        :return: The minimum_count of this V1InstanceOverprovisioningSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._minimum_count
+
+    @minimum_count.setter
+    def minimum_count(self, minimum_count: 'int'):
+        """Sets the minimum_count of this V1InstanceOverprovisioningSpec.
+
+
+        :param minimum_count: The minimum_count of this V1InstanceOverprovisioningSpec.  # noqa: E501
+        :type: int
+        """
+
+        self._minimum_count = minimum_count
+
+    @property
+    def region(self) -> 'str':
+        """Gets the region of this V1InstanceOverprovisioningSpec.  # noqa: E501
+
+
+        :return: The region of this V1InstanceOverprovisioningSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._region
+
+    @region.setter
+    def region(self, region: 'str'):
+        """Sets the region of this V1InstanceOverprovisioningSpec.
+
+
+        :param region: The region of this V1InstanceOverprovisioningSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._region = region
 
     @property
     def resource_type(self) -> 'str':

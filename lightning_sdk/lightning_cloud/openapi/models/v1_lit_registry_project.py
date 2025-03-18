@@ -41,6 +41,7 @@ class V1LitRegistryProject(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cluster_id': 'str',
         'id': 'int',
         'lit_reg_project_name': 'str',
         'project_id': 'str',
@@ -49,6 +50,7 @@ class V1LitRegistryProject(object):
     }
 
     attribute_map = {
+        'cluster_id': 'clusterId',
         'id': 'id',
         'lit_reg_project_name': 'litRegProjectName',
         'project_id': 'projectId',
@@ -56,14 +58,17 @@ class V1LitRegistryProject(object):
         'repositories': 'repositories'
     }
 
-    def __init__(self, id: 'int' =None, lit_reg_project_name: 'str' =None, project_id: 'str' =None, repo_count: 'str' =None, repositories: 'list[V1LitRepository]' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, id: 'int' =None, lit_reg_project_name: 'str' =None, project_id: 'str' =None, repo_count: 'str' =None, repositories: 'list[V1LitRepository]' =None):  # noqa: E501
         """V1LitRegistryProject - a model defined in Swagger"""  # noqa: E501
+        self._cluster_id = None
         self._id = None
         self._lit_reg_project_name = None
         self._project_id = None
         self._repo_count = None
         self._repositories = None
         self.discriminator = None
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if id is not None:
             self.id = id
         if lit_reg_project_name is not None:
@@ -74,6 +79,27 @@ class V1LitRegistryProject(object):
             self.repo_count = repo_count
         if repositories is not None:
             self.repositories = repositories
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1LitRegistryProject.  # noqa: E501
+
+
+        :return: The cluster_id of this V1LitRegistryProject.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1LitRegistryProject.
+
+
+        :param cluster_id: The cluster_id of this V1LitRegistryProject.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def id(self) -> 'int':

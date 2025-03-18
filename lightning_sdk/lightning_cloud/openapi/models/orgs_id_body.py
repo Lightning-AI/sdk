@@ -45,6 +45,7 @@ class OrgsIdBody(object):
         'allow_gcp_saas': 'bool',
         'allow_guest': 'bool',
         'allow_lambda_saas': 'bool',
+        'allow_marketplace': 'bool',
         'allow_member_invitations': 'bool',
         'allow_member_teamspace_creation': 'bool',
         'allow_vultr_saas': 'bool',
@@ -69,6 +70,7 @@ class OrgsIdBody(object):
         'allow_gcp_saas': 'allowGcpSaas',
         'allow_guest': 'allowGuest',
         'allow_lambda_saas': 'allowLambdaSaas',
+        'allow_marketplace': 'allowMarketplace',
         'allow_member_invitations': 'allowMemberInvitations',
         'allow_member_teamspace_creation': 'allowMemberTeamspaceCreation',
         'allow_vultr_saas': 'allowVultrSaas',
@@ -88,12 +90,13 @@ class OrgsIdBody(object):
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_gcp_saas = None
         self._allow_guest = None
         self._allow_lambda_saas = None
+        self._allow_marketplace = None
         self._allow_member_invitations = None
         self._allow_member_teamspace_creation = None
         self._allow_vultr_saas = None
@@ -120,6 +123,8 @@ class OrgsIdBody(object):
             self.allow_guest = allow_guest
         if allow_lambda_saas is not None:
             self.allow_lambda_saas = allow_lambda_saas
+        if allow_marketplace is not None:
+            self.allow_marketplace = allow_marketplace
         if allow_member_invitations is not None:
             self.allow_member_invitations = allow_member_invitations
         if allow_member_teamspace_creation is not None:
@@ -238,6 +243,27 @@ class OrgsIdBody(object):
         """
 
         self._allow_lambda_saas = allow_lambda_saas
+
+    @property
+    def allow_marketplace(self) -> 'bool':
+        """Gets the allow_marketplace of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The allow_marketplace of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_marketplace
+
+    @allow_marketplace.setter
+    def allow_marketplace(self, allow_marketplace: 'bool'):
+        """Sets the allow_marketplace of this OrgsIdBody.
+
+
+        :param allow_marketplace: The allow_marketplace of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_marketplace = allow_marketplace
 
     @property
     def allow_member_invitations(self) -> 'bool':
