@@ -32,7 +32,7 @@ from lightning_sdk.organization import Organization
 from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace, _resolve_user
+from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_org, _resolve_teamspace, _resolve_user
 
 
 class Deployment:
@@ -74,6 +74,7 @@ class Deployment:
 
         self._name = name
         self._user = _resolve_user(self._user or user)
+        self._org = _resolve_org(org)
 
         self._teamspace = _resolve_teamspace(
             teamspace=teamspace,
@@ -96,6 +97,8 @@ class Deployment:
             self._name = deployment.name
             self._is_created = True
             self._deployment = deployment
+        else:
+            self._deployment = None
 
     def start(
         self,
@@ -236,6 +239,13 @@ class Deployment:
         self._deployment = self._deployment_api.stop(self._deployment)
 
     @property
+    def name(self) -> Optional[str]:
+        if self._deployment:
+            self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
+            self._name = self._deployment.name
+        return self._name
+
+    @property
     def replicas(self) -> Optional[int]:
         """The default number of replicas the release starts with."""
         if self._deployment:
@@ -372,8 +382,12 @@ class Deployment:
         return None
 
     @property
+    def org(self) -> Optional[Organization]:
+        return self._org
+
+    @property
     def user(self) -> Optional[User]:
-        """The teamspace of the deployment."""
+        """The user of the deployment."""
         return self._user
 
     @property

@@ -77,6 +77,7 @@ def _resolve_org(org: Optional[Union[str, "Organization"]]) -> Optional["Organiz
 
     if isinstance(org, Organization):
         return org
+
     org = _resolve_org_name(org)
 
     if org is None:

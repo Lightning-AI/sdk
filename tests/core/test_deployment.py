@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from lightning_sdk import organization as organization_module
 from lightning_sdk import teamspace, user
 from lightning_sdk.api import deployment_api as deployment_api_module
 from lightning_sdk.deployment import deployment as deployment_module
@@ -268,6 +269,11 @@ def test_deployment_start_first_time(monkeypatch):
     resolve_user_mock = MagicMock()
     monkeypatch.setattr(deployment_module, "_resolve_user", resolve_user_mock)
 
+    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
+
+    organization = organization_module.Organization(name="toto")
+    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
+
     client = MagicMock()
 
     def fn(*_, **__):
@@ -283,6 +289,10 @@ def test_deployment_start_first_time(monkeypatch):
     deployment = deployment_module.Deployment(name="ollama")
 
     resolve_user_mock.assert_called()
+
+    assert deployment.name == "ollama"
+
+    assert isinstance(deployment.org, organization_module.Organization)
 
     deployment.start(
         autoscale=AutoScaleConfig(
