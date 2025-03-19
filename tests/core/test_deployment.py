@@ -381,7 +381,7 @@ def test_deployment_stop(monkeypatch):
 
     deployment_spec = V1Deployment(
         name="ollama",
-        spec=V1JobSpec(),
+        spec=V1JobSpec(image="my-image"),
         endpoint=V1Endpoint(),
         strategy=None,
         autoscaling=V1AutoscalingSpec(max_replicas=1, min_replicas=0),
@@ -419,6 +419,7 @@ def test_deployment_stop(monkeypatch):
     assert deployment.max_replicas == 0
     assert deployment_spec.replicas == 0
     assert deployment.is_stopped
+    assert deployment.image == "my-image"
 
 
 def test_deployment_get(monkeypatch):
