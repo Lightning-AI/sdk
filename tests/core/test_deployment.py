@@ -384,7 +384,7 @@ def test_deployment_stop(monkeypatch):
         spec=V1JobSpec(),
         endpoint=V1Endpoint(),
         strategy=None,
-        autoscaling=V1AutoscalingSpec(),
+        autoscaling=V1AutoscalingSpec(max_replicas=1, min_replicas=0),
         replicas=1,
     )
 
@@ -412,7 +412,11 @@ def test_deployment_stop(monkeypatch):
     deployment = deployment_module.Deployment(name="ollama")
     deployment._deployment_api._wait_on_stop = 0
     assert not deployment.is_stopped
+    assert deployment.min_replicas == 0
+    assert deployment.max_replicas == 1
     deployment.stop()
+    assert deployment.min_replicas == 0
+    assert deployment.max_replicas == 0
     assert deployment_spec.replicas == 0
     assert deployment.is_stopped
 

@@ -248,7 +248,7 @@ class Deployment:
         """The minimum number of replicas."""
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
-            return self._deployment.autoscaling.min_replicas
+            return int(self._deployment.autoscaling.min_replicas)
         return None
 
     @property
@@ -256,7 +256,7 @@ class Deployment:
         """The maximum number of replicas."""
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
-            return self._deployment.autoscaling.max_replicas
+            return int(self._deployment.autoscaling.max_replicas)
         return None
 
     @property
