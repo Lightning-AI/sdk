@@ -68,6 +68,7 @@ class V1UserFeatures(object):
         'drive_v2': 'bool',
         'enable_crypto_crackdown': 'bool',
         'enable_storage_limits': 'bool',
+        'enterprise_compute_admin': 'bool',
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'filestore': 'bool',
@@ -91,7 +92,6 @@ class V1UserFeatures(object):
         'plugin_langflow': 'bool',
         'plugin_lightning_apps': 'bool',
         'plugin_lightning_apps_distributed': 'bool',
-        'plugin_mage_ai': 'bool',
         'plugin_milvus': 'bool',
         'plugin_python_profiler': 'bool',
         'plugin_react': 'bool',
@@ -147,6 +147,7 @@ class V1UserFeatures(object):
         'drive_v2': 'driveV2',
         'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'enable_storage_limits': 'enableStorageLimits',
+        'enterprise_compute_admin': 'enterpriseComputeAdmin',
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filestore': 'filestore',
@@ -170,7 +171,6 @@ class V1UserFeatures(object):
         'plugin_langflow': 'pluginLangflow',
         'plugin_lightning_apps': 'pluginLightningApps',
         'plugin_lightning_apps_distributed': 'pluginLightningAppsDistributed',
-        'plugin_mage_ai': 'pluginMageAi',
         'plugin_milvus': 'pluginMilvus',
         'plugin_python_profiler': 'pluginPythonProfiler',
         'plugin_react': 'pluginReact',
@@ -198,7 +198,7 @@ class V1UserFeatures(object):
         'vultr': 'vultr'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, jobs_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_mage_ai: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, jobs_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -227,6 +227,7 @@ class V1UserFeatures(object):
         self._drive_v2 = None
         self._enable_crypto_crackdown = None
         self._enable_storage_limits = None
+        self._enterprise_compute_admin = None
         self._fair_share = None
         self._featured_studios_admin = None
         self._filestore = None
@@ -250,7 +251,6 @@ class V1UserFeatures(object):
         self._plugin_langflow = None
         self._plugin_lightning_apps = None
         self._plugin_lightning_apps_distributed = None
-        self._plugin_mage_ai = None
         self._plugin_milvus = None
         self._plugin_python_profiler = None
         self._plugin_react = None
@@ -331,6 +331,8 @@ class V1UserFeatures(object):
             self.enable_crypto_crackdown = enable_crypto_crackdown
         if enable_storage_limits is not None:
             self.enable_storage_limits = enable_storage_limits
+        if enterprise_compute_admin is not None:
+            self.enterprise_compute_admin = enterprise_compute_admin
         if fair_share is not None:
             self.fair_share = fair_share
         if featured_studios_admin is not None:
@@ -377,8 +379,6 @@ class V1UserFeatures(object):
             self.plugin_lightning_apps = plugin_lightning_apps
         if plugin_lightning_apps_distributed is not None:
             self.plugin_lightning_apps_distributed = plugin_lightning_apps_distributed
-        if plugin_mage_ai is not None:
-            self.plugin_mage_ai = plugin_mage_ai
         if plugin_milvus is not None:
             self.plugin_milvus = plugin_milvus
         if plugin_python_profiler is not None:
@@ -998,6 +998,27 @@ class V1UserFeatures(object):
         self._enable_storage_limits = enable_storage_limits
 
     @property
+    def enterprise_compute_admin(self) -> 'bool':
+        """Gets the enterprise_compute_admin of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The enterprise_compute_admin of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._enterprise_compute_admin
+
+    @enterprise_compute_admin.setter
+    def enterprise_compute_admin(self, enterprise_compute_admin: 'bool'):
+        """Sets the enterprise_compute_admin of this V1UserFeatures.
+
+
+        :param enterprise_compute_admin: The enterprise_compute_admin of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._enterprise_compute_admin = enterprise_compute_admin
+
+    @property
     def fair_share(self) -> 'bool':
         """Gets the fair_share of this V1UserFeatures.  # noqa: E501
 
@@ -1479,27 +1500,6 @@ class V1UserFeatures(object):
         """
 
         self._plugin_lightning_apps_distributed = plugin_lightning_apps_distributed
-
-    @property
-    def plugin_mage_ai(self) -> 'bool':
-        """Gets the plugin_mage_ai of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_mage_ai of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_mage_ai
-
-    @plugin_mage_ai.setter
-    def plugin_mage_ai(self, plugin_mage_ai: 'bool'):
-        """Sets the plugin_mage_ai of this V1UserFeatures.
-
-
-        :param plugin_mage_ai: The plugin_mage_ai of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_mage_ai = plugin_mage_ai
 
     @property
     def plugin_milvus(self) -> 'bool':
