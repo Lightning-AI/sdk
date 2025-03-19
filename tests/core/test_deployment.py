@@ -411,8 +411,10 @@ def test_deployment_stop(monkeypatch):
 
     deployment = deployment_module.Deployment(name="ollama")
     deployment._deployment_api._wait_on_stop = 0
+    assert not deployment.is_stopped
     deployment.stop()
     assert deployment_spec.replicas == 0
+    assert deployment.is_stopped
 
 
 def test_deployment_get(monkeypatch):

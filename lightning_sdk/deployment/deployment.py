@@ -386,6 +386,13 @@ class Deployment:
         return self._is_created
 
     @property
+    def is_stopped(self) -> Optional[bool]:
+        if self._deployment:
+            self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
+            return self._deployment.autoscaling.max_replicas == 0
+        return None
+
+    @property
     def _session(self) -> Any:
         if self._request_session is None:
             self._request_session = requests.Session()
