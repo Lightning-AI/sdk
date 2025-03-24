@@ -257,6 +257,9 @@ def _handle_cloud(
     if DeploymentApi().get_deployment_by_name(deployment_name, resolved_teamspace.id):
         raise StudioCliError(f"Deployment {deployment_name} already exists. Please choose a different name.") from None
 
+    # list containers to create the project if it doesn't exist
+    lit_cr.list_containers(resolved_teamspace.id)
+
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),

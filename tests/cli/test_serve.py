@@ -2,10 +2,12 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from unittest.mock import call, patch
+from unittest.mock import MagicMock, call, patch
 
 import pytest
+import rich
 
+from lightning_sdk.cli.serve import _handle_cloud
 from lightning_sdk.cli.serve import api_impl as serve_api
 
 
@@ -233,3 +235,24 @@ def test_args_without_repository(mock_subprocess, mock_dt, temp_script):
     serve_api(temp_script)
     mock_dt.now.assert_called()
     mock_subprocess.assert_called_once()
+
+
+@patch("lightning_sdk.cli.serve.LitContainerApi")
+@patch("lightning_sdk.cli.serve.Teamspace")
+@patch("lightning_sdk.cli.serve._LitServeDeployer")
+@patch("lightning_sdk.cli.serve.Confirm.ask")
+@patch("lightning_sdk.cli.serve.DeploymentApi")
+def test_handle_cloud(mock_deployment_api, mock_ask, mock_ls_deployer, mock_teamspace, mock_litcr, temp_script):
+    mock_ask.return_value = True
+    mock_deployment_api.return_value.get_deployment_by_name.return_value = None
+    console = rich.console.Console()
+    _handle_cloud(
+        temp_script,
+        console,
+        teamspace="test",
+        machine=MagicMock(),
+    )
+    mock_litcr.assert_called_once()
+    mock_litcr.return_value.list_containers.assert_called_once()
+    mock_ls_deployer.return_value.push_container.assert_called_once()
+    mock_ls_deployer.assert_called_once()
