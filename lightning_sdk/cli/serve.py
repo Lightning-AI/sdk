@@ -8,11 +8,11 @@ import click
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
+from rich.syntax import Syntax
 
 from lightning_sdk import Machine, Teamspace
 from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
-from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.serve import _LitServeDeployer
 
@@ -255,7 +255,20 @@ def _handle_cloud(
 
     ls_deployer.authenticate()
     if DeploymentApi().get_deployment_by_name(deployment_name, resolved_teamspace.id):
-        raise StudioCliError(f"Deployment {deployment_name} already exists. Please choose a different name.") from None
+        syntax = Syntax(
+            "from lightning_sdk import Deployment\n\n"
+            f"deployment = Deployment('{deployment_name}', teamspace={resolved_teamspace.name})\n"
+            "deployment.update(...)",
+            "python",
+            line_numbers=True,
+        )
+
+        console.print(
+            f"\nDeployment with name [b]{deployment_name}[/b] already running. "
+            "To update the deployment, use the Deployment API:\n",
+            syntax,
+        )
+        return
 
     # list containers to create the project if it doesn't exist
     lit_cr.list_containers(resolved_teamspace.id)

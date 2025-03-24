@@ -256,3 +256,22 @@ def test_handle_cloud(mock_deployment_api, mock_ask, mock_ls_deployer, mock_team
     mock_litcr.return_value.list_containers.assert_called_once()
     mock_ls_deployer.return_value.push_container.assert_called_once()
     mock_ls_deployer.assert_called_once()
+
+
+@patch("lightning_sdk.cli.serve.LitContainerApi")
+@patch("lightning_sdk.cli.serve.Teamspace")
+@patch("lightning_sdk.cli.serve._LitServeDeployer")
+@patch("lightning_sdk.cli.serve.Confirm.ask")
+@patch("lightning_sdk.cli.serve.DeploymentApi")
+def test_handle_cloud_deployment_api(mock_deployment_api, mock_ask, _, __, ___, temp_script):
+    mock_ask.return_value = True
+    mock_deployment_api.return_value.get_deployment_by_name.return_value = True
+    mock_console = MagicMock()
+    _handle_cloud(
+        temp_script,
+        mock_console,
+        teamspace="test",
+        machine=MagicMock(),
+    )
+    mock_console.print.assert_called()
+    assert "To update the deployment, use the Deployment API" in mock_console.print.call_args[0][0]

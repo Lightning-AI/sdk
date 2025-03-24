@@ -235,9 +235,11 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         deployment = Deployment(deployment_name, teamspace)
         if deployment.is_started:
             raise RuntimeError(
-                f"Deployment with name {deployment_name} already running. "
-                "Please stop the deployment before starting a new one.\n"
-                f"You can access the deployment at {url}"
+                f"Deployment with name {deployment_name} already running: {url} \n"
+                "To update the deployment, use the Deployment API:\n"
+                "from lightning_sdk import Deployment\n"
+                f"deployment = Deployment('{deployment_name}', teamspace)\n"
+                "deployment.update(...)"
             )
         autoscale = AutoScaleConfig(min_replicas=min_replica, max_replicas=max_replica, metric=metric, threshold=0.95)
         deployment.start(
