@@ -217,3 +217,19 @@ def test_cloud_deployment_non_interactive(
     assert mock_confirm.call_count == 0
     captured = capsys.readouterr()
     assert f"✅ Image pushed to {repo}:{tag}" in captured.out
+
+
+@patch("lightning_sdk.cli.serve.datetime")
+@patch("lightning_sdk.cli.serve.subprocess.run")
+def test_args_with_repository(mock_subprocess, mock_dt, temp_script):
+    serve_api(temp_script, repository="test")
+    mock_dt.now.assert_not_called()
+    mock_subprocess.assert_called_once()
+
+
+@patch("lightning_sdk.cli.serve.datetime")
+@patch("lightning_sdk.cli.serve.subprocess.run")
+def test_args_without_repository(mock_subprocess, mock_dt, temp_script):
+    serve_api(temp_script)
+    mock_dt.now.assert_called()
+    mock_subprocess.assert_called_once()

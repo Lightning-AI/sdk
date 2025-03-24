@@ -1,5 +1,6 @@
 import os
 import subprocess
+from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
 
@@ -109,7 +110,7 @@ def api(
     script_path: str,
     easy: bool,
     cloud: bool,
-    name: str,
+    name: Optional[str],
     non_interactive: bool,
     machine: str,
     interruptible: bool,
@@ -137,6 +138,7 @@ def api(
         user=user,
         cloud_account=cloud_account,
         port=port,
+        replicas=replicas,
         min_replica=min_replica,
         max_replica=max_replica,
         include_credentials=not no_credentials,
@@ -171,6 +173,10 @@ def api_impl(
         raise ValueError(f"Path is not a file: {script_path}")
 
     _LitServeDeployer.generate_client() if easy else None
+
+    if not repository:
+        timestr = datetime.now().strftime("%b-%d-%H_%M")
+        repository = f"litserve-{timestr}".lower()
 
     if cloud:
         repository = repository or "litserve-model"
