@@ -42,29 +42,24 @@ class V1VultrDirectV1(object):
     """
     swagger_types = {
         'credentials_secret_id': 'str',
-        'parent_cluster_id': 'str',
         'primary_region': 'str',
         'regions': 'list[str]'
     }
 
     attribute_map = {
         'credentials_secret_id': 'credentialsSecretId',
-        'parent_cluster_id': 'parentClusterId',
         'primary_region': 'primaryRegion',
         'regions': 'regions'
     }
 
-    def __init__(self, credentials_secret_id: 'str' =None, parent_cluster_id: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None):  # noqa: E501
+    def __init__(self, credentials_secret_id: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None):  # noqa: E501
         """V1VultrDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._credentials_secret_id = None
-        self._parent_cluster_id = None
         self._primary_region = None
         self._regions = None
         self.discriminator = None
         if credentials_secret_id is not None:
             self.credentials_secret_id = credentials_secret_id
-        if parent_cluster_id is not None:
-            self.parent_cluster_id = parent_cluster_id
         if primary_region is not None:
             self.primary_region = primary_region
         if regions is not None:
@@ -92,27 +87,6 @@ class V1VultrDirectV1(object):
         """
 
         self._credentials_secret_id = credentials_secret_id
-
-    @property
-    def parent_cluster_id(self) -> 'str':
-        """Gets the parent_cluster_id of this V1VultrDirectV1.  # noqa: E501
-
-
-        :return: The parent_cluster_id of this V1VultrDirectV1.  # noqa: E501
-        :rtype: str
-        """
-        return self._parent_cluster_id
-
-    @parent_cluster_id.setter
-    def parent_cluster_id(self, parent_cluster_id: 'str'):
-        """Sets the parent_cluster_id of this V1VultrDirectV1.
-
-
-        :param parent_cluster_id: The parent_cluster_id of this V1VultrDirectV1.  # noqa: E501
-        :type: str
-        """
-
-        self._parent_cluster_id = parent_cluster_id
 
     @property
     def primary_region(self) -> 'str':

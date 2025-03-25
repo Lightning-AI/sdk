@@ -41,6 +41,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'alerts': 'list[V1ServerAlert]',
         'app_url': 'str',
         'bytes_to_sync': 'str',
         'cloud_space_id': 'str',
@@ -73,6 +74,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
     }
 
     attribute_map = {
+        'alerts': 'alerts',
         'app_url': 'appUrl',
         'bytes_to_sync': 'bytesToSync',
         'cloud_space_id': 'cloudSpaceId',
@@ -104,8 +106,9 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, app_url: 'str' =None, bytes_to_sync: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
+        self._alerts = None
         self._app_url = None
         self._bytes_to_sync = None
         self._cloud_space_id = None
@@ -136,6 +139,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self._termination_time = None
         self._vscode_url = None
         self.discriminator = None
+        if alerts is not None:
+            self.alerts = alerts
         if app_url is not None:
             self.app_url = app_url
         if bytes_to_sync is not None:
@@ -194,6 +199,27 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.termination_time = termination_time
         if vscode_url is not None:
             self.vscode_url = vscode_url
+
+    @property
+    def alerts(self) -> 'list[V1ServerAlert]':
+        """Gets the alerts of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The alerts of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: list[V1ServerAlert]
+        """
+        return self._alerts
+
+    @alerts.setter
+    def alerts(self, alerts: 'list[V1ServerAlert]'):
+        """Sets the alerts of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param alerts: The alerts of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: list[V1ServerAlert]
+        """
+
+        self._alerts = alerts
 
     @property
     def app_url(self) -> 'str':

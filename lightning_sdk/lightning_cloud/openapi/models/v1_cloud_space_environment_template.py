@@ -41,6 +41,7 @@ class V1CloudSpaceEnvironmentTemplate(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'config': 'V1CloudSpaceEnvironmentTemplateConfig',
         'created_at': 'datetime',
         'id': 'str',
         'name': 'str',
@@ -50,6 +51,7 @@ class V1CloudSpaceEnvironmentTemplate(object):
     }
 
     attribute_map = {
+        'config': 'config',
         'created_at': 'createdAt',
         'id': 'id',
         'name': 'name',
@@ -58,8 +60,9 @@ class V1CloudSpaceEnvironmentTemplate(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, config: 'V1CloudSpaceEnvironmentTemplateConfig' =None, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplate - a model defined in Swagger"""  # noqa: E501
+        self._config = None
         self._created_at = None
         self._id = None
         self._name = None
@@ -67,6 +70,8 @@ class V1CloudSpaceEnvironmentTemplate(object):
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
+        if config is not None:
+            self.config = config
         if created_at is not None:
             self.created_at = created_at
         if id is not None:
@@ -79,6 +84,27 @@ class V1CloudSpaceEnvironmentTemplate(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def config(self) -> 'V1CloudSpaceEnvironmentTemplateConfig':
+        """Gets the config of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+
+
+        :return: The config of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+        :rtype: V1CloudSpaceEnvironmentTemplateConfig
+        """
+        return self._config
+
+    @config.setter
+    def config(self, config: 'V1CloudSpaceEnvironmentTemplateConfig'):
+        """Sets the config of this V1CloudSpaceEnvironmentTemplate.
+
+
+        :param config: The config of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+        :type: V1CloudSpaceEnvironmentTemplateConfig
+        """
+
+        self._config = config
 
     @property
     def created_at(self) -> 'datetime':

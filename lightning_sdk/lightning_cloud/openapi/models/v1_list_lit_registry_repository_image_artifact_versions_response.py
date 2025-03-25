@@ -42,6 +42,7 @@ class V1ListLitRegistryRepositoryImageArtifactVersionsResponse(object):
     """
     swagger_types = {
         'artifacts': 'list[V1LitRegistryArtifact]',
+        'cluster_id': 'str',
         'latest_artifact': 'V1LitRegistryArtifact',
         'latest_tag_name': 'str',
         'lit_repo_name': 'str',
@@ -50,15 +51,17 @@ class V1ListLitRegistryRepositoryImageArtifactVersionsResponse(object):
 
     attribute_map = {
         'artifacts': 'artifacts',
+        'cluster_id': 'clusterId',
         'latest_artifact': 'latestArtifact',
         'latest_tag_name': 'latestTagName',
         'lit_repo_name': 'litRepoName',
         'project_id': 'projectId'
     }
 
-    def __init__(self, artifacts: 'list[V1LitRegistryArtifact]' =None, latest_artifact: 'V1LitRegistryArtifact' =None, latest_tag_name: 'str' =None, lit_repo_name: 'str' =None, project_id: 'str' =None):  # noqa: E501
+    def __init__(self, artifacts: 'list[V1LitRegistryArtifact]' =None, cluster_id: 'str' =None, latest_artifact: 'V1LitRegistryArtifact' =None, latest_tag_name: 'str' =None, lit_repo_name: 'str' =None, project_id: 'str' =None):  # noqa: E501
         """V1ListLitRegistryRepositoryImageArtifactVersionsResponse - a model defined in Swagger"""  # noqa: E501
         self._artifacts = None
+        self._cluster_id = None
         self._latest_artifact = None
         self._latest_tag_name = None
         self._lit_repo_name = None
@@ -66,6 +69,8 @@ class V1ListLitRegistryRepositoryImageArtifactVersionsResponse(object):
         self.discriminator = None
         if artifacts is not None:
             self.artifacts = artifacts
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if latest_artifact is not None:
             self.latest_artifact = latest_artifact
         if latest_tag_name is not None:
@@ -97,6 +102,27 @@ class V1ListLitRegistryRepositoryImageArtifactVersionsResponse(object):
         """
 
         self._artifacts = artifacts
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1ListLitRegistryRepositoryImageArtifactVersionsResponse.  # noqa: E501
+
+
+        :return: The cluster_id of this V1ListLitRegistryRepositoryImageArtifactVersionsResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1ListLitRegistryRepositoryImageArtifactVersionsResponse.
+
+
+        :param cluster_id: The cluster_id of this V1ListLitRegistryRepositoryImageArtifactVersionsResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def latest_artifact(self) -> 'V1LitRegistryArtifact':

@@ -45,12 +45,14 @@ class V1GoogleCloudDirectV1(object):
         'compute_project_role': 'str',
         'credentials_secret_id': 'str',
         'credentials_service_account_email': 'str',
+        'custom_subnet_mode': 'bool',
         'primary_region': 'str',
         'project_id': 'str',
         'project_sa_enabled': 'bool',
         'regions': 'list[str]',
         'service_account_email': 'str',
-        'source_cidr_ips': 'list[str]'
+        'source_cidr_ips': 'list[str]',
+        'subnets': 'list[V1SubnetSpec]'
     }
 
     attribute_map = {
@@ -58,26 +60,30 @@ class V1GoogleCloudDirectV1(object):
         'compute_project_role': 'computeProjectRole',
         'credentials_secret_id': 'credentialsSecretId',
         'credentials_service_account_email': 'credentialsServiceAccountEmail',
+        'custom_subnet_mode': 'customSubnetMode',
         'primary_region': 'primaryRegion',
         'project_id': 'projectId',
         'project_sa_enabled': 'projectSaEnabled',
         'regions': 'regions',
         'service_account_email': 'serviceAccountEmail',
-        'source_cidr_ips': 'sourceCidrIps'
+        'source_cidr_ips': 'sourceCidrIps',
+        'subnets': 'subnets'
     }
 
-    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._compute_project_role = None
         self._credentials_secret_id = None
         self._credentials_service_account_email = None
+        self._custom_subnet_mode = None
         self._primary_region = None
         self._project_id = None
         self._project_sa_enabled = None
         self._regions = None
         self._service_account_email = None
         self._source_cidr_ips = None
+        self._subnets = None
         self.discriminator = None
         if bucket_name is not None:
             self.bucket_name = bucket_name
@@ -87,6 +93,8 @@ class V1GoogleCloudDirectV1(object):
             self.credentials_secret_id = credentials_secret_id
         if credentials_service_account_email is not None:
             self.credentials_service_account_email = credentials_service_account_email
+        if custom_subnet_mode is not None:
+            self.custom_subnet_mode = custom_subnet_mode
         if primary_region is not None:
             self.primary_region = primary_region
         if project_id is not None:
@@ -99,6 +107,8 @@ class V1GoogleCloudDirectV1(object):
             self.service_account_email = service_account_email
         if source_cidr_ips is not None:
             self.source_cidr_ips = source_cidr_ips
+        if subnets is not None:
+            self.subnets = subnets
 
     @property
     def bucket_name(self) -> 'str':
@@ -185,6 +195,27 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._credentials_service_account_email = credentials_service_account_email
+
+    @property
+    def custom_subnet_mode(self) -> 'bool':
+        """Gets the custom_subnet_mode of this V1GoogleCloudDirectV1.  # noqa: E501
+
+
+        :return: The custom_subnet_mode of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._custom_subnet_mode
+
+    @custom_subnet_mode.setter
+    def custom_subnet_mode(self, custom_subnet_mode: 'bool'):
+        """Sets the custom_subnet_mode of this V1GoogleCloudDirectV1.
+
+
+        :param custom_subnet_mode: The custom_subnet_mode of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._custom_subnet_mode = custom_subnet_mode
 
     @property
     def primary_region(self) -> 'str':
@@ -315,6 +346,27 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._source_cidr_ips = source_cidr_ips
+
+    @property
+    def subnets(self) -> 'list[V1SubnetSpec]':
+        """Gets the subnets of this V1GoogleCloudDirectV1.  # noqa: E501
+
+
+        :return: The subnets of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: list[V1SubnetSpec]
+        """
+        return self._subnets
+
+    @subnets.setter
+    def subnets(self, subnets: 'list[V1SubnetSpec]'):
+        """Sets the subnets of this V1GoogleCloudDirectV1.
+
+
+        :param subnets: The subnets of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: list[V1SubnetSpec]
+        """
+
+        self._subnets = subnets
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

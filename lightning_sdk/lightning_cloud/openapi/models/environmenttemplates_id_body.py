@@ -41,6 +41,7 @@ class EnvironmenttemplatesIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'config': 'V1CloudSpaceEnvironmentTemplateConfig',
         'created_at': 'datetime',
         'name': 'str',
         'org_id': 'str',
@@ -49,6 +50,7 @@ class EnvironmenttemplatesIdBody(object):
     }
 
     attribute_map = {
+        'config': 'config',
         'created_at': 'createdAt',
         'name': 'name',
         'org_id': 'orgId',
@@ -56,14 +58,17 @@ class EnvironmenttemplatesIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, config: 'V1CloudSpaceEnvironmentTemplateConfig' =None, created_at: 'datetime' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """EnvironmenttemplatesIdBody - a model defined in Swagger"""  # noqa: E501
+        self._config = None
         self._created_at = None
         self._name = None
         self._org_id = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
+        if config is not None:
+            self.config = config
         if created_at is not None:
             self.created_at = created_at
         if name is not None:
@@ -74,6 +79,27 @@ class EnvironmenttemplatesIdBody(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def config(self) -> 'V1CloudSpaceEnvironmentTemplateConfig':
+        """Gets the config of this EnvironmenttemplatesIdBody.  # noqa: E501
+
+
+        :return: The config of this EnvironmenttemplatesIdBody.  # noqa: E501
+        :rtype: V1CloudSpaceEnvironmentTemplateConfig
+        """
+        return self._config
+
+    @config.setter
+    def config(self, config: 'V1CloudSpaceEnvironmentTemplateConfig'):
+        """Sets the config of this EnvironmenttemplatesIdBody.
+
+
+        :param config: The config of this EnvironmenttemplatesIdBody.  # noqa: E501
+        :type: V1CloudSpaceEnvironmentTemplateConfig
+        """
+
+        self._config = config
 
     @property
     def created_at(self) -> 'datetime':

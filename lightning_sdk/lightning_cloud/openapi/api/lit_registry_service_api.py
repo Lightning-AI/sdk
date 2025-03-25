@@ -159,6 +159,7 @@ class LitRegistryServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str lit_repo_name: (required)
+        :param str cluster_id:
         :return: V1DeleteLitRepositoryResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -181,12 +182,13 @@ class LitRegistryServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str lit_repo_name: (required)
+        :param str cluster_id:
         :return: V1DeleteLitRepositoryResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'lit_repo_name']  # noqa: E501
+        all_params = ['project_id', 'lit_repo_name', 'cluster_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -219,6 +221,8 @@ class LitRegistryServiceApi(object):
             path_params['litRepoName'] = params['lit_repo_name']  # noqa: E501
 
         query_params = []
+        if 'cluster_id' in params:
+            query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
 
         header_params = {}
 
@@ -475,6 +479,7 @@ class LitRegistryServiceApi(object):
         :param str project_id: (required)
         :param str lit_repo_name: (required)
         :param bool latest_only:
+        :param str cluster_id:
         :return: V1LitRepository
                  If the method is called asynchronously,
                  returns the request thread.
@@ -498,12 +503,13 @@ class LitRegistryServiceApi(object):
         :param str project_id: (required)
         :param str lit_repo_name: (required)
         :param bool latest_only:
+        :param str cluster_id:
         :return: V1LitRepository
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'lit_repo_name', 'latest_only']  # noqa: E501
+        all_params = ['project_id', 'lit_repo_name', 'latest_only', 'cluster_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -538,6 +544,8 @@ class LitRegistryServiceApi(object):
         query_params = []
         if 'latest_only' in params:
             query_params.append(('latestOnly', params['latest_only']))  # noqa: E501
+        if 'cluster_id' in params:
+            query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
 
         header_params = {}
 
@@ -580,6 +588,7 @@ class LitRegistryServiceApi(object):
         :param str project_id: (required)
         :param str lit_repo_name: (required)
         :param bool latest_only:
+        :param str cluster_id:
         :return: V1ListLitRegistryRepositoryImageArtifactVersionsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -603,12 +612,13 @@ class LitRegistryServiceApi(object):
         :param str project_id: (required)
         :param str lit_repo_name: (required)
         :param bool latest_only:
+        :param str cluster_id:
         :return: V1ListLitRegistryRepositoryImageArtifactVersionsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'lit_repo_name', 'latest_only']  # noqa: E501
+        all_params = ['project_id', 'lit_repo_name', 'latest_only', 'cluster_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -643,6 +653,8 @@ class LitRegistryServiceApi(object):
         query_params = []
         if 'latest_only' in params:
             query_params.append(('latestOnly', params['latest_only']))  # noqa: E501
+        if 'cluster_id' in params:
+            query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
 
         header_params = {}
 

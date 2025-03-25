@@ -73,9 +73,9 @@ class V1UserFeatures(object):
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'filestore': 'bool',
+        'inactive_notify_delete': 'bool',
         'instant_capacity_reservation': 'bool',
         'job_artifacts_v2': 'bool',
-        'jobs_v2': 'bool',
         'lambda_labs': 'bool',
         'landing_studios': 'bool',
         'lit_logger': 'bool',
@@ -84,10 +84,10 @@ class V1UserFeatures(object):
         'mmt_strategy_selector': 'bool',
         'multicloud_saas': 'bool',
         'multiple_studio_versions': 'bool',
+        'org_admin_alerts': 'bool',
         'org_level_member_permissions': 'bool',
         'pipelines': 'bool',
         'plugin_distributed': 'bool',
-        'plugin_fiftyone': 'bool',
         'plugin_inference': 'bool',
         'plugin_label_studio': 'bool',
         'plugin_langflow': 'bool',
@@ -109,11 +109,11 @@ class V1UserFeatures(object):
         'show_dev_admin': 'bool',
         'slurm': 'bool',
         'slurm_machine_selector': 'bool',
-        'snapshotter_service': 'bool',
         'stop_ide_container_on_shutdown': 'bool',
         'studio_config': 'bool',
         'studio_on_stop': 'bool',
         'studio_version_visibility': 'bool',
+        'studios_dashboard': 'bool',
         'teamspace_storage_tab': 'bool',
         'trainium2': 'bool',
         'use_rclone_mounts_only': 'bool',
@@ -153,9 +153,9 @@ class V1UserFeatures(object):
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filestore': 'filestore',
+        'inactive_notify_delete': 'inactiveNotifyDelete',
         'instant_capacity_reservation': 'instantCapacityReservation',
         'job_artifacts_v2': 'jobArtifactsV2',
-        'jobs_v2': 'jobsV2',
         'lambda_labs': 'lambdaLabs',
         'landing_studios': 'landingStudios',
         'lit_logger': 'litLogger',
@@ -164,10 +164,10 @@ class V1UserFeatures(object):
         'mmt_strategy_selector': 'mmtStrategySelector',
         'multicloud_saas': 'multicloudSaas',
         'multiple_studio_versions': 'multipleStudioVersions',
+        'org_admin_alerts': 'orgAdminAlerts',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'pipelines': 'pipelines',
         'plugin_distributed': 'pluginDistributed',
-        'plugin_fiftyone': 'pluginFiftyone',
         'plugin_inference': 'pluginInference',
         'plugin_label_studio': 'pluginLabelStudio',
         'plugin_langflow': 'pluginLangflow',
@@ -189,18 +189,18 @@ class V1UserFeatures(object):
         'show_dev_admin': 'showDevAdmin',
         'slurm': 'slurm',
         'slurm_machine_selector': 'slurmMachineSelector',
-        'snapshotter_service': 'snapshotterService',
         'stop_ide_container_on_shutdown': 'stopIdeContainerOnShutdown',
         'studio_config': 'studioConfig',
         'studio_on_stop': 'studioOnStop',
         'studio_version_visibility': 'studioVersionVisibility',
+        'studios_dashboard': 'studiosDashboard',
         'teamspace_storage_tab': 'teamspaceStorageTab',
         'trainium2': 'trainium2',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
         'vultr': 'vultr'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, jobs_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_fiftyone: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, snapshotter_service: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -234,9 +234,9 @@ class V1UserFeatures(object):
         self._fair_share = None
         self._featured_studios_admin = None
         self._filestore = None
+        self._inactive_notify_delete = None
         self._instant_capacity_reservation = None
         self._job_artifacts_v2 = None
-        self._jobs_v2 = None
         self._lambda_labs = None
         self._landing_studios = None
         self._lit_logger = None
@@ -245,10 +245,10 @@ class V1UserFeatures(object):
         self._mmt_strategy_selector = None
         self._multicloud_saas = None
         self._multiple_studio_versions = None
+        self._org_admin_alerts = None
         self._org_level_member_permissions = None
         self._pipelines = None
         self._plugin_distributed = None
-        self._plugin_fiftyone = None
         self._plugin_inference = None
         self._plugin_label_studio = None
         self._plugin_langflow = None
@@ -270,11 +270,11 @@ class V1UserFeatures(object):
         self._show_dev_admin = None
         self._slurm = None
         self._slurm_machine_selector = None
-        self._snapshotter_service = None
         self._stop_ide_container_on_shutdown = None
         self._studio_config = None
         self._studio_on_stop = None
         self._studio_version_visibility = None
+        self._studios_dashboard = None
         self._teamspace_storage_tab = None
         self._trainium2 = None
         self._use_rclone_mounts_only = None
@@ -344,12 +344,12 @@ class V1UserFeatures(object):
             self.featured_studios_admin = featured_studios_admin
         if filestore is not None:
             self.filestore = filestore
+        if inactive_notify_delete is not None:
+            self.inactive_notify_delete = inactive_notify_delete
         if instant_capacity_reservation is not None:
             self.instant_capacity_reservation = instant_capacity_reservation
         if job_artifacts_v2 is not None:
             self.job_artifacts_v2 = job_artifacts_v2
-        if jobs_v2 is not None:
-            self.jobs_v2 = jobs_v2
         if lambda_labs is not None:
             self.lambda_labs = lambda_labs
         if landing_studios is not None:
@@ -366,14 +366,14 @@ class V1UserFeatures(object):
             self.multicloud_saas = multicloud_saas
         if multiple_studio_versions is not None:
             self.multiple_studio_versions = multiple_studio_versions
+        if org_admin_alerts is not None:
+            self.org_admin_alerts = org_admin_alerts
         if org_level_member_permissions is not None:
             self.org_level_member_permissions = org_level_member_permissions
         if pipelines is not None:
             self.pipelines = pipelines
         if plugin_distributed is not None:
             self.plugin_distributed = plugin_distributed
-        if plugin_fiftyone is not None:
-            self.plugin_fiftyone = plugin_fiftyone
         if plugin_inference is not None:
             self.plugin_inference = plugin_inference
         if plugin_label_studio is not None:
@@ -416,8 +416,6 @@ class V1UserFeatures(object):
             self.slurm = slurm
         if slurm_machine_selector is not None:
             self.slurm_machine_selector = slurm_machine_selector
-        if snapshotter_service is not None:
-            self.snapshotter_service = snapshotter_service
         if stop_ide_container_on_shutdown is not None:
             self.stop_ide_container_on_shutdown = stop_ide_container_on_shutdown
         if studio_config is not None:
@@ -426,6 +424,8 @@ class V1UserFeatures(object):
             self.studio_on_stop = studio_on_stop
         if studio_version_visibility is not None:
             self.studio_version_visibility = studio_version_visibility
+        if studios_dashboard is not None:
+            self.studios_dashboard = studios_dashboard
         if teamspace_storage_tab is not None:
             self.teamspace_storage_tab = teamspace_storage_tab
         if trainium2 is not None:
@@ -1108,6 +1108,27 @@ class V1UserFeatures(object):
         self._filestore = filestore
 
     @property
+    def inactive_notify_delete(self) -> 'bool':
+        """Gets the inactive_notify_delete of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The inactive_notify_delete of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._inactive_notify_delete
+
+    @inactive_notify_delete.setter
+    def inactive_notify_delete(self, inactive_notify_delete: 'bool'):
+        """Sets the inactive_notify_delete of this V1UserFeatures.
+
+
+        :param inactive_notify_delete: The inactive_notify_delete of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._inactive_notify_delete = inactive_notify_delete
+
+    @property
     def instant_capacity_reservation(self) -> 'bool':
         """Gets the instant_capacity_reservation of this V1UserFeatures.  # noqa: E501
 
@@ -1148,27 +1169,6 @@ class V1UserFeatures(object):
         """
 
         self._job_artifacts_v2 = job_artifacts_v2
-
-    @property
-    def jobs_v2(self) -> 'bool':
-        """Gets the jobs_v2 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The jobs_v2 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._jobs_v2
-
-    @jobs_v2.setter
-    def jobs_v2(self, jobs_v2: 'bool'):
-        """Sets the jobs_v2 of this V1UserFeatures.
-
-
-        :param jobs_v2: The jobs_v2 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._jobs_v2 = jobs_v2
 
     @property
     def lambda_labs(self) -> 'bool':
@@ -1339,6 +1339,27 @@ class V1UserFeatures(object):
         self._multiple_studio_versions = multiple_studio_versions
 
     @property
+    def org_admin_alerts(self) -> 'bool':
+        """Gets the org_admin_alerts of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The org_admin_alerts of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._org_admin_alerts
+
+    @org_admin_alerts.setter
+    def org_admin_alerts(self, org_admin_alerts: 'bool'):
+        """Sets the org_admin_alerts of this V1UserFeatures.
+
+
+        :param org_admin_alerts: The org_admin_alerts of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._org_admin_alerts = org_admin_alerts
+
+    @property
     def org_level_member_permissions(self) -> 'bool':
         """Gets the org_level_member_permissions of this V1UserFeatures.  # noqa: E501
 
@@ -1400,27 +1421,6 @@ class V1UserFeatures(object):
         """
 
         self._plugin_distributed = plugin_distributed
-
-    @property
-    def plugin_fiftyone(self) -> 'bool':
-        """Gets the plugin_fiftyone of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_fiftyone of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_fiftyone
-
-    @plugin_fiftyone.setter
-    def plugin_fiftyone(self, plugin_fiftyone: 'bool'):
-        """Sets the plugin_fiftyone of this V1UserFeatures.
-
-
-        :param plugin_fiftyone: The plugin_fiftyone of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_fiftyone = plugin_fiftyone
 
     @property
     def plugin_inference(self) -> 'bool':
@@ -1864,27 +1864,6 @@ class V1UserFeatures(object):
         self._slurm_machine_selector = slurm_machine_selector
 
     @property
-    def snapshotter_service(self) -> 'bool':
-        """Gets the snapshotter_service of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The snapshotter_service of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._snapshotter_service
-
-    @snapshotter_service.setter
-    def snapshotter_service(self, snapshotter_service: 'bool'):
-        """Sets the snapshotter_service of this V1UserFeatures.
-
-
-        :param snapshotter_service: The snapshotter_service of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._snapshotter_service = snapshotter_service
-
-    @property
     def stop_ide_container_on_shutdown(self) -> 'bool':
         """Gets the stop_ide_container_on_shutdown of this V1UserFeatures.  # noqa: E501
 
@@ -1967,6 +1946,27 @@ class V1UserFeatures(object):
         """
 
         self._studio_version_visibility = studio_version_visibility
+
+    @property
+    def studios_dashboard(self) -> 'bool':
+        """Gets the studios_dashboard of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The studios_dashboard of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._studios_dashboard
+
+    @studios_dashboard.setter
+    def studios_dashboard(self, studios_dashboard: 'bool'):
+        """Sets the studios_dashboard of this V1UserFeatures.
+
+
+        :param studios_dashboard: The studios_dashboard of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._studios_dashboard = studios_dashboard
 
     @property
     def teamspace_storage_tab(self) -> 'bool':

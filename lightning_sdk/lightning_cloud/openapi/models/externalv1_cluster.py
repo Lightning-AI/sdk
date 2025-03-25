@@ -44,6 +44,7 @@ class Externalv1Cluster(object):
         'created_at': 'datetime',
         'id': 'str',
         'name': 'str',
+        'protected': 'bool',
         'spec': 'V1ClusterSpec',
         'status': 'V1ClusterStatus'
     }
@@ -52,15 +53,17 @@ class Externalv1Cluster(object):
         'created_at': 'createdAt',
         'id': 'id',
         'name': 'name',
+        'protected': 'protected',
         'spec': 'spec',
         'status': 'status'
     }
 
-    def __init__(self, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, spec: 'V1ClusterSpec' =None, status: 'V1ClusterStatus' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, protected: 'bool' =None, spec: 'V1ClusterSpec' =None, status: 'V1ClusterStatus' =None):  # noqa: E501
         """Externalv1Cluster - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._id = None
         self._name = None
+        self._protected = None
         self._spec = None
         self._status = None
         self.discriminator = None
@@ -70,6 +73,8 @@ class Externalv1Cluster(object):
             self.id = id
         if name is not None:
             self.name = name
+        if protected is not None:
+            self.protected = protected
         if spec is not None:
             self.spec = spec
         if status is not None:
@@ -137,6 +142,27 @@ class Externalv1Cluster(object):
         """
 
         self._name = name
+
+    @property
+    def protected(self) -> 'bool':
+        """Gets the protected of this Externalv1Cluster.  # noqa: E501
+
+
+        :return: The protected of this Externalv1Cluster.  # noqa: E501
+        :rtype: bool
+        """
+        return self._protected
+
+    @protected.setter
+    def protected(self, protected: 'bool'):
+        """Sets the protected of this Externalv1Cluster.
+
+
+        :param protected: The protected of this Externalv1Cluster.  # noqa: E501
+        :type: bool
+        """
+
+        self._protected = protected
 
     @property
     def spec(self) -> 'V1ClusterSpec':

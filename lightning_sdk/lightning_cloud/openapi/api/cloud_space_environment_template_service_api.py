@@ -334,12 +334,12 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_environment_template_service_list_get_cloud_space_environment_templates(self, **kwargs) -> 'V1ListCloudSpaceEnvironmentTemplatesResponse':  # noqa: E501
-        """cloud_space_environment_template_service_list_get_cloud_space_environment_templates  # noqa: E501
+    def cloud_space_environment_template_service_list_cloud_space_environment_templates(self, **kwargs) -> 'V1ListCloudSpaceEnvironmentTemplatesResponse':  # noqa: E501
+        """cloud_space_environment_template_service_list_cloud_space_environment_templates  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.cloud_space_environment_template_service_list_get_cloud_space_environment_templates(async_req=True)
+        >>> thread = api.cloud_space_environment_template_service_list_cloud_space_environment_templates(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -352,17 +352,17 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.cloud_space_environment_template_service_list_get_cloud_space_environment_templates_with_http_info(**kwargs)  # noqa: E501
+            return self.cloud_space_environment_template_service_list_cloud_space_environment_templates_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.cloud_space_environment_template_service_list_get_cloud_space_environment_templates_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.cloud_space_environment_template_service_list_cloud_space_environment_templates_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def cloud_space_environment_template_service_list_get_cloud_space_environment_templates_with_http_info(self, **kwargs) -> 'V1ListCloudSpaceEnvironmentTemplatesResponse':  # noqa: E501
-        """cloud_space_environment_template_service_list_get_cloud_space_environment_templates  # noqa: E501
+    def cloud_space_environment_template_service_list_cloud_space_environment_templates_with_http_info(self, **kwargs) -> 'V1ListCloudSpaceEnvironmentTemplatesResponse':  # noqa: E501
+        """cloud_space_environment_template_service_list_cloud_space_environment_templates  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.cloud_space_environment_template_service_list_get_cloud_space_environment_templates_with_http_info(async_req=True)
+        >>> thread = api.cloud_space_environment_template_service_list_cloud_space_environment_templates_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -385,7 +385,7 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method cloud_space_environment_template_service_list_get_cloud_space_environment_templates" % key
+                    " to method cloud_space_environment_template_service_list_cloud_space_environment_templates" % key
                 )
             params[key] = val
         del params['kwargs']

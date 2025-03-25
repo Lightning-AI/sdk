@@ -42,6 +42,7 @@ class ProjectIdCloudspacesBody(object):
     """
     swagger_types = {
         'can_download_source_code': 'bool',
+        'cloud_space_environment_template_id': 'str',
         'cloud_space_instance_cpu_image_override': 'str',
         'cloud_space_instance_gpu_image_override': 'str',
         'cluster_id': 'str',
@@ -59,6 +60,7 @@ class ProjectIdCloudspacesBody(object):
 
     attribute_map = {
         'can_download_source_code': 'canDownloadSourceCode',
+        'cloud_space_environment_template_id': 'cloudSpaceEnvironmentTemplateId',
         'cloud_space_instance_cpu_image_override': 'cloudSpaceInstanceCpuImageOverride',
         'cloud_space_instance_gpu_image_override': 'cloudSpaceInstanceGpuImageOverride',
         'cluster_id': 'clusterId',
@@ -74,9 +76,10 @@ class ProjectIdCloudspacesBody(object):
         'spot': 'spot'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, spot: 'bool' =None):  # noqa: E501
         """ProjectIdCloudspacesBody - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
+        self._cloud_space_environment_template_id = None
         self._cloud_space_instance_cpu_image_override = None
         self._cloud_space_instance_gpu_image_override = None
         self._cluster_id = None
@@ -93,6 +96,8 @@ class ProjectIdCloudspacesBody(object):
         self.discriminator = None
         if can_download_source_code is not None:
             self.can_download_source_code = can_download_source_code
+        if cloud_space_environment_template_id is not None:
+            self.cloud_space_environment_template_id = cloud_space_environment_template_id
         if cloud_space_instance_cpu_image_override is not None:
             self.cloud_space_instance_cpu_image_override = cloud_space_instance_cpu_image_override
         if cloud_space_instance_gpu_image_override is not None:
@@ -140,6 +145,27 @@ class ProjectIdCloudspacesBody(object):
         """
 
         self._can_download_source_code = can_download_source_code
+
+    @property
+    def cloud_space_environment_template_id(self) -> 'str':
+        """Gets the cloud_space_environment_template_id of this ProjectIdCloudspacesBody.  # noqa: E501
+
+
+        :return: The cloud_space_environment_template_id of this ProjectIdCloudspacesBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloud_space_environment_template_id
+
+    @cloud_space_environment_template_id.setter
+    def cloud_space_environment_template_id(self, cloud_space_environment_template_id: 'str'):
+        """Sets the cloud_space_environment_template_id of this ProjectIdCloudspacesBody.
+
+
+        :param cloud_space_environment_template_id: The cloud_space_environment_template_id of this ProjectIdCloudspacesBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cloud_space_environment_template_id = cloud_space_environment_template_id
 
     @property
     def cloud_space_instance_cpu_image_override(self) -> 'str':
