@@ -120,7 +120,60 @@ def test_upload_container_success(lit_container, mock_teamspace):
 
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
-        mock_upload.assert_called_once_with("my-container", mock_teamspace, "v1.0")
+        mock_upload.assert_called_once_with("my-container", mock_teamspace, "v1.0", None)
+
+
+def test_upload_byoc_container_success(lit_container, mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
+        lit_container._api, "upload_container"
+    ) as mock_upload:
+        # Setup mocks
+        mock_resolve.return_value = mock_teamspace
+        mock_upload.return_value = ["Uploading...", "Upload complete"]
+
+        # Call the method
+        lit_container.upload_container(
+            container="my-container", teamspace="test-team", tag="v1.0", cloud_account="byoc-123"
+        )
+
+        # Verify the mocks were called correctly
+        mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
+        mock_upload.assert_called_once_with("my-container", mock_teamspace, "v1.0", "byoc-123")
+
+
+def test_upload_byoc_container_pull_then_push(lit_container, mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
+        lit_container._api, "_docker_client"
+    ) as mock_docker_client:
+        mock_resolve.return_value = mock_teamspace
+
+        lit_container._api._docker_auth_config = {"username": "admin", "api_key": "grid"}
+        mock_docker_client.images.get.side_effect = [
+            docker.errors.ImageNotFound("This will trigger images.pull()"),
+            MagicMock(id="my-container"),
+        ]
+        mock_docker_client.images.pull.return_value = MagicMock(id="my-container")
+        mock_docker_client.api.tag.return_value = True
+        mock_docker_client.api.push.return_value = [{"status": "Pushing"}, {"status": "Complete"}]
+
+        lit_container.upload_container(
+            container="my-container", teamspace="test-team", tag="v1.0", cloud_account="byoc-123"
+        )
+
+        mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
+
+        # Assert that we call get(my-container) on the first attempt
+        # Assert that we call get(my-container) on the second attempt after pull
+        mock_docker_client.images.get.assert_has_calls([call("my-container"), call("my-container")])
+
+        # Assert we fallback to pulling when the first get(...) fails.
+        mock_docker_client.images.pull.assert_called_once_with("my-container", "v1.0")
+
+        repository = f"{_get_registry_url()}/lit-container-byoc-123/test-org/test-team/my-container"
+        mock_docker_client.api.tag.assert_called_once_with("my-container", repository, "v1.0")
+        mock_docker_client.api.push.assert_called_once_with(
+            repository, stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
+        )
 
 
 def test_upload_container_pull_then_push(lit_container, mock_teamspace):
@@ -324,7 +377,7 @@ def test_upload_container_with_org(lit_container, mock_teamspace):
 
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org="test-org", user=None)
-        mock_upload.assert_called_once_with("my-container", mock_teamspace, "latest")
+        mock_upload.assert_called_once_with("my-container", mock_teamspace, "latest", None)
 
 
 def test_download_container(lit_container, mock_teamspace):

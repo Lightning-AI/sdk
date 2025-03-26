@@ -64,7 +64,13 @@ class LitContainer:
         return self._api.delete_container(project_id, container)
 
     def upload_container(
-        self, container: str, teamspace: str, org: Optional[str] = None, user: Optional[str] = None, tag: str = "latest"
+        self,
+        container: str,
+        teamspace: str,
+        org: Optional[str] = None,
+        user: Optional[str] = None,
+        tag: str = "latest",
+        cloud_account: Optional[str] = None,
     ) -> None:
         """Upload a container to the docker registry.
 
@@ -74,13 +80,14 @@ class LitContainer:
             org: The organization which contains the container.
             user: The user which contains the container.
             tag: The tag to use for the container.
+            cloud_account: The cloud account where the container is stored.
         """
         try:
             teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         except Exception as e:
             raise ValueError(f"Could not resolve teamspace: {e}") from e
 
-        resp = self._api.upload_container(container, teamspace, tag)
+        resp = self._api.upload_container(container, teamspace, tag, cloud_account)
         for line in resp:
             print(line)
 

@@ -116,7 +116,15 @@ def file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = N
         "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
     ),
 )
-def upload_container(container: str, tag: str = "latest", teamspace: Optional[str] = None) -> None:
+@click.option(
+    "--cloud-account",
+    "--cloud_account",  # The UI will present the above variant, using this as a secondary to be consistent w/ models
+    default=None,
+    help="The name of the cloud account to store the Container in.",
+)
+def upload_container(
+    container: str, tag: str = "latest", teamspace: Optional[str] = None, cloud_account: Optional[str] = None
+) -> None:
     """Upload a container to Lightning AI's container registry."""
     menu = _TeamspacesMenu()
     teamspace = menu._resolve_teamspace(teamspace)
@@ -139,14 +147,14 @@ def upload_container(container: str, tag: str = "latest", teamspace: Optional[st
                 # let the push with retry take control of auth moving forward
                 pass
 
-            lines = api.upload_container(container, teamspace, tag)
+            lines = api.upload_container(container, teamspace, tag, cloud_account)
             _print_docker_push(lines, console, progress, push_task)
         except LCRAuthFailedError:
             console.print("Re-authenticating with Lightning Container Registry...")
             if not api.authenticate(reauth=True):
                 raise StudioCliError("Failed to authenticate with Lightning Container Registry") from None
             console.print("Authenticated with Lightning Container Registry", style="green")
-            lines = api.upload_container(container, teamspace, tag)
+            lines = api.upload_container(container, teamspace, tag, cloud_account)
             _print_docker_push(lines, console, progress, push_task)
         progress.update(push_task, description="[green]Container pushed![/green]")
 

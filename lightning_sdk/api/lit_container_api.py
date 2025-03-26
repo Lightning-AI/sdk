@@ -96,7 +96,9 @@ class LitContainerApi:
             raise ValueError(f"Could not delete container {container} from project {project_id}: {e!s}") from e
 
     @retry_on_lcr_auth_failure
-    def upload_container(self, container: str, teamspace: Teamspace, tag: str) -> Generator[dict, None, None]:
+    def upload_container(
+        self, container: str, teamspace: Teamspace, tag: str, cloud_account: str
+    ) -> Generator[dict, None, None]:
         try:
             self._docker_client.images.get(container)
         except docker.errors.ImageNotFound:
@@ -112,15 +114,19 @@ class LitContainerApi:
 
         registry_url = _get_registry_url()
         container_basename = container.split("/")[-1]
-        repository = f"{registry_url}/lit-container/{teamspace.owner.name}/{teamspace.name}/{container_basename}"
+        repository = (
+            f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"
+            f"{teamspace.owner.name}/{teamspace.name}/{container_basename}"
+        )
         tagged = self._docker_client.api.tag(container, repository, tag)
         if not tagged:
             raise ValueError(f"Could not tag container {container} with {repository}:{tag}")
         yield from self._push_with_retry(repository)
+
         yield {
             "finish": True,
-            "url": f"{LIGHTNING_CLOUD_URL}/{teamspace.owner.name}/{teamspace.name}/containers/{container_basename}",
-            "repository": repository,
+            "url": f"{LIGHTNING_CLOUD_URL}/{teamspace.owner.name}/{teamspace.name}/containers/{container_basename}"
+            f"{f'?clusterId={cloud_account}' if cloud_account is not None else ''}",
         }
 
     def _push_with_retry(self, repository: str, max_retries: int = 3) -> Iterator[Dict[str, Any]]:

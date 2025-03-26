@@ -39,11 +39,16 @@ def test_container_help():
   Upload a container to Lightning AI's container registry.
 
 Options:
-  --tag TEXT        The tag of the container to upload.
-  --teamspace TEXT  The teamspace the studio is part of. Should be of format
-                    <OWNER>/<TEAMSPACE_NAME>. If not specified, tries to infer
-                    from the environment (e.g. when run from within a Studio.)
-  --help            Show this message and exit.
+  --tag TEXT                      The tag of the container to upload.
+  --teamspace TEXT                The teamspace the studio is part of. Should
+                                  be of format <OWNER>/<TEAMSPACE_NAME>. If
+                                  not specified, tries to infer from the
+                                  environment (e.g. when run from within a
+                                  Studio.)
+  --cloud-account, --cloud_account TEXT
+                                  The name of the cloud account to store the
+                                  Container in.
+  --help                          Show this message and exit.
 """
     )
 
