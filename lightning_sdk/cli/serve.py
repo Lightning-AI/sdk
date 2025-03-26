@@ -229,31 +229,14 @@ def _handle_cloud(
     replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
 ) -> None:
+    deployment_name = os.path.basename(repository)
+    tag = tag if tag else "latest"
     if teamspace is None:
         menu = _TeamspacesMenu()
         resolved_teamspace = menu._resolve_teamspace(teamspace)
     else:
         resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
 
-    port = port or 8000
-    ls_deployer = _LitServeDeployer()
-    path = ls_deployer.dockerize_api(script_path, port=port, gpu=not machine.is_cpu(), tag=tag, print_success=False)
-    console.clear()
-    if non_interactive:
-        console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
-
-    console.print(f"\nPlease review the Dockerfile at [u]{path}[/u] and make sure it is correct.", style="bold")
-    correct_dockerfile = True if non_interactive else Confirm.ask("Is the Dockerfile correct?", default=True)
-    if not correct_dockerfile:
-        console.print("Please fix the Dockerfile and try again.", style="red")
-        return
-
-    tag = tag if tag else "latest"
-
-    lit_cr = LitContainerApi()
-    deployment_name = os.path.basename(repository)
-
-    ls_deployer.authenticate()
     if DeploymentApi().get_deployment_by_name(deployment_name, resolved_teamspace.id):
         syntax = Syntax(
             "from lightning_sdk import Deployment\n\n"
@@ -270,7 +253,22 @@ def _handle_cloud(
         )
         return
 
+    port = port or 8000
+    ls_deployer = _LitServeDeployer()
+    path = ls_deployer.dockerize_api(script_path, port=port, gpu=not machine.is_cpu(), tag=tag, print_success=False)
+    console.clear()
+    if non_interactive:
+        console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
+
+    console.print(f"\nPlease review the Dockerfile at [u]{path}[/u] and make sure it is correct.", style="bold")
+    correct_dockerfile = True if non_interactive else Confirm.ask("Is the Dockerfile correct?", default=True)
+    if not correct_dockerfile:
+        console.print("Please fix the Dockerfile and try again.", style="red")
+        return
+
+    ls_deployer.authenticate()
     # list containers to create the project if it doesn't exist
+    lit_cr = LitContainerApi()
     lit_cr.list_containers(resolved_teamspace.id)
 
     with Progress(
