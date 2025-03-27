@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import ANY, MagicMock, call, patch
 
 import pytest
 import rich
@@ -242,7 +242,23 @@ def test_handle_cloud(mock_ask, mock_ls_deployer, _, mock_litcr, temp_script):
         machine=MagicMock(),
     )
     mock_litcr.assert_called_once()
-    mock_litcr.return_value.list_containers.assert_called_once()
+    mock_litcr.return_value.list_containers.assert_called_once_with(ANY, cloud_account=None)
+    mock_ls_deployer.return_value.push_container.assert_called_once()
+    mock_ls_deployer.assert_called_once()
+
+
+@patch("lightning_sdk.cli.serve.LitContainerApi")
+@patch("lightning_sdk.cli.serve.Teamspace")
+@patch("lightning_sdk.cli.serve._LitServeDeployer")
+@patch("lightning_sdk.cli.serve.Confirm.ask")
+@patch("lightning_sdk.serve.DeploymentApi")
+def test_handle_byoc_cloud(mock_deployment_api, mock_ask, mock_ls_deployer, mock_teamspace, mock_litcr, temp_script):
+    mock_ask.return_value = True
+    mock_deployment_api.return_value.get_deployment_by_name.return_value = None
+    console = rich.console.Console()
+    _handle_cloud(temp_script, console, teamspace="test", machine=MagicMock(), cloud_account="byoc-123")
+    mock_litcr.assert_called_once()
+    mock_litcr.return_value.list_containers.assert_called_once_with(ANY, cloud_account="byoc-123")
     mock_ls_deployer.return_value.push_container.assert_called_once()
     mock_ls_deployer.assert_called_once()
 

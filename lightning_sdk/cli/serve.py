@@ -252,7 +252,7 @@ def _handle_cloud(
     ls_deployer.authenticate()
     # list containers to create the project if it doesn't exist
     lit_cr = LitContainerApi()
-    lit_cr.list_containers(resolved_teamspace.id)
+    lit_cr.list_containers(resolved_teamspace.id, cloud_account=cloud_account)
 
     with Progress(
         SpinnerColumn(),

@@ -1,6 +1,6 @@
 import inspect
 import time
-from typing import Any, Callable, Dict, Generator, Iterator, List
+from typing import Any, Callable, Dict, Generator, Iterator, List, Optional
 
 import docker
 import requests
@@ -99,8 +99,10 @@ class LitContainerApi:
             print(f"Authentication error: {e} resp: {resp}")
             return False
 
-    def list_containers(self, project_id: str) -> List:
-        project = self._client.lit_registry_service_get_lit_project_registry(project_id)
+    def list_containers(self, project_id: str, cloud_account: Optional[str] = None) -> List:
+        project = self._client.lit_registry_service_get_lit_project_registry(
+            project_id, cluster_id=cloud_account
+        )  # cloud account on the CLI is cluster_id
         return project.repositories
 
     def delete_container(self, project_id: str, container: str) -> V1DeleteLitRepositoryResponse:
