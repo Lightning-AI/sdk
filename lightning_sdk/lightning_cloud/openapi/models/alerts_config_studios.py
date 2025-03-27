@@ -41,76 +41,24 @@ class AlertsConfigStudios(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'apt_restore': 'list[V1AlertMethod]',
-        'conda_restore': 'list[V1AlertMethod]',
         'internal_error': 'list[V1AlertMethod]',
-        'settings_restore': 'list[V1AlertMethod]'
+        'rehydration_error': 'list[V1AlertMethod]'
     }
 
     attribute_map = {
-        'apt_restore': 'aptRestore',
-        'conda_restore': 'condaRestore',
         'internal_error': 'internalError',
-        'settings_restore': 'settingsRestore'
+        'rehydration_error': 'rehydrationError'
     }
 
-    def __init__(self, apt_restore: 'list[V1AlertMethod]' =None, conda_restore: 'list[V1AlertMethod]' =None, internal_error: 'list[V1AlertMethod]' =None, settings_restore: 'list[V1AlertMethod]' =None):  # noqa: E501
+    def __init__(self, internal_error: 'list[V1AlertMethod]' =None, rehydration_error: 'list[V1AlertMethod]' =None):  # noqa: E501
         """AlertsConfigStudios - a model defined in Swagger"""  # noqa: E501
-        self._apt_restore = None
-        self._conda_restore = None
         self._internal_error = None
-        self._settings_restore = None
+        self._rehydration_error = None
         self.discriminator = None
-        if apt_restore is not None:
-            self.apt_restore = apt_restore
-        if conda_restore is not None:
-            self.conda_restore = conda_restore
         if internal_error is not None:
             self.internal_error = internal_error
-        if settings_restore is not None:
-            self.settings_restore = settings_restore
-
-    @property
-    def apt_restore(self) -> 'list[V1AlertMethod]':
-        """Gets the apt_restore of this AlertsConfigStudios.  # noqa: E501
-
-
-        :return: The apt_restore of this AlertsConfigStudios.  # noqa: E501
-        :rtype: list[V1AlertMethod]
-        """
-        return self._apt_restore
-
-    @apt_restore.setter
-    def apt_restore(self, apt_restore: 'list[V1AlertMethod]'):
-        """Sets the apt_restore of this AlertsConfigStudios.
-
-
-        :param apt_restore: The apt_restore of this AlertsConfigStudios.  # noqa: E501
-        :type: list[V1AlertMethod]
-        """
-
-        self._apt_restore = apt_restore
-
-    @property
-    def conda_restore(self) -> 'list[V1AlertMethod]':
-        """Gets the conda_restore of this AlertsConfigStudios.  # noqa: E501
-
-
-        :return: The conda_restore of this AlertsConfigStudios.  # noqa: E501
-        :rtype: list[V1AlertMethod]
-        """
-        return self._conda_restore
-
-    @conda_restore.setter
-    def conda_restore(self, conda_restore: 'list[V1AlertMethod]'):
-        """Sets the conda_restore of this AlertsConfigStudios.
-
-
-        :param conda_restore: The conda_restore of this AlertsConfigStudios.  # noqa: E501
-        :type: list[V1AlertMethod]
-        """
-
-        self._conda_restore = conda_restore
+        if rehydration_error is not None:
+            self.rehydration_error = rehydration_error
 
     @property
     def internal_error(self) -> 'list[V1AlertMethod]':
@@ -134,25 +82,25 @@ class AlertsConfigStudios(object):
         self._internal_error = internal_error
 
     @property
-    def settings_restore(self) -> 'list[V1AlertMethod]':
-        """Gets the settings_restore of this AlertsConfigStudios.  # noqa: E501
+    def rehydration_error(self) -> 'list[V1AlertMethod]':
+        """Gets the rehydration_error of this AlertsConfigStudios.  # noqa: E501
 
 
-        :return: The settings_restore of this AlertsConfigStudios.  # noqa: E501
+        :return: The rehydration_error of this AlertsConfigStudios.  # noqa: E501
         :rtype: list[V1AlertMethod]
         """
-        return self._settings_restore
+        return self._rehydration_error
 
-    @settings_restore.setter
-    def settings_restore(self, settings_restore: 'list[V1AlertMethod]'):
-        """Sets the settings_restore of this AlertsConfigStudios.
+    @rehydration_error.setter
+    def rehydration_error(self, rehydration_error: 'list[V1AlertMethod]'):
+        """Sets the rehydration_error of this AlertsConfigStudios.
 
 
-        :param settings_restore: The settings_restore of this AlertsConfigStudios.  # noqa: E501
+        :param rehydration_error: The rehydration_error of this AlertsConfigStudios.  # noqa: E501
         :type: list[V1AlertMethod]
         """
 
-        self._settings_restore = settings_restore
+        self._rehydration_error = rehydration_error
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

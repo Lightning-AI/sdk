@@ -55,6 +55,7 @@ class V1CloudSpaceColdStartMetrics(object):
         'overprovisioned': 'bool',
         'progress_bar_ended_at': 'datetime',
         'project_id': 'str',
+        'resources': 'V1Resources',
         'spot': 'bool',
         'started_at': 'datetime',
         'stop_at': 'datetime',
@@ -77,6 +78,7 @@ class V1CloudSpaceColdStartMetrics(object):
         'overprovisioned': 'overprovisioned',
         'progress_bar_ended_at': 'progressBarEndedAt',
         'project_id': 'projectId',
+        'resources': 'resources',
         'spot': 'spot',
         'started_at': 'startedAt',
         'stop_at': 'stopAt',
@@ -84,7 +86,7 @@ class V1CloudSpaceColdStartMetrics(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cloudspace_instance_id: 'str' =None, cluster_id: 'str' =None, container_started_at: 'datetime' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, docker_availability_ended_at: 'datetime' =None, docker_availability_started_at: 'datetime' =None, image_pulling_ended_at: 'datetime' =None, image_pulling_started_at: 'datetime' =None, instance_type: 'str' =None, overprovisioned: 'bool' =None, progress_bar_ended_at: 'datetime' =None, project_id: 'str' =None, spot: 'bool' =None, started_at: 'datetime' =None, stop_at: 'datetime' =None, stopped_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cloudspace_instance_id: 'str' =None, cluster_id: 'str' =None, container_started_at: 'datetime' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, docker_availability_ended_at: 'datetime' =None, docker_availability_started_at: 'datetime' =None, image_pulling_ended_at: 'datetime' =None, image_pulling_started_at: 'datetime' =None, instance_type: 'str' =None, overprovisioned: 'bool' =None, progress_bar_ended_at: 'datetime' =None, project_id: 'str' =None, resources: 'V1Resources' =None, spot: 'bool' =None, started_at: 'datetime' =None, stop_at: 'datetime' =None, stopped_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1CloudSpaceColdStartMetrics - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cloudspace_instance_id = None
@@ -100,6 +102,7 @@ class V1CloudSpaceColdStartMetrics(object):
         self._overprovisioned = None
         self._progress_bar_ended_at = None
         self._project_id = None
+        self._resources = None
         self._spot = None
         self._started_at = None
         self._stop_at = None
@@ -134,6 +137,8 @@ class V1CloudSpaceColdStartMetrics(object):
             self.progress_bar_ended_at = progress_bar_ended_at
         if project_id is not None:
             self.project_id = project_id
+        if resources is not None:
+            self.resources = resources
         if spot is not None:
             self.spot = spot
         if started_at is not None:
@@ -438,6 +443,27 @@ class V1CloudSpaceColdStartMetrics(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def resources(self) -> 'V1Resources':
+        """Gets the resources of this V1CloudSpaceColdStartMetrics.  # noqa: E501
+
+
+        :return: The resources of this V1CloudSpaceColdStartMetrics.  # noqa: E501
+        :rtype: V1Resources
+        """
+        return self._resources
+
+    @resources.setter
+    def resources(self, resources: 'V1Resources'):
+        """Sets the resources of this V1CloudSpaceColdStartMetrics.
+
+
+        :param resources: The resources of this V1CloudSpaceColdStartMetrics.  # noqa: E501
+        :type: V1Resources
+        """
+
+        self._resources = resources
 
     @property
     def spot(self) -> 'bool':
