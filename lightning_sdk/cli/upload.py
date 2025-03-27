@@ -11,11 +11,12 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from simple_term_menu import TerminalMenu
 from tqdm import tqdm
 
-from lightning_sdk.api.lit_container_api import LCRAuthFailedError, LitContainerApi
+from lightning_sdk.api.lit_container_api import DockerNotRunningError, LCRAuthFailedError, LitContainerApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.cli.studios_menu import _StudiosMenu
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.models import upload_model as _upload_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
@@ -128,7 +129,6 @@ def upload_container(
     """Upload a container to Lightning AI's container registry."""
     menu = _TeamspacesMenu()
     teamspace = menu._resolve_teamspace(teamspace)
-    api = LitContainerApi()
     console = Console()
     with Progress(
         SpinnerColumn(),
@@ -137,8 +137,9 @@ def upload_container(
         console=console,
         transient=False,
     ) as progress:
-        push_task = progress.add_task("Pushing Docker image", total=None)
         try:
+            api = LitContainerApi()
+            push_task = progress.add_task("Pushing Docker image", total=None)
             console.print("Authenticating with Lightning Container Registry...")
             try:
                 api.authenticate()
@@ -149,6 +150,9 @@ def upload_container(
 
             lines = api.upload_container(container, teamspace, tag, cloud_account)
             _print_docker_push(lines, console, progress, push_task)
+        except DockerNotRunningError as e:
+            e.print_help()
+            return
         except LCRAuthFailedError:
             console.print("Re-authenticating with Lightning Container Registry...")
             if not api.authenticate(reauth=True):
@@ -156,6 +160,15 @@ def upload_container(
             console.print("Authenticated with Lightning Container Registry", style="green")
             lines = api.upload_container(container, teamspace, tag, cloud_account)
             _print_docker_push(lines, console, progress, push_task)
+        except Exception as e:
+            if _LIGHTNING_DEBUG:
+                print(e)
+                if e.__cause__:
+                    print(e.__cause__)
+
+            progress.update(push_task, description=f"[bold red]Error: {e!s}[/]")
+            progress.stop()
+            return
         progress.update(push_task, description="[green]Container pushed![/green]")
 
 

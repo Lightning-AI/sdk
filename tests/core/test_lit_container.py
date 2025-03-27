@@ -132,13 +132,11 @@ def test_upload_byoc_container_success(lit_container, mock_teamspace):
         mock_upload.return_value = ["Uploading...", "Upload complete"]
 
         # Call the method
-        lit_container.upload_container(
-            container="my-container", teamspace="test-team", tag="v1.0", cloud_account="byoc-123"
-        )
+        lit_container.upload_container(container="my-container", teamspace="test-team", cloud_account="byoc-123")
 
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
-        mock_upload.assert_called_once_with("my-container", mock_teamspace, "v1.0", "byoc-123")
+        mock_upload.assert_called_once_with("my-container", mock_teamspace, "latest", "byoc-123")
 
 
 def test_upload_byoc_container_pull_then_push(lit_container, mock_teamspace):
@@ -157,22 +155,22 @@ def test_upload_byoc_container_pull_then_push(lit_container, mock_teamspace):
         mock_docker_client.api.push.return_value = [{"status": "Pushing"}, {"status": "Complete"}]
 
         lit_container.upload_container(
-            container="my-container", teamspace="test-team", tag="v1.0", cloud_account="byoc-123"
+            container="my-container", teamspace="test-team", tag="latest", cloud_account="byoc-123"
         )
 
         mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
 
         # Assert that we call get(my-container) on the first attempt
         # Assert that we call get(my-container) on the second attempt after pull
-        mock_docker_client.images.get.assert_has_calls([call("my-container"), call("my-container")])
+        mock_docker_client.images.get.assert_has_calls([call("my-container:latest"), call("my-container:latest")])
 
         # Assert we fallback to pulling when the first get(...) fails.
-        mock_docker_client.images.pull.assert_called_once_with("my-container", "v1.0")
+        mock_docker_client.images.pull.assert_called_once_with(repository="my-container", tag="latest")
 
         repository = f"{_get_registry_url()}/lit-container-byoc-123/test-org/test-team/my-container"
-        mock_docker_client.api.tag.assert_called_once_with("my-container", repository, "v1.0")
+        mock_docker_client.api.tag.assert_called_once_with("my-container:latest", repository, "latest")
         mock_docker_client.api.push.assert_called_once_with(
-            repository, stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
+            repository, tag="latest", stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
         )
 
 
@@ -197,15 +195,15 @@ def test_upload_container_pull_then_push(lit_container, mock_teamspace):
 
         # Assert that we call get(my-container) on the first attempt
         # Assert that we call get(my-container) on the second attempt after pull
-        mock_docker_client.images.get.assert_has_calls([call("my-container"), call("my-container")])
+        mock_docker_client.images.get.assert_has_calls([call("my-container:v1.0"), call("my-container:v1.0")])
 
         # Assert we fallback to pulling when the first get(...) fails.
-        mock_docker_client.images.pull.assert_called_once_with("my-container", "v1.0")
+        mock_docker_client.images.pull.assert_called_once_with(repository="my-container", tag="v1.0")
 
         repository = f"{_get_registry_url()}/lit-container/test-org/test-team/my-container"
-        mock_docker_client.api.tag.assert_called_once_with("my-container", repository, "v1.0")
+        mock_docker_client.api.tag.assert_called_once_with("my-container:v1.0", repository, "v1.0")
         mock_docker_client.api.push.assert_called_once_with(
-            repository, stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
+            repository, tag="v1.0", stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
         )
 
 
@@ -304,7 +302,7 @@ def test_upload_container_auth_retry_max_attempts(lit_container, mock_teamspace)
         assert mock_docker_client.api.push.call_count == 3
         repository = f"{_get_registry_url()}/lit-container/test-org/test-team/my-container"
         mock_docker_client.api.push.assert_called_with(
-            repository, stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
+            repository, tag="v1.0", stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
         )
         assert mock_authenticate.call_count == 2
         mock_authenticate.assert_called_with(reauth=True)

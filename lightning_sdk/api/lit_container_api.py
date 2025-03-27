@@ -4,6 +4,7 @@ from typing import Any, Callable, Dict, Generator, Iterator, List
 
 import docker
 import requests
+from rich.console import Console
 
 from lightning_sdk.api.utils import _get_registry_url
 from lightning_sdk.lightning_cloud.env import LIGHTNING_CLOUD_URL
@@ -19,6 +20,21 @@ class LCRAuthFailedError(Exception):
 
 class DockerPushError(Exception):
     pass
+
+
+class DockerNotRunningError(Exception):
+    def __init__(self, message: str = "Failed to connect to Docker") -> None:
+        self.message = message
+        super().__init__(self.message)
+
+    def print_help(self) -> None:
+        console = Console()
+        console.print("[bold red]Docker Error: Failed to connect to Docker. Is it running?[/bold red]")
+        console.print("[yellow]Troubleshooting:[/yellow]")
+        console.print("1. Check if Docker daemon is running")
+        console.print("2. Verify your user has proper permissions")
+        console.print("3. Try restarting Docker service")
+        console.print("4. Read more here: https://docs.docker.com/engine/daemon/start/")
 
 
 def retry_on_lcr_auth_failure(func: Callable) -> Callable:
@@ -54,9 +70,7 @@ class LitContainerApi:
             self._docker_client.ping()
             self._docker_auth_config = {}
         except docker.errors.DockerException:
-            raise RuntimeError(
-                "Failed to connect to Docker, follow these steps to start it: https://docs.docker.com/engine/daemon/start/"
-            ) from None
+            raise DockerNotRunningError() from None
 
     def authenticate(self, reauth: bool = False) -> bool:
         resp = None
@@ -100,17 +114,17 @@ class LitContainerApi:
         self, container: str, teamspace: Teamspace, tag: str, cloud_account: str
     ) -> Generator[dict, None, None]:
         try:
-            self._docker_client.images.get(container)
+            self._docker_client.images.get(f"{container}:{tag}")
         except docker.errors.ImageNotFound:
             try:
-                self._docker_client.images.pull(container, tag)
-                self._docker_client.images.get(container)
+                self._docker_client.images.pull(repository=container, tag=tag)
+                self._docker_client.images.get(f"{container}:{tag}")
+            except docker.errors.ImageNotFound as e:
+                raise ValueError(f"Container {container}:{tag} does not exist") from e
             except docker.errors.APIError as e:
                 raise ValueError(f"Could not pull container {container}") from e
-            except docker.errors.ImageNotFound as e:
-                raise ValueError(f"Container {container} does not exist") from e
             except Exception as e:
-                raise ValueError(f"Unable to upload {container}") from e
+                raise ValueError(f"Unable to upload {container}:{tag}") from e
 
         registry_url = _get_registry_url()
         container_basename = container.split("/")[-1]
@@ -118,10 +132,10 @@ class LitContainerApi:
             f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"
             f"{teamspace.owner.name}/{teamspace.name}/{container_basename}"
         )
-        tagged = self._docker_client.api.tag(container, repository, tag)
+        tagged = self._docker_client.api.tag(f"{container}:{tag}", repository, tag)
         if not tagged:
-            raise ValueError(f"Could not tag container {container} with {repository}:{tag}")
-        yield from self._push_with_retry(repository)
+            raise ValueError(f"Could not tag container {container}:{tag} with {repository}:{tag}")
+        yield from self._push_with_retry(repository, tag=tag)
 
         yield {
             "finish": True,
@@ -130,7 +144,7 @@ class LitContainerApi:
             "repository": repository,
         }
 
-    def _push_with_retry(self, repository: str, max_retries: int = 3) -> Iterator[Dict[str, Any]]:
+    def _push_with_retry(self, repository: str, tag: str, max_retries: int = 3) -> Iterator[Dict[str, Any]]:
         def is_auth_error(error_msg: str) -> bool:
             auth_errors = ["unauthorized", "authentication required", "unauth"]
             return any(err in error_msg.lower() for err in auth_errors)
@@ -148,7 +162,7 @@ class LitContainerApi:
                     time.sleep(2)
 
                 lines = self._docker_client.api.push(
-                    repository, stream=True, decode=True, auth_config=self._docker_auth_config
+                    repository, tag=tag, stream=True, decode=True, auth_config=self._docker_auth_config
                 )
                 for line in lines:
                     if isinstance(line, dict) and "error" in line:
@@ -156,7 +170,7 @@ class LitContainerApi:
                         if is_auth_error(error) or is_timeout_error(error):
                             if attempt < max_retries - 1:
                                 break
-                            raise DockerPushError(f"Max retries reached: {error}")
+                            raise DockerPushError(f"Max retries reached while pushing: {error}")
                         raise DockerPushError(f"Push error: {error}")
                     yield line
                 else:
@@ -165,7 +179,7 @@ class LitContainerApi:
             except docker.errors.APIError as e:
                 if (is_auth_error(str(e)) or is_timeout_error(str(e))) and attempt < max_retries - 1:
                     continue
-                raise DockerPushError(f"Push failed: {e}") from e
+                raise DockerPushError("Pushing the container failed") from e
 
         raise DockerPushError("Max push retries reached")
 
