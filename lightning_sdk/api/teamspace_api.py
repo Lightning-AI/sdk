@@ -218,6 +218,7 @@ class TeamspaceApi:
         teamspace_id: str,
         progress_bar: bool = True,
     ) -> None:
+        """Upload a file to the model store."""
         uploader = _ModelFileUploader(
             client=self._client,
             model_id=model_id,
@@ -233,18 +234,20 @@ class TeamspaceApi:
         self,
         model_id: str,
         version: str,
-        root_path: Path,
-        filepaths: List[Path],
+        file_paths: List[Path],
+        remote_paths: List[str],
         teamspace_id: str,
         progress_bar: bool = True,
     ) -> None:
-        main_pbar = tqdm(total=len(filepaths), desc="Uploading files...", position=0) if progress_bar else None
-        for filepath in filepaths:
+        """Upload files to the model store."""
+        main_pbar = tqdm(total=len(file_paths), desc="Uploading files...", position=0) if progress_bar else None
+        assert len(file_paths) == len(remote_paths), "File paths and remote paths must have the same length"
+        for filepath, remote_path in zip(file_paths, remote_paths):
             self.upload_model_file(
                 model_id=model_id,
                 version=version,
                 local_path=filepath,
-                remote_path=str(filepath.relative_to(root_path)),
+                remote_path=remote_path,
                 teamspace_id=teamspace_id,
                 progress_bar=progress_bar,  # TODO: Global progress bar
             )

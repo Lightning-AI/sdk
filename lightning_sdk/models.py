@@ -144,7 +144,7 @@ def download_model(
 
 def upload_model(
     name: str,
-    path: Union[Path, str] = ".",
+    path: Union[str, Path, List[Union[str, Path]]] = ".",
     cloud_account: Optional[str] = None,
     progress_bar: bool = True,
 ) -> UploadedModelInfo:

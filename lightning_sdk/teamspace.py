@@ -243,7 +243,7 @@ class Teamspace:
 
     def upload_model(
         self,
-        path: Union[str, Path],
+        path: Union[str, Path, List[Union[str, Path]]],
         name: str,
         cloud_account: Optional[str] = None,
         progress_bar: bool = True,
@@ -261,30 +261,33 @@ class Teamspace:
             raise ValueError("No path provided to upload")
         if not name:
             raise ValueError("No name provided for the model")
-        path = Path(path).resolve()
-        if not path.exists():
-            raise FileNotFoundError(str(path))
 
-        cloud_account = (
-            self._teamspace_api._determine_cloud_account(self.id) if cloud_account is None else cloud_account
-        )
-        filepaths = [path] if path.is_file() else [p for p in path.rglob("*") if p.is_file()]
+        if isinstance(path, (str, Path)):
+            path = [path]
+        file_paths, relative_paths = [], []
+        for p in path:
+            lpaths, rpaths = _list_files(p)
+            file_paths.extend(lpaths)
+            relative_paths.extend(rpaths)
 
-        if not filepaths:
+        if not file_paths:
             raise FileNotFoundError(
                 "The path to upload doesn't contain any files. Make sure it points to a file or"
                 f" non-empty folder: {path}"
             )
+        if len(relative_paths) != len(set(relative_paths)):
+            raise RuntimeError(
+                "The paths to upload contain files with the same name or relative path in folders."
+                f"The listed files are: {file_paths}\nThe relative paths are: {relative_paths}"
+            )
 
-        root_path = path
-        if len(filepaths) == 1:
-            root_path = path.parent
-
-        filenames = ",".join(str(f.relative_to(root_path)) for f in filepaths)
+        cloud_account = (
+            self._teamspace_api._determine_cloud_account(self.id) if cloud_account is None else cloud_account
+        )
 
         model = self._teamspace_api.create_model(
             name=name,
-            metadata={"filenames": filenames},
+            metadata={"filenames": ",".join(relative_paths)},
             private=True,
             teamspace_id=self.id,
             cloud_account=cloud_account,
@@ -292,8 +295,8 @@ class Teamspace:
         self._teamspace_api.upload_model_files(
             model_id=model.model_id,
             version=model.version,
-            root_path=root_path,
-            filepaths=filepaths,
+            file_paths=file_paths,
+            remote_paths=relative_paths,
             teamspace_id=self.id,
             progress_bar=progress_bar,
         )
@@ -368,6 +371,18 @@ class Teamspace:
         """
         name, version = _parse_model_and_version(name)
         self._teamspace_api.delete_model(name=name, version=version, teamspace_id=self.id)
+
+
+def _list_files(path: Union[str, Path]) -> Tuple[List[Path], List[str]]:
+    """List all folders in a directory and return them as a list and relative path."""
+    path = Path(path).resolve()
+    if not path.exists():
+        raise FileNotFoundError(f"Path {path} does not exist")
+    if not path.is_dir():
+        return [path], [str(path.name)]
+    local_paths = [p for p in path.rglob("*") if p.is_file()]
+    relative_paths = [str(p.relative_to(path)) for p in local_paths]
+    return local_paths, relative_paths
 
 
 def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name: str) -> ValueError:
