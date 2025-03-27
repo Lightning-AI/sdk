@@ -134,3 +134,6 @@ def test_run(mock_resolve_teamspace):
     assert deployment.status.urls[0] == "http://lightning.ai/example", "base_url is decoded from the server response"
     assert deployment.spec.cluster_id == "public-prod", "Deployment cluster_id is public-prod"
     assert deployment.spec.quantity == 2, "Deployment quantity is 2"
+
+    _, kwargs = hub._api._client.jobs_service_create_deployment.call_args
+    assert kwargs["body"].parent_template_id == template_id, "parent_template_id should be identical to template_id"

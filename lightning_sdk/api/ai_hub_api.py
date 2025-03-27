@@ -165,6 +165,7 @@ class AIHubApi:
                 name=name,
                 replicas=1,
                 spec=template.spec_v2.job,
+                parent_template_id=template_id,
             ),
         )
 
