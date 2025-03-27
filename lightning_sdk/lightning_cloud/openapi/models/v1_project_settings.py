@@ -46,6 +46,7 @@ class V1ProjectSettings(object):
         'allow_lambda_saas': 'bool',
         'allow_vultr_saas': 'bool',
         'default_machine_image_version': 'str',
+        'default_machine_type': 'str',
         'preferred_cluster': 'str',
         'preferred_deployment_provider': 'str',
         'preferred_studio_provider': 'str',
@@ -59,6 +60,7 @@ class V1ProjectSettings(object):
         'allow_lambda_saas': 'allowLambdaSaas',
         'allow_vultr_saas': 'allowVultrSaas',
         'default_machine_image_version': 'defaultMachineImageVersion',
+        'default_machine_type': 'defaultMachineType',
         'preferred_cluster': 'preferredCluster',
         'preferred_deployment_provider': 'preferredDeploymentProvider',
         'preferred_studio_provider': 'preferredStudioProvider',
@@ -66,13 +68,14 @@ class V1ProjectSettings(object):
         'start_studio_on_spot_instance': 'startStudioOnSpotInstance'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, default_machine_image_version: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
         """V1ProjectSettings - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_gcp_saas = None
         self._allow_lambda_saas = None
         self._allow_vultr_saas = None
         self._default_machine_image_version = None
+        self._default_machine_type = None
         self._preferred_cluster = None
         self._preferred_deployment_provider = None
         self._preferred_studio_provider = None
@@ -89,6 +92,8 @@ class V1ProjectSettings(object):
             self.allow_vultr_saas = allow_vultr_saas
         if default_machine_image_version is not None:
             self.default_machine_image_version = default_machine_image_version
+        if default_machine_type is not None:
+            self.default_machine_type = default_machine_type
         if preferred_cluster is not None:
             self.preferred_cluster = preferred_cluster
         if preferred_deployment_provider is not None:
@@ -204,6 +209,27 @@ class V1ProjectSettings(object):
         """
 
         self._default_machine_image_version = default_machine_image_version
+
+    @property
+    def default_machine_type(self) -> 'str':
+        """Gets the default_machine_type of this V1ProjectSettings.  # noqa: E501
+
+
+        :return: The default_machine_type of this V1ProjectSettings.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_machine_type
+
+    @default_machine_type.setter
+    def default_machine_type(self, default_machine_type: 'str'):
+        """Sets the default_machine_type of this V1ProjectSettings.
+
+
+        :param default_machine_type: The default_machine_type of this V1ProjectSettings.  # noqa: E501
+        :type: str
+        """
+
+        self._default_machine_type = default_machine_type
 
     @property
     def preferred_cluster(self) -> 'str':

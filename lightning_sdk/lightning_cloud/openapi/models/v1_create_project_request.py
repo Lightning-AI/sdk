@@ -42,6 +42,7 @@ class V1CreateProjectRequest(object):
     """
     swagger_types = {
         'default_machine_image_version': 'str',
+        'default_machine_type': 'str',
         'description': 'str',
         'display_name': 'str',
         'name': 'str',
@@ -52,6 +53,7 @@ class V1CreateProjectRequest(object):
 
     attribute_map = {
         'default_machine_image_version': 'defaultMachineImageVersion',
+        'default_machine_type': 'defaultMachineType',
         'description': 'description',
         'display_name': 'displayName',
         'name': 'name',
@@ -60,9 +62,10 @@ class V1CreateProjectRequest(object):
         'quotas': 'quotas'
     }
 
-    def __init__(self, default_machine_image_version: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
+    def __init__(self, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
         """V1CreateProjectRequest - a model defined in Swagger"""  # noqa: E501
         self._default_machine_image_version = None
+        self._default_machine_type = None
         self._description = None
         self._display_name = None
         self._name = None
@@ -72,6 +75,8 @@ class V1CreateProjectRequest(object):
         self.discriminator = None
         if default_machine_image_version is not None:
             self.default_machine_image_version = default_machine_image_version
+        if default_machine_type is not None:
+            self.default_machine_type = default_machine_type
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -105,6 +110,27 @@ class V1CreateProjectRequest(object):
         """
 
         self._default_machine_image_version = default_machine_image_version
+
+    @property
+    def default_machine_type(self) -> 'str':
+        """Gets the default_machine_type of this V1CreateProjectRequest.  # noqa: E501
+
+
+        :return: The default_machine_type of this V1CreateProjectRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_machine_type
+
+    @default_machine_type.setter
+    def default_machine_type(self, default_machine_type: 'str'):
+        """Sets the default_machine_type of this V1CreateProjectRequest.
+
+
+        :param default_machine_type: The default_machine_type of this V1CreateProjectRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._default_machine_type = default_machine_type
 
     @property
     def description(self) -> 'str':

@@ -41,6 +41,7 @@ class OrgsIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'alerts_config': 'V1AlertsConfig',
         'allow_aws_saas': 'bool',
         'allow_gcp_saas': 'bool',
         'allow_guest': 'bool',
@@ -51,6 +52,7 @@ class OrgsIdBody(object):
         'allow_vultr_saas': 'bool',
         'auto_invite_by_domain': 'bool',
         'auto_join_domains': 'list[str]',
+        'default_machine_type': 'str',
         'description': 'str',
         'display_name': 'str',
         'domain': 'str',
@@ -66,6 +68,7 @@ class OrgsIdBody(object):
     }
 
     attribute_map = {
+        'alerts_config': 'alertsConfig',
         'allow_aws_saas': 'allowAwsSaas',
         'allow_gcp_saas': 'allowGcpSaas',
         'allow_guest': 'allowGuest',
@@ -76,6 +79,7 @@ class OrgsIdBody(object):
         'allow_vultr_saas': 'allowVultrSaas',
         'auto_invite_by_domain': 'autoInviteByDomain',
         'auto_join_domains': 'autoJoinDomains',
+        'default_machine_type': 'defaultMachineType',
         'description': 'description',
         'display_name': 'displayName',
         'domain': 'domain',
@@ -90,8 +94,9 @@ class OrgsIdBody(object):
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
+        self._alerts_config = None
         self._allow_aws_saas = None
         self._allow_gcp_saas = None
         self._allow_guest = None
@@ -102,6 +107,7 @@ class OrgsIdBody(object):
         self._allow_vultr_saas = None
         self._auto_invite_by_domain = None
         self._auto_join_domains = None
+        self._default_machine_type = None
         self._description = None
         self._display_name = None
         self._domain = None
@@ -115,6 +121,8 @@ class OrgsIdBody(object):
         self._teamspace_default_credits = None
         self._twitter_username = None
         self.discriminator = None
+        if alerts_config is not None:
+            self.alerts_config = alerts_config
         if allow_aws_saas is not None:
             self.allow_aws_saas = allow_aws_saas
         if allow_gcp_saas is not None:
@@ -135,6 +143,8 @@ class OrgsIdBody(object):
             self.auto_invite_by_domain = auto_invite_by_domain
         if auto_join_domains is not None:
             self.auto_join_domains = auto_join_domains
+        if default_machine_type is not None:
+            self.default_machine_type = default_machine_type
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -159,6 +169,27 @@ class OrgsIdBody(object):
             self.teamspace_default_credits = teamspace_default_credits
         if twitter_username is not None:
             self.twitter_username = twitter_username
+
+    @property
+    def alerts_config(self) -> 'V1AlertsConfig':
+        """Gets the alerts_config of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The alerts_config of this OrgsIdBody.  # noqa: E501
+        :rtype: V1AlertsConfig
+        """
+        return self._alerts_config
+
+    @alerts_config.setter
+    def alerts_config(self, alerts_config: 'V1AlertsConfig'):
+        """Sets the alerts_config of this OrgsIdBody.
+
+
+        :param alerts_config: The alerts_config of this OrgsIdBody.  # noqa: E501
+        :type: V1AlertsConfig
+        """
+
+        self._alerts_config = alerts_config
 
     @property
     def allow_aws_saas(self) -> 'bool':
@@ -369,6 +400,27 @@ class OrgsIdBody(object):
         """
 
         self._auto_join_domains = auto_join_domains
+
+    @property
+    def default_machine_type(self) -> 'str':
+        """Gets the default_machine_type of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The default_machine_type of this OrgsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_machine_type
+
+    @default_machine_type.setter
+    def default_machine_type(self, default_machine_type: 'str'):
+        """Sets the default_machine_type of this OrgsIdBody.
+
+
+        :param default_machine_type: The default_machine_type of this OrgsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._default_machine_type = default_machine_type
 
     @property
     def description(self) -> 'str':

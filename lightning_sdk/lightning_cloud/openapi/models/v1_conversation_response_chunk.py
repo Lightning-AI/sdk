@@ -45,7 +45,8 @@ class V1ConversationResponseChunk(object):
         'conversation_id': 'str',
         'executable': 'bool',
         'id': 'str',
-        'object': 'str'
+        'object': 'str',
+        'throughput': 'float'
     }
 
     attribute_map = {
@@ -53,16 +54,18 @@ class V1ConversationResponseChunk(object):
         'conversation_id': 'conversationId',
         'executable': 'executable',
         'id': 'id',
-        'object': 'object'
+        'object': 'object',
+        'throughput': 'throughput'
     }
 
-    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, executable: 'bool' =None, id: 'str' =None, object: 'str' =None):  # noqa: E501
+    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, executable: 'bool' =None, id: 'str' =None, object: 'str' =None, throughput: 'float' =None):  # noqa: E501
         """V1ConversationResponseChunk - a model defined in Swagger"""  # noqa: E501
         self._choices = None
         self._conversation_id = None
         self._executable = None
         self._id = None
         self._object = None
+        self._throughput = None
         self.discriminator = None
         if choices is not None:
             self.choices = choices
@@ -74,6 +77,8 @@ class V1ConversationResponseChunk(object):
             self.id = id
         if object is not None:
             self.object = object
+        if throughput is not None:
+            self.throughput = throughput
 
     @property
     def choices(self) -> 'list[V1ResponseChoice]':
@@ -179,6 +184,27 @@ class V1ConversationResponseChunk(object):
         """
 
         self._object = object
+
+    @property
+    def throughput(self) -> 'float':
+        """Gets the throughput of this V1ConversationResponseChunk.  # noqa: E501
+
+
+        :return: The throughput of this V1ConversationResponseChunk.  # noqa: E501
+        :rtype: float
+        """
+        return self._throughput
+
+    @throughput.setter
+    def throughput(self, throughput: 'float'):
+        """Sets the throughput of this V1ConversationResponseChunk.
+
+
+        :param throughput: The throughput of this V1ConversationResponseChunk.  # noqa: E501
+        :type: float
+        """
+
+        self._throughput = throughput
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

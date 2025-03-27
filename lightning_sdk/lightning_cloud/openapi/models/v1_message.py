@@ -50,7 +50,8 @@ class V1Message(object):
         'executable': 'bool',
         'id': 'str',
         'model': 'str',
-        'prompt_tokens': 'str'
+        'prompt_tokens': 'str',
+        'throughput': 'float'
     }
 
     attribute_map = {
@@ -63,10 +64,11 @@ class V1Message(object):
         'executable': 'executable',
         'id': 'id',
         'model': 'model',
-        'prompt_tokens': 'promptTokens'
+        'prompt_tokens': 'promptTokens',
+        'throughput': 'throughput'
     }
 
-    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._assistant_id = None
         self._author = None
@@ -78,6 +80,7 @@ class V1Message(object):
         self._id = None
         self._model = None
         self._prompt_tokens = None
+        self._throughput = None
         self.discriminator = None
         if assistant_id is not None:
             self.assistant_id = assistant_id
@@ -99,6 +102,8 @@ class V1Message(object):
             self.model = model
         if prompt_tokens is not None:
             self.prompt_tokens = prompt_tokens
+        if throughput is not None:
+            self.throughput = throughput
 
     @property
     def assistant_id(self) -> 'str':
@@ -309,6 +314,27 @@ class V1Message(object):
         """
 
         self._prompt_tokens = prompt_tokens
+
+    @property
+    def throughput(self) -> 'float':
+        """Gets the throughput of this V1Message.  # noqa: E501
+
+
+        :return: The throughput of this V1Message.  # noqa: E501
+        :rtype: float
+        """
+        return self._throughput
+
+    @throughput.setter
+    def throughput(self, throughput: 'float'):
+        """Sets the throughput of this V1Message.
+
+
+        :param throughput: The throughput of this V1Message.  # noqa: E501
+        :type: float
+        """
+
+        self._throughput = throughput
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

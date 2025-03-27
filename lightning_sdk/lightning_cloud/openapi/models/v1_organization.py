@@ -41,6 +41,7 @@ class V1Organization(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'alerts_config': 'V1AlertsConfig',
         'allow_aws_saas': 'bool',
         'allow_gcp_saas': 'bool',
         'allow_guest': 'bool',
@@ -54,6 +55,7 @@ class V1Organization(object):
         'auto_join_domains': 'list[str]',
         'created_at': 'datetime',
         'default_machine_image_version': 'str',
+        'default_machine_type': 'str',
         'description': 'str',
         'display_name': 'str',
         'domain': 'str',
@@ -74,6 +76,7 @@ class V1Organization(object):
     }
 
     attribute_map = {
+        'alerts_config': 'alertsConfig',
         'allow_aws_saas': 'allowAwsSaas',
         'allow_gcp_saas': 'allowGcpSaas',
         'allow_guest': 'allowGuest',
@@ -87,6 +90,7 @@ class V1Organization(object):
         'auto_join_domains': 'autoJoinDomains',
         'created_at': 'createdAt',
         'default_machine_image_version': 'defaultMachineImageVersion',
+        'default_machine_type': 'defaultMachineType',
         'description': 'description',
         'display_name': 'displayName',
         'domain': 'domain',
@@ -106,8 +110,9 @@ class V1Organization(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
+        self._alerts_config = None
         self._allow_aws_saas = None
         self._allow_gcp_saas = None
         self._allow_guest = None
@@ -121,6 +126,7 @@ class V1Organization(object):
         self._auto_join_domains = None
         self._created_at = None
         self._default_machine_image_version = None
+        self._default_machine_type = None
         self._description = None
         self._display_name = None
         self._domain = None
@@ -139,6 +145,8 @@ class V1Organization(object):
         self._twitter_username = None
         self._updated_at = None
         self.discriminator = None
+        if alerts_config is not None:
+            self.alerts_config = alerts_config
         if allow_aws_saas is not None:
             self.allow_aws_saas = allow_aws_saas
         if allow_gcp_saas is not None:
@@ -165,6 +173,8 @@ class V1Organization(object):
             self.created_at = created_at
         if default_machine_image_version is not None:
             self.default_machine_image_version = default_machine_image_version
+        if default_machine_type is not None:
+            self.default_machine_type = default_machine_type
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -199,6 +209,27 @@ class V1Organization(object):
             self.twitter_username = twitter_username
         if updated_at is not None:
             self.updated_at = updated_at
+
+    @property
+    def alerts_config(self) -> 'V1AlertsConfig':
+        """Gets the alerts_config of this V1Organization.  # noqa: E501
+
+
+        :return: The alerts_config of this V1Organization.  # noqa: E501
+        :rtype: V1AlertsConfig
+        """
+        return self._alerts_config
+
+    @alerts_config.setter
+    def alerts_config(self, alerts_config: 'V1AlertsConfig'):
+        """Sets the alerts_config of this V1Organization.
+
+
+        :param alerts_config: The alerts_config of this V1Organization.  # noqa: E501
+        :type: V1AlertsConfig
+        """
+
+        self._alerts_config = alerts_config
 
     @property
     def allow_aws_saas(self) -> 'bool':
@@ -472,6 +503,27 @@ class V1Organization(object):
         """
 
         self._default_machine_image_version = default_machine_image_version
+
+    @property
+    def default_machine_type(self) -> 'str':
+        """Gets the default_machine_type of this V1Organization.  # noqa: E501
+
+
+        :return: The default_machine_type of this V1Organization.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_machine_type
+
+    @default_machine_type.setter
+    def default_machine_type(self, default_machine_type: 'str'):
+        """Sets the default_machine_type of this V1Organization.
+
+
+        :param default_machine_type: The default_machine_type of this V1Organization.  # noqa: E501
+        :type: str
+        """
+
+        self._default_machine_type = default_machine_type
 
     @property
     def description(self) -> 'str':

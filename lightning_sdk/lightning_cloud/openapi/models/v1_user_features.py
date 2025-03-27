@@ -79,6 +79,7 @@ class V1UserFeatures(object):
         'lambda_labs': 'bool',
         'landing_studios': 'bool',
         'lit_logger': 'bool',
+        'manage_default_studio_machine': 'bool',
         'marketplace': 'bool',
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
@@ -107,6 +108,7 @@ class V1UserFeatures(object):
         'runnable_public_studio_page': 'bool',
         'security_docs': 'bool',
         'show_dev_admin': 'bool',
+        'single_wallet': 'bool',
         'slurm': 'bool',
         'slurm_machine_selector': 'bool',
         'stop_ide_container_on_shutdown': 'bool',
@@ -159,6 +161,7 @@ class V1UserFeatures(object):
         'lambda_labs': 'lambdaLabs',
         'landing_studios': 'landingStudios',
         'lit_logger': 'litLogger',
+        'manage_default_studio_machine': 'manageDefaultStudioMachine',
         'marketplace': 'marketplace',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
@@ -187,6 +190,7 @@ class V1UserFeatures(object):
         'runnable_public_studio_page': 'runnablePublicStudioPage',
         'security_docs': 'securityDocs',
         'show_dev_admin': 'showDevAdmin',
+        'single_wallet': 'singleWallet',
         'slurm': 'slurm',
         'slurm_machine_selector': 'slurmMachineSelector',
         'stop_ide_container_on_shutdown': 'stopIdeContainerOnShutdown',
@@ -200,7 +204,7 @@ class V1UserFeatures(object):
         'vultr': 'vultr'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, manage_default_studio_machine: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -240,6 +244,7 @@ class V1UserFeatures(object):
         self._lambda_labs = None
         self._landing_studios = None
         self._lit_logger = None
+        self._manage_default_studio_machine = None
         self._marketplace = None
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
@@ -268,6 +273,7 @@ class V1UserFeatures(object):
         self._runnable_public_studio_page = None
         self._security_docs = None
         self._show_dev_admin = None
+        self._single_wallet = None
         self._slurm = None
         self._slurm_machine_selector = None
         self._stop_ide_container_on_shutdown = None
@@ -356,6 +362,8 @@ class V1UserFeatures(object):
             self.landing_studios = landing_studios
         if lit_logger is not None:
             self.lit_logger = lit_logger
+        if manage_default_studio_machine is not None:
+            self.manage_default_studio_machine = manage_default_studio_machine
         if marketplace is not None:
             self.marketplace = marketplace
         if mmt_fault_tolerance is not None:
@@ -412,6 +420,8 @@ class V1UserFeatures(object):
             self.security_docs = security_docs
         if show_dev_admin is not None:
             self.show_dev_admin = show_dev_admin
+        if single_wallet is not None:
+            self.single_wallet = single_wallet
         if slurm is not None:
             self.slurm = slurm
         if slurm_machine_selector is not None:
@@ -1234,6 +1244,27 @@ class V1UserFeatures(object):
         self._lit_logger = lit_logger
 
     @property
+    def manage_default_studio_machine(self) -> 'bool':
+        """Gets the manage_default_studio_machine of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The manage_default_studio_machine of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._manage_default_studio_machine
+
+    @manage_default_studio_machine.setter
+    def manage_default_studio_machine(self, manage_default_studio_machine: 'bool'):
+        """Sets the manage_default_studio_machine of this V1UserFeatures.
+
+
+        :param manage_default_studio_machine: The manage_default_studio_machine of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._manage_default_studio_machine = manage_default_studio_machine
+
+    @property
     def marketplace(self) -> 'bool':
         """Gets the marketplace of this V1UserFeatures.  # noqa: E501
 
@@ -1820,6 +1851,27 @@ class V1UserFeatures(object):
         """
 
         self._show_dev_admin = show_dev_admin
+
+    @property
+    def single_wallet(self) -> 'bool':
+        """Gets the single_wallet of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The single_wallet of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._single_wallet
+
+    @single_wallet.setter
+    def single_wallet(self, single_wallet: 'bool'):
+        """Sets the single_wallet of this V1UserFeatures.
+
+
+        :param single_wallet: The single_wallet of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._single_wallet = single_wallet
 
     @property
     def slurm(self) -> 'bool':

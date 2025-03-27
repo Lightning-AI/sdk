@@ -2,41 +2,39 @@ import functools
 import logging
 import time
 from functools import wraps
-from typing import Any, Callable, Optional
+from typing import Callable, Optional, Any
 
 import urllib3
-
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     ApiClient,
-    AssistantsServiceApi,
     AuthServiceApi,
-    BillingServiceApi,
-    CloudSpaceEnvironmentTemplateServiceApi,
     CloudSpaceServiceApi,
     ClusterServiceApi,
     Configuration,
     DataConnectionServiceApi,
-    DatasetServiceApi,
-    DeploymentTemplatesServiceApi,
-    EndpointServiceApi,
-    JobsServiceApi,
     LightningappInstanceServiceApi,
     LightningappV2ServiceApi,
     LightningworkServiceApi,
-    LitLoggerServiceApi,
-    LitRegistryServiceApi,
-    ModelsStoreApi,
-    OrganizationsServiceApi,
-    PipelinesServiceApi,
     ProjectsServiceApi,
-    SchedulesServiceApi,
     SecretServiceApi,
-    SlurmJobsUserServiceApi,
     SSHPublicKeyServiceApi,
-    StorageServiceApi,
+    DatasetServiceApi,
+    OrganizationsServiceApi,
     UserServiceApi,
+    BillingServiceApi,
+    EndpointServiceApi,
+    SlurmJobsUserServiceApi,
+    LitLoggerServiceApi,
+    JobsServiceApi,
+    AssistantsServiceApi,
+    StorageServiceApi,
+    DeploymentTemplatesServiceApi,
+    ModelsStoreApi,
+    LitRegistryServiceApi,
+    PipelinesServiceApi,
+    SchedulesServiceApi,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.source_code.logs_socket_api import LightningLogsSocketAPI
@@ -73,34 +71,34 @@ def create_swagger_client(check_context=True):
 
 
 class GridRestClient(
-    LightningLogsSocketAPI,
-    LightningappInstanceServiceApi,
-    LightningappV2ServiceApi,
-    AuthServiceApi,
-    CloudSpaceServiceApi,
-    ClusterServiceApi,
-    ProjectsServiceApi,
-    LightningworkServiceApi,
-    SecretServiceApi,
-    SSHPublicKeyServiceApi,
-    DataConnectionServiceApi,
-    DatasetServiceApi,
-    OrganizationsServiceApi,
-    UserServiceApi,
-    BillingServiceApi,
-    EndpointServiceApi,
-    SlurmJobsUserServiceApi,
-    LitLoggerServiceApi,
-    JobsServiceApi,
-    AssistantsServiceApi,
-    StorageServiceApi,
-    DeploymentTemplatesServiceApi,
-    ModelsStoreApi,
-    LitRegistryServiceApi,
-    PipelinesServiceApi,
-    SchedulesServiceApi,
-    CloudSpaceEnvironmentTemplateServiceApi,
+        LightningLogsSocketAPI,
+        LightningappInstanceServiceApi,
+        LightningappV2ServiceApi,
+        AuthServiceApi,
+        CloudSpaceServiceApi,
+        ClusterServiceApi,
+        ProjectsServiceApi,
+        LightningworkServiceApi,
+        SecretServiceApi,
+        SSHPublicKeyServiceApi,
+        DataConnectionServiceApi,
+        DatasetServiceApi,
+        OrganizationsServiceApi,
+        UserServiceApi,
+        BillingServiceApi,
+        EndpointServiceApi,
+        SlurmJobsUserServiceApi,
+        LitLoggerServiceApi,
+        JobsServiceApi,
+        AssistantsServiceApi,
+        StorageServiceApi,
+        DeploymentTemplatesServiceApi,
+        ModelsStoreApi,
+        LitRegistryServiceApi,
+        PipelinesServiceApi,
+        SchedulesServiceApi,
 ):
+
     def __init__(self, api_client: Optional[ApiClient] = None):
         api_client = api_client if api_client else create_swagger_client()
         api_client.request = request_auth_warning_wrapper(api_client.request)
