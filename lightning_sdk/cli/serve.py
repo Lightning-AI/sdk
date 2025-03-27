@@ -264,17 +264,19 @@ def _handle_cloud(
         try:
             # TODO: @aniketmaurya improve the console prints here
             ls_deployer.build_container(path, repository, tag, console, progress)
-            push_status = ls_deployer.push_container(repository, tag, resolved_teamspace, lit_cr, progress)
+            push_status = ls_deployer.push_container(
+                repository, tag, resolved_teamspace, lit_cr, progress, cloud_account=cloud_account
+            )
         except Exception as e:
             console.print(f"❌ Deployment failed: {e}", style="red")
             return
     console.print(f"\n✅ Image pushed to {repository}:{tag}")
     console.print(f"🔗 You can access the container at: [i]{push_status.get('url')}[/i]")
-    repository = push_status.get("repository")
+    image = push_status.get("repository")
 
     deployment_status = ls_deployer.run_on_cloud(
         deployment_name=deployment_name,
-        image=repository,
+        image=image,
         teamspace=resolved_teamspace,
         metric=None,
         machine=machine,

@@ -200,13 +200,19 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         progress.update(build_task, description="[green]Build completed![/green]")
 
     def push_container(
-        self, repository: str, tag: str, teamspace: Teamspace, lit_cr: LitContainerApi, progress: Progress
+        self,
+        repository: str,
+        tag: str,
+        teamspace: Teamspace,
+        lit_cr: LitContainerApi,
+        progress: Progress,
+        cloud_account: str,
     ) -> dict:
         console = self._console
         push_task = progress.add_task("Pushing to registry", total=None)
         console.print("\nPushing image...", style="bold blue")
         lit_cr.authenticate()
-        push_status = lit_cr.upload_container(repository, teamspace, tag=tag)
+        push_status = lit_cr.upload_container(repository, teamspace, tag=tag, cloud_account=cloud_account)
         last_status = {}
         for line in push_status:
             last_status = line

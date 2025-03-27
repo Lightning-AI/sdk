@@ -127,6 +127,7 @@ class LitContainerApi:
             "finish": True,
             "url": f"{LIGHTNING_CLOUD_URL}/{teamspace.owner.name}/{teamspace.name}/containers/{container_basename}"
             f"{f'?clusterId={cloud_account}' if cloud_account is not None else ''}",
+            "repository": repository,
         }
 
     def _push_with_retry(self, repository: str, max_retries: int = 3) -> Iterator[Dict[str, Any]]:

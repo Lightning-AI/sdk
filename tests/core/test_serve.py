@@ -60,3 +60,13 @@ def test_authenticate(mock_load, _, mock_authserver, deployer):
     with patch.object(_Auth, "__post_init__", lambda self: fn(self)):
         deployer.authenticate()
         mock_authserver.return_value.login_with_browser.assert_called_once()
+
+
+def test_push_container(deployer):
+    teamspace = MagicMock()
+    lit_cr = MagicMock()
+    lit_cr.upload_container.return_value = []
+    progress = MagicMock()
+    deployer.push_container("repository", "tag", teamspace, lit_cr, progress, "cloud_account")
+    lit_cr.authenticate.assert_called_once()
+    lit_cr.upload_container.assert_called_once_with("repository", teamspace, tag="tag", cloud_account="cloud_account")
