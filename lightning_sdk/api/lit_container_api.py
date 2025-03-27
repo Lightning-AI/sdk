@@ -100,12 +100,23 @@ class LitContainerApi:
             return False
 
     def list_containers(self, project_id: str, cloud_account: Optional[str] = None) -> List:
+        """Lists containers of the project ID.
+
+        :param project_id: The non-human readable project ID used internally to identify projects.
+        :return:
+        """
         project = self._client.lit_registry_service_get_lit_project_registry(
             project_id, cluster_id=cloud_account
         )  # cloud account on the CLI is cluster_id
         return project.repositories
 
     def delete_container(self, project_id: str, container: str) -> V1DeleteLitRepositoryResponse:
+        """Deletes the container from LitCR. Garbage collection will come in and do the final sweep of the blob.
+
+        :param project_id: The non-human readable project ID used internally to identify projects.
+        :param container: The name of the docker container a user wants to push up, ie, nginx, vllm, etc
+        :return:
+        """
         try:
             return self._client.lit_registry_service_delete_lit_repository(project_id, container)
         except Exception as e:
@@ -113,13 +124,27 @@ class LitContainerApi:
 
     @retry_on_lcr_auth_failure
     def upload_container(
-        self, container: str, teamspace: Teamspace, tag: str, cloud_account: str
+        self, container: str, teamspace: Teamspace, tag: str, cloud_account: str, platform: str
     ) -> Generator[dict, None, None]:
+        """Upload container will push the container to LitCR.
+
+        It uses docker push API to interact with docker daemon which will then push the container to a storage
+        location defined by teamspace + cloud_account. Will retry pushes if not authenticated or if push errors happen
+
+        :param container: The name of the docker container a user wants to push up, ie, nginx, vllm, etc
+        :param teamspace: The teamspace he container is going to appear in. This is <OWNER_ID>/<TEAMSPACE_NAME>
+        :param tag: The container tag, default will latest.
+        :param cloud_account: If empty will be pushed to Lightning SaaS storage. Otherwise, this will be cluster_id.
+            Named cloud-account in the CLI options.
+        :param platform: If empty will be linux/amd64. This is important because our entire deployment infra runs on
+            linux/amd64. Will show user a warning otherwise.
+        :return: Generator[dict, None, None]
+        """
         try:
             self._docker_client.images.get(f"{container}:{tag}")
         except docker.errors.ImageNotFound:
             try:
-                self._docker_client.images.pull(repository=container, tag=tag)
+                self._docker_client.images.pull(repository=container, tag=tag, platform=platform)
                 self._docker_client.images.get(f"{container}:{tag}")
             except docker.errors.ImageNotFound as e:
                 raise ValueError(f"Container {container}:{tag} does not exist") from e
@@ -189,6 +214,13 @@ class LitContainerApi:
     def download_container(
         self, container: str, teamspace: Teamspace, tag: str, cloud_account: Optional[str] = None
     ) -> Generator[str, None, None]:
+        """Will download container from LitCR. Optionally from a BYOC cluster.
+
+        :param container: The name of the container to download
+        :param teamspace: The teamspace containing the container
+        :param tag: The tag of the container to download
+        :return: Generator yielding download status
+        """
         registry_url = _get_registry_url()
         repository = (
             f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"

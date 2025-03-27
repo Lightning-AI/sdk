@@ -120,7 +120,7 @@ def test_upload_container_success(lit_container, mock_teamspace):
 
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
-        mock_upload.assert_called_once_with("my-container", mock_teamspace, "v1.0", None)
+        mock_upload.assert_called_once_with("my-container", mock_teamspace, "v1.0", None, platform="linux/amd64")
 
 
 def test_upload_byoc_container_success(lit_container, mock_teamspace):
@@ -136,7 +136,9 @@ def test_upload_byoc_container_success(lit_container, mock_teamspace):
 
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
-        mock_upload.assert_called_once_with("my-container", mock_teamspace, "latest", "byoc-123")
+        mock_upload.assert_called_once_with(
+            "my-container", mock_teamspace, "latest", "byoc-123", platform="linux/amd64"
+        )
 
 
 def test_upload_byoc_container_pull_then_push(lit_container, mock_teamspace):
@@ -165,7 +167,9 @@ def test_upload_byoc_container_pull_then_push(lit_container, mock_teamspace):
         mock_docker_client.images.get.assert_has_calls([call("my-container:latest"), call("my-container:latest")])
 
         # Assert we fallback to pulling when the first get(...) fails.
-        mock_docker_client.images.pull.assert_called_once_with(repository="my-container", tag="latest")
+        mock_docker_client.images.pull.assert_called_once_with(
+            repository="my-container", tag="latest", platform="linux/amd64"
+        )
 
         repository = f"{_get_registry_url()}/lit-container-byoc-123/test-org/test-team/my-container"
         mock_docker_client.api.tag.assert_called_once_with("my-container:latest", repository, "latest")
@@ -189,7 +193,9 @@ def test_upload_container_pull_then_push(lit_container, mock_teamspace):
         mock_docker_client.api.tag.return_value = True
         mock_docker_client.api.push.return_value = [{"status": "Pushing"}, {"status": "Complete"}]
 
-        lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
+        lit_container.upload_container(
+            container="my-container", teamspace="test-team", tag="v1.0", platform="another/one"
+        )
 
         mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
 
@@ -198,7 +204,9 @@ def test_upload_container_pull_then_push(lit_container, mock_teamspace):
         mock_docker_client.images.get.assert_has_calls([call("my-container:v1.0"), call("my-container:v1.0")])
 
         # Assert we fallback to pulling when the first get(...) fails.
-        mock_docker_client.images.pull.assert_called_once_with(repository="my-container", tag="v1.0")
+        mock_docker_client.images.pull.assert_called_once_with(
+            repository="my-container", tag="v1.0", platform="another/one"
+        )
 
         repository = f"{_get_registry_url()}/lit-container/test-org/test-team/my-container"
         mock_docker_client.api.tag.assert_called_once_with("my-container:v1.0", repository, "v1.0")
@@ -375,7 +383,7 @@ def test_upload_container_with_org(lit_container, mock_teamspace):
 
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org="test-org", user=None)
-        mock_upload.assert_called_once_with("my-container", mock_teamspace, "latest", None)
+        mock_upload.assert_called_once_with("my-container", mock_teamspace, "latest", None, platform="linux/amd64")
 
 
 def test_download_container(lit_container, mock_teamspace):

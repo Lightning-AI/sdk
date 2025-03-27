@@ -71,6 +71,7 @@ class LitContainer:
         user: Optional[str] = None,
         tag: str = "latest",
         cloud_account: Optional[str] = None,
+        platform: Optional[str] = "linux/amd64",
     ) -> None:
         """Upload a container to the docker registry.
 
@@ -81,13 +82,14 @@ class LitContainer:
             user: The user which contains the container.
             tag: The tag to use for the container.
             cloud_account: The cloud account where the container is stored.
+            platform: The platform the container is meant to run on.
         """
         try:
             teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         except Exception as e:
             raise ValueError(f"Could not resolve teamspace: {e}") from e
 
-        resp = self._api.upload_container(container, teamspace, tag, cloud_account)
+        resp = self._api.upload_container(container, teamspace, tag, cloud_account, platform=platform)
         for line in resp:
             print(line)
 

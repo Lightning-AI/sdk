@@ -48,6 +48,8 @@ Options:
   --cloud-account, --cloud_account TEXT
                                   The name of the cloud account to store the
                                   Container in.
+  --platform, --platform TEXT     This is the platform the container pulled
+                                  and push to Lightning AI will run on.
   --help                          Show this message and exit.
 """
     )
