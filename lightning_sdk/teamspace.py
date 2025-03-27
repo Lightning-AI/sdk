@@ -294,7 +294,6 @@ class Teamspace:
             version=model.version,
             root_path=root_path,
             filepaths=filepaths,
-            cloud_account=cloud_account,
             teamspace_id=self.id,
             progress_bar=progress_bar,
         )

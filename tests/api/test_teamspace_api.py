@@ -91,7 +91,6 @@ def test_upload_model_file(uploader_mock):
         version="latest",
         local_path=Path("path/to/checkpoint.pt"),
         remote_path="modelpath/on/cluster",
-        cloud_account="test-cluster-id",
         teamspace_id="test-project-id",
         progress_bar=False,
     )
@@ -101,7 +100,6 @@ def test_upload_model_file(uploader_mock):
         version="latest",
         file_path="path/to/checkpoint.pt",
         remote_path="modelpath/on/cluster",
-        cloud_account="test-cluster-id",
         teamspace_id="test-project-id",
         progress_bar=False,
     )

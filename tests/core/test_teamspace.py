@@ -210,7 +210,6 @@ def test_upload_model_single_file(
         version="v3",
         local_path=file_path,
         remote_path="checkpoint.pt",
-        cloud_account="test-cluster-id",
         teamspace_id="ts-abc002",
         progress_bar=True,
     )
@@ -263,7 +262,6 @@ def test_upload_model_multiple_files(
     call_args = {
         "model_id": "test-model-id",
         "version": "v3",
-        "cloud_account": "test-cluster-id",
         "teamspace_id": "ts-abc002",
         "progress_bar": True,
     }

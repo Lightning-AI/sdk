@@ -202,7 +202,6 @@ class _ModelFileUploader:
         model_id: str,
         version: str,
         teamspace_id: str,
-        cloud_account: str,
         file_path: str,
         remote_path: str,
         progress_bar: bool,

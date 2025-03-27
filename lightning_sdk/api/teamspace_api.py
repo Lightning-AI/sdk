@@ -215,7 +215,6 @@ class TeamspaceApi:
         version: str,
         local_path: Path,
         remote_path: str,
-        cloud_account: str,
         teamspace_id: str,
         progress_bar: bool = True,
     ) -> None:
@@ -224,7 +223,6 @@ class TeamspaceApi:
             model_id=model_id,
             version=version,
             teamspace_id=teamspace_id,
-            cloud_account=cloud_account,
             file_path=str(local_path),
             remote_path=str(remote_path),
             progress_bar=progress_bar,
@@ -237,7 +235,6 @@ class TeamspaceApi:
         version: str,
         root_path: Path,
         filepaths: List[Path],
-        cloud_account: str,
         teamspace_id: str,
         progress_bar: bool = True,
     ) -> None:
@@ -248,7 +245,6 @@ class TeamspaceApi:
                 version=version,
                 local_path=filepath,
                 remote_path=str(filepath.relative_to(root_path)),
-                cloud_account=cloud_account,
                 teamspace_id=teamspace_id,
                 progress_bar=progress_bar,  # TODO: Global progress bar
             )
