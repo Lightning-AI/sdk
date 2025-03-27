@@ -395,6 +395,25 @@ def test_download_container(lit_container, mock_teamspace):
         )
 
 
+def test_download_byoc_container(lit_container, mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
+        lit_container._api, "_docker_client"
+    ) as mock_docker_client:
+        lit_container._api._docker_auth_config = {"username": "admin", "api_key": "grid"}
+        mock_resolve.return_value = mock_teamspace
+
+        lit_container.download_container(
+            container="my-container", teamspace="test-team", tag="latest", cloud_account="byoc-123"
+        )
+        repository = f"{_get_registry_url()}/lit-container-byoc-123/test-org/test-team/my-container"
+        (
+            mock_docker_client.images.pull.assert_called_once_with(
+                repository, tag="latest", auth_config={"username": "admin", "api_key": "grid"}
+            ),
+            "Docker pull was not called",
+        )
+
+
 @patch("lightning_sdk.api.lit_container_api.docker")
 @patch("lightning_sdk.api.lit_container_api.LightningClient")
 def test_authenticate(mock_lightning_client, mock_docker):

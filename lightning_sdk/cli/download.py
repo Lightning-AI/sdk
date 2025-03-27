@@ -143,7 +143,15 @@ def file(path: str = "", studio: Optional[str] = None, local_path: str = ".") ->
 @click.argument("container")
 @click.option("--teamspace", default=None, help="The name of the teamspace to download the container from")
 @click.option("--tag", default="latest", show_default=True, help="The tag of the container to download.")
-def download_container(container: str, teamspace: Optional[str] = None, tag: str = "latest") -> None:
+@click.option(
+    "--cloud-account",
+    "--cloud_account",  # The UI will present the above variant, using this as a secondary to be consistent w/ models
+    default=None,
+    help="The name of the cloud account to download the Container from.",
+)
+def download_container(
+    container: str, teamspace: Optional[str] = None, tag: str = "latest", cloud_account: Optional[str] = None
+) -> None:
     """Download a docker container from a teamspace.
 
     Example:
@@ -156,7 +164,7 @@ def download_container(container: str, teamspace: Optional[str] = None, tag: str
     resolved_teamspace = menu._resolve_teamspace(teamspace)
     with console.status("Downloading container..."):
         api = LitContainerApi()
-        api.download_container(container, resolved_teamspace, tag)
+        api.download_container(container, resolved_teamspace, tag, cloud_account)
         console.print("Container downloaded successfully", style="green")
 
 

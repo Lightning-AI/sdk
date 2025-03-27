@@ -92,7 +92,13 @@ class LitContainer:
             print(line)
 
     def download_container(
-        self, container: str, teamspace: str, org: Optional[str] = None, user: Optional[str] = None, tag: str = "latest"
+        self,
+        container: str,
+        teamspace: str,
+        org: Optional[str] = None,
+        user: Optional[str] = None,
+        tag: str = "latest",
+        cloud_account: Optional[str] = None,
     ) -> None:
         """Download a container from the docker registry.
 
@@ -108,4 +114,4 @@ class LitContainer:
         except Exception as e:
             raise ValueError(f"Could not resolve teamspace: {e}") from e
 
-        return self._api.download_container(container, teamspace, tag)
+        return self._api.download_container(container, teamspace, tag, cloud_account)

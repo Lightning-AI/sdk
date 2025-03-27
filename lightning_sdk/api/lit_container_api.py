@@ -186,9 +186,14 @@ class LitContainerApi:
         raise DockerPushError("Max push retries reached")
 
     @retry_on_lcr_auth_failure
-    def download_container(self, container: str, teamspace: Teamspace, tag: str) -> Generator[str, None, None]:
+    def download_container(
+        self, container: str, teamspace: Teamspace, tag: str, cloud_account: Optional[str] = None
+    ) -> Generator[str, None, None]:
         registry_url = _get_registry_url()
-        repository = f"{registry_url}/lit-container/{teamspace.owner.name}/{teamspace.name}/{container}"
+        repository = (
+            f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"
+            f"{teamspace.owner.name}/{teamspace.name}/{container}"
+        )
         try:
             self._docker_client.images.pull(repository, tag=tag, auth_config=self._docker_auth_config)
         except requests.exceptions.HTTPError as e:

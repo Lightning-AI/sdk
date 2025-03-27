@@ -38,9 +38,14 @@ def test_container_help():
   CONTAINER: The name of the container to download.
 
 Options:
-  --teamspace TEXT  The name of the teamspace to download the container from
-  --tag TEXT        The tag of the container to download.  [default: latest]
-  --help            Show this message and exit.
+  --teamspace TEXT                The name of the teamspace to download the
+                                  container from
+  --tag TEXT                      The tag of the container to download.
+                                  [default: latest]
+  --cloud-account, --cloud_account TEXT
+                                  The name of the cloud account to download
+                                  the Container from.
+  --help                          Show this message and exit.
 """
     )
 
