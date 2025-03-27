@@ -130,7 +130,9 @@ def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
 @patch("lightning_sdk.cli.serve.LitContainerApi")
 @patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
+@patch("lightning_sdk.cli.serve.authenticate")
 def test_cloud_deployment(
+    mock_authenticate,
     mock_docker_build,
     _,
     mock_litcr,
@@ -142,7 +144,6 @@ def test_cloud_deployment(
     capsys,
 ):
     mock_client = mock_docker.return_value
-
     # Mock Docker client responses
     mock_client.ping.return_value = True
     mock_client.api.build.return_value = [{"stream": "Step 1/10"}]
@@ -160,6 +161,7 @@ def test_cloud_deployment(
     serve_api(temp_script, cloud=True, repository=repo, tag=tag)
 
     mock_teamspace.return_value._resolve_teamspace.assert_called_once()
+    mock_authenticate.assert_called_once()
 
     # Verify Docker operations
     mock_docker_build.assert_called_once()
@@ -267,7 +269,8 @@ def test_handle_byoc_cloud(mock_deployment_api, mock_ask, mock_ls_deployer, mock
 @patch("lightning_sdk.cli.serve.Teamspace")
 @patch("lightning_sdk.cli.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
-def test_handle_cloud_deployment_api(mock_ask, mock_deployer, __, ___, temp_script):
+@patch("lightning_sdk.cli.serve.authenticate")
+def test_handle_cloud_deployment_api(mock_authenticate, mock_ask, mock_deployer, __, ___, temp_script):
     mock_ask.return_value = True
     mock_deployer.created = True
     mock_console = MagicMock()
@@ -279,6 +282,6 @@ def test_handle_cloud_deployment_api(mock_ask, mock_deployer, __, ___, temp_scri
     )
 
     mock_deployer.return_value.dockerize_api.assert_called_once()
-    mock_deployer.return_value.authenticate.assert_called_once()
+    mock_authenticate.assert_called_once()
     mock_console.print.assert_called()
     assert "Deployment started, access at" in mock_console.print.call_args[0][0]

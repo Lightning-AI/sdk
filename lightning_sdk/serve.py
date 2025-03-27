@@ -35,17 +35,17 @@ class _Auth(Auth):
         _AuthServer().login_with_browser(self)
 
 
+def authenticate() -> None:
+    auth = _Auth()
+    auth.authenticate()
+
+
 class _LitServeDeployer:
     def __init__(self, name: Optional[str], teamspace: Optional[Teamspace]) -> None:
         self.name = name
         self.teamspace = teamspace
         self._console = Console()
         self._client = None
-
-    @staticmethod
-    def authenticate() -> None:
-        auth = _Auth()
-        auth.authenticate()
 
     @property
     def client(self) -> docker.DockerClient:

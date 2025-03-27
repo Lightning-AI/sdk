@@ -12,7 +12,7 @@ from rich.prompt import Confirm
 from lightning_sdk import Machine, Teamspace
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
-from lightning_sdk.serve import _LitServeDeployer
+from lightning_sdk.serve import _LitServeDeployer, authenticate
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
@@ -233,6 +233,8 @@ def _handle_cloud(
     if non_interactive:
         console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
 
+    # Authenticate with LitServe affiliate
+    authenticate()
     if teamspace is None:
         menu = _TeamspacesMenu()
         resolved_teamspace = menu._resolve_teamspace(teamspace)
@@ -249,7 +251,6 @@ def _handle_cloud(
         console.print("Please fix the Dockerfile and try again.", style="red")
         return
 
-    ls_deployer.authenticate()
     # list containers to create the project if it doesn't exist
     lit_cr = LitContainerApi()
     lit_cr.list_containers(resolved_teamspace.id, cloud_account=cloud_account)
