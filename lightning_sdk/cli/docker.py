@@ -19,4 +19,4 @@ def api(server_filename: str, port: int = 8000, gpu: bool = False, tag: str = "l
 
 
 def _api(server_filename: str, port: int = 8000, gpu: bool = False, tag: str = "litserve-model") -> str:
-    return _LitServeDeployer().dockerize_api(server_filename=server_filename, port=port, gpu=gpu, tag=tag)
+    return _LitServeDeployer(None, None).dockerize_api(server_filename=server_filename, port=port, gpu=gpu, tag=tag)

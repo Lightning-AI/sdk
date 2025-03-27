@@ -8,10 +8,8 @@ import click
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
-from rich.syntax import Syntax
 
 from lightning_sdk import Machine, Teamspace
-from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.serve import _LitServeDeployer
@@ -231,34 +229,19 @@ def _handle_cloud(
 ) -> None:
     deployment_name = os.path.basename(repository)
     tag = tag if tag else "latest"
+
+    if non_interactive:
+        console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
+
     if teamspace is None:
         menu = _TeamspacesMenu()
         resolved_teamspace = menu._resolve_teamspace(teamspace)
     else:
         resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
 
-    if DeploymentApi().get_deployment_by_name(deployment_name, resolved_teamspace.id):
-        syntax = Syntax(
-            "from lightning_sdk import Deployment\n\n"
-            f"deployment = Deployment('{deployment_name}', teamspace={resolved_teamspace.name})\n"
-            "deployment.update(...)",
-            "python",
-            line_numbers=True,
-        )
-
-        console.print(
-            f"\nDeployment with name [b]{deployment_name}[/b] already running. "
-            "To update the deployment, use the Deployment API:\n",
-            syntax,
-        )
-        return
-
     port = port or 8000
-    ls_deployer = _LitServeDeployer()
+    ls_deployer = _LitServeDeployer(name=deployment_name, teamspace=resolved_teamspace)
     path = ls_deployer.dockerize_api(script_path, port=port, gpu=not machine.is_cpu(), tag=tag, print_success=False)
-    console.clear()
-    if non_interactive:
-        console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
 
     console.print(f"\nPlease review the Dockerfile at [u]{path}[/u] and make sure it is correct.", style="bold")
     correct_dockerfile = True if non_interactive else Confirm.ask("Is the Dockerfile correct?", default=True)
@@ -279,6 +262,7 @@ def _handle_cloud(
         transient=True,
     ) as progress:
         try:
+            # TODO: @aniketmaurya improve the console prints here
             ls_deployer.build_container(path, repository, tag, console, progress)
             push_status = ls_deployer.push_container(repository, tag, resolved_teamspace, lit_cr, progress)
         except Exception as e:
@@ -288,7 +272,7 @@ def _handle_cloud(
     console.print(f"🔗 You can access the container at: [i]{push_status.get('url')}[/i]")
     repository = push_status.get("repository")
 
-    deployment_status = ls_deployer._run_on_cloud(
+    deployment_status = ls_deployer.run_on_cloud(
         deployment_name=deployment_name,
         image=repository,
         teamspace=resolved_teamspace,

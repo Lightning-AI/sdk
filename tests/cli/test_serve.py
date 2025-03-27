@@ -128,13 +128,11 @@ def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
 @patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.cli.serve._TeamspacesMenu")
 @patch("lightning_sdk.cli.serve.LitContainerApi")
-@patch("lightning_sdk.cli.serve.DeploymentApi")
-@patch("lightning_sdk.serve._LitServeDeployer._run_on_cloud")
+@patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
 def test_cloud_deployment(
     mock_docker_build,
-    mock_run_on_cloud,
-    mock_deploy_api,
+    _,
     mock_litcr,
     mock_teamspace,
     mock_confirm,
@@ -159,7 +157,6 @@ def test_cloud_deployment(
     # Test with specific repository tag
     repo = "test-repo/model"
     tag = "latest"
-    mock_deploy_api.return_value.get_deployment_by_name.return_value = None
     serve_api(temp_script, cloud=True, repository=repo, tag=tag)
 
     mock_teamspace.return_value._resolve_teamspace.assert_called_once()
@@ -182,13 +179,11 @@ def test_cloud_deployment(
 @patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.cli.serve._TeamspacesMenu")
 @patch("lightning_sdk.cli.serve.LitContainerApi")
-@patch("lightning_sdk.cli.serve.DeploymentApi")
-@patch("lightning_sdk.serve._LitServeDeployer._run_on_cloud")
+@patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
 def test_cloud_deployment_non_interactive(
     mock_docker_build,
     mock_run_cloud,
-    mock_deployment_api,
     mock_litcr,
     mock_teamspace,
     mock_confirm,
@@ -206,13 +201,9 @@ def test_cloud_deployment_non_interactive(
 
     repo = "test-repo/model"
     tag = "latest"
-    mock_deployment_api.return_value.get_deployment_by_name.return_value = None
     serve_api(temp_script, cloud=True, repository=repo, tag=tag, non_interactive=True)
 
     mock_teamspace.return_value._resolve_teamspace.assert_called_once()
-
-    mock_deployment_api.return_value.get_deployment_by_name.assert_called_once()
-
     mock_docker_build.assert_called_once()
     mock_litcr.return_value.upload_container.assert_called_once()
 
@@ -241,10 +232,8 @@ def test_args_without_repository(mock_subprocess, mock_dt, temp_script):
 @patch("lightning_sdk.cli.serve.Teamspace")
 @patch("lightning_sdk.cli.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
-@patch("lightning_sdk.cli.serve.DeploymentApi")
-def test_handle_cloud(mock_deployment_api, mock_ask, mock_ls_deployer, mock_teamspace, mock_litcr, temp_script):
+def test_handle_cloud(mock_ask, mock_ls_deployer, _, mock_litcr, temp_script):
     mock_ask.return_value = True
-    mock_deployment_api.return_value.get_deployment_by_name.return_value = None
     console = rich.console.Console()
     _handle_cloud(
         temp_script,
@@ -262,10 +251,9 @@ def test_handle_cloud(mock_deployment_api, mock_ask, mock_ls_deployer, mock_team
 @patch("lightning_sdk.cli.serve.Teamspace")
 @patch("lightning_sdk.cli.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
-@patch("lightning_sdk.cli.serve.DeploymentApi")
-def test_handle_cloud_deployment_api(mock_deployment_api, mock_ask, _, __, ___, temp_script):
+def test_handle_cloud_deployment_api(mock_ask, mock_deployer, __, ___, temp_script):
     mock_ask.return_value = True
-    mock_deployment_api.return_value.get_deployment_by_name.return_value = True
+    mock_deployer.created = True
     mock_console = MagicMock()
     _handle_cloud(
         temp_script,
@@ -273,5 +261,8 @@ def test_handle_cloud_deployment_api(mock_deployment_api, mock_ask, _, __, ___, 
         teamspace="test",
         machine=MagicMock(),
     )
+
+    mock_deployer.return_value.dockerize_api.assert_called_once()
+    mock_deployer.return_value.authenticate.assert_called_once()
     mock_console.print.assert_called()
-    assert "To update the deployment, use the Deployment API" in mock_console.print.call_args[0][0]
+    assert "Deployment started, access at" in mock_console.print.call_args[0][0]

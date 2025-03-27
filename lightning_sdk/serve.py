@@ -2,7 +2,7 @@ import os
 import shlex
 import subprocess
 from pathlib import Path
-from typing import Generator, Optional
+from typing import Generator, List, Optional, Union
 from urllib.parse import urlencode
 
 import docker
@@ -10,7 +10,7 @@ from rich.console import Console
 from rich.progress import Progress
 
 from lightning_sdk import Deployment, Machine, Teamspace
-from lightning_sdk.api.deployment_api import AutoScaleConfig
+from lightning_sdk.api.deployment_api import AutoScaleConfig, DeploymentApi, Env, Secret
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.lightning_cloud import env
@@ -36,7 +36,9 @@ class _Auth(Auth):
 
 
 class _LitServeDeployer:
-    def __init__(self) -> None:
+    def __init__(self, name: Optional[str], teamspace: Optional[Teamspace]) -> None:
+        self.name = name
+        self.teamspace = teamspace
         self._console = Console()
         self._client = None
 
@@ -55,6 +57,10 @@ class _LitServeDeployer:
             except docker.errors.DockerException:
                 raise RuntimeError(_DOCKER_NOT_RUNNING_MSG) from None
         return self._client
+
+    @property
+    def created(self) -> bool:
+        return DeploymentApi().get_deployment_by_name(self.name, self.teamspace.id) is not None
 
     def dockerize_api(
         self,
@@ -214,7 +220,38 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         progress.update(push_task, description="[green]Push completed![/green]")
         return last_status
 
-    def _run_on_cloud(
+    def _update_deployment(
+        self,
+        deployment: Deployment,
+        machine: Optional[Machine] = None,
+        image: Optional[str] = None,
+        entrypoint: Optional[str] = None,
+        command: Optional[str] = None,
+        env: Optional[List[Union[Env, Secret]]] = None,
+        min_replica: Optional[int] = 0,
+        max_replica: Optional[int] = 1,
+        spot: Optional[bool] = None,
+        replicas: Optional[int] = 1,
+        cloud_account: Optional[str] = None,
+        port: Optional[int] = 8000,
+        include_credentials: Optional[bool] = True,
+    ) -> None:
+        return deployment.update(
+            machine=machine,
+            image=image,
+            entrypoint=entrypoint,
+            command=command,
+            env=env,
+            max_replicas=max_replica,
+            min_replicas=min_replica,
+            replicas=replicas,
+            spot=spot,
+            cloud_account=cloud_account,
+            ports=[port],
+            include_credentials=include_credentials,
+        )
+
+    def run_on_cloud(
         self,
         deployment_name: str,
         teamspace: Teamspace,
@@ -229,18 +266,44 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         port: Optional[int] = 8000,
         include_credentials: Optional[bool] = True,
     ) -> dict:
+        """Run a deployment on the cloud. If the deployment already exists, it will be updated.
+
+        Args:
+            deployment_name: The name of the deployment.
+            teamspace: The teamspace to run the deployment on.
+            image: The image to run the deployment on.
+            metric: The metric to use for autoscaling. Defaults to None.
+            machine: The machine to run the deployment on. Defaults to None.
+            min_replica: The minimum number of replicas to run. Defaults to 0.
+            max_replica: The maximum number of replicas to run. Defaults to 1.
+            spot: Whether to run the deployment on spot instances. Defaults to None.
+            replicas: The number of replicas to run. Defaults to 1.
+            cloud_account: The cloud account to run the deployment on. Defaults to None.
+            port: The port to run the deployment on. Defaults to 8000.
+            include_credentials: Whether to include credentials in the deployment. Defaults to True.
+
+        Returns:
+            dict: The deployment and the URL of the deployment.
+        """
         url = f"{_get_cloud_url()}/{teamspace.owner.name}/{teamspace.name}/jobs/{deployment_name}"
         machine = machine or Machine.CPU
         metric = metric or ("CPU" if machine.is_cpu() else "GPU")
         deployment = Deployment(deployment_name, teamspace)
         if deployment.is_started:
-            raise RuntimeError(
-                f"Deployment with name {deployment_name} already running: {url} \n"
-                "To update the deployment, use the Deployment API:\n"
-                "from lightning_sdk import Deployment\n"
-                f"deployment = Deployment('{deployment_name}', teamspace)\n"
-                "deployment.update(...)"
+            self._console.print(f"Deployment with name {deployment_name} already running. Updating the deployment.")
+            self._update_deployment(
+                deployment,
+                machine,
+                image,
+                min_replica=min_replica,
+                max_replica=max_replica,
+                spot=spot,
+                replicas=replicas,
+                cloud_account=cloud_account,
+                port=port,
+                include_credentials=include_credentials,
             )
+            return {"deployment": deployment, "url": url, "updated": True}
         autoscale = AutoScaleConfig(min_replicas=min_replica, max_replicas=max_replica, metric=metric, threshold=0.95)
         deployment.start(
             machine=machine,
