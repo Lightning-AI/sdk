@@ -45,6 +45,7 @@ class ProjectsIdBody(object):
         'allow_gcp_saas': 'bool',
         'allow_lambda_saas': 'bool',
         'allow_vultr_saas': 'bool',
+        'default_machine_type': 'str',
         'description': 'str',
         'display_name': 'str',
         'name': 'str',
@@ -61,6 +62,7 @@ class ProjectsIdBody(object):
         'allow_gcp_saas': 'allowGcpSaas',
         'allow_lambda_saas': 'allowLambdaSaas',
         'allow_vultr_saas': 'allowVultrSaas',
+        'default_machine_type': 'defaultMachineType',
         'description': 'description',
         'display_name': 'displayName',
         'name': 'name',
@@ -72,12 +74,13 @@ class ProjectsIdBody(object):
         'start_studio_on_spot_instance': 'startStudioOnSpotInstance'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
         """ProjectsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_gcp_saas = None
         self._allow_lambda_saas = None
         self._allow_vultr_saas = None
+        self._default_machine_type = None
         self._description = None
         self._display_name = None
         self._name = None
@@ -96,6 +99,8 @@ class ProjectsIdBody(object):
             self.allow_lambda_saas = allow_lambda_saas
         if allow_vultr_saas is not None:
             self.allow_vultr_saas = allow_vultr_saas
+        if default_machine_type is not None:
+            self.default_machine_type = default_machine_type
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -198,6 +203,27 @@ class ProjectsIdBody(object):
         """
 
         self._allow_vultr_saas = allow_vultr_saas
+
+    @property
+    def default_machine_type(self) -> 'str':
+        """Gets the default_machine_type of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The default_machine_type of this ProjectsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_machine_type
+
+    @default_machine_type.setter
+    def default_machine_type(self, default_machine_type: 'str'):
+        """Sets the default_machine_type of this ProjectsIdBody.
+
+
+        :param default_machine_type: The default_machine_type of this ProjectsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._default_machine_type = default_machine_type
 
     @property
     def description(self) -> 'str':

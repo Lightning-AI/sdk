@@ -42,24 +42,29 @@ class V1ServerAlert(object):
     """
     swagger_types = {
         'message': 'str',
+        'phase': 'V1ServerAlertPhase',
         'severity': 'V1ServerAlertSeverity',
         'type': 'V1ServerAlertType'
     }
 
     attribute_map = {
         'message': 'message',
+        'phase': 'phase',
         'severity': 'severity',
         'type': 'type'
     }
 
-    def __init__(self, message: 'str' =None, severity: 'V1ServerAlertSeverity' =None, type: 'V1ServerAlertType' =None):  # noqa: E501
+    def __init__(self, message: 'str' =None, phase: 'V1ServerAlertPhase' =None, severity: 'V1ServerAlertSeverity' =None, type: 'V1ServerAlertType' =None):  # noqa: E501
         """V1ServerAlert - a model defined in Swagger"""  # noqa: E501
         self._message = None
+        self._phase = None
         self._severity = None
         self._type = None
         self.discriminator = None
         if message is not None:
             self.message = message
+        if phase is not None:
+            self.phase = phase
         if severity is not None:
             self.severity = severity
         if type is not None:
@@ -85,6 +90,27 @@ class V1ServerAlert(object):
         """
 
         self._message = message
+
+    @property
+    def phase(self) -> 'V1ServerAlertPhase':
+        """Gets the phase of this V1ServerAlert.  # noqa: E501
+
+
+        :return: The phase of this V1ServerAlert.  # noqa: E501
+        :rtype: V1ServerAlertPhase
+        """
+        return self._phase
+
+    @phase.setter
+    def phase(self, phase: 'V1ServerAlertPhase'):
+        """Sets the phase of this V1ServerAlert.
+
+
+        :param phase: The phase of this V1ServerAlert.  # noqa: E501
+        :type: V1ServerAlertPhase
+        """
+
+        self._phase = phase
 
     @property
     def severity(self) -> 'V1ServerAlertSeverity':
