@@ -107,6 +107,27 @@ def lit_container():
     return LitContainer()
 
 
+@patch("lightning_sdk.api.lit_container_api.LitContainerApi._push_with_retry")
+@patch("lightning_sdk.api.lit_container_api.docker")
+def test_upload_container_stop_iteration(mock_docker, mock_push_with_retry, mock_teamspace):
+    mock_docker_client = MagicMock()
+    api = LitContainerApi()
+    api._docker_client = mock_docker_client
+    mock_docker.from_env.return_value = mock_docker_client
+    value = {}
+    try:
+        gen = api.upload_container("container", teamspace=mock_teamspace, tag="v1.0")
+        yield from gen
+    except StopIteration as e:
+        value: dict = e.value
+    mock_docker_client.images.get.assert_called_once_with("container:v1.0")
+    mock_docker_client.api.tag.assert_called_once()
+    mock_push_with_retry.assert_called_once()
+    assert "finish" in value, "Expected 'finish' in StopIteration value"
+    assert value["url"] == f"{_get_registry_url()}/lit-container/test-org/test-team/container:v1.0"
+    assert value["repository"] == "container"
+
+
 def test_upload_container_success(lit_container, mock_teamspace):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
         lit_container._api, "upload_container"

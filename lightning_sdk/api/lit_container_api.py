@@ -125,7 +125,7 @@ class LitContainerApi:
     @retry_on_lcr_auth_failure
     def upload_container(
         self, container: str, teamspace: Teamspace, tag: str, cloud_account: str, platform: str
-    ) -> Generator[dict, None, None]:
+    ) -> Generator[dict, None, dict]:
         """Upload container will push the container to LitCR.
 
         It uses docker push API to interact with docker daemon which will then push the container to a storage
@@ -138,7 +138,7 @@ class LitContainerApi:
             Named cloud-account in the CLI options.
         :param platform: If empty will be linux/amd64. This is important because our entire deployment infra runs on
             linux/amd64. Will show user a warning otherwise.
-        :return: Generator[dict, None, None]
+        :return: Generator[dict, None, dict]
         """
         try:
             self._docker_client.images.get(f"{container}:{tag}")
@@ -164,7 +164,7 @@ class LitContainerApi:
             raise ValueError(f"Could not tag container {container}:{tag} with {repository}:{tag}")
         yield from self._push_with_retry(repository, tag=tag)
 
-        yield {
+        return {
             "finish": True,
             "url": f"{LIGHTNING_CLOUD_URL}/{teamspace.owner.name}/{teamspace.name}/containers/{container_basename}"
             f"{f'?clusterId={cloud_account}' if cloud_account is not None else ''}",

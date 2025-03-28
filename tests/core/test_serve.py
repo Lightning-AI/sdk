@@ -72,7 +72,10 @@ def test_push_container(deployer):
     teamspace = MagicMock()
     lit_cr = MagicMock()
     lit_cr.upload_container.return_value = []
-    progress = MagicMock()
-    deployer.push_container("repository", "tag", teamspace, lit_cr, progress, "cloud_account")
+    gen = deployer.push_container("repository", "tag", teamspace, lit_cr=lit_cr, cloud_account="cloud_account")
+    with pytest.raises(StopIteration):
+        next(gen)
     lit_cr.authenticate.assert_called_once()
-    lit_cr.upload_container.assert_called_once_with("repository", teamspace, tag="tag", cloud_account="cloud_account")
+    lit_cr.upload_container.assert_called_once_with(
+        "repository", teamspace, tag="tag", cloud_account="cloud_account", platform=None
+    )

@@ -7,7 +7,6 @@ from urllib.parse import urlencode
 
 import docker
 from rich.console import Console
-from rich.progress import Progress
 
 from lightning_sdk import Deployment, Machine, Teamspace
 from lightning_sdk.api.deployment_api import AutoScaleConfig, DeploymentApi, Env, Secret
@@ -182,22 +181,14 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
 
         return log_generator()
 
-    def build_container(self, path: str, repository: str, tag: str, console: Console, progress: Progress) -> None:
-        build_task = progress.add_task("Building Docker image", total=None)
+    def build_container(self, path: str, repository: str, tag: str) -> Generator[str, None, None]:
         build_logs = self._docker_build_with_logs(path, repository, tag=tag)
 
         for line in build_logs:
             if "error" in line:
-                progress.stop()
-                console.print(f"\n[red]{line}[/red]")
                 raise RuntimeError(f"Failed to build image: {line}")
             else:
-                console.print(
-                    line.strip(),
-                )
-                progress.update(build_task, description="Building Docker image")
-
-        progress.update(build_task, description="[green]Build completed![/green]")
+                yield line.strip()
 
     def push_container(
         self,
@@ -205,26 +196,17 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         tag: str,
         teamspace: Teamspace,
         lit_cr: LitContainerApi,
-        progress: Progress,
         cloud_account: str,
-    ) -> dict:
-        console = self._console
-        push_task = progress.add_task("Pushing to registry", total=None)
-        console.print("\nPushing image...", style="bold blue")
+    ) -> Generator[dict, None, dict]:
         lit_cr.authenticate()
-        push_status = lit_cr.upload_container(repository, teamspace, tag=tag, cloud_account=cloud_account)
-        last_status = {}
+        push_status = lit_cr.upload_container(
+            repository, teamspace, tag=tag, cloud_account=cloud_account, platform=None
+        )
         for line in push_status:
-            last_status = line
             if "error" in line:
-                progress.stop()
-                console.print(f"\n[red]{line}[/red]")
                 raise RuntimeError(f"Failed to push image: {line}")
             if "status" in line:
-                console.print(line["status"].strip())
-                progress.update(push_task, description="Pushing to registry")
-        progress.update(push_task, description="[green]Push completed![/green]")
-        return last_status
+                yield {"status": line["status"].strip()}
 
     def _update_deployment(
         self,

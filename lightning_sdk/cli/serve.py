@@ -272,11 +272,26 @@ def _handle_cloud(
         transient=True,
     ) as progress:
         try:
-            # TODO: @aniketmaurya improve the console prints here
-            ls_deployer.build_container(path, repository, tag, console, progress)
-            push_status = ls_deployer.push_container(
-                repository, tag, resolved_teamspace, lit_cr, progress, cloud_account=cloud_account
-            )
+            # Build the container
+            build_task = progress.add_task("Building Docker image", total=None)
+            for line in ls_deployer.build_container(path, repository, tag):
+                console.print(line.strip())
+                progress.update(build_task, advance=1)
+            progress.update(build_task, description="[green]Build completed![/green]", completed=1.0)
+            progress.remove_task(build_task)
+
+            # Push the container to the registry
+            push_task = progress.add_task("Pushing to registry", total=None)
+            push_status = {}
+            try:
+                for line in ls_deployer.push_container(
+                    repository, tag, resolved_teamspace, lit_cr, cloud_account=cloud_account
+                ):
+                    progress.update(push_task, advance=1)
+                    console.print(line)
+                progress.update(push_task, description="[green]Push completed![/green]")
+            except StopIteration as e:
+                push_status = e.value
         except Exception as e:
             console.print(f"❌ Deployment failed: {e}", style="red")
             return
