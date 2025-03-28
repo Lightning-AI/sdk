@@ -17,17 +17,26 @@ from lightning_sdk.serve import _LitServeDeployer, authenticate
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
 
-@click.group("serve")
+class _ServeGroup(click.Group):
+    def parse_args(self, ctx: click.Context, args: list) -> click.Group:
+        # Check if first arg is a file path and not a command name
+        if args and os.path.exists(args[0]) and args[0] not in self.commands:
+            # Insert the 'api' command before the file path
+            args.insert(0, "api")
+        return super().parse_args(ctx, args)
+
+
+@click.group("serve", cls=_ServeGroup)
 def serve() -> None:
     """Serve a LitServe model.
 
     Example:
-        lightning serve api server.py  # serve locally
+        lightning serve server.py  # serve locally
 
     Example:
-        lightning serve api server.py --cloud --name litserve-api  # deploy to the cloud
+        lightning serve server.py --cloud  # deploy to the cloud
 
-    You can deploy the API to the cloud by running `lightning serve api server.py --cloud`.
+    You can deploy the API to the cloud by running `lightning serve server.py --cloud`.
     This will build a docker container for the server.py script and deploy it to the Lightning AI platform.
     """
 
