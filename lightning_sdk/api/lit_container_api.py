@@ -7,7 +7,6 @@ import requests
 from rich.console import Console
 
 from lightning_sdk.api.utils import _get_registry_url
-from lightning_sdk.lightning_cloud.env import LIGHTNING_CLOUD_URL
 from lightning_sdk.lightning_cloud.openapi.models import V1DeleteLitRepositoryResponse
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.teamspace import Teamspace
@@ -126,7 +125,7 @@ class LitContainerApi:
     @retry_on_lcr_auth_failure
     def upload_container(
         self, container: str, teamspace: Teamspace, tag: str, cloud_account: str, platform: str
-    ) -> Generator[dict, None, dict]:
+    ) -> Generator[dict, None, None]:
         """Upload container will push the container to LitCR.
 
         It uses docker push API to interact with docker daemon which will then push the container to a storage
@@ -164,13 +163,6 @@ class LitContainerApi:
         if not tagged:
             raise ValueError(f"Could not tag container {container}:{tag} with {repository}:{tag}")
         yield from self._push_with_retry(repository, tag=tag)
-
-        return {
-            "finish": True,
-            "url": f"{LIGHTNING_CLOUD_URL}/{teamspace.owner.name}/{teamspace.name}/containers/{container_basename}"
-            f"{f'?clusterId={cloud_account}' if cloud_account is not None else ''}",
-            "repository": repository,
-        }
 
     def _push_with_retry(self, repository: str, tag: str, max_retries: int = 3) -> Iterator[Dict[str, Any]]:
         def is_auth_error(error_msg: str) -> bool:

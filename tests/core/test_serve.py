@@ -73,8 +73,12 @@ def test_push_container(deployer):
     lit_cr = MagicMock()
     lit_cr.upload_container.return_value = []
     gen = deployer.push_container("repository", "tag", teamspace, lit_cr=lit_cr, cloud_account="cloud_account")
-    with pytest.raises(StopIteration):
-        next(gen)
+    last_line = None
+    for line in gen:
+        last_line = line
+    assert isinstance(last_line, dict), "Expected a dictionary"
+    assert last_line["finish"], "Last line must have finish=True"
+    assert isinstance(last_line["image"], str), "Last line must contain the docker repo image"
     lit_cr.authenticate.assert_called_once()
     lit_cr.upload_container.assert_called_once_with(
         "repository", teamspace, tag="tag", cloud_account="cloud_account", platform=None

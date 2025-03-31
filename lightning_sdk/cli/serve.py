@@ -281,23 +281,22 @@ def _handle_cloud(
             progress.remove_task(build_task)
 
             # Push the container to the registry
+            console.print("\nPushing image to registry. It may take a while...", style="bold")
             push_task = progress.add_task("Pushing to registry", total=None)
             push_status = {}
-            try:
-                for line in ls_deployer.push_container(
-                    repository, tag, resolved_teamspace, lit_cr, cloud_account=cloud_account
-                ):
-                    progress.update(push_task, advance=1)
-                    console.print(line)
-                progress.update(push_task, description="[green]Push completed![/green]")
-            except StopIteration as e:
-                push_status = e.value
+            for line in ls_deployer.push_container(
+                repository, tag, resolved_teamspace, lit_cr, cloud_account=cloud_account
+            ):
+                push_status = line
+                progress.update(push_task, advance=1)
+                if not ("Pushing" in line["status"] or "Waiting" in line["status"]):
+                    console.print(line["status"])
+            progress.update(push_task, description="[green]Push completed![/green]")
         except Exception as e:
             console.print(f"❌ Deployment failed: {e}", style="red")
             return
     console.print(f"\n✅ Image pushed to {repository}:{tag}")
-    console.print(f"🔗 You can access the container at: [i]{push_status.get('url')}[/i]")
-    image = push_status.get("repository")
+    image = push_status.get("image")
 
     deployment_status = ls_deployer.run_on_cloud(
         deployment_name=deployment_name,

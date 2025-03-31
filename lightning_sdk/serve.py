@@ -11,8 +11,9 @@ from rich.console import Console
 from lightning_sdk import Deployment, Machine, Teamspace
 from lightning_sdk.api.deployment_api import AutoScaleConfig, DeploymentApi, Env, Secret
 from lightning_sdk.api.lit_container_api import LitContainerApi
-from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.api.utils import _get_cloud_url, _get_registry_url
 from lightning_sdk.lightning_cloud import env
+from lightning_sdk.lightning_cloud.env import LIGHTNING_CLOUD_URL
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 
 _DOCKER_NOT_RUNNING_MSG = (
@@ -207,6 +208,20 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
                 raise RuntimeError(f"Failed to push image: {line}")
             if "status" in line:
                 yield {"status": line["status"].strip()}
+
+        registry_url = _get_registry_url()
+        container_basename = repository.split("/")[-1]
+        repository = (
+            f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"
+            f"{teamspace.owner.name}/{teamspace.name}/{container_basename}"
+        )
+        yield {
+            "finish": True,
+            "status": "Container pushed successfully",
+            "url": f"{LIGHTNING_CLOUD_URL}/{teamspace.owner.name}/{teamspace.name}/containers/{container_basename}"
+            f"{f'?clusterId={cloud_account}' if cloud_account is not None else ''}",
+            "image": repository,
+        }
 
     def _update_deployment(
         self,
