@@ -51,11 +51,11 @@ def serve() -> None:
     help="Generate a client for the model",
 )
 @click.option(
-    "--cloud",
+    "--local",
     is_flag=True,
     default=False,
     flag_value=True,
-    help="Deploy the model to the Lightning AI platform",
+    help="Run the model locally",
 )
 @click.option("--name", default=None, help="Name of the deployed API (e.g., 'classification-api', 'Llama-api')")
 @click.option(
@@ -116,7 +116,7 @@ def serve() -> None:
 def api(
     script_path: str,
     easy: bool,
-    cloud: bool,
+    local: bool,
     name: Optional[str],
     non_interactive: bool,
     machine: str,
@@ -135,7 +135,7 @@ def api(
     return api_impl(
         script_path=script_path,
         easy=easy,
-        cloud=cloud,
+        local=local,
         repository=name,
         non_interactive=non_interactive,
         machine=machine,
@@ -155,7 +155,7 @@ def api(
 def api_impl(
     script_path: Union[str, Path],
     easy: bool = False,
-    cloud: bool = False,
+    local: bool = False,
     repository: [str] = None,
     tag: Optional[str] = None,
     non_interactive: bool = False,
@@ -185,7 +185,7 @@ def api_impl(
         timestr = datetime.now().strftime("%b-%d-%H_%M")
         repository = f"litserve-{timestr}".lower()
 
-    if cloud:
+    if not local:
         repository = repository or "litserve-model"
         machine = Machine.from_str(machine)
         return _handle_cloud(

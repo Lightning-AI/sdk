@@ -50,8 +50,7 @@ def test_api_help():
 
 Options:
   --easy                          Generate a client for the model
-  --cloud                         Deploy the model to the Lightning AI
-                                  platform
+  --local                         Run the model locally
   --name TEXT                     Name of the deployed API (e.g.,
                                   'classification-api', 'Llama-api')
   --non-interactive, --non_interactive
@@ -112,7 +111,7 @@ if __name__ == "__main__":
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
 @patch("subprocess.run")
 def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
-    serve_api(temp_script, True)
+    serve_api(temp_script, True, local=True)
 
     assert (mock_cwd / "client.py").exists(), "Client file not generated"
     mock_subprocess.assert_called_once_with(
@@ -157,7 +156,7 @@ def test_cloud_deployment(
     # Test with specific repository tag
     repo = "test-repo/model"
     tag = "latest"
-    serve_api(temp_script, cloud=True, repository=repo, tag=tag)
+    serve_api(temp_script, local=False, repository=repo, tag=tag)
 
     mock_teamspace.return_value._resolve_teamspace.assert_called_once()
     mock_authenticate.assert_called_once()
@@ -202,7 +201,7 @@ def test_cloud_deployment_non_interactive(
 
     repo = "test-repo/model"
     tag = "latest"
-    serve_api(temp_script, cloud=True, repository=repo, tag=tag, non_interactive=True)
+    serve_api(temp_script, local=False, repository=repo, tag=tag, non_interactive=True)
 
     mock_teamspace.return_value._resolve_teamspace.assert_called_once()
     mock_docker_build.assert_called_once()
@@ -216,7 +215,7 @@ def test_cloud_deployment_non_interactive(
 @patch("lightning_sdk.cli.serve.datetime")
 @patch("lightning_sdk.cli.serve.subprocess.run")
 def test_args_with_repository(mock_subprocess, mock_dt, temp_script):
-    serve_api(temp_script, repository="test")
+    serve_api(temp_script, repository="test", local=True)
     mock_dt.now.assert_not_called()
     mock_subprocess.assert_called_once()
 
@@ -224,7 +223,7 @@ def test_args_with_repository(mock_subprocess, mock_dt, temp_script):
 @patch("lightning_sdk.cli.serve.datetime")
 @patch("lightning_sdk.cli.serve.subprocess.run")
 def test_args_without_repository(mock_subprocess, mock_dt, temp_script):
-    serve_api(temp_script)
+    serve_api(temp_script, local=True)
     mock_dt.now.assert_called()
     mock_subprocess.assert_called_once()
 
