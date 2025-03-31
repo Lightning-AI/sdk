@@ -37,6 +37,14 @@ def mock_api_list_containers_string_creation():
     return repo
 
 
+def test_api_list_containers():
+    api = LitContainerApi()
+    api._client = MagicMock()
+    api._docker_client = MagicMock()
+    api.list_containers("test-project-id")
+    api._client.lit_registry_service_get_lit_project_registry.assert_called_once_with("test-project-id", cluster_id="")
+
+
 def test_list_containers(mock_teamspace, mock_api_list_containers, mock_api_list_containers_string_creation):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
         mock_resolve_teamspace.return_value = mock_teamspace

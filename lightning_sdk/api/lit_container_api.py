@@ -103,10 +103,11 @@ class LitContainerApi:
         """Lists containers of the project ID.
 
         :param project_id: The non-human readable project ID used internally to identify projects.
+        :param cloud_account: The cluster ID of the cloud account. If None, will use the default cluster.
         :return:
         """
         project = self._client.lit_registry_service_get_lit_project_registry(
-            project_id, cluster_id=cloud_account
+            project_id, cluster_id="" if cloud_account is None else cloud_account
         )  # cloud account on the CLI is cluster_id
         return project.repositories
 
