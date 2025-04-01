@@ -1,12 +1,14 @@
 import os
 import shlex
 import subprocess
+import time
 from pathlib import Path
 from typing import Generator, List, Optional, Union
 from urllib.parse import urlencode
 
 import docker
 from rich.console import Console
+from rich.prompt import Confirm
 
 from lightning_sdk import Deployment, Machine, Teamspace
 from lightning_sdk.api.deployment_api import AutoScaleConfig, DeploymentApi, Env, Secret
@@ -31,12 +33,28 @@ class _AuthServer(AuthServer):
 
 
 class _Auth(Auth):
+    def __init__(self, shall_confirm: bool = False) -> None:
+        super().__init__()
+        self._shall_confirm = shall_confirm
+
     def _run_server(self) -> None:
+        if self._shall_confirm:
+            proceed = Confirm.ask(
+                "Authenticating with Lightning AI. This will open a browser window. Continue?", default=True
+            )
+            if not proceed:
+                raise RuntimeError(
+                    "Login cancelled. Please login to Lightning AI to deploy your model."
+                    " Run `lightning login` to login."
+                ) from None
+        print("Opening browser for authentication...")
+        print("Please come back to the terminal after logging in.")
+        time.sleep(3)
         _AuthServer().login_with_browser(self)
 
 
-def authenticate() -> None:
-    auth = _Auth()
+def authenticate(shall_confirm: bool = True) -> None:
+    auth = _Auth(shall_confirm)
     auth.authenticate()
 
 

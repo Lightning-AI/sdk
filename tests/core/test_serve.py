@@ -56,7 +56,7 @@ def test_authenticate(mock_auth_class):
 
 @patch("lightning_sdk.serve._AuthServer")
 @patch("lightning_sdk.lightning_cloud.login.Auth.auth_header")
-def test_auth_run_server(mock_auth_header, mock_authserver):
+def test_auth_run_server(_, mock_authserver):
     mock_authserver.return_value.login_with_browser = MagicMock()
 
     auth = _Auth()
@@ -66,6 +66,24 @@ def test_auth_run_server(mock_auth_header, mock_authserver):
 
     auth.load.assert_called_once()
     mock_authserver.return_value.login_with_browser.assert_called_once()
+
+
+@patch("lightning_sdk.serve._AuthServer")
+@patch("lightning_sdk.lightning_cloud.login.Auth.auth_header")
+@patch("lightning_sdk.serve.Confirm")
+def test_auth_run_server_confirm_browser_open(mock_confirm, _, mock_authserver):
+    mock_authserver.return_value.login_with_browser = MagicMock()
+
+    auth = _Auth(shall_confirm=True)
+    auth.load = MagicMock(return_value=False)
+    auth._with_env_var = False
+    auth.authenticate()
+
+    auth.load.assert_called_once()
+    mock_authserver.return_value.login_with_browser.assert_called_once()
+    mock_confirm.ask.assert_called_once_with(
+        "Authenticating with Lightning AI. This will open a browser window. Continue?", default=True
+    )
 
 
 def test_push_container(deployer):
