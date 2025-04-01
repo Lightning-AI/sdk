@@ -26,7 +26,7 @@ jobs:
       import-name: "lightning_sdk"
       testing-matrix: |
         {
-          "os": ["ubuntu-20.04", "macos-latest"],
+          "os": ["ubuntu-24.04", "macos-latest"],
           "python-version": ["3.8", "3.9", "3.10", "3.11"]
         }
       env-vars: |
@@ -36,7 +36,7 @@ jobs:
         }
 
   pre-commit:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout 🛎️
       uses: actions/checkout@v4
