@@ -31,12 +31,12 @@ def serve() -> None:
     """Serve a LitServe model.
 
     Example:
-        lightning serve server.py  # serve locally
+        lightning serve server.py  # deploy to the cloud
 
     Example:
-        lightning serve server.py --cloud  # deploy to the cloud
+        lightning serve server.py --local  # serve locally
 
-    You can deploy the API to the cloud by running `lightning serve server.py --cloud`.
+    You can deploy the API to the cloud by running `lightning serve server.py`.
     This will build a docker container for the server.py script and deploy it to the Lightning AI platform.
     """
 
