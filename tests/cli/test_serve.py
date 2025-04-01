@@ -232,8 +232,10 @@ def test_args_without_repository(mock_subprocess, mock_dt, temp_script):
 @patch("lightning_sdk.cli.serve.Teamspace")
 @patch("lightning_sdk.cli.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
-def test_handle_cloud(mock_ask, mock_ls_deployer, _, mock_litcr, temp_script):
+@patch("lightning_sdk.cli.serve.webbrowser")
+def test_handle_cloud(mock_browser, mock_ask, mock_ls_deployer, _, mock_litcr, temp_script):
     mock_ask.return_value = True
+    mock_ls_deployer.return_value.run_on_cloud.return_value = {"url": "test-url"}
     console = rich.console.Console()
     _handle_cloud(
         temp_script,
@@ -245,6 +247,7 @@ def test_handle_cloud(mock_ask, mock_ls_deployer, _, mock_litcr, temp_script):
     mock_litcr.return_value.list_containers.assert_called_once_with(ANY, cloud_account=None)
     mock_ls_deployer.return_value.push_container.assert_called_once()
     mock_ls_deployer.assert_called_once()
+    mock_browser.open.assert_called_once_with("test-url")
 
 
 @patch("lightning_sdk.cli.serve.LitContainerApi")

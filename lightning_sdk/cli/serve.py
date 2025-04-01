@@ -1,5 +1,6 @@
 import os
 import subprocess
+import webbrowser
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
@@ -313,3 +314,4 @@ def _handle_cloud(
         include_credentials=include_credentials,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")
+    webbrowser.open(deployment_status.get("url"))
