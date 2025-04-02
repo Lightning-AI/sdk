@@ -1,9 +1,11 @@
 import os
 import subprocess
+import time
 import webbrowser
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
+from urllib.parse import urlencode
 
 import click
 from rich.console import Console
@@ -13,7 +15,9 @@ from rich.prompt import Confirm
 from lightning_sdk import Machine, Teamspace
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
-from lightning_sdk.serve import _LitServeDeployer, authenticate
+from lightning_sdk.lightning_cloud import env
+from lightning_sdk.lightning_cloud.login import Auth, AuthServer
+from lightning_sdk.serve import _LitServeDeployer
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
@@ -219,6 +223,39 @@ def api_impl(
         raise RuntimeError(error_msg) from None
 
 
+class _AuthServer(AuthServer):
+    def get_auth_url(self, port: int) -> str:
+        redirect_uri = f"http://localhost:{port}/login-complete"
+        params = urlencode({"redirectTo": redirect_uri, "inviteCode": "litserve"})
+        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
+
+
+class _Auth(Auth):
+    def __init__(self, shall_confirm: bool = False) -> None:
+        super().__init__()
+        self._shall_confirm = shall_confirm
+
+    def _run_server(self) -> None:
+        if self._shall_confirm:
+            proceed = Confirm.ask(
+                "Authenticating with Lightning AI. This will open a browser window. Continue?", default=True
+            )
+            if not proceed:
+                raise RuntimeError(
+                    "Login cancelled. Please login to Lightning AI to deploy your model."
+                    " Run `lightning login` to login."
+                ) from None
+        print("Opening browser for authentication...")
+        print("Please come back to the terminal after logging in.")
+        time.sleep(3)
+        _AuthServer().login_with_browser(self)
+
+
+def authenticate(shall_confirm: bool = True) -> None:
+    auth = _Auth(shall_confirm)
+    auth.authenticate()
+
+
 def _handle_cloud(
     script_path: Union[str, Path],
     console: Console,
@@ -244,7 +281,7 @@ def _handle_cloud(
         console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
 
     # Authenticate with LitServe affiliate
-    authenticate()
+    authenticate(shall_confirm=not non_interactive)
     if teamspace is None:
         menu = _TeamspacesMenu()
         resolved_teamspace = menu._resolve_teamspace(teamspace)
