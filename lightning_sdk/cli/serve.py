@@ -280,16 +280,8 @@ def _handle_cloud(
     if non_interactive:
         console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
 
-    # Authenticate with LitServe affiliate
-    authenticate(shall_confirm=not non_interactive)
-    if teamspace is None:
-        menu = _TeamspacesMenu()
-        resolved_teamspace = menu._resolve_teamspace(teamspace)
-    else:
-        resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
-
     port = port or 8000
-    ls_deployer = _LitServeDeployer(name=deployment_name, teamspace=resolved_teamspace)
+    ls_deployer = _LitServeDeployer(name=deployment_name, teamspace=None)
     path = ls_deployer.dockerize_api(script_path, port=port, gpu=not machine.is_cpu(), tag=tag, print_success=False)
 
     console.print(f"\nPlease review the Dockerfile at [u]{path}[/u] and make sure it is correct.", style="bold")
@@ -297,10 +289,6 @@ def _handle_cloud(
     if not correct_dockerfile:
         console.print("Please fix the Dockerfile and try again.", style="red")
         return
-
-    # list containers to create the project if it doesn't exist
-    lit_cr = LitContainerApi()
-    lit_cr.list_containers(resolved_teamspace.id, cloud_account=cloud_account)
 
     with Progress(
         SpinnerColumn(),
@@ -318,8 +306,31 @@ def _handle_cloud(
             progress.update(build_task, description="[green]Build completed![/green]", completed=1.0)
             progress.remove_task(build_task)
 
-            # Push the container to the registry
-            console.print("\nPushing image to registry. It may take a while...", style="bold")
+        except Exception as e:
+            console.print(f"❌ Deployment failed: {e}", style="red")
+            return
+
+    # Push the container to the registry
+    console.print("\nPushing container to registry. It may take a while...", style="bold")
+    # Authenticate with LitServe affiliate
+    authenticate(shall_confirm=not non_interactive)
+    if teamspace is None:
+        menu = _TeamspacesMenu()
+        resolved_teamspace = menu._resolve_teamspace(teamspace)
+    else:
+        resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
+    # list containers to create the project if it doesn't exist
+    lit_cr = LitContainerApi()
+    lit_cr.list_containers(resolved_teamspace.id, cloud_account=cloud_account)
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        TimeElapsedColumn(),
+        console=console,
+        transient=True,
+    ) as progress:
+        try:
             push_task = progress.add_task("Pushing to registry", total=None)
             push_status = {}
             for line in ls_deployer.push_container(
