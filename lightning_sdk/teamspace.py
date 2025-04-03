@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import TeamspaceApi
+from lightning_sdk.lightning_cloud.openapi import V1ProjectClusterBinding
 from lightning_sdk.machine import Machine
 from lightning_sdk.models import UploadedModelInfo
 from lightning_sdk.organization import Organization
@@ -123,6 +124,11 @@ class Teamspace:
         """All cloud accounts associated with that teamspace."""
         clusters = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
         return [cl.cluster_name for cl in clusters]
+
+    @property
+    def cloud_account_objs(self) -> List[V1ProjectClusterBinding]:
+        """All cloud accounts associated with that teamspace."""
+        return self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
 
     @property
     def clusters(self) -> List[str]:
