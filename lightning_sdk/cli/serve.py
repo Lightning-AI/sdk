@@ -18,7 +18,7 @@ from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.serve import _LitServeDeployer
-from lightning_sdk.utils.resolve import _get_authed_user
+from lightning_sdk.utils.resolve import _get_authed_user, _resolve_teamspace
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
@@ -268,7 +268,7 @@ def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optiona
 
         return menu._resolve_teamspace(teamspace)
 
-    return Teamspace(name=teamspace, org=org, user=user)
+    return _resolve_teamspace(teamspace=teamspace, org=org, user=user)
 
 
 def _handle_cloud(

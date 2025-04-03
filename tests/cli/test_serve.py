@@ -232,11 +232,12 @@ def test_args_without_repository(mock_subprocess, mock_dt, temp_script):
 
 
 @patch("lightning_sdk.cli.serve.LitContainerApi")
-@patch("lightning_sdk.cli.serve.Teamspace")
+@patch("lightning_sdk.cli.serve._resolve_teamspace")
 @patch("lightning_sdk.cli.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
 @patch("lightning_sdk.cli.serve.webbrowser")
-def test_handle_cloud(mock_browser, mock_ask, mock_ls_deployer, _, mock_litcr, temp_script):
+@patch("lightning_sdk.cli.serve.authenticate")
+def test_handle_cloud(mock_authenticate, mock_browser, mock_ask, mock_ls_deployer, _, mock_litcr, temp_script):
     mock_ask.return_value = True
     mock_ls_deployer.return_value.run_on_cloud.return_value = {"url": "test-url"}
     console = rich.console.Console()
@@ -247,6 +248,7 @@ def test_handle_cloud(mock_browser, mock_ask, mock_ls_deployer, _, mock_litcr, t
         machine=MagicMock(),
     )
     mock_litcr.assert_called_once()
+    mock_authenticate.assert_called_once()
     mock_litcr.return_value.list_containers.assert_called_once_with(ANY, cloud_account=None)
     mock_ls_deployer.return_value.push_container.assert_called_once()
     mock_ls_deployer.assert_called_once()
@@ -254,23 +256,27 @@ def test_handle_cloud(mock_browser, mock_ask, mock_ls_deployer, _, mock_litcr, t
 
 
 @patch("lightning_sdk.cli.serve.LitContainerApi")
-@patch("lightning_sdk.cli.serve.Teamspace")
+@patch("lightning_sdk.cli.serve.select_teamspace")
 @patch("lightning_sdk.cli.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
 @patch("lightning_sdk.serve.DeploymentApi")
-def test_handle_byoc_cloud(mock_deployment_api, mock_ask, mock_ls_deployer, mock_teamspace, mock_litcr, temp_script):
+@patch("lightning_sdk.cli.serve.authenticate")
+def test_handle_byoc_cloud(
+    mock_authenticate, mock_deployment_api, mock_ask, mock_ls_deployer, _, mock_litcr, temp_script
+):
     mock_ask.return_value = True
     mock_deployment_api.return_value.get_deployment_by_name.return_value = None
     console = rich.console.Console()
     _handle_cloud(temp_script, console, teamspace="test", machine=MagicMock(), cloud_account="byoc-123")
     mock_litcr.assert_called_once()
+    mock_authenticate.assert_called_once()
     mock_litcr.return_value.list_containers.assert_called_once_with(ANY, cloud_account="byoc-123")
     mock_ls_deployer.return_value.push_container.assert_called_once()
     mock_ls_deployer.assert_called_once()
 
 
 @patch("lightning_sdk.cli.serve.LitContainerApi")
-@patch("lightning_sdk.cli.serve.Teamspace")
+@patch("lightning_sdk.cli.serve.select_teamspace")
 @patch("lightning_sdk.cli.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
 @patch("lightning_sdk.cli.serve.authenticate")
@@ -341,7 +347,7 @@ def test_select_teamspace_when_only_one_available(mock_ts_menu, mock_get_authed_
     mock_teamspace_cls.assert_called_once_with(name="test-teamspace", org="org", user="user")
 
 
-@patch("lightning_sdk.cli.serve.Teamspace")
-def test_select_teamspace(mock_teamspace_cls):
+@patch("lightning_sdk.cli.serve._resolve_teamspace")
+def test_select_teamspace(mock_resolve_teamspace):
     select_teamspace(teamspace="test-teamspace", org="org", user="user")
-    mock_teamspace_cls.assert_called_once_with(name="test-teamspace", org="org", user="user")
+    mock_resolve_teamspace.assert_called_once_with(teamspace="test-teamspace", org="org", user="user")
