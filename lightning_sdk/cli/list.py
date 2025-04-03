@@ -7,8 +7,9 @@ from rich.table import Table
 from typing_extensions import Literal
 
 from lightning_sdk import Job, Machine, Studio, Teamspace
+from lightning_sdk.cli.clusters_menu import _ClustersMenu
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
-from lightning_sdk.lightning_cloud.openapi import V1MultiMachineJob
+from lightning_sdk.lightning_cloud.openapi import V1ClusterType, V1MultiMachineJob
 from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.utils.resolve import _get_authed_user
 
@@ -232,18 +233,37 @@ def mmts(
         "If not provided, can be selected in an interactive menu."
     ),
 )
-def containers(teamspace: Optional[str] = None) -> None:
+@click.option(
+    "--cloud-account",
+    "--cloud_account",  # The UI will present the above variant, using this as a secondary to be consistent w/ models
+    default=None,
+    help="The name of the cloud account where containers are stored in.",
+)
+def containers(teamspace: Optional[str] = None, cloud_account: Optional[str] = None) -> None:
     """Display the list of available containers."""
     api = LitContainer()
     menu = _TeamspacesMenu()
+    clusters_menu = _ClustersMenu()
     resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
-    result = api.list_containers(teamspace=resolved_teamspace.name, org=resolved_teamspace.owner.name)
+
+    if not cloud_account:
+        cloud_account_obj = clusters_menu._resolve_cluster(resolved_teamspace)
+        cloud_account = "" if cloud_account_obj.spec.cluster_type == V1ClusterType.GLOBAL else cloud_account_obj.id
+
+    result = api.list_containers(
+        teamspace=resolved_teamspace.name, org=resolved_teamspace.owner.name, cloud_account=cloud_account
+    )
+
+    if not result:
+        return
+
     table = Table(pad_edge=True, box=None)
     table.add_column("REPOSITORY")
-    table.add_column("IMAGE ID")
+    table.add_column("CLOUD ACCOUNT")
+    table.add_column("LATEST TAG")
     table.add_column("CREATED")
     for repo in result:
-        table.add_row(repo["REPOSITORY"], repo["IMAGE ID"], repo["CREATED"])
+        table.add_row(repo["REPOSITORY"], repo["CLOUD ACCOUNT"], repo["LATEST TAG"], repo["CREATED"])
     Console().print(table)
 
 

@@ -35,10 +35,14 @@ def test_containers_help():
   Display the list of available containers.
 
 Options:
-  --teamspace TEXT  the teamspace to list containers from. Should be specified
-                    as {owner}/{name}If not provided, can be selected in an
-                    interactive menu.
-  --help            Show this message and exit.
+  --teamspace TEXT                the teamspace to list containers from.
+                                  Should be specified as {owner}/{name}If not
+                                  provided, can be selected in an interactive
+                                  menu.
+  --cloud-account, --cloud_account TEXT
+                                  The name of the cloud account where
+                                  containers are stored in.
+  --help                          Show this message and exit.
 """
     )
 

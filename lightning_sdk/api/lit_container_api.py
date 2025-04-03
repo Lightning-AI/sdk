@@ -105,9 +105,11 @@ class LitContainerApi:
         :param cloud_account: The cluster ID of the cloud account. If None, will use the default cluster.
         :return:
         """
-        project = self._client.lit_registry_service_get_lit_project_registry(
-            project_id, cluster_id="" if cloud_account is None else cloud_account
-        )  # cloud account on the CLI is cluster_id
+        if cloud_account is None:
+            project = self._client.lit_registry_service_get_lit_project_registry(project_id)
+        else:
+            project = self._client.lit_registry_service_get_lit_project_registry(project_id, cluster_id=cloud_account)
+
         return project.repositories
 
     def delete_container(self, project_id: str, container: str) -> V1DeleteLitRepositoryResponse:

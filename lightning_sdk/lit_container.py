@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
+from rich.console import Console
+
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.utils.resolve import _resolve_teamspace
 
@@ -10,7 +12,7 @@ class LitContainer:
         self._api = LitContainerApi()
 
     def list_containers(
-        self, teamspace: str, org: Optional[str] = None, user: Optional[str] = None
+        self, teamspace: str, org: Optional[str] = None, user: Optional[str] = None, cloud_account: Optional[str] = None
     ) -> List[Dict[str, str]]:
         """List available docker repositories.
 
@@ -18,16 +20,19 @@ class LitContainer:
             teamspace: The teamspace to list containers from.
             org: The organization to list containers from.
             user: The user to list the containers from.
+            cloud_account: The cloud account to list the containers from.
 
         Returns:
             A list of dictionaries containing repository details.
         """
+        console = Console()
         try:
             teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
-        except Exception as e:
-            raise ValueError(f"Could not resolve teamspace: {e}") from e
+        except Exception:
+            console.print(f"[bold red]Could not resolve teamspace: {teamspace}[/bold red]")
+            return []
         project_id = teamspace.id
-        repositories = self._api.list_containers(project_id)
+        repositories = self._api.list_containers(project_id, cloud_account=cloud_account)
         table = []
         for repo in repositories:
             created_date = repo.creation_time
@@ -39,8 +44,11 @@ class LitContainer:
             table.append(
                 {
                     "REPOSITORY": repo.name,
-                    "IMAGE ID": repo.id,
+                    "CLOUD ACCOUNT": cloud_account
+                    if cloud_account != "" and cloud_account is not None
+                    else "Lightning cloud",
                     "CREATED": created,
+                    "LATEST TAG": repo.latest_artifact.tag_name,
                 }
             )
         return table

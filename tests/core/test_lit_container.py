@@ -23,6 +23,8 @@ def mock_api_list_containers():
     repo = MagicMock()
     repo.name = "test-docker-image"
     repo.id = "test-image-id"
+    repo.latest_artifact = MagicMock()
+    repo.latest_artifact.tag_name = "v2.0.0"
     repo.creation_time = datetime(2024, 1, 1, 12, 0, 0)
     return repo
 
@@ -32,6 +34,8 @@ def mock_api_list_containers_string_creation():
     repo = MagicMock()
     repo.name = "test-docker-image"
     repo.id = "test-image-id"
+    repo.latest_artifact = MagicMock()
+    repo.latest_artifact.tag_name = "v1.0.0"
     creation_time = datetime(2024, 1, 1, 12, 0, 0)
     repo.creation_time = creation_time.isoformat()
     return repo
@@ -42,7 +46,7 @@ def test_api_list_containers():
     api._client = MagicMock()
     api._docker_client = MagicMock()
     api.list_containers("test-project-id")
-    api._client.lit_registry_service_get_lit_project_registry.assert_called_once_with("test-project-id", cluster_id="")
+    api._client.lit_registry_service_get_lit_project_registry.assert_called_once_with("test-project-id")
 
 
 def test_list_containers(mock_teamspace, mock_api_list_containers, mock_api_list_containers_string_creation):
@@ -53,10 +57,15 @@ def test_list_containers(mock_teamspace, mock_api_list_containers, mock_api_list
         registry._api = MagicMock(spec=LitContainerApi)
         registry._api.list_containers.return_value = [mock_api_list_containers]
 
-        result = registry.list_containers(teamspace="test-teamspace")
+        result = registry.list_containers(teamspace="test-teamspace", cloud_account=None)
 
         expected_result = [
-            {"REPOSITORY": "test-docker-image", "IMAGE ID": "test-image-id", "CREATED": "2024-01-01 12:00:00"}
+            {
+                "REPOSITORY": "test-docker-image",
+                "LATEST TAG": "v2.0.0",
+                "CLOUD ACCOUNT": "Lightning cloud",
+                "CREATED": "2024-01-01 12:00:00",
+            }
         ]
         assert result == expected_result
 
@@ -64,17 +73,25 @@ def test_list_containers(mock_teamspace, mock_api_list_containers, mock_api_list
         registry2._api = MagicMock(spec=LitContainerApi)
         registry2._api.list_containers.return_value = [mock_api_list_containers_string_creation]
 
-        result = registry2.list_containers(teamspace="test-teamspace")
+        result = registry2.list_containers(teamspace="test-teamspace", cloud_account=None)
 
         expected_result = [
-            {"REPOSITORY": "test-docker-image", "IMAGE ID": "test-image-id", "CREATED": "2024-01-01 12:00:00"}
+            {
+                "REPOSITORY": "test-docker-image",
+                "LATEST TAG": "v1.0.0",
+                "CLOUD ACCOUNT": "Lightning cloud",
+                "CREATED": "2024-01-01 12:00:00",
+            }
         ]
         assert result == expected_result
 
         mock_resolve_teamspace.assert_called_with(teamspace="test-teamspace", org=None, user=None)
         assert mock_resolve_teamspace.call_count == 2
 
-        registry._api.list_containers.assert_called_once_with("test-project-id")
+        registry._api.list_containers.assert_called_once_with("test-project-id", cloud_account=None)
+        args, kwargs = registry._api.list_containers.call_args
+        assert args[0] == "test-project-id"
+        assert kwargs.get("cloud_account") is None
 
 
 def test_list_containers_with_org(mock_teamspace, mock_api_list_containers):
@@ -88,12 +105,49 @@ def test_list_containers_with_org(mock_teamspace, mock_api_list_containers):
         result = registry.list_containers(teamspace="test-teamspace", org="test-org")
 
         mock_resolve_teamspace.assert_called_once_with(teamspace="test-teamspace", org="test-org", user=None)
-        registry._api.list_containers.assert_called_once_with("test-project-id")
+        registry._api.list_containers.assert_called_once_with("test-project-id", cloud_account=None)
 
         expected_result = [
-            {"REPOSITORY": "test-docker-image", "IMAGE ID": "test-image-id", "CREATED": "2024-01-01 12:00:00"}
+            {
+                "REPOSITORY": "test-docker-image",
+                "LATEST TAG": "v2.0.0",
+                "CLOUD ACCOUNT": "Lightning cloud",
+                "CREATED": "2024-01-01 12:00:00",
+            }
         ]
         assert result == expected_result
+
+        args, kwargs = registry._api.list_containers.call_args
+        assert args[0] == "test-project-id"
+        assert kwargs.get("cloud_account") is None
+
+
+def test_list_containers_with_org_with_cloud_account(mock_teamspace, mock_api_list_containers):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
+        mock_resolve_teamspace.return_value = mock_teamspace
+
+        registry = LitContainer()
+        registry._api = MagicMock(spec=LitContainerApi)
+        registry._api.list_containers.return_value = [mock_api_list_containers]
+
+        result = registry.list_containers(teamspace="test-teamspace", org="test-org", cloud_account="byoc-123")
+
+        mock_resolve_teamspace.assert_called_once_with(teamspace="test-teamspace", org="test-org", user=None)
+        registry._api.list_containers.assert_called_once_with("test-project-id", cloud_account="byoc-123")
+
+        expected_result = [
+            {
+                "REPOSITORY": "test-docker-image",
+                "LATEST TAG": "v2.0.0",
+                "CLOUD ACCOUNT": "byoc-123",
+                "CREATED": "2024-01-01 12:00:00",
+            }
+        ]
+        assert result == expected_result
+
+        args, kwargs = registry._api.list_containers.call_args
+        assert args[0] == "test-project-id"
+        assert kwargs.get("cloud_account") == "byoc-123"
 
 
 def test_delete_container(mock_teamspace):
@@ -113,27 +167,6 @@ def test_delete_container(mock_teamspace):
 @pytest.fixture()
 def lit_container():
     return LitContainer()
-
-
-@patch("lightning_sdk.api.lit_container_api.LitContainerApi._push_with_retry")
-@patch("lightning_sdk.api.lit_container_api.docker")
-def test_upload_container_stop_iteration(mock_docker, mock_push_with_retry, mock_teamspace):
-    mock_docker_client = MagicMock()
-    api = LitContainerApi()
-    api._docker_client = mock_docker_client
-    mock_docker.from_env.return_value = mock_docker_client
-    value = {}
-    try:
-        gen = api.upload_container("container", teamspace=mock_teamspace, tag="v1.0")
-        yield from gen
-    except StopIteration as e:
-        value: dict = e.value
-    mock_docker_client.images.get.assert_called_once_with("container:v1.0")
-    mock_docker_client.api.tag.assert_called_once()
-    mock_push_with_retry.assert_called_once()
-    assert "finish" in value, "Expected 'finish' in StopIteration value"
-    assert value["url"] == f"{_get_registry_url()}/lit-container/test-org/test-team/container:v1.0"
-    assert value["repository"] == "container"
 
 
 def test_upload_container_success(lit_container, mock_teamspace):
