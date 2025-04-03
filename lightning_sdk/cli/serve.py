@@ -18,6 +18,7 @@ from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.serve import _LitServeDeployer
+from lightning_sdk.utils.resolve import _get_authed_user
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 
@@ -242,7 +243,7 @@ class _Auth(Auth):
             )
             if not proceed:
                 raise RuntimeError(
-                    "Login cancelled. Please login to Lightning AI to deploy your model."
+                    "Login cancelled. Please login to Lightning AI to deploy the API."
                     " Run `lightning login` to login."
                 ) from None
         print("Opening browser for authentication...")
@@ -254,6 +255,20 @@ class _Auth(Auth):
 def authenticate(shall_confirm: bool = True) -> None:
     auth = _Auth(shall_confirm)
     auth.authenticate()
+
+
+def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
+    if teamspace is None:
+        user = _get_authed_user()
+        menu = _TeamspacesMenu()
+        possible_teamspaces = menu._get_possible_teamspaces(user)
+        if len(possible_teamspaces) == 1:
+            name = next(iter(possible_teamspaces.values()))["name"]
+            return Teamspace(name=name, org=org, user=user)
+
+        return menu._resolve_teamspace(teamspace)
+
+    return Teamspace(name=teamspace, org=org, user=user)
 
 
 def _handle_cloud(
@@ -314,11 +329,7 @@ def _handle_cloud(
     console.print("\nPushing container to registry. It may take a while...", style="bold")
     # Authenticate with LitServe affiliate
     authenticate(shall_confirm=not non_interactive)
-    if teamspace is None:
-        menu = _TeamspacesMenu()
-        resolved_teamspace = menu._resolve_teamspace(teamspace)
-    else:
-        resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
+    resolved_teamspace = select_teamspace(teamspace, org, user)
     # list containers to create the project if it doesn't exist
     lit_cr = LitContainerApi()
     lit_cr.list_containers(resolved_teamspace.id, cloud_account=cloud_account)

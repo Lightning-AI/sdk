@@ -7,7 +7,7 @@ from unittest.mock import ANY, MagicMock, call, patch
 import pytest
 import rich
 
-from lightning_sdk.cli.serve import _Auth, _handle_cloud, authenticate
+from lightning_sdk.cli.serve import _Auth, _handle_cloud, authenticate, select_teamspace
 from lightning_sdk.cli.serve import api_impl as serve_api
 
 
@@ -124,7 +124,7 @@ def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
 @patch("docker.from_env")
 @patch("rich.prompt.Confirm.ask")
-@patch("lightning_sdk.cli.serve._TeamspacesMenu")
+@patch("lightning_sdk.cli.serve.select_teamspace")
 @patch("lightning_sdk.cli.serve.LitContainerApi")
 @patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
@@ -134,7 +134,7 @@ def test_cloud_deployment(
     mock_docker_build,
     _,
     mock_litcr,
-    mock_teamspace,
+    mock_select_teamspace,
     mock_confirm,
     mock_docker,
     mock_cwd,
@@ -158,7 +158,7 @@ def test_cloud_deployment(
     tag = "latest"
     serve_api(temp_script, local=False, repository=repo, tag=tag)
 
-    mock_teamspace.return_value._resolve_teamspace.assert_called_once()
+    mock_select_teamspace.assert_called_once()
     mock_authenticate.assert_called_once()
 
     # Verify Docker operations
@@ -177,15 +177,17 @@ def test_cloud_deployment(
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
 @patch("docker.from_env")
 @patch("rich.prompt.Confirm.ask")
-@patch("lightning_sdk.cli.serve._TeamspacesMenu")
+@patch("lightning_sdk.cli.serve.select_teamspace")
 @patch("lightning_sdk.cli.serve.LitContainerApi")
 @patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
+@patch("lightning_sdk.cli.serve.authenticate")
 def test_cloud_deployment_non_interactive(
+    mock_authenticate,
     mock_docker_build,
-    mock_run_cloud,
+    _,
     mock_litcr,
-    mock_teamspace,
+    mock_select_teamspace,
     mock_confirm,
     mock_docker,
     mock_cwd,
@@ -203,7 +205,8 @@ def test_cloud_deployment_non_interactive(
     tag = "latest"
     serve_api(temp_script, local=False, repository=repo, tag=tag, non_interactive=True)
 
-    mock_teamspace.return_value._resolve_teamspace.assert_called_once()
+    mock_authenticate.assert_called_once_with(shall_confirm=False)
+    mock_select_teamspace.assert_called_once()
     mock_docker_build.assert_called_once()
     mock_litcr.return_value.upload_container.assert_called_once()
 
@@ -324,3 +327,21 @@ def test_auth_run_server_confirm_browser_open(mock_confirm, _, mock_authserver):
     mock_confirm.ask.assert_called_once_with(
         "Authenticating with Lightning AI. This will open a browser window. Continue?", default=True
     )
+
+
+@patch("lightning_sdk.cli.serve.Teamspace")
+@patch("lightning_sdk.cli.serve._get_authed_user")
+@patch("lightning_sdk.cli.serve._TeamspacesMenu")
+def test_select_teamspace_when_only_one_available(mock_ts_menu, mock_get_authed_user, mock_teamspace_cls):
+    mock_ts_menu.return_value._get_possible_teamspaces.return_value = {"id": {"name": "test-teamspace"}}
+    mock_get_authed_user.return_value = "user"
+
+    select_teamspace(teamspace=None, org="org", user="user")
+    mock_ts_menu.return_value._get_possible_teamspaces.assert_called_once()
+    mock_teamspace_cls.assert_called_once_with(name="test-teamspace", org="org", user="user")
+
+
+@patch("lightning_sdk.cli.serve.Teamspace")
+def test_select_teamspace(mock_teamspace_cls):
+    select_teamspace(teamspace="test-teamspace", org="org", user="user")
+    mock_teamspace_cls.assert_called_once_with(name="test-teamspace", org="org", user="user")
