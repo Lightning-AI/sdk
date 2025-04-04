@@ -146,7 +146,7 @@ def test_create_delete_model():
         models_store_create_model=mock.MagicMock(return_value=mock.MagicMock(model_id="model-id")),
     )
     teamspace_api.create_model(
-        teamspace_id="ts-abc", name="model-name", metadata={}, private=True, cloud_account="cluster-abc"
+        teamspace_id="ts-abc", name="model-name", version="vvv", metadata={}, private=True, cloud_account="cluster-abc"
     )
     # validate the calls
     teamspace_api._models.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
@@ -177,20 +177,14 @@ def test_create_delete_model_version():
     version = teamspace_api.create_model(
         teamspace_id="ts-abc",
         name="model-name",
-        metadata={},
-        private=True,
-        cloud_account="cluster-abc",
-    )
-    version = teamspace_api.create_model(
-        teamspace_id="ts-abc",
-        name="model-name",
+        version="vVv",
         metadata={},
         private=True,
         cloud_account="cluster-abc",
     )
     teamspace_api._models.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
     teamspace_api._models.models_store_create_model_version.assert_called_with(
-        project_id="ts-abc", body=ModelIdVersionsBody(cluster_id="cluster-abc"), model_id="model-id"
+        project_id="ts-abc", body=ModelIdVersionsBody(cluster_id="cluster-abc", version="vVv"), model_id="model-id"
     )
 
     teamspace_api._models = mock.MagicMock(

@@ -177,6 +177,7 @@ class TeamspaceApi:
     def create_model(
         self,
         name: str,
+        version: Optional[str],
         metadata: Dict[str, str],
         private: bool,
         teamspace_id: str,
@@ -191,7 +192,7 @@ class TeamspaceApi:
             )
         assert len(models) == 1, "Multiple models with the same name found"
         return self.models.models_store_create_model_version(
-            body=ModelIdVersionsBody(cluster_id=cloud_account),
+            body=ModelIdVersionsBody(cluster_id=cloud_account, version=version),
             project_id=teamspace_id,
             model_id=models[0].id,
         )

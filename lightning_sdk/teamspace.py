@@ -251,6 +251,7 @@ class Teamspace:
         self,
         path: Union[str, Path, List[Union[str, Path]]],
         name: str,
+        version: Optional[str] = None,
         cloud_account: Optional[str] = None,
         progress_bar: bool = True,
     ) -> UploadedModelInfo:
@@ -287,12 +288,12 @@ class Teamspace:
                 f"The listed files are: {file_paths}\nThe relative paths are: {relative_paths}"
             )
 
-        cloud_account = (
-            self._teamspace_api._determine_cloud_account(self.id) if cloud_account is None else cloud_account
-        )
+        if cloud_account is None:
+            cloud_account = self._teamspace_api._determine_cloud_account(self.id)
 
         model = self._teamspace_api.create_model(
             name=name,
+            version=version,
             metadata={"filenames": ",".join(relative_paths)},
             private=True,
             teamspace_id=self.id,

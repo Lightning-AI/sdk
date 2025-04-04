@@ -200,6 +200,7 @@ def test_upload_model_single_file(
 
     ts._teamspace_api.create_model.assert_called_once_with(
         name="modelname",
+        version=None,
         metadata={"filenames": "checkpoint.pt"},
         private=True,
         teamspace_id="ts-abc002",

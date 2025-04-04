@@ -211,7 +211,7 @@ def test_parse_model_and_version():
 
 
 def test_parse_model_name_and_version():
-    assert _parse_model_name_and_version("org/teamspace/model") == ("org", "teamspace", "model", "default")
+    assert _parse_model_name_and_version("org/teamspace/model") == ("org", "teamspace", "model", None)
     assert _parse_model_name_and_version("org/teamspace/model:v1") == ("org", "teamspace", "model", "v1")
     with pytest.raises(
         ValueError, match="Model version is expected to be in the format `organization/teamspace/model_name:version`"

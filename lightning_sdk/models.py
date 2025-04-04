@@ -95,7 +95,7 @@ def _parse_model_name_and_version(name: str) -> Tuple[str, str, str, str]:
         ) from err
     parts = model_name.split(":")
     if len(parts) == 1:
-        return org_name, teamspace_name, parts[0], "default"
+        return org_name, teamspace_name, parts[0], None
     if len(parts) == 2:
         return org_name, teamspace_name, parts[0], parts[1]
     # The rest of the validation for name and version happens in the backend
@@ -120,6 +120,8 @@ def download_model(
     """
     name = _extend_model_name_with_teamspace(name)
     teamspace_owner_name, teamspace_name, model_name, version = _parse_model_name_and_version(name)
+    if version is None:
+        version = "default"
 
     download_dir = Path(download_dir)
 
@@ -159,11 +161,12 @@ def upload_model(
         progress_bar: Whether to show a progress bar for the upload.
     """
     name = _extend_model_name_with_teamspace(name)
-    org_name, teamspace_name, model_name, _ = _parse_model_name_and_version(name)
+    org_name, teamspace_name, model_name, version = _parse_model_name_and_version(name)
     teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
     return teamspace.upload_model(
         path=path,
         name=model_name,
+        version=version,
         cloud_account=cloud_account,
         progress_bar=progress_bar,
     )
