@@ -149,6 +149,7 @@ def upload_model(
     path: Union[str, Path, List[Union[str, Path]]] = ".",
     cloud_account: Optional[str] = None,
     progress_bar: bool = True,
+    metadata: Optional[Dict[str, Any]] = None,
 ) -> UploadedModelInfo:
     """Upload a Model.
 
@@ -169,4 +170,5 @@ def upload_model(
         version=version,
         cloud_account=cloud_account,
         progress_bar=progress_bar,
+        metadata=metadata,
     )

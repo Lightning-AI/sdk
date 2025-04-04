@@ -3,6 +3,7 @@ import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 
+import lightning_sdk
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import TeamspaceApi
 from lightning_sdk.lightning_cloud.openapi import V1ProjectClusterBinding
@@ -254,6 +255,7 @@ class Teamspace:
         version: Optional[str] = None,
         cloud_account: Optional[str] = None,
         progress_bar: bool = True,
+        metadata: Optional[dict] = None,
     ) -> UploadedModelInfo:
         """Upload a local checkpoint file to the model store.
 
@@ -263,6 +265,7 @@ class Teamspace:
             cloud_account: The name of the cloud account to store the Model in.
                 If not provided, the default cloud account for the Teamspace will be used.
             progress_bar: Whether to show a progress bar for the upload.
+            metadata: Metadata to attach to the model. Can be a dictionary.
         """
         if not path:
             raise ValueError("No path provided to upload")
@@ -290,11 +293,16 @@ class Teamspace:
 
         if cloud_account is None:
             cloud_account = self._teamspace_api._determine_cloud_account(self.id)
+        if not metadata:
+            metadata = {}
+        if not isinstance(metadata, dict):
+            raise TypeError(f"Metadata must be a dictionary, but provided {type(metadata)}")
+        metadata.update({"lightning-sdk": lightning_sdk.__version__})
 
         model = self._teamspace_api.create_model(
             name=name,
             version=version,
-            metadata={"filenames": ",".join(relative_paths)},
+            metadata=metadata,
             private=True,
             teamspace_id=self.id,
             cloud_account=cloud_account,

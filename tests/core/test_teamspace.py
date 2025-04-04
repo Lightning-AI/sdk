@@ -5,6 +5,7 @@ from unittest import mock
 
 import pytest
 
+import lightning_sdk
 from lightning_sdk.job import Job
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
@@ -196,12 +197,12 @@ def test_upload_model_single_file(
     ts._teamspace_api.upload_model_file = mock.Mock()
     ts._teamspace_api.complete_model_upload = mock.Mock()
 
-    result = ts.upload_model(path=str(file_path), name="modelname")
+    result = ts.upload_model(path=str(file_path), name="modelname", metadata={"weather": "sunny or rainy"})
 
     ts._teamspace_api.create_model.assert_called_once_with(
         name="modelname",
         version=None,
-        metadata={"filenames": "checkpoint.pt"},
+        metadata={"weather": "sunny or rainy", "lightning-sdk": lightning_sdk.__version__},
         private=True,
         teamspace_id="ts-abc002",
         cloud_account="test-cluster-id",
