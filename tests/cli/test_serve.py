@@ -7,7 +7,7 @@ from unittest.mock import ANY, MagicMock, call, patch
 import pytest
 import rich
 
-from lightning_sdk.cli.serve import _Auth, _handle_cloud, authenticate, select_teamspace
+from lightning_sdk.cli.serve import _Auth, _handle_cloud, authenticate, poll_verified_status, select_teamspace
 from lightning_sdk.cli.serve import api_impl as serve_api
 
 
@@ -129,7 +129,9 @@ def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
 @patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
 @patch("lightning_sdk.cli.serve.authenticate")
+@patch("lightning_sdk.cli.serve.poll_verified_status")
 def test_cloud_deployment(
+    mock_poll_verified_status,
     mock_authenticate,
     mock_docker_build,
     _,
@@ -142,6 +144,7 @@ def test_cloud_deployment(
     capsys,
 ):
     mock_client = mock_docker.return_value
+    mock_poll_verified_status.return_value = True
     # Mock Docker client responses
     mock_client.ping.return_value = True
     mock_client.api.build.return_value = [{"stream": "Step 1/10"}]
@@ -182,7 +185,9 @@ def test_cloud_deployment(
 @patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
 @patch("lightning_sdk.cli.serve.authenticate")
+@patch("lightning_sdk.cli.serve.poll_verified_status")
 def test_cloud_deployment_non_interactive(
+    mock_poll_verified_status,
     mock_authenticate,
     mock_docker_build,
     _,
@@ -206,6 +211,7 @@ def test_cloud_deployment_non_interactive(
     serve_api(temp_script, local=False, repository=repo, tag=tag, non_interactive=True)
 
     mock_authenticate.assert_called_once_with(shall_confirm=False)
+    mock_poll_verified_status.asssert_called_once()
     mock_select_teamspace.assert_called_once()
     mock_docker_build.assert_called_once()
     mock_litcr.return_value.upload_container.assert_called_once()
@@ -237,7 +243,10 @@ def test_args_without_repository(mock_subprocess, mock_dt, temp_script):
 @patch("lightning_sdk.cli.serve.Confirm.ask")
 @patch("lightning_sdk.cli.serve.webbrowser")
 @patch("lightning_sdk.cli.serve.authenticate")
-def test_handle_cloud(mock_authenticate, mock_browser, mock_ask, mock_ls_deployer, _, mock_litcr, temp_script):
+@patch("lightning_sdk.cli.serve.poll_verified_status")
+def test_handle_cloud(
+    mock_poll_verified_status, mock_authenticate, mock_browser, mock_ask, mock_ls_deployer, _, mock_litcr, temp_script
+):
     mock_ask.return_value = True
     mock_ls_deployer.return_value.run_on_cloud.return_value = {"url": "test-url"}
     console = rich.console.Console()
@@ -248,6 +257,7 @@ def test_handle_cloud(mock_authenticate, mock_browser, mock_ask, mock_ls_deploye
         machine=MagicMock(),
     )
     mock_litcr.assert_called_once()
+    mock_poll_verified_status.asssert_called_once()
     mock_authenticate.assert_called_once()
     mock_litcr.return_value.list_containers.assert_called_once_with(ANY, cloud_account=None)
     mock_ls_deployer.return_value.push_container.assert_called_once()
@@ -261,14 +271,23 @@ def test_handle_cloud(mock_authenticate, mock_browser, mock_ask, mock_ls_deploye
 @patch("lightning_sdk.cli.serve.Confirm.ask")
 @patch("lightning_sdk.serve.DeploymentApi")
 @patch("lightning_sdk.cli.serve.authenticate")
+@patch("lightning_sdk.cli.serve.poll_verified_status")
 def test_handle_byoc_cloud(
-    mock_authenticate, mock_deployment_api, mock_ask, mock_ls_deployer, _, mock_litcr, temp_script
+    mock_poll_verified_status,
+    mock_authenticate,
+    mock_deployment_api,
+    mock_ask,
+    mock_ls_deployer,
+    _,
+    mock_litcr,
+    temp_script,
 ):
     mock_ask.return_value = True
     mock_deployment_api.return_value.get_deployment_by_name.return_value = None
     console = rich.console.Console()
     _handle_cloud(temp_script, console, teamspace="test", machine=MagicMock(), cloud_account="byoc-123")
     mock_litcr.assert_called_once()
+    mock_poll_verified_status.asssert_called_once()
     mock_authenticate.assert_called_once()
     mock_litcr.return_value.list_containers.assert_called_once_with(ANY, cloud_account="byoc-123")
     mock_ls_deployer.return_value.push_container.assert_called_once()
@@ -280,7 +299,10 @@ def test_handle_byoc_cloud(
 @patch("lightning_sdk.cli.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
 @patch("lightning_sdk.cli.serve.authenticate")
-def test_handle_cloud_deployment_api(mock_authenticate, mock_ask, mock_deployer, __, ___, temp_script):
+@patch("lightning_sdk.cli.serve.poll_verified_status")
+def test_handle_cloud_deployment_api(
+    mock_poll_verified_status, mock_authenticate, mock_ask, mock_deployer, __, ___, temp_script
+):
     mock_ask.return_value = True
     mock_deployer.created = True
     mock_console = MagicMock()
@@ -291,6 +313,7 @@ def test_handle_cloud_deployment_api(mock_authenticate, mock_ask, mock_deployer,
         machine=MagicMock(),
     )
 
+    mock_poll_verified_status.asssert_called_once()
     mock_deployer.return_value.dockerize_api.assert_called_once()
     mock_authenticate.assert_called_once()
     mock_console.print.assert_called()
@@ -351,3 +374,13 @@ def test_select_teamspace_when_only_one_available(mock_ts_menu, mock_get_authed_
 def test_select_teamspace(mock_resolve_teamspace):
     select_teamspace(teamspace="test-teamspace", org="org", user="user")
     mock_resolve_teamspace.assert_called_once_with(teamspace="test-teamspace", org="org", user="user")
+
+
+@patch("lightning_sdk.cli.serve._get_authed_user")
+@patch("lightning_sdk.cli.serve.UserApi")
+def test_poll_verified_status(mock_user_api_cls, mock_get_authed_user):
+    # test poll_verified_status
+    mock_get_user = mock_user_api_cls.return_value.get_user = MagicMock(return_value=MagicMock(verified=False))
+    assert poll_verified_status()
+    mock_get_authed_user.assert_called_once()
+    mock_get_user.assert_called_once()

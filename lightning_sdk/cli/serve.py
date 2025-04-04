@@ -13,6 +13,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
 
 from lightning_sdk import Machine, Teamspace
+from lightning_sdk.api import UserApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud import env
@@ -271,6 +272,22 @@ def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optiona
     return _resolve_teamspace(teamspace=teamspace, org=org, user=user)
 
 
+def poll_verified_status() -> bool:
+    """Polls the verified status of the user until it is True or a timeout occurs."""
+    user_api = UserApi()
+    user = _get_authed_user()
+    start_time = datetime.now()
+    timeout = 600  # 10 minutes
+    while True:
+        user_resp = user_api.get_user(name=user.name)
+        if user_resp.status.verified:
+            return True
+        if (datetime.now() - start_time).total_seconds() > timeout:
+            break
+        time.sleep(5)
+    return False
+
+
 def _handle_cloud(
     script_path: Union[str, Path],
     console: Console,
@@ -330,6 +347,11 @@ def _handle_cloud(
     # Authenticate with LitServe affiliate
     authenticate(shall_confirm=not non_interactive)
     resolved_teamspace = select_teamspace(teamspace, org, user)
+    verified = poll_verified_status()
+    if not verified:
+        console.print("❌ Verify phone number to continue. Visit lightning.ai.", style="red")
+        return
+
     # list containers to create the project if it doesn't exist
     lit_cr = LitContainerApi()
     lit_cr.list_containers(resolved_teamspace.id, cloud_account=cloud_account)
