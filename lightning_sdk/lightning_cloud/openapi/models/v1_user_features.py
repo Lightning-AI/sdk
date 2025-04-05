@@ -67,7 +67,6 @@ class V1UserFeatures(object):
         'dgx_cloud': 'bool',
         'docs_agent': 'bool',
         'drive_v2': 'bool',
-        'enable_crypto_crackdown': 'bool',
         'enable_storage_limits': 'bool',
         'enterprise_compute_admin': 'bool',
         'fair_share': 'bool',
@@ -79,7 +78,6 @@ class V1UserFeatures(object):
         'lambda_labs': 'bool',
         'landing_studios': 'bool',
         'lit_logger': 'bool',
-        'manage_default_studio_machine': 'bool',
         'marketplace': 'bool',
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
@@ -92,14 +90,9 @@ class V1UserFeatures(object):
         'plugin_inference': 'bool',
         'plugin_label_studio': 'bool',
         'plugin_langflow': 'bool',
-        'plugin_lightning_apps': 'bool',
-        'plugin_lightning_apps_distributed': 'bool',
-        'plugin_milvus': 'bool',
         'plugin_python_profiler': 'bool',
-        'plugin_react': 'bool',
         'plugin_service': 'bool',
         'plugin_sweeps': 'bool',
-        'plugin_weviate': 'bool',
         'pricing_updates': 'bool',
         'product_generator': 'bool',
         'project_selector': 'bool',
@@ -116,10 +109,12 @@ class V1UserFeatures(object):
         'studio_on_stop': 'bool',
         'studio_version_visibility': 'bool',
         'studios_dashboard': 'bool',
+        'studios_dashboard_system_metrics': 'bool',
         'teamspace_storage_tab': 'bool',
         'trainium2': 'bool',
         'use_rclone_mounts_only': 'bool',
-        'vultr': 'bool'
+        'vultr': 'bool',
+        'weka': 'bool'
     }
 
     attribute_map = {
@@ -149,7 +144,6 @@ class V1UserFeatures(object):
         'dgx_cloud': 'dgxCloud',
         'docs_agent': 'docsAgent',
         'drive_v2': 'driveV2',
-        'enable_crypto_crackdown': 'enableCryptoCrackdown',
         'enable_storage_limits': 'enableStorageLimits',
         'enterprise_compute_admin': 'enterpriseComputeAdmin',
         'fair_share': 'fairShare',
@@ -161,7 +155,6 @@ class V1UserFeatures(object):
         'lambda_labs': 'lambdaLabs',
         'landing_studios': 'landingStudios',
         'lit_logger': 'litLogger',
-        'manage_default_studio_machine': 'manageDefaultStudioMachine',
         'marketplace': 'marketplace',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
@@ -174,14 +167,9 @@ class V1UserFeatures(object):
         'plugin_inference': 'pluginInference',
         'plugin_label_studio': 'pluginLabelStudio',
         'plugin_langflow': 'pluginLangflow',
-        'plugin_lightning_apps': 'pluginLightningApps',
-        'plugin_lightning_apps_distributed': 'pluginLightningAppsDistributed',
-        'plugin_milvus': 'pluginMilvus',
         'plugin_python_profiler': 'pluginPythonProfiler',
-        'plugin_react': 'pluginReact',
         'plugin_service': 'pluginService',
         'plugin_sweeps': 'pluginSweeps',
-        'plugin_weviate': 'pluginWeviate',
         'pricing_updates': 'pricingUpdates',
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
@@ -198,13 +186,15 @@ class V1UserFeatures(object):
         'studio_on_stop': 'studioOnStop',
         'studio_version_visibility': 'studioVersionVisibility',
         'studios_dashboard': 'studiosDashboard',
+        'studios_dashboard_system_metrics': 'studiosDashboardSystemMetrics',
         'teamspace_storage_tab': 'teamspaceStorageTab',
         'trainium2': 'trainium2',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
-        'vultr': 'vultr'
+        'vultr': 'vultr',
+        'weka': 'weka'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_crypto_crackdown: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, manage_default_studio_machine: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_lightning_apps: 'bool' =None, plugin_lightning_apps_distributed: 'bool' =None, plugin_milvus: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_react: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, plugin_weviate: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -232,7 +222,6 @@ class V1UserFeatures(object):
         self._dgx_cloud = None
         self._docs_agent = None
         self._drive_v2 = None
-        self._enable_crypto_crackdown = None
         self._enable_storage_limits = None
         self._enterprise_compute_admin = None
         self._fair_share = None
@@ -244,7 +233,6 @@ class V1UserFeatures(object):
         self._lambda_labs = None
         self._landing_studios = None
         self._lit_logger = None
-        self._manage_default_studio_machine = None
         self._marketplace = None
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
@@ -257,14 +245,9 @@ class V1UserFeatures(object):
         self._plugin_inference = None
         self._plugin_label_studio = None
         self._plugin_langflow = None
-        self._plugin_lightning_apps = None
-        self._plugin_lightning_apps_distributed = None
-        self._plugin_milvus = None
         self._plugin_python_profiler = None
-        self._plugin_react = None
         self._plugin_service = None
         self._plugin_sweeps = None
-        self._plugin_weviate = None
         self._pricing_updates = None
         self._product_generator = None
         self._project_selector = None
@@ -281,10 +264,12 @@ class V1UserFeatures(object):
         self._studio_on_stop = None
         self._studio_version_visibility = None
         self._studios_dashboard = None
+        self._studios_dashboard_system_metrics = None
         self._teamspace_storage_tab = None
         self._trainium2 = None
         self._use_rclone_mounts_only = None
         self._vultr = None
+        self._weka = None
         self.discriminator = None
         if affiliate_links is not None:
             self.affiliate_links = affiliate_links
@@ -338,8 +323,6 @@ class V1UserFeatures(object):
             self.docs_agent = docs_agent
         if drive_v2 is not None:
             self.drive_v2 = drive_v2
-        if enable_crypto_crackdown is not None:
-            self.enable_crypto_crackdown = enable_crypto_crackdown
         if enable_storage_limits is not None:
             self.enable_storage_limits = enable_storage_limits
         if enterprise_compute_admin is not None:
@@ -362,8 +345,6 @@ class V1UserFeatures(object):
             self.landing_studios = landing_studios
         if lit_logger is not None:
             self.lit_logger = lit_logger
-        if manage_default_studio_machine is not None:
-            self.manage_default_studio_machine = manage_default_studio_machine
         if marketplace is not None:
             self.marketplace = marketplace
         if mmt_fault_tolerance is not None:
@@ -388,22 +369,12 @@ class V1UserFeatures(object):
             self.plugin_label_studio = plugin_label_studio
         if plugin_langflow is not None:
             self.plugin_langflow = plugin_langflow
-        if plugin_lightning_apps is not None:
-            self.plugin_lightning_apps = plugin_lightning_apps
-        if plugin_lightning_apps_distributed is not None:
-            self.plugin_lightning_apps_distributed = plugin_lightning_apps_distributed
-        if plugin_milvus is not None:
-            self.plugin_milvus = plugin_milvus
         if plugin_python_profiler is not None:
             self.plugin_python_profiler = plugin_python_profiler
-        if plugin_react is not None:
-            self.plugin_react = plugin_react
         if plugin_service is not None:
             self.plugin_service = plugin_service
         if plugin_sweeps is not None:
             self.plugin_sweeps = plugin_sweeps
-        if plugin_weviate is not None:
-            self.plugin_weviate = plugin_weviate
         if pricing_updates is not None:
             self.pricing_updates = pricing_updates
         if product_generator is not None:
@@ -436,6 +407,8 @@ class V1UserFeatures(object):
             self.studio_version_visibility = studio_version_visibility
         if studios_dashboard is not None:
             self.studios_dashboard = studios_dashboard
+        if studios_dashboard_system_metrics is not None:
+            self.studios_dashboard_system_metrics = studios_dashboard_system_metrics
         if teamspace_storage_tab is not None:
             self.teamspace_storage_tab = teamspace_storage_tab
         if trainium2 is not None:
@@ -444,6 +417,8 @@ class V1UserFeatures(object):
             self.use_rclone_mounts_only = use_rclone_mounts_only
         if vultr is not None:
             self.vultr = vultr
+        if weka is not None:
+            self.weka = weka
 
     @property
     def affiliate_links(self) -> 'bool':
@@ -992,27 +967,6 @@ class V1UserFeatures(object):
         self._drive_v2 = drive_v2
 
     @property
-    def enable_crypto_crackdown(self) -> 'bool':
-        """Gets the enable_crypto_crackdown of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The enable_crypto_crackdown of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._enable_crypto_crackdown
-
-    @enable_crypto_crackdown.setter
-    def enable_crypto_crackdown(self, enable_crypto_crackdown: 'bool'):
-        """Sets the enable_crypto_crackdown of this V1UserFeatures.
-
-
-        :param enable_crypto_crackdown: The enable_crypto_crackdown of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._enable_crypto_crackdown = enable_crypto_crackdown
-
-    @property
     def enable_storage_limits(self) -> 'bool':
         """Gets the enable_storage_limits of this V1UserFeatures.  # noqa: E501
 
@@ -1242,27 +1196,6 @@ class V1UserFeatures(object):
         """
 
         self._lit_logger = lit_logger
-
-    @property
-    def manage_default_studio_machine(self) -> 'bool':
-        """Gets the manage_default_studio_machine of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The manage_default_studio_machine of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._manage_default_studio_machine
-
-    @manage_default_studio_machine.setter
-    def manage_default_studio_machine(self, manage_default_studio_machine: 'bool'):
-        """Sets the manage_default_studio_machine of this V1UserFeatures.
-
-
-        :param manage_default_studio_machine: The manage_default_studio_machine of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._manage_default_studio_machine = manage_default_studio_machine
 
     @property
     def marketplace(self) -> 'bool':
@@ -1517,69 +1450,6 @@ class V1UserFeatures(object):
         self._plugin_langflow = plugin_langflow
 
     @property
-    def plugin_lightning_apps(self) -> 'bool':
-        """Gets the plugin_lightning_apps of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_lightning_apps of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_lightning_apps
-
-    @plugin_lightning_apps.setter
-    def plugin_lightning_apps(self, plugin_lightning_apps: 'bool'):
-        """Sets the plugin_lightning_apps of this V1UserFeatures.
-
-
-        :param plugin_lightning_apps: The plugin_lightning_apps of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_lightning_apps = plugin_lightning_apps
-
-    @property
-    def plugin_lightning_apps_distributed(self) -> 'bool':
-        """Gets the plugin_lightning_apps_distributed of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_lightning_apps_distributed of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_lightning_apps_distributed
-
-    @plugin_lightning_apps_distributed.setter
-    def plugin_lightning_apps_distributed(self, plugin_lightning_apps_distributed: 'bool'):
-        """Sets the plugin_lightning_apps_distributed of this V1UserFeatures.
-
-
-        :param plugin_lightning_apps_distributed: The plugin_lightning_apps_distributed of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_lightning_apps_distributed = plugin_lightning_apps_distributed
-
-    @property
-    def plugin_milvus(self) -> 'bool':
-        """Gets the plugin_milvus of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_milvus of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_milvus
-
-    @plugin_milvus.setter
-    def plugin_milvus(self, plugin_milvus: 'bool'):
-        """Sets the plugin_milvus of this V1UserFeatures.
-
-
-        :param plugin_milvus: The plugin_milvus of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_milvus = plugin_milvus
-
-    @property
     def plugin_python_profiler(self) -> 'bool':
         """Gets the plugin_python_profiler of this V1UserFeatures.  # noqa: E501
 
@@ -1599,27 +1469,6 @@ class V1UserFeatures(object):
         """
 
         self._plugin_python_profiler = plugin_python_profiler
-
-    @property
-    def plugin_react(self) -> 'bool':
-        """Gets the plugin_react of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_react of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_react
-
-    @plugin_react.setter
-    def plugin_react(self, plugin_react: 'bool'):
-        """Sets the plugin_react of this V1UserFeatures.
-
-
-        :param plugin_react: The plugin_react of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_react = plugin_react
 
     @property
     def plugin_service(self) -> 'bool':
@@ -1662,27 +1511,6 @@ class V1UserFeatures(object):
         """
 
         self._plugin_sweeps = plugin_sweeps
-
-    @property
-    def plugin_weviate(self) -> 'bool':
-        """Gets the plugin_weviate of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_weviate of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_weviate
-
-    @plugin_weviate.setter
-    def plugin_weviate(self, plugin_weviate: 'bool'):
-        """Sets the plugin_weviate of this V1UserFeatures.
-
-
-        :param plugin_weviate: The plugin_weviate of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_weviate = plugin_weviate
 
     @property
     def pricing_updates(self) -> 'bool':
@@ -2021,6 +1849,27 @@ class V1UserFeatures(object):
         self._studios_dashboard = studios_dashboard
 
     @property
+    def studios_dashboard_system_metrics(self) -> 'bool':
+        """Gets the studios_dashboard_system_metrics of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The studios_dashboard_system_metrics of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._studios_dashboard_system_metrics
+
+    @studios_dashboard_system_metrics.setter
+    def studios_dashboard_system_metrics(self, studios_dashboard_system_metrics: 'bool'):
+        """Sets the studios_dashboard_system_metrics of this V1UserFeatures.
+
+
+        :param studios_dashboard_system_metrics: The studios_dashboard_system_metrics of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._studios_dashboard_system_metrics = studios_dashboard_system_metrics
+
+    @property
     def teamspace_storage_tab(self) -> 'bool':
         """Gets the teamspace_storage_tab of this V1UserFeatures.  # noqa: E501
 
@@ -2103,6 +1952,27 @@ class V1UserFeatures(object):
         """
 
         self._vultr = vultr
+
+    @property
+    def weka(self) -> 'bool':
+        """Gets the weka of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The weka of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._weka
+
+    @weka.setter
+    def weka(self, weka: 'bool'):
+        """Sets the weka of this V1UserFeatures.
+
+
+        :param weka: The weka of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._weka = weka
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

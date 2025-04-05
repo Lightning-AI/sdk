@@ -47,11 +47,13 @@ class V1CloudSpaceColdStartMetrics(object):
         'container_started_at': 'datetime',
         'created_at': 'datetime',
         'deleted_at': 'datetime',
+        'display_name': 'str',
         'docker_availability_ended_at': 'datetime',
         'docker_availability_started_at': 'datetime',
         'image_pulling_ended_at': 'datetime',
         'image_pulling_started_at': 'datetime',
         'instance_type': 'str',
+        'is_studio_deleted': 'bool',
         'overprovisioned': 'bool',
         'progress_bar_ended_at': 'datetime',
         'project_id': 'str',
@@ -70,11 +72,13 @@ class V1CloudSpaceColdStartMetrics(object):
         'container_started_at': 'containerStartedAt',
         'created_at': 'createdAt',
         'deleted_at': 'deletedAt',
+        'display_name': 'displayName',
         'docker_availability_ended_at': 'dockerAvailabilityEndedAt',
         'docker_availability_started_at': 'dockerAvailabilityStartedAt',
         'image_pulling_ended_at': 'imagePullingEndedAt',
         'image_pulling_started_at': 'imagePullingStartedAt',
         'instance_type': 'instanceType',
+        'is_studio_deleted': 'isStudioDeleted',
         'overprovisioned': 'overprovisioned',
         'progress_bar_ended_at': 'progressBarEndedAt',
         'project_id': 'projectId',
@@ -86,7 +90,7 @@ class V1CloudSpaceColdStartMetrics(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cloudspace_instance_id: 'str' =None, cluster_id: 'str' =None, container_started_at: 'datetime' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, docker_availability_ended_at: 'datetime' =None, docker_availability_started_at: 'datetime' =None, image_pulling_ended_at: 'datetime' =None, image_pulling_started_at: 'datetime' =None, instance_type: 'str' =None, overprovisioned: 'bool' =None, progress_bar_ended_at: 'datetime' =None, project_id: 'str' =None, resources: 'V1Resources' =None, spot: 'bool' =None, started_at: 'datetime' =None, stop_at: 'datetime' =None, stopped_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cloudspace_instance_id: 'str' =None, cluster_id: 'str' =None, container_started_at: 'datetime' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, display_name: 'str' =None, docker_availability_ended_at: 'datetime' =None, docker_availability_started_at: 'datetime' =None, image_pulling_ended_at: 'datetime' =None, image_pulling_started_at: 'datetime' =None, instance_type: 'str' =None, is_studio_deleted: 'bool' =None, overprovisioned: 'bool' =None, progress_bar_ended_at: 'datetime' =None, project_id: 'str' =None, resources: 'V1Resources' =None, spot: 'bool' =None, started_at: 'datetime' =None, stop_at: 'datetime' =None, stopped_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1CloudSpaceColdStartMetrics - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cloudspace_instance_id = None
@@ -94,11 +98,13 @@ class V1CloudSpaceColdStartMetrics(object):
         self._container_started_at = None
         self._created_at = None
         self._deleted_at = None
+        self._display_name = None
         self._docker_availability_ended_at = None
         self._docker_availability_started_at = None
         self._image_pulling_ended_at = None
         self._image_pulling_started_at = None
         self._instance_type = None
+        self._is_studio_deleted = None
         self._overprovisioned = None
         self._progress_bar_ended_at = None
         self._project_id = None
@@ -121,6 +127,8 @@ class V1CloudSpaceColdStartMetrics(object):
             self.created_at = created_at
         if deleted_at is not None:
             self.deleted_at = deleted_at
+        if display_name is not None:
+            self.display_name = display_name
         if docker_availability_ended_at is not None:
             self.docker_availability_ended_at = docker_availability_ended_at
         if docker_availability_started_at is not None:
@@ -131,6 +139,8 @@ class V1CloudSpaceColdStartMetrics(object):
             self.image_pulling_started_at = image_pulling_started_at
         if instance_type is not None:
             self.instance_type = instance_type
+        if is_studio_deleted is not None:
+            self.is_studio_deleted = is_studio_deleted
         if overprovisioned is not None:
             self.overprovisioned = overprovisioned
         if progress_bar_ended_at is not None:
@@ -277,6 +287,27 @@ class V1CloudSpaceColdStartMetrics(object):
         self._deleted_at = deleted_at
 
     @property
+    def display_name(self) -> 'str':
+        """Gets the display_name of this V1CloudSpaceColdStartMetrics.  # noqa: E501
+
+
+        :return: The display_name of this V1CloudSpaceColdStartMetrics.  # noqa: E501
+        :rtype: str
+        """
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, display_name: 'str'):
+        """Sets the display_name of this V1CloudSpaceColdStartMetrics.
+
+
+        :param display_name: The display_name of this V1CloudSpaceColdStartMetrics.  # noqa: E501
+        :type: str
+        """
+
+        self._display_name = display_name
+
+    @property
     def docker_availability_ended_at(self) -> 'datetime':
         """Gets the docker_availability_ended_at of this V1CloudSpaceColdStartMetrics.  # noqa: E501
 
@@ -380,6 +411,27 @@ class V1CloudSpaceColdStartMetrics(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def is_studio_deleted(self) -> 'bool':
+        """Gets the is_studio_deleted of this V1CloudSpaceColdStartMetrics.  # noqa: E501
+
+
+        :return: The is_studio_deleted of this V1CloudSpaceColdStartMetrics.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_studio_deleted
+
+    @is_studio_deleted.setter
+    def is_studio_deleted(self, is_studio_deleted: 'bool'):
+        """Sets the is_studio_deleted of this V1CloudSpaceColdStartMetrics.
+
+
+        :param is_studio_deleted: The is_studio_deleted of this V1CloudSpaceColdStartMetrics.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_studio_deleted = is_studio_deleted
 
     @property
     def overprovisioned(self) -> 'bool':

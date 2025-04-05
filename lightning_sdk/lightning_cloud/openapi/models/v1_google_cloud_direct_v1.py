@@ -43,6 +43,7 @@ class V1GoogleCloudDirectV1(object):
     swagger_types = {
         'bucket_name': 'str',
         'compute_project_role': 'str',
+        'compute_service_account_email': 'str',
         'credentials_secret_id': 'str',
         'credentials_service_account_email': 'str',
         'custom_subnet_mode': 'bool',
@@ -59,6 +60,7 @@ class V1GoogleCloudDirectV1(object):
     attribute_map = {
         'bucket_name': 'bucketName',
         'compute_project_role': 'computeProjectRole',
+        'compute_service_account_email': 'computeServiceAccountEmail',
         'credentials_secret_id': 'credentialsSecretId',
         'credentials_service_account_email': 'credentialsServiceAccountEmail',
         'custom_subnet_mode': 'customSubnetMode',
@@ -72,10 +74,11 @@ class V1GoogleCloudDirectV1(object):
         'vpc_networks': 'vpcNetworks'
     }
 
-    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None, vpc_networks: 'list[str]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, compute_service_account_email: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None, vpc_networks: 'list[str]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._compute_project_role = None
+        self._compute_service_account_email = None
         self._credentials_secret_id = None
         self._credentials_service_account_email = None
         self._custom_subnet_mode = None
@@ -92,6 +95,8 @@ class V1GoogleCloudDirectV1(object):
             self.bucket_name = bucket_name
         if compute_project_role is not None:
             self.compute_project_role = compute_project_role
+        if compute_service_account_email is not None:
+            self.compute_service_account_email = compute_service_account_email
         if credentials_secret_id is not None:
             self.credentials_secret_id = credentials_secret_id
         if credentials_service_account_email is not None:
@@ -156,6 +161,27 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._compute_project_role = compute_project_role
+
+    @property
+    def compute_service_account_email(self) -> 'str':
+        """Gets the compute_service_account_email of this V1GoogleCloudDirectV1.  # noqa: E501
+
+
+        :return: The compute_service_account_email of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._compute_service_account_email
+
+    @compute_service_account_email.setter
+    def compute_service_account_email(self, compute_service_account_email: 'str'):
+        """Sets the compute_service_account_email of this V1GoogleCloudDirectV1.
+
+
+        :param compute_service_account_email: The compute_service_account_email of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._compute_service_account_email = compute_service_account_email
 
     @property
     def credentials_secret_id(self) -> 'str':
