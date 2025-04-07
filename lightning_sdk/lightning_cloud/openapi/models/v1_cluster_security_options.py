@@ -44,6 +44,7 @@ class V1ClusterSecurityOptions(object):
         'bucket_kms_key': 'str',
         'containers_non_privileged': 'bool',
         'disable_public_ip': 'bool',
+        'disabled_services': 'list[str]',
         'encrypt_cluster_bucket': 'bool',
         'encrypt_instance_volumes': 'bool',
         'extra_firewall_cidr_ranges': 'list[str]',
@@ -59,6 +60,7 @@ class V1ClusterSecurityOptions(object):
         'bucket_kms_key': 'bucketKmsKey',
         'containers_non_privileged': 'containersNonPrivileged',
         'disable_public_ip': 'disablePublicIp',
+        'disabled_services': 'disabledServices',
         'encrypt_cluster_bucket': 'encryptClusterBucket',
         'encrypt_instance_volumes': 'encryptInstanceVolumes',
         'extra_firewall_cidr_ranges': 'extraFirewallCidrRanges',
@@ -70,11 +72,12 @@ class V1ClusterSecurityOptions(object):
         'ssh_disabled': 'sshDisabled'
     }
 
-    def __init__(self, bucket_kms_key: 'str' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_policy: 'str' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
+    def __init__(self, bucket_kms_key: 'str' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_policy: 'str' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
         self._bucket_kms_key = None
         self._containers_non_privileged = None
         self._disable_public_ip = None
+        self._disabled_services = None
         self._encrypt_cluster_bucket = None
         self._encrypt_instance_volumes = None
         self._extra_firewall_cidr_ranges = None
@@ -91,6 +94,8 @@ class V1ClusterSecurityOptions(object):
             self.containers_non_privileged = containers_non_privileged
         if disable_public_ip is not None:
             self.disable_public_ip = disable_public_ip
+        if disabled_services is not None:
+            self.disabled_services = disabled_services
         if encrypt_cluster_bucket is not None:
             self.encrypt_cluster_bucket = encrypt_cluster_bucket
         if encrypt_instance_volumes is not None:
@@ -172,6 +177,27 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._disable_public_ip = disable_public_ip
+
+    @property
+    def disabled_services(self) -> 'list[str]':
+        """Gets the disabled_services of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The disabled_services of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._disabled_services
+
+    @disabled_services.setter
+    def disabled_services(self, disabled_services: 'list[str]'):
+        """Sets the disabled_services of this V1ClusterSecurityOptions.
+
+
+        :param disabled_services: The disabled_services of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._disabled_services = disabled_services
 
     @property
     def encrypt_cluster_bucket(self) -> 'bool':
