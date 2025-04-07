@@ -262,6 +262,8 @@ class Teamspace:
         Args:
             path: Path to the model file or folder to upload.
             name: Name tag of the model to upload.
+            version: Version tag of the model to upload.
+                If not provided, the ``vX`` version will be used where X is running index.
             cloud_account: The name of the cloud account to store the Model in.
                 If not provided, the default cloud account for the Teamspace will be used.
             progress_bar: Whether to show a progress bar for the upload.

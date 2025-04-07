@@ -160,6 +160,8 @@ def upload_model(
         cloud_account: The name of the cloud account to store the Model in.
             If not provided, the default cloud account for the Teamspace will be used.
         progress_bar: Whether to show a progress bar for the upload.
+        metadata: Metadata to attach to the uploaded model.
+            If not provided, an empty dictionary will be used.
     """
     name = _extend_model_name_with_teamspace(name)
     org_name, teamspace_name, model_name, version = _parse_model_name_and_version(name)
