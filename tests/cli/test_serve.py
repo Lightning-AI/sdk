@@ -7,7 +7,14 @@ from unittest.mock import ANY, MagicMock, call, patch
 import pytest
 import rich
 
-from lightning_sdk.cli.serve import _Auth, _handle_cloud, authenticate, poll_verified_status, select_teamspace
+from lightning_sdk.cli.serve import (
+    _Auth,
+    _handle_cloud,
+    authenticate,
+    is_connected,
+    poll_verified_status,
+    select_teamspace,
+)
 from lightning_sdk.cli.serve import api_impl as serve_api
 
 
@@ -235,6 +242,26 @@ def test_args_without_repository(mock_subprocess, mock_dt, temp_script):
     serve_api(temp_script, local=True)
     mock_dt.now.assert_called()
     mock_subprocess.assert_called_once()
+
+
+def test_is_connected():
+    assert is_connected(), "should return True when the internet is available"
+
+
+@patch("lightning_sdk.cli.serve.socket.create_connection")
+def test_is_connected_no_internet(mock_create_connection):
+    mock_create_connection.side_effect = OSError("No internet connection")
+    assert is_connected() is False, "should return True when the internet is available"
+
+
+@patch("lightning_sdk.cli.serve.is_connected")
+def test_handle_cloud_no_internet(mock_is_connected):
+    mock_is_connected.return_value = False
+    console = MagicMock()
+    _handle_cloud(None, console, teamspace="test", machine=MagicMock())
+    assert (
+        console.print.call_args[0][0] == "To run locally instead, use: `lightning serve [SCRIPT | server.py] --local`"
+    )
 
 
 @patch("lightning_sdk.cli.serve.LitContainerApi")

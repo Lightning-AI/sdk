@@ -1,4 +1,5 @@
 import os
+import socket
 import subprocess
 import time
 import webbrowser
@@ -288,6 +289,15 @@ def poll_verified_status() -> bool:
     return False
 
 
+def is_connected(host: str = "8.8.8.8", port: int = 53, timeout: int = 10) -> bool:
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.create_connection((host, port))
+        return True
+    except OSError:
+        return False
+
+
 def _handle_cloud(
     script_path: Union[str, Path],
     console: Console,
@@ -306,6 +316,11 @@ def _handle_cloud(
     replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
 ) -> None:
+    if not is_connected():
+        console.print("❌ Internet connection required to deploy to the cloud.", style="red")
+        console.print("To run locally instead, use: `lightning serve [SCRIPT | server.py] --local`")
+        return
+
     deployment_name = os.path.basename(repository)
     tag = tag if tag else "latest"
 
