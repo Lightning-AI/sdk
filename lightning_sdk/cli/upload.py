@@ -1,6 +1,7 @@
 import concurrent.futures
 import json
 import os
+import webbrowser
 from pathlib import Path
 from typing import Dict, Generator, List, Optional
 
@@ -162,7 +163,7 @@ def upload_container(
                 # let the push with retry take control of auth moving forward
                 pass
 
-            lines = api.upload_container(container, teamspace, tag, cloud_account, platform)
+            lines = api.upload_container(container, teamspace, tag, cloud_account, platform, return_final_dict=True)
             _print_docker_push(lines, console, progress, push_task)
         except DockerNotRunningError as e:
             e.print_help()
@@ -303,6 +304,8 @@ def _print_docker_push(lines: Generator, console: Console, progress: Progress, p
             console.print(f"\n[red]{line}[/red]")
             return
         elif "finish" in line:
+            if "url" in line:
+                webbrowser.open(line["url"])
             console.print(f"Container available at [i]{line['url']}[/i]")
             return
         else:

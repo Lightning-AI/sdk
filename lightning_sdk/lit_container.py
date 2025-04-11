@@ -80,7 +80,8 @@ class LitContainer:
         tag: str = "latest",
         cloud_account: Optional[str] = None,
         platform: Optional[str] = "linux/amd64",
-    ) -> None:
+        return_final_dict: bool = False,
+    ) -> Optional[Dict]:
         """Upload a container to the docker registry.
 
         Args:
@@ -91,15 +92,24 @@ class LitContainer:
             tag: The tag to use for the container.
             cloud_account: The cloud account where the container is stored.
             platform: The platform the container is meant to run on.
+            return_final_dict: Instructs function to return metadata about container location in platform.
         """
         try:
             teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         except Exception as e:
             raise ValueError(f"Could not resolve teamspace: {e}") from e
 
-        resp = self._api.upload_container(container, teamspace, tag, cloud_account, platform=platform)
+        resp = self._api.upload_container(
+            container, teamspace, tag, cloud_account, platform=platform, return_final_dict=return_final_dict
+        )
+
+        final_dict = None
         for line in resp:
             print(line)
+            if return_final_dict and isinstance(line, dict) and line.get("finish") is True:
+                final_dict = line
+
+        return final_dict if return_final_dict else None
 
     def download_container(
         self,

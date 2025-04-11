@@ -182,7 +182,9 @@ def test_upload_container_success(lit_container, mock_teamspace):
 
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
-        mock_upload.assert_called_once_with("my-container", mock_teamspace, "v1.0", None, platform="linux/amd64")
+        mock_upload.assert_called_once_with(
+            "my-container", mock_teamspace, "v1.0", None, platform="linux/amd64", return_final_dict=False
+        )
 
 
 def test_upload_byoc_container_success(lit_container, mock_teamspace):
@@ -199,7 +201,7 @@ def test_upload_byoc_container_success(lit_container, mock_teamspace):
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org=None, user=None)
         mock_upload.assert_called_once_with(
-            "my-container", mock_teamspace, "latest", "byoc-123", platform="linux/amd64"
+            "my-container", mock_teamspace, "latest", "byoc-123", platform="linux/amd64", return_final_dict=False
         )
 
 
@@ -445,7 +447,50 @@ def test_upload_container_with_org(lit_container, mock_teamspace):
 
         # Verify the mocks were called correctly
         mock_resolve.assert_called_once_with(teamspace="test-team", org="test-org", user=None)
-        mock_upload.assert_called_once_with("my-container", mock_teamspace, "latest", None, platform="linux/amd64")
+        mock_upload.assert_called_once_with(
+            "my-container", mock_teamspace, "latest", None, platform="linux/amd64", return_final_dict=False
+        )
+
+
+def test_upload_container_returns_generator_output(lit_container, mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
+        lit_container._api, "upload_container"
+    ) as mock_upload:
+        # Setup mocks
+        mock_resolve.return_value = mock_teamspace
+
+        # Create a mock generator that yields status updates and returns final dict
+        def mock_generator():
+            yield {"status": "Uploading..."}
+            yield {"status": "Uploading layer 1/3"}
+            yield {"status": "Uploading layer 2/3"}
+            yield {"status": "Uploading layer 3/3"}
+            yield {"status": "Upload complete"}
+            yield {
+                "finish": True,
+                "url": "https://lightning.ai/test-org/test-team/containers/my-container?section=tags",
+                "repository": "litcr.io/lit-container/test-org/test-team/my-container",
+            }
+
+        mock_upload.return_value = mock_generator()
+
+        # Call the function with return_final_dict=True so I can verify that we always get back a
+        # a metadata dict about location in platform.
+        result = lit_container.upload_container(
+            container="my-container", teamspace="test-team", org="test-org", tag="latest", return_final_dict=True
+        )
+
+        # Verify the result is the final dictionary
+        assert isinstance(result, dict)
+        assert result["finish"] is True
+        assert "url" in result
+        assert "repository" in result
+        assert result["url"] == "https://lightning.ai/test-org/test-team/containers/my-container?section=tags"
+
+        mock_resolve.assert_called_once_with(teamspace="test-team", org="test-org", user=None)
+        mock_upload.assert_called_once_with(
+            "my-container", mock_teamspace, "latest", None, platform="linux/amd64", return_final_dict=True
+        )
 
 
 def test_download_container(lit_container, mock_teamspace):
