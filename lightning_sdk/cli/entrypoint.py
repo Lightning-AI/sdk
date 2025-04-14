@@ -21,7 +21,7 @@ from lightning_sdk.cli.inspect import inspect
 from lightning_sdk.cli.list import list_cli
 from lightning_sdk.cli.open import open
 from lightning_sdk.cli.run import run
-from lightning_sdk.cli.serve import serve
+from lightning_sdk.cli.serve import deploy
 from lightning_sdk.cli.start import start
 from lightning_sdk.cli.stop import stop
 from lightning_sdk.cli.switch import switch
@@ -76,7 +76,7 @@ main_cli.add_command(generate)
 main_cli.add_command(inspect)
 main_cli.add_command(list_cli)
 main_cli.add_command(run)
-main_cli.add_command(serve)
+main_cli.add_command(deploy)
 main_cli.add_command(start)
 main_cli.add_command(stop)
 main_cli.add_command(switch)

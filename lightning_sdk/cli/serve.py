@@ -34,22 +34,22 @@ class _ServeGroup(click.Group):
         return super().parse_args(ctx, args)
 
 
-@click.group("serve", cls=_ServeGroup)
-def serve() -> None:
-    """Serve a LitServe model.
+@click.group("deploy", cls=_ServeGroup)
+def deploy() -> None:
+    """Deploy a LitServe model.
 
     Example:
-        lightning serve server.py  # deploy to the cloud
+        lightning deploy server.py  # deploy to the cloud
 
     Example:
-        lightning serve server.py --local  # serve locally
+        lightning deploy server.py --local  # run locally
 
-    You can deploy the API to the cloud by running `lightning serve server.py`.
+    You can deploy the API to the cloud by running `lightning deploy server.py`.
     This will build a docker container for the server.py script and deploy it to the Lightning AI platform.
     """
 
 
-@serve.command("api")
+@deploy.command("api")
 @click.argument("script-path", type=click.Path(exists=True))
 @click.option(
     "--easy",

@@ -21,6 +21,7 @@ Commands:
   connect    Connect to lightning products.
   create     Create new resources on the Lightning AI platform.
   delete     Delete resources on the Lightning AI platform.
+  deploy     Deploy a LitServe model.
   dockerize  Generate a Dockerfile for a LitServe model.
   download   Download resources from Lightning AI.
   generate   Generate configs (such as ssh for studio) and print them to...
@@ -30,7 +31,6 @@ Commands:
   logout     Logout from Lightning AI Studios.
   open       Open a local file or folder in a Lightning Studio.
   run        Run async workloads on the Lightning AI platform.
-  serve      Serve a LitServe model.
   start      Start resources on the Lightning AI platform.
   stop       Stop resources on the Lightning AI platform.
   switch     Switch machines for resources on the Lightning AI platform.

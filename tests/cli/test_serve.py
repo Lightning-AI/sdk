@@ -19,20 +19,20 @@ from lightning_sdk.cli.serve import api_impl as serve_api
 
 
 def test_serve_help():
-    result = subprocess.run("lightning serve --help", shell=True, capture_output=True, text=True)
+    result = subprocess.run("lightning deploy --help", shell=True, capture_output=True, text=True)
     result_text = result.stdout + result.stderr
 
     assert (
         result_text
-        == """Usage: lightning serve [OPTIONS] COMMAND [ARGS]...
+        == """Usage: lightning deploy [OPTIONS] COMMAND [ARGS]...
 
-  Serve a LitServe model.
+  Deploy a LitServe model.
 
-  Example:     lightning serve server.py  # deploy to the cloud
+  Example:     lightning deploy server.py  # deploy to the cloud
 
-  Example:     lightning serve server.py --local  # serve locally
+  Example:     lightning deploy server.py --local  # run locally
 
-  You can deploy the API to the cloud by running `lightning serve server.py`.
+  You can deploy the API to the cloud by running `lightning deploy server.py`.
   This will build a docker container for the server.py script and deploy it to
   the Lightning AI platform.
 
@@ -46,12 +46,12 @@ Commands:
 
 
 def test_api_help():
-    result = subprocess.run("lightning serve api --help", shell=True, capture_output=True, text=True)
+    result = subprocess.run("lightning deploy api --help", shell=True, capture_output=True, text=True)
     result_text = result.stdout + result.stderr
 
     assert (
         result_text
-        == """Usage: lightning serve api [OPTIONS] SCRIPT_PATH
+        == """Usage: lightning deploy api [OPTIONS] SCRIPT_PATH
 
   Deploy a LitServe model script.
 
