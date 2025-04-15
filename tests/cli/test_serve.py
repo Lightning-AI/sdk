@@ -151,7 +151,7 @@ def test_cloud_deployment(
     capsys,
 ):
     mock_client = mock_docker.return_value
-    mock_poll_verified_status.return_value = True
+    mock_poll_verified_status.return_value = {"onboarded": True, "verified": True}
     # Mock Docker client responses
     mock_client.ping.return_value = True
     mock_client.api.build.return_value = [{"stream": "Step 1/10"}]

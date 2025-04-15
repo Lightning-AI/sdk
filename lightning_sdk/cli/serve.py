@@ -5,7 +5,7 @@ import time
 import webbrowser
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, TypedDict, Union
 from urllib.parse import urlencode
 
 import click
@@ -273,20 +273,28 @@ def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optiona
     return _resolve_teamspace(teamspace=teamspace, org=org, user=user)
 
 
-def poll_verified_status() -> bool:
+class _UserStatus(TypedDict):
+    verified: bool
+    onboarded: bool
+
+
+def poll_verified_status() -> _UserStatus:
     """Polls the verified status of the user until it is True or a timeout occurs."""
     user_api = UserApi()
     user = _get_authed_user()
     start_time = datetime.now()
     timeout = 600  # 10 minutes
+    result = {"onboarded": False, "verified": False}
     while True:
         user_resp = user_api.get_user(name=user.name)
+        result["onboarded"] = user_resp.status.completed_project_onboarding
+        result["verified"] = user_resp.status.verified
         if user_resp.status.verified:
-            return True
+            return result
         if (datetime.now() - start_time).total_seconds() > timeout:
             break
         time.sleep(5)
-    return False
+    return result
 
 
 def is_connected(host: str = "8.8.8.8", port: int = 53, timeout: int = 10) -> bool:
@@ -362,8 +370,8 @@ def _handle_cloud(
     # Authenticate with LitServe affiliate
     authenticate(shall_confirm=not non_interactive)
     resolved_teamspace = select_teamspace(teamspace, org, user)
-    verified = poll_verified_status()
-    if not verified:
+    user_status = poll_verified_status()
+    if not user_status["verified"]:
         console.print("❌ Verify phone number to continue. Visit lightning.ai.", style="red")
         return
 
@@ -410,4 +418,5 @@ def _handle_cloud(
         include_credentials=include_credentials,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")
-    webbrowser.open(deployment_status.get("url"))
+    if user_status["onboarded"]:
+        webbrowser.open(deployment_status.get("url"))
