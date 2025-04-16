@@ -34,7 +34,7 @@ class TeamspaceApi:
 
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=7)
-        self._models: Optional[ModelsStoreApi] = None
+        self._models_api: Optional[ModelsStoreApi] = None
 
     def get_teamspace(self, name: str, owner_id: str) -> V1Project:
         """Get the current teamspace from the owner."""
@@ -166,12 +166,12 @@ class TeamspaceApi:
 
     # lazy property which is only created when needed
     @property
-    def models(self) -> ModelsStoreApi:
-        if not self._models:
-            self._models = ModelsStoreApi(self._client.api_client)
-        return self._models
+    def models_api(self) -> ModelsStoreApi:
+        if not self._models_api:
+            self._models_api = ModelsStoreApi(self._client.api_client)
+        return self._models_api
 
-    def get_model_version(self, name: str, version: str, teamspace_id: str) -> V1ModelVersionArchive:
+    def get_model_version(self, name: str, version: Optional[str], teamspace_id: str) -> V1ModelVersionArchive:
         return _get_model_version(client=self._client, name=name, version=version, teamspace_id=teamspace_id)
 
     def create_model(
@@ -184,14 +184,14 @@ class TeamspaceApi:
         cloud_account: str,
     ) -> V1ModelVersionArchive:
         # ask if such model already exists by listing models with specific name
-        models = self.models.models_store_list_models(project_id=teamspace_id, name=name).models
+        models = self.models_api.models_store_list_models(project_id=teamspace_id, name=name).models
         if len(models) == 0:
-            return self.models.models_store_create_model(
+            return self.models_api.models_store_create_model(
                 body=ProjectIdModelsBody(cluster_id=cloud_account, metadata=metadata, name=name, private=private),
                 project_id=teamspace_id,
             )
         assert len(models) == 1, "Multiple models with the same name found"
-        return self.models.models_store_create_model_version(
+        return self.models_api.models_store_create_model_version(
             body=ModelIdVersionsBody(cluster_id=cloud_account, version=version),
             project_id=teamspace_id,
             model_id=models[0].id,
@@ -199,16 +199,18 @@ class TeamspaceApi:
 
     def delete_model(self, name: str, version: Optional[str], teamspace_id: str) -> None:
         """Delete a model or a version from the model store."""
-        models = self.models.models_store_list_models(project_id=teamspace_id, name=name).models
+        models = self.models_api.models_store_list_models(project_id=teamspace_id, name=name).models
         assert len(models) == 1, "Multiple models with the same name found"
-        model_id = models[0].id
+        model = models[0]
         # decide if delete only version of whole model
         if version:
             if version == "default":
-                version = models[0].default_version
-            self.models.models_store_delete_model_version(project_id=teamspace_id, model_id=model_id, version=version)
+                version = model.default_version
+            self.models_api.models_store_delete_model_version(
+                project_id=teamspace_id, model_id=model.id, version=version
+            )
         else:
-            self.models.models_store_delete_model(project_id=teamspace_id, model_id=model_id)
+            self.models_api.models_store_delete_model(project_id=teamspace_id, model_id=model.id)
 
     def upload_model_file(
         self,
@@ -256,7 +258,7 @@ class TeamspaceApi:
                 main_pbar.update(1)
 
     def complete_model_upload(self, model_id: str, version: str, teamspace_id: str) -> None:
-        self.models.models_store_complete_model_upload(
+        self.models_api.models_store_complete_model_upload(
             body=_DummyBody(),
             project_id=teamspace_id,
             model_id=model_id,

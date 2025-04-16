@@ -179,16 +179,23 @@ def skip_studio_init() -> Generator[None, None, None]:
     Studio._skip_init = prev_studio_init_state
 
 
-def _parse_model_and_version(name: str) -> Tuple[str, str]:
+def _parse_model_and_version(name: str) -> Tuple[str, Optional[str]]:
+    """Parse the model name and version from the given string.
+
+    >>> _parse_model_and_version("org/teamspace/modelname")
+    ('org/teamspace/modelname', None)
+    >>> _parse_model_and_version("org/teamspace/modelname:version")
+    ('org/teamspace/modelname', 'version')
+    """
     parts = name.split(":")
     if len(parts) == 1:
-        return parts[0], "default"
+        return parts[0], None
     if len(parts) == 2:
         return parts[0], parts[1]
     # The rest of the validation for name and version happens in the backend
     raise ValueError(
-        "Model version is expected to be in the format `entity/modelname:version` separated by a"
-        f" single colon, but got: {name}"
+        "Model version is expected to be in the format `entity/modelname:version` separated by a single colon,"
+        f" but got: {name}"
     )
 
 

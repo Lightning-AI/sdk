@@ -12,7 +12,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1SearchUser,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.models import _get_teamspace, download_model, upload_model
+from lightning_sdk.models import _get_teamspace, delete_model, download_model, upload_model
 from lightning_sdk.user import User
 
 
@@ -222,3 +222,42 @@ def test_upload_model_in_studio_with_user(
         progress_bar=True,
         version=None,
     )
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
+def test_delete_model_in_studio_with_org(
+    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_get_teamspace.return_value = mock.MagicMock()
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    delete_model("model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_ts.delete_model.assert_called_once_with(name="model_name")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.user.UserApi")
+def test_delete_model_in_studio_with_user(
+    mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    delete_model("model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name")
+    mock_ts.delete_model.assert_called_once_with(name="model_name")

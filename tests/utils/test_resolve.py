@@ -199,8 +199,8 @@ def test_resolve_teamspace_combinations(
 
 def test_parse_model_and_version():
     # Most of the validation for name and version happens in the backend
-    assert _parse_model_and_version("") == ("", "default")
-    assert _parse_model_and_version("user/modelname") == ("user/modelname", "default")
+    assert _parse_model_and_version("") == ("", None)
+    assert _parse_model_and_version("user/modelname") == ("user/modelname", None)
     assert _parse_model_and_version("user/modelname:") == ("user/modelname", "")
     assert _parse_model_and_version("user/modelname:v1") == ("user/modelname", "v1")
     assert _parse_model_and_version("user/modelname: v1") == ("user/modelname", " v1")

@@ -169,3 +169,19 @@ def upload_model(
         progress_bar=progress_bar,
         metadata=metadata,
     )
+
+
+def delete_model(
+    name: str,
+) -> None:
+    """Delete a model or a version of model.
+
+    Args:
+        name: The name of the model you want to delete or with specified version it deltes only that version.
+            This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME> for full model deletion
+            or <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>:<VERSION> for version deletion.
+    """
+    name = _extend_model_name_with_teamspace(name)
+    org_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
+    teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
+    teamspace.delete_model(name=model_name)
