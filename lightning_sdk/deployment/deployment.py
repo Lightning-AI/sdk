@@ -117,6 +117,7 @@ class Deployment:
         cloud_account: Optional[str] = None,
         custom_domain: Optional[str] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
+        cloudspace_id: Optional[str] = None,
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
     ) -> None:
@@ -141,9 +142,10 @@ class Deployment:
             auth: The auth config to protect your services. Only Basic and Token supported.
             cloud_account: The name of the cloud account, the studio should be created on.
                 Doesn't matter when the studio already exists.
-            custom_domain: Whether your service would be referenced under a custom doamin.
+            custom_domain: Whether your service would be referenced under a custom domain.
+            cloudspace_id: Connect deployment to a Studio.
             quantity: The number of machines per replica to deploy.
-            include_credentials: Whether to include the environement variables for the SDK to authenticate
+            include_credentials: Whether to include the environment variables for the SDK to authenticate
 
         Note:
             Since a teamspace can either be owned by an org or by a user directly,
@@ -166,6 +168,7 @@ class Deployment:
                 name=self._name,
                 project_id=self._teamspace.id,
                 replicas=replicas,
+                cloudspace_id=cloudspace_id,
                 spec=to_spec(
                     cloud_account=cloud_account,
                     command=command,

@@ -228,6 +228,7 @@ class DeploymentApi:
         return self._client.jobs_service_create_deployment(
             project_id=deployment.project_id,
             body=CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(
+                cloudspace_id=deployment.cloudspace_id,
                 autoscaling=deployment.autoscaling,
                 cluster_id=deployment.spec.cluster_id,
                 endpoint=deployment.endpoint,

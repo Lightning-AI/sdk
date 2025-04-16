@@ -248,6 +248,7 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
         cloud_account: Optional[str] = None,
         port: Optional[int] = 8000,
         include_credentials: Optional[bool] = True,
+        cloudspace_id: Optional[str] = None,
     ) -> dict:
         """Run a deployment on the cloud. If the deployment already exists, it will be updated.
 
@@ -264,6 +265,7 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
             cloud_account: The cloud account to run the deployment on. Defaults to None.
             port: The port to run the deployment on. Defaults to 8000.
             include_credentials: Whether to include credentials in the deployment. Defaults to True.
+            cloudspace_id: Connect to a Studio.
 
         Returns:
             dict: The deployment and the URL of the deployment.
@@ -297,6 +299,7 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
             cloud_account=cloud_account,
             ports=[port],
             include_credentials=include_credentials,
+            cloudspace_id=cloudspace_id,
         )
 
         return {"deployment": deployment, "url": url}

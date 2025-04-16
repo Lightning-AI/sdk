@@ -6,7 +6,7 @@ import webbrowser
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Optional, TypedDict, Union
+from typing import List, Optional, TypedDict, Union
 from urllib.parse import urlencode
 
 import click
@@ -20,6 +20,7 @@ from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
+from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.serve import _LitServeDeployer
 from lightning_sdk.utils.resolve import _get_authed_user, _resolve_teamspace
@@ -348,6 +349,13 @@ class _Onboarding:
 
         raise RuntimeError("Timed out waiting for onboarding status")
 
+    def get_cloudspace_id(self, teamspace: Teamspace) -> Optional[str]:
+        cloudspaces: List[V1CloudSpace] = self.client.cloud_space_service_list_cloud_spaces(teamspace.id).cloudspaces
+        for cloudspace in cloudspaces:
+            if "scratch-studio" in cloudspace.name or "scratch-studio" in cloudspace.display_name:
+                return cloudspace.id
+        return None
+
     def select_teamspace(self, teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
         """Select a teamspace while onboarding.
 
@@ -456,12 +464,14 @@ def _handle_cloud(
     # Authenticate with LitServe affiliate
     authenticate(shall_confirm=not non_interactive)
     user_status = poll_verified_status()
+    cloudspace_id: Optional[str] = None
     if not user_status["verified"]:
         console.print("❌ Verify phone number to continue. Visit lightning.ai.", style="red")
         return
     if not user_status["onboarded"]:
         onboarding = _Onboarding(console)
         resolved_teamspace = onboarding.select_teamspace(teamspace, org, user)
+        cloudspace_id = onboarding.get_cloudspace_id(resolved_teamspace)
     else:
         resolved_teamspace = select_teamspace(teamspace, org, user)
 
@@ -506,6 +516,7 @@ def _handle_cloud(
         max_replica=max_replica,
         replicas=replicas,
         include_credentials=include_credentials,
+        cloudspace_id=cloudspace_id,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")
     if user_status["onboarded"]:
