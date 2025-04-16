@@ -322,7 +322,7 @@ def test_download_model(
         teamspace_name="ts-abc",
         teamspace_owner_name="user-abc",
         name="user/modelname",
-        version=None,
+        version="default",
         download_dir=Path(folder) if folder else tmp_path,
         progress_bar=True,
     )

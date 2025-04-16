@@ -274,6 +274,8 @@ class TeamspaceApi:
         teamspace_owner_name: str,
         progress_bar: bool = True,
     ) -> List[str]:
+        if version is None:
+            version = "default"
         return _download_model_files(
             client=self._client,
             teamspace_name=teamspace_name,

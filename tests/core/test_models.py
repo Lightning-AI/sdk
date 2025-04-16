@@ -143,7 +143,7 @@ def test_download_model_in_studio_with_org(
         progress_bar=True,
         teamspace_name="ts-abc",
         teamspace_owner_name="org-abc",
-        version=None,
+        version="default",
     )
 
 
@@ -168,7 +168,7 @@ def test_download_model_in_studio_with_user(
         progress_bar=True,
         teamspace_name="ts-abc",
         teamspace_owner_name="user-abc",
-        version=None,
+        version="default",
     )
 
 
