@@ -10,6 +10,8 @@ import rich
 from lightning_sdk.cli.serve import (
     _Auth,
     _handle_cloud,
+    _Onboarding,
+    _OnboardingStatus,
     authenticate,
     is_connected,
     poll_verified_status,
@@ -411,3 +413,91 @@ def test_poll_verified_status(mock_user_api_cls, mock_get_authed_user):
     assert poll_verified_status()
     mock_get_authed_user.assert_called_once()
     mock_get_user.assert_called_once()
+
+
+@pytest.fixture()
+def mock_onboarding():
+    with patch("lightning_sdk.cli.serve.UserApi") as mock_user_api_cls:  # noqa: SIM117
+        with patch("lightning_sdk.cli.serve._get_authed_user") as mock_get_authed_user:
+            with patch("lightning_sdk.cli.serve.LightningClient") as mock_lightning_client:
+                with patch("lightning_sdk.cli.serve.select_teamspace") as mock_select_teamspace:
+                    onboarding = _Onboarding(MagicMock())
+                    yield (
+                        onboarding,
+                        mock_user_api_cls,
+                        mock_get_authed_user,
+                        mock_lightning_client,
+                        mock_select_teamspace,
+                    )
+
+
+@patch("lightning_sdk.cli.serve.Teamspace")
+@patch("lightning_sdk.cli.serve._TeamspacesMenu")
+def test_onboarding_select_teamspace_without_org(mock_ts_menu, mock_ts, mock_onboarding):
+    (
+        onboarding,
+        mock_user_api_cls,
+        mock_get_authed_user,
+        mock_lightning_client,
+        mock_select_teamspace,
+    ) = mock_onboarding
+    mock_ts_menu.return_value._get_possible_teamspaces.return_value = {
+        "id1": {"name": "personal-teamspace", "org": None, "user": "test-user"},
+    }
+    mock_user_api_cls.return_value.get_user.return_value.status.verified = True
+    mock_user_api_cls.return_value.get_user.return_value.status.completed_project_onboarding = False
+    (
+        mock_lightning_client.return_value.organizations_service_list_joinable_organizations.return_value
+    ).joinable_organizations = ("org1",)
+    onboarding._wait = MagicMock()
+    assert onboarding.verified, "User is verified"
+    assert not onboarding.is_onboarded, "User is still being onboarded"
+    assert onboarding.status == _OnboardingStatus.ONBOARDING, "User is still being onboarded"
+    assert onboarding.can_join_org, "User can join organization"
+    mock_select_teamspace.assert_not_called(), "select_teamspace shouldn't called when user is onboarding"
+    onboarding.select_teamspace(None, org=None, user=None)
+    onboarding._wait.assert_called_once()
+    mock_ts.assert_called_once_with(name="personal-teamspace", org=None, user="test-user")
+
+    mock_ts_menu.return_value._get_possible_teamspaces.return_value = {
+        "id1": {"name": "personal-teamspace", "org": None, "user": "test-user"},
+        "id2": {"name": "org-teamspace", "org": "test-org", "user": "test-user"},
+    }
+
+
+@patch("lightning_sdk.cli.serve.Teamspace")
+@patch("lightning_sdk.cli.serve._TeamspacesMenu")
+def test_onboarding_select_teamspace_with_org(mock_ts_menu, mock_ts, mock_onboarding):
+    (
+        onboarding,
+        mock_user_api_cls,
+        mock_get_authed_user,
+        mock_lightning_client,
+        mock_select_teamspace,
+    ) = mock_onboarding
+
+    possible_teamspaces = [
+        {
+            "id1": {"name": "personal-teamspace", "org": None, "user": "test-user"},
+        },
+        {
+            "id1": {"name": "personal-teamspace", "org": None, "user": "test-user"},
+            "id2": {"name": "org-teamspace", "org": "test-org", "user": "test-user"},
+        },
+    ]
+
+    mock_ts_menu.return_value._get_possible_teamspaces = lambda x: possible_teamspaces.pop(0)
+    mock_user_api_cls.return_value.get_user.return_value.status.verified = True
+    mock_user_api_cls.return_value.get_user.return_value.status.completed_project_onboarding = False
+    (
+        mock_lightning_client.return_value.organizations_service_list_joinable_organizations.return_value
+    ).joinable_organizations = ("org1",)
+    onboarding._wait = MagicMock()
+    assert onboarding.verified, "User is verified"
+    assert not onboarding.is_onboarded, "User is still being onboarded"
+    assert onboarding.status == _OnboardingStatus.ONBOARDING, "User is still being onboarded"
+    assert onboarding.can_join_org, "User can join organization"
+    mock_select_teamspace.assert_not_called(), "select_teamspace shouldn't called when user is onboarding"
+    onboarding.select_teamspace(None, org=None, user=None)
+    onboarding._wait.assert_called_once()
+    mock_ts.assert_called_once_with(name="org-teamspace", org="test-org", user="test-user")

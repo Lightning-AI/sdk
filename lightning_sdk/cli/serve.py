@@ -4,6 +4,7 @@ import subprocess
 import time
 import webbrowser
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 from typing import Optional, TypedDict, Union
 from urllib.parse import urlencode
@@ -19,10 +20,12 @@ from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
+from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.serve import _LitServeDeployer
 from lightning_sdk.utils.resolve import _get_authed_user, _resolve_teamspace
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
+_POLL_TIMEOUT = 600
 
 
 class _ServeGroup(click.Group):
@@ -278,12 +281,11 @@ class _UserStatus(TypedDict):
     onboarded: bool
 
 
-def poll_verified_status() -> _UserStatus:
+def poll_verified_status(timeout: int = _POLL_TIMEOUT) -> _UserStatus:
     """Polls the verified status of the user until it is True or a timeout occurs."""
     user_api = UserApi()
     user = _get_authed_user()
     start_time = datetime.now()
-    timeout = 600  # 10 minutes
     result = {"onboarded": False, "verified": False}
     while True:
         user_resp = user_api.get_user(name=user.name)
@@ -295,6 +297,90 @@ def poll_verified_status() -> _UserStatus:
             break
         time.sleep(5)
     return result
+
+
+class _OnboardingStatus(Enum):
+    NOT_VERIFIED = "not_verified"
+    ONBOARDING = "onboarding"
+    ONBOARDED = "onboarded"
+
+
+class _Onboarding:
+    def __init__(self, console: Console) -> None:
+        self.console = console
+        self.user = _get_authed_user()
+        self.user_api = UserApi()
+        self.client = LightningClient(max_tries=7)
+
+    @property
+    def verified(self) -> bool:
+        return self.user_api.get_user(name=self.user.name).status.verified
+
+    @property
+    def is_onboarded(self) -> bool:
+        return self.user_api.get_user(name=self.user.name).status.completed_project_onboarding
+
+    @property
+    def can_join_org(self) -> bool:
+        return len(self.client.organizations_service_list_joinable_organizations().joinable_organizations) > 0
+
+    @property
+    def status(self) -> _OnboardingStatus:
+        if not self.verified:
+            return _OnboardingStatus.NOT_VERIFIED
+        if self.is_onboarded:
+            return _OnboardingStatus.ONBOARDED
+        return _OnboardingStatus.ONBOARDING
+
+    def _wait(self, timeout: int = _POLL_TIMEOUT) -> None:
+        """Wait for user onboarding if they can join the teamspace otherwise move to select a teamspace."""
+        status = self.status
+        if status == _OnboardingStatus.ONBOARDED:
+            return
+
+        start_time = datetime.now()
+        while self.status != _OnboardingStatus.ONBOARDED:
+            time.sleep(5)
+            if self.is_onboarded:
+                return
+            if (datetime.now() - start_time).total_seconds() > timeout:
+                break
+
+        raise RuntimeError("Timed out waiting for onboarding status")
+
+    def select_teamspace(self, teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
+        """Select a teamspace while onboarding.
+
+        If user is being onboarded and can't join any org, the teamspace it will be resolved to the default
+         personal teamspace.
+        If user is being onboarded and can join an org then it will select default teamspace from the org.
+        """
+        if self.is_onboarded:
+            return select_teamspace(teamspace, org, user)
+
+        # Run only when user hasn't completed onboarding yet.
+        menu = _TeamspacesMenu()
+        possible_teamspaces = menu._get_possible_teamspaces(self.user)
+        can_join_org = self.can_join_org
+
+        if len(possible_teamspaces) == 1 and can_join_org:
+            # wait for onboarding to complete so that user can join an org
+            # create deployment in the org default teamspace
+            self.console.print("Waiting for account setup. Visit lightning.ai")
+            self._wait()
+
+        possible_teamspaces = menu._get_possible_teamspaces(self.user)
+        if len(possible_teamspaces) == 1:
+            # User didn't select any org
+            value = next(iter(possible_teamspaces.values()))
+            return Teamspace(name=value["name"], org=value["org"], user=value["user"])
+
+        for _, value in possible_teamspaces.items():
+            # User select an org
+            # Onboarding teamspace will be the default teamspace in the selected org
+            if value["org"]:
+                return Teamspace(name=value["name"], org=value["org"], user=value["user"])
+        raise RuntimeError("Unable to select teamspace. Visit lightning.ai")
 
 
 def is_connected(host: str = "8.8.8.8", port: int = 53, timeout: int = 10) -> bool:
@@ -369,11 +455,15 @@ def _handle_cloud(
     console.print("\nPushing container to registry. It may take a while...", style="bold")
     # Authenticate with LitServe affiliate
     authenticate(shall_confirm=not non_interactive)
-    resolved_teamspace = select_teamspace(teamspace, org, user)
     user_status = poll_verified_status()
     if not user_status["verified"]:
         console.print("❌ Verify phone number to continue. Visit lightning.ai.", style="red")
         return
+    if not user_status["onboarded"]:
+        onboarding = _Onboarding(console)
+        resolved_teamspace = onboarding.select_teamspace(teamspace, org, user)
+    else:
+        resolved_teamspace = select_teamspace(teamspace, org, user)
 
     # list containers to create the project if it doesn't exist
     lit_cr = LitContainerApi()
