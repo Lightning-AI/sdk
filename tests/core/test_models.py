@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -122,66 +123,102 @@ def test_download_model_errors(mock_teamspace_api):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
-@mock.patch("lightning_sdk.models._parse_model_name_and_version")
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.organization.OrgApi")
 def test_download_model_in_studio_with_org(
-    mock_org_api, mock_teamspace_api, mock_download_model_files, mock_parse_model_name_and_version
+    mock_org_api, mock_teamspace_api, mock_download_model_files, mock_parse_org_teamspace_model_version
 ):
-    mock_parse_model_name_and_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_parse_org_teamspace_model_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
     mock_org_api().get_org.return_value = V1Organization(name="org-abc")
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
 
     download_model("model_name")
-    mock_parse_model_name_and_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_download_model_files.assert_called_once_with(
+        client=mock.ANY,
+        download_dir=Path("."),
+        name="model_name",
+        progress_bar=True,
+        teamspace_name="ts-abc",
+        teamspace_owner_name="org-abc",
+        version=None,
+    )
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
-@mock.patch("lightning_sdk.models._parse_model_name_and_version")
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.user.UserApi")
 def test_download_model_in_studio_with_user(
-    mock_user_api, mock_teamspace_api, mock_download_model_files, mock_parse_model_name_and_version
+    mock_user_api, mock_teamspace_api, mock_download_model_files, mock_parse_org_teamspace_model_version
 ):
-    mock_parse_model_name_and_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", None)
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
     mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
 
     download_model("model_name")
-    mock_parse_model_name_and_version.assert_called_once_with("user-abc/ts-abc/model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name")
+    mock_download_model_files.assert_called_once_with(
+        client=mock.ANY,
+        download_dir=Path("."),
+        name="model_name",
+        progress_bar=True,
+        teamspace_name="ts-abc",
+        teamspace_owner_name="user-abc",
+        version=None,
+    )
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
-@mock.patch("lightning_sdk.models._parse_model_name_and_version")
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.organization.OrgApi")
 def test_upload_model_in_studio_with_org(
-    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_model_name_and_version
+    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
-    mock_parse_model_name_and_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
-    mock_get_teamspace.return_value = mock.MagicMock()
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
     mock_org_api().get_org.return_value = V1Organization(name="org-abc")
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
 
     upload_model("model_name")
-    mock_parse_model_name_and_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_ts.upload_model.assert_called_once_with(
+        cloud_account=None,
+        metadata=None,
+        name="model_name",
+        path=".",
+        progress_bar=True,
+        version=None,
+    )
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
-@mock.patch("lightning_sdk.models._parse_model_name_and_version")
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.user.UserApi")
 def test_upload_model_in_studio_with_user(
-    mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_model_name_and_version
+    mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
-    mock_parse_model_name_and_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
-    mock_get_teamspace.return_value = mock.MagicMock()
+    mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", None)
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
     mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
 
     upload_model("model_name")
-    mock_parse_model_name_and_version.assert_called_once_with("user-abc/ts-abc/model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name")
+    mock_ts.upload_model.assert_called_once_with(
+        cloud_account=None,
+        metadata=None,
+        name="model_name",
+        path=".",
+        progress_bar=True,
+        version=None,
+    )

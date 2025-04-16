@@ -266,7 +266,7 @@ class TeamspaceApi:
     def download_model_files(
         self,
         name: str,
-        version: str,
+        version: Optional[str],
         download_dir: Path,
         teamspace_name: str,
         teamspace_owner_name: str,

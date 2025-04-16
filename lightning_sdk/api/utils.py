@@ -509,7 +509,7 @@ def _download_model_files(
     teamspace_name: str,
     teamspace_owner_name: str,
     name: str,
-    version: str,
+    version: Optional[str],
     download_dir: Path,
     progress_bar: bool,
     num_workers: int = 20,

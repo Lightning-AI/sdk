@@ -85,7 +85,7 @@ def _extend_model_name_with_teamspace(name: str) -> str:
     return f"{teamspace.owner.name}/{teamspace.name}/{name}"
 
 
-def _parse_model_name_and_version(name: str) -> Tuple[str, str, str, str]:
+def _parse_org_teamspace_model_version(name: str) -> Tuple[str, str, str, Optional[str]]:
     """Parse the name argument into its components."""
     try:
         org_name, teamspace_name, model_name = name.split("/")
@@ -119,19 +119,14 @@ def download_model(
         progress_bar: Whether to show a progress bar when downloading.
     """
     name = _extend_model_name_with_teamspace(name)
-    teamspace_owner_name, teamspace_name, model_name, version = _parse_model_name_and_version(name)
-    if version is None:
-        version = "default"
-
-    download_dir = Path(download_dir)
-
+    teamspace_owner_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
     api = TeamspaceApi()
 
     try:
         return api.download_model_files(
             name=model_name,
             version=version,
-            download_dir=download_dir,
+            download_dir=Path(download_dir),
             teamspace_name=teamspace_name,
             teamspace_owner_name=teamspace_owner_name,
             progress_bar=progress_bar,
@@ -164,7 +159,7 @@ def upload_model(
             If not provided, an empty dictionary will be used.
     """
     name = _extend_model_name_with_teamspace(name)
-    org_name, teamspace_name, model_name, version = _parse_model_name_and_version(name)
+    org_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
     teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
     return teamspace.upload_model(
         path=path,
