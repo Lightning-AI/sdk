@@ -44,31 +44,37 @@ class ClusterIdCapacityreservationsBody(object):
         'capacity_reservation_type': 'str',
         'cloud_provider_capacity_reservation_id': 'str',
         'end_time': 'datetime',
+        'full_cloud_provider_reservation_string': 'str',
         'instance_type': 'str',
         'match_pattern': 'str',
         'region': 'str',
-        'start_time': 'datetime'
+        'start_time': 'datetime',
+        'zone': 'str'
     }
 
     attribute_map = {
         'capacity_reservation_type': 'capacityReservationType',
         'cloud_provider_capacity_reservation_id': 'cloudProviderCapacityReservationId',
         'end_time': 'endTime',
+        'full_cloud_provider_reservation_string': 'fullCloudProviderReservationString',
         'instance_type': 'instanceType',
         'match_pattern': 'matchPattern',
         'region': 'region',
-        'start_time': 'startTime'
+        'start_time': 'startTime',
+        'zone': 'zone'
     }
 
-    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, end_time: 'datetime' =None, instance_type: 'str' =None, match_pattern: 'str' =None, region: 'str' =None, start_time: 'datetime' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
         """ClusterIdCapacityreservationsBody - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_type = None
         self._cloud_provider_capacity_reservation_id = None
         self._end_time = None
+        self._full_cloud_provider_reservation_string = None
         self._instance_type = None
         self._match_pattern = None
         self._region = None
         self._start_time = None
+        self._zone = None
         self.discriminator = None
         if capacity_reservation_type is not None:
             self.capacity_reservation_type = capacity_reservation_type
@@ -76,6 +82,8 @@ class ClusterIdCapacityreservationsBody(object):
             self.cloud_provider_capacity_reservation_id = cloud_provider_capacity_reservation_id
         if end_time is not None:
             self.end_time = end_time
+        if full_cloud_provider_reservation_string is not None:
+            self.full_cloud_provider_reservation_string = full_cloud_provider_reservation_string
         if instance_type is not None:
             self.instance_type = instance_type
         if match_pattern is not None:
@@ -84,6 +92,8 @@ class ClusterIdCapacityreservationsBody(object):
             self.region = region
         if start_time is not None:
             self.start_time = start_time
+        if zone is not None:
+            self.zone = zone
 
     @property
     def capacity_reservation_type(self) -> 'str':
@@ -147,6 +157,27 @@ class ClusterIdCapacityreservationsBody(object):
         """
 
         self._end_time = end_time
+
+    @property
+    def full_cloud_provider_reservation_string(self) -> 'str':
+        """Gets the full_cloud_provider_reservation_string of this ClusterIdCapacityreservationsBody.  # noqa: E501
+
+
+        :return: The full_cloud_provider_reservation_string of this ClusterIdCapacityreservationsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._full_cloud_provider_reservation_string
+
+    @full_cloud_provider_reservation_string.setter
+    def full_cloud_provider_reservation_string(self, full_cloud_provider_reservation_string: 'str'):
+        """Sets the full_cloud_provider_reservation_string of this ClusterIdCapacityreservationsBody.
+
+
+        :param full_cloud_provider_reservation_string: The full_cloud_provider_reservation_string of this ClusterIdCapacityreservationsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._full_cloud_provider_reservation_string = full_cloud_provider_reservation_string
 
     @property
     def instance_type(self) -> 'str':
@@ -231,6 +262,27 @@ class ClusterIdCapacityreservationsBody(object):
         """
 
         self._start_time = start_time
+
+    @property
+    def zone(self) -> 'str':
+        """Gets the zone of this ClusterIdCapacityreservationsBody.  # noqa: E501
+
+
+        :return: The zone of this ClusterIdCapacityreservationsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._zone
+
+    @zone.setter
+    def zone(self, zone: 'str'):
+        """Sets the zone of this ClusterIdCapacityreservationsBody.
+
+
+        :param zone: The zone of this ClusterIdCapacityreservationsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._zone = zone
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

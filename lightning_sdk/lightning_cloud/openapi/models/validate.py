@@ -48,6 +48,7 @@ class Validate(object):
         'filestore': 'V1FilestoreDataConnection',
         'gcp': 'V1GcpDataConnection',
         'gcs_folder': 'V1GCSFolderDataConnection',
+        'r2': 'V1R2DataConnection',
         's3_folder': 'V1S3FolderDataConnection'
     }
 
@@ -59,10 +60,11 @@ class Validate(object):
         'filestore': 'filestore',
         'gcp': 'gcp',
         'gcs_folder': 'gcsFolder',
+        'r2': 'r2',
         's3_folder': 's3Folder'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, check_is_public: 'bool' =None, cluster_ids: 'list[str]' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, s3_folder: 'V1S3FolderDataConnection' =None):  # noqa: E501
+    def __init__(self, aws: 'V1AwsDataConnection' =None, check_is_public: 'bool' =None, cluster_ids: 'list[str]' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, r2: 'V1R2DataConnection' =None, s3_folder: 'V1S3FolderDataConnection' =None):  # noqa: E501
         """Validate - a model defined in Swagger"""  # noqa: E501
         self._aws = None
         self._check_is_public = None
@@ -71,6 +73,7 @@ class Validate(object):
         self._filestore = None
         self._gcp = None
         self._gcs_folder = None
+        self._r2 = None
         self._s3_folder = None
         self.discriminator = None
         if aws is not None:
@@ -87,6 +90,8 @@ class Validate(object):
             self.gcp = gcp
         if gcs_folder is not None:
             self.gcs_folder = gcs_folder
+        if r2 is not None:
+            self.r2 = r2
         if s3_folder is not None:
             self.s3_folder = s3_folder
 
@@ -236,6 +241,27 @@ class Validate(object):
         """
 
         self._gcs_folder = gcs_folder
+
+    @property
+    def r2(self) -> 'V1R2DataConnection':
+        """Gets the r2 of this Validate.  # noqa: E501
+
+
+        :return: The r2 of this Validate.  # noqa: E501
+        :rtype: V1R2DataConnection
+        """
+        return self._r2
+
+    @r2.setter
+    def r2(self, r2: 'V1R2DataConnection'):
+        """Sets the r2 of this Validate.
+
+
+        :param r2: The r2 of this Validate.  # noqa: E501
+        :type: V1R2DataConnection
+        """
+
+        self._r2 = r2
 
     @property
     def s3_folder(self) -> 'V1S3FolderDataConnection':

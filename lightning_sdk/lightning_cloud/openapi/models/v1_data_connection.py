@@ -58,6 +58,7 @@ class V1DataConnection(object):
         'name': 'str',
         'number_of_files': 'str',
         'project_id': 'str',
+        'r2': 'V1R2DataConnection',
         'run_cmds': 'list[str]',
         's3_folder': 'V1S3FolderDataConnection',
         'snowflake': 'V1SnowflakeDataConnection',
@@ -87,6 +88,7 @@ class V1DataConnection(object):
         'name': 'name',
         'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
+        'r2': 'r2',
         'run_cmds': 'runCmds',
         's3_folder': 's3Folder',
         'snowflake': 'snowflake',
@@ -98,7 +100,7 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
@@ -117,6 +119,7 @@ class V1DataConnection(object):
         self._name = None
         self._number_of_files = None
         self._project_id = None
+        self._r2 = None
         self._run_cmds = None
         self._s3_folder = None
         self._snowflake = None
@@ -161,6 +164,8 @@ class V1DataConnection(object):
             self.number_of_files = number_of_files
         if project_id is not None:
             self.project_id = project_id
+        if r2 is not None:
+            self.r2 = r2
         if run_cmds is not None:
             self.run_cmds = run_cmds
         if s3_folder is not None:
@@ -536,6 +541,27 @@ class V1DataConnection(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def r2(self) -> 'V1R2DataConnection':
+        """Gets the r2 of this V1DataConnection.  # noqa: E501
+
+
+        :return: The r2 of this V1DataConnection.  # noqa: E501
+        :rtype: V1R2DataConnection
+        """
+        return self._r2
+
+    @r2.setter
+    def r2(self, r2: 'V1R2DataConnection'):
+        """Sets the r2 of this V1DataConnection.
+
+
+        :param r2: The r2 of this V1DataConnection.  # noqa: E501
+        :type: V1R2DataConnection
+        """
+
+        self._r2 = r2
 
     @property
     def run_cmds(self) -> 'list[str]':

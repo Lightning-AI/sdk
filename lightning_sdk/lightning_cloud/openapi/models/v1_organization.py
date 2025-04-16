@@ -43,6 +43,7 @@ class V1Organization(object):
     swagger_types = {
         'alerts_config': 'V1AlertsConfig',
         'allow_aws_saas': 'bool',
+        'allow_budgeting': 'bool',
         'allow_gcp_saas': 'bool',
         'allow_guest': 'bool',
         'allow_lambda_saas': 'bool',
@@ -72,12 +73,14 @@ class V1Organization(object):
         'start_studios_on_spot_instance': 'bool',
         'teamspace_default_credits': 'float',
         'twitter_username': 'str',
-        'updated_at': 'datetime'
+        'updated_at': 'datetime',
+        'workload_max_run_duration': 'str'
     }
 
     attribute_map = {
         'alerts_config': 'alertsConfig',
         'allow_aws_saas': 'allowAwsSaas',
+        'allow_budgeting': 'allowBudgeting',
         'allow_gcp_saas': 'allowGcpSaas',
         'allow_guest': 'allowGuest',
         'allow_lambda_saas': 'allowLambdaSaas',
@@ -107,13 +110,15 @@ class V1Organization(object):
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername',
-        'updated_at': 'updatedAt'
+        'updated_at': 'updatedAt',
+        'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_aws_saas = None
+        self._allow_budgeting = None
         self._allow_gcp_saas = None
         self._allow_guest = None
         self._allow_lambda_saas = None
@@ -144,11 +149,14 @@ class V1Organization(object):
         self._teamspace_default_credits = None
         self._twitter_username = None
         self._updated_at = None
+        self._workload_max_run_duration = None
         self.discriminator = None
         if alerts_config is not None:
             self.alerts_config = alerts_config
         if allow_aws_saas is not None:
             self.allow_aws_saas = allow_aws_saas
+        if allow_budgeting is not None:
+            self.allow_budgeting = allow_budgeting
         if allow_gcp_saas is not None:
             self.allow_gcp_saas = allow_gcp_saas
         if allow_guest is not None:
@@ -209,6 +217,8 @@ class V1Organization(object):
             self.twitter_username = twitter_username
         if updated_at is not None:
             self.updated_at = updated_at
+        if workload_max_run_duration is not None:
+            self.workload_max_run_duration = workload_max_run_duration
 
     @property
     def alerts_config(self) -> 'V1AlertsConfig':
@@ -251,6 +261,27 @@ class V1Organization(object):
         """
 
         self._allow_aws_saas = allow_aws_saas
+
+    @property
+    def allow_budgeting(self) -> 'bool':
+        """Gets the allow_budgeting of this V1Organization.  # noqa: E501
+
+
+        :return: The allow_budgeting of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_budgeting
+
+    @allow_budgeting.setter
+    def allow_budgeting(self, allow_budgeting: 'bool'):
+        """Sets the allow_budgeting of this V1Organization.
+
+
+        :param allow_budgeting: The allow_budgeting of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_budgeting = allow_budgeting
 
     @property
     def allow_gcp_saas(self) -> 'bool':
@@ -881,6 +912,27 @@ class V1Organization(object):
         """
 
         self._updated_at = updated_at
+
+    @property
+    def workload_max_run_duration(self) -> 'str':
+        """Gets the workload_max_run_duration of this V1Organization.  # noqa: E501
+
+
+        :return: The workload_max_run_duration of this V1Organization.  # noqa: E501
+        :rtype: str
+        """
+        return self._workload_max_run_duration
+
+    @workload_max_run_duration.setter
+    def workload_max_run_duration(self, workload_max_run_duration: 'str'):
+        """Sets the workload_max_run_duration of this V1Organization.
+
+
+        :param workload_max_run_duration: The workload_max_run_duration of this V1Organization.  # noqa: E501
+        :type: str
+        """
+
+        self._workload_max_run_duration = workload_max_run_duration
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

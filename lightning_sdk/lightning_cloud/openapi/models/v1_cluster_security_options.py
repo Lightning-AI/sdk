@@ -42,6 +42,8 @@ class V1ClusterSecurityOptions(object):
     """
     swagger_types = {
         'bucket_kms_key': 'str',
+        'cloud_init_boot_cmds': 'list[str]',
+        'cloud_init_run_cmds': 'list[str]',
         'containers_non_privileged': 'bool',
         'disable_public_ip': 'bool',
         'disabled_services': 'list[str]',
@@ -58,6 +60,8 @@ class V1ClusterSecurityOptions(object):
 
     attribute_map = {
         'bucket_kms_key': 'bucketKmsKey',
+        'cloud_init_boot_cmds': 'cloudInitBootCmds',
+        'cloud_init_run_cmds': 'cloudInitRunCmds',
         'containers_non_privileged': 'containersNonPrivileged',
         'disable_public_ip': 'disablePublicIp',
         'disabled_services': 'disabledServices',
@@ -72,9 +76,11 @@ class V1ClusterSecurityOptions(object):
         'ssh_disabled': 'sshDisabled'
     }
 
-    def __init__(self, bucket_kms_key: 'str' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_policy: 'str' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
+    def __init__(self, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_policy: 'str' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
         self._bucket_kms_key = None
+        self._cloud_init_boot_cmds = None
+        self._cloud_init_run_cmds = None
         self._containers_non_privileged = None
         self._disable_public_ip = None
         self._disabled_services = None
@@ -90,6 +96,10 @@ class V1ClusterSecurityOptions(object):
         self.discriminator = None
         if bucket_kms_key is not None:
             self.bucket_kms_key = bucket_kms_key
+        if cloud_init_boot_cmds is not None:
+            self.cloud_init_boot_cmds = cloud_init_boot_cmds
+        if cloud_init_run_cmds is not None:
+            self.cloud_init_run_cmds = cloud_init_run_cmds
         if containers_non_privileged is not None:
             self.containers_non_privileged = containers_non_privileged
         if disable_public_ip is not None:
@@ -135,6 +145,48 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._bucket_kms_key = bucket_kms_key
+
+    @property
+    def cloud_init_boot_cmds(self) -> 'list[str]':
+        """Gets the cloud_init_boot_cmds of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The cloud_init_boot_cmds of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._cloud_init_boot_cmds
+
+    @cloud_init_boot_cmds.setter
+    def cloud_init_boot_cmds(self, cloud_init_boot_cmds: 'list[str]'):
+        """Sets the cloud_init_boot_cmds of this V1ClusterSecurityOptions.
+
+
+        :param cloud_init_boot_cmds: The cloud_init_boot_cmds of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._cloud_init_boot_cmds = cloud_init_boot_cmds
+
+    @property
+    def cloud_init_run_cmds(self) -> 'list[str]':
+        """Gets the cloud_init_run_cmds of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The cloud_init_run_cmds of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._cloud_init_run_cmds
+
+    @cloud_init_run_cmds.setter
+    def cloud_init_run_cmds(self, cloud_init_run_cmds: 'list[str]'):
+        """Sets the cloud_init_run_cmds of this V1ClusterSecurityOptions.
+
+
+        :param cloud_init_run_cmds: The cloud_init_run_cmds of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._cloud_init_run_cmds = cloud_init_run_cmds
 
     @property
     def containers_non_privileged(self) -> 'bool':

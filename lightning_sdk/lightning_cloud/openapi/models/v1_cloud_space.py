@@ -52,6 +52,7 @@ class V1CloudSpace(object):
         'display_name': 'str',
         'engagement_counts': 'dict(str, str)',
         'env': 'list[V1EnvVar]',
+        'environment_template_id': 'str',
         'featured': 'bool',
         'hide_files': 'bool',
         'id': 'str',
@@ -64,6 +65,7 @@ class V1CloudSpace(object):
         'license_url': 'str',
         'lock_out': 'bool',
         'machine_image_version': 'str',
+        'max_run_duration': 'str',
         'message': 'str',
         'multi_user_edit': 'bool',
         'name': 'str',
@@ -103,6 +105,7 @@ class V1CloudSpace(object):
         'display_name': 'displayName',
         'engagement_counts': 'engagementCounts',
         'env': 'env',
+        'environment_template_id': 'environmentTemplateId',
         'featured': 'featured',
         'hide_files': 'hideFiles',
         'id': 'id',
@@ -115,6 +118,7 @@ class V1CloudSpace(object):
         'license_url': 'licenseUrl',
         'lock_out': 'lockOut',
         'machine_image_version': 'machineImageVersion',
+        'max_run_duration': 'maxRunDuration',
         'message': 'message',
         'multi_user_edit': 'multiUserEdit',
         'name': 'name',
@@ -142,7 +146,7 @@ class V1CloudSpace(object):
         'web_path': 'webPath'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, lock_out: 'bool' =None, machine_image_version: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, publications: 'list[V1CloudSpaceVersionPublication]' =None, published_at: 'datetime' =None, published_to_org_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, environment_template_id: 'str' =None, featured: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, lock_out: 'bool' =None, machine_image_version: 'str' =None, max_run_duration: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, publications: 'list[V1CloudSpaceVersionPublication]' =None, published_at: 'datetime' =None, published_to_org_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cluster_id = None
@@ -155,6 +159,7 @@ class V1CloudSpace(object):
         self._display_name = None
         self._engagement_counts = None
         self._env = None
+        self._environment_template_id = None
         self._featured = None
         self._hide_files = None
         self._id = None
@@ -167,6 +172,7 @@ class V1CloudSpace(object):
         self._license_url = None
         self._lock_out = None
         self._machine_image_version = None
+        self._max_run_duration = None
         self._message = None
         self._multi_user_edit = None
         self._name = None
@@ -215,6 +221,8 @@ class V1CloudSpace(object):
             self.engagement_counts = engagement_counts
         if env is not None:
             self.env = env
+        if environment_template_id is not None:
+            self.environment_template_id = environment_template_id
         if featured is not None:
             self.featured = featured
         if hide_files is not None:
@@ -239,6 +247,8 @@ class V1CloudSpace(object):
             self.lock_out = lock_out
         if machine_image_version is not None:
             self.machine_image_version = machine_image_version
+        if max_run_duration is not None:
+            self.max_run_duration = max_run_duration
         if message is not None:
             self.message = message
         if multi_user_edit is not None:
@@ -522,6 +532,27 @@ class V1CloudSpace(object):
         self._env = env
 
     @property
+    def environment_template_id(self) -> 'str':
+        """Gets the environment_template_id of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The environment_template_id of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._environment_template_id
+
+    @environment_template_id.setter
+    def environment_template_id(self, environment_template_id: 'str'):
+        """Sets the environment_template_id of this V1CloudSpace.
+
+
+        :param environment_template_id: The environment_template_id of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._environment_template_id = environment_template_id
+
+    @property
     def featured(self) -> 'bool':
         """Gets the featured of this V1CloudSpace.  # noqa: E501
 
@@ -772,6 +803,27 @@ class V1CloudSpace(object):
         """
 
         self._machine_image_version = machine_image_version
+
+    @property
+    def max_run_duration(self) -> 'str':
+        """Gets the max_run_duration of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The max_run_duration of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._max_run_duration
+
+    @max_run_duration.setter
+    def max_run_duration(self, max_run_duration: 'str'):
+        """Sets the max_run_duration of this V1CloudSpace.
+
+
+        :param max_run_duration: The max_run_duration of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._max_run_duration = max_run_duration
 
     @property
     def message(self) -> 'str':

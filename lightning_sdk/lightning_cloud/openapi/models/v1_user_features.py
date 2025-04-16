@@ -63,7 +63,6 @@ class V1UserFeatures(object):
         'default_one_cluster': 'bool',
         'deployment_alerts': 'bool',
         'deployment_persistent_disk': 'bool',
-        'deployment_reservations': 'bool',
         'dgx_cloud': 'bool',
         'docs_agent': 'bool',
         'drive_v2': 'bool',
@@ -85,6 +84,7 @@ class V1UserFeatures(object):
         'multiple_studio_versions': 'bool',
         'org_admin_alerts': 'bool',
         'org_level_member_permissions': 'bool',
+        'org_usage_limits': 'bool',
         'pipelines': 'bool',
         'plugin_distributed': 'bool',
         'plugin_inference': 'bool',
@@ -140,7 +140,6 @@ class V1UserFeatures(object):
         'default_one_cluster': 'defaultOneCluster',
         'deployment_alerts': 'deploymentAlerts',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
-        'deployment_reservations': 'deploymentReservations',
         'dgx_cloud': 'dgxCloud',
         'docs_agent': 'docsAgent',
         'drive_v2': 'driveV2',
@@ -162,6 +161,7 @@ class V1UserFeatures(object):
         'multiple_studio_versions': 'multipleStudioVersions',
         'org_admin_alerts': 'orgAdminAlerts',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
+        'org_usage_limits': 'orgUsageLimits',
         'pipelines': 'pipelines',
         'plugin_distributed': 'pluginDistributed',
         'plugin_inference': 'pluginInference',
@@ -194,7 +194,7 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_reservations: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -218,7 +218,6 @@ class V1UserFeatures(object):
         self._default_one_cluster = None
         self._deployment_alerts = None
         self._deployment_persistent_disk = None
-        self._deployment_reservations = None
         self._dgx_cloud = None
         self._docs_agent = None
         self._drive_v2 = None
@@ -240,6 +239,7 @@ class V1UserFeatures(object):
         self._multiple_studio_versions = None
         self._org_admin_alerts = None
         self._org_level_member_permissions = None
+        self._org_usage_limits = None
         self._pipelines = None
         self._plugin_distributed = None
         self._plugin_inference = None
@@ -315,8 +315,6 @@ class V1UserFeatures(object):
             self.deployment_alerts = deployment_alerts
         if deployment_persistent_disk is not None:
             self.deployment_persistent_disk = deployment_persistent_disk
-        if deployment_reservations is not None:
-            self.deployment_reservations = deployment_reservations
         if dgx_cloud is not None:
             self.dgx_cloud = dgx_cloud
         if docs_agent is not None:
@@ -359,6 +357,8 @@ class V1UserFeatures(object):
             self.org_admin_alerts = org_admin_alerts
         if org_level_member_permissions is not None:
             self.org_level_member_permissions = org_level_member_permissions
+        if org_usage_limits is not None:
+            self.org_usage_limits = org_usage_limits
         if pipelines is not None:
             self.pipelines = pipelines
         if plugin_distributed is not None:
@@ -883,27 +883,6 @@ class V1UserFeatures(object):
         self._deployment_persistent_disk = deployment_persistent_disk
 
     @property
-    def deployment_reservations(self) -> 'bool':
-        """Gets the deployment_reservations of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The deployment_reservations of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._deployment_reservations
-
-    @deployment_reservations.setter
-    def deployment_reservations(self, deployment_reservations: 'bool'):
-        """Sets the deployment_reservations of this V1UserFeatures.
-
-
-        :param deployment_reservations: The deployment_reservations of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._deployment_reservations = deployment_reservations
-
-    @property
     def dgx_cloud(self) -> 'bool':
         """Gets the dgx_cloud of this V1UserFeatures.  # noqa: E501
 
@@ -1343,6 +1322,27 @@ class V1UserFeatures(object):
         """
 
         self._org_level_member_permissions = org_level_member_permissions
+
+    @property
+    def org_usage_limits(self) -> 'bool':
+        """Gets the org_usage_limits of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The org_usage_limits of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._org_usage_limits
+
+    @org_usage_limits.setter
+    def org_usage_limits(self, org_usage_limits: 'bool'):
+        """Sets the org_usage_limits of this V1UserFeatures.
+
+
+        :param org_usage_limits: The org_usage_limits of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._org_usage_limits = org_usage_limits
 
     @property
     def pipelines(self) -> 'bool':

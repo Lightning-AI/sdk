@@ -54,7 +54,7 @@ class V1GoogleCloudDirectV1(object):
         'service_account_email': 'str',
         'source_cidr_ips': 'list[str]',
         'subnets': 'list[V1SubnetSpec]',
-        'vpc_networks': 'list[str]'
+        'vpcs': 'list[V1GCPDirectVPC]'
     }
 
     attribute_map = {
@@ -71,10 +71,10 @@ class V1GoogleCloudDirectV1(object):
         'service_account_email': 'serviceAccountEmail',
         'source_cidr_ips': 'sourceCidrIps',
         'subnets': 'subnets',
-        'vpc_networks': 'vpcNetworks'
+        'vpcs': 'vpcs'
     }
 
-    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, compute_service_account_email: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None, vpc_networks: 'list[str]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, compute_service_account_email: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None, vpcs: 'list[V1GCPDirectVPC]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._compute_project_role = None
@@ -89,7 +89,7 @@ class V1GoogleCloudDirectV1(object):
         self._service_account_email = None
         self._source_cidr_ips = None
         self._subnets = None
-        self._vpc_networks = None
+        self._vpcs = None
         self.discriminator = None
         if bucket_name is not None:
             self.bucket_name = bucket_name
@@ -117,8 +117,8 @@ class V1GoogleCloudDirectV1(object):
             self.source_cidr_ips = source_cidr_ips
         if subnets is not None:
             self.subnets = subnets
-        if vpc_networks is not None:
-            self.vpc_networks = vpc_networks
+        if vpcs is not None:
+            self.vpcs = vpcs
 
     @property
     def bucket_name(self) -> 'str':
@@ -400,25 +400,25 @@ class V1GoogleCloudDirectV1(object):
         self._subnets = subnets
 
     @property
-    def vpc_networks(self) -> 'list[str]':
-        """Gets the vpc_networks of this V1GoogleCloudDirectV1.  # noqa: E501
+    def vpcs(self) -> 'list[V1GCPDirectVPC]':
+        """Gets the vpcs of this V1GoogleCloudDirectV1.  # noqa: E501
 
 
-        :return: The vpc_networks of this V1GoogleCloudDirectV1.  # noqa: E501
-        :rtype: list[str]
+        :return: The vpcs of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: list[V1GCPDirectVPC]
         """
-        return self._vpc_networks
+        return self._vpcs
 
-    @vpc_networks.setter
-    def vpc_networks(self, vpc_networks: 'list[str]'):
-        """Sets the vpc_networks of this V1GoogleCloudDirectV1.
+    @vpcs.setter
+    def vpcs(self, vpcs: 'list[V1GCPDirectVPC]'):
+        """Sets the vpcs of this V1GoogleCloudDirectV1.
 
 
-        :param vpc_networks: The vpc_networks of this V1GoogleCloudDirectV1.  # noqa: E501
-        :type: list[str]
+        :param vpcs: The vpcs of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: list[V1GCPDirectVPC]
         """
 
-        self._vpc_networks = vpc_networks
+        self._vpcs = vpcs
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

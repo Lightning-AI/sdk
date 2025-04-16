@@ -42,38 +42,33 @@ class V1WekaDataConnection(object):
     """
     swagger_types = {
         'backend_ips': 'list[str]',
-        'cores': 'int',
         'file_system_name': 'str',
-        'management_ip': 'str',
-        'memory_mb': 'int'
+        'memory_mb': 'int',
+        'readonly': 'bool'
     }
 
     attribute_map = {
         'backend_ips': 'backendIps',
-        'cores': 'cores',
         'file_system_name': 'fileSystemName',
-        'management_ip': 'managementIp',
-        'memory_mb': 'memoryMb'
+        'memory_mb': 'memoryMb',
+        'readonly': 'readonly'
     }
 
-    def __init__(self, backend_ips: 'list[str]' =None, cores: 'int' =None, file_system_name: 'str' =None, management_ip: 'str' =None, memory_mb: 'int' =None):  # noqa: E501
+    def __init__(self, backend_ips: 'list[str]' =None, file_system_name: 'str' =None, memory_mb: 'int' =None, readonly: 'bool' =None):  # noqa: E501
         """V1WekaDataConnection - a model defined in Swagger"""  # noqa: E501
         self._backend_ips = None
-        self._cores = None
         self._file_system_name = None
-        self._management_ip = None
         self._memory_mb = None
+        self._readonly = None
         self.discriminator = None
         if backend_ips is not None:
             self.backend_ips = backend_ips
-        if cores is not None:
-            self.cores = cores
         if file_system_name is not None:
             self.file_system_name = file_system_name
-        if management_ip is not None:
-            self.management_ip = management_ip
         if memory_mb is not None:
             self.memory_mb = memory_mb
+        if readonly is not None:
+            self.readonly = readonly
 
     @property
     def backend_ips(self) -> 'list[str]':
@@ -97,27 +92,6 @@ class V1WekaDataConnection(object):
         self._backend_ips = backend_ips
 
     @property
-    def cores(self) -> 'int':
-        """Gets the cores of this V1WekaDataConnection.  # noqa: E501
-
-
-        :return: The cores of this V1WekaDataConnection.  # noqa: E501
-        :rtype: int
-        """
-        return self._cores
-
-    @cores.setter
-    def cores(self, cores: 'int'):
-        """Sets the cores of this V1WekaDataConnection.
-
-
-        :param cores: The cores of this V1WekaDataConnection.  # noqa: E501
-        :type: int
-        """
-
-        self._cores = cores
-
-    @property
     def file_system_name(self) -> 'str':
         """Gets the file_system_name of this V1WekaDataConnection.  # noqa: E501
 
@@ -139,27 +113,6 @@ class V1WekaDataConnection(object):
         self._file_system_name = file_system_name
 
     @property
-    def management_ip(self) -> 'str':
-        """Gets the management_ip of this V1WekaDataConnection.  # noqa: E501
-
-
-        :return: The management_ip of this V1WekaDataConnection.  # noqa: E501
-        :rtype: str
-        """
-        return self._management_ip
-
-    @management_ip.setter
-    def management_ip(self, management_ip: 'str'):
-        """Sets the management_ip of this V1WekaDataConnection.
-
-
-        :param management_ip: The management_ip of this V1WekaDataConnection.  # noqa: E501
-        :type: str
-        """
-
-        self._management_ip = management_ip
-
-    @property
     def memory_mb(self) -> 'int':
         """Gets the memory_mb of this V1WekaDataConnection.  # noqa: E501
 
@@ -179,6 +132,27 @@ class V1WekaDataConnection(object):
         """
 
         self._memory_mb = memory_mb
+
+    @property
+    def readonly(self) -> 'bool':
+        """Gets the readonly of this V1WekaDataConnection.  # noqa: E501
+
+
+        :return: The readonly of this V1WekaDataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._readonly
+
+    @readonly.setter
+    def readonly(self, readonly: 'bool'):
+        """Sets the readonly of this V1WekaDataConnection.
+
+
+        :param readonly: The readonly of this V1WekaDataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._readonly = readonly
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

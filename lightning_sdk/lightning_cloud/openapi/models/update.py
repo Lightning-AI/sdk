@@ -46,6 +46,7 @@ class Update(object):
         'gcp': 'V1GcpDataConnection',
         'gcs_folder': 'V1GCSFolderDataConnection',
         'name': 'str',
+        'r2': 'V1R2DataConnection',
         'run_cmds': 'list[str]',
         's3_folder': 'V1S3FolderDataConnection',
         'snowflake': 'V1SnowflakeDataConnection',
@@ -58,19 +59,21 @@ class Update(object):
         'gcp': 'gcp',
         'gcs_folder': 'gcsFolder',
         'name': 'name',
+        'r2': 'r2',
         'run_cmds': 'runCmds',
         's3_folder': 's3Folder',
         'snowflake': 'snowflake',
         'writable': 'writable'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Update - a model defined in Swagger"""  # noqa: E501
         self._aws = None
         self._efs = None
         self._gcp = None
         self._gcs_folder = None
         self._name = None
+        self._r2 = None
         self._run_cmds = None
         self._s3_folder = None
         self._snowflake = None
@@ -86,6 +89,8 @@ class Update(object):
             self.gcs_folder = gcs_folder
         if name is not None:
             self.name = name
+        if r2 is not None:
+            self.r2 = r2
         if run_cmds is not None:
             self.run_cmds = run_cmds
         if s3_folder is not None:
@@ -199,6 +204,27 @@ class Update(object):
         """
 
         self._name = name
+
+    @property
+    def r2(self) -> 'V1R2DataConnection':
+        """Gets the r2 of this Update.  # noqa: E501
+
+
+        :return: The r2 of this Update.  # noqa: E501
+        :rtype: V1R2DataConnection
+        """
+        return self._r2
+
+    @r2.setter
+    def r2(self, r2: 'V1R2DataConnection'):
+        """Sets the r2 of this Update.
+
+
+        :param r2: The r2 of this Update.  # noqa: E501
+        :type: V1R2DataConnection
+        """
+
+        self._r2 = r2
 
     @property
     def run_cmds(self) -> 'list[str]':

@@ -47,6 +47,7 @@ class V1ProjectClusterBinding(object):
         'created_at': 'datetime',
         'is_cluster_healthy': 'bool',
         'project_id': 'str',
+        'sa_key': 'str',
         'updated_at': 'datetime'
     }
 
@@ -57,10 +58,11 @@ class V1ProjectClusterBinding(object):
         'created_at': 'createdAt',
         'is_cluster_healthy': 'isClusterHealthy',
         'project_id': 'projectId',
+        'sa_key': 'saKey',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, cluster_id: 'str' =None, cluster_name: 'str' =None, cluster_region: 'str' =None, created_at: 'datetime' =None, is_cluster_healthy: 'bool' =None, project_id: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, cluster_name: 'str' =None, cluster_region: 'str' =None, created_at: 'datetime' =None, is_cluster_healthy: 'bool' =None, project_id: 'str' =None, sa_key: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1ProjectClusterBinding - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._cluster_name = None
@@ -68,6 +70,7 @@ class V1ProjectClusterBinding(object):
         self._created_at = None
         self._is_cluster_healthy = None
         self._project_id = None
+        self._sa_key = None
         self._updated_at = None
         self.discriminator = None
         if cluster_id is not None:
@@ -82,6 +85,8 @@ class V1ProjectClusterBinding(object):
             self.is_cluster_healthy = is_cluster_healthy
         if project_id is not None:
             self.project_id = project_id
+        if sa_key is not None:
+            self.sa_key = sa_key
         if updated_at is not None:
             self.updated_at = updated_at
 
@@ -210,6 +215,27 @@ class V1ProjectClusterBinding(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def sa_key(self) -> 'str':
+        """Gets the sa_key of this V1ProjectClusterBinding.  # noqa: E501
+
+
+        :return: The sa_key of this V1ProjectClusterBinding.  # noqa: E501
+        :rtype: str
+        """
+        return self._sa_key
+
+    @sa_key.setter
+    def sa_key(self, sa_key: 'str'):
+        """Sets the sa_key of this V1ProjectClusterBinding.
+
+
+        :param sa_key: The sa_key of this V1ProjectClusterBinding.  # noqa: E501
+        :type: str
+        """
+
+        self._sa_key = sa_key
 
     @property
     def updated_at(self) -> 'datetime':

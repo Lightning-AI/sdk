@@ -42,24 +42,29 @@ class V1CreateClusterCapacityReservationResponse(object):
     """
     swagger_types = {
         'cloud_provider_capacity_reservation_id': 'str',
+        'full_cloud_provider_reservation_string': 'str',
         'id': 'str',
         'match_pattern': 'str'
     }
 
     attribute_map = {
         'cloud_provider_capacity_reservation_id': 'cloudProviderCapacityReservationId',
+        'full_cloud_provider_reservation_string': 'fullCloudProviderReservationString',
         'id': 'id',
         'match_pattern': 'matchPattern'
     }
 
-    def __init__(self, cloud_provider_capacity_reservation_id: 'str' =None, id: 'str' =None, match_pattern: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_provider_capacity_reservation_id: 'str' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, match_pattern: 'str' =None):  # noqa: E501
         """V1CreateClusterCapacityReservationResponse - a model defined in Swagger"""  # noqa: E501
         self._cloud_provider_capacity_reservation_id = None
+        self._full_cloud_provider_reservation_string = None
         self._id = None
         self._match_pattern = None
         self.discriminator = None
         if cloud_provider_capacity_reservation_id is not None:
             self.cloud_provider_capacity_reservation_id = cloud_provider_capacity_reservation_id
+        if full_cloud_provider_reservation_string is not None:
+            self.full_cloud_provider_reservation_string = full_cloud_provider_reservation_string
         if id is not None:
             self.id = id
         if match_pattern is not None:
@@ -85,6 +90,27 @@ class V1CreateClusterCapacityReservationResponse(object):
         """
 
         self._cloud_provider_capacity_reservation_id = cloud_provider_capacity_reservation_id
+
+    @property
+    def full_cloud_provider_reservation_string(self) -> 'str':
+        """Gets the full_cloud_provider_reservation_string of this V1CreateClusterCapacityReservationResponse.  # noqa: E501
+
+
+        :return: The full_cloud_provider_reservation_string of this V1CreateClusterCapacityReservationResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._full_cloud_provider_reservation_string
+
+    @full_cloud_provider_reservation_string.setter
+    def full_cloud_provider_reservation_string(self, full_cloud_provider_reservation_string: 'str'):
+        """Sets the full_cloud_provider_reservation_string of this V1CreateClusterCapacityReservationResponse.
+
+
+        :param full_cloud_provider_reservation_string: The full_cloud_provider_reservation_string of this V1CreateClusterCapacityReservationResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._full_cloud_provider_reservation_string = full_cloud_provider_reservation_string
 
     @property
     def id(self) -> 'str':

@@ -53,9 +53,11 @@ class Create(object):
         'gcs_folder': 'V1GCSFolderDataConnection',
         'id': 'str',
         'name': 'str',
+        'r2': 'V1R2DataConnection',
         'run_cmds': 'list[str]',
         's3_folder': 'V1S3FolderDataConnection',
         'snowflake': 'V1SnowflakeDataConnection',
+        'weka': 'V1WekaDataConnection',
         'writable': 'bool'
     }
 
@@ -72,13 +74,15 @@ class Create(object):
         'gcs_folder': 'gcsFolder',
         'id': 'id',
         'name': 'name',
+        'r2': 'r2',
         'run_cmds': 'runCmds',
         's3_folder': 's3Folder',
         'snowflake': 'snowflake',
+        'weka': 'weka',
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, name: 'str' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, name: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Create - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._aws = None
@@ -92,9 +96,11 @@ class Create(object):
         self._gcs_folder = None
         self._id = None
         self._name = None
+        self._r2 = None
         self._run_cmds = None
         self._s3_folder = None
         self._snowflake = None
+        self._weka = None
         self._writable = None
         self.discriminator = None
         if access_cluster_ids is not None:
@@ -121,12 +127,16 @@ class Create(object):
             self.id = id
         if name is not None:
             self.name = name
+        if r2 is not None:
+            self.r2 = r2
         if run_cmds is not None:
             self.run_cmds = run_cmds
         if s3_folder is not None:
             self.s3_folder = s3_folder
         if snowflake is not None:
             self.snowflake = snowflake
+        if weka is not None:
+            self.weka = weka
         if writable is not None:
             self.writable = writable
 
@@ -383,6 +393,27 @@ class Create(object):
         self._name = name
 
     @property
+    def r2(self) -> 'V1R2DataConnection':
+        """Gets the r2 of this Create.  # noqa: E501
+
+
+        :return: The r2 of this Create.  # noqa: E501
+        :rtype: V1R2DataConnection
+        """
+        return self._r2
+
+    @r2.setter
+    def r2(self, r2: 'V1R2DataConnection'):
+        """Sets the r2 of this Create.
+
+
+        :param r2: The r2 of this Create.  # noqa: E501
+        :type: V1R2DataConnection
+        """
+
+        self._r2 = r2
+
+    @property
     def run_cmds(self) -> 'list[str]':
         """Gets the run_cmds of this Create.  # noqa: E501
 
@@ -444,6 +475,27 @@ class Create(object):
         """
 
         self._snowflake = snowflake
+
+    @property
+    def weka(self) -> 'V1WekaDataConnection':
+        """Gets the weka of this Create.  # noqa: E501
+
+
+        :return: The weka of this Create.  # noqa: E501
+        :rtype: V1WekaDataConnection
+        """
+        return self._weka
+
+    @weka.setter
+    def weka(self, weka: 'V1WekaDataConnection'):
+        """Sets the weka of this Create.
+
+
+        :param weka: The weka of this Create.  # noqa: E501
+        :type: V1WekaDataConnection
+        """
+
+        self._weka = weka
 
     @property
     def writable(self) -> 'bool':

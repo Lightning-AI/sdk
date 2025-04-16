@@ -44,6 +44,7 @@ class V1ClusterSpec(object):
         'auth_token': 'str',
         'available_accelerators': 'list[str]',
         'aws_v1': 'V1AWSDirectV1',
+        'cloudflare_v1': 'V1CloudflareV1',
         'cluster_type': 'V1ClusterType',
         'deletion_options': 'V1ClusterDeletionOptions',
         'desired_state': 'V1ClusterState',
@@ -71,6 +72,7 @@ class V1ClusterSpec(object):
         'auth_token': 'authToken',
         'available_accelerators': 'availableAccelerators',
         'aws_v1': 'awsV1',
+        'cloudflare_v1': 'cloudflareV1',
         'cluster_type': 'clusterType',
         'deletion_options': 'deletionOptions',
         'desired_state': 'desiredState',
@@ -94,11 +96,12 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_accelerators = None
         self._aws_v1 = None
+        self._cloudflare_v1 = None
         self._cluster_type = None
         self._deletion_options = None
         self._desired_state = None
@@ -127,6 +130,8 @@ class V1ClusterSpec(object):
             self.available_accelerators = available_accelerators
         if aws_v1 is not None:
             self.aws_v1 = aws_v1
+        if cloudflare_v1 is not None:
+            self.cloudflare_v1 = cloudflare_v1
         if cluster_type is not None:
             self.cluster_type = cluster_type
         if deletion_options is not None:
@@ -232,6 +237,27 @@ class V1ClusterSpec(object):
         """
 
         self._aws_v1 = aws_v1
+
+    @property
+    def cloudflare_v1(self) -> 'V1CloudflareV1':
+        """Gets the cloudflare_v1 of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The cloudflare_v1 of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1CloudflareV1
+        """
+        return self._cloudflare_v1
+
+    @cloudflare_v1.setter
+    def cloudflare_v1(self, cloudflare_v1: 'V1CloudflareV1'):
+        """Sets the cloudflare_v1 of this V1ClusterSpec.
+
+
+        :param cloudflare_v1: The cloudflare_v1 of this V1ClusterSpec.  # noqa: E501
+        :type: V1CloudflareV1
+        """
+
+        self._cloudflare_v1 = cloudflare_v1
 
     @property
     def cluster_type(self) -> 'V1ClusterType':

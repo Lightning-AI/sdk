@@ -43,20 +43,23 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
     swagger_types = {
         'machine_image_version': 'str',
         'name': 'str',
-        'org_id': 'str'
+        'org_id': 'str',
+        'setup_script_text': 'str'
     }
 
     attribute_map = {
         'machine_image_version': 'machineImageVersion',
         'name': 'name',
-        'org_id': 'orgId'
+        'org_id': 'orgId',
+        'setup_script_text': 'setupScriptText'
     }
 
-    def __init__(self, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None):  # noqa: E501
+    def __init__(self, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, setup_script_text: 'str' =None):  # noqa: E501
         """V1CreateCloudSpaceEnvironmentTemplateRequest - a model defined in Swagger"""  # noqa: E501
         self._machine_image_version = None
         self._name = None
         self._org_id = None
+        self._setup_script_text = None
         self.discriminator = None
         if machine_image_version is not None:
             self.machine_image_version = machine_image_version
@@ -64,6 +67,8 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
             self.name = name
         if org_id is not None:
             self.org_id = org_id
+        if setup_script_text is not None:
+            self.setup_script_text = setup_script_text
 
     @property
     def machine_image_version(self) -> 'str':
@@ -127,6 +132,27 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         """
 
         self._org_id = org_id
+
+    @property
+    def setup_script_text(self) -> 'str':
+        """Gets the setup_script_text of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+
+
+        :return: The setup_script_text of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._setup_script_text
+
+    @setup_script_text.setter
+    def setup_script_text(self, setup_script_text: 'str'):
+        """Sets the setup_script_text of this V1CreateCloudSpaceEnvironmentTemplateRequest.
+
+
+        :param setup_script_text: The setup_script_text of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._setup_script_text = setup_script_text
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

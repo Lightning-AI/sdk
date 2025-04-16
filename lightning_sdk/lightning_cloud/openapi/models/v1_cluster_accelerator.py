@@ -82,6 +82,7 @@ class V1ClusterAccelerator(object):
         'reservation_quota_name': 'str',
         'reservation_quota_page_url': 'str',
         'resources': 'V1Resources',
+        'secondary_instance_id': 'str',
         'slug': 'str',
         'slug_multi_cloud': 'str',
         'spot_price': 'float',
@@ -132,6 +133,7 @@ class V1ClusterAccelerator(object):
         'reservation_quota_name': 'reservationQuotaName',
         'reservation_quota_page_url': 'reservationQuotaPageUrl',
         'resources': 'resources',
+        'secondary_instance_id': 'secondaryInstanceId',
         'slug': 'slug',
         'slug_multi_cloud': 'slugMultiCloud',
         'spot_price': 'spotPrice',
@@ -140,7 +142,7 @@ class V1ClusterAccelerator(object):
         'spot_quota_page_url': 'spotQuotaPageUrl'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, dws_only: 'bool' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_included: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, local_disks_count: 'str' =None, max_available_quota: 'str' =None, non_spot: 'bool' =None, provider: 'V1CloudProvider' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, reservation_quota_code: 'str' =None, reservation_quota_name: 'str' =None, reservation_quota_page_url: 'str' =None, resources: 'V1Resources' =None, slug: 'str' =None, slug_multi_cloud: 'str' =None, spot_price: 'float' =None, spot_quota_code: 'str' =None, spot_quota_name: 'str' =None, spot_quota_page_url: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, dws_only: 'bool' =None, enabled: 'bool' =None, family: 'str' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, local_disk_included: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, local_disks_count: 'str' =None, max_available_quota: 'str' =None, non_spot: 'bool' =None, provider: 'V1CloudProvider' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, reservation_quota_code: 'str' =None, reservation_quota_name: 'str' =None, reservation_quota_page_url: 'str' =None, resources: 'V1Resources' =None, secondary_instance_id: 'str' =None, slug: 'str' =None, slug_multi_cloud: 'str' =None, spot_price: 'float' =None, spot_quota_code: 'str' =None, spot_quota_name: 'str' =None, spot_quota_page_url: 'str' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -183,6 +185,7 @@ class V1ClusterAccelerator(object):
         self._reservation_quota_name = None
         self._reservation_quota_page_url = None
         self._resources = None
+        self._secondary_instance_id = None
         self._slug = None
         self._slug_multi_cloud = None
         self._spot_price = None
@@ -272,6 +275,8 @@ class V1ClusterAccelerator(object):
             self.reservation_quota_page_url = reservation_quota_page_url
         if resources is not None:
             self.resources = resources
+        if secondary_instance_id is not None:
+            self.secondary_instance_id = secondary_instance_id
         if slug is not None:
             self.slug = slug
         if slug_multi_cloud is not None:
@@ -1145,6 +1150,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._resources = resources
+
+    @property
+    def secondary_instance_id(self) -> 'str':
+        """Gets the secondary_instance_id of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The secondary_instance_id of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: str
+        """
+        return self._secondary_instance_id
+
+    @secondary_instance_id.setter
+    def secondary_instance_id(self, secondary_instance_id: 'str'):
+        """Sets the secondary_instance_id of this V1ClusterAccelerator.
+
+
+        :param secondary_instance_id: The secondary_instance_id of this V1ClusterAccelerator.  # noqa: E501
+        :type: str
+        """
+
+        self._secondary_instance_id = secondary_instance_id
 
     @property
     def slug(self) -> 'str':
