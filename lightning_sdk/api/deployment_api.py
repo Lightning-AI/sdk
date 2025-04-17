@@ -224,6 +224,7 @@ class DeploymentApi:
     def create_deployment(
         self,
         deployment: V1Deployment,
+        from_onboarding: Optional[bool] = None,
     ) -> V1Deployment:
         return self._client.jobs_service_create_deployment(
             project_id=deployment.project_id,
@@ -236,6 +237,7 @@ class DeploymentApi:
                 replicas=deployment.replicas,
                 spec=deployment.spec,
                 strategy=deployment.strategy,
+                from_onboarding=from_onboarding,
             ),
         )
 

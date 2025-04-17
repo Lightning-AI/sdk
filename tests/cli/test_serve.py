@@ -449,14 +449,14 @@ def test_onboarding_select_teamspace_without_org(mock_ts_menu, mock_ts, mock_onb
     (
         mock_lightning_client.return_value.organizations_service_list_joinable_organizations.return_value
     ).joinable_organizations = ("org1",)
-    onboarding._wait = MagicMock()
+    onboarding._wait_user_onboarding = MagicMock()
     assert onboarding.verified, "User is verified"
     assert not onboarding.is_onboarded, "User is still being onboarded"
     assert onboarding.status == _OnboardingStatus.ONBOARDING, "User is still being onboarded"
     assert onboarding.can_join_org, "User can join organization"
     mock_select_teamspace.assert_not_called(), "select_teamspace shouldn't called when user is onboarding"
     onboarding.select_teamspace(None, org=None, user=None)
-    onboarding._wait.assert_called_once()
+    onboarding._wait_user_onboarding.assert_called_once()
     mock_ts.assert_called_once_with(name="personal-teamspace", org=None, user="test-user")
 
     mock_ts_menu.return_value._get_possible_teamspaces.return_value = {
@@ -476,28 +476,22 @@ def test_onboarding_select_teamspace_with_org(mock_ts_menu, mock_ts, mock_onboar
         mock_select_teamspace,
     ) = mock_onboarding
 
-    possible_teamspaces = [
-        {
-            "id1": {"name": "personal-teamspace", "org": None, "user": "test-user"},
-        },
-        {
-            "id1": {"name": "personal-teamspace", "org": None, "user": "test-user"},
-            "id2": {"name": "org-teamspace", "org": "test-org", "user": "test-user"},
-        },
-    ]
-
-    mock_ts_menu.return_value._get_possible_teamspaces = lambda x: possible_teamspaces.pop(0)
+    possible_teamspaces = {
+        "id1": {"name": "personal-teamspace", "org": None, "user": "test-user"},
+        "id2": {"name": "org-teamspace", "org": "test-org", "user": "test-user"},
+    }
+    mock_ts_menu.return_value._get_possible_teamspaces.return_value = possible_teamspaces
     mock_user_api_cls.return_value.get_user.return_value.status.verified = True
     mock_user_api_cls.return_value.get_user.return_value.status.completed_project_onboarding = False
     (
         mock_lightning_client.return_value.organizations_service_list_joinable_organizations.return_value
     ).joinable_organizations = ("org1",)
-    onboarding._wait = MagicMock()
+    onboarding._wait_user_onboarding = MagicMock()
     assert onboarding.verified, "User is verified"
     assert not onboarding.is_onboarded, "User is still being onboarded"
     assert onboarding.status == _OnboardingStatus.ONBOARDING, "User is still being onboarded"
     assert onboarding.can_join_org, "User can join organization"
     mock_select_teamspace.assert_not_called(), "select_teamspace shouldn't called when user is onboarding"
     onboarding.select_teamspace(None, org=None, user=None)
-    onboarding._wait.assert_called_once()
+    onboarding._wait_user_onboarding.assert_called_once()
     mock_ts.assert_called_once_with(name="org-teamspace", org="test-org", user="test-user")

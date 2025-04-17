@@ -333,12 +333,13 @@ class _Onboarding:
             return _OnboardingStatus.ONBOARDED
         return _OnboardingStatus.ONBOARDING
 
-    def _wait(self, timeout: int = _POLL_TIMEOUT) -> None:
+    def _wait_user_onboarding(self, timeout: int = _POLL_TIMEOUT) -> None:
         """Wait for user onboarding if they can join the teamspace otherwise move to select a teamspace."""
         status = self.status
         if status == _OnboardingStatus.ONBOARDED:
             return
 
+        self.console.print("Waiting for account setup. Visit lightning.ai")
         start_time = datetime.now()
         while self.status != _OnboardingStatus.ONBOARDED:
             time.sleep(5)
@@ -368,15 +369,8 @@ class _Onboarding:
 
         # Run only when user hasn't completed onboarding yet.
         menu = _TeamspacesMenu()
-        possible_teamspaces = menu._get_possible_teamspaces(self.user)
-        can_join_org = self.can_join_org
-
-        if len(possible_teamspaces) == 1 and can_join_org:
-            # wait for onboarding to complete so that user can join an org
-            # create deployment in the org default teamspace
-            self.console.print("Waiting for account setup. Visit lightning.ai")
-            self._wait()
-
+        self._wait_user_onboarding()
+        # Onboarding has been completed - user already selected organization if they could
         possible_teamspaces = menu._get_possible_teamspaces(self.user)
         if len(possible_teamspaces) == 1:
             # User didn't select any org
@@ -465,13 +459,16 @@ def _handle_cloud(
     authenticate(shall_confirm=not non_interactive)
     user_status = poll_verified_status()
     cloudspace_id: Optional[str] = None
+    from_onboarding = False
     if not user_status["verified"]:
         console.print("❌ Verify phone number to continue. Visit lightning.ai.", style="red")
         return
     if not user_status["onboarded"]:
+        console.print("onboarding user")
         onboarding = _Onboarding(console)
         resolved_teamspace = onboarding.select_teamspace(teamspace, org, user)
         cloudspace_id = onboarding.get_cloudspace_id(resolved_teamspace)
+        from_onboarding = True
     else:
         resolved_teamspace = select_teamspace(teamspace, org, user)
 
@@ -517,6 +514,7 @@ def _handle_cloud(
         replicas=replicas,
         include_credentials=include_credentials,
         cloudspace_id=cloudspace_id,
+        from_onboarding=from_onboarding,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")
     if user_status["onboarded"]:

@@ -120,6 +120,7 @@ class Deployment:
         cloudspace_id: Optional[str] = None,
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
+        from_onboarding: Optional[bool] = None,
     ) -> None:
         """The Lightning AI Deployment.
 
@@ -146,6 +147,7 @@ class Deployment:
             cloudspace_id: Connect deployment to a Studio.
             quantity: The number of machines per replica to deploy.
             include_credentials: Whether to include the environment variables for the SDK to authenticate
+            from_onboarding: Whether the deployment is from onboarding.
 
         Note:
             Since a teamspace can either be owned by an org or by a user directly,
@@ -182,7 +184,8 @@ class Deployment:
                     include_credentials=include_credentials if include_credentials is not None else True,
                 ),
                 strategy=to_strategy(release_strategy),
-            )
+            ),
+            from_onboarding=from_onboarding,
         )
 
         # Overrides the name
