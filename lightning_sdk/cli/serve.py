@@ -352,9 +352,13 @@ class _Onboarding:
 
     def get_cloudspace_id(self, teamspace: Teamspace) -> Optional[str]:
         cloudspaces: List[V1CloudSpace] = self.client.cloud_space_service_list_cloud_spaces(teamspace.id).cloudspaces
-        for cloudspace in cloudspaces:
-            if "scratch-studio" in cloudspace.name or "scratch-studio" in cloudspace.display_name:
-                return cloudspace.id
+        cloudspaces = sorted(cloudspaces, key=lambda cloudspace: cloudspace.created_at, reverse=True)
+        if len(cloudspaces) == 0:
+            raise RuntimeError("Error creating deployment! Finish account setup at lightning.ai first.")
+        # get the first cloudspace
+        cloudspace = cloudspaces[0]
+        if "scratch-studio" in cloudspace.name or "scratch-studio" in cloudspace.display_name:
+            return cloudspace.id
         return None
 
     def select_teamspace(self, teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:

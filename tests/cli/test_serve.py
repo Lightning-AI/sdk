@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import ANY, MagicMock, call, patch
 
@@ -495,3 +496,22 @@ def test_onboarding_select_teamspace_with_org(mock_ts_menu, mock_ts, mock_onboar
     onboarding.select_teamspace(None, org=None, user=None)
     onboarding._wait_user_onboarding.assert_called_once()
     mock_ts.assert_called_once_with(name="org-teamspace", org="test-org", user="test-user")
+
+
+def test_onboarding_get_cloudspace_id(mock_onboarding):
+    (
+        onboarding,
+        mock_user_api_cls,
+        mock_get_authed_user,
+        mock_lightning_client,
+        mock_select_teamspace,
+    ) = mock_onboarding
+    cloudspaces = [
+        MagicMock(display_name="scratch-studio", created_at=datetime.now(), id=1),
+        MagicMock(display_name="scratch-studio-1", created_at=datetime.now(), id=2),
+        MagicMock(display_name="scratch-studio-latest", created_at=datetime.now(), id=3),
+    ]
+    mock_lightning_client.return_value.cloud_space_service_list_cloud_spaces.return_value.cloudspaces = cloudspaces
+    resp = onboarding.get_cloudspace_id(MagicMock())
+    assert resp == cloudspaces[-1].id, "Should return the latest scratch cloudspace id"
+    mock_lightning_client.return_value.cloud_space_service_list_cloud_spaces.assert_called_once()
