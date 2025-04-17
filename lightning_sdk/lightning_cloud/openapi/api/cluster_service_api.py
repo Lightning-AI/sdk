@@ -2328,6 +2328,9 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id: (required)
+        :param datetime start_time:
+        :param datetime end_time:
+        :param bool available_only:
         :return: V1ListClusterCapacityReservationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2350,12 +2353,15 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id: (required)
+        :param datetime start_time:
+        :param datetime end_time:
+        :param bool available_only:
         :return: V1ListClusterCapacityReservationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'start_time', 'end_time', 'available_only']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2388,6 +2394,12 @@ class ClusterServiceApi(object):
             path_params['clusterId'] = params['cluster_id']  # noqa: E501
 
         query_params = []
+        if 'start_time' in params:
+            query_params.append(('startTime', params['start_time']))  # noqa: E501
+        if 'end_time' in params:
+            query_params.append(('endTime', params['end_time']))  # noqa: E501
+        if 'available_only' in params:
+            query_params.append(('availableOnly', params['available_only']))  # noqa: E501
 
         header_params = {}
 

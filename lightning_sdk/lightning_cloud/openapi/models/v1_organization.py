@@ -64,6 +64,7 @@ class V1Organization(object):
         'featured_gallery': 'bool',
         'full_story_end_date': 'datetime',
         'full_story_start_date': 'datetime',
+        'general_teamspace': 'bool',
         'id': 'str',
         'location': 'str',
         'name': 'str',
@@ -101,6 +102,7 @@ class V1Organization(object):
         'featured_gallery': 'featuredGallery',
         'full_story_end_date': 'fullStoryEndDate',
         'full_story_start_date': 'fullStoryStartDate',
+        'general_teamspace': 'generalTeamspace',
         'id': 'id',
         'location': 'location',
         'name': 'name',
@@ -114,7 +116,7 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_aws_saas = None
@@ -139,6 +141,7 @@ class V1Organization(object):
         self._featured_gallery = None
         self._full_story_end_date = None
         self._full_story_start_date = None
+        self._general_teamspace = None
         self._id = None
         self._location = None
         self._name = None
@@ -197,6 +200,8 @@ class V1Organization(object):
             self.full_story_end_date = full_story_end_date
         if full_story_start_date is not None:
             self.full_story_start_date = full_story_start_date
+        if general_teamspace is not None:
+            self.general_teamspace = general_teamspace
         if id is not None:
             self.id = id
         if location is not None:
@@ -702,6 +707,27 @@ class V1Organization(object):
         """
 
         self._full_story_start_date = full_story_start_date
+
+    @property
+    def general_teamspace(self) -> 'bool':
+        """Gets the general_teamspace of this V1Organization.  # noqa: E501
+
+
+        :return: The general_teamspace of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._general_teamspace
+
+    @general_teamspace.setter
+    def general_teamspace(self, general_teamspace: 'bool'):
+        """Sets the general_teamspace of this V1Organization.
+
+
+        :param general_teamspace: The general_teamspace of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._general_teamspace = general_teamspace
 
     @property
     def id(self) -> 'str':

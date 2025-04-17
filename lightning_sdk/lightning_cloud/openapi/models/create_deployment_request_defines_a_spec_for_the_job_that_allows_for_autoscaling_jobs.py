@@ -47,6 +47,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'endpoint': 'V1Endpoint',
+        'from_litserve': 'bool',
         'from_onboarding': 'bool',
         'name': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
@@ -63,6 +64,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'endpoint': 'endpoint',
+        'from_litserve': 'fromLitserve',
         'from_onboarding': 'fromOnboarding',
         'name': 'name',
         'parameter_spec': 'parameterSpec',
@@ -72,7 +74,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'strategy': 'strategy'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs - a model defined in Swagger"""  # noqa: E501
         self._api_standard = None
         self._apis = None
@@ -80,6 +82,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         self._cloudspace_id = None
         self._cluster_id = None
         self._endpoint = None
+        self._from_litserve = None
         self._from_onboarding = None
         self._name = None
         self._parameter_spec = None
@@ -100,6 +103,8 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
             self.cluster_id = cluster_id
         if endpoint is not None:
             self.endpoint = endpoint
+        if from_litserve is not None:
+            self.from_litserve = from_litserve
         if from_onboarding is not None:
             self.from_onboarding = from_onboarding
         if name is not None:
@@ -240,6 +245,27 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         """
 
         self._endpoint = endpoint
+
+    @property
+    def from_litserve(self) -> 'bool':
+        """Gets the from_litserve of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+
+
+        :return: The from_litserve of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :rtype: bool
+        """
+        return self._from_litserve
+
+    @from_litserve.setter
+    def from_litserve(self, from_litserve: 'bool'):
+        """Sets the from_litserve of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.
+
+
+        :param from_litserve: The from_litserve of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :type: bool
+        """
+
+        self._from_litserve = from_litserve
 
     @property
     def from_onboarding(self) -> 'bool':
