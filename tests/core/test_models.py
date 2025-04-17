@@ -130,7 +130,7 @@ def test_download_model_errors(mock_teamspace_api):
 def test_download_model_in_studio_with_org(
     mock_org_api, mock_teamspace_api, mock_download_model_files, mock_parse_org_teamspace_model_version
 ):
-    mock_parse_org_teamspace_model_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
     mock_org_api().get_org.return_value = V1Organization(name="org-abc")
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
 
@@ -232,7 +232,7 @@ def test_upload_model_in_studio_with_user(
 def test_delete_model_in_studio_with_org(
     mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
-    mock_parse_org_teamspace_model_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
     mock_get_teamspace.return_value = mock.MagicMock()
     mock_org_api().get_org.return_value = V1Organization(name="org-abc")
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
@@ -252,7 +252,7 @@ def test_delete_model_in_studio_with_org(
 def test_delete_model_in_studio_with_user(
     mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
-    mock_parse_org_teamspace_model_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", None)
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
     mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
     mock_ts = mock.MagicMock()
@@ -268,10 +268,49 @@ def test_delete_model_in_studio_with_user(
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.organization.OrgApi")
+def test_delete_model_version_in_studio_with_org(
+    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", "abc")
+    mock_get_teamspace.return_value = mock.MagicMock()
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    delete_model("model_name:abc")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name:abc")
+    mock_ts.delete_model.assert_called_once_with(name="model_name:abc")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.user.UserApi")
+def test_delete_model_version_in_studio_with_user(
+    mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", "abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    delete_model("model_name:abc")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name:abc")
+    mock_ts.delete_model.assert_called_once_with(name="model_name:abc")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
 def test_list_model_versions_in_studio_with_org(
     mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
-    mock_parse_org_teamspace_model_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
     mock_get_teamspace.return_value = mock.MagicMock()
     mock_org_api().get_org.return_value = V1Organization(name="org-abc")
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
@@ -291,7 +330,7 @@ def test_list_model_versions_in_studio_with_org(
 def test_list_model_versions_in_studio_with_user(
     mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
-    mock_parse_org_teamspace_model_version.return_value = (mock.ANY, mock.ANY, mock.ANY, mock.ANY)
+    mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", None)
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
     mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
     mock_ts = mock.MagicMock()

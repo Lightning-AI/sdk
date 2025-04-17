@@ -185,7 +185,7 @@ def delete_model(
     name = _extend_model_name_with_teamspace(name)
     org_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
     teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
-    teamspace.delete_model(name=model_name)
+    teamspace.delete_model(name=f"{model_name}:{version}" if version else model_name)
 
 
 def list_model_versions(
