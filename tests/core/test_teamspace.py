@@ -195,7 +195,7 @@ def test_upload_model_single_file(
 
     ts._teamspace_api.create_model = mock.Mock(return_value=mock.Mock(model_id="test-model-id", version="v3"))
     ts._teamspace_api.upload_model_file = mock.Mock()
-    ts._teamspace_api.complete_model_upload = mock.Mock()
+    ts._teamspace_api._complete_model_upload = mock.Mock()
 
     result = ts.upload_model(path=str(file_path), name="modelname", metadata={"weather": "sunny or rainy"})
 
@@ -215,7 +215,7 @@ def test_upload_model_single_file(
         teamspace_id="ts-abc002",
         progress_bar=True,
     )
-    ts._teamspace_api.complete_model_upload.assert_called_once()
+    ts._teamspace_api._complete_model_upload.assert_called_once()
 
     assert result.name == "modelname"
     assert result.version == "v3"
@@ -255,7 +255,7 @@ def test_upload_model_multiple_files(
 
     ts._teamspace_api.create_model = mock.Mock(return_value=mock.Mock(model_id="test-model-id", version="v3"))
     ts._teamspace_api.upload_model_file = mock.Mock()
-    ts._teamspace_api.complete_model_upload = mock.Mock()
+    ts._teamspace_api._complete_model_upload = mock.Mock()
 
     ts.upload_model(path=str(upload_path), name="user/modelname")
 
@@ -277,7 +277,7 @@ def test_upload_model_multiple_files(
         remote_path="subfolder/nested-file",
         **call_args,
     )
-    ts._teamspace_api.complete_model_upload.assert_called_once()
+    ts._teamspace_api._complete_model_upload.assert_called_once()
 
     ts._teamspace_api.delete_model = mock.Mock()
     ts.delete_model("user/modelname:v3")

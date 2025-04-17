@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 import lightning_sdk
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import TeamspaceApi
-from lightning_sdk.lightning_cloud.openapi import V1ProjectClusterBinding
+from lightning_sdk.lightning_cloud.openapi import V1Model, V1ModelVersionArchive, V1ProjectClusterBinding
 from lightning_sdk.machine import Machine
 from lightning_sdk.models import UploadedModelInfo
 from lightning_sdk.organization import Organization
@@ -317,7 +317,7 @@ class Teamspace:
             teamspace_id=self.id,
             progress_bar=progress_bar,
         )
-        self._teamspace_api.complete_model_upload(
+        self._teamspace_api._complete_model_upload(
             model_id=model.model_id,
             version=model.version,
             teamspace_id=self.id,
@@ -388,6 +388,18 @@ class Teamspace:
         """
         name, version = _parse_model_and_version(name)
         self._teamspace_api.delete_model(name=name, version=version, teamspace_id=self.id)
+
+    def list_models(self) -> List[V1Model]:
+        """List all models in the model store."""
+        return self._teamspace_api.list_models(teamspace_id=self.id)
+
+    def list_model_versions(self, name: str) -> List[V1ModelVersionArchive]:
+        """List all versions of a model in the model store."""
+        if ":" in name:
+            raise ValueError(
+                "Model name should not contain a version tag. Please provide the model name without a version."
+            )
+        return self._teamspace_api.list_model_versions(teamspace_id=self.id, model_name=name)
 
 
 def _list_files(path: Union[str, Path]) -> Tuple[List[Path], List[str]]:

@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from lightning_sdk.api import OrgApi, TeamspaceApi, UserApi
+from lightning_sdk.lightning_cloud.openapi import V1ModelVersionArchive
 from lightning_sdk.lightning_cloud.openapi.models import V1Membership, V1OwnerType
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.user import User
@@ -185,3 +186,18 @@ def delete_model(
     org_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
     teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
     teamspace.delete_model(name=model_name)
+
+
+def list_model_versions(
+    name: str,
+) -> List[V1ModelVersionArchive]:
+    """List all versions of a model.
+
+    Args:
+        name: The name of the model you want to list versions for.
+            This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
+    """
+    name = _extend_model_name_with_teamspace(name)
+    org_name, teamspace_name, model_name, _ = _parse_org_teamspace_model_version(name)
+    teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
+    return teamspace.list_model_versions(name=model_name)

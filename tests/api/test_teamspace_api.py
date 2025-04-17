@@ -217,3 +217,24 @@ def test_list_machines(mock_client):
     mock_client().cluster_service_list_project_cluster_accelerators.assert_called_once_with(
         project_id="teamspace-id", id="cloud-account"
     )
+
+
+def test_get_model_errors(internal_teamspace_api_mocker):
+    teamspace_api = TeamspaceApi()
+
+    with pytest.raises(ValueError, match="Either `model_id` or `model_name` must be provided."):
+        teamspace_api.get_model("xyz")
+
+    # mock the response for empty state
+    teamspace_api._models_api = mock.MagicMock(
+        models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[])),
+    )
+    with pytest.raises(ValueError, match="Model 'model-name' does not exist."):
+        teamspace_api.get_model("xyz", model_name="model-name")
+
+    # mock the response for too many models
+    teamspace_api._models_api = mock.MagicMock(
+        models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[mock.Mock(), mock.Mock()])),
+    )
+    with pytest.raises(RuntimeError, match="Model name 'model-name' is not a unique with this teamspace."):
+        teamspace_api.get_model("xyz", model_name="model-name")

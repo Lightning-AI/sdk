@@ -17,6 +17,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterAccelerator,
     V1Endpoint,
     V1Job,
+    V1Model,
     V1ModelVersionArchive,
     V1MultiMachineJob,
     V1Project,
@@ -199,9 +200,7 @@ class TeamspaceApi:
 
     def delete_model(self, name: str, version: Optional[str], teamspace_id: str) -> None:
         """Delete a model or a version from the model store."""
-        models = self.models_api.models_store_list_models(project_id=teamspace_id, name=name).models
-        assert len(models) == 1, "Multiple models with the same name found"
-        model = models[0]
+        model = self.get_model(teamspace_id=teamspace_id, model_name=name)
         # decide if delete only version of whole model
         if version:
             if version == "default":
@@ -257,7 +256,7 @@ class TeamspaceApi:
             if main_pbar:
                 main_pbar.update(1)
 
-    def complete_model_upload(self, model_id: str, version: str, teamspace_id: str) -> None:
+    def _complete_model_upload(self, model_id: str, version: str, teamspace_id: str) -> None:
         self.models_api.models_store_complete_model_upload(
             body=_DummyBody(),
             project_id=teamspace_id,
@@ -306,3 +305,29 @@ class TeamspaceApi:
             project_id=teamspace_id, id=cloud_account
         )
         return response.accelerator
+
+    def get_model(self, teamspace_id: str, model_id: Optional[str] = None, model_name: Optional[str] = None) -> V1Model:
+        if model_id:
+            return self.models_api.models_store_get_model(project_id=teamspace_id, model_id=model_id)
+        if not model_name:
+            raise ValueError("Either `model_id` or `model_name` must be provided.")
+        # list models with specific name
+        models = self.models_api.models_store_list_models(project_id=teamspace_id, name=model_name).models
+        if len(models) == 0:
+            raise ValueError(f"Model '{model_name}' does not exist.")
+        if len(models) > 1:
+            raise RuntimeError(f"Model name '{model_name}' is not a unique with this teamspace.")
+        # if there is only one model with the name, return it
+        return models[0]
+
+    def list_models(self, teamspace_id: str) -> List[V1Model]:
+        response = self.models_api.models_store_list_models(project_id=teamspace_id)
+        return response.models
+
+    def list_model_versions(
+        self, teamspace_id: str, model_id: Optional[str] = None, model_name: Optional[str] = None
+    ) -> List[V1ModelVersionArchive]:
+        if model_name and not model_id:
+            model_id = self.get_model(teamspace_id=teamspace_id, model_name=model_name).id
+        response = self.models_api.models_store_list_model_versions(project_id=teamspace_id, model_id=model_id)
+        return response.versions
