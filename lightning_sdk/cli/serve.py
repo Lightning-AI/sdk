@@ -27,6 +27,7 @@ from lightning_sdk.utils.resolve import _get_authed_user, _resolve_teamspace
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 _POLL_TIMEOUT = 600
+LITSERVE_CODE = os.environ.get("LITSERVE_CODE", "j39bzk903h")
 
 
 class _ServeGroup(click.Group):
@@ -233,7 +234,7 @@ def api_impl(
 class _AuthServer(AuthServer):
     def get_auth_url(self, port: int) -> str:
         redirect_uri = f"http://localhost:{port}/login-complete"
-        params = urlencode({"redirectTo": redirect_uri, "inviteCode": "litserve"})
+        params = urlencode({"redirectTo": redirect_uri, "inviteCode": LITSERVE_CODE})
         return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
 
