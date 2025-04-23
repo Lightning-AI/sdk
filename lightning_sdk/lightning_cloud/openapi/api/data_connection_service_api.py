@@ -1025,7 +1025,7 @@ class DataConnectionServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def data_connection_service_update_data_connection(self, body: 'Update', project_id: 'str', id: 'str', **kwargs) -> 'V1DataConnection':  # noqa: E501
+    def data_connection_service_update_data_connection(self, body: 'Update1', project_id: 'str', id: 'str', **kwargs) -> 'V1DataConnection':  # noqa: E501
         """data_connection_service_update_data_connection  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1034,7 +1034,7 @@ class DataConnectionServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param Update body: (required)
+        :param Update1 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1DataConnection
@@ -1048,7 +1048,7 @@ class DataConnectionServiceApi(object):
             (data) = self.data_connection_service_update_data_connection_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def data_connection_service_update_data_connection_with_http_info(self, body: 'Update', project_id: 'str', id: 'str', **kwargs) -> 'V1DataConnection':  # noqa: E501
+    def data_connection_service_update_data_connection_with_http_info(self, body: 'Update1', project_id: 'str', id: 'str', **kwargs) -> 'V1DataConnection':  # noqa: E501
         """data_connection_service_update_data_connection  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1057,7 +1057,7 @@ class DataConnectionServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param Update body: (required)
+        :param Update1 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1DataConnection

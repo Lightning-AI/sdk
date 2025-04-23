@@ -43,6 +43,7 @@ class V1CloudSpaceEnvironmentTemplate(object):
     swagger_types = {
         'config': 'V1CloudSpaceEnvironmentTemplateConfig',
         'created_at': 'datetime',
+        'disabled': 'bool',
         'id': 'str',
         'name': 'str',
         'org_id': 'str',
@@ -53,6 +54,7 @@ class V1CloudSpaceEnvironmentTemplate(object):
     attribute_map = {
         'config': 'config',
         'created_at': 'createdAt',
+        'disabled': 'disabled',
         'id': 'id',
         'name': 'name',
         'org_id': 'orgId',
@@ -60,10 +62,11 @@ class V1CloudSpaceEnvironmentTemplate(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, config: 'V1CloudSpaceEnvironmentTemplateConfig' =None, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, config: 'V1CloudSpaceEnvironmentTemplateConfig' =None, created_at: 'datetime' =None, disabled: 'bool' =None, id: 'str' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplate - a model defined in Swagger"""  # noqa: E501
         self._config = None
         self._created_at = None
+        self._disabled = None
         self._id = None
         self._name = None
         self._org_id = None
@@ -74,6 +77,8 @@ class V1CloudSpaceEnvironmentTemplate(object):
             self.config = config
         if created_at is not None:
             self.created_at = created_at
+        if disabled is not None:
+            self.disabled = disabled
         if id is not None:
             self.id = id
         if name is not None:
@@ -126,6 +131,27 @@ class V1CloudSpaceEnvironmentTemplate(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def disabled(self) -> 'bool':
+        """Gets the disabled of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+
+
+        :return: The disabled of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disabled
+
+    @disabled.setter
+    def disabled(self, disabled: 'bool'):
+        """Sets the disabled of this V1CloudSpaceEnvironmentTemplate.
+
+
+        :param disabled: The disabled of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+        :type: bool
+        """
+
+        self._disabled = disabled
 
     @property
     def id(self) -> 'str':

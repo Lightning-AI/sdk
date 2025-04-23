@@ -73,6 +73,7 @@ class V1UserFeatures(object):
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'filestore': 'bool',
+        'gcp_local_disk_binding': 'bool',
         'inactive_notify_delete': 'bool',
         'instant_capacity_reservation': 'bool',
         'job_artifacts_v2': 'bool',
@@ -99,6 +100,7 @@ class V1UserFeatures(object):
         'product_generator': 'bool',
         'project_selector': 'bool',
         'publish_pipelines': 'bool',
+        'r2_data_connections': 'bool',
         'restartable_jobs': 'bool',
         'runnable_public_studio_page': 'bool',
         'security_docs': 'bool',
@@ -115,6 +117,7 @@ class V1UserFeatures(object):
         'teamspace_storage_tab': 'bool',
         'trainium2': 'bool',
         'use_rclone_mounts_only': 'bool',
+        'voltage_park': 'bool',
         'vultr': 'bool',
         'weka': 'bool'
     }
@@ -152,6 +155,7 @@ class V1UserFeatures(object):
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filestore': 'filestore',
+        'gcp_local_disk_binding': 'gcpLocalDiskBinding',
         'inactive_notify_delete': 'inactiveNotifyDelete',
         'instant_capacity_reservation': 'instantCapacityReservation',
         'job_artifacts_v2': 'jobArtifactsV2',
@@ -178,6 +182,7 @@ class V1UserFeatures(object):
         'product_generator': 'productGenerator',
         'project_selector': 'projectSelector',
         'publish_pipelines': 'publishPipelines',
+        'r2_data_connections': 'r2DataConnections',
         'restartable_jobs': 'restartableJobs',
         'runnable_public_studio_page': 'runnablePublicStudioPage',
         'security_docs': 'securityDocs',
@@ -194,11 +199,12 @@ class V1UserFeatures(object):
         'teamspace_storage_tab': 'teamspaceStorageTab',
         'trainium2': 'trainium2',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
+        'voltage_park': 'voltagePark',
         'vultr': 'vultr',
         'weka': 'weka'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, dgx_cloud: 'bool' =None, doc_helper_chat: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, dgx_cloud: 'bool' =None, doc_helper_chat: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcp_local_disk_binding: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -232,6 +238,7 @@ class V1UserFeatures(object):
         self._fair_share = None
         self._featured_studios_admin = None
         self._filestore = None
+        self._gcp_local_disk_binding = None
         self._inactive_notify_delete = None
         self._instant_capacity_reservation = None
         self._job_artifacts_v2 = None
@@ -258,6 +265,7 @@ class V1UserFeatures(object):
         self._product_generator = None
         self._project_selector = None
         self._publish_pipelines = None
+        self._r2_data_connections = None
         self._restartable_jobs = None
         self._runnable_public_studio_page = None
         self._security_docs = None
@@ -274,6 +282,7 @@ class V1UserFeatures(object):
         self._teamspace_storage_tab = None
         self._trainium2 = None
         self._use_rclone_mounts_only = None
+        self._voltage_park = None
         self._vultr = None
         self._weka = None
         self.discriminator = None
@@ -341,6 +350,8 @@ class V1UserFeatures(object):
             self.featured_studios_admin = featured_studios_admin
         if filestore is not None:
             self.filestore = filestore
+        if gcp_local_disk_binding is not None:
+            self.gcp_local_disk_binding = gcp_local_disk_binding
         if inactive_notify_delete is not None:
             self.inactive_notify_delete = inactive_notify_delete
         if instant_capacity_reservation is not None:
@@ -393,6 +404,8 @@ class V1UserFeatures(object):
             self.project_selector = project_selector
         if publish_pipelines is not None:
             self.publish_pipelines = publish_pipelines
+        if r2_data_connections is not None:
+            self.r2_data_connections = r2_data_connections
         if restartable_jobs is not None:
             self.restartable_jobs = restartable_jobs
         if runnable_public_studio_page is not None:
@@ -425,6 +438,8 @@ class V1UserFeatures(object):
             self.trainium2 = trainium2
         if use_rclone_mounts_only is not None:
             self.use_rclone_mounts_only = use_rclone_mounts_only
+        if voltage_park is not None:
+            self.voltage_park = voltage_park
         if vultr is not None:
             self.vultr = vultr
         if weka is not None:
@@ -1103,6 +1118,27 @@ class V1UserFeatures(object):
         self._filestore = filestore
 
     @property
+    def gcp_local_disk_binding(self) -> 'bool':
+        """Gets the gcp_local_disk_binding of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The gcp_local_disk_binding of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._gcp_local_disk_binding
+
+    @gcp_local_disk_binding.setter
+    def gcp_local_disk_binding(self, gcp_local_disk_binding: 'bool'):
+        """Sets the gcp_local_disk_binding of this V1UserFeatures.
+
+
+        :param gcp_local_disk_binding: The gcp_local_disk_binding of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._gcp_local_disk_binding = gcp_local_disk_binding
+
+    @property
     def inactive_notify_delete(self) -> 'bool':
         """Gets the inactive_notify_delete of this V1UserFeatures.  # noqa: E501
 
@@ -1649,6 +1685,27 @@ class V1UserFeatures(object):
         self._publish_pipelines = publish_pipelines
 
     @property
+    def r2_data_connections(self) -> 'bool':
+        """Gets the r2_data_connections of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The r2_data_connections of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._r2_data_connections
+
+    @r2_data_connections.setter
+    def r2_data_connections(self, r2_data_connections: 'bool'):
+        """Sets the r2_data_connections of this V1UserFeatures.
+
+
+        :param r2_data_connections: The r2_data_connections of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._r2_data_connections = r2_data_connections
+
+    @property
     def restartable_jobs(self) -> 'bool':
         """Gets the restartable_jobs of this V1UserFeatures.  # noqa: E501
 
@@ -1983,6 +2040,27 @@ class V1UserFeatures(object):
         """
 
         self._use_rclone_mounts_only = use_rclone_mounts_only
+
+    @property
+    def voltage_park(self) -> 'bool':
+        """Gets the voltage_park of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The voltage_park of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._voltage_park
+
+    @voltage_park.setter
+    def voltage_park(self, voltage_park: 'bool'):
+        """Sets the voltage_park of this V1UserFeatures.
+
+
+        :param voltage_park: The voltage_park of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._voltage_park = voltage_park
 
     @property
     def vultr(self) -> 'bool':

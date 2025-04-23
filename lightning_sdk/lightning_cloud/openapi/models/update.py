@@ -41,148 +41,81 @@ class Update(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'aws': 'V1AwsDataConnection',
-        'efs': 'V1EfsConfig',
-        'gcp': 'V1GcpDataConnection',
-        'gcs_folder': 'V1GCSFolderDataConnection',
+        'disabled': 'bool',
+        'machine_image_version': 'str',
         'name': 'str',
-        'r2': 'V1R2DataConnection',
-        'run_cmds': 'list[str]',
-        's3_folder': 'V1S3FolderDataConnection',
-        'snowflake': 'V1SnowflakeDataConnection',
-        'writable': 'bool'
+        'org_id': 'str',
+        'setup_script_text': 'str'
     }
 
     attribute_map = {
-        'aws': 'aws',
-        'efs': 'efs',
-        'gcp': 'gcp',
-        'gcs_folder': 'gcsFolder',
+        'disabled': 'disabled',
+        'machine_image_version': 'machineImageVersion',
         'name': 'name',
-        'r2': 'r2',
-        'run_cmds': 'runCmds',
-        's3_folder': 's3Folder',
-        'snowflake': 'snowflake',
-        'writable': 'writable'
+        'org_id': 'orgId',
+        'setup_script_text': 'setupScriptText'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, disabled: 'bool' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, setup_script_text: 'str' =None):  # noqa: E501
         """Update - a model defined in Swagger"""  # noqa: E501
-        self._aws = None
-        self._efs = None
-        self._gcp = None
-        self._gcs_folder = None
+        self._disabled = None
+        self._machine_image_version = None
         self._name = None
-        self._r2 = None
-        self._run_cmds = None
-        self._s3_folder = None
-        self._snowflake = None
-        self._writable = None
+        self._org_id = None
+        self._setup_script_text = None
         self.discriminator = None
-        if aws is not None:
-            self.aws = aws
-        if efs is not None:
-            self.efs = efs
-        if gcp is not None:
-            self.gcp = gcp
-        if gcs_folder is not None:
-            self.gcs_folder = gcs_folder
+        if disabled is not None:
+            self.disabled = disabled
+        if machine_image_version is not None:
+            self.machine_image_version = machine_image_version
         if name is not None:
             self.name = name
-        if r2 is not None:
-            self.r2 = r2
-        if run_cmds is not None:
-            self.run_cmds = run_cmds
-        if s3_folder is not None:
-            self.s3_folder = s3_folder
-        if snowflake is not None:
-            self.snowflake = snowflake
-        if writable is not None:
-            self.writable = writable
+        if org_id is not None:
+            self.org_id = org_id
+        if setup_script_text is not None:
+            self.setup_script_text = setup_script_text
 
     @property
-    def aws(self) -> 'V1AwsDataConnection':
-        """Gets the aws of this Update.  # noqa: E501
+    def disabled(self) -> 'bool':
+        """Gets the disabled of this Update.  # noqa: E501
 
 
-        :return: The aws of this Update.  # noqa: E501
-        :rtype: V1AwsDataConnection
+        :return: The disabled of this Update.  # noqa: E501
+        :rtype: bool
         """
-        return self._aws
+        return self._disabled
 
-    @aws.setter
-    def aws(self, aws: 'V1AwsDataConnection'):
-        """Sets the aws of this Update.
+    @disabled.setter
+    def disabled(self, disabled: 'bool'):
+        """Sets the disabled of this Update.
 
 
-        :param aws: The aws of this Update.  # noqa: E501
-        :type: V1AwsDataConnection
+        :param disabled: The disabled of this Update.  # noqa: E501
+        :type: bool
         """
 
-        self._aws = aws
+        self._disabled = disabled
 
     @property
-    def efs(self) -> 'V1EfsConfig':
-        """Gets the efs of this Update.  # noqa: E501
+    def machine_image_version(self) -> 'str':
+        """Gets the machine_image_version of this Update.  # noqa: E501
 
 
-        :return: The efs of this Update.  # noqa: E501
-        :rtype: V1EfsConfig
+        :return: The machine_image_version of this Update.  # noqa: E501
+        :rtype: str
         """
-        return self._efs
+        return self._machine_image_version
 
-    @efs.setter
-    def efs(self, efs: 'V1EfsConfig'):
-        """Sets the efs of this Update.
-
-
-        :param efs: The efs of this Update.  # noqa: E501
-        :type: V1EfsConfig
-        """
-
-        self._efs = efs
-
-    @property
-    def gcp(self) -> 'V1GcpDataConnection':
-        """Gets the gcp of this Update.  # noqa: E501
+    @machine_image_version.setter
+    def machine_image_version(self, machine_image_version: 'str'):
+        """Sets the machine_image_version of this Update.
 
 
-        :return: The gcp of this Update.  # noqa: E501
-        :rtype: V1GcpDataConnection
-        """
-        return self._gcp
-
-    @gcp.setter
-    def gcp(self, gcp: 'V1GcpDataConnection'):
-        """Sets the gcp of this Update.
-
-
-        :param gcp: The gcp of this Update.  # noqa: E501
-        :type: V1GcpDataConnection
+        :param machine_image_version: The machine_image_version of this Update.  # noqa: E501
+        :type: str
         """
 
-        self._gcp = gcp
-
-    @property
-    def gcs_folder(self) -> 'V1GCSFolderDataConnection':
-        """Gets the gcs_folder of this Update.  # noqa: E501
-
-
-        :return: The gcs_folder of this Update.  # noqa: E501
-        :rtype: V1GCSFolderDataConnection
-        """
-        return self._gcs_folder
-
-    @gcs_folder.setter
-    def gcs_folder(self, gcs_folder: 'V1GCSFolderDataConnection'):
-        """Sets the gcs_folder of this Update.
-
-
-        :param gcs_folder: The gcs_folder of this Update.  # noqa: E501
-        :type: V1GCSFolderDataConnection
-        """
-
-        self._gcs_folder = gcs_folder
+        self._machine_image_version = machine_image_version
 
     @property
     def name(self) -> 'str':
@@ -206,109 +139,46 @@ class Update(object):
         self._name = name
 
     @property
-    def r2(self) -> 'V1R2DataConnection':
-        """Gets the r2 of this Update.  # noqa: E501
+    def org_id(self) -> 'str':
+        """Gets the org_id of this Update.  # noqa: E501
 
 
-        :return: The r2 of this Update.  # noqa: E501
-        :rtype: V1R2DataConnection
+        :return: The org_id of this Update.  # noqa: E501
+        :rtype: str
         """
-        return self._r2
+        return self._org_id
 
-    @r2.setter
-    def r2(self, r2: 'V1R2DataConnection'):
-        """Sets the r2 of this Update.
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this Update.
 
 
-        :param r2: The r2 of this Update.  # noqa: E501
-        :type: V1R2DataConnection
+        :param org_id: The org_id of this Update.  # noqa: E501
+        :type: str
         """
 
-        self._r2 = r2
+        self._org_id = org_id
 
     @property
-    def run_cmds(self) -> 'list[str]':
-        """Gets the run_cmds of this Update.  # noqa: E501
+    def setup_script_text(self) -> 'str':
+        """Gets the setup_script_text of this Update.  # noqa: E501
 
 
-        :return: The run_cmds of this Update.  # noqa: E501
-        :rtype: list[str]
+        :return: The setup_script_text of this Update.  # noqa: E501
+        :rtype: str
         """
-        return self._run_cmds
+        return self._setup_script_text
 
-    @run_cmds.setter
-    def run_cmds(self, run_cmds: 'list[str]'):
-        """Sets the run_cmds of this Update.
-
-
-        :param run_cmds: The run_cmds of this Update.  # noqa: E501
-        :type: list[str]
-        """
-
-        self._run_cmds = run_cmds
-
-    @property
-    def s3_folder(self) -> 'V1S3FolderDataConnection':
-        """Gets the s3_folder of this Update.  # noqa: E501
+    @setup_script_text.setter
+    def setup_script_text(self, setup_script_text: 'str'):
+        """Sets the setup_script_text of this Update.
 
 
-        :return: The s3_folder of this Update.  # noqa: E501
-        :rtype: V1S3FolderDataConnection
-        """
-        return self._s3_folder
-
-    @s3_folder.setter
-    def s3_folder(self, s3_folder: 'V1S3FolderDataConnection'):
-        """Sets the s3_folder of this Update.
-
-
-        :param s3_folder: The s3_folder of this Update.  # noqa: E501
-        :type: V1S3FolderDataConnection
+        :param setup_script_text: The setup_script_text of this Update.  # noqa: E501
+        :type: str
         """
 
-        self._s3_folder = s3_folder
-
-    @property
-    def snowflake(self) -> 'V1SnowflakeDataConnection':
-        """Gets the snowflake of this Update.  # noqa: E501
-
-
-        :return: The snowflake of this Update.  # noqa: E501
-        :rtype: V1SnowflakeDataConnection
-        """
-        return self._snowflake
-
-    @snowflake.setter
-    def snowflake(self, snowflake: 'V1SnowflakeDataConnection'):
-        """Sets the snowflake of this Update.
-
-
-        :param snowflake: The snowflake of this Update.  # noqa: E501
-        :type: V1SnowflakeDataConnection
-        """
-
-        self._snowflake = snowflake
-
-    @property
-    def writable(self) -> 'bool':
-        """Gets the writable of this Update.  # noqa: E501
-
-
-        :return: The writable of this Update.  # noqa: E501
-        :rtype: bool
-        """
-        return self._writable
-
-    @writable.setter
-    def writable(self, writable: 'bool'):
-        """Sets the writable of this Update.
-
-
-        :param writable: The writable of this Update.  # noqa: E501
-        :type: bool
-        """
-
-        self._writable = writable
+        self._setup_script_text = setup_script_text
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

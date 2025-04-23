@@ -41,66 +41,14 @@ class V1DeleteCloudSpaceEnvironmentTemplateResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'id': 'str',
-        'org_id': 'str'
     }
 
     attribute_map = {
-        'id': 'id',
-        'org_id': 'orgId'
     }
 
-    def __init__(self, id: 'str' =None, org_id: 'str' =None):  # noqa: E501
+    def __init__(self):  # noqa: E501
         """V1DeleteCloudSpaceEnvironmentTemplateResponse - a model defined in Swagger"""  # noqa: E501
-        self._id = None
-        self._org_id = None
         self.discriminator = None
-        if id is not None:
-            self.id = id
-        if org_id is not None:
-            self.org_id = org_id
-
-    @property
-    def id(self) -> 'str':
-        """Gets the id of this V1DeleteCloudSpaceEnvironmentTemplateResponse.  # noqa: E501
-
-
-        :return: The id of this V1DeleteCloudSpaceEnvironmentTemplateResponse.  # noqa: E501
-        :rtype: str
-        """
-        return self._id
-
-    @id.setter
-    def id(self, id: 'str'):
-        """Sets the id of this V1DeleteCloudSpaceEnvironmentTemplateResponse.
-
-
-        :param id: The id of this V1DeleteCloudSpaceEnvironmentTemplateResponse.  # noqa: E501
-        :type: str
-        """
-
-        self._id = id
-
-    @property
-    def org_id(self) -> 'str':
-        """Gets the org_id of this V1DeleteCloudSpaceEnvironmentTemplateResponse.  # noqa: E501
-
-
-        :return: The org_id of this V1DeleteCloudSpaceEnvironmentTemplateResponse.  # noqa: E501
-        :rtype: str
-        """
-        return self._org_id
-
-    @org_id.setter
-    def org_id(self, org_id: 'str'):
-        """Sets the org_id of this V1DeleteCloudSpaceEnvironmentTemplateResponse.
-
-
-        :param org_id: The org_id of this V1DeleteCloudSpaceEnvironmentTemplateResponse.  # noqa: E501
-        :type: str
-        """
-
-        self._org_id = org_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

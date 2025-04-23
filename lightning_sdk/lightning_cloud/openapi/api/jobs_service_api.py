@@ -2821,6 +2821,121 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def jobs_service_list_job_resources(self, **kwargs) -> 'V1ListJobResourcesResponse':  # noqa: E501
+        """jobs_service_list_job_resources  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_list_job_resources(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param list[str] project_ids:
+        :param str user_id:
+        :param str org_id:
+        :param str state:
+        :param list[str] job_types:
+        :param datetime end_time:
+        :param int limit:
+        :return: V1ListJobResourcesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_list_job_resources_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_list_job_resources_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_list_job_resources_with_http_info(self, **kwargs) -> 'V1ListJobResourcesResponse':  # noqa: E501
+        """jobs_service_list_job_resources  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_list_job_resources_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param list[str] project_ids:
+        :param str user_id:
+        :param str org_id:
+        :param str state:
+        :param list[str] job_types:
+        :param datetime end_time:
+        :param int limit:
+        :return: V1ListJobResourcesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_ids', 'user_id', 'org_id', 'state', 'job_types', 'end_time', 'limit']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_list_job_resources" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'project_ids' in params:
+            query_params.append(('projectIds', params['project_ids']))  # noqa: E501
+            collection_formats['projectIds'] = 'multi'  # noqa: E501
+        if 'user_id' in params:
+            query_params.append(('userId', params['user_id']))  # noqa: E501
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'state' in params:
+            query_params.append(('state', params['state']))  # noqa: E501
+        if 'job_types' in params:
+            query_params.append(('jobTypes', params['job_types']))  # noqa: E501
+            collection_formats['jobTypes'] = 'multi'  # noqa: E501
+        if 'end_time' in params:
+            query_params.append(('endTime', params['end_time']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/jobs', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListJobResourcesResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def jobs_service_list_jobs(self, project_id: 'str', **kwargs) -> 'V1ListJobsResponse':  # noqa: E501
         """jobs_service_list_jobs  # noqa: E501
 
