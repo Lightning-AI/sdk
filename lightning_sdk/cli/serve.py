@@ -236,7 +236,7 @@ def api_impl(
 class _AuthServer(AuthServer):
     def get_auth_url(self, port: int) -> str:
         redirect_uri = f"http://localhost:{port}/login-complete"
-        params = urlencode({"redirectTo": redirect_uri, "inviteCode": LITSERVE_CODE})
+        params = urlencode({"redirectTo": redirect_uri, "okbhrt": LITSERVE_CODE})
         return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
 
