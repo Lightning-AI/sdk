@@ -271,6 +271,46 @@ def test_handle_cloud_no_internet(mock_is_connected):
 @patch("lightning_sdk.cli.serve._resolve_teamspace")
 @patch("lightning_sdk.cli.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
+@patch("lightning_sdk.cli.serve.authenticate")
+@patch("lightning_sdk.cli.serve.poll_verified_status")
+@patch("lightning_sdk.cli.serve._Onboarding")
+@patch("lightning_sdk.cli.serve.Thread")
+def test_handle_cloud_from_onboarding(
+    mock_thread,
+    mock_onboarding,
+    mock_poll_verified_status,
+    mock_authenticate,
+    mock_ask,
+    mock_ls_deployer,
+    _,
+    mock_litcr,
+    temp_script,
+):
+    mock_ask.return_value = True
+    mock_ls_deployer.return_value.run_on_cloud.return_value = {"url": "test-url"}
+    mock_poll_verified_status.return_value = {"onboarded": False, "verified": True}
+    console = rich.console.Console()
+    _handle_cloud(
+        temp_script,
+        console,
+        teamspace="test",
+        machine=MagicMock(),
+    )
+    mock_litcr.assert_called_once()
+    mock_poll_verified_status.asssert_called_once()
+    mock_authenticate.assert_called_once()
+    mock_litcr.return_value.list_containers.assert_called_once_with(ANY, cloud_account=None)
+    mock_ls_deployer.return_value.push_container.assert_called_once()
+    mock_ls_deployer.assert_called_once()
+    mock_thread.assert_called_once()
+    mock_thread.return_value.start.assert_called_once()
+    mock_thread.return_value.join.assert_called_once()
+
+
+@patch("lightning_sdk.cli.serve.LitContainerApi")
+@patch("lightning_sdk.cli.serve._resolve_teamspace")
+@patch("lightning_sdk.cli.serve._LitServeDeployer")
+@patch("lightning_sdk.cli.serve.Confirm.ask")
 @patch("lightning_sdk.cli.serve.webbrowser")
 @patch("lightning_sdk.cli.serve.authenticate")
 @patch("lightning_sdk.cli.serve.poll_verified_status")

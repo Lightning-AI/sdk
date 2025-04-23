@@ -300,6 +300,7 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
             include_credentials=include_credentials,
             cloudspace_id=cloudspace_id,
             from_onboarding=from_onboarding,
+            command="",
         )
 
         return {"deployment": deployment, "url": url}

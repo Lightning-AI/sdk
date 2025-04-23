@@ -6,6 +6,7 @@ import webbrowser
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from threading import Thread
 from typing import List, Optional, TypedDict, Union
 from urllib.parse import urlencode
 
@@ -17,6 +18,7 @@ from rich.prompt import Confirm
 from lightning_sdk import Machine, Teamspace
 from lightning_sdk.api import UserApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
+from lightning_sdk.api.utils import _get_registry_url
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
@@ -399,6 +401,38 @@ def is_connected(host: str = "8.8.8.8", port: int = 53, timeout: int = 10) -> bo
         return False
 
 
+def _upload_container(
+    console: Console,
+    ls_deployer: _LitServeDeployer,
+    repository: str,
+    tag: str,
+    resolved_teamspace: Teamspace,
+    lit_cr: LitContainerApi,
+    cloud_account: Optional[str],
+) -> bool:
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        TimeElapsedColumn(),
+        console=console,
+        transient=True,
+    ) as progress:
+        try:
+            push_task = progress.add_task("Uploading container to Lightning registry", total=None)
+            for line in ls_deployer.push_container(
+                repository, tag, resolved_teamspace, lit_cr, cloud_account=cloud_account
+            ):
+                progress.update(push_task, advance=1)
+                if not ("Pushing" in line["status"] or "Waiting" in line["status"]):
+                    console.print(line["status"])
+            progress.update(push_task, description="[green]Push completed![/green]")
+        except Exception as e:
+            console.print(f"❌ Deployment failed: {e}", style="red")
+            return False
+    console.print(f"\n✅ Image pushed to {repository}:{tag}")
+    return True
+
+
 def _handle_cloud(
     script_path: Union[str, Path],
     console: Console,
@@ -481,29 +515,43 @@ def _handle_cloud(
     lit_cr = LitContainerApi()
     lit_cr.list_containers(resolved_teamspace.id, cloud_account=cloud_account)
 
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        TimeElapsedColumn(),
-        console=console,
-        transient=True,
-    ) as progress:
-        try:
-            push_task = progress.add_task("Pushing to registry", total=None)
-            push_status = {}
-            for line in ls_deployer.push_container(
-                repository, tag, resolved_teamspace, lit_cr, cloud_account=cloud_account
-            ):
-                push_status = line
-                progress.update(push_task, advance=1)
-                if not ("Pushing" in line["status"] or "Waiting" in line["status"]):
-                    console.print(line["status"])
-            progress.update(push_task, description="[green]Push completed![/green]")
-        except Exception as e:
-            console.print(f"❌ Deployment failed: {e}", style="red")
+    registry_url = _get_registry_url()
+    container_basename = repository.split("/")[-1]
+    image = (
+        f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"
+        f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}/{container_basename}"
+    )
+
+    if from_onboarding:
+        thread = Thread(
+            target=ls_deployer.run_on_cloud,
+            kwargs={
+                "deployment_name": deployment_name,
+                "image": image,
+                "teamspace": resolved_teamspace,
+                "metric": None,
+                "machine": machine,
+                "spot": interruptible,
+                "cloud_account": cloud_account,
+                "port": port,
+                "min_replica": min_replica,
+                "max_replica": max_replica,
+                "replicas": replicas,
+                "include_credentials": include_credentials,
+                "cloudspace_id": cloudspace_id,
+                "from_onboarding": from_onboarding,
+            },
+        )
+        thread.start()
+        console.print("🚀 Deployment started")
+        if not _upload_container(console, ls_deployer, repository, tag, resolved_teamspace, lit_cr, cloud_account):
+            thread.join()
             return
-    console.print(f"\n✅ Image pushed to {repository}:{tag}")
-    image = push_status.get("image")
+        thread.join()
+        return
+
+    if not _upload_container(console, ls_deployer, repository, tag, resolved_teamspace, lit_cr, cloud_account):
+        return
 
     deployment_status = ls_deployer.run_on_cloud(
         deployment_name=deployment_name,
