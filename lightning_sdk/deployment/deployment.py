@@ -30,6 +30,7 @@ from lightning_sdk.lightning_cloud.openapi import V1Deployment
 from lightning_sdk.machine import Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.services.utilities import _get_cluster
+from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_org, _resolve_teamspace, _resolve_user
@@ -102,6 +103,7 @@ class Deployment:
 
     def start(
         self,
+        studio: Optional[Union[str, Studio]] = None,
         machine: Optional[Machine] = None,
         image: Optional[str] = None,
         autoscale: Optional[AutoScaleConfig] = None,
@@ -109,6 +111,7 @@ class Deployment:
         release_strategy: Optional[ReleaseStrategy] = None,
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
+        commands: Optional[List[str]] = None,
         env: Union[List[Union[Secret, Env]], Dict[str, str], None] = None,
         spot: Optional[bool] = None,
         replicas: Optional[int] = None,
@@ -163,6 +166,32 @@ class Deployment:
             print(f"No cloud account was provided, defaulting to {self._cloud_account.cluster_id}")
             cloud_account = os.getenv("LIGHTNING_CLUSTER_ID") or self._cloud_account.cluster_id
 
+        if isinstance(studio, Studio):
+            cloudspace_id = studio._studio.id
+
+        if isinstance(studio, str):
+            cloudspace_id = Studio(studio)._studio.id
+
+        if replicas is None and autoscale is None:
+            replicas = 1
+
+        if machine is None:
+            machine = Machine.CPU
+
+        if autoscale is None:
+            autoscale = AutoScaleConfig(
+                min_replicas=0,
+                max_replicas=1,
+                metric="CPU" if machine.is_cpu() else "GPU",
+                threshold=90,
+            )
+
+        if command is not None and commands is not None:
+            raise ValueError("Command and commands are mutually exclusive")
+
+        if commands is not None:
+            command = " && ".join(commands)
+
         self._deployment = self._deployment_api.create_deployment(
             V1Deployment(
                 autoscaling=to_autoscaling(autoscale, replicas),
@@ -182,6 +211,7 @@ class Deployment:
                     health_check=health_check,
                     quantity=quantity,
                     include_credentials=include_credentials if include_credentials is not None else True,
+                    cloudspace_id=cloudspace_id,
                 ),
                 strategy=to_strategy(release_strategy),
             ),

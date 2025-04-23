@@ -460,7 +460,7 @@ def to_autoscaling(
     if target_metrics is None and (threshold < 0 or threshold > 100):
         raise ValueError("The autoscaling threshold should be defined between 0 and 100.")
 
-    if target_metrics is not None and len(target_metrics) == 0:
+    if target_metrics is not None and len(target_metrics) == 0 and metric is None:
         raise ValueError("The target_metrics must be provided.")
 
     if target_metrics is not None:
@@ -555,6 +555,7 @@ def to_spec(
     health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
     quantity: Optional[int] = None,
     include_credentials: Optional[bool] = None,
+    cloudspace_id: Optional[None] = None,
 ) -> V1JobSpec:
     if cloud_account is None:
         raise ValueError("The cloud account should be defined.")
@@ -562,8 +563,14 @@ def to_spec(
     if machine is None:
         raise ValueError("The machine should be defined.")
 
-    if image is None:
+    if image is None and cloudspace_id is None:
         raise ValueError("The image should be defined.")
+
+    if entrypoint is not None and cloudspace_id is not None:
+        raise ValueError("The entrypoint shouldn't be defined when a Studio is provided.")
+
+    if command is None:
+        raise ValueError("The command should be defined.")
 
     return V1JobSpec(
         cluster_id=cloud_account,
@@ -576,6 +583,7 @@ def to_spec(
         readiness_probe=to_health_check(health_check),
         quantity=quantity,
         include_credentials=include_credentials,
+        cloudspace_id=cloudspace_id,
     )
 
 

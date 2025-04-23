@@ -283,7 +283,7 @@ def test_deployment_start_first_time(monkeypatch):
     monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
-    with pytest.raises(ValueError, match="An autoscaling config should be provided."):
+    with pytest.raises(ValueError, match="At least one port is required to reach your deployment."):
         deployment.start()
 
     deployment = deployment_module.Deployment(name="ollama")
@@ -305,6 +305,7 @@ def test_deployment_start_first_time(monkeypatch):
         image="ollama/ollama:latest",
         quantity=2,
         include_credentials=False,
+        commands=["cd /", "ls"],
     )
     client.jobs_service_create_deployment.assert_called()
 
@@ -313,6 +314,7 @@ def test_deployment_start_first_time(monkeypatch):
     assert spec.quantity == 2
     assert spec.image == "ollama/ollama:latest"
     assert spec.cluster_id == "cluster_id"
+    assert spec.command == "cd / && ls"
 
     with pytest.raises(RuntimeError, match="This deployment has already been started."):
         deployment.start()
@@ -572,3 +574,19 @@ def test_deployment_delete(monkeypatch):
     deployment.delete("/")
 
     requests_mock.Session().delete.assert_called_with(f"{url}/", verify=False)
+
+
+def test_to_spec():
+    with pytest.raises(ValueError, match="The cloud account should be defined."):
+        deployment_api_module.to_spec(None, None, None, None, None)
+
+    with pytest.raises(ValueError, match="The machine should be defined."):
+        deployment_api_module.to_spec("cluster-id", None, None, None, None)
+
+    with pytest.raises(ValueError, match="The image should be defined."):
+        deployment_api_module.to_spec("cluster-id", Machine.CPU, None, None, None)
+
+    with pytest.raises(ValueError, match="The command should be defined."):
+        deployment_api_module.to_spec("cluster-id", Machine.CPU, None, None, None, cloudspace_id="cloudspace_id")
+
+    deployment_api_module.to_spec("cluster-id", Machine.CPU, None, None, "command", cloudspace_id="cloudspace_id")
