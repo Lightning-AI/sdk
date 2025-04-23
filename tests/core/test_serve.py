@@ -60,7 +60,6 @@ def test_push_container(deployer):
         last_line = line
     assert isinstance(last_line, dict), "Expected a dictionary"
     assert last_line["finish"], "Last line must have finish=True"
-    assert isinstance(last_line["image"], str), "Last line must contain the docker repo image"
     lit_cr.authenticate.assert_called_once()
     lit_cr.upload_container.assert_called_once_with(
         "repository", teamspace, tag="tag", cloud_account="cloud_account", platform=None

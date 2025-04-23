@@ -537,3 +537,11 @@ def test_authenticate(mock_lightning_client, mock_docker):
     api.authenticate()
     mock_docker.from_env.assert_called(), "Docker client was not created"
     mock_docker.from_env().login.assert_called(), "Docker client was not created"
+
+
+def test_get_container_url(lit_container, mock_teamspace):
+    api = LitContainerApi()
+    docker_url = api.get_container_url(
+        repository="local/litserve", tag="latest", teamspace=mock_teamspace, cloud_account=None
+    )
+    assert docker_url == "litcr.io/lit-container/test-org/test-team/litserve"

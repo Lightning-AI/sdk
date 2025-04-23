@@ -125,6 +125,17 @@ class LitContainerApi:
         except Exception as e:
             raise ValueError(f"Could not delete container {container} from project {project_id}: {e!s}") from e
 
+    def get_container_url(
+        self, repository: str, tag: str, teamspace: Teamspace, cloud_account: Optional[str] = None
+    ) -> str:
+        """Docker container will be pushed to the URL returned from this function."""
+        registry_url = _get_registry_url()
+        container_basename = repository.split("/")[-1]
+        return (
+            f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"
+            f"{teamspace.owner.name}/{teamspace.name}/{container_basename}"
+        )
+
     @retry_on_lcr_auth_failure
     def upload_container(
         self,
@@ -147,7 +158,6 @@ class LitContainerApi:
             Named cloud-account in the CLI options.
         :param platform: If empty will be linux/amd64. This is important because our entire deployment infra runs on
             linux/amd64. Will show user a warning otherwise.
-        :return_final_dict: Controls whether we respond with the dictionary containing metadata about container upload
         :return: Generator[dict, None, dict]
         """
         try:
@@ -163,18 +173,14 @@ class LitContainerApi:
             except Exception as e:
                 raise ValueError(f"Unable to upload {container}:{tag}") from e
 
-        registry_url = _get_registry_url()
-        container_basename = container.split("/")[-1]
-        repository = (
-            f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"
-            f"{teamspace.owner.name}/{teamspace.name}/{container_basename}"
-        )
+        repository = self.get_container_url(container, tag, teamspace, cloud_account)
         tagged = self._docker_client.api.tag(f"{container}:{tag}", repository, tag)
         if not tagged:
             raise ValueError(f"Could not tag container {container}:{tag} with {repository}:{tag}")
         yield from self._push_with_retry(repository, tag=tag)
 
         if return_final_dict:
+            container_basename = repository.split("/")[-1]
             yield {
                 "finish": True,
                 "url": f"{LIGHTNING_CLOUD_URL}/{teamspace.owner.name}/{teamspace.name}/containers/"
