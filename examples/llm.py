@@ -1,3 +1,5 @@
 from lightning_sdk.llm import LLM
 
 llm = LLM(name="openai/gpt-4o")
+print(llm.chat("Hello, how are you?"))
+# Hello! I'm just a computer program, so I don't have feelings, but I'm here and ready to help you. How can I assist you today?
