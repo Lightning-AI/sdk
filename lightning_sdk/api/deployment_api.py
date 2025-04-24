@@ -575,7 +575,7 @@ def to_spec(
     if entrypoint is not None and cloudspace_id is not None:
         raise ValueError("The entrypoint shouldn't be defined when a Studio is provided.")
 
-    if command is None:
+    if command is None and cloudspace_id is not None:
         raise ValueError("The command should be defined.")
 
     return V1JobSpec(

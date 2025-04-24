@@ -592,6 +592,8 @@ def test_to_spec():
 
     deployment_api_module.to_spec("cluster-id", Machine.CPU, None, None, "command", cloudspace_id="cloudspace_id")
 
+    deployment_api_module.to_spec("cluster-id", Machine.CPU, "image", None, None)
+
 
 def test_compose_commands():
     commands = ["python server.py &", "python server.py &"]
