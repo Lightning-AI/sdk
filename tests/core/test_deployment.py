@@ -260,9 +260,6 @@ def test_deployment_start_first_time(monkeypatch):
     monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
 
-    with pytest.raises(TypeError, match=r"missing 1 required positional argument: 'name'"):
-        deployment_module.Deployment()
-
     teamspace_mock = MagicMock()
     teamspace_mock.id = "project_id"
     monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
@@ -590,3 +587,13 @@ def test_to_spec():
         deployment_api_module.to_spec("cluster-id", Machine.CPU, None, None, None, cloudspace_id="cloudspace_id")
 
     deployment_api_module.to_spec("cluster-id", Machine.CPU, None, None, "command", cloudspace_id="cloudspace_id")
+
+
+def test_compose_commands():
+    commands = ["python server.py &", "python server.py &"]
+    command = deployment_api_module.compose_commands(commands)
+    assert command == "( python server.py & ) && ( python server.py & )"
+
+    commands = ["python server.py &", "ls", "python server.py &"]
+    command = deployment_api_module.compose_commands(commands)
+    assert command == "( python server.py & ) && ls && ( python server.py & )"

@@ -608,3 +608,21 @@ def apply_change(spec: Any, key: str, value: Any) -> bool:
         return True
 
     return False
+
+
+def compose_commands(commands: List[str]) -> str:
+    composite_command = []
+
+    for command in commands:
+        command = command.strip()
+
+        # Check if the command already has '&'
+        if command.endswith("&"):
+            # It's a background command, add it as a subshell without further adjustment
+            composite_command.append(f"( {command} )")
+        else:
+            # Sequential execution, add as-is and use `&&` to connect if followed by another command
+            composite_command.append(command)
+
+    # Joining commands, using `&&` between sequential parts and respecting subshell backgrounds
+    return " && ".join(composite_command)

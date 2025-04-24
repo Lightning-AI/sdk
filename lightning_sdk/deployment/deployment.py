@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
 import requests
@@ -15,6 +16,7 @@ from lightning_sdk.api.deployment_api import (
     ReleaseStrategy,
     Secret,
     TokenAuth,
+    compose_commands,
     restore_auth,
     restore_autoscale,
     restore_env,
@@ -56,7 +58,7 @@ class Deployment:
 
     def __init__(
         self,
-        name: str,
+        name: Optional[str] = None,
         teamspace: Optional[Union[str, Teamspace]] = None,
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
@@ -73,7 +75,7 @@ class Deployment:
         except ConnectionError as e:
             raise e
 
-        self._name = name
+        self._name = name or "dep_" + datetime.now().strftime("%m-%d_%H:%M:%S")
         self._user = _resolve_user(self._user or user)
         self._org = _resolve_org(org)
 
@@ -107,7 +109,7 @@ class Deployment:
         machine: Optional[Machine] = None,
         image: Optional[str] = None,
         autoscale: Optional[AutoScaleConfig] = None,
-        ports: Optional[List[float]] = None,
+        ports: Optional[Union[float, List[float]]] = None,
         release_strategy: Optional[ReleaseStrategy] = None,
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
@@ -160,23 +162,36 @@ class Deployment:
         if self._is_created:
             raise RuntimeError("This deployment has already been started.")
 
-        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+        if isinstance(studio, Studio):
+            cloudspace_id = studio._studio.id
+            cloud_account = studio._studio.cluster_id
+
+        if isinstance(studio, str):
+            studio = Studio(studio)
+            cloudspace_id = studio._studio.id
+            cloud_account = studio._studio.cluster_id
+
+        if cloud_account is None:
+            cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
         if cloud_account is None and self._cloud_account is not None:
             print(f"No cloud account was provided, defaulting to {self._cloud_account.cluster_id}")
             cloud_account = os.getenv("LIGHTNING_CLUSTER_ID") or self._cloud_account.cluster_id
 
-        if isinstance(studio, Studio):
-            cloudspace_id = studio._studio.id
-
-        if isinstance(studio, str):
-            cloudspace_id = Studio(studio)._studio.id
+        if isinstance(ports, float):
+            ports = [ports]
 
         if replicas is None and autoscale is None:
             replicas = 1
 
         if machine is None:
             machine = Machine.CPU
+
+        if commands is not None and command is not None:
+            raise ValueError("Commands and command are mutually exclusive")
+
+        if commands is not None:
+            command = compose_commands(commands)
 
         if autoscale is None:
             autoscale = AutoScaleConfig(
@@ -185,12 +200,6 @@ class Deployment:
                 metric="CPU" if machine.is_cpu() else "GPU",
                 threshold=90,
             )
-
-        if command is not None and commands is not None:
-            raise ValueError("Command and commands are mutually exclusive")
-
-        if commands is not None:
-            command = " && ".join(commands)
 
         self._deployment = self._deployment_api.create_deployment(
             V1Deployment(
@@ -229,6 +238,7 @@ class Deployment:
         image: Optional[str] = None,
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
+        commands: Optional[List[str]] = None,
         env: Optional[List[Union[Env, Secret]]] = None,
         spot: Optional[bool] = None,
         cloud_account: Optional[str] = None,
@@ -247,6 +257,9 @@ class Deployment:
         include_credentials: Optional[bool] = None,
     ) -> None:
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+
+        if command is None and commands is not None:
+            command = compose_commands(commands)
 
         self._deployment = self._deployment_api.update_deployment(
             self._deployment,
