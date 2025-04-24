@@ -50,6 +50,7 @@ class V1Usage(object):
         'id': 'str',
         'name': 'str',
         'project_id': 'str',
+        'reservations': 'list[V1ReservationBillingSession]',
         'resource_type': 'str',
         'saved_cost': 'float',
         'session_ended_at': 'datetime',
@@ -68,6 +69,7 @@ class V1Usage(object):
         'id': 'id',
         'name': 'name',
         'project_id': 'projectId',
+        'reservations': 'reservations',
         'resource_type': 'resourceType',
         'saved_cost': 'savedCost',
         'session_ended_at': 'sessionEndedAt',
@@ -76,7 +78,7 @@ class V1Usage(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, billed_time_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, free: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, resource_type: 'str' =None, saved_cost: 'float' =None, session_ended_at: 'datetime' =None, session_started_at: 'datetime' =None, spot: 'bool' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, billed_time_seconds: 'str' =None, cluster_id: 'str' =None, cost: 'float' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, free: 'bool' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, reservations: 'list[V1ReservationBillingSession]' =None, resource_type: 'str' =None, saved_cost: 'float' =None, session_ended_at: 'datetime' =None, session_started_at: 'datetime' =None, spot: 'bool' =None, user_id: 'str' =None):  # noqa: E501
         """V1Usage - a model defined in Swagger"""  # noqa: E501
         self._billed_time_seconds = None
         self._cluster_id = None
@@ -87,6 +89,7 @@ class V1Usage(object):
         self._id = None
         self._name = None
         self._project_id = None
+        self._reservations = None
         self._resource_type = None
         self._saved_cost = None
         self._session_ended_at = None
@@ -112,6 +115,8 @@ class V1Usage(object):
             self.name = name
         if project_id is not None:
             self.project_id = project_id
+        if reservations is not None:
+            self.reservations = reservations
         if resource_type is not None:
             self.resource_type = resource_type
         if saved_cost is not None:
@@ -313,6 +318,27 @@ class V1Usage(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def reservations(self) -> 'list[V1ReservationBillingSession]':
+        """Gets the reservations of this V1Usage.  # noqa: E501
+
+
+        :return: The reservations of this V1Usage.  # noqa: E501
+        :rtype: list[V1ReservationBillingSession]
+        """
+        return self._reservations
+
+    @reservations.setter
+    def reservations(self, reservations: 'list[V1ReservationBillingSession]'):
+        """Sets the reservations of this V1Usage.
+
+
+        :param reservations: The reservations of this V1Usage.  # noqa: E501
+        :type: list[V1ReservationBillingSession]
+        """
+
+        self._reservations = reservations
 
     @property
     def resource_type(self) -> 'str':

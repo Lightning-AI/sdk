@@ -46,8 +46,10 @@ class V1Resources(object):
         'extra': 'dict(str, str)',
         'gpu': 'int',
         'gpu_type': 'str',
+        'iops': 'str',
         'memory_mb': 'str',
-        'storage_gb': 'str'
+        'storage_gb': 'str',
+        'throughput': 'str'
     }
 
     attribute_map = {
@@ -56,19 +58,23 @@ class V1Resources(object):
         'extra': 'extra',
         'gpu': 'gpu',
         'gpu_type': 'gpuType',
+        'iops': 'iops',
         'memory_mb': 'memoryMb',
-        'storage_gb': 'storageGb'
+        'storage_gb': 'storageGb',
+        'throughput': 'throughput'
     }
 
-    def __init__(self, cpu: 'int' =None, cpus: 'str' =None, extra: 'dict(str, str)' =None, gpu: 'int' =None, gpu_type: 'str' =None, memory_mb: 'str' =None, storage_gb: 'str' =None):  # noqa: E501
+    def __init__(self, cpu: 'int' =None, cpus: 'str' =None, extra: 'dict(str, str)' =None, gpu: 'int' =None, gpu_type: 'str' =None, iops: 'str' =None, memory_mb: 'str' =None, storage_gb: 'str' =None, throughput: 'str' =None):  # noqa: E501
         """V1Resources - a model defined in Swagger"""  # noqa: E501
         self._cpu = None
         self._cpus = None
         self._extra = None
         self._gpu = None
         self._gpu_type = None
+        self._iops = None
         self._memory_mb = None
         self._storage_gb = None
+        self._throughput = None
         self.discriminator = None
         if cpu is not None:
             self.cpu = cpu
@@ -80,10 +86,14 @@ class V1Resources(object):
             self.gpu = gpu
         if gpu_type is not None:
             self.gpu_type = gpu_type
+        if iops is not None:
+            self.iops = iops
         if memory_mb is not None:
             self.memory_mb = memory_mb
         if storage_gb is not None:
             self.storage_gb = storage_gb
+        if throughput is not None:
+            self.throughput = throughput
 
     @property
     def cpu(self) -> 'int':
@@ -191,6 +201,27 @@ class V1Resources(object):
         self._gpu_type = gpu_type
 
     @property
+    def iops(self) -> 'str':
+        """Gets the iops of this V1Resources.  # noqa: E501
+
+
+        :return: The iops of this V1Resources.  # noqa: E501
+        :rtype: str
+        """
+        return self._iops
+
+    @iops.setter
+    def iops(self, iops: 'str'):
+        """Sets the iops of this V1Resources.
+
+
+        :param iops: The iops of this V1Resources.  # noqa: E501
+        :type: str
+        """
+
+        self._iops = iops
+
+    @property
     def memory_mb(self) -> 'str':
         """Gets the memory_mb of this V1Resources.  # noqa: E501
 
@@ -231,6 +262,27 @@ class V1Resources(object):
         """
 
         self._storage_gb = storage_gb
+
+    @property
+    def throughput(self) -> 'str':
+        """Gets the throughput of this V1Resources.  # noqa: E501
+
+
+        :return: The throughput of this V1Resources.  # noqa: E501
+        :rtype: str
+        """
+        return self._throughput
+
+    @throughput.setter
+    def throughput(self, throughput: 'str'):
+        """Sets the throughput of this V1Resources.
+
+
+        :param throughput: The throughput of this V1Resources.  # noqa: E501
+        :type: str
+        """
+
+        self._throughput = throughput
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

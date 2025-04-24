@@ -42,6 +42,7 @@ class V1ProjectSettings(object):
     """
     swagger_types = {
         'allow_aws_saas': 'bool',
+        'allow_external_project_duplication': 'bool',
         'allow_gcp_saas': 'bool',
         'allow_lambda_saas': 'bool',
         'allow_vultr_saas': 'bool',
@@ -56,6 +57,7 @@ class V1ProjectSettings(object):
 
     attribute_map = {
         'allow_aws_saas': 'allowAwsSaas',
+        'allow_external_project_duplication': 'allowExternalProjectDuplication',
         'allow_gcp_saas': 'allowGcpSaas',
         'allow_lambda_saas': 'allowLambdaSaas',
         'allow_vultr_saas': 'allowVultrSaas',
@@ -68,9 +70,10 @@ class V1ProjectSettings(object):
         'start_studio_on_spot_instance': 'startStudioOnSpotInstance'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
         """V1ProjectSettings - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
+        self._allow_external_project_duplication = None
         self._allow_gcp_saas = None
         self._allow_lambda_saas = None
         self._allow_vultr_saas = None
@@ -84,6 +87,8 @@ class V1ProjectSettings(object):
         self.discriminator = None
         if allow_aws_saas is not None:
             self.allow_aws_saas = allow_aws_saas
+        if allow_external_project_duplication is not None:
+            self.allow_external_project_duplication = allow_external_project_duplication
         if allow_gcp_saas is not None:
             self.allow_gcp_saas = allow_gcp_saas
         if allow_lambda_saas is not None:
@@ -125,6 +130,29 @@ class V1ProjectSettings(object):
         """
 
         self._allow_aws_saas = allow_aws_saas
+
+    @property
+    def allow_external_project_duplication(self) -> 'bool':
+        """Gets the allow_external_project_duplication of this V1ProjectSettings.  # noqa: E501
+
+        Allows teamspace admins to configure whether or not they want members to be able to duplicate studios without admin intervention.  # noqa: E501
+
+        :return: The allow_external_project_duplication of this V1ProjectSettings.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_external_project_duplication
+
+    @allow_external_project_duplication.setter
+    def allow_external_project_duplication(self, allow_external_project_duplication: 'bool'):
+        """Sets the allow_external_project_duplication of this V1ProjectSettings.
+
+        Allows teamspace admins to configure whether or not they want members to be able to duplicate studios without admin intervention.  # noqa: E501
+
+        :param allow_external_project_duplication: The allow_external_project_duplication of this V1ProjectSettings.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_external_project_duplication = allow_external_project_duplication
 
     @property
     def allow_gcp_saas(self) -> 'bool':

@@ -45,6 +45,7 @@ class AssistantIdConversationsBody(object):
         'conversation_id': 'str',
         'max_tokens': 'str',
         'message': 'V1Message',
+        'metadata': 'dict(str, str)',
         'parent_message_id': 'str',
         'stream': 'bool'
     }
@@ -54,16 +55,18 @@ class AssistantIdConversationsBody(object):
         'conversation_id': 'conversationId',
         'max_tokens': 'maxTokens',
         'message': 'message',
+        'metadata': 'metadata',
         'parent_message_id': 'parentMessageId',
         'stream': 'stream'
     }
 
-    def __init__(self, auto_name: 'bool' =None, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._conversation_id = None
         self._max_tokens = None
         self._message = None
+        self._metadata = None
         self._parent_message_id = None
         self._stream = None
         self.discriminator = None
@@ -75,6 +78,8 @@ class AssistantIdConversationsBody(object):
             self.max_tokens = max_tokens
         if message is not None:
             self.message = message
+        if metadata is not None:
+            self.metadata = metadata
         if parent_message_id is not None:
             self.parent_message_id = parent_message_id
         if stream is not None:
@@ -163,6 +168,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._message = message
+
+    @property
+    def metadata(self) -> 'dict(str, str)':
+        """Gets the metadata of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The metadata of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, metadata: 'dict(str, str)'):
+        """Sets the metadata of this AssistantIdConversationsBody.
+
+
+        :param metadata: The metadata of this AssistantIdConversationsBody.  # noqa: E501
+        :type: dict(str, str)
+        """
+
+        self._metadata = metadata
 
     @property
     def parent_message_id(self) -> 'str':
