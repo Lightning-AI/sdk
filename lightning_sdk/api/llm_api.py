@@ -16,6 +16,10 @@ class LLMApi:
         result = self._client.assistants_service_list_assistants(published=True)
         return result.assistants
 
+    def get_user_models(self, user_id: str) -> List[str]:
+        result = self._client.assistants_service_list_assistants(user_id=user_id)
+        return result.assistants
+
     def start_conversation(
         self, prompt: str, system_prompt: Optional[str], assistant_id: str
     ) -> V1ConversationResponseChunk:
