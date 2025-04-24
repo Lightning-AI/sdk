@@ -597,3 +597,11 @@ def test_compose_commands():
     commands = ["python server.py &", "ls", "python server.py &"]
     command = deployment_api_module.compose_commands(commands)
     assert command == "( python server.py & ) && ls && ( python server.py & )"
+
+
+def to_health_check_empty():
+    health_check = deployment_api_module.to_health_check()
+    assert health_check.failure_threshold == 600
+    assert health_check.initial_delay_seconds == 600
+    assert health_check.interval_seconds == 600
+    assert health_check.timeout_seconds == 600

@@ -524,8 +524,14 @@ def to_endpoint(
 def to_health_check(
     health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None
 ) -> Optional[V1JobHealthCheckConfig]:
+    # Use Default health check if none is provided
     if not health_check:
-        return None
+        return V1JobHealthCheckConfig(
+            failure_threshold=600,
+            initial_delay_seconds=0,
+            interval_seconds=1,
+            timeout_seconds=600,
+        )
 
     health_check_config = V1JobHealthCheckConfig(
         failure_threshold=health_check.failure_threshold,
