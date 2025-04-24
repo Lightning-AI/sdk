@@ -75,7 +75,10 @@ class Deployment:
         except ConnectionError as e:
             raise e
 
-        self._name = name or "dep_" + datetime.now().strftime("%m-%d_%H:%M:%S")
+        if name is None:
+            name = "dep_" + datetime.now().strftime("%m-%d_%H:%M:%S")
+
+        self._name = name
         self._user = _resolve_user(self._user or user)
         self._org = _resolve_org(org)
 

@@ -283,6 +283,10 @@ def test_deployment_start_first_time(monkeypatch):
     with pytest.raises(ValueError, match="At least one port is required to reach your deployment."):
         deployment.start()
 
+    deployment = deployment_module.Deployment()
+
+    assert deployment._name.startswith("dep_")
+
     deployment = deployment_module.Deployment(name="ollama")
 
     resolve_user_mock.assert_called()
