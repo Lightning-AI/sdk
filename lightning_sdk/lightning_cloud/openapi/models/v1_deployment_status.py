@@ -47,6 +47,7 @@ class V1DeploymentStatus(object):
         'message': 'str',
         'pending_replicas': 'str',
         'ready_replicas': 'str',
+        'state': 'V1JobState',
         'urls': 'list[str]'
     }
 
@@ -57,10 +58,11 @@ class V1DeploymentStatus(object):
         'message': 'message',
         'pending_replicas': 'pendingReplicas',
         'ready_replicas': 'readyReplicas',
+        'state': 'state',
         'urls': 'urls'
     }
 
-    def __init__(self, deleting_replicas: 'str' =None, failing_replicas: 'str' =None, first_job_state_current_release: 'str' =None, message: 'str' =None, pending_replicas: 'str' =None, ready_replicas: 'str' =None, urls: 'list[str]' =None):  # noqa: E501
+    def __init__(self, deleting_replicas: 'str' =None, failing_replicas: 'str' =None, first_job_state_current_release: 'str' =None, message: 'str' =None, pending_replicas: 'str' =None, ready_replicas: 'str' =None, state: 'V1JobState' =None, urls: 'list[str]' =None):  # noqa: E501
         """V1DeploymentStatus - a model defined in Swagger"""  # noqa: E501
         self._deleting_replicas = None
         self._failing_replicas = None
@@ -68,6 +70,7 @@ class V1DeploymentStatus(object):
         self._message = None
         self._pending_replicas = None
         self._ready_replicas = None
+        self._state = None
         self._urls = None
         self.discriminator = None
         if deleting_replicas is not None:
@@ -82,6 +85,8 @@ class V1DeploymentStatus(object):
             self.pending_replicas = pending_replicas
         if ready_replicas is not None:
             self.ready_replicas = ready_replicas
+        if state is not None:
+            self.state = state
         if urls is not None:
             self.urls = urls
 
@@ -210,6 +215,27 @@ class V1DeploymentStatus(object):
         """
 
         self._ready_replicas = ready_replicas
+
+    @property
+    def state(self) -> 'V1JobState':
+        """Gets the state of this V1DeploymentStatus.  # noqa: E501
+
+
+        :return: The state of this V1DeploymentStatus.  # noqa: E501
+        :rtype: V1JobState
+        """
+        return self._state
+
+    @state.setter
+    def state(self, state: 'V1JobState'):
+        """Sets the state of this V1DeploymentStatus.
+
+
+        :param state: The state of this V1DeploymentStatus.  # noqa: E501
+        :type: V1JobState
+        """
+
+        self._state = state
 
     @property
     def urls(self) -> 'list[str]':

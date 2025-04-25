@@ -49,6 +49,7 @@ class V1ClusterSecurityOptions(object):
         'disabled_services': 'list[str]',
         'encrypt_cluster_bucket': 'bool',
         'encrypt_instance_volumes': 'bool',
+        'exposed_ports': 'list[str]',
         'extra_firewall_cidr_ranges': 'list[str]',
         'extra_policy': 'str',
         'kms_key_id': 'str',
@@ -67,6 +68,7 @@ class V1ClusterSecurityOptions(object):
         'disabled_services': 'disabledServices',
         'encrypt_cluster_bucket': 'encryptClusterBucket',
         'encrypt_instance_volumes': 'encryptInstanceVolumes',
+        'exposed_ports': 'exposedPorts',
         'extra_firewall_cidr_ranges': 'extraFirewallCidrRanges',
         'extra_policy': 'extraPolicy',
         'kms_key_id': 'kmsKeyId',
@@ -76,7 +78,7 @@ class V1ClusterSecurityOptions(object):
         'ssh_disabled': 'sshDisabled'
     }
 
-    def __init__(self, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_policy: 'str' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
+    def __init__(self, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, exposed_ports: 'list[str]' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_policy: 'str' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
         self._bucket_kms_key = None
         self._cloud_init_boot_cmds = None
@@ -86,6 +88,7 @@ class V1ClusterSecurityOptions(object):
         self._disabled_services = None
         self._encrypt_cluster_bucket = None
         self._encrypt_instance_volumes = None
+        self._exposed_ports = None
         self._extra_firewall_cidr_ranges = None
         self._extra_policy = None
         self._kms_key_id = None
@@ -110,6 +113,8 @@ class V1ClusterSecurityOptions(object):
             self.encrypt_cluster_bucket = encrypt_cluster_bucket
         if encrypt_instance_volumes is not None:
             self.encrypt_instance_volumes = encrypt_instance_volumes
+        if exposed_ports is not None:
+            self.exposed_ports = exposed_ports
         if extra_firewall_cidr_ranges is not None:
             self.extra_firewall_cidr_ranges = extra_firewall_cidr_ranges
         if extra_policy is not None:
@@ -292,6 +297,27 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._encrypt_instance_volumes = encrypt_instance_volumes
+
+    @property
+    def exposed_ports(self) -> 'list[str]':
+        """Gets the exposed_ports of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The exposed_ports of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._exposed_ports
+
+    @exposed_ports.setter
+    def exposed_ports(self, exposed_ports: 'list[str]'):
+        """Sets the exposed_ports of this V1ClusterSecurityOptions.
+
+
+        :param exposed_ports: The exposed_ports of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._exposed_ports = exposed_ports
 
     @property
     def extra_firewall_cidr_ranges(self) -> 'list[str]':

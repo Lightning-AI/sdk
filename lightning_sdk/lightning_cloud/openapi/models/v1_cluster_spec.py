@@ -60,6 +60,7 @@ class V1ClusterSpec(object):
         'pause_automation': 'bool',
         'reservation_details': 'V1ReservationDetails',
         'reserved_capacity_provider': 'bool',
+        'reserved_instances_only': 'bool',
         'security_options': 'V1ClusterSecurityOptions',
         'slurm_v1': 'V1SlurmV1',
         'tagging_options': 'V1ClusterTaggingOptions',
@@ -88,6 +89,7 @@ class V1ClusterSpec(object):
         'pause_automation': 'pauseAutomation',
         'reservation_details': 'reservationDetails',
         'reserved_capacity_provider': 'reservedCapacityProvider',
+        'reserved_instances_only': 'reservedInstancesOnly',
         'security_options': 'securityOptions',
         'slurm_v1': 'slurmV1',
         'tagging_options': 'taggingOptions',
@@ -96,7 +98,7 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_accelerators = None
@@ -117,6 +119,7 @@ class V1ClusterSpec(object):
         self._pause_automation = None
         self._reservation_details = None
         self._reserved_capacity_provider = None
+        self._reserved_instances_only = None
         self._security_options = None
         self._slurm_v1 = None
         self._tagging_options = None
@@ -162,6 +165,8 @@ class V1ClusterSpec(object):
             self.reservation_details = reservation_details
         if reserved_capacity_provider is not None:
             self.reserved_capacity_provider = reserved_capacity_provider
+        if reserved_instances_only is not None:
+            self.reserved_instances_only = reserved_instances_only
         if security_options is not None:
             self.security_options = security_options
         if slurm_v1 is not None:
@@ -575,6 +580,27 @@ class V1ClusterSpec(object):
         """
 
         self._reserved_capacity_provider = reserved_capacity_provider
+
+    @property
+    def reserved_instances_only(self) -> 'bool':
+        """Gets the reserved_instances_only of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The reserved_instances_only of this V1ClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._reserved_instances_only
+
+    @reserved_instances_only.setter
+    def reserved_instances_only(self, reserved_instances_only: 'bool'):
+        """Sets the reserved_instances_only of this V1ClusterSpec.
+
+
+        :param reserved_instances_only: The reserved_instances_only of this V1ClusterSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._reserved_instances_only = reserved_instances_only
 
     @property
     def security_options(self) -> 'V1ClusterSecurityOptions':
