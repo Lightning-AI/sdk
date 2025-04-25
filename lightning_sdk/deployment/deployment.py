@@ -362,7 +362,7 @@ class Deployment:
         return None
 
     @property
-    def env(self) -> Optional[AutoScaleConfig]:
+    def env(self) -> Optional[List[Union[Secret, Env]]]:
         """The env configuration of the deployment."""
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
