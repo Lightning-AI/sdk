@@ -353,7 +353,7 @@ def test_deployment_update(monkeypatch):
     client = MagicMock()
     client.jobs_service_get_deployment_by_name.return_value = V1Deployment(
         name="ollama",
-        spec=V1JobSpec(quantity=2),
+        spec=V1JobSpec(quantity=2, include_credentials=False),
         endpoint=V1Endpoint(),
         strategy=None,
         release_id="release-id",
@@ -370,6 +370,21 @@ def test_deployment_update(monkeypatch):
         entrypoint="new_entrypoint",
         release_strategy=deployment_api_module.RollingUpdateReleaseStrategy(),
         health_check=HttpHealthCheck(path="/health", port=8000),
+        include_credentials=True,
+    )
+    client.jobs_service_update_deployment.assert_called()
+    assert client.jobs_service_update_deployment._mock_mock_calls[0].kwargs["body"].spec.entrypoint == "new_entrypoint"
+    readiness_probe = client.jobs_service_update_deployment._mock_mock_calls[0].kwargs["body"].spec.readiness_probe
+    assert readiness_probe.http_get.path == "/health"
+    assert readiness_probe.http_get.port == 8000
+    assert deployment.release_id == "release-id"
+    assert deployment.quantity == 2
+    assert deployment.include_credentials is True
+
+    deployment.update(
+        entrypoint="new_entrypoint",
+        release_strategy=deployment_api_module.RollingUpdateReleaseStrategy(),
+        health_check=HttpHealthCheck(path="/health", port=8000),
         include_credentials=False,
     )
     client.jobs_service_update_deployment.assert_called()
@@ -379,6 +394,9 @@ def test_deployment_update(monkeypatch):
     assert readiness_probe.http_get.port == 8000
     assert deployment.release_id == "release-id"
     assert deployment.quantity == 2
+    assert deployment.include_credentials is False
+
+    deployment.update(include_credentials=None)
     assert deployment.include_credentials is False
 
 

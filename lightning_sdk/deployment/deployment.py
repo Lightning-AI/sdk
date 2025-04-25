@@ -283,7 +283,7 @@ class Deployment:
             health_check=health_check,
             release_strategy=release_strategy,
             quantity=quantity,
-            include_credentials=include_credentials if include_credentials is not None else True,
+            include_credentials=include_credentials,
         )
 
     def stop(self) -> None:
