@@ -20,12 +20,14 @@ from lightning_sdk.api import UserApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_registry_url
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.upload import _upload_folder
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.serve import _LitServeDeployer
-from lightning_sdk.utils.resolve import _get_authed_user, _resolve_teamspace
+from lightning_sdk.studio import Studio
+from lightning_sdk.utils.resolve import _get_authed_user, _get_studio_url, _resolve_teamspace
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
 _POLL_TIMEOUT = 600
@@ -159,7 +161,7 @@ def api(
         script_path=script_path,
         easy=easy,
         local=local,
-        repository=name,
+        name=name,
         non_interactive=non_interactive,
         machine=machine,
         devbox=devbox,
@@ -180,7 +182,7 @@ def api_impl(
     script_path: Union[str, Path],
     easy: bool = False,
     local: bool = False,
-    repository: Optional[str] = None,
+    name: Optional[str] = None,
     tag: Optional[str] = None,
     non_interactive: bool = False,
     machine: str = "CPU",
@@ -206,9 +208,9 @@ def api_impl(
 
     _LitServeDeployer.generate_client() if easy else None
 
-    if not repository:
+    if not name:
         timestr = datetime.now().strftime("%b-%d-%H_%M")
-        repository = f"litserve-{timestr}".lower()
+        name = f"litserve-{timestr}".lower()
 
     if local:
         try:
@@ -223,13 +225,13 @@ def api_impl(
             raise RuntimeError(error_msg) from None
 
     if devbox:
-        return _handle_devbox(script_path, console, non_interactive, devbox)
+        return _handle_devbox(name, script_path, console, non_interactive, devbox, interruptible, teamspace, org, user)
 
     machine = Machine.from_str(machine)
     return _handle_cloud(
         script_path,
         console,
-        repository=repository,
+        repository=name,
         tag=tag,
         non_interactive=non_interactive,
         machine=machine,
@@ -447,12 +449,36 @@ def _upload_container(
 
 
 def _handle_devbox(
-    script_path: Union[str, Path],
+    name: str,
+    script_path: Path,
     console: Console,
     non_interactive: bool = False,
     devbox: Machine = "CPU",
+    interruptible: bool = False,
+    teamspace: Optional[str] = None,
+    org: Optional[str] = None,
+    user: Optional[str] = None,
 ) -> None:
-    raise NotImplementedError("Devbox is not implemented yet")
+    if script_path.suffix != ".py":
+        console.print("❌ [bold]Script path must be a Python file[/bold]", style="red")
+        return
+    resolved_teamspace = select_teamspace(teamspace, org, user)
+    studio = Studio(name=name, teamspace=resolved_teamspace)
+    pathlib_path = Path(script_path).resolve()
+    console.print(f"Uploading {pathlib_path.parent} to {studio.owner.name}/{studio.teamspace.name}/{studio.name}")
+    _upload_folder(pathlib_path.parent, remote_path=".", studio=studio)
+    console.line()
+    console.print("Starting Studio...")
+    studio.start(machine=devbox, interruptible=interruptible)
+    console.line()
+    console.print("Running server...")
+    # TODO: Run server and connect to custom port
+    console.print(f"[bold]Opening {studio.owner.name}/{studio.teamspace.name}/{studio.name}[/bold]")
+    studio_url = _get_studio_url(studio, turn_on=False)
+    console.print(f"🚀 Studio opened at {studio_url}")
+    ok = webbrowser.open(studio_url)
+    if not ok:
+        console.print(f"Open your Studio at: {studio_url}")
 
 
 def _handle_cloud(

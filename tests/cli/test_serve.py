@@ -11,6 +11,7 @@ import rich
 from lightning_sdk.cli.serve import (
     _Auth,
     _handle_cloud,
+    _handle_devbox,
     _Onboarding,
     _OnboardingStatus,
     authenticate,
@@ -173,7 +174,7 @@ def test_cloud_deployment(
     # Test with specific repository tag
     repo = "test-repo/model"
     tag = "latest"
-    serve_api(temp_script, local=False, repository=repo, tag=tag)
+    serve_api(temp_script, local=False, name=repo, tag=tag)
 
     mock_select_teamspace.assert_called_once()
     mock_authenticate.assert_called_once()
@@ -222,7 +223,7 @@ def test_cloud_deployment_non_interactive(
 
     repo = "test-repo/model"
     tag = "latest"
-    serve_api(temp_script, local=False, repository=repo, tag=tag, non_interactive=True)
+    serve_api(temp_script, local=False, name=repo, tag=tag, non_interactive=True)
 
     mock_authenticate.assert_called_once_with(shall_confirm=False)
     mock_poll_verified_status.asssert_called_once()
@@ -238,7 +239,7 @@ def test_cloud_deployment_non_interactive(
 @patch("lightning_sdk.cli.serve.datetime")
 @patch("lightning_sdk.cli.serve.subprocess.run")
 def test_args_with_repository(mock_subprocess, mock_dt, temp_script):
-    serve_api(temp_script, repository="test", local=True)
+    serve_api(temp_script, name="test", local=True)
     mock_dt.now.assert_not_called()
     mock_subprocess.assert_called_once()
 
@@ -559,3 +560,36 @@ def test_onboarding_get_cloudspace_id(mock_onboarding):
     resp = onboarding.get_cloudspace_id(MagicMock())
     assert resp == cloudspaces[-1].id, "Should return the latest scratch cloudspace id"
     mock_lightning_client.return_value.cloud_space_service_list_cloud_spaces.assert_called_once()
+
+
+def test_handle_devbox_non_python_file():
+    console = MagicMock()
+    _handle_devbox(
+        "test",
+        Path("test.cpp"),
+        console,
+        False,
+        "CPU",
+    )
+    console.print.assert_called_once_with("❌ [bold]Script path must be a Python file[/bold]", style="red")
+
+
+@patch("lightning_sdk.cli.serve.select_teamspace")
+@patch("lightning_sdk.cli.serve.Studio")
+@patch("lightning_sdk.cli.serve._upload_folder")
+@patch("lightning_sdk.cli.serve._get_studio_url")
+@patch("lightning_sdk.cli.serve.webbrowser")
+def test_handle_devbox(mock_webbrowser, mock_get_studio_url, mock_upload_folder, mock_studio, mock_select_teamspace):
+    mock_get_studio_url.return_value = "https://lightning.ai"
+    _handle_devbox(
+        "test",
+        Path("test.py"),
+        MagicMock(),
+        teamspace="test-teamspace",
+        org="test-org",
+        user="test-user",
+    )
+    mock_select_teamspace.assert_called_once_with("test-teamspace", "test-org", "test-user")
+    mock_studio.assert_called_once()
+    mock_studio.return_value.start.assert_called_once_with(machine="CPU", interruptible=False)
+    mock_webbrowser.open.assert_called_once_with(mock_get_studio_url.return_value)
