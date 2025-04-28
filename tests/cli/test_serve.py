@@ -66,8 +66,12 @@ Options:
   --non-interactive, --non_interactive
                                   Do not prompt for confirmation
   --machine [CPU_SMALL|CPU|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_8|H100_X_8|H200_X_8]
-                                  The machine type to deploy the API on.
-                                  [default: CPU]
+                                  Machine type to deploy the API on. Defaults
+                                  to CPU.  [default: CPU]
+  --devbox [CPU_SMALL|CPU|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_8|H100_X_8|H200_X_8]
+                                  Machine type to build the API on. Setting
+                                  this argument will open the server in a
+                                  Studio.
   --interruptible                 Whether the machine should be interruptible
                                   (spot) or not.
   --teamspace TEXT                The teamspace the deployment should be

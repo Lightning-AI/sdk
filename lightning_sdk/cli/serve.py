@@ -86,7 +86,14 @@ def deploy() -> None:
     default="CPU",
     show_default=True,
     type=click.Choice(_MACHINE_VALUES),
-    help="The machine type to deploy the API on.",
+    help="Machine type to deploy the API on. Defaults to CPU.",
+)
+@click.option(
+    "--devbox",
+    default=None,
+    show_default=True,
+    type=click.Choice(_MACHINE_VALUES),
+    help="Machine type to build the API on. Setting this argument will open the server in a Studio.",
 )
 @click.option(
     "--interruptible",
@@ -134,7 +141,8 @@ def api(
     local: bool,
     name: Optional[str],
     non_interactive: bool,
-    machine: str,
+    machine: Optional[str],
+    devbox: Optional[str],
     interruptible: bool,
     teamspace: Optional[str],
     org: Optional[str],
@@ -154,6 +162,7 @@ def api(
         repository=name,
         non_interactive=non_interactive,
         machine=machine,
+        devbox=devbox,
         interruptible=interruptible,
         teamspace=teamspace,
         org=org,
@@ -171,10 +180,11 @@ def api_impl(
     script_path: Union[str, Path],
     easy: bool = False,
     local: bool = False,
-    repository: [str] = None,
+    repository: Optional[str] = None,
     tag: Optional[str] = None,
     non_interactive: bool = False,
     machine: str = "CPU",
+    devbox: Optional[str] = None,
     interruptible: bool = False,
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
@@ -200,37 +210,40 @@ def api_impl(
         timestr = datetime.now().strftime("%b-%d-%H_%M")
         repository = f"litserve-{timestr}".lower()
 
-    if not local:
-        repository = repository or "litserve-model"
-        machine = Machine.from_str(machine)
-        return _handle_cloud(
-            script_path,
-            console,
-            repository=repository,
-            tag=tag,
-            non_interactive=non_interactive,
-            machine=machine,
-            interruptible=interruptible,
-            teamspace=teamspace,
-            org=org,
-            user=user,
-            cloud_account=cloud_account,
-            port=port,
-            min_replica=min_replica,
-            max_replica=max_replica,
-            replicas=replicas,
-            include_credentials=include_credentials,
-        )
+    if local:
+        try:
+            subprocess.run(
+                ["python", str(script_path)],
+                check=True,
+                text=True,
+            )
+            return None
+        except subprocess.CalledProcessError as e:
+            error_msg = f"Script execution failed with exit code {e.returncode}\nstdout: {e.stdout}\nstderr: {e.stderr}"
+            raise RuntimeError(error_msg) from None
 
-    try:
-        subprocess.run(
-            ["python", str(script_path)],
-            check=True,
-            text=True,
-        )
-    except subprocess.CalledProcessError as e:
-        error_msg = f"Script execution failed with exit code {e.returncode}\nstdout: {e.stdout}\nstderr: {e.stderr}"
-        raise RuntimeError(error_msg) from None
+    if devbox:
+        return _handle_devbox(script_path, console, non_interactive, devbox)
+
+    machine = Machine.from_str(machine)
+    return _handle_cloud(
+        script_path,
+        console,
+        repository=repository,
+        tag=tag,
+        non_interactive=non_interactive,
+        machine=machine,
+        interruptible=interruptible,
+        teamspace=teamspace,
+        org=org,
+        user=user,
+        cloud_account=cloud_account,
+        port=port,
+        min_replica=min_replica,
+        max_replica=max_replica,
+        replicas=replicas,
+        include_credentials=include_credentials,
+    )
 
 
 class _AuthServer(AuthServer):
@@ -431,6 +444,15 @@ def _upload_container(
             return False
     console.print(f"\n✅ Image pushed to {repository}:{tag}")
     return True
+
+
+def _handle_devbox(
+    script_path: Union[str, Path],
+    console: Console,
+    non_interactive: bool = False,
+    devbox: Machine = "CPU",
+) -> None:
+    raise NotImplementedError("Devbox is not implemented yet")
 
 
 def _handle_cloud(
