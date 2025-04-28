@@ -8,10 +8,6 @@ class LLMApi:
     def __init__(self) -> None:
         self._client = LightningClient(retry=False, max_tries=0)
 
-    def list_models(self) -> List[str]:
-        result = self._client.assistants_service_list_assistant_managed_endpoints()
-        return result.endpoints
-
     def get_public_models(self) -> List[str]:
         result = self._client.assistants_service_list_assistants(published=True)
         return result.assistants

@@ -1,4 +1,3 @@
-import re
 from unittest.mock import MagicMock
 
 import pytest
@@ -58,17 +57,6 @@ def test_invalid_format(monkeypatch, mock_user_auth, mock_model_data):
 
     with pytest.raises(ValueError, match="Model name must be in the format `organization/model_name`"):
         LLM("gpt-4o")
-
-
-def test_invalid_provider(monkeypatch, mock_user_auth, mock_model_data):
-    mock_api = MagicMock()
-    mock_api.list_models.return_value = mock_model_data
-    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
-
-    with pytest.raises(
-        ValueError, match=re.escape("Model provider openedai not found. Available models providers: ['openai']")
-    ):
-        LLM("openedai/gpt-4o")
 
 
 def test_user_model(monkeypatch, mock_user_auth, mock_user_model):
