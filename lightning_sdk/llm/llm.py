@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 from lightning_sdk.api import UserApi
 from lightning_sdk.api.llm_api import LLMApi
@@ -9,7 +9,7 @@ from lightning_sdk.utils.resolve import _resolve_user
 
 
 class LLM:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, user: Union[str, "User", None] = None) -> None:
         self._auth = Auth()
         self._user = None
 
@@ -20,7 +20,7 @@ class LLM:
             raise e
 
         self._name = name
-        self._user = _resolve_user(self._user)
+        self._user = _resolve_user(self._user or user)
 
         self._name = name
         self._org, self._model_name = self._parse_model_name(name)
@@ -31,9 +31,14 @@ class LLM:
 
     def _parse_model_name(self, name: str) -> Tuple[str, str]:
         parts = name.split("/")
-        if len(parts) != 2:
-            raise ValueError(f"Model name must be in the format `organization/model_name`, but got '{name}'.")
-        return parts[0], parts[1]
+        if len(parts) == 1:
+            # a user model
+            return None, parts[0]
+        if len(parts) == 2:
+            return parts[0], parts[1]
+        raise ValueError(
+            f"Model name must be in the format `organization/model_name` or `model_name`, but got '{name}'."
+        )
 
     def _build_model_lookup(self, endpoints: List[str]) -> Dict[str, Set[str]]:
         result = {}
@@ -54,7 +59,7 @@ class LLM:
         if self._model_name in self._user_models:
             return self._user_models.get(self._model_name)[0]
         raise ValueError(
-            f"Model {self._model_name} not found in public or user models. \
+            f"Model {self._model_name} not found in public or {self._user.name} models. \
                 Available models: {list(self._public_models.keys()) + list(self._user_models.keys())}"
         )
 
