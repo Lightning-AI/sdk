@@ -21,7 +21,7 @@ class LLMApi:
         return result.assistants
 
     def start_conversation(
-        self, prompt: str, system_prompt: Optional[str], assistant_id: str
+        self, prompt: str, system_prompt: Optional[str], max_completion_tokens: Optional[int], assistant_id: str
     ) -> V1ConversationResponseChunk:
         body = {
             "message": {
@@ -33,6 +33,7 @@ class LLMApi:
                     }
                 ],
             },
+            "max_completion_tokens": max_completion_tokens,
         }
         result = self._client.assistants_service_start_conversation(body, assistant_id)
         return result.result

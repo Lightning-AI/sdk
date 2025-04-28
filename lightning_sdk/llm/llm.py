@@ -79,6 +79,6 @@ class LLM:
                 Available models: {list(self._public_models.keys()) + list(self._user_models.keys())}"
         )
 
-    def chat(self, prompt: str, system_prompt: Optional[str] = None) -> str:
-        output = self._llm_api.start_conversation(prompt, system_prompt, self._model.id)
+    def chat(self, prompt: str, system_prompt: Optional[str] = None, max_tokens: Optional[int] = 500) -> str:
+        output = self._llm_api.start_conversation(prompt, system_prompt, max_tokens, self._model.id)
         return output.choices[0].delta.content

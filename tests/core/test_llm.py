@@ -101,3 +101,7 @@ def test_chat(monkeypatch, mock_user_auth, mock_model_data, mock_public_model):
 
     assert isinstance(response, str)
     assert response == "I'm doing well, thank you!"
+
+    # explicitly pass max_tokens
+    response = llm.chat("Hello, how are you?", max_tokens=10)
+    mock_api.start_conversation.assert_called_with("Hello, how are you?", None, 10, llm._model.id)
