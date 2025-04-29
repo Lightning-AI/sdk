@@ -1,3 +1,4 @@
+import concurrent.futures
 import os
 import socket
 import subprocess
@@ -7,7 +8,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from threading import Thread
-from typing import List, Optional, TypedDict, Union
+from typing import Dict, List, Optional, TypedDict, Union
 from urllib.parse import urlencode
 
 import click
@@ -20,7 +21,11 @@ from lightning_sdk.api import UserApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_registry_url
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
-from lightning_sdk.cli.upload import _upload_folder
+from lightning_sdk.cli.upload import (
+    _dump_current_upload_state,
+    _resolve_previous_upload_state,
+    _start_parallel_upload,
+)
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
@@ -448,6 +453,38 @@ def _upload_container(
     return True
 
 
+# TODO: Move the rest of the devbox logic here
+class _LitServeDevbox:
+    """Build LitServe API in a Studio."""
+
+    def resolve_previous_upload(self, studio: Studio, folder: str) -> Dict[str, str]:
+        remote_path = "."
+        pairs = {}
+        for root, _, files in os.walk(folder):
+            rel_root = os.path.relpath(root, folder)
+            for f in files:
+                pairs[os.path.join(root, f)] = os.path.join(remote_path, rel_root, f)
+        return _resolve_previous_upload_state(studio, remote_path, pairs)
+
+    def upload_folder(self, studio: Studio, folder: str, upload_state: Dict[str, str]) -> None:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            futures = _start_parallel_upload(executor, studio, upload_state)
+            total_files = len(upload_state)
+
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                TimeElapsedColumn(),
+                console=Console(),
+                transient=True,
+            ) as progress:
+                upload_task = progress.add_task(f"[cyan]Uploading {total_files} files to Studio...", total=total_files)
+                for f in concurrent.futures.as_completed(futures):
+                    upload_state.pop(f.result())
+                    _dump_current_upload_state(studio, ".", upload_state)
+                    progress.update(upload_task, advance=1)
+
+
 def _handle_devbox(
     name: str,
     script_path: Path,
@@ -460,25 +497,47 @@ def _handle_devbox(
     user: Optional[str] = None,
 ) -> None:
     if script_path.suffix != ".py":
-        console.print("❌ [bold]Script path must be a Python file[/bold]", style="red")
+        console.print("❌ Error: Only Python files (.py) are supported for development servers", style="red")
         return
+
     resolved_teamspace = select_teamspace(teamspace, org, user)
     studio = Studio(name=name, teamspace=resolved_teamspace)
+    lit_devbox = _LitServeDevbox()
+
+    studio_url = _get_studio_url(studio, turn_on=True)
     pathlib_path = Path(script_path).resolve()
-    console.print(f"Uploading {pathlib_path.parent} to {studio.owner.name}/{studio.teamspace.name}/{studio.name}")
-    _upload_folder(pathlib_path.parent, remote_path=".", studio=studio)
-    console.line()
-    console.print("Starting Studio...")
-    studio.start(machine=devbox, interruptible=interruptible)
-    console.line()
-    console.print("Running server...")
-    # TODO: Run server and connect to custom port
-    console.print(f"[bold]Opening {studio.owner.name}/{studio.teamspace.name}/{studio.name}[/bold]")
-    studio_url = _get_studio_url(studio, turn_on=False)
-    console.print(f"🚀 Studio opened at {studio_url}")
-    ok = webbrowser.open(studio_url)
+    ok = False
+    studio_path = f"{studio.owner.name}/{studio.teamspace.name}/{studio.name}"
+
+    console.print("\n=== Lightning Studio Setup ===")
+    console.print(f"🔧 Setting up Lightning Studio: {studio_path}")
+    console.print(f"📁 Local project: {pathlib_path.parent}")
+
+    upload_state = lit_devbox.resolve_previous_upload(studio, pathlib_path.parent)
+    if non_interactive:
+        console.print(f"🌐 Opening Studio in browser: [link={studio_url}]{studio_url}[/link]")
+        ok = webbrowser.open(studio_url)
+    else:
+        if Confirm.ask("Would you like to open your Studio in the browser?", default=True):
+            console.print(f"🌐 Opening Studio in browser: [link={studio_url}]{studio_url}[/link]")
+            ok = webbrowser.open(studio_url)
+
     if not ok:
-        console.print(f"Open your Studio at: {studio_url}")
+        console.print(f"🔗 Access your Studio at: [link={studio_url}]{studio_url}[/link]")
+
+    console.print("\n⚡ Initializing Studio (this typically takes 1-2 minutes)...")
+    studio.start(machine=devbox, interruptible=interruptible)
+
+    console.print("📤 Syncing project files to Studio...")
+    lit_devbox.upload_folder(studio, pathlib_path.parent, upload_state)
+
+    # Add completion message with next steps
+    console.print("\n✅ Studio ready!")
+    console.print("\n📋 Next steps:")
+    console.print("  1. Server code will be available in the Studio")
+    console.print("  2. The Studio is now running with the specified configuration")
+    console.print("  3. Modify and run your server directly in the Studio")
+    # TODO: Once server running is implemented
 
 
 def _handle_cloud(

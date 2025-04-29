@@ -14,7 +14,7 @@ from lightning_sdk.cli.configure import configure
 from lightning_sdk.cli.connect import connect
 from lightning_sdk.cli.create import create
 from lightning_sdk.cli.delete import delete
-from lightning_sdk.cli.docker import dockerize
+from lightning_sdk.cli.docker_cli import dockerize
 from lightning_sdk.cli.download import download
 from lightning_sdk.cli.generate import generate
 from lightning_sdk.cli.inspect import inspect

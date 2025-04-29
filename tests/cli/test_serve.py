@@ -571,15 +571,22 @@ def test_handle_devbox_non_python_file():
         False,
         "CPU",
     )
-    console.print.assert_called_once_with("❌ [bold]Script path must be a Python file[/bold]", style="red")
+    console.print.assert_called_once_with(
+        "❌ Error: Only Python files (.py) are supported for development servers", style="red"
+    )
 
 
 @patch("lightning_sdk.cli.serve.select_teamspace")
 @patch("lightning_sdk.cli.serve.Studio")
-@patch("lightning_sdk.cli.serve._upload_folder")
 @patch("lightning_sdk.cli.serve._get_studio_url")
 @patch("lightning_sdk.cli.serve.webbrowser")
-def test_handle_devbox(mock_webbrowser, mock_get_studio_url, mock_upload_folder, mock_studio, mock_select_teamspace):
+@patch("lightning_sdk.cli.serve._LitServeDevbox")
+@patch("lightning_sdk.cli.serve.Confirm.ask")
+def test_handle_devbox(
+    mock_ask, mock_lit_serve_devbox, mock_webbrowser, mock_get_studio_url, mock_studio, mock_select_teamspace
+):
+    mock_ask.return_value = True
+    mock_lit_serve_devbox.return_value.upload_folder = MagicMock()
     mock_get_studio_url.return_value = "https://lightning.ai"
     _handle_devbox(
         "test",
@@ -593,3 +600,4 @@ def test_handle_devbox(mock_webbrowser, mock_get_studio_url, mock_upload_folder,
     mock_studio.assert_called_once()
     mock_studio.return_value.start.assert_called_once_with(machine="CPU", interruptible=False)
     mock_webbrowser.open.assert_called_once_with(mock_get_studio_url.return_value)
+    mock_ask.assert_called_once_with("Would you like to open your Studio in the browser?", default=True)

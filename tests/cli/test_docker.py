@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lightning_sdk.cli.docker import _api as docker_api
+from lightning_sdk.cli.docker_cli import _api as docker_api
 
 
 def test_dockerize_help():
