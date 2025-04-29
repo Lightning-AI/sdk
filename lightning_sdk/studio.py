@@ -1,6 +1,9 @@
+import glob
 import os
 import warnings
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Tuple, Union
+
+from tqdm.auto import tqdm
 
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import _machine_to_compute_name
@@ -264,6 +267,34 @@ class Studio:
             remote_path=os.path.normpath(remote_path),
             progress_bar=progress_bar,
         )
+
+    def upload_folder(self, folder_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
+        """Uploads a given folder to a remote path on the Studio."""
+        if folder_path is None:
+            raise ValueError("Cannot upload a folder that is None.")
+        folder_path = os.path.normpath(folder_path)
+        if os.path.isfile(folder_path):
+            raise NotADirectoryError(f"Cannot upload a file as a folder. '{folder_path}' is a file.")
+        if not os.path.exists(folder_path):
+            raise NotADirectoryError(f"Cannot upload a folder that does not exist. '{folder_path}' is not a directory.")
+        all_files = []
+        for fp in glob.glob(os.path.join(folder_path, "**"), recursive=True):
+            if not os.path.isfile(fp):
+                continue
+            rel_path = os.path.relpath(fp, folder_path)
+            remote_file = os.path.join(remote_path, rel_path) if remote_path else rel_path
+            all_files.append((fp, remote_file))
+
+        if progress_bar:
+            progress_bar = tqdm(total=len(all_files), desc="Uploading files", unit="file")
+        for local_file, remote_path in sorted(all_files, key=lambda p: p[1]):
+            if progress_bar:
+                progress_bar.set_description(f"Uploading {local_file}")
+            self.upload_file(local_file, remote_path=remote_path, progress_bar=False)
+            if progress_bar:
+                progress_bar.update(1)
+        if progress_bar:
+            progress_bar.close()
 
     def download_file(self, remote_path: str, file_path: Optional[str] = None) -> None:
         """Downloads a file from the Studio to a given target path."""

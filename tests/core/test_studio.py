@@ -460,10 +460,49 @@ def test_upload_file(
     file_path.touch()
 
     studio._studio_api.upload_file = mock.Mock()
-
     studio.upload_file(file_path=str(file_path), progress_bar=progress_bar)
-
     studio._studio_api.upload_file.assert_called_once()
+
+
+@pytest.mark.parametrize("progress_bar", [True, False])
+def test_upload_folder(
+    internal_studio_init_mocker,
+    internal_studio_status_mocker,
+    internal_studio_api_login,
+    tmp_path,
+    progress_bar,
+):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+
+    with pytest.raises(NotADirectoryError):
+        studio.upload_folder(folder_path="any-path-which-does-not-exist", progress_bar=progress_bar)
+
+    # Upload single file
+    file_path = tmp_path / "checkpoint.pt"
+    file_path.touch()
+
+    with pytest.raises(NotADirectoryError):
+        studio.upload_folder(folder_path=str(file_path), progress_bar=progress_bar)
+
+    (tmp_path / "folder1").mkdir(parents=True)
+    (tmp_path / "folder1" / "checkpoint1.pt").touch()
+    (tmp_path / "folder2").mkdir(parents=True)
+    (tmp_path / "folder2" / "checkpoint2.pt").touch()
+
+    studio._studio_api.upload_file = mock.Mock()
+    studio.upload_folder(folder_path=str(tmp_path), progress_bar=progress_bar)
+    common_args = dict(  # noqa: C408
+        studio_id="st-abc",
+        teamspace_id="ts-abc001",
+        cloud_account="c-abc",
+        file_path=mock.ANY,
+        progress_bar=False,
+    )
+    assert studio._studio_api.upload_file.call_args_list == [
+        mock.call(remote_path="checkpoint.pt", **common_args),
+        mock.call(remote_path="folder1/checkpoint1.pt", **common_args),
+        mock.call(remote_path="folder2/checkpoint2.pt", **common_args),
+    ]
 
 
 def test_download_file(
