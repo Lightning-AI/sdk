@@ -7,7 +7,7 @@ from lightning_sdk.llm import LLM
 
 
 @pytest.fixture()
-def mock_user_auth(monkeypatch):
+def mock_auth(monkeypatch):
     mock_auth = MagicMock()
     mock_auth.user_id = "user-123"
     monkeypatch.setattr("lightning_sdk.llm.llm.Auth", lambda: mock_auth)
@@ -21,6 +21,11 @@ def mock_user_auth(monkeypatch):
 
     mock_user_instance = MagicMock()
     monkeypatch.setattr("lightning_sdk.llm.llm.User", lambda name: mock_user_instance)
+
+    mock_org = MagicMock()
+    mock_org.id = "org-123"
+    mock_org.name = "org-name"
+    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_org", lambda org: mock_org)
     return mock_user_instance
 
 
@@ -44,6 +49,15 @@ def mock_public_model():
 
 
 @pytest.fixture()
+def mock_org_model():
+    org_model_meta = MagicMock()
+    org_model_meta.model = "org-model1"
+    org_model_meta.id = "ast_234"
+    org_model_meta.org_id = "org-123"
+    return [org_model_meta]
+
+
+@pytest.fixture()
 def mock_user_model():
     user_model_meta = MagicMock()
     user_model_meta.model = "user-model1"
@@ -52,7 +66,7 @@ def mock_user_model():
     return [user_model_meta]
 
 
-def test_invalid_format(monkeypatch, mock_user_auth, mock_model_data):
+def test_invalid_format(monkeypatch, mock_auth, mock_model_data):
     mock_api = MagicMock()
     mock_api.list_models.return_value = mock_model_data
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
@@ -62,6 +76,29 @@ def test_invalid_format(monkeypatch, mock_user_auth, mock_model_data):
         match="Model name must be in the format `organization/model_name` or `model_name`, but got 'openai/gpt-4o/v1'",
     ):
         LLM("openai/gpt-4o/v1")
+
+
+def test_org_model(monkeypatch, mock_auth, mock_org_model):
+    mock_org = MagicMock()
+    mock_org.id = "org-123"
+    mock_org.name = "org-name"
+    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_org", lambda org: mock_org)
+
+    mock_api = MagicMock()
+    mock_api.get_org_models.return_value = mock_org_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    llm = LLM("org-name/org-model1")
+    assert llm._org.id == "org-123"
+
+    llm = LLM("org-model1", org="org-name")
+    assert llm._org.id == "org-123"
+
+    with pytest.raises(
+        ValueError,
+        match=re.escape("Model 'dummy-model' not found. \nAvailable models: \nOrg (org-name) Models: org-model1"),
+    ):
+        LLM("org-123/dummy-model")
 
 
 def test_user_model(monkeypatch, mock_user_model):
@@ -91,15 +128,12 @@ def test_user_model(monkeypatch, mock_user_model):
     assert llm._model_name == "user-model1"
     with pytest.raises(
         ValueError,
-        match=re.escape(
-            "Model dummy-model not found in public or mockuser models. \
-                Available models: ['user-model1']"
-        ),
+        match=re.escape("Model 'dummy-model' not found. \nAvailable models: \nUser (mockuser) Models: user-model1"),
     ):
         LLM("dummy-model", user="mockuser")
 
 
-def test_chat(monkeypatch, mock_user_auth, mock_model_data, mock_public_model):
+def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
     mock_api = MagicMock()
     mock_api.list_models.return_value = mock_model_data
     mock_api.get_public_models.return_value = mock_public_model
