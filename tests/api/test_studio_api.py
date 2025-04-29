@@ -356,3 +356,11 @@ def test_download_folder(_, tmpdir, internal_studio_api_login, internal_studio_a
 
     filepath = os.path.join(tmpdir, "file1")
     studio_api.download_folder("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
+
+
+def test_start_new_port(internal_studio_api_start_new_port_mocker):
+    studio_api = StudioApi()
+
+    url = studio_api.start_new_port("st-abc", "ts-abc", "test", 8000)
+
+    assert url == "http://localhost:8000", "endpoint_service_create_endpoint returns [localhost:8000] for urls"

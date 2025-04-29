@@ -36,13 +36,16 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpaceInstanceConfig,
     V1CloudSpaceSeedFile,
     V1CloudSpaceState,
+    V1EndpointType,
     V1GetCloudSpaceInstanceStatusResponse,
     V1GetLongRunningCommandInCloudSpaceResponse,
     V1LoginRequest,
     V1Plugin,
     V1PluginsListResponse,
+    V1UpstreamCloudSpace,
     V1UserRequestedComputeConfig,
 )
+from lightning_sdk.lightning_cloud.openapi.models import ProjectIdEndpointsBody
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
@@ -667,6 +670,20 @@ class StudioApi:
             endpoint=endpoint,
             interruptible=interruptible,
         )
+
+    def start_new_port(self, teamspace_id: str, studio_id: str, name: str, port: int, auto_start: bool = False) -> str:
+        """Starts a new port to the given Studio."""
+        endpoint = self._client.endpoint_service_create_endpoint(
+            project_id=teamspace_id,
+            body=ProjectIdEndpointsBody(
+                name=name,
+                ports=[str(port)],
+                cloudspace=V1UpstreamCloudSpace(
+                    cloudspace_id=studio_id, port=str(port), type=V1EndpointType.PLUGIN_PORT, auto_start=auto_start
+                ),
+            ),
+        )
+        return endpoint.urls[0]
 
     def _create_app(
         self, studio_id: str, teamspace_id: str, cloud_account: str, plugin_type: str, **other_arguments: Any

@@ -4,6 +4,7 @@ import pytest
 
 from lightning_sdk.machine import Machine
 from lightning_sdk.plugin import (
+    CustomPortPlugin,
     InferenceServerPlugin,
     JobsPlugin,
     MultiMachineDataPrepPlugin,
@@ -156,3 +157,13 @@ def test_slurm_job(internal_studio_init_mocker, internal_studio_status_mocker, i
 
     with pytest.raises(ValueError, match="The argument `work_dir` needs to be a proper path on the SLURM Cluster."):
         plugin.run("", work_dir="")
+
+
+def test_custom_port(
+    internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_api_start_new_port_mocker
+):
+    studio = Studio("st-ghi", "ts-abc", "org-abc")
+    plugin = CustomPortPlugin("custom-port", "", studio)
+    url = plugin.run(port=8000)
+
+    assert url == "http://localhost:8000"

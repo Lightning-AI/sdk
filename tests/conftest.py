@@ -1535,6 +1535,23 @@ def internal_studio_api_login(mocker):  # noqa: PT004 # todo
 
 
 @pytest.fixture()
+def internal_studio_api_start_new_port_mocker(mocker):  # todo
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_create_endpoint",
+        autospec=True,
+        return_value=V1Endpoint(
+            id="endpoint-id",
+            name="endpoint-name",
+            urls=["http://localhost:8000"],
+        ),
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture()
 def internal_data_prep_run_mocker(mocker):
     def side_effect(self, body, project_id, cloudspace_id, id):
         from lightning_sdk.machine import Machine

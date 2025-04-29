@@ -395,6 +395,25 @@ class SlurmJobsPlugin(_Plugin):
         return resp
 
 
+class CustomPortPlugin(_Plugin):
+    """Plugin handling the port of a given service."""
+
+    _plugin_run_name = "Custom Port"
+    _slug_name = "custom-port"
+
+    def run(self, name: Optional[str] = None, port: int = 8000) -> str:
+        """Starts a new port to the given Studio."""
+        if name is None:
+            name = _run_name("port")
+
+        return self._studio._studio_api.start_new_port(
+            teamspace_id=self._studio._teamspace.id,
+            studio_id=self._studio._studio.id,
+            name=name,
+            port=port,
+        )
+
+
 @runtime_checkable
 class _RunnablePlugin(Protocol):
     _plugin_run_name: str
