@@ -55,8 +55,10 @@ class V1ClusterSpec(object):
         'lambda_labs_v1': 'V1LambdaLabsDirectV1',
         'locked_zones': 'list[str]',
         'monitor_deletion_disabled': 'bool',
+        'nebius_v1': 'V1NebiusDirectV1',
         'overprovisioning': 'list[V1InstanceOverprovisioningSpec]',
         'parent_cluster_id': 'str',
+        'parent_cluster_type': 'str',
         'pause_automation': 'bool',
         'reservation_details': 'V1ReservationDetails',
         'reserved_capacity_provider': 'bool',
@@ -84,8 +86,10 @@ class V1ClusterSpec(object):
         'lambda_labs_v1': 'lambdaLabsV1',
         'locked_zones': 'lockedZones',
         'monitor_deletion_disabled': 'monitorDeletionDisabled',
+        'nebius_v1': 'nebiusV1',
         'overprovisioning': 'overprovisioning',
         'parent_cluster_id': 'parentClusterId',
+        'parent_cluster_type': 'parentClusterType',
         'pause_automation': 'pauseAutomation',
         'reservation_details': 'reservationDetails',
         'reserved_capacity_provider': 'reservedCapacityProvider',
@@ -98,7 +102,7 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_accelerators = None
@@ -114,8 +118,10 @@ class V1ClusterSpec(object):
         self._lambda_labs_v1 = None
         self._locked_zones = None
         self._monitor_deletion_disabled = None
+        self._nebius_v1 = None
         self._overprovisioning = None
         self._parent_cluster_id = None
+        self._parent_cluster_type = None
         self._pause_automation = None
         self._reservation_details = None
         self._reserved_capacity_provider = None
@@ -155,10 +161,14 @@ class V1ClusterSpec(object):
             self.locked_zones = locked_zones
         if monitor_deletion_disabled is not None:
             self.monitor_deletion_disabled = monitor_deletion_disabled
+        if nebius_v1 is not None:
+            self.nebius_v1 = nebius_v1
         if overprovisioning is not None:
             self.overprovisioning = overprovisioning
         if parent_cluster_id is not None:
             self.parent_cluster_id = parent_cluster_id
+        if parent_cluster_type is not None:
+            self.parent_cluster_type = parent_cluster_type
         if pause_automation is not None:
             self.pause_automation = pause_automation
         if reservation_details is not None:
@@ -477,6 +487,27 @@ class V1ClusterSpec(object):
         self._monitor_deletion_disabled = monitor_deletion_disabled
 
     @property
+    def nebius_v1(self) -> 'V1NebiusDirectV1':
+        """Gets the nebius_v1 of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The nebius_v1 of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1NebiusDirectV1
+        """
+        return self._nebius_v1
+
+    @nebius_v1.setter
+    def nebius_v1(self, nebius_v1: 'V1NebiusDirectV1'):
+        """Sets the nebius_v1 of this V1ClusterSpec.
+
+
+        :param nebius_v1: The nebius_v1 of this V1ClusterSpec.  # noqa: E501
+        :type: V1NebiusDirectV1
+        """
+
+        self._nebius_v1 = nebius_v1
+
+    @property
     def overprovisioning(self) -> 'list[V1InstanceOverprovisioningSpec]':
         """Gets the overprovisioning of this V1ClusterSpec.  # noqa: E501
 
@@ -517,6 +548,27 @@ class V1ClusterSpec(object):
         """
 
         self._parent_cluster_id = parent_cluster_id
+
+    @property
+    def parent_cluster_type(self) -> 'str':
+        """Gets the parent_cluster_type of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The parent_cluster_type of this V1ClusterSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_cluster_type
+
+    @parent_cluster_type.setter
+    def parent_cluster_type(self, parent_cluster_type: 'str'):
+        """Sets the parent_cluster_type of this V1ClusterSpec.
+
+
+        :param parent_cluster_type: The parent_cluster_type of this V1ClusterSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_cluster_type = parent_cluster_type
 
     @property
     def pause_automation(self) -> 'bool':

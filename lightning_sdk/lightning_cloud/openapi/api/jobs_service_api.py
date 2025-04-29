@@ -2831,12 +2831,14 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param list[str] project_ids:
-        :param str user_id:
+        :param list[str] user_ids:
         :param str org_id:
         :param str state:
         :param list[str] job_types:
         :param datetime end_time:
         :param int limit:
+        :param str cloudspace_id:
+        :param bool standalone: fields specific to deployments.
         :return: V1ListJobResourcesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2858,18 +2860,20 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param list[str] project_ids:
-        :param str user_id:
+        :param list[str] user_ids:
         :param str org_id:
         :param str state:
         :param list[str] job_types:
         :param datetime end_time:
         :param int limit:
+        :param str cloudspace_id:
+        :param bool standalone: fields specific to deployments.
         :return: V1ListJobResourcesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_ids', 'user_id', 'org_id', 'state', 'job_types', 'end_time', 'limit']  # noqa: E501
+        all_params = ['project_ids', 'user_ids', 'org_id', 'state', 'job_types', 'end_time', 'limit', 'cloudspace_id', 'standalone']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2893,8 +2897,9 @@ class JobsServiceApi(object):
         if 'project_ids' in params:
             query_params.append(('projectIds', params['project_ids']))  # noqa: E501
             collection_formats['projectIds'] = 'multi'  # noqa: E501
-        if 'user_id' in params:
-            query_params.append(('userId', params['user_id']))  # noqa: E501
+        if 'user_ids' in params:
+            query_params.append(('userIds', params['user_ids']))  # noqa: E501
+            collection_formats['userIds'] = 'multi'  # noqa: E501
         if 'org_id' in params:
             query_params.append(('orgId', params['org_id']))  # noqa: E501
         if 'state' in params:
@@ -2906,6 +2911,10 @@ class JobsServiceApi(object):
             query_params.append(('endTime', params['end_time']))  # noqa: E501
         if 'limit' in params:
             query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'cloudspace_id' in params:
+            query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
+        if 'standalone' in params:
+            query_params.append(('standalone', params['standalone']))  # noqa: E501
 
         header_params = {}
 

@@ -41,40 +41,40 @@ class V1ListJobResourcesResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'resources': 'list[V1JobResource]'
+        'job_resources': 'list[V1JobResource]'
     }
 
     attribute_map = {
-        'resources': 'resources'
+        'job_resources': 'jobResources'
     }
 
-    def __init__(self, resources: 'list[V1JobResource]' =None):  # noqa: E501
+    def __init__(self, job_resources: 'list[V1JobResource]' =None):  # noqa: E501
         """V1ListJobResourcesResponse - a model defined in Swagger"""  # noqa: E501
-        self._resources = None
+        self._job_resources = None
         self.discriminator = None
-        if resources is not None:
-            self.resources = resources
+        if job_resources is not None:
+            self.job_resources = job_resources
 
     @property
-    def resources(self) -> 'list[V1JobResource]':
-        """Gets the resources of this V1ListJobResourcesResponse.  # noqa: E501
+    def job_resources(self) -> 'list[V1JobResource]':
+        """Gets the job_resources of this V1ListJobResourcesResponse.  # noqa: E501
 
 
-        :return: The resources of this V1ListJobResourcesResponse.  # noqa: E501
+        :return: The job_resources of this V1ListJobResourcesResponse.  # noqa: E501
         :rtype: list[V1JobResource]
         """
-        return self._resources
+        return self._job_resources
 
-    @resources.setter
-    def resources(self, resources: 'list[V1JobResource]'):
-        """Sets the resources of this V1ListJobResourcesResponse.
+    @job_resources.setter
+    def job_resources(self, job_resources: 'list[V1JobResource]'):
+        """Sets the job_resources of this V1ListJobResourcesResponse.
 
 
-        :param resources: The resources of this V1ListJobResourcesResponse.  # noqa: E501
+        :param job_resources: The job_resources of this V1ListJobResourcesResponse.  # noqa: E501
         :type: list[V1JobResource]
         """
 
-        self._resources = resources
+        self._job_resources = job_resources
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

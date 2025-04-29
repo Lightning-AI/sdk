@@ -562,7 +562,6 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_job_logs_page import V1JobL
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_logs_response import V1JobLogsResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_resource import V1JobResource
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_spec import V1JobSpec
-from lightning_sdk.lightning_cloud.openapi.models.v1_job_state import V1JobState
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_timing import V1JobTiming
 from lightning_sdk.lightning_cloud.openapi.models.v1_job_type import V1JobType
 from lightning_sdk.lightning_cloud.openapi.models.v1_joinable_organization import V1JoinableOrganization
@@ -726,6 +725,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_multi_machine_job_fault_tol
 from lightning_sdk.lightning_cloud.openapi.models.v1_multi_machine_job_state import V1MultiMachineJobState
 from lightning_sdk.lightning_cloud.openapi.models.v1_multi_machine_job_status import V1MultiMachineJobStatus
 from lightning_sdk.lightning_cloud.openapi.models.v1_named_get_logger_metrics import V1NamedGetLoggerMetrics
+from lightning_sdk.lightning_cloud.openapi.models.v1_nebius_direct_v1 import V1NebiusDirectV1
 from lightning_sdk.lightning_cloud.openapi.models.v1_network_config import V1NetworkConfig
 from lightning_sdk.lightning_cloud.openapi.models.v1_new_feature import V1NewFeature
 from lightning_sdk.lightning_cloud.openapi.models.v1_notification_preference import V1NotificationPreference

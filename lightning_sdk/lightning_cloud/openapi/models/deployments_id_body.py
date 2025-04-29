@@ -47,6 +47,7 @@ class DeploymentsIdBody(object):
         'autoscaling': 'V1AutoscalingSpec',
         'cloudspace_id': 'str',
         'created_at': 'datetime',
+        'current_state': 'V1DeploymentState',
         'debug': 'bool',
         'desired_state': 'V1DeploymentState',
         'endpoint': 'V1Endpoint',
@@ -74,6 +75,7 @@ class DeploymentsIdBody(object):
         'autoscaling': 'autoscaling',
         'cloudspace_id': 'cloudspaceId',
         'created_at': 'createdAt',
+        'current_state': 'currentState',
         'debug': 'debug',
         'desired_state': 'desiredState',
         'endpoint': 'endpoint',
@@ -94,7 +96,7 @@ class DeploymentsIdBody(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """DeploymentsIdBody - a model defined in Swagger"""  # noqa: E501
         self._api_standard = None
         self._apis = None
@@ -102,6 +104,7 @@ class DeploymentsIdBody(object):
         self._autoscaling = None
         self._cloudspace_id = None
         self._created_at = None
+        self._current_state = None
         self._debug = None
         self._desired_state = None
         self._endpoint = None
@@ -133,6 +136,8 @@ class DeploymentsIdBody(object):
             self.cloudspace_id = cloudspace_id
         if created_at is not None:
             self.created_at = created_at
+        if current_state is not None:
+            self.current_state = current_state
         if debug is not None:
             self.debug = debug
         if desired_state is not None:
@@ -295,6 +300,27 @@ class DeploymentsIdBody(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def current_state(self) -> 'V1DeploymentState':
+        """Gets the current_state of this DeploymentsIdBody.  # noqa: E501
+
+
+        :return: The current_state of this DeploymentsIdBody.  # noqa: E501
+        :rtype: V1DeploymentState
+        """
+        return self._current_state
+
+    @current_state.setter
+    def current_state(self, current_state: 'V1DeploymentState'):
+        """Sets the current_state of this DeploymentsIdBody.
+
+
+        :param current_state: The current_state of this DeploymentsIdBody.  # noqa: E501
+        :type: V1DeploymentState
+        """
+
+        self._current_state = current_state
 
     @property
     def debug(self) -> 'bool':
