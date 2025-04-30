@@ -476,6 +476,7 @@ class Studio:
     def _add_plugin(self, plugin_name: str) -> None:
         """Adds the just installed plugin to the internal list of plugins."""
         from lightning_sdk.plugin import (
+            CustomPortPlugin,
             InferenceServerPlugin,
             JobsPlugin,
             MultiMachineTrainingPlugin,
@@ -489,6 +490,7 @@ class Studio:
             "jobs": JobsPlugin,
             "multi-machine-training": MultiMachineTrainingPlugin,
             "inference-server": InferenceServerPlugin,
+            "custom-port": CustomPortPlugin,
         }.get(plugin_name, Plugin)
 
         description = self._list_installed_plugins()[plugin_name]

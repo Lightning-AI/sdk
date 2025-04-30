@@ -30,7 +30,6 @@ from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
-from lightning_sdk.plugin import CustomPortPlugin
 from lightning_sdk.serve import _LitServeDeployer
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, _get_studio_url, _resolve_teamspace
@@ -530,8 +529,7 @@ def _handle_devbox(
     studio.start(machine=devbox, interruptible=interruptible)
     studio.install_plugin("custom-port")
     console.print("🔌 Configuring server port...")
-    plugin = CustomPortPlugin("custom-port", "", studio)
-    plugin.run(port=8000)  # TODO: Remove hardcoded port and fetch from LitServe
+    studio.run_plugin("custom-port", port=8000)  # TODO: Remove hardcoded port and fetch from LitServe
 
     console.print("📤 Syncing project files to Studio...")
     lit_devbox.upload_folder(studio, pathlib_path.parent, upload_state)

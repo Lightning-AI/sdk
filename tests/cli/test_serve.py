@@ -601,3 +601,4 @@ def test_handle_devbox(
     mock_studio.return_value.start.assert_called_once_with(machine="CPU", interruptible=False)
     mock_webbrowser.open.assert_called_once_with(mock_get_studio_url.return_value)
     mock_ask.assert_called_once_with("Would you like to open your Studio in the browser?", default=True)
+    mock_studio.return_value.run_plugin.assert_called_once_with("custom-port", port=8000)
