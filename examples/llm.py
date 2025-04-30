@@ -14,3 +14,15 @@ print(llm.chat("Hello, how are you?"))
 llm = LLM(name="llama4-scout", user="kaeun")
 print(llm.chat("Hello, how are you?"))
 # Hello! I'm just a language model, I don't have feelings like humans do, but I'm functioning properly and ready to help you with any questions or tasks you have! How can I assist you today?
+
+# continue conversation using conversation param
+llm = LLM(name="openai/gpt-4o")
+llm.chat("Hello, how are you?", conversation="basic")
+llm.chat("Hello world!", conversation="basic")
+
+# list existing conversations
+llm = LLM(name="openai/gpt-4o")
+llm.chat("Hello, how are you?", conversation="conv1")
+llm.chat("Hello world!", conversation="conv2")
+print(llm.list_conversations())
+# ['conv1', 'conv2']

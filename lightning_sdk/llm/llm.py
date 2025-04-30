@@ -45,6 +45,7 @@ class LLM:
         self._org_models = self._build_model_lookup(self._get_org_models())
         self._user_models = self._build_model_lookup(self._get_user_models())
         self._model = self._get_model()
+        self._conversations = {}
 
     def _parse_model_name(self, name: str) -> Tuple[str, str]:
         parts = name.split("/")
@@ -94,6 +95,24 @@ class LLM:
         available_models_str = "\n".join(available_models)
         raise ValueError(f"Model '{self._model_name}' not found. \nAvailable models: \n{available_models_str}")
 
-    def chat(self, prompt: str, system_prompt: Optional[str] = None, max_tokens: Optional[int] = 500) -> str:
-        output = self._llm_api.start_conversation(prompt, system_prompt, max_tokens, self._model.id)
+    def chat(
+        self,
+        prompt: str,
+        system_prompt: Optional[str] = None,
+        max_completion_tokens: Optional[int] = 500,
+        conversation: Optional[str] = None,
+    ) -> str:
+        conversation_id = self._conversations.get(conversation) if conversation else None
+        output = self._llm_api.start_conversation(
+            prompt=prompt,
+            system_prompt=system_prompt,
+            max_completion_tokens=max_completion_tokens,
+            assistant_id=self._model.id,
+            conversation_id=conversation_id,
+        )
+        if conversation and not conversation_id:
+            self._conversations[conversation] = output.conversation_id
         return output.choices[0].delta.content
+
+    def list_conversations(self) -> List[Dict]:
+        return list(self._conversations.keys())

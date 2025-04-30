@@ -140,6 +140,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
     mock_response = MagicMock()
+    mock_response.conversation_id = "conv_123"
     mock_response.choices[0].delta.content = "I'm doing well, thank you!"
     mock_api.start_conversation.return_value = mock_response
 
@@ -150,5 +151,36 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
     assert response == "I'm doing well, thank you!"
 
     # explicitly pass max_tokens
-    response = llm.chat("Hello, how are you?", max_tokens=10)
-    mock_api.start_conversation.assert_called_with("Hello, how are you?", None, 10, llm._model.id)
+    response = llm.chat("Hello, how are you?", max_completion_tokens=10)
+    mock_api.start_conversation.assert_called_with(
+        prompt="Hello, how are you?",
+        system_prompt=None,
+        max_completion_tokens=10,
+        assistant_id=llm._model.id,
+        conversation_id=None,
+    )
+
+    # pass conversation and continue conversation
+    assert "conv1" not in llm._conversations
+    continue_response = llm.chat("Hello, how are you?", conversation="conv1")
+    assert isinstance(continue_response, str)
+    mock_api.start_conversation.assert_called_with(
+        prompt="Hello, how are you?",
+        system_prompt=None,
+        max_completion_tokens=500,
+        assistant_id=llm._model.id,
+        conversation_id=None,
+    )
+    mock_api.start_conversation.reset_mock()
+    continue_response = llm.chat("Hi again!", conversation="conv1")
+    assert isinstance(continue_response, str)
+    mock_api.start_conversation.assert_called_with(
+        prompt="Hi again!",
+        system_prompt=None,
+        max_completion_tokens=500,
+        assistant_id=llm._model.id,
+        conversation_id="conv_123",
+    )
+    # check list of conversations
+    assert llm._conversations == {"conv1": "conv_123"}
+    assert llm.list_conversations() == ["conv1"]
