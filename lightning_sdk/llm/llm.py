@@ -95,6 +95,14 @@ class LLM:
         available_models_str = "\n".join(available_models)
         raise ValueError(f"Model '{self._model_name}' not found. \nAvailable models: \n{available_models_str}")
 
+    def _get_conversations(self) -> Dict[str, str]:
+        # TODO: after updating backend, this will fetch conversations from backend
+        # conversations = self._llm_api.list_conversations(assistant_id=self._model.id)
+        return self._conversations
+
+    def _fetch_conversations(self) -> None:
+        self._conversations = self._get_conversations()
+
     def chat(
         self,
         prompt: str,
@@ -102,6 +110,9 @@ class LLM:
         max_completion_tokens: Optional[int] = 500,
         conversation: Optional[str] = None,
     ) -> str:
+        if conversation and conversation not in self._conversations:
+            self._fetch_conversations()
+
         conversation_id = self._conversations.get(conversation) if conversation else None
         output = self._llm_api.start_conversation(
             prompt=prompt,
@@ -115,4 +126,35 @@ class LLM:
         return output.choices[0].delta.content
 
     def list_conversations(self) -> List[Dict]:
+        self._fetch_conversations()
         return list(self._conversations.keys())
+
+    def _get_conversation_messages(self, conversation_id: str) -> Optional[str]:
+        return self._llm_api.get_conversation(assistant_id=self._model.id, conversation_id=conversation_id)
+
+    def get_history(self, conversation: str) -> Optional[List[Dict]]:
+        # TODO: after updating backend, this will fetch conversation from backend
+        if conversation not in self._conversations:
+            self._fetch_conversations()
+
+        if conversation not in self._conversations:
+            raise ValueError(
+                f"Conversation '{conversation}' not found. \nAvailable conversations: {self._conversations.keys()}"
+            )
+
+        messages = self._get_conversation_messages(self._conversations[conversation])
+        history = []
+        for message in messages:
+            if message.author.role == "user":
+                history.append({"role": "user", "content": message.content[0].parts[0]})
+            elif message.author.role == "assistant":
+                history.append({"role": "assistant", "content": message.content[0].parts[0]})
+        return history
+
+    def reset_conversation(self, conversation: str) -> None:
+        if conversation in self._conversations:
+            self._llm_api.reset_conversation(
+                assistant_id=self._model.id,
+                conversation_id=self._conversations[conversation],
+            )
+            del self._conversations[conversation]

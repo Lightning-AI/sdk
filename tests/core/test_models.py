@@ -16,11 +16,14 @@ from lightning_sdk.models import _get_teamspace, delete_model, download_model, l
 from lightning_sdk.user import User
 
 
+@mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.models._get_authed_user")
 @mock.patch("lightning_sdk.models.UserApi")
 @mock.patch("lightning_sdk.models.OrgApi")
-def test_get_teamspace_org_owner(mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api):
+def test_get_teamspace_org_owner(
+    mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_resolve_org
+):
     mock_user_api()._get_all_teamspace_memberships.return_value = [
         V1Membership(name="test-teamspace", owner_id="org-id", owner_type=V1OwnerType.ORGANIZATION),
         V1Membership(name="test-teamspace", owner_id="user-id", owner_type=V1OwnerType.USER),
@@ -28,8 +31,13 @@ def test_get_teamspace_org_owner(mock_org_api, mock_user_api, mock_get_authed_us
     ]
 
     mock_org_api()._get_org_by_id.return_value = V1Organization(name="test-org")
+    mock_org_api()._get_org.return_value = V1Organization(name="test-org")
 
     mock_get_authed_user.return_value.id = "user-id"
+
+    mock_org_instance = mock.MagicMock()
+    mock_org_instance.name = "test-org"
+    mock_resolve_org.return_value = mock_org_instance
 
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="test-teamspace")
 

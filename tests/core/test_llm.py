@@ -184,3 +184,27 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
     # check list of conversations
     assert llm._conversations == {"conv1": "conv_123"}
     assert llm.list_conversations() == ["conv1"]
+
+    # get history of conv1
+    user_msg = MagicMock()
+    user_msg.conversation_id = "conv_123"
+    user_msg.author.role = "user"
+    user_msg.content = [MagicMock(parts=["Hello!"])]
+
+    assistant_msg = MagicMock()
+    assistant_msg.conversation_id = "conv_123"
+    assistant_msg.author.role = "assistant"
+    assistant_msg.content = [MagicMock(parts=["Hi there!"])]
+
+    llm._get_conversation_messages = MagicMock(return_value=[user_msg, assistant_msg])
+
+    history = llm.get_history("conv1")
+
+    assert history == [
+        {"role": "user", "content": "Hello!"},
+        {"role": "assistant", "content": "Hi there!"},
+    ]
+
+    # reset conversation
+    llm.reset_conversation("conv1")
+    assert "conv1" not in llm._conversations

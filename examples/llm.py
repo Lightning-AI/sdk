@@ -20,6 +20,11 @@ llm = LLM(name="openai/gpt-4o")
 llm.chat("Hello, how are you?", conversation="basic")
 llm.chat("Hello world!", conversation="basic")
 
+# print conversation history
+print(llm.get_history("basic"))
+# reset conversation
+llm.reset_conversation("basic")
+
 # list existing conversations
 llm = LLM(name="openai/gpt-4o")
 llm.chat("Hello, how are you?", conversation="conv1")

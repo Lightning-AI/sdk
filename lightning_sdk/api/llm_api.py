@@ -44,3 +44,14 @@ class LLMApi:
             body["conversation_id"] = conversation_id
         result = self._client.assistants_service_start_conversation(body, assistant_id)
         return result.result
+
+    def list_conversations(self, assistant_id: str) -> List[str]:
+        result = self._client.assistants_service_list_conversations(assistant_id)
+        return result.conversations
+
+    def get_conversation(self, assistant_id: str, conversation_id: str) -> V1ConversationResponseChunk:
+        result = self._client.assistants_service_get_conversation(assistant_id, conversation_id)
+        return result.messages
+
+    def reset_conversation(self, assistant_id: str, conversation_id: str) -> None:
+        self._client.assistants_service_delete_conversation(assistant_id, conversation_id)
