@@ -45,6 +45,7 @@ class V1Conversation(object):
         'created_at': 'datetime',
         'id': 'str',
         'messages': 'list[V1Message]',
+        'name': 'str',
         'project_id': 'str',
         'title': 'str',
         'updated_at': 'datetime',
@@ -56,18 +57,20 @@ class V1Conversation(object):
         'created_at': 'createdAt',
         'id': 'id',
         'messages': 'messages',
+        'name': 'name',
         'project_id': 'projectId',
         'title': 'title',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, assistant_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, messages: 'list[V1Message]' =None, project_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, messages: 'list[V1Message]' =None, name: 'str' =None, project_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Conversation - a model defined in Swagger"""  # noqa: E501
         self._assistant_id = None
         self._created_at = None
         self._id = None
         self._messages = None
+        self._name = None
         self._project_id = None
         self._title = None
         self._updated_at = None
@@ -81,6 +84,8 @@ class V1Conversation(object):
             self.id = id
         if messages is not None:
             self.messages = messages
+        if name is not None:
+            self.name = name
         if project_id is not None:
             self.project_id = project_id
         if title is not None:
@@ -173,6 +178,27 @@ class V1Conversation(object):
         """
 
         self._messages = messages
+
+    @property
+    def name(self) -> 'str':
+        """Gets the name of this V1Conversation.  # noqa: E501
+
+
+        :return: The name of this V1Conversation.  # noqa: E501
+        :rtype: str
+        """
+        return self._name
+
+    @name.setter
+    def name(self, name: 'str'):
+        """Sets the name of this V1Conversation.
+
+
+        :param name: The name of this V1Conversation.  # noqa: E501
+        :type: str
+        """
+
+        self._name = name
 
     @property
     def project_id(self) -> 'str':

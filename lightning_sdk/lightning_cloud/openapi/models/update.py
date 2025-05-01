@@ -41,6 +41,8 @@ class Update(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allowed_machines': 'list[str]',
+        'default_machine': 'str',
         'disabled': 'bool',
         'machine_image_version': 'str',
         'name': 'str',
@@ -49,6 +51,8 @@ class Update(object):
     }
 
     attribute_map = {
+        'allowed_machines': 'allowedMachines',
+        'default_machine': 'defaultMachine',
         'disabled': 'disabled',
         'machine_image_version': 'machineImageVersion',
         'name': 'name',
@@ -56,14 +60,20 @@ class Update(object):
         'setup_script_text': 'setupScriptText'
     }
 
-    def __init__(self, disabled: 'bool' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, setup_script_text: 'str' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, disabled: 'bool' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, setup_script_text: 'str' =None):  # noqa: E501
         """Update - a model defined in Swagger"""  # noqa: E501
+        self._allowed_machines = None
+        self._default_machine = None
         self._disabled = None
         self._machine_image_version = None
         self._name = None
         self._org_id = None
         self._setup_script_text = None
         self.discriminator = None
+        if allowed_machines is not None:
+            self.allowed_machines = allowed_machines
+        if default_machine is not None:
+            self.default_machine = default_machine
         if disabled is not None:
             self.disabled = disabled
         if machine_image_version is not None:
@@ -74,6 +84,48 @@ class Update(object):
             self.org_id = org_id
         if setup_script_text is not None:
             self.setup_script_text = setup_script_text
+
+    @property
+    def allowed_machines(self) -> 'list[str]':
+        """Gets the allowed_machines of this Update.  # noqa: E501
+
+
+        :return: The allowed_machines of this Update.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._allowed_machines
+
+    @allowed_machines.setter
+    def allowed_machines(self, allowed_machines: 'list[str]'):
+        """Sets the allowed_machines of this Update.
+
+
+        :param allowed_machines: The allowed_machines of this Update.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._allowed_machines = allowed_machines
+
+    @property
+    def default_machine(self) -> 'str':
+        """Gets the default_machine of this Update.  # noqa: E501
+
+
+        :return: The default_machine of this Update.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_machine
+
+    @default_machine.setter
+    def default_machine(self, default_machine: 'str'):
+        """Sets the default_machine of this Update.
+
+
+        :param default_machine: The default_machine of this Update.  # noqa: E501
+        :type: str
+        """
+
+        self._default_machine = default_machine
 
     @property
     def disabled(self) -> 'bool':

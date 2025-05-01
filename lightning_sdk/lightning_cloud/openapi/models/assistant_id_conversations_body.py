@@ -42,36 +42,44 @@ class AssistantIdConversationsBody(object):
     """
     swagger_types = {
         'auto_name': 'bool',
+        'billing_project_id': 'str',
         'conversation_id': 'str',
         'max_tokens': 'str',
         'message': 'V1Message',
         'metadata': 'dict(str, str)',
+        'name': 'str',
         'parent_message_id': 'str',
         'stream': 'bool'
     }
 
     attribute_map = {
         'auto_name': 'autoName',
+        'billing_project_id': 'billingProjectId',
         'conversation_id': 'conversationId',
         'max_tokens': 'maxTokens',
         'message': 'message',
         'metadata': 'metadata',
+        'name': 'name',
         'parent_message_id': 'parentMessageId',
         'stream': 'stream'
     }
 
-    def __init__(self, auto_name: 'bool' =None, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
+        self._billing_project_id = None
         self._conversation_id = None
         self._max_tokens = None
         self._message = None
         self._metadata = None
+        self._name = None
         self._parent_message_id = None
         self._stream = None
         self.discriminator = None
         if auto_name is not None:
             self.auto_name = auto_name
+        if billing_project_id is not None:
+            self.billing_project_id = billing_project_id
         if conversation_id is not None:
             self.conversation_id = conversation_id
         if max_tokens is not None:
@@ -80,6 +88,8 @@ class AssistantIdConversationsBody(object):
             self.message = message
         if metadata is not None:
             self.metadata = metadata
+        if name is not None:
+            self.name = name
         if parent_message_id is not None:
             self.parent_message_id = parent_message_id
         if stream is not None:
@@ -105,6 +115,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._auto_name = auto_name
+
+    @property
+    def billing_project_id(self) -> 'str':
+        """Gets the billing_project_id of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The billing_project_id of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._billing_project_id
+
+    @billing_project_id.setter
+    def billing_project_id(self, billing_project_id: 'str'):
+        """Sets the billing_project_id of this AssistantIdConversationsBody.
+
+
+        :param billing_project_id: The billing_project_id of this AssistantIdConversationsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._billing_project_id = billing_project_id
 
     @property
     def conversation_id(self) -> 'str':
@@ -189,6 +220,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._metadata = metadata
+
+    @property
+    def name(self) -> 'str':
+        """Gets the name of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The name of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._name
+
+    @name.setter
+    def name(self, name: 'str'):
+        """Sets the name of this AssistantIdConversationsBody.
+
+
+        :param name: The name of this AssistantIdConversationsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._name = name
 
     @property
     def parent_message_id(self) -> 'str':

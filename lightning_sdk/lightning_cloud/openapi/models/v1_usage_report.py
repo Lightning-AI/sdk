@@ -42,6 +42,8 @@ class V1UsageReport(object):
     """
     swagger_types = {
         'daily_usage': 'list[V1DailyUsage]',
+        'has_more': 'bool',
+        'search_after': 'datetime',
         'total_cost': 'float',
         'total_saved_cost': 'float',
         'usage': 'list[V1Usage]'
@@ -49,20 +51,28 @@ class V1UsageReport(object):
 
     attribute_map = {
         'daily_usage': 'dailyUsage',
+        'has_more': 'hasMore',
+        'search_after': 'searchAfter',
         'total_cost': 'totalCost',
         'total_saved_cost': 'totalSavedCost',
         'usage': 'usage'
     }
 
-    def __init__(self, daily_usage: 'list[V1DailyUsage]' =None, total_cost: 'float' =None, total_saved_cost: 'float' =None, usage: 'list[V1Usage]' =None):  # noqa: E501
+    def __init__(self, daily_usage: 'list[V1DailyUsage]' =None, has_more: 'bool' =None, search_after: 'datetime' =None, total_cost: 'float' =None, total_saved_cost: 'float' =None, usage: 'list[V1Usage]' =None):  # noqa: E501
         """V1UsageReport - a model defined in Swagger"""  # noqa: E501
         self._daily_usage = None
+        self._has_more = None
+        self._search_after = None
         self._total_cost = None
         self._total_saved_cost = None
         self._usage = None
         self.discriminator = None
         if daily_usage is not None:
             self.daily_usage = daily_usage
+        if has_more is not None:
+            self.has_more = has_more
+        if search_after is not None:
+            self.search_after = search_after
         if total_cost is not None:
             self.total_cost = total_cost
         if total_saved_cost is not None:
@@ -90,6 +100,48 @@ class V1UsageReport(object):
         """
 
         self._daily_usage = daily_usage
+
+    @property
+    def has_more(self) -> 'bool':
+        """Gets the has_more of this V1UsageReport.  # noqa: E501
+
+
+        :return: The has_more of this V1UsageReport.  # noqa: E501
+        :rtype: bool
+        """
+        return self._has_more
+
+    @has_more.setter
+    def has_more(self, has_more: 'bool'):
+        """Sets the has_more of this V1UsageReport.
+
+
+        :param has_more: The has_more of this V1UsageReport.  # noqa: E501
+        :type: bool
+        """
+
+        self._has_more = has_more
+
+    @property
+    def search_after(self) -> 'datetime':
+        """Gets the search_after of this V1UsageReport.  # noqa: E501
+
+
+        :return: The search_after of this V1UsageReport.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._search_after
+
+    @search_after.setter
+    def search_after(self, search_after: 'datetime'):
+        """Sets the search_after of this V1UsageReport.
+
+
+        :param search_after: The search_after of this V1UsageReport.  # noqa: E501
+        :type: datetime
+        """
+
+        self._search_after = search_after
 
     @property
     def total_cost(self) -> 'float':

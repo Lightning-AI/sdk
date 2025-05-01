@@ -42,21 +42,26 @@ class ModelIdVersionsBody(object):
     """
     swagger_types = {
         'cluster_id': 'str',
+        'metadata': 'dict(str, str)',
         'version': 'str'
     }
 
     attribute_map = {
         'cluster_id': 'clusterId',
+        'metadata': 'metadata',
         'version': 'version'
     }
 
-    def __init__(self, cluster_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, metadata: 'dict(str, str)' =None, version: 'str' =None):  # noqa: E501
         """ModelIdVersionsBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
+        self._metadata = None
         self._version = None
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if metadata is not None:
+            self.metadata = metadata
         if version is not None:
             self.version = version
 
@@ -80,6 +85,27 @@ class ModelIdVersionsBody(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def metadata(self) -> 'dict(str, str)':
+        """Gets the metadata of this ModelIdVersionsBody.  # noqa: E501
+
+
+        :return: The metadata of this ModelIdVersionsBody.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, metadata: 'dict(str, str)'):
+        """Sets the metadata of this ModelIdVersionsBody.
+
+
+        :param metadata: The metadata of this ModelIdVersionsBody.  # noqa: E501
+        :type: dict(str, str)
+        """
+
+        self._metadata = metadata
 
     @property
     def version(self) -> 'str':

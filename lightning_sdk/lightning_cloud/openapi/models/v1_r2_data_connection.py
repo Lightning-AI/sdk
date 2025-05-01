@@ -43,6 +43,7 @@ class V1R2DataConnection(object):
     swagger_types = {
         'account_id': 'str',
         'credential_id': 'str',
+        'endpoint': 'str',
         'name': 'str',
         'secret_access_key': 'str',
         'source': 'str',
@@ -52,16 +53,18 @@ class V1R2DataConnection(object):
     attribute_map = {
         'account_id': 'accountId',
         'credential_id': 'credentialId',
+        'endpoint': 'endpoint',
         'name': 'name',
         'secret_access_key': 'secretAccessKey',
         'source': 'source',
         'token_value': 'tokenValue'
     }
 
-    def __init__(self, account_id: 'str' =None, credential_id: 'str' =None, name: 'str' =None, secret_access_key: 'str' =None, source: 'str' =None, token_value: 'str' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, credential_id: 'str' =None, endpoint: 'str' =None, name: 'str' =None, secret_access_key: 'str' =None, source: 'str' =None, token_value: 'str' =None):  # noqa: E501
         """V1R2DataConnection - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
         self._credential_id = None
+        self._endpoint = None
         self._name = None
         self._secret_access_key = None
         self._source = None
@@ -71,6 +74,8 @@ class V1R2DataConnection(object):
             self.account_id = account_id
         if credential_id is not None:
             self.credential_id = credential_id
+        if endpoint is not None:
+            self.endpoint = endpoint
         if name is not None:
             self.name = name
         if secret_access_key is not None:
@@ -121,6 +126,27 @@ class V1R2DataConnection(object):
         """
 
         self._credential_id = credential_id
+
+    @property
+    def endpoint(self) -> 'str':
+        """Gets the endpoint of this V1R2DataConnection.  # noqa: E501
+
+
+        :return: The endpoint of this V1R2DataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._endpoint
+
+    @endpoint.setter
+    def endpoint(self, endpoint: 'str'):
+        """Sets the endpoint of this V1R2DataConnection.
+
+
+        :param endpoint: The endpoint of this V1R2DataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._endpoint = endpoint
 
     @property
     def name(self) -> 'str':

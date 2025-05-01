@@ -41,6 +41,7 @@ class V1SecretType(object):
     DOCKER_REGISTRY = "SECRET_TYPE_DOCKER_REGISTRY"
     GCP_CREDENTIALS = "SECRET_TYPE_GCP_CREDENTIALS"
     SNOWFLAKE_CREDENTIALS = "SECRET_TYPE_SNOWFLAKE_CREDENTIALS"
+    R2_CREDENTIALS = "SECRET_TYPE_R2_CREDENTIALS"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

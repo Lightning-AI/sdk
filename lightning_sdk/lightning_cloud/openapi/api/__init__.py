@@ -30,6 +30,7 @@ from lightning_sdk.lightning_cloud.openapi.api.models_store_api import ModelsSto
 from lightning_sdk.lightning_cloud.openapi.api.organizations_service_api import OrganizationsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.pipeline_templates_service_api import PipelineTemplatesServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.pipelines_service_api import PipelinesServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.product_license_service_api import ProductLicenseServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.profiler_service_api import ProfilerServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.projects_service_api import ProjectsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.quest_service_api import QuestServiceApi

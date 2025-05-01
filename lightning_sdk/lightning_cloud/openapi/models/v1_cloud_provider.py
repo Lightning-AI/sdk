@@ -45,6 +45,8 @@ class V1CloudProvider(object):
     SLURM = "SLURM"
     DGX = "DGX"
     VOLTAGE_PARK = "VOLTAGE_PARK"
+    NEBIUS = "NEBIUS"
+    CLOUDFLARE = "CLOUDFLARE"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

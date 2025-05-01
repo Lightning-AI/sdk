@@ -48,6 +48,7 @@ class V1DeploymentAPI(object):
         'method': 'str',
         'name': 'str',
         'path': 'str',
+        'port': 'int',
         '_query_params': 'list[V1QueryParam]'
     }
 
@@ -59,10 +60,11 @@ class V1DeploymentAPI(object):
         'method': 'method',
         'name': 'name',
         'path': 'path',
+        'port': 'port',
         '_query_params': 'queryParams'
     }
 
-    def __init__(self, body: 'V1Body' =None, description: 'str' =None, headers: 'list[V1Header]' =None, id: 'str' =None, method: 'str' =None, name: 'str' =None, path: 'str' =None, _query_params: 'list[V1QueryParam]' =None):  # noqa: E501
+    def __init__(self, body: 'V1Body' =None, description: 'str' =None, headers: 'list[V1Header]' =None, id: 'str' =None, method: 'str' =None, name: 'str' =None, path: 'str' =None, port: 'int' =None, _query_params: 'list[V1QueryParam]' =None):  # noqa: E501
         """V1DeploymentAPI - a model defined in Swagger"""  # noqa: E501
         self._body = None
         self._description = None
@@ -71,6 +73,7 @@ class V1DeploymentAPI(object):
         self._method = None
         self._name = None
         self._path = None
+        self._port = None
         self.__query_params = None
         self.discriminator = None
         if body is not None:
@@ -87,6 +90,8 @@ class V1DeploymentAPI(object):
             self.name = name
         if path is not None:
             self.path = path
+        if port is not None:
+            self.port = port
         if _query_params is not None:
             self._query_params = _query_params
 
@@ -236,6 +241,27 @@ class V1DeploymentAPI(object):
         """
 
         self._path = path
+
+    @property
+    def port(self) -> 'int':
+        """Gets the port of this V1DeploymentAPI.  # noqa: E501
+
+
+        :return: The port of this V1DeploymentAPI.  # noqa: E501
+        :rtype: int
+        """
+        return self._port
+
+    @port.setter
+    def port(self, port: 'int'):
+        """Sets the port of this V1DeploymentAPI.
+
+
+        :param port: The port of this V1DeploymentAPI.  # noqa: E501
+        :type: int
+        """
+
+        self._port = port
 
     @property
     def _query_params(self) -> 'list[V1QueryParam]':

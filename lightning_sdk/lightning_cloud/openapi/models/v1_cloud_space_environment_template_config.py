@@ -41,24 +41,76 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allowed_machines': 'list[str]',
+        'default_machine': 'str',
         'machine_image_version': 'str',
         'setup_script_text': 'str'
     }
 
     attribute_map = {
+        'allowed_machines': 'allowedMachines',
+        'default_machine': 'defaultMachine',
         'machine_image_version': 'machineImageVersion',
         'setup_script_text': 'setupScriptText'
     }
 
-    def __init__(self, machine_image_version: 'str' =None, setup_script_text: 'str' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, machine_image_version: 'str' =None, setup_script_text: 'str' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplateConfig - a model defined in Swagger"""  # noqa: E501
+        self._allowed_machines = None
+        self._default_machine = None
         self._machine_image_version = None
         self._setup_script_text = None
         self.discriminator = None
+        if allowed_machines is not None:
+            self.allowed_machines = allowed_machines
+        if default_machine is not None:
+            self.default_machine = default_machine
         if machine_image_version is not None:
             self.machine_image_version = machine_image_version
         if setup_script_text is not None:
             self.setup_script_text = setup_script_text
+
+    @property
+    def allowed_machines(self) -> 'list[str]':
+        """Gets the allowed_machines of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+
+
+        :return: The allowed_machines of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._allowed_machines
+
+    @allowed_machines.setter
+    def allowed_machines(self, allowed_machines: 'list[str]'):
+        """Sets the allowed_machines of this V1CloudSpaceEnvironmentTemplateConfig.
+
+
+        :param allowed_machines: The allowed_machines of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._allowed_machines = allowed_machines
+
+    @property
+    def default_machine(self) -> 'str':
+        """Gets the default_machine of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+
+
+        :return: The default_machine of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_machine
+
+    @default_machine.setter
+    def default_machine(self, default_machine: 'str'):
+        """Sets the default_machine of this V1CloudSpaceEnvironmentTemplateConfig.
+
+
+        :param default_machine: The default_machine of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._default_machine = default_machine
 
     @property
     def machine_image_version(self) -> 'str':

@@ -942,6 +942,8 @@ class BillingServiceApi(object):
         :param datetime to:
         :param str user_id:
         :param str time_zone:
+        :param int limit:
+        :param datetime search_after:
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
@@ -971,12 +973,14 @@ class BillingServiceApi(object):
         :param datetime to:
         :param str user_id:
         :param str time_zone:
+        :param int limit:
+        :param datetime search_after:
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1015,6 +1019,10 @@ class BillingServiceApi(object):
             query_params.append(('userId', params['user_id']))  # noqa: E501
         if 'time_zone' in params:
             query_params.append(('timeZone', params['time_zone']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'search_after' in params:
+            query_params.append(('searchAfter', params['search_after']))  # noqa: E501
 
         header_params = {}
 
