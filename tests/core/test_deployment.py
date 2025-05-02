@@ -23,6 +23,9 @@ from lightning_sdk.machine import Machine
 
 
 def test_deployment_resolve_teamspace(monkeypatch):
+    mock_org = MagicMock()
+    mock_org.name = "org"
+    monkeypatch.setattr(deployment_module, "_resolve_org", mock_org)
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
     monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())

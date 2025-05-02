@@ -20,6 +20,9 @@ from lightning_sdk.utils.resolve import skip_studio_init
 
 
 def test_pipeline_run(monkeypatch):
+    mock_org = MagicMock()
+    mock_org.name = "org"
+    monkeypatch.setattr(pipeline_module, "_resolve_org", mock_org)
     monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
     monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
