@@ -26,6 +26,10 @@ def mock_auth(monkeypatch):
     mock_org.id = "org-123"
     mock_org.name = "org-name"
     monkeypatch.setattr("lightning_sdk.llm.llm._resolve_org", lambda org: mock_org)
+
+    teamspace = MagicMock()
+    teamspace.id = "teamspace-123"
+    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", lambda **kwargs: teamspace)
     return mock_user_instance
 
 
@@ -158,6 +162,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         max_completion_tokens=10,
         assistant_id=llm._model.id,
         conversation_id=None,
+        billing_project_id="teamspace-123",
     )
 
     # pass conversation and continue conversation
@@ -170,6 +175,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         max_completion_tokens=500,
         assistant_id=llm._model.id,
         conversation_id=None,
+        billing_project_id="teamspace-123",
     )
     mock_api.start_conversation.reset_mock()
     continue_response = llm.chat("Hi again!", conversation="conv1")
@@ -180,6 +186,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         max_completion_tokens=500,
         assistant_id=llm._model.id,
         conversation_id="conv_123",
+        billing_project_id="teamspace-123",
     )
     # check list of conversations
     assert llm._conversations == {"conv1": "conv_123"}

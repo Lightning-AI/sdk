@@ -24,9 +24,10 @@ class LLMApi:
         self,
         prompt: str,
         system_prompt: Optional[str],
-        max_completion_tokens: Optional[int],
+        max_completion_tokens: int,
         assistant_id: str,
-        conversation_id: Optional[str],
+        conversation_id: Optional[str] = None,
+        billing_project_id: Optional[str] = None,
     ) -> V1ConversationResponseChunk:
         body = {
             "message": {
@@ -39,9 +40,9 @@ class LLMApi:
                 ],
             },
             "max_completion_tokens": max_completion_tokens,
+            "conversation_id": conversation_id,
+            "billing_project_id": billing_project_id,
         }
-        if conversation_id:
-            body["conversation_id"] = conversation_id
         result = self._client.assistants_service_start_conversation(body, assistant_id)
         return result.result
 

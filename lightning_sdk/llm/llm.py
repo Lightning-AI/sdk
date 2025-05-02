@@ -6,8 +6,9 @@ from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import V1Assistant
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.organization import Organization
+from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_org, _resolve_user
+from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace, _resolve_user
 
 
 class LLM:
@@ -16,6 +17,7 @@ class LLM:
         name: str,
         user: Union[str, "User", None] = None,
         org: Union[str, "Organization", None] = None,
+        teamspace: Union[str, "Teamspace", None] = None,
     ) -> None:
         self._auth = Auth()
         self._user = None
@@ -39,6 +41,12 @@ class LLM:
             self._org = _resolve_org(self._org or org)
         except ApiException:
             self._org = None
+
+        self._teamspace = _resolve_teamspace(
+            teamspace=teamspace,
+            org=org,
+            user=user,
+        )
 
         self._llm_api = LLMApi()
         self._public_models = self._build_model_lookup(self._get_public_models())
@@ -120,6 +128,7 @@ class LLM:
             max_completion_tokens=max_completion_tokens,
             assistant_id=self._model.id,
             conversation_id=conversation_id,
+            billing_project_id=self._teamspace.id if self._teamspace else None,
         )
         if conversation and not conversation_id:
             self._conversations[conversation] = output.conversation_id
