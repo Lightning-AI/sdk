@@ -43,7 +43,6 @@ class V1GetProjectBalanceResponse(object):
     swagger_types = {
         'account_id': 'str',
         'balance': 'float',
-        'next_free_credits_grant_at': 'datetime',
         'project_id': 'str',
         'transactions': 'list[V1Transaction]'
     }
@@ -51,16 +50,14 @@ class V1GetProjectBalanceResponse(object):
     attribute_map = {
         'account_id': 'accountId',
         'balance': 'balance',
-        'next_free_credits_grant_at': 'nextFreeCreditsGrantAt',
         'project_id': 'projectId',
         'transactions': 'transactions'
     }
 
-    def __init__(self, account_id: 'str' =None, balance: 'float' =None, next_free_credits_grant_at: 'datetime' =None, project_id: 'str' =None, transactions: 'list[V1Transaction]' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, balance: 'float' =None, project_id: 'str' =None, transactions: 'list[V1Transaction]' =None):  # noqa: E501
         """V1GetProjectBalanceResponse - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
         self._balance = None
-        self._next_free_credits_grant_at = None
         self._project_id = None
         self._transactions = None
         self.discriminator = None
@@ -68,8 +65,6 @@ class V1GetProjectBalanceResponse(object):
             self.account_id = account_id
         if balance is not None:
             self.balance = balance
-        if next_free_credits_grant_at is not None:
-            self.next_free_credits_grant_at = next_free_credits_grant_at
         if project_id is not None:
             self.project_id = project_id
         if transactions is not None:
@@ -116,27 +111,6 @@ class V1GetProjectBalanceResponse(object):
         """
 
         self._balance = balance
-
-    @property
-    def next_free_credits_grant_at(self) -> 'datetime':
-        """Gets the next_free_credits_grant_at of this V1GetProjectBalanceResponse.  # noqa: E501
-
-
-        :return: The next_free_credits_grant_at of this V1GetProjectBalanceResponse.  # noqa: E501
-        :rtype: datetime
-        """
-        return self._next_free_credits_grant_at
-
-    @next_free_credits_grant_at.setter
-    def next_free_credits_grant_at(self, next_free_credits_grant_at: 'datetime'):
-        """Sets the next_free_credits_grant_at of this V1GetProjectBalanceResponse.
-
-
-        :param next_free_credits_grant_at: The next_free_credits_grant_at of this V1GetProjectBalanceResponse.  # noqa: E501
-        :type: datetime
-        """
-
-        self._next_free_credits_grant_at = next_free_credits_grant_at
 
     @property
     def project_id(self) -> 'str':

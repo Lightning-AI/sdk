@@ -41,6 +41,7 @@ class V1R2DataConnection(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'access_key_id': 'str',
         'account_id': 'str',
         'credential_id': 'str',
         'endpoint': 'str',
@@ -51,6 +52,7 @@ class V1R2DataConnection(object):
     }
 
     attribute_map = {
+        'access_key_id': 'accessKeyId',
         'account_id': 'accountId',
         'credential_id': 'credentialId',
         'endpoint': 'endpoint',
@@ -60,8 +62,9 @@ class V1R2DataConnection(object):
         'token_value': 'tokenValue'
     }
 
-    def __init__(self, account_id: 'str' =None, credential_id: 'str' =None, endpoint: 'str' =None, name: 'str' =None, secret_access_key: 'str' =None, source: 'str' =None, token_value: 'str' =None):  # noqa: E501
+    def __init__(self, access_key_id: 'str' =None, account_id: 'str' =None, credential_id: 'str' =None, endpoint: 'str' =None, name: 'str' =None, secret_access_key: 'str' =None, source: 'str' =None, token_value: 'str' =None):  # noqa: E501
         """V1R2DataConnection - a model defined in Swagger"""  # noqa: E501
+        self._access_key_id = None
         self._account_id = None
         self._credential_id = None
         self._endpoint = None
@@ -70,6 +73,8 @@ class V1R2DataConnection(object):
         self._source = None
         self._token_value = None
         self.discriminator = None
+        if access_key_id is not None:
+            self.access_key_id = access_key_id
         if account_id is not None:
             self.account_id = account_id
         if credential_id is not None:
@@ -84,6 +89,27 @@ class V1R2DataConnection(object):
             self.source = source
         if token_value is not None:
             self.token_value = token_value
+
+    @property
+    def access_key_id(self) -> 'str':
+        """Gets the access_key_id of this V1R2DataConnection.  # noqa: E501
+
+
+        :return: The access_key_id of this V1R2DataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._access_key_id
+
+    @access_key_id.setter
+    def access_key_id(self, access_key_id: 'str'):
+        """Sets the access_key_id of this V1R2DataConnection.
+
+
+        :param access_key_id: The access_key_id of this V1R2DataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._access_key_id = access_key_id
 
     @property
     def account_id(self) -> 'str':
