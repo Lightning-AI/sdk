@@ -11,6 +11,7 @@ import rich
 from lightning_sdk import Machine
 from lightning_sdk.cli.serve import (
     _Auth,
+    _detect_port,
     _handle_cloud,
     _handle_devbox,
     _Onboarding,
@@ -577,6 +578,18 @@ def test_handle_devbox_non_python_file():
     )
 
 
+def test_detect_port(tmpdir):
+    test_file1 = tmpdir.join("test.py")
+    test_file1.write("s.run(port=8001)")
+    test_file2 = tmpdir.join("test2.py")
+    test_file2.write("server.run(port=8002)")
+    test_file3 = tmpdir.join("test3.py")
+    test_file3.write("server.run()")
+    assert _detect_port(Path(test_file1)) == 8001
+    assert _detect_port(Path(test_file2)) == 8002
+    assert _detect_port(Path(test_file3)) == 8000
+
+
 @patch("lightning_sdk.cli.serve.select_teamspace")
 @patch("lightning_sdk.cli.serve.Studio")
 @patch("lightning_sdk.cli.serve._get_studio_url")
@@ -584,7 +597,9 @@ def test_handle_devbox_non_python_file():
 @patch("lightning_sdk.cli.serve._LitServeDevbox")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
 @patch("lightning_sdk.cli.serve.Thread")
+@patch("lightning_sdk.cli.serve._detect_port")
 def test_handle_devbox(
+    mock_detect_port,
     mock_thread,
     mock_ask,
     mock_lit_serve_devbox,
@@ -594,6 +609,7 @@ def test_handle_devbox(
     mock_select_teamspace,
 ):
     mock_ask.return_value = True
+    mock_detect_port.return_value = 8000
     mock_lit_serve_devbox.return_value.upload_folder = MagicMock()
     mock_get_studio_url.return_value = "https://lightning.ai"
     _handle_devbox(

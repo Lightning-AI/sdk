@@ -1,5 +1,6 @@
 import concurrent.futures
 import os
+import re
 import socket
 import subprocess
 import time
@@ -485,6 +486,17 @@ class _LitServeDevbox:
                     progress.update(upload_task, advance=1)
 
 
+def _detect_port(script_path: Path) -> int:
+    with open(script_path) as f:
+        content = f.read()
+
+    # Try to match server.run first and then any variable name and then default port=8000
+    match = re.search(r"server\.run\s*\([^)]*port\s*=\s*(\d+)", content) or re.search(
+        r"\w+\.run\s*\([^)]*port\s*=\s*(\d+)", content
+    )
+    return int(match.group(1)) if match else 8000
+
+
 def _handle_devbox(
     name: str,
     script_path: Path,
@@ -538,8 +550,9 @@ def _handle_devbox(
     console.print("⚡ Waiting for Studio to start...")
     studio_thread.join()
 
+    port = _detect_port(pathlib_path)
     console.print("🔌 Configuring server port...")
-    port_url = studio.run_plugin("custom-port", port=8000)  # TODO: Remove hardcoded port and fetch from LitServe
+    port_url = studio.run_plugin("custom-port", port=port)
 
     # Add completion message with next steps
     console.print("\n✅ Studio ready!")
