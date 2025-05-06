@@ -550,6 +550,13 @@ def _handle_devbox(
     console.print("⚡ Waiting for Studio to start...")
     studio_thread.join()
 
+    try:
+        console.print("🚀 Starting server...")
+        studio.run_and_detach(f"python {script_path}", timeout=5)
+    except Exception as e:
+        console.print(f"❌ Error: {e}", style="red")
+        return
+
     port = _detect_port(pathlib_path)
     console.print("🔌 Configuring server port...")
     port_url = studio.run_plugin("custom-port", port=port)
