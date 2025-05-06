@@ -31,3 +31,7 @@ llm.chat("Hello, how are you?", conversation="conv1")
 llm.chat("Hello world!", conversation="conv2")
 print(llm.list_conversations())
 # ['conv1', 'conv2', 'test']
+
+# streaming
+for chunk in llm.chat("Hi!", conversation="basic", stream=True):
+    print(chunk, end="", flush=True)

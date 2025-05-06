@@ -1,4 +1,5 @@
 import re
+from typing import Generator
 from unittest.mock import MagicMock
 
 import pytest
@@ -163,7 +164,8 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         assistant_id=llm._model.id,
         conversation_id=None,
         billing_project_id="teamspace-123",
-        name="",
+        name=None,
+        stream=False,
     )
 
     # pass conversation and continue conversation
@@ -178,6 +180,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         conversation_id=None,
         billing_project_id="teamspace-123",
         name="conv1",
+        stream=False,
     )
     mock_api.start_conversation.reset_mock()
     continue_response = llm.chat("Hi again!", conversation="conv1")
@@ -190,6 +193,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         conversation_id="conv_123",
         billing_project_id="teamspace-123",
         name="conv1",
+        stream=False,
     )
     # check list of conversations
     assert llm._conversations == {"conv1": "conv_123"}
@@ -218,6 +222,22 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
     # reset conversation
     llm.reset_conversation("conv1")
     assert "conv1" not in llm._conversations
+
+    # test streaming
+    llm = LLM("openai/gpt-4o")
+    response = llm.chat("Hello, how are you?", stream=True)
+
+    assert isinstance(response, Generator)
+    mock_api.start_conversation.assert_called_with(
+        prompt="Hello, how are you?",
+        system_prompt=None,
+        max_completion_tokens=500,
+        assistant_id=llm._model.id,
+        conversation_id=None,
+        billing_project_id="teamspace-123",
+        name=None,
+        stream=True,
+    )
 
 
 def test_chat_backend(monkeypatch, mock_auth, mock_public_model):

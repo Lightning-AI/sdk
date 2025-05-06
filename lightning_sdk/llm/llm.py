@@ -1,9 +1,10 @@
-from typing import Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, Generator, List, Optional, Set, Tuple, Union
 
 from lightning_sdk.api import UserApi
 from lightning_sdk.api.llm_api import LLMApi
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import V1Assistant
+from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.organization import Organization
 from lightning_sdk.teamspace import Teamspace
@@ -109,13 +110,26 @@ class LLM:
             if conversation.name and conversation.name not in self._conversations:
                 self._conversations[conversation.name] = conversation.id
 
+    def _stream_chat_response(
+        self, result: Generator[V1ConversationResponseChunk, None, None], conversation: Optional[str] = None
+    ) -> Generator[str, None, None]:
+        first_line = next(result, None)
+        if first_line:
+            if conversation and first_line.conversation_id:
+                self._conversations[conversation] = first_line.conversation_id
+            yield first_line.choices[0].delta.content
+
+        for line in result:
+            yield line.choices[0].delta.content
+
     def chat(
         self,
         prompt: str,
         system_prompt: Optional[str] = None,
         max_completion_tokens: Optional[int] = 500,
-        conversation: Optional[str] = "",
-    ) -> str:
+        conversation: Optional[str] = None,
+        stream: bool = False,
+    ) -> Union[str, Generator[str, None, None]]:
         if conversation and conversation not in self._conversations:
             self._get_conversations()
 
@@ -128,10 +142,13 @@ class LLM:
             conversation_id=conversation_id,
             billing_project_id=self._teamspace.id if self._teamspace else None,
             name=conversation,
+            stream=stream,
         )
         if conversation and not conversation_id:
             self._conversations[conversation] = output.conversation_id
-        return output.choices[0].delta.content
+        if not stream:
+            return output.choices[0].delta.content
+        return self._stream_chat_response(output, conversation=conversation)
 
     def list_conversations(self) -> List[Dict]:
         self._get_conversations()
