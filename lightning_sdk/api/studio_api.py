@@ -5,7 +5,7 @@ import time
 import warnings
 import zipfile
 from threading import Event, Thread
-from typing import Any, Dict, Mapping, Optional, Tuple, Union
+from typing import Any, Dict, Generator, Mapping, Optional, Tuple, Union
 
 import backoff
 import requests
@@ -284,6 +284,52 @@ class StudioApi:
 
         for response in responses:
             yield response.result
+
+    def run_studio_commands_and_yield(
+        self, studio_id: str, teamspace_id: str, *commands: str, timeout: float, check_interval: float
+    ) -> Generator[Tuple[str, int], None, None]:
+        """Run given commands in a given Studio and yield the output and exit code for the given timeout.
+
+        Args:
+            timeout: wait for this many seconds for the command to finish.
+        """
+        response_submit = self._client.cloud_space_service_execute_command_in_cloud_space(
+            IdExecuteBody1("; ".join(commands), detached=True),
+            project_id=teamspace_id,
+            id=studio_id,
+        )
+
+        if not response_submit:
+            raise RuntimeError("Unable to submit command")
+
+        if response_submit.session_name == "":
+            raise RuntimeError("The session name should be defined.")
+
+        start_time = time.time()
+        exit_code = None
+        while True:
+            for resp in self._get_detached_command_status(
+                studio_id=studio_id,
+                teamspace_id=teamspace_id,
+                session_id=response_submit.session_name,
+            ):
+                if time.time() - start_time >= timeout:
+                    return
+
+                if resp.exit_code == -1:
+                    break
+
+                if exit_code is None:
+                    exit_code = resp.exit_code
+
+                elif exit_code != resp.exit_code:
+                    raise RuntimeError("Cannot determine exit code")
+
+                if resp.exit_code is not None and resp.exit_code != 0:
+                    raise RuntimeError(f"Command failed with exit code {resp.exit_code}. Output: {resp.output}")
+
+                yield resp.output, exit_code
+                time.sleep(check_interval)
 
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Tuple[str, int]:
         """Run given commands in a given Studio."""

@@ -221,6 +221,36 @@ class Studio:
             self._studio.id, self._teamspace.id, machine, interruptible=interruptible
         )
 
+    def run_and_detach(self, *commands: str, timeout: float = 10, check_interval: float = 1) -> str:
+        """Runs given commands on the Studio and returns immediately.
+
+        The command will continue to run in the background.
+
+        Args:
+            timeout: wait for this many seconds for the command to finish.
+            check_interval: check the status of the command every this many seconds.
+        """
+        if check_interval > timeout:
+            raise ValueError("check_interval must be less than timeout")
+
+        if _LIGHTNING_DEBUG:
+            print(f"Running {commands=}")
+        status = self.status
+        if status != Status.Running:
+            raise RuntimeError(f"Cannot run a command in a studio that is not running. Studio {self.name} is {status}.")
+
+        iter_output = self._studio_api.run_studio_commands_and_yield(
+            self._studio.id, self._teamspace.id, *commands, timeout=timeout, check_interval=check_interval
+        )
+
+        output = ""
+        code = None
+        for line, exit_code in iter_output:
+            print(line)
+            output += line
+            code = exit_code
+        return output, code
+
     def run_with_exit_code(self, *commands: str) -> Tuple[str, int]:
         """Runs given commands on the Studio while returning output and exit code.
 

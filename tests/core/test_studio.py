@@ -1,10 +1,12 @@
 import importlib
 import os
+import time
 from contextlib import nullcontext
 from unittest import mock
 
 import pytest
 
+from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.machine import Machine
 from lightning_sdk.plugin import (
     InferenceServerPlugin,
@@ -202,6 +204,29 @@ def test_run_command_exit_code(internal_studio_init_mocker, internal_studio_run_
 
     assert result_output == "foo-response bar-response"
     assert result_exit_code == 0
+
+
+def test_run_command_and_detach(internal_studio_init_mocker, internal_studio_run_mocker):
+    with mock.patch(
+        "lightning_sdk.api.studio_api.StudioApi._get_detached_command_status"
+    ) as mock_get_detached_command_status:
+
+        def side_effect(studio_id, teamspace_id, session_id):
+            time.sleep(1)
+            yield
+
+        mock_get_detached_command_status.side_effect = side_effect
+        api = StudioApi()
+        # should return immediately
+        iterator = api.run_studio_commands_and_yield("st-abc", "ts-abc", "foo", timeout=0, check_interval=0)
+        with pytest.raises(StopIteration):
+            next(iterator)
+
+
+def test_run_command_and_detach_timeout(internal_studio_init_mocker, internal_studio_run_mocker):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+    with pytest.raises(ValueError, match="check_interval must be less than timeout"):
+        studio.run_and_detach("foo", timeout=10, check_interval=11)
 
 
 @pytest.mark.parametrize(
