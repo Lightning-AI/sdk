@@ -103,23 +103,21 @@ class LLM:
         available_models_str = "\n".join(available_models)
         raise ValueError(f"Model '{self._model_name}' not found. \nAvailable models: \n{available_models_str}")
 
-    def _get_conversations(self) -> Dict[str, str]:
-        # TODO: after updating backend, this will fetch conversations from backend
-        # conversations = self._llm_api.list_conversations(assistant_id=self._model.id)
-        return self._conversations
-
-    def _fetch_conversations(self) -> None:
-        self._conversations = self._get_conversations()
+    def _get_conversations(self) -> None:
+        conversations = self._llm_api.list_conversations(assistant_id=self._model.id)
+        for conversation in conversations:
+            if conversation.name and conversation.name not in self._conversations:
+                self._conversations[conversation.name] = conversation.id
 
     def chat(
         self,
         prompt: str,
         system_prompt: Optional[str] = None,
         max_completion_tokens: Optional[int] = 500,
-        conversation: Optional[str] = None,
+        conversation: Optional[str] = "",
     ) -> str:
         if conversation and conversation not in self._conversations:
-            self._fetch_conversations()
+            self._get_conversations()
 
         conversation_id = self._conversations.get(conversation) if conversation else None
         output = self._llm_api.start_conversation(
@@ -129,22 +127,22 @@ class LLM:
             assistant_id=self._model.id,
             conversation_id=conversation_id,
             billing_project_id=self._teamspace.id if self._teamspace else None,
+            name=conversation,
         )
         if conversation and not conversation_id:
             self._conversations[conversation] = output.conversation_id
         return output.choices[0].delta.content
 
     def list_conversations(self) -> List[Dict]:
-        self._fetch_conversations()
+        self._get_conversations()
         return list(self._conversations.keys())
 
     def _get_conversation_messages(self, conversation_id: str) -> Optional[str]:
         return self._llm_api.get_conversation(assistant_id=self._model.id, conversation_id=conversation_id)
 
     def get_history(self, conversation: str) -> Optional[List[Dict]]:
-        # TODO: after updating backend, this will fetch conversation from backend
         if conversation not in self._conversations:
-            self._fetch_conversations()
+            self._get_conversations()
 
         if conversation not in self._conversations:
             raise ValueError(
@@ -161,6 +159,8 @@ class LLM:
         return history
 
     def reset_conversation(self, conversation: str) -> None:
+        if conversation not in self._conversations:
+            self._get_conversations()
         if conversation in self._conversations:
             self._llm_api.reset_conversation(
                 assistant_id=self._model.id,

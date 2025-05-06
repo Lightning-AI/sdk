@@ -163,6 +163,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         assistant_id=llm._model.id,
         conversation_id=None,
         billing_project_id="teamspace-123",
+        name="",
     )
 
     # pass conversation and continue conversation
@@ -176,6 +177,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         assistant_id=llm._model.id,
         conversation_id=None,
         billing_project_id="teamspace-123",
+        name="conv1",
     )
     mock_api.start_conversation.reset_mock()
     continue_response = llm.chat("Hi again!", conversation="conv1")
@@ -187,6 +189,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         assistant_id=llm._model.id,
         conversation_id="conv_123",
         billing_project_id="teamspace-123",
+        name="conv1",
     )
     # check list of conversations
     assert llm._conversations == {"conv1": "conv_123"}
@@ -215,3 +218,24 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
     # reset conversation
     llm.reset_conversation("conv1")
     assert "conv1" not in llm._conversations
+
+
+def test_chat_backend(monkeypatch, mock_auth, mock_public_model):
+    mock_api = MagicMock()
+    mock_api.get_public_models.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    mock_conv1 = MagicMock()
+    mock_conv1.name = "test1"
+    mock_conv1.id = "conv_123"
+    mock_api.list_conversations.return_value = [mock_conv1]
+
+    llm1 = LLM("openai/gpt-4o")
+    llm1.chat("Hello, how are you?", conversation="test1")
+
+    llm2 = LLM("openai/gpt-4o")
+    llm2.list_conversations()
+
+    # should be able to retrieve conversation "test1"
+    conversations = llm2.list_conversations()
+    assert set(conversations) == {"test1"}
