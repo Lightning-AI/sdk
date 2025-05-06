@@ -490,7 +490,7 @@ def _handle_devbox(
     script_path: Path,
     console: Console,
     non_interactive: bool = False,
-    devbox: Machine = "CPU",
+    devbox: Union[Machine, str] = Machine.CPU,
     interruptible: bool = False,
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
@@ -502,37 +502,44 @@ def _handle_devbox(
 
     resolved_teamspace = select_teamspace(teamspace, org, user)
     studio = Studio(name=name, teamspace=resolved_teamspace)
+    studio.install_plugin("custom-port")
     lit_devbox = _LitServeDevbox()
 
     studio_url = _get_studio_url(studio, turn_on=True)
     pathlib_path = Path(script_path).resolve()
-    ok = False
+    browser_opened = False
     studio_path = f"{studio.owner.name}/{studio.teamspace.name}/{studio.name}"
 
     console.print("\n=== Lightning Studio Setup ===")
     console.print(f"🔧 [bold]Setting up Studio:[/bold] {studio_path}")
     console.print(f"📁 [bold]Local project:[/bold] {pathlib_path.parent}")
 
-    upload_state = lit_devbox.resolve_previous_upload(studio, pathlib_path.parent)
+    upload_state = lit_devbox.resolve_previous_upload(studio, str(pathlib_path.parent))
     if non_interactive:
         console.print(f"🌐 [bold]Opening Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
-        ok = webbrowser.open(studio_url)
+        browser_opened = webbrowser.open(studio_url)
     else:
         if Confirm.ask("Would you like to open your Studio in the browser?", default=True):
             console.print(f"🌐 [bold]Opening Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
-            ok = webbrowser.open(studio_url)
+            browser_opened = webbrowser.open(studio_url)
 
-    if not ok:
+    if not browser_opened:
         console.print(f"🔗 [bold]Access Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
 
-    console.print("\n⚡ Initializing Studio (this typically takes 1-2 minutes)...")
-    studio.start(machine=devbox, interruptible=interruptible)
-    studio.install_plugin("custom-port")
-    console.print("🔌 Configuring server port...")
-    studio.run_plugin("custom-port", port=8000)  # TODO: Remove hardcoded port and fetch from LitServe
+    # Start the Studio in the background and return immediately using threading
+    console.print("\n⚡ Initializing Studio in the background...")
+    studio_thread = Thread(target=studio.start, args=(devbox, interruptible))
+    studio_thread.start()
 
     console.print("📤 Syncing project files to Studio...")
     lit_devbox.upload_folder(studio, pathlib_path.parent, upload_state)
+
+    # Wait for the Studio to start
+    console.print("⚡ Waiting for Studio to start...")
+    studio_thread.join()
+
+    console.print("🔌 Configuring server port...")
+    port_url = studio.run_plugin("custom-port", port=8000)  # TODO: Remove hardcoded port and fetch from LitServe
 
     # Add completion message with next steps
     console.print("\n✅ Studio ready!")
@@ -540,6 +547,7 @@ def _handle_devbox(
     console.print("  [bold]1.[/bold] Server code will be available in the Studio")
     console.print("  [bold]2.[/bold] The Studio is now running with the specified configuration")
     console.print("  [bold]3.[/bold] Modify and run your server directly in the Studio")
+    console.print(f"  [bold]4.[/bold] Your server will be accessible on [link={port_url}]{port_url}[/link]")
     # TODO: Once server running is implemented
 
 

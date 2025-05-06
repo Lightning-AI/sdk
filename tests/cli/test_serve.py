@@ -8,6 +8,7 @@ from unittest.mock import ANY, MagicMock, call, patch
 import pytest
 import rich
 
+from lightning_sdk import Machine
 from lightning_sdk.cli.serve import (
     _Auth,
     _handle_cloud,
@@ -582,8 +583,15 @@ def test_handle_devbox_non_python_file():
 @patch("lightning_sdk.cli.serve.webbrowser")
 @patch("lightning_sdk.cli.serve._LitServeDevbox")
 @patch("lightning_sdk.cli.serve.Confirm.ask")
+@patch("lightning_sdk.cli.serve.Thread")
 def test_handle_devbox(
-    mock_ask, mock_lit_serve_devbox, mock_webbrowser, mock_get_studio_url, mock_studio, mock_select_teamspace
+    mock_thread,
+    mock_ask,
+    mock_lit_serve_devbox,
+    mock_webbrowser,
+    mock_get_studio_url,
+    mock_studio,
+    mock_select_teamspace,
 ):
     mock_ask.return_value = True
     mock_lit_serve_devbox.return_value.upload_folder = MagicMock()
@@ -598,7 +606,8 @@ def test_handle_devbox(
     )
     mock_select_teamspace.assert_called_once_with("test-teamspace", "test-org", "test-user")
     mock_studio.assert_called_once()
-    mock_studio.return_value.start.assert_called_once_with(machine="CPU", interruptible=False)
+    mock_thread.assert_called_once_with(target=mock_studio.return_value.start, args=(Machine.CPU, False))
+    mock_thread.return_value.start.assert_called()
     mock_webbrowser.open.assert_called_once_with(mock_get_studio_url.return_value)
     mock_ask.assert_called_once_with("Would you like to open your Studio in the browser?", default=True)
     mock_studio.return_value.run_plugin.assert_called_once_with("custom-port", port=8000)
