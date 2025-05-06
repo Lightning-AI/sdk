@@ -100,6 +100,7 @@ class V1UserFeatures(object):
         'plugin_sweeps': 'bool',
         'pricing_updates': 'bool',
         'product_generator': 'bool',
+        'product_license': 'bool',
         'project_selector': 'bool',
         'publish_pipelines': 'bool',
         'r2_data_connections': 'bool',
@@ -186,6 +187,7 @@ class V1UserFeatures(object):
         'plugin_sweeps': 'pluginSweeps',
         'pricing_updates': 'pricingUpdates',
         'product_generator': 'productGenerator',
+        'product_license': 'productLicense',
         'project_selector': 'projectSelector',
         'publish_pipelines': 'publishPipelines',
         'r2_data_connections': 'r2DataConnections',
@@ -212,7 +214,7 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, dgx_cloud: 'bool' =None, doc_helper_chat: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcp_local_disk_binding: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stable_vscode_server: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_deployment: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, dgx_cloud: 'bool' =None, doc_helper_chat: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcp_local_disk_binding: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stable_vscode_server: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_deployment: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -273,6 +275,7 @@ class V1UserFeatures(object):
         self._plugin_sweeps = None
         self._pricing_updates = None
         self._product_generator = None
+        self._product_license = None
         self._project_selector = None
         self._publish_pipelines = None
         self._r2_data_connections = None
@@ -416,6 +419,8 @@ class V1UserFeatures(object):
             self.pricing_updates = pricing_updates
         if product_generator is not None:
             self.product_generator = product_generator
+        if product_license is not None:
+            self.product_license = product_license
         if project_selector is not None:
             self.project_selector = project_selector
         if publish_pipelines is not None:
@@ -1703,6 +1708,27 @@ class V1UserFeatures(object):
         """
 
         self._product_generator = product_generator
+
+    @property
+    def product_license(self) -> 'bool':
+        """Gets the product_license of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The product_license of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._product_license
+
+    @product_license.setter
+    def product_license(self, product_license: 'bool'):
+        """Sets the product_license of this V1UserFeatures.
+
+
+        :param product_license: The product_license of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._product_license = product_license
 
     @property
     def project_selector(self) -> 'bool':

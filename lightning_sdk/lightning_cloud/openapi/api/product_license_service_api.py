@@ -233,12 +233,12 @@ class ProductLicenseServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def product_license_service_list_product_licenses(self, user_id: 'str', **kwargs) -> 'V1ListProductLicensesResponse':  # noqa: E501
+    def product_license_service_list_user_licenses(self, user_id: 'str', **kwargs) -> 'V1ListProductLicensesResponse':  # noqa: E501
         """list product licenses assigned to a user  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_list_product_licenses(user_id, async_req=True)
+        >>> thread = api.product_license_service_list_user_licenses(user_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -249,17 +249,17 @@ class ProductLicenseServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.product_license_service_list_product_licenses_with_http_info(user_id, **kwargs)  # noqa: E501
+            return self.product_license_service_list_user_licenses_with_http_info(user_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.product_license_service_list_product_licenses_with_http_info(user_id, **kwargs)  # noqa: E501
+            (data) = self.product_license_service_list_user_licenses_with_http_info(user_id, **kwargs)  # noqa: E501
             return data
 
-    def product_license_service_list_product_licenses_with_http_info(self, user_id: 'str', **kwargs) -> 'V1ListProductLicensesResponse':  # noqa: E501
+    def product_license_service_list_user_licenses_with_http_info(self, user_id: 'str', **kwargs) -> 'V1ListProductLicensesResponse':  # noqa: E501
         """list product licenses assigned to a user  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_list_product_licenses_with_http_info(user_id, async_req=True)
+        >>> thread = api.product_license_service_list_user_licenses_with_http_info(user_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -280,14 +280,14 @@ class ProductLicenseServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method product_license_service_list_product_licenses" % key
+                    " to method product_license_service_list_user_licenses" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'user_id' is set
         if ('user_id' not in params or
                 params['user_id'] is None):
-            raise ValueError("Missing the required parameter `user_id` when calling `product_license_service_list_product_licenses`")  # noqa: E501
+            raise ValueError("Missing the required parameter `user_id` when calling `product_license_service_list_user_licenses`")  # noqa: E501
 
         collection_formats = {}
 

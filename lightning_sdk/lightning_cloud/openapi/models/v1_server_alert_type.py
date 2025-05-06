@@ -41,6 +41,7 @@ class V1ServerAlertType(object):
     APT_RESTORE = "SERVER_ALERT_TYPE_APT_RESTORE"
     CONDA_RESTORE = "SERVER_ALERT_TYPE_CONDA_RESTORE"
     SETTINGS_RESTORE = "SERVER_ALERT_TYPE_SETTINGS_RESTORE"
+    BASE_STUDIO_SETUP = "SERVER_ALERT_TYPE_BASE_STUDIO_SETUP"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

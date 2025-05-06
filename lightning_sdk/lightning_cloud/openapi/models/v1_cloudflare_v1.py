@@ -41,60 +41,39 @@ class V1CloudflareV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'access_key_id': 'str',
         'account_id': 'str',
-        'api_token_id': 'str',
-        'r2_endpoint': 'str',
-        'secret_access_key': 'str'
+        'api_token_secret_id': 'str',
+        'api_token_value': 'str',
+        'bucket_credentials_secret_id': 'str',
+        'bucket_name': 'str'
     }
 
     attribute_map = {
-        'access_key_id': 'accessKeyId',
         'account_id': 'accountId',
-        'api_token_id': 'apiTokenId',
-        'r2_endpoint': 'r2Endpoint',
-        'secret_access_key': 'secretAccessKey'
+        'api_token_secret_id': 'apiTokenSecretId',
+        'api_token_value': 'apiTokenValue',
+        'bucket_credentials_secret_id': 'bucketCredentialsSecretId',
+        'bucket_name': 'bucketName'
     }
 
-    def __init__(self, access_key_id: 'str' =None, account_id: 'str' =None, api_token_id: 'str' =None, r2_endpoint: 'str' =None, secret_access_key: 'str' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, api_token_secret_id: 'str' =None, api_token_value: 'str' =None, bucket_credentials_secret_id: 'str' =None, bucket_name: 'str' =None):  # noqa: E501
         """V1CloudflareV1 - a model defined in Swagger"""  # noqa: E501
-        self._access_key_id = None
         self._account_id = None
-        self._api_token_id = None
-        self._r2_endpoint = None
-        self._secret_access_key = None
+        self._api_token_secret_id = None
+        self._api_token_value = None
+        self._bucket_credentials_secret_id = None
+        self._bucket_name = None
         self.discriminator = None
-        if access_key_id is not None:
-            self.access_key_id = access_key_id
         if account_id is not None:
             self.account_id = account_id
-        if api_token_id is not None:
-            self.api_token_id = api_token_id
-        if r2_endpoint is not None:
-            self.r2_endpoint = r2_endpoint
-        if secret_access_key is not None:
-            self.secret_access_key = secret_access_key
-
-    @property
-    def access_key_id(self) -> 'str':
-        """Gets the access_key_id of this V1CloudflareV1.  # noqa: E501
-
-
-        :return: The access_key_id of this V1CloudflareV1.  # noqa: E501
-        :rtype: str
-        """
-        return self._access_key_id
-
-    @access_key_id.setter
-    def access_key_id(self, access_key_id: 'str'):
-        """Sets the access_key_id of this V1CloudflareV1.
-
-
-        :param access_key_id: The access_key_id of this V1CloudflareV1.  # noqa: E501
-        :type: str
-        """
-
-        self._access_key_id = access_key_id
+        if api_token_secret_id is not None:
+            self.api_token_secret_id = api_token_secret_id
+        if api_token_value is not None:
+            self.api_token_value = api_token_value
+        if bucket_credentials_secret_id is not None:
+            self.bucket_credentials_secret_id = bucket_credentials_secret_id
+        if bucket_name is not None:
+            self.bucket_name = bucket_name
 
     @property
     def account_id(self) -> 'str':
@@ -118,67 +97,88 @@ class V1CloudflareV1(object):
         self._account_id = account_id
 
     @property
-    def api_token_id(self) -> 'str':
-        """Gets the api_token_id of this V1CloudflareV1.  # noqa: E501
+    def api_token_secret_id(self) -> 'str':
+        """Gets the api_token_secret_id of this V1CloudflareV1.  # noqa: E501
 
 
-        :return: The api_token_id of this V1CloudflareV1.  # noqa: E501
+        :return: The api_token_secret_id of this V1CloudflareV1.  # noqa: E501
         :rtype: str
         """
-        return self._api_token_id
+        return self._api_token_secret_id
 
-    @api_token_id.setter
-    def api_token_id(self, api_token_id: 'str'):
-        """Sets the api_token_id of this V1CloudflareV1.
+    @api_token_secret_id.setter
+    def api_token_secret_id(self, api_token_secret_id: 'str'):
+        """Sets the api_token_secret_id of this V1CloudflareV1.
 
 
-        :param api_token_id: The api_token_id of this V1CloudflareV1.  # noqa: E501
+        :param api_token_secret_id: The api_token_secret_id of this V1CloudflareV1.  # noqa: E501
         :type: str
         """
 
-        self._api_token_id = api_token_id
+        self._api_token_secret_id = api_token_secret_id
 
     @property
-    def r2_endpoint(self) -> 'str':
-        """Gets the r2_endpoint of this V1CloudflareV1.  # noqa: E501
+    def api_token_value(self) -> 'str':
+        """Gets the api_token_value of this V1CloudflareV1.  # noqa: E501
 
 
-        :return: The r2_endpoint of this V1CloudflareV1.  # noqa: E501
+        :return: The api_token_value of this V1CloudflareV1.  # noqa: E501
         :rtype: str
         """
-        return self._r2_endpoint
+        return self._api_token_value
 
-    @r2_endpoint.setter
-    def r2_endpoint(self, r2_endpoint: 'str'):
-        """Sets the r2_endpoint of this V1CloudflareV1.
+    @api_token_value.setter
+    def api_token_value(self, api_token_value: 'str'):
+        """Sets the api_token_value of this V1CloudflareV1.
 
 
-        :param r2_endpoint: The r2_endpoint of this V1CloudflareV1.  # noqa: E501
+        :param api_token_value: The api_token_value of this V1CloudflareV1.  # noqa: E501
         :type: str
         """
 
-        self._r2_endpoint = r2_endpoint
+        self._api_token_value = api_token_value
 
     @property
-    def secret_access_key(self) -> 'str':
-        """Gets the secret_access_key of this V1CloudflareV1.  # noqa: E501
+    def bucket_credentials_secret_id(self) -> 'str':
+        """Gets the bucket_credentials_secret_id of this V1CloudflareV1.  # noqa: E501
 
 
-        :return: The secret_access_key of this V1CloudflareV1.  # noqa: E501
+        :return: The bucket_credentials_secret_id of this V1CloudflareV1.  # noqa: E501
         :rtype: str
         """
-        return self._secret_access_key
+        return self._bucket_credentials_secret_id
 
-    @secret_access_key.setter
-    def secret_access_key(self, secret_access_key: 'str'):
-        """Sets the secret_access_key of this V1CloudflareV1.
+    @bucket_credentials_secret_id.setter
+    def bucket_credentials_secret_id(self, bucket_credentials_secret_id: 'str'):
+        """Sets the bucket_credentials_secret_id of this V1CloudflareV1.
 
 
-        :param secret_access_key: The secret_access_key of this V1CloudflareV1.  # noqa: E501
+        :param bucket_credentials_secret_id: The bucket_credentials_secret_id of this V1CloudflareV1.  # noqa: E501
         :type: str
         """
 
-        self._secret_access_key = secret_access_key
+        self._bucket_credentials_secret_id = bucket_credentials_secret_id
+
+    @property
+    def bucket_name(self) -> 'str':
+        """Gets the bucket_name of this V1CloudflareV1.  # noqa: E501
+
+
+        :return: The bucket_name of this V1CloudflareV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._bucket_name
+
+    @bucket_name.setter
+    def bucket_name(self, bucket_name: 'str'):
+        """Sets the bucket_name of this V1CloudflareV1.
+
+
+        :param bucket_name: The bucket_name of this V1CloudflareV1.  # noqa: E501
+        :type: str
+        """
+
+        self._bucket_name = bucket_name
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
