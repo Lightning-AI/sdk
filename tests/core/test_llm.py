@@ -95,9 +95,13 @@ def test_org_model(monkeypatch, mock_auth, mock_org_model):
 
     llm = LLM("org-name/org-model1")
     assert llm._org.id == "org-123"
+    assert llm.owner.name == "org-name"
+    assert llm.provider == "org-name"
 
     llm = LLM("org-model1", org="org-name")
     assert llm._org.id == "org-123"
+    assert llm.owner.name == "org-name"
+    assert llm.provider is None
 
     with pytest.raises(
         ValueError,
@@ -131,6 +135,16 @@ def test_user_model(monkeypatch, mock_user_model):
 
     llm = LLM("user-model1", user="mockuser")
     assert llm._model_name == "user-model1"
+    assert llm.owner.name == "mockuser"
+    assert llm.name == "user-model1"
+    assert llm.provider is None
+
+    llm = LLM("mockuser/user-model1")
+    assert llm._model_name == "user-model1"
+    assert llm.owner.name == "mockuser"
+    assert llm.name == "user-model1"
+    assert llm.provider == "mockuser"
+
     with pytest.raises(
         ValueError,
         match=re.escape("Model 'dummy-model' not found. \nAvailable models: \nUser (mockuser) Models: user-model1"),

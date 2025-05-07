@@ -7,6 +7,7 @@ from lightning_sdk.lightning_cloud.openapi import V1Assistant
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.organization import Organization
+from lightning_sdk.owner import Owner
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace, _resolve_user
@@ -29,17 +30,15 @@ class LLM:
         except ConnectionError as e:
             raise e
 
-        self._name = name
         try:
             self._user = _resolve_user(self._user or user)
         except ValueError:
             self._user = None
 
-        self._name = name
-        self._org, self._model_name = self._parse_model_name(name)
+        self._model_provider, self._model_name = self._parse_model_name(name)
         try:
             # check if it is a org model
-            self._org = _resolve_org(self._org or org)
+            self._org = _resolve_org(self._model_provider or org)
         except ApiException:
             self._org = None
 
@@ -55,6 +54,18 @@ class LLM:
         self._user_models = self._build_model_lookup(self._get_user_models())
         self._model = self._get_model()
         self._conversations = {}
+
+    @property
+    def name(self) -> str:
+        return self._model_name
+
+    @property
+    def provider(self) -> str:
+        return self._model_provider
+
+    @property
+    def owner(self) -> Optional[Owner]:
+        return self._org or self._user
 
     def _parse_model_name(self, name: str) -> Tuple[str, str]:
         parts = name.split("/")
@@ -144,9 +155,9 @@ class LLM:
             name=conversation,
             stream=stream,
         )
-        if conversation and not conversation_id:
-            self._conversations[conversation] = output.conversation_id
         if not stream:
+            if conversation and not conversation_id:
+                self._conversations[conversation] = output.conversation_id
             return output.choices[0].delta.content
         return self._stream_chat_response(output, conversation=conversation)
 
