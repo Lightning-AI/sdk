@@ -42,11 +42,19 @@ class LLM:
         except ApiException:
             self._org = None
 
-        self._teamspace = _resolve_teamspace(
-            teamspace=teamspace,
-            org=org,
-            user=user,
-        )
+        if self._org and self._user:
+            try:
+                self._teamspace = _resolve_teamspace(teamspace=teamspace, org=self._org, user=None)
+            except Exception:
+                self._teamspace = None
+
+            if not self._teamspace:
+                try:
+                    self._teamspace = _resolve_teamspace(teamspace=teamspace, org=None, user=self._user)
+                except Exception:
+                    self._teamspace = None
+        else:
+            self._teamspace = _resolve_teamspace(teamspace=teamspace, org=self._org, user=self._user)
 
         self._llm_api = LLMApi()
         self._public_models = self._build_model_lookup(self._get_public_models())

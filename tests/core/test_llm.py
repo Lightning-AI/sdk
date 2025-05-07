@@ -152,6 +152,33 @@ def test_user_model(monkeypatch, mock_user_model):
         LLM("dummy-model", user="mockuser")
 
 
+def test_teamspace(monkeypatch, mock_model_data, mock_public_model):
+    mock_auth = MagicMock()
+    mock_auth.user_id = "user-123"
+    monkeypatch.setattr("lightning_sdk.llm.llm.Auth", lambda: mock_auth)
+
+    mock_org = MagicMock()
+    mock_org.id = "org-123"
+    mock_org.name = "org-name"
+    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_org", lambda org: mock_org)
+
+    mock_user_data = MagicMock()
+    mock_user_data.username = "mockuser"
+    mock_user_api_instance = MagicMock()
+    mock_user_api_instance._get_user_by_id.return_value = mock_user_data
+    monkeypatch.setattr("lightning_sdk.llm.llm.UserApi", lambda: mock_user_api_instance)
+    monkeypatch.setattr("lightning_sdk.user.UserApi", lambda: mock_user_api_instance)
+
+    mock_api = MagicMock()
+    mock_api.list_models.return_value = mock_model_data
+    mock_api.get_public_models.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    # should not throw an error
+    llm = LLM("openai/gpt-4o")
+    assert llm._teamspace is None
+
+
 def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
     mock_api = MagicMock()
     mock_api.list_models.return_value = mock_model_data
