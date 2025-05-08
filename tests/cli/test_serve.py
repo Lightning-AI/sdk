@@ -629,7 +629,7 @@ def test_handle_devbox(
     mock_webbrowser.open.assert_called_once_with(mock_get_studio_url.return_value)
     mock_ask.assert_called_once_with("Would you like to open your Studio in the browser?", default=True)
     mock_studio.return_value.run_plugin.assert_called_once_with("custom-port", port=8000)
-    mock_studio.return_value.run_and_detach.assert_called_once_with("python test.py", timeout=5)
+    mock_studio.return_value.run_and_detach.assert_called_once_with("python test.py", timeout=10)
     mock_console.print.assert_called_with(
         "  [bold]4.[/bold] Your server will be accessible on [link=https://lightning.ai]https://lightning.ai[/link]"
     )

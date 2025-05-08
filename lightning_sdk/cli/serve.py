@@ -16,6 +16,7 @@ import click
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
+from rich.syntax import Syntax
 
 from lightning_sdk import Machine, Teamspace
 from lightning_sdk.api import UserApi
@@ -552,9 +553,12 @@ def _handle_devbox(
 
     try:
         console.print("🚀 Starting server...")
-        studio.run_and_detach(f"python {script_path}", timeout=5)
+        studio.run_and_detach(f"python {script_path}", timeout=10)
     except Exception as e:
-        console.print(f"❌ Error: {e}", style="red")
+        console.print("❌ Error while starting server", style="red")
+        syntax = Syntax(f"{e}", "bash", theme="monokai")
+        console.print(syntax)
+        console.print(f"\n🔄 [bold]To fix:[/bold] Edit your code in Studio and run with: [u]python {script_path}[/u]")
         return
 
     port = _detect_port(pathlib_path)
