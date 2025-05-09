@@ -11,6 +11,7 @@ import rich
 from lightning_sdk import Machine
 from lightning_sdk.cli.serve import (
     _Auth,
+    _AuthMode,
     _detect_port,
     _handle_cloud,
     _handle_devbox,
@@ -227,7 +228,7 @@ def test_cloud_deployment_non_interactive(
     tag = "latest"
     serve_api(temp_script, local=False, name=repo, tag=tag, non_interactive=True)
 
-    mock_authenticate.assert_called_once_with(shall_confirm=False)
+    mock_authenticate.assert_called_once_with(_AuthMode.DEPLOY, shall_confirm=False)
     mock_poll_verified_status.asssert_called_once()
     mock_select_teamspace.assert_called_once()
     mock_docker_build.assert_called_once()
@@ -399,7 +400,7 @@ def test_handle_cloud_deployment_api(
 
 @patch("lightning_sdk.cli.serve._Auth")
 def test_authenticate(mock_auth_class):
-    authenticate()
+    authenticate(_AuthMode.DEPLOY)
     mock_auth_class.return_value.authenticate.assert_called_once()
 
 
@@ -408,7 +409,7 @@ def test_authenticate(mock_auth_class):
 def test_auth_run_server(_, mock_authserver):
     mock_authserver.return_value.login_with_browser = MagicMock()
 
-    auth = _Auth()
+    auth = _Auth(_AuthMode.DEPLOY)
     auth.load = MagicMock(return_value=False)
     auth._with_env_var = False
     auth.authenticate()
@@ -423,7 +424,7 @@ def test_auth_run_server(_, mock_authserver):
 def test_auth_run_server_confirm_browser_open(mock_confirm, _, mock_authserver):
     mock_authserver.return_value.login_with_browser = MagicMock()
 
-    auth = _Auth(shall_confirm=True)
+    auth = _Auth(_AuthMode.DEPLOY, shall_confirm=True)
     auth.load = MagicMock(return_value=False)
     auth._with_env_var = False
     auth.authenticate()

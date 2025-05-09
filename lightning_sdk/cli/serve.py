@@ -9,7 +9,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from threading import Thread
-from typing import Dict, List, Optional, TypedDict, Union
+from typing import Any, Dict, List, Optional, TypedDict, Union
 from urllib.parse import urlencode
 
 import click
@@ -255,16 +255,26 @@ def api_impl(
     )
 
 
+class _AuthMode(Enum):
+    DEVBOX = "dev"
+    DEPLOY = "deploy"
+
+
 class _AuthServer(AuthServer):
+    def __init__(self, mode: _AuthMode, *args: Any, **kwargs: Any) -> None:
+        self._mode = mode
+        super().__init__(*args, **kwargs)
+
     def get_auth_url(self, port: int) -> str:
         redirect_uri = f"http://localhost:{port}/login-complete"
-        params = urlencode({"redirectTo": redirect_uri, "okbhrt": LITSERVE_CODE})
+        params = urlencode({"redirectTo": redirect_uri, "mode": self._mode.value, "okbhrt": LITSERVE_CODE})
         return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
 
 class _Auth(Auth):
-    def __init__(self, shall_confirm: bool = False) -> None:
+    def __init__(self, mode: _AuthMode, shall_confirm: bool = False) -> None:
         super().__init__()
+        self._mode = mode
         self._shall_confirm = shall_confirm
 
     def _run_server(self) -> None:
@@ -280,11 +290,11 @@ class _Auth(Auth):
         print("Opening browser for authentication...")
         print("Please come back to the terminal after logging in.")
         time.sleep(3)
-        _AuthServer().login_with_browser(self)
+        _AuthServer(self._mode).login_with_browser(self)
 
 
-def authenticate(shall_confirm: bool = True) -> None:
-    auth = _Auth(shall_confirm)
+def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
+    auth = _Auth(mode, shall_confirm)
     auth.authenticate()
 
 
@@ -513,6 +523,8 @@ def _handle_devbox(
         console.print("❌ Error: Only Python files (.py) are supported for development servers", style="red")
         return
 
+    authenticate(_AuthMode.DEVBOX, shall_confirm=not non_interactive)
+
     resolved_teamspace = select_teamspace(teamspace, org, user)
     studio = Studio(name=name, teamspace=resolved_teamspace)
     studio.install_plugin("custom-port")
@@ -637,7 +649,7 @@ def _handle_cloud(
     # Push the container to the registry
     console.print("\nPushing container to registry. It may take a while...", style="bold")
     # Authenticate with LitServe affiliate
-    authenticate(shall_confirm=not non_interactive)
+    authenticate(_AuthMode.DEPLOY, shall_confirm=not non_interactive)
     user_status = poll_verified_status()
     cloudspace_id: Optional[str] = None
     from_onboarding = False
