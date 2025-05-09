@@ -431,6 +431,7 @@ class ProductLicenseServiceApi(object):
         :param str license_key: (required)
         :param str product_name:
         :param str product_version:
+        :param str product_type:
         :return: V1ProductLicenseCheckResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -454,12 +455,13 @@ class ProductLicenseServiceApi(object):
         :param str license_key: (required)
         :param str product_name:
         :param str product_version:
+        :param str product_type:
         :return: V1ProductLicenseCheckResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['license_key', 'product_name', 'product_version']  # noqa: E501
+        all_params = ['license_key', 'product_name', 'product_version', 'product_type']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -490,6 +492,8 @@ class ProductLicenseServiceApi(object):
             query_params.append(('productName', params['product_name']))  # noqa: E501
         if 'product_version' in params:
             query_params.append(('productVersion', params['product_version']))  # noqa: E501
+        if 'product_type' in params:
+            query_params.append(('productType', params['product_type']))  # noqa: E501
 
         header_params = {}
 
