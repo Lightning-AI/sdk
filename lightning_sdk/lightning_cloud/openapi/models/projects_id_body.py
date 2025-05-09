@@ -42,9 +42,11 @@ class ProjectsIdBody(object):
     """
     swagger_types = {
         'allow_aws_saas': 'bool',
+        'allow_dgx_saas': 'bool',
         'allow_external_project_duplication': 'bool',
         'allow_gcp_saas': 'bool',
         'allow_lambda_saas': 'bool',
+        'allow_lightning_saas': 'bool',
         'allow_vultr_saas': 'bool',
         'default_machine_type': 'str',
         'description': 'str',
@@ -60,9 +62,11 @@ class ProjectsIdBody(object):
 
     attribute_map = {
         'allow_aws_saas': 'allowAwsSaas',
+        'allow_dgx_saas': 'allowDgxSaas',
         'allow_external_project_duplication': 'allowExternalProjectDuplication',
         'allow_gcp_saas': 'allowGcpSaas',
         'allow_lambda_saas': 'allowLambdaSaas',
+        'allow_lightning_saas': 'allowLightningSaas',
         'allow_vultr_saas': 'allowVultrSaas',
         'default_machine_type': 'defaultMachineType',
         'description': 'description',
@@ -76,12 +80,14 @@ class ProjectsIdBody(object):
         'start_studio_on_spot_instance': 'startStudioOnSpotInstance'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
         """ProjectsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
+        self._allow_dgx_saas = None
         self._allow_external_project_duplication = None
         self._allow_gcp_saas = None
         self._allow_lambda_saas = None
+        self._allow_lightning_saas = None
         self._allow_vultr_saas = None
         self._default_machine_type = None
         self._description = None
@@ -96,12 +102,16 @@ class ProjectsIdBody(object):
         self.discriminator = None
         if allow_aws_saas is not None:
             self.allow_aws_saas = allow_aws_saas
+        if allow_dgx_saas is not None:
+            self.allow_dgx_saas = allow_dgx_saas
         if allow_external_project_duplication is not None:
             self.allow_external_project_duplication = allow_external_project_duplication
         if allow_gcp_saas is not None:
             self.allow_gcp_saas = allow_gcp_saas
         if allow_lambda_saas is not None:
             self.allow_lambda_saas = allow_lambda_saas
+        if allow_lightning_saas is not None:
+            self.allow_lightning_saas = allow_lightning_saas
         if allow_vultr_saas is not None:
             self.allow_vultr_saas = allow_vultr_saas
         if default_machine_type is not None:
@@ -145,6 +155,27 @@ class ProjectsIdBody(object):
         """
 
         self._allow_aws_saas = allow_aws_saas
+
+    @property
+    def allow_dgx_saas(self) -> 'bool':
+        """Gets the allow_dgx_saas of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The allow_dgx_saas of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_dgx_saas
+
+    @allow_dgx_saas.setter
+    def allow_dgx_saas(self, allow_dgx_saas: 'bool'):
+        """Sets the allow_dgx_saas of this ProjectsIdBody.
+
+
+        :param allow_dgx_saas: The allow_dgx_saas of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_dgx_saas = allow_dgx_saas
 
     @property
     def allow_external_project_duplication(self) -> 'bool':
@@ -208,6 +239,27 @@ class ProjectsIdBody(object):
         """
 
         self._allow_lambda_saas = allow_lambda_saas
+
+    @property
+    def allow_lightning_saas(self) -> 'bool':
+        """Gets the allow_lightning_saas of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The allow_lightning_saas of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_lightning_saas
+
+    @allow_lightning_saas.setter
+    def allow_lightning_saas(self, allow_lightning_saas: 'bool'):
+        """Sets the allow_lightning_saas of this ProjectsIdBody.
+
+
+        :param allow_lightning_saas: The allow_lightning_saas of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_lightning_saas = allow_lightning_saas
 
     @property
     def allow_vultr_saas(self) -> 'bool':

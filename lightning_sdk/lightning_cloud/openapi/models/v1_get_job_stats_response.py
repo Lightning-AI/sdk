@@ -41,24 +41,55 @@ class V1GetJobStatsResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'running_deployments': 'int',
         'running_jobs': 'int',
+        'running_pipelines': 'int',
         'total_jobs': 'int'
     }
 
     attribute_map = {
+        'running_deployments': 'runningDeployments',
         'running_jobs': 'runningJobs',
+        'running_pipelines': 'runningPipelines',
         'total_jobs': 'totalJobs'
     }
 
-    def __init__(self, running_jobs: 'int' =None, total_jobs: 'int' =None):  # noqa: E501
+    def __init__(self, running_deployments: 'int' =None, running_jobs: 'int' =None, running_pipelines: 'int' =None, total_jobs: 'int' =None):  # noqa: E501
         """V1GetJobStatsResponse - a model defined in Swagger"""  # noqa: E501
+        self._running_deployments = None
         self._running_jobs = None
+        self._running_pipelines = None
         self._total_jobs = None
         self.discriminator = None
+        if running_deployments is not None:
+            self.running_deployments = running_deployments
         if running_jobs is not None:
             self.running_jobs = running_jobs
+        if running_pipelines is not None:
+            self.running_pipelines = running_pipelines
         if total_jobs is not None:
             self.total_jobs = total_jobs
+
+    @property
+    def running_deployments(self) -> 'int':
+        """Gets the running_deployments of this V1GetJobStatsResponse.  # noqa: E501
+
+
+        :return: The running_deployments of this V1GetJobStatsResponse.  # noqa: E501
+        :rtype: int
+        """
+        return self._running_deployments
+
+    @running_deployments.setter
+    def running_deployments(self, running_deployments: 'int'):
+        """Sets the running_deployments of this V1GetJobStatsResponse.
+
+
+        :param running_deployments: The running_deployments of this V1GetJobStatsResponse.  # noqa: E501
+        :type: int
+        """
+
+        self._running_deployments = running_deployments
 
     @property
     def running_jobs(self) -> 'int':
@@ -80,6 +111,27 @@ class V1GetJobStatsResponse(object):
         """
 
         self._running_jobs = running_jobs
+
+    @property
+    def running_pipelines(self) -> 'int':
+        """Gets the running_pipelines of this V1GetJobStatsResponse.  # noqa: E501
+
+
+        :return: The running_pipelines of this V1GetJobStatsResponse.  # noqa: E501
+        :rtype: int
+        """
+        return self._running_pipelines
+
+    @running_pipelines.setter
+    def running_pipelines(self, running_pipelines: 'int'):
+        """Sets the running_pipelines of this V1GetJobStatsResponse.
+
+
+        :param running_pipelines: The running_pipelines of this V1GetJobStatsResponse.  # noqa: E501
+        :type: int
+        """
+
+        self._running_pipelines = running_pipelines
 
     @property
     def total_jobs(self) -> 'int':

@@ -44,6 +44,7 @@ class Update(object):
         'allowed_machines': 'list[str]',
         'default_machine': 'str',
         'disabled': 'bool',
+        'environment_type': 'V1CloudSpaceEnvironmentType',
         'machine_image_version': 'str',
         'name': 'str',
         'org_id': 'str',
@@ -54,17 +55,19 @@ class Update(object):
         'allowed_machines': 'allowedMachines',
         'default_machine': 'defaultMachine',
         'disabled': 'disabled',
+        'environment_type': 'environmentType',
         'machine_image_version': 'machineImageVersion',
         'name': 'name',
         'org_id': 'orgId',
         'setup_script_text': 'setupScriptText'
     }
 
-    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, disabled: 'bool' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, setup_script_text: 'str' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, disabled: 'bool' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, setup_script_text: 'str' =None):  # noqa: E501
         """Update - a model defined in Swagger"""  # noqa: E501
         self._allowed_machines = None
         self._default_machine = None
         self._disabled = None
+        self._environment_type = None
         self._machine_image_version = None
         self._name = None
         self._org_id = None
@@ -76,6 +79,8 @@ class Update(object):
             self.default_machine = default_machine
         if disabled is not None:
             self.disabled = disabled
+        if environment_type is not None:
+            self.environment_type = environment_type
         if machine_image_version is not None:
             self.machine_image_version = machine_image_version
         if name is not None:
@@ -147,6 +152,27 @@ class Update(object):
         """
 
         self._disabled = disabled
+
+    @property
+    def environment_type(self) -> 'V1CloudSpaceEnvironmentType':
+        """Gets the environment_type of this Update.  # noqa: E501
+
+
+        :return: The environment_type of this Update.  # noqa: E501
+        :rtype: V1CloudSpaceEnvironmentType
+        """
+        return self._environment_type
+
+    @environment_type.setter
+    def environment_type(self, environment_type: 'V1CloudSpaceEnvironmentType'):
+        """Sets the environment_type of this Update.
+
+
+        :param environment_type: The environment_type of this Update.  # noqa: E501
+        :type: V1CloudSpaceEnvironmentType
+        """
+
+        self._environment_type = environment_type
 
     @property
     def machine_image_version(self) -> 'str':

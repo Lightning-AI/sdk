@@ -52,7 +52,7 @@ class PipelinesIdBody(object):
         'parent_pipeline_id': 'str',
         'schedule_id': 'str',
         'shared_filesystem': 'V1SharedFilesystem',
-        'state': 'str',
+        'state': 'V1PipelineState',
         'statuses': 'list[V1PipelineStepStatus]',
         'steps': 'list[V1PipelineStep]',
         'updated_at': 'datetime',
@@ -78,7 +78,7 @@ class PipelinesIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'str' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'V1PipelineState' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """PipelinesIdBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
@@ -362,22 +362,22 @@ class PipelinesIdBody(object):
         self._shared_filesystem = shared_filesystem
 
     @property
-    def state(self) -> 'str':
+    def state(self) -> 'V1PipelineState':
         """Gets the state of this PipelinesIdBody.  # noqa: E501
 
 
         :return: The state of this PipelinesIdBody.  # noqa: E501
-        :rtype: str
+        :rtype: V1PipelineState
         """
         return self._state
 
     @state.setter
-    def state(self, state: 'str'):
+    def state(self, state: 'V1PipelineState'):
         """Sets the state of this PipelinesIdBody.
 
 
         :param state: The state of this PipelinesIdBody.  # noqa: E501
-        :type: str
+        :type: V1PipelineState
         """
 
         self._state = state

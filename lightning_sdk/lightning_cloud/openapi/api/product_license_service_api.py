@@ -125,7 +125,7 @@ class ProductLicenseServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/license', 'POST',
+            '/v1/licenses', 'POST',
             path_params,
             query_params,
             header_params,
@@ -218,7 +218,7 @@ class ProductLicenseServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/license/{licenseId}', 'GET',
+            '/v1/licenses/{licenseId}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -505,7 +505,7 @@ class ProductLicenseServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/license/{licenseKey}/validate', 'GET',
+            '/v1/licenses/{licenseKey}/validate', 'GET',
             path_params,
             query_params,
             header_params,

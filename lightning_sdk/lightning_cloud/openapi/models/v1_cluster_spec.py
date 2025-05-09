@@ -49,6 +49,7 @@ class V1ClusterSpec(object):
         'deletion_options': 'V1ClusterDeletionOptions',
         'desired_state': 'V1ClusterState',
         'domain': 'str',
+        'driver': 'V1CloudProvider',
         'freeze_accelerators': 'bool',
         'google_cloud_v1': 'V1GoogleCloudDirectV1',
         'insurer_disabled': 'bool',
@@ -80,6 +81,7 @@ class V1ClusterSpec(object):
         'deletion_options': 'deletionOptions',
         'desired_state': 'desiredState',
         'domain': 'domain',
+        'driver': 'driver',
         'freeze_accelerators': 'freezeAccelerators',
         'google_cloud_v1': 'googleCloudV1',
         'insurer_disabled': 'insurerDisabled',
@@ -102,7 +104,7 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_accelerators = None
@@ -112,6 +114,7 @@ class V1ClusterSpec(object):
         self._deletion_options = None
         self._desired_state = None
         self._domain = None
+        self._driver = None
         self._freeze_accelerators = None
         self._google_cloud_v1 = None
         self._insurer_disabled = None
@@ -149,6 +152,8 @@ class V1ClusterSpec(object):
             self.desired_state = desired_state
         if domain is not None:
             self.domain = domain
+        if driver is not None:
+            self.driver = driver
         if freeze_accelerators is not None:
             self.freeze_accelerators = freeze_accelerators
         if google_cloud_v1 is not None:
@@ -359,6 +364,27 @@ class V1ClusterSpec(object):
         """
 
         self._domain = domain
+
+    @property
+    def driver(self) -> 'V1CloudProvider':
+        """Gets the driver of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The driver of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1CloudProvider
+        """
+        return self._driver
+
+    @driver.setter
+    def driver(self, driver: 'V1CloudProvider'):
+        """Sets the driver of this V1ClusterSpec.
+
+
+        :param driver: The driver of this V1ClusterSpec.  # noqa: E501
+        :type: V1CloudProvider
+        """
+
+        self._driver = driver
 
     @property
     def freeze_accelerators(self) -> 'bool':

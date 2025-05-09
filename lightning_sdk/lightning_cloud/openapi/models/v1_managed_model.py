@@ -46,6 +46,7 @@ class V1ManagedModel(object):
         'context_length': 'str',
         'deployment_details': 'V1DeploymentDetails',
         'description': 'str',
+        'disabled': 'bool',
         'endpoint_id': 'str',
         'id': 'str',
         'max_completion_tokens': 'str',
@@ -62,6 +63,7 @@ class V1ManagedModel(object):
         'context_length': 'contextLength',
         'deployment_details': 'deploymentDetails',
         'description': 'description',
+        'disabled': 'disabled',
         'endpoint_id': 'endpointId',
         'id': 'id',
         'max_completion_tokens': 'maxCompletionTokens',
@@ -72,13 +74,14 @@ class V1ManagedModel(object):
         'top_k': 'topK'
     }
 
-    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, completion_token_price: 'float' =None, context_length: 'str' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, top_k: 'str' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, completion_token_price: 'float' =None, context_length: 'str' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, disabled: 'bool' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, top_k: 'str' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._abilities = None
         self._completion_token_price = None
         self._context_length = None
         self._deployment_details = None
         self._description = None
+        self._disabled = None
         self._endpoint_id = None
         self._id = None
         self._max_completion_tokens = None
@@ -98,6 +101,8 @@ class V1ManagedModel(object):
             self.deployment_details = deployment_details
         if description is not None:
             self.description = description
+        if disabled is not None:
+            self.disabled = disabled
         if endpoint_id is not None:
             self.endpoint_id = endpoint_id
         if id is not None:
@@ -219,6 +224,27 @@ class V1ManagedModel(object):
         """
 
         self._description = description
+
+    @property
+    def disabled(self) -> 'bool':
+        """Gets the disabled of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The disabled of this V1ManagedModel.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disabled
+
+    @disabled.setter
+    def disabled(self, disabled: 'bool'):
+        """Sets the disabled of this V1ManagedModel.
+
+
+        :param disabled: The disabled of this V1ManagedModel.  # noqa: E501
+        :type: bool
+        """
+
+        self._disabled = disabled
 
     @property
     def endpoint_id(self) -> 'str':

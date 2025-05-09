@@ -41,6 +41,7 @@ class StorageCompleteBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allow_multicloud': 'bool',
         'cluster_id': 'str',
         'filename': 'str',
         'parts': 'list[V1CompleteUpload]',
@@ -49,6 +50,7 @@ class StorageCompleteBody(object):
     }
 
     attribute_map = {
+        'allow_multicloud': 'allowMulticloud',
         'cluster_id': 'clusterId',
         'filename': 'filename',
         'parts': 'parts',
@@ -56,14 +58,17 @@ class StorageCompleteBody(object):
         'upload_id': 'uploadId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, filename: 'str' =None, parts: 'list[V1CompleteUpload]' =None, suppress_reindex: 'bool' =None, upload_id: 'str' =None):  # noqa: E501
+    def __init__(self, allow_multicloud: 'bool' =None, cluster_id: 'str' =None, filename: 'str' =None, parts: 'list[V1CompleteUpload]' =None, suppress_reindex: 'bool' =None, upload_id: 'str' =None):  # noqa: E501
         """StorageCompleteBody - a model defined in Swagger"""  # noqa: E501
+        self._allow_multicloud = None
         self._cluster_id = None
         self._filename = None
         self._parts = None
         self._suppress_reindex = None
         self._upload_id = None
         self.discriminator = None
+        if allow_multicloud is not None:
+            self.allow_multicloud = allow_multicloud
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if filename is not None:
@@ -74,6 +79,27 @@ class StorageCompleteBody(object):
             self.suppress_reindex = suppress_reindex
         if upload_id is not None:
             self.upload_id = upload_id
+
+    @property
+    def allow_multicloud(self) -> 'bool':
+        """Gets the allow_multicloud of this StorageCompleteBody.  # noqa: E501
+
+
+        :return: The allow_multicloud of this StorageCompleteBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_multicloud
+
+    @allow_multicloud.setter
+    def allow_multicloud(self, allow_multicloud: 'bool'):
+        """Sets the allow_multicloud of this StorageCompleteBody.
+
+
+        :param allow_multicloud: The allow_multicloud of this StorageCompleteBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_multicloud = allow_multicloud
 
     @property
     def cluster_id(self) -> 'str':

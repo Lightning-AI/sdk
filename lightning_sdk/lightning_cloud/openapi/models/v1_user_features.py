@@ -41,6 +41,7 @@ class V1UserFeatures(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'admin_dashboard': 'bool',
         'affiliate_links': 'bool',
         'agents_v2': 'bool',
         'ai_hub_monetization': 'bool',
@@ -54,6 +55,7 @@ class V1UserFeatures(object):
         'capacity_reservation_dry_run': 'bool',
         'chat_models': 'bool',
         'cloud_space_environment_templates': 'bool',
+        'cloudy_vibe_code': 'bool',
         'code_tab': 'bool',
         'collab_screen_sharing': 'bool',
         'concurrent_gpu_limit': 'bool',
@@ -65,7 +67,6 @@ class V1UserFeatures(object):
         'deployment_alerts': 'bool',
         'deployment_persistent_disk': 'bool',
         'dgx_cloud': 'bool',
-        'doc_helper_chat': 'bool',
         'docs_agent': 'bool',
         'drive_v2': 'bool',
         'enable_storage_limits': 'bool',
@@ -74,15 +75,18 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'bool',
         'filestore': 'bool',
         'gcp_local_disk_binding': 'bool',
+        'gcs_folders': 'bool',
         'inactive_notify_delete': 'bool',
         'instant_capacity_reservation': 'bool',
         'job_artifacts_v2': 'bool',
         'lambda_labs': 'bool',
         'landing_studios': 'bool',
+        'lightning_cloud': 'bool',
         'lit_logger': 'bool',
         'marketplace': 'bool',
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
+        'multicloud_folders': 'bool',
         'multicloud_saas': 'bool',
         'multiple_studio_versions': 'bool',
         'nebius': 'bool',
@@ -128,6 +132,7 @@ class V1UserFeatures(object):
     }
 
     attribute_map = {
+        'admin_dashboard': 'adminDashboard',
         'affiliate_links': 'affiliateLinks',
         'agents_v2': 'agentsV2',
         'ai_hub_monetization': 'aiHubMonetization',
@@ -141,6 +146,7 @@ class V1UserFeatures(object):
         'capacity_reservation_dry_run': 'capacityReservationDryRun',
         'chat_models': 'chatModels',
         'cloud_space_environment_templates': 'cloudSpaceEnvironmentTemplates',
+        'cloudy_vibe_code': 'cloudyVibeCode',
         'code_tab': 'codeTab',
         'collab_screen_sharing': 'collabScreenSharing',
         'concurrent_gpu_limit': 'concurrentGpuLimit',
@@ -152,7 +158,6 @@ class V1UserFeatures(object):
         'deployment_alerts': 'deploymentAlerts',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
         'dgx_cloud': 'dgxCloud',
-        'doc_helper_chat': 'docHelperChat',
         'docs_agent': 'docsAgent',
         'drive_v2': 'driveV2',
         'enable_storage_limits': 'enableStorageLimits',
@@ -161,15 +166,18 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filestore': 'filestore',
         'gcp_local_disk_binding': 'gcpLocalDiskBinding',
+        'gcs_folders': 'gcsFolders',
         'inactive_notify_delete': 'inactiveNotifyDelete',
         'instant_capacity_reservation': 'instantCapacityReservation',
         'job_artifacts_v2': 'jobArtifactsV2',
         'lambda_labs': 'lambdaLabs',
         'landing_studios': 'landingStudios',
+        'lightning_cloud': 'lightningCloud',
         'lit_logger': 'litLogger',
         'marketplace': 'marketplace',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
+        'multicloud_folders': 'multicloudFolders',
         'multicloud_saas': 'multicloudSaas',
         'multiple_studio_versions': 'multipleStudioVersions',
         'nebius': 'nebius',
@@ -214,8 +222,9 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, dgx_cloud: 'bool' =None, doc_helper_chat: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcp_local_disk_binding: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stable_vscode_server: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_deployment: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, admin_dashboard: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcp_local_disk_binding: 'bool' =None, gcs_folders: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_admin_alerts: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stable_vscode_server: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_deployment: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
+        self._admin_dashboard = None
         self._affiliate_links = None
         self._agents_v2 = None
         self._ai_hub_monetization = None
@@ -229,6 +238,7 @@ class V1UserFeatures(object):
         self._capacity_reservation_dry_run = None
         self._chat_models = None
         self._cloud_space_environment_templates = None
+        self._cloudy_vibe_code = None
         self._code_tab = None
         self._collab_screen_sharing = None
         self._concurrent_gpu_limit = None
@@ -240,7 +250,6 @@ class V1UserFeatures(object):
         self._deployment_alerts = None
         self._deployment_persistent_disk = None
         self._dgx_cloud = None
-        self._doc_helper_chat = None
         self._docs_agent = None
         self._drive_v2 = None
         self._enable_storage_limits = None
@@ -249,15 +258,18 @@ class V1UserFeatures(object):
         self._featured_studios_admin = None
         self._filestore = None
         self._gcp_local_disk_binding = None
+        self._gcs_folders = None
         self._inactive_notify_delete = None
         self._instant_capacity_reservation = None
         self._job_artifacts_v2 = None
         self._lambda_labs = None
         self._landing_studios = None
+        self._lightning_cloud = None
         self._lit_logger = None
         self._marketplace = None
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
+        self._multicloud_folders = None
         self._multicloud_saas = None
         self._multiple_studio_versions = None
         self._nebius = None
@@ -301,6 +313,8 @@ class V1UserFeatures(object):
         self._vultr = None
         self._weka = None
         self.discriminator = None
+        if admin_dashboard is not None:
+            self.admin_dashboard = admin_dashboard
         if affiliate_links is not None:
             self.affiliate_links = affiliate_links
         if agents_v2 is not None:
@@ -327,6 +341,8 @@ class V1UserFeatures(object):
             self.chat_models = chat_models
         if cloud_space_environment_templates is not None:
             self.cloud_space_environment_templates = cloud_space_environment_templates
+        if cloudy_vibe_code is not None:
+            self.cloudy_vibe_code = cloudy_vibe_code
         if code_tab is not None:
             self.code_tab = code_tab
         if collab_screen_sharing is not None:
@@ -349,8 +365,6 @@ class V1UserFeatures(object):
             self.deployment_persistent_disk = deployment_persistent_disk
         if dgx_cloud is not None:
             self.dgx_cloud = dgx_cloud
-        if doc_helper_chat is not None:
-            self.doc_helper_chat = doc_helper_chat
         if docs_agent is not None:
             self.docs_agent = docs_agent
         if drive_v2 is not None:
@@ -367,6 +381,8 @@ class V1UserFeatures(object):
             self.filestore = filestore
         if gcp_local_disk_binding is not None:
             self.gcp_local_disk_binding = gcp_local_disk_binding
+        if gcs_folders is not None:
+            self.gcs_folders = gcs_folders
         if inactive_notify_delete is not None:
             self.inactive_notify_delete = inactive_notify_delete
         if instant_capacity_reservation is not None:
@@ -377,6 +393,8 @@ class V1UserFeatures(object):
             self.lambda_labs = lambda_labs
         if landing_studios is not None:
             self.landing_studios = landing_studios
+        if lightning_cloud is not None:
+            self.lightning_cloud = lightning_cloud
         if lit_logger is not None:
             self.lit_logger = lit_logger
         if marketplace is not None:
@@ -385,6 +403,8 @@ class V1UserFeatures(object):
             self.mmt_fault_tolerance = mmt_fault_tolerance
         if mmt_strategy_selector is not None:
             self.mmt_strategy_selector = mmt_strategy_selector
+        if multicloud_folders is not None:
+            self.multicloud_folders = multicloud_folders
         if multicloud_saas is not None:
             self.multicloud_saas = multicloud_saas
         if multiple_studio_versions is not None:
@@ -469,6 +489,27 @@ class V1UserFeatures(object):
             self.vultr = vultr
         if weka is not None:
             self.weka = weka
+
+    @property
+    def admin_dashboard(self) -> 'bool':
+        """Gets the admin_dashboard of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The admin_dashboard of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._admin_dashboard
+
+    @admin_dashboard.setter
+    def admin_dashboard(self, admin_dashboard: 'bool'):
+        """Sets the admin_dashboard of this V1UserFeatures.
+
+
+        :param admin_dashboard: The admin_dashboard of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._admin_dashboard = admin_dashboard
 
     @property
     def affiliate_links(self) -> 'bool':
@@ -744,6 +785,27 @@ class V1UserFeatures(object):
         self._cloud_space_environment_templates = cloud_space_environment_templates
 
     @property
+    def cloudy_vibe_code(self) -> 'bool':
+        """Gets the cloudy_vibe_code of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The cloudy_vibe_code of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._cloudy_vibe_code
+
+    @cloudy_vibe_code.setter
+    def cloudy_vibe_code(self, cloudy_vibe_code: 'bool'):
+        """Sets the cloudy_vibe_code of this V1UserFeatures.
+
+
+        :param cloudy_vibe_code: The cloudy_vibe_code of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._cloudy_vibe_code = cloudy_vibe_code
+
+    @property
     def code_tab(self) -> 'bool':
         """Gets the code_tab of this V1UserFeatures.  # noqa: E501
 
@@ -975,27 +1037,6 @@ class V1UserFeatures(object):
         self._dgx_cloud = dgx_cloud
 
     @property
-    def doc_helper_chat(self) -> 'bool':
-        """Gets the doc_helper_chat of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The doc_helper_chat of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._doc_helper_chat
-
-    @doc_helper_chat.setter
-    def doc_helper_chat(self, doc_helper_chat: 'bool'):
-        """Sets the doc_helper_chat of this V1UserFeatures.
-
-
-        :param doc_helper_chat: The doc_helper_chat of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._doc_helper_chat = doc_helper_chat
-
-    @property
     def docs_agent(self) -> 'bool':
         """Gets the docs_agent of this V1UserFeatures.  # noqa: E501
 
@@ -1164,6 +1205,27 @@ class V1UserFeatures(object):
         self._gcp_local_disk_binding = gcp_local_disk_binding
 
     @property
+    def gcs_folders(self) -> 'bool':
+        """Gets the gcs_folders of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The gcs_folders of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._gcs_folders
+
+    @gcs_folders.setter
+    def gcs_folders(self, gcs_folders: 'bool'):
+        """Sets the gcs_folders of this V1UserFeatures.
+
+
+        :param gcs_folders: The gcs_folders of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._gcs_folders = gcs_folders
+
+    @property
     def inactive_notify_delete(self) -> 'bool':
         """Gets the inactive_notify_delete of this V1UserFeatures.  # noqa: E501
 
@@ -1269,6 +1331,27 @@ class V1UserFeatures(object):
         self._landing_studios = landing_studios
 
     @property
+    def lightning_cloud(self) -> 'bool':
+        """Gets the lightning_cloud of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The lightning_cloud of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._lightning_cloud
+
+    @lightning_cloud.setter
+    def lightning_cloud(self, lightning_cloud: 'bool'):
+        """Sets the lightning_cloud of this V1UserFeatures.
+
+
+        :param lightning_cloud: The lightning_cloud of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._lightning_cloud = lightning_cloud
+
+    @property
     def lit_logger(self) -> 'bool':
         """Gets the lit_logger of this V1UserFeatures.  # noqa: E501
 
@@ -1351,6 +1434,27 @@ class V1UserFeatures(object):
         """
 
         self._mmt_strategy_selector = mmt_strategy_selector
+
+    @property
+    def multicloud_folders(self) -> 'bool':
+        """Gets the multicloud_folders of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The multicloud_folders of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._multicloud_folders
+
+    @multicloud_folders.setter
+    def multicloud_folders(self, multicloud_folders: 'bool'):
+        """Sets the multicloud_folders of this V1UserFeatures.
+
+
+        :param multicloud_folders: The multicloud_folders of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._multicloud_folders = multicloud_folders
 
     @property
     def multicloud_saas(self) -> 'bool':

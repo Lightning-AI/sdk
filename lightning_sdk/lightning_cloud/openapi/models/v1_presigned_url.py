@@ -41,24 +41,55 @@ class V1PresignedUrl(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cluster_id': 'str',
         'part_number': 'str',
+        'upload_id': 'str',
         'url': 'str'
     }
 
     attribute_map = {
+        'cluster_id': 'clusterId',
         'part_number': 'partNumber',
+        'upload_id': 'uploadId',
         'url': 'url'
     }
 
-    def __init__(self, part_number: 'str' =None, url: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, part_number: 'str' =None, upload_id: 'str' =None, url: 'str' =None):  # noqa: E501
         """V1PresignedUrl - a model defined in Swagger"""  # noqa: E501
+        self._cluster_id = None
         self._part_number = None
+        self._upload_id = None
         self._url = None
         self.discriminator = None
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if part_number is not None:
             self.part_number = part_number
+        if upload_id is not None:
+            self.upload_id = upload_id
         if url is not None:
             self.url = url
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1PresignedUrl.  # noqa: E501
+
+
+        :return: The cluster_id of this V1PresignedUrl.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1PresignedUrl.
+
+
+        :param cluster_id: The cluster_id of this V1PresignedUrl.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def part_number(self) -> 'str':
@@ -80,6 +111,27 @@ class V1PresignedUrl(object):
         """
 
         self._part_number = part_number
+
+    @property
+    def upload_id(self) -> 'str':
+        """Gets the upload_id of this V1PresignedUrl.  # noqa: E501
+
+
+        :return: The upload_id of this V1PresignedUrl.  # noqa: E501
+        :rtype: str
+        """
+        return self._upload_id
+
+    @upload_id.setter
+    def upload_id(self, upload_id: 'str'):
+        """Sets the upload_id of this V1PresignedUrl.
+
+
+        :param upload_id: The upload_id of this V1PresignedUrl.  # noqa: E501
+        :type: str
+        """
+
+        self._upload_id = upload_id
 
     @property
     def url(self) -> 'str':

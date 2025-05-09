@@ -42,21 +42,26 @@ class V1UploadProjectArtifactResponse(object):
     """
     swagger_types = {
         'upload_id': 'str',
+        'uploads': 'list[V1ClusterUpload]',
         'urls': 'list[V1PresignedUrl]'
     }
 
     attribute_map = {
         'upload_id': 'uploadId',
+        'uploads': 'uploads',
         'urls': 'urls'
     }
 
-    def __init__(self, upload_id: 'str' =None, urls: 'list[V1PresignedUrl]' =None):  # noqa: E501
+    def __init__(self, upload_id: 'str' =None, uploads: 'list[V1ClusterUpload]' =None, urls: 'list[V1PresignedUrl]' =None):  # noqa: E501
         """V1UploadProjectArtifactResponse - a model defined in Swagger"""  # noqa: E501
         self._upload_id = None
+        self._uploads = None
         self._urls = None
         self.discriminator = None
         if upload_id is not None:
             self.upload_id = upload_id
+        if uploads is not None:
+            self.uploads = uploads
         if urls is not None:
             self.urls = urls
 
@@ -80,6 +85,27 @@ class V1UploadProjectArtifactResponse(object):
         """
 
         self._upload_id = upload_id
+
+    @property
+    def uploads(self) -> 'list[V1ClusterUpload]':
+        """Gets the uploads of this V1UploadProjectArtifactResponse.  # noqa: E501
+
+
+        :return: The uploads of this V1UploadProjectArtifactResponse.  # noqa: E501
+        :rtype: list[V1ClusterUpload]
+        """
+        return self._uploads
+
+    @uploads.setter
+    def uploads(self, uploads: 'list[V1ClusterUpload]'):
+        """Sets the uploads of this V1UploadProjectArtifactResponse.
+
+
+        :param uploads: The uploads of this V1UploadProjectArtifactResponse.  # noqa: E501
+        :type: list[V1ClusterUpload]
+        """
+
+        self._uploads = uploads
 
     @property
     def urls(self) -> 'list[V1PresignedUrl]':
