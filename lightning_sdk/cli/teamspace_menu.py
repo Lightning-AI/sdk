@@ -22,7 +22,15 @@ class _TeamspacesMenu:
     def _get_teamspace_from_name(
         self, teamspace: str, possible_teamspaces: Dict[str, Dict[str, str]]
     ) -> Dict[str, str]:
-        owner, name = teamspace.split("/", maxsplit=1)
+        try:
+            owner, name = teamspace.split("/", maxsplit=1)
+        except ValueError as e:
+            raise ValueError(
+                f"Invalid teamspace format: '{teamspace}'. "
+                "Teamspace should be specified as '{teamspace_owner}/{teamspace_name}' "
+                "(e.g., 'my-org/my-teamspace')."
+            ) from e
+
         for _, ts in possible_teamspaces.items():
             if ts["name"] == name and (ts["user"] == owner or ts["org"] == owner):
                 return ts
