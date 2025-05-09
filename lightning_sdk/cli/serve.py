@@ -524,8 +524,16 @@ def _handle_devbox(
         return
 
     authenticate(_AuthMode.DEVBOX, shall_confirm=not non_interactive)
-
-    resolved_teamspace = select_teamspace(teamspace, org, user)
+    user_status = poll_verified_status()
+    if not user_status["verified"]:
+        console.print("❌ Verify phone number to continue. Visit lightning.ai.", style="red")
+        return
+    if not user_status["onboarded"]:
+        console.print("onboarding user")
+        onboarding = _Onboarding(console)
+        resolved_teamspace = onboarding.select_teamspace(teamspace, org, user)
+    else:
+        resolved_teamspace = select_teamspace(teamspace, org, user)
     studio = Studio(name=name, teamspace=resolved_teamspace)
     studio.install_plugin("custom-port")
     lit_devbox = _LitServeDevbox()

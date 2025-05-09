@@ -599,7 +599,11 @@ def test_detect_port(tmpdir):
 @patch("lightning_sdk.cli.serve.Confirm.ask")
 @patch("lightning_sdk.cli.serve.Thread")
 @patch("lightning_sdk.cli.serve._detect_port")
+@patch("lightning_sdk.cli.serve.authenticate")
+@patch("lightning_sdk.cli.serve.poll_verified_status")
 def test_handle_devbox(
+    mock_poll_verified_status,
+    mock_authenticate,
     mock_detect_port,
     mock_thread,
     mock_ask,
@@ -615,6 +619,7 @@ def test_handle_devbox(
     mock_get_studio_url.return_value = "https://lightning.ai"
     mock_console = MagicMock()
     mock_studio.return_value.run_plugin.return_value = "https://lightning.ai"
+    mock_poll_verified_status.return_value = {"onboarded": True, "verified": True}
     _handle_devbox(
         "test",
         Path("test.py"),
@@ -624,6 +629,7 @@ def test_handle_devbox(
         user="test-user",
     )
     mock_select_teamspace.assert_called_once_with("test-teamspace", "test-org", "test-user")
+    mock_authenticate.assert_called_once_with(_AuthMode.DEVBOX, shall_confirm=True)
     mock_studio.assert_called_once()
     mock_thread.assert_called_once_with(target=mock_studio.return_value.start, args=(Machine.CPU, False))
     mock_thread.return_value.start.assert_called()
