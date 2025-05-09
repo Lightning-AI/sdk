@@ -12,6 +12,7 @@ class LicenseApi:
         license_key: str,
         product_name: str,
         product_version: Optional[str] = None,
+        product_type: str = "package",
     ) -> bool:
         """Check if the license key is valid.
 
@@ -19,6 +20,7 @@ class LicenseApi:
             license_key: The license key to check.
             product_name: The name of the product.
             product_version: The version of the product.
+            product_type: The type of the product. Default is "package".
 
         Returns:
             True if the license key is valid, False otherwise.
@@ -27,7 +29,8 @@ class LicenseApi:
             license_key=license_key,
             product_name=product_name,
             product_version=product_version,
+            product_type=product_type,
         )
         if code != 200:
-            return False
+            raise ConnectionError(f"Failed to validate license key: {code} - {response}")
         return response.valid
