@@ -17,7 +17,7 @@ def delete() -> None:
 
 
 @delete.command(name="container")
-@click.argument("container")
+@click.argument("name")
 @click.option(
     "--teamspace",
     default=None,
@@ -27,18 +27,16 @@ def delete() -> None:
         "If not provided, can be selected in an interactive menu."
     ),
 )
-def delete_container(container: str, teamspace: Optional[str] = None) -> None:
-    """Delete the docker container CONTAINER."""
+def container(name: str, teamspace: Optional[str] = None) -> None:
+    """Delete the docker container NAME."""
     api = LitContainer()
     menu = _TeamspacesMenu()
     resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
     try:
-        api.delete_container(container, resolved_teamspace.name, resolved_teamspace.owner.name)
-        Console().print(f"Container {container} deleted successfully.")
+        api.delete_container(name, resolved_teamspace.name, resolved_teamspace.owner.name)
+        Console().print(f"Container {name} deleted successfully.")
     except Exception as e:
-        raise StudioCliError(
-            f"Could not delete container {container} from project {resolved_teamspace.name}: {e}"
-        ) from None
+        raise StudioCliError(f"Could not delete container {name} from project {resolved_teamspace.name}: {e}") from None
 
 
 @delete.command(name="job")

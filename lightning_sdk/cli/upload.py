@@ -126,7 +126,6 @@ def file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = N
 )
 @click.option(
     "--platform",
-    "--platform",
     default="linux/amd64",
     help="This is the platform the container pulled and push to Lightning AI will run on.",
 )

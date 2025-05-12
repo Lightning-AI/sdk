@@ -135,7 +135,7 @@ def deploy() -> None:
 @click.option("--port", default=8000, help="The port to expose the API on.")
 @click.option("--min_replica", "--min-replica", default=0, help="Number of replicas to start with.")
 @click.option("--max_replica", "--max-replica", default=1, help="Number of replicas to scale up to.")
-@click.option("--replicas", "--replicas", default=1, help="Deployment will start with this many replicas.")
+@click.option("--replicas", default=1, help="Deployment will start with this many replicas.")
 @click.option(
     "--no_credentials",
     "--no-credentials",

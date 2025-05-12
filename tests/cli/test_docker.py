@@ -1,12 +1,14 @@
 import os
 import subprocess
-import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+from lightning_utilities.core.imports import package_available
 
 from lightning_sdk.cli.docker_cli import _api as docker_api
+
+_LLITSERVE_AVAILABLE = package_available("litserve")
 
 
 def test_dockerize_help():
@@ -67,13 +69,13 @@ if __name__ == "__main__":
     return script_path
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 def test_docker_api_file_not_found(mock_cwd):
     with pytest.raises(FileNotFoundError, match="Server file `server.py` must be in the current directory"):
         docker_api("server.py")
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 @patch("lightning_sdk.serve.Console")
 def test_docker_api_without_requirements(mock_console, mock_cwd, temp_script):
     with patch("litserve.__version__", "1.0.0"):
@@ -89,7 +91,7 @@ def test_docker_api_without_requirements(mock_console, mock_cwd, temp_script):
     assert 'CMD ["python", "/app/server.py"]' in dockerfile_content
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 def test_docker_api_with_requirements(mock_cwd, temp_script):
     requirements_path = Path(mock_cwd) / "requirements.txt"
     requirements_path.touch()
@@ -105,7 +107,7 @@ def test_docker_api_with_requirements(mock_cwd, temp_script):
     assert 'CMD ["python", "/app/server.py"]' in dockerfile_content
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 def test_docker_api_with_gpu(mock_cwd, temp_script):
     with patch("litserve.__version__", "1.0.0"):
         docker_api("server.py", port=8000, gpu=True)
@@ -116,7 +118,7 @@ def test_docker_api_with_gpu(mock_cwd, temp_script):
     assert 'CMD ["python", "/app/server.py"]' in dockerfile_content
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 @patch("lightning_sdk.serve.Console")
 def test_skip_dockerfile_generation(mock_console, mock_cwd):
     console_obj = MagicMock()

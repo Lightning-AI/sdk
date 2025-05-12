@@ -8,6 +8,10 @@ on:
   pull_request:
     types: [opened, reopened, ready_for_review, synchronize]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   cli-tests:
     runs-on: ${{ matrix.os }}
@@ -17,6 +21,7 @@ jobs:
       matrix:
         os: ["ubuntu-22.04", "macos-14"]  # todo: add "windows-2022"
         python-version: ["3.12"]
+        install-extras: ["", "serve"]
     timeout-minutes: 10
     steps:
     - uses: actions/checkout@v2
@@ -26,21 +31,24 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip' # caching pip dependencies
 
-    - name: Install dependencies
-      run: |
-        pip install -r tests/requirements.txt ${{ matrix.extra-installs }}
-        pip install '.[serve]' --upgrade
-        pip list
-      shell: bash
+    - name: Install package and test dependencies
+      run: pip install . --upgrade -r tests/requirements.txt
+
+    - name: Re-Install dependencies with `${{ matrix.install-extras }}`
+      if: ${{ matrix.install-extras != '' }}
+      run: pip install '.[${{ matrix.install-extras }}]' --upgrade -r tests/requirements.txt
+
+    - name: show pip list
+      run: pip list
 
     - name: Tests
-      run: |
-        # NOTE: do not include coverage report here, see: https://github.com/nedbat/coveragepy/issues/1003
-        coverage run --source lightning_sdk -m pytest cli/ -vv -s
+      working-directory: tests
       env: # the following values are just dummies since the actual http calls are mocked out
         LIGHTNING_USER_ID: ${{ secrets.LIGHTNING_USER_ID }}
         LIGHTNING_API_KEY: ${{ secrets.LIGHTNING_API_KEY }}
-      working-directory: tests
+      run: |
+        # NOTE: do not include coverage report here, see: https://github.com/nedbat/coveragepy/issues/1003
+        coverage run --source lightning_sdk -m pytest cli/ -vv -s
     - name: Statistics
       working-directory: tests
       continue-on-error: true

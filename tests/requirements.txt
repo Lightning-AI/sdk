@@ -7,3 +7,4 @@ coverage
 mock
 boto3
 exceptiongroup #necessary for >= 3.11
+lightning_utilities  # used for if package is not installed

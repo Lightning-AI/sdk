@@ -1,12 +1,12 @@
 import os
 import subprocess
-import sys
 from datetime import datetime
 from pathlib import Path
 from unittest.mock import ANY, MagicMock, call, patch
 
 import pytest
 import rich
+from lightning_utilities.core.imports import package_available
 
 from lightning_sdk import Machine
 from lightning_sdk.cli.serve import (
@@ -23,6 +23,8 @@ from lightning_sdk.cli.serve import (
     select_teamspace,
 )
 from lightning_sdk.cli.serve import api_impl as serve_api
+
+_LLITSERVE_AVAILABLE = package_available("litserve")
 
 
 def test_serve_help():
@@ -96,7 +98,7 @@ Options:
                                   Number of replicas to start with.
   --max_replica, --max-replica INTEGER
                                   Number of replicas to scale up to.
-  --replicas, --replicas INTEGER  Deployment will start with this many
+  --replicas INTEGER              Deployment will start with this many
                                   replicas.
   --no_credentials, --no-credentials
                                   Whether to include credentials in the
@@ -126,7 +128,7 @@ if __name__ == "__main__":
     return script_path
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 @patch("subprocess.run")
 def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
     serve_api(temp_script, True, local=True)
@@ -139,7 +141,7 @@ def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
     )
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 @patch("docker.from_env")
 @patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.cli.serve.select_teamspace")
@@ -195,7 +197,7 @@ def test_cloud_deployment(
     assert f"✅ Image pushed to {repo}" in captured.out
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="LitServe requires python3.9 or above")
+@pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 @patch("docker.from_env")
 @patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.cli.serve.select_teamspace")

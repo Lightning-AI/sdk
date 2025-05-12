@@ -15,7 +15,7 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  container  Delete the docker container CONTAINER.
+  container  Delete the docker container NAME.
   job        Delete a job.
   mmt        Delete a multi-machine job.
   studio     Delete an existing studio.
@@ -29,9 +29,9 @@ def test_container_help():
 
     assert (
         result_text
-        == """Usage: lightning delete container [OPTIONS] CONTAINER
+        == """Usage: lightning delete container [OPTIONS] NAME
 
-  Delete the docker container CONTAINER.
+  Delete the docker container NAME.
 
 Options:
   --teamspace TEXT  The teamspace to delete the container from. Should be

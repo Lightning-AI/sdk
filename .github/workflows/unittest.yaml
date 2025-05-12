@@ -43,10 +43,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.BYOC_SANDBOX_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Tests
+    - name: Tests w/o CLI
+      working-directory: tests
       run: |
         # NOTE: do not include coverage report here, see: https://github.com/nedbat/coveragepy/issues/1003
-        coverage run -m pytest tests/ -vv -s
+        coverage run -m pytest . -vv -s --ignore=cli
       env: # the following values are just dummies since the actual http calls are mocked out
         LIGHTNING_USER_ID: ${{ secrets.LIGHTNING_USER_ID }}
         LIGHTNING_API_KEY: ${{ secrets.LIGHTNING_API_KEY }}
