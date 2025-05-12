@@ -1,60 +1,63 @@
 from typing import Dict, Generator, List, Optional, Set, Tuple, Union
 
-from lightning_sdk.api import UserApi
 from lightning_sdk.api.llm_api import LLMApi
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi import V1Assistant
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
 from lightning_sdk.teamspace import Teamspace
-from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace, _resolve_user
+from lightning_sdk.utils.resolve import _get_authed_user, _resolve_org
 
 
 class LLM:
     def __init__(
         self,
         name: str,
-        user: Union[str, "User", None] = None,
-        org: Union[str, "Organization", None] = None,
-        teamspace: Union[str, "Teamspace", None] = None,
+        teamspace: Optional[str] = None,
     ) -> None:
-        self._auth = Auth()
-        self._user = None
+        """Initializes the LLM instance with teamspace information, which is required for billing purposes.
 
-        try:
-            self._auth.authenticate()
-            self._user = User(name=UserApi()._get_user_by_id(self._auth.user_id).username)
-        except ConnectionError as e:
-            raise e
+        Teamspace information is resolved through the following methods:
+        1. `.lightning/credentials.json` - Attempts to retrieve the teamspace from the local credentials file.
+        2. Environment Variables - Checks for `LIGHTNING_*` environment variables.
+        3. User Authentication - Redirects the user to the login page if teamspace information is not found.
 
-        try:
-            self._user = _resolve_user(self._user or user)
-        except ValueError:
-            self._user = None
+        Args:
+            name (str): The name of the model or resource.
+            teamspace (Optional[str]): The specified teamspace for billing. If not provided, it will be resolved
+                                       through the above methods.
+
+        Raises:
+            ValueError: If teamspace information cannot be resolved.
+        """
+        menu = _TeamspacesMenu()
+        user = _get_authed_user()
+        possible_teamspaces = menu._get_possible_teamspaces(user)
+        if teamspace is None:
+            if len(possible_teamspaces) == 1:
+                teamspace_name = next(iter(possible_teamspaces.values()))["name"]
+                self._teamspace = Teamspace(name=teamspace_name, org=None, user=user)
+            else:
+                self._teamspace = menu._resolve_teamspace(teamspace)
+        else:
+            self._teamspace = Teamspace(**menu._get_teamspace_from_name(teamspace, possible_teamspaces))
+
+        if self._teamspace is None:
+            raise ValueError("Teamspace is required for billing but could not be resolved. ")
+
+        self._user = user
 
         self._model_provider, self._model_name = self._parse_model_name(name)
         try:
             # check if it is a org model
-            self._org = _resolve_org(self._model_provider or org)
+            self._org = _resolve_org(self._model_provider)
         except ApiException:
-            self._org = None
-
-        if self._org and self._user:
-            try:
-                self._teamspace = _resolve_teamspace(teamspace=teamspace, org=self._org, user=None)
-            except Exception:
-                self._teamspace = None
-
-            if not self._teamspace:
-                try:
-                    self._teamspace = _resolve_teamspace(teamspace=teamspace, org=None, user=self._user)
-                except Exception:
-                    self._teamspace = None
-        else:
-            self._teamspace = _resolve_teamspace(teamspace=teamspace, org=self._org, user=self._user)
+            if isinstance(self._teamspace.owner, Organization):
+                self._org = self._teamspace.owner
+            else:
+                self._org = None
 
         self._llm_api = LLMApi()
         self._public_models = self._build_model_lookup(self._get_public_models())
@@ -73,7 +76,7 @@ class LLM:
 
     @property
     def owner(self) -> Optional[Owner]:
-        return self._org or self._user
+        return self._teamspace.owner
 
     def _parse_model_name(self, name: str) -> Tuple[str, str]:
         parts = name.split("/")
@@ -159,7 +162,7 @@ class LLM:
             max_completion_tokens=max_completion_tokens,
             assistant_id=self._model.id,
             conversation_id=conversation_id,
-            billing_project_id=self._teamspace.id if self._teamspace else None,
+            billing_project_id=self._teamspace.id,
             name=conversation,
             stream=stream,
         )
