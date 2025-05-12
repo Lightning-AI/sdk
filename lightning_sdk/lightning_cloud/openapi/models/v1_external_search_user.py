@@ -47,6 +47,7 @@ class V1ExternalSearchUser(object):
         'organization': 'str',
         'picture_url': 'str',
         'role': 'str',
+        'sb': 'bool',
         'username': 'str'
     }
 
@@ -57,10 +58,11 @@ class V1ExternalSearchUser(object):
         'organization': 'organization',
         'picture_url': 'pictureUrl',
         'role': 'role',
+        'sb': 'sb',
         'username': 'username'
     }
 
-    def __init__(self, first_name: 'str' =None, id: 'str' =None, last_name: 'str' =None, organization: 'str' =None, picture_url: 'str' =None, role: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, first_name: 'str' =None, id: 'str' =None, last_name: 'str' =None, organization: 'str' =None, picture_url: 'str' =None, role: 'str' =None, sb: 'bool' =None, username: 'str' =None):  # noqa: E501
         """V1ExternalSearchUser - a model defined in Swagger"""  # noqa: E501
         self._first_name = None
         self._id = None
@@ -68,6 +70,7 @@ class V1ExternalSearchUser(object):
         self._organization = None
         self._picture_url = None
         self._role = None
+        self._sb = None
         self._username = None
         self.discriminator = None
         if first_name is not None:
@@ -82,6 +85,8 @@ class V1ExternalSearchUser(object):
             self.picture_url = picture_url
         if role is not None:
             self.role = role
+        if sb is not None:
+            self.sb = sb
         if username is not None:
             self.username = username
 
@@ -210,6 +215,27 @@ class V1ExternalSearchUser(object):
         """
 
         self._role = role
+
+    @property
+    def sb(self) -> 'bool':
+        """Gets the sb of this V1ExternalSearchUser.  # noqa: E501
+
+
+        :return: The sb of this V1ExternalSearchUser.  # noqa: E501
+        :rtype: bool
+        """
+        return self._sb
+
+    @sb.setter
+    def sb(self, sb: 'bool'):
+        """Sets the sb of this V1ExternalSearchUser.
+
+
+        :param sb: The sb of this V1ExternalSearchUser.  # noqa: E501
+        :type: bool
+        """
+
+        self._sb = sb
 
     @property
     def username(self) -> 'str':
