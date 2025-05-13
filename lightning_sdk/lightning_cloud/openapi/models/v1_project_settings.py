@@ -48,6 +48,7 @@ class V1ProjectSettings(object):
         'allow_lambda_saas': 'bool',
         'allow_lightning_saas': 'bool',
         'allow_vultr_saas': 'bool',
+        'auto_switch_machine': 'bool',
         'default_machine_image_version': 'str',
         'default_machine_type': 'str',
         'preferred_cluster': 'str',
@@ -65,6 +66,7 @@ class V1ProjectSettings(object):
         'allow_lambda_saas': 'allowLambdaSaas',
         'allow_lightning_saas': 'allowLightningSaas',
         'allow_vultr_saas': 'allowVultrSaas',
+        'auto_switch_machine': 'autoSwitchMachine',
         'default_machine_image_version': 'defaultMachineImageVersion',
         'default_machine_type': 'defaultMachineType',
         'preferred_cluster': 'preferredCluster',
@@ -74,7 +76,7 @@ class V1ProjectSettings(object):
         'start_studio_on_spot_instance': 'startStudioOnSpotInstance'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_switch_machine: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
         """V1ProjectSettings - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_dgx_saas = None
@@ -83,6 +85,7 @@ class V1ProjectSettings(object):
         self._allow_lambda_saas = None
         self._allow_lightning_saas = None
         self._allow_vultr_saas = None
+        self._auto_switch_machine = None
         self._default_machine_image_version = None
         self._default_machine_type = None
         self._preferred_cluster = None
@@ -105,6 +108,8 @@ class V1ProjectSettings(object):
             self.allow_lightning_saas = allow_lightning_saas
         if allow_vultr_saas is not None:
             self.allow_vultr_saas = allow_vultr_saas
+        if auto_switch_machine is not None:
+            self.auto_switch_machine = auto_switch_machine
         if default_machine_image_version is not None:
             self.default_machine_image_version = default_machine_image_version
         if default_machine_type is not None:
@@ -268,6 +273,27 @@ class V1ProjectSettings(object):
         """
 
         self._allow_vultr_saas = allow_vultr_saas
+
+    @property
+    def auto_switch_machine(self) -> 'bool':
+        """Gets the auto_switch_machine of this V1ProjectSettings.  # noqa: E501
+
+
+        :return: The auto_switch_machine of this V1ProjectSettings.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_switch_machine
+
+    @auto_switch_machine.setter
+    def auto_switch_machine(self, auto_switch_machine: 'bool'):
+        """Sets the auto_switch_machine of this V1ProjectSettings.
+
+
+        :param auto_switch_machine: The auto_switch_machine of this V1ProjectSettings.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_switch_machine = auto_switch_machine
 
     @property
     def default_machine_image_version(self) -> 'str':
