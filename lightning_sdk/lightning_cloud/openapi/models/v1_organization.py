@@ -57,6 +57,7 @@ class V1Organization(object):
         'auto_invite_by_domain': 'bool',
         'auto_join_domain_validations': 'dict(str, V1AutoJoinDomainValidation)',
         'auto_join_domains': 'list[str]',
+        'auto_switch_machine': 'bool',
         'created_at': 'datetime',
         'default_machine_image_version': 'str',
         'default_machine_type': 'str',
@@ -98,6 +99,7 @@ class V1Organization(object):
         'auto_invite_by_domain': 'autoInviteByDomain',
         'auto_join_domain_validations': 'autoJoinDomainValidations',
         'auto_join_domains': 'autoJoinDomains',
+        'auto_switch_machine': 'autoSwitchMachine',
         'created_at': 'createdAt',
         'default_machine_image_version': 'defaultMachineImageVersion',
         'default_machine_type': 'defaultMachineType',
@@ -122,7 +124,7 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_aws_saas = None
@@ -140,6 +142,7 @@ class V1Organization(object):
         self._auto_invite_by_domain = None
         self._auto_join_domain_validations = None
         self._auto_join_domains = None
+        self._auto_switch_machine = None
         self._created_at = None
         self._default_machine_image_version = None
         self._default_machine_type = None
@@ -195,6 +198,8 @@ class V1Organization(object):
             self.auto_join_domain_validations = auto_join_domain_validations
         if auto_join_domains is not None:
             self.auto_join_domains = auto_join_domains
+        if auto_switch_machine is not None:
+            self.auto_switch_machine = auto_switch_machine
         if created_at is not None:
             self.created_at = created_at
         if default_machine_image_version is not None:
@@ -577,6 +582,27 @@ class V1Organization(object):
         """
 
         self._auto_join_domains = auto_join_domains
+
+    @property
+    def auto_switch_machine(self) -> 'bool':
+        """Gets the auto_switch_machine of this V1Organization.  # noqa: E501
+
+
+        :return: The auto_switch_machine of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_switch_machine
+
+    @auto_switch_machine.setter
+    def auto_switch_machine(self, auto_switch_machine: 'bool'):
+        """Sets the auto_switch_machine of this V1Organization.
+
+
+        :param auto_switch_machine: The auto_switch_machine of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_switch_machine = auto_switch_machine
 
     @property
     def created_at(self) -> 'datetime':

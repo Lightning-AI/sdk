@@ -53,6 +53,7 @@ class V1Endpoint(object):
         'ports': 'list[str]',
         'prewarm': 'V1EndpointPrewarm',
         'project_id': 'str',
+        'proxy': 'bool',
         'updated_at': 'datetime',
         'urls': 'list[str]',
         'user_id': 'str'
@@ -71,12 +72,13 @@ class V1Endpoint(object):
         'ports': 'ports',
         'prewarm': 'prewarm',
         'project_id': 'projectId',
+        'proxy': 'proxy',
         'updated_at': 'updatedAt',
         'urls': 'urls',
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, id: 'str' =None, job: 'V1UpstreamJob' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, id: 'str' =None, job: 'V1UpstreamJob' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, proxy: 'bool' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """V1Endpoint - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
@@ -90,6 +92,7 @@ class V1Endpoint(object):
         self._ports = None
         self._prewarm = None
         self._project_id = None
+        self._proxy = None
         self._updated_at = None
         self._urls = None
         self._user_id = None
@@ -118,6 +121,8 @@ class V1Endpoint(object):
             self.prewarm = prewarm
         if project_id is not None:
             self.project_id = project_id
+        if proxy is not None:
+            self.proxy = proxy
         if updated_at is not None:
             self.updated_at = updated_at
         if urls is not None:
@@ -376,6 +381,27 @@ class V1Endpoint(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def proxy(self) -> 'bool':
+        """Gets the proxy of this V1Endpoint.  # noqa: E501
+
+
+        :return: The proxy of this V1Endpoint.  # noqa: E501
+        :rtype: bool
+        """
+        return self._proxy
+
+    @proxy.setter
+    def proxy(self, proxy: 'bool'):
+        """Sets the proxy of this V1Endpoint.
+
+
+        :param proxy: The proxy of this V1Endpoint.  # noqa: E501
+        :type: bool
+        """
+
+        self._proxy = proxy
 
     @property
     def updated_at(self) -> 'datetime':

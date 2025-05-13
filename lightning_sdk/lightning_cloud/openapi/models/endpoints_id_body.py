@@ -51,6 +51,7 @@ class EndpointsIdBody(object):
         'openai': 'V1UpstreamOpenAI',
         'ports': 'list[str]',
         'prewarm': 'V1EndpointPrewarm',
+        'proxy': 'bool',
         'updated_at': 'datetime',
         'urls': 'list[str]',
         'user_id': 'str'
@@ -67,12 +68,13 @@ class EndpointsIdBody(object):
         'openai': 'openai',
         'ports': 'ports',
         'prewarm': 'prewarm',
+        'proxy': 'proxy',
         'updated_at': 'updatedAt',
         'urls': 'urls',
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, job: 'V1UpstreamJob' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, job: 'V1UpstreamJob' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, proxy: 'bool' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """EndpointsIdBody - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
@@ -84,6 +86,7 @@ class EndpointsIdBody(object):
         self._openai = None
         self._ports = None
         self._prewarm = None
+        self._proxy = None
         self._updated_at = None
         self._urls = None
         self._user_id = None
@@ -108,6 +111,8 @@ class EndpointsIdBody(object):
             self.ports = ports
         if prewarm is not None:
             self.prewarm = prewarm
+        if proxy is not None:
+            self.proxy = proxy
         if updated_at is not None:
             self.updated_at = updated_at
         if urls is not None:
@@ -324,6 +329,27 @@ class EndpointsIdBody(object):
         """
 
         self._prewarm = prewarm
+
+    @property
+    def proxy(self) -> 'bool':
+        """Gets the proxy of this EndpointsIdBody.  # noqa: E501
+
+
+        :return: The proxy of this EndpointsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._proxy
+
+    @proxy.setter
+    def proxy(self, proxy: 'bool'):
+        """Sets the proxy of this EndpointsIdBody.
+
+
+        :param proxy: The proxy of this EndpointsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._proxy = proxy
 
     @property
     def updated_at(self) -> 'datetime':

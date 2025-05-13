@@ -56,6 +56,7 @@ class OrgsIdBody(object):
         'allow_vultr_saas': 'bool',
         'auto_invite_by_domain': 'bool',
         'auto_join_domains': 'list[str]',
+        'auto_switch_machine': 'bool',
         'default_machine_type': 'str',
         'description': 'str',
         'display_name': 'str',
@@ -88,6 +89,7 @@ class OrgsIdBody(object):
         'allow_vultr_saas': 'allowVultrSaas',
         'auto_invite_by_domain': 'autoInviteByDomain',
         'auto_join_domains': 'autoJoinDomains',
+        'auto_switch_machine': 'autoSwitchMachine',
         'default_machine_type': 'defaultMachineType',
         'description': 'description',
         'display_name': 'displayName',
@@ -104,7 +106,7 @@ class OrgsIdBody(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_aws_saas = None
@@ -121,6 +123,7 @@ class OrgsIdBody(object):
         self._allow_vultr_saas = None
         self._auto_invite_by_domain = None
         self._auto_join_domains = None
+        self._auto_switch_machine = None
         self._default_machine_type = None
         self._description = None
         self._display_name = None
@@ -166,6 +169,8 @@ class OrgsIdBody(object):
             self.auto_invite_by_domain = auto_invite_by_domain
         if auto_join_domains is not None:
             self.auto_join_domains = auto_join_domains
+        if auto_switch_machine is not None:
+            self.auto_switch_machine = auto_switch_machine
         if default_machine_type is not None:
             self.default_machine_type = default_machine_type
         if description is not None:
@@ -509,6 +514,27 @@ class OrgsIdBody(object):
         """
 
         self._auto_join_domains = auto_join_domains
+
+    @property
+    def auto_switch_machine(self) -> 'bool':
+        """Gets the auto_switch_machine of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The auto_switch_machine of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_switch_machine
+
+    @auto_switch_machine.setter
+    def auto_switch_machine(self, auto_switch_machine: 'bool'):
+        """Sets the auto_switch_machine of this OrgsIdBody.
+
+
+        :param auto_switch_machine: The auto_switch_machine of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_switch_machine = auto_switch_machine
 
     @property
     def default_machine_type(self) -> 'str':

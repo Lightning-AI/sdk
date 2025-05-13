@@ -2821,6 +2821,133 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def jobs_service_list_deployment_routing_telemetry(self, project_id: 'str', id: 'str', **kwargs) -> 'V1GeListDeploymentRoutingTelemetryResponse':  # noqa: E501
+        """Deployment Telemetry aggregated to display global monitor metrics  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_list_deployment_routing_telemetry(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str last_request_id:
+        :param datetime start:
+        :param datetime end:
+        :param list[str] path:
+        :param list[int] status_code:
+        :param int limit:
+        :return: V1GeListDeploymentRoutingTelemetryResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_list_deployment_routing_telemetry_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_list_deployment_routing_telemetry_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_list_deployment_routing_telemetry_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1GeListDeploymentRoutingTelemetryResponse':  # noqa: E501
+        """Deployment Telemetry aggregated to display global monitor metrics  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_list_deployment_routing_telemetry_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str last_request_id:
+        :param datetime start:
+        :param datetime end:
+        :param list[str] path:
+        :param list[int] status_code:
+        :param int limit:
+        :return: V1GeListDeploymentRoutingTelemetryResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id', 'last_request_id', 'start', 'end', 'path', 'status_code', 'limit']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_list_deployment_routing_telemetry" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_list_deployment_routing_telemetry`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `jobs_service_list_deployment_routing_telemetry`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'last_request_id' in params:
+            query_params.append(('lastRequestId', params['last_request_id']))  # noqa: E501
+        if 'start' in params:
+            query_params.append(('start', params['start']))  # noqa: E501
+        if 'end' in params:
+            query_params.append(('end', params['end']))  # noqa: E501
+        if 'path' in params:
+            query_params.append(('path', params['path']))  # noqa: E501
+            collection_formats['path'] = 'multi'  # noqa: E501
+        if 'status_code' in params:
+            query_params.append(('statusCode', params['status_code']))  # noqa: E501
+            collection_formats['statusCode'] = 'multi'  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/deployments/{id}/list-routing-telemetry', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GeListDeploymentRoutingTelemetryResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def jobs_service_list_deployments(self, project_id: 'str', **kwargs) -> 'V1ListDeploymentsResponse':  # noqa: E501
         """jobs_service_list_deployments  # noqa: E501
 

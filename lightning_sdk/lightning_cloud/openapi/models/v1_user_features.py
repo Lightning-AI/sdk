@@ -41,12 +41,12 @@ class V1UserFeatures(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'admin_dashboard': 'bool',
         'affiliate_links': 'bool',
         'agents_v2': 'bool',
         'ai_hub_monetization': 'bool',
         'auto_fast_load': 'bool',
         'auto_join_orgs': 'bool',
+        'auto_top_up': 'bool',
         'b2c_experience': 'bool',
         'byoc_litcr': 'bool',
         'cap_add': 'list[str]',
@@ -61,11 +61,11 @@ class V1UserFeatures(object):
         'concurrent_gpu_limit': 'bool',
         'cost_attribution_settings': 'bool',
         'custom_app_domain': 'bool',
-        'custom_instance_types': 'bool',
         'datasets': 'bool',
         'default_one_cluster': 'bool',
         'deployment_alerts': 'bool',
         'deployment_persistent_disk': 'bool',
+        'deployment_requests_tab': 'bool',
         'dgx_cloud': 'bool',
         'docs_agent': 'bool',
         'drive_v2': 'bool',
@@ -74,7 +74,6 @@ class V1UserFeatures(object):
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'filestore': 'bool',
-        'gcp_local_disk_binding': 'bool',
         'gcs_folders': 'bool',
         'inactive_notify_delete': 'bool',
         'instant_capacity_reservation': 'bool',
@@ -90,9 +89,11 @@ class V1UserFeatures(object):
         'multicloud_saas': 'bool',
         'multiple_studio_versions': 'bool',
         'nebius': 'bool',
+        'neocloud_studios': 'bool',
         'nerf_fs_nonpaying': 'bool',
         'org_level_member_permissions': 'bool',
         'org_usage_limits': 'bool',
+        'paygo_free_storage_limit_check': 'bool',
         'pipelines': 'bool',
         'plugin_distributed': 'bool',
         'plugin_inference': 'bool',
@@ -130,12 +131,12 @@ class V1UserFeatures(object):
     }
 
     attribute_map = {
-        'admin_dashboard': 'adminDashboard',
         'affiliate_links': 'affiliateLinks',
         'agents_v2': 'agentsV2',
         'ai_hub_monetization': 'aiHubMonetization',
         'auto_fast_load': 'autoFastLoad',
         'auto_join_orgs': 'autoJoinOrgs',
+        'auto_top_up': 'autoTopUp',
         'b2c_experience': 'b2cExperience',
         'byoc_litcr': 'byocLitcr',
         'cap_add': 'capAdd',
@@ -150,11 +151,11 @@ class V1UserFeatures(object):
         'concurrent_gpu_limit': 'concurrentGpuLimit',
         'cost_attribution_settings': 'costAttributionSettings',
         'custom_app_domain': 'customAppDomain',
-        'custom_instance_types': 'customInstanceTypes',
         'datasets': 'datasets',
         'default_one_cluster': 'defaultOneCluster',
         'deployment_alerts': 'deploymentAlerts',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
+        'deployment_requests_tab': 'deploymentRequestsTab',
         'dgx_cloud': 'dgxCloud',
         'docs_agent': 'docsAgent',
         'drive_v2': 'driveV2',
@@ -163,7 +164,6 @@ class V1UserFeatures(object):
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filestore': 'filestore',
-        'gcp_local_disk_binding': 'gcpLocalDiskBinding',
         'gcs_folders': 'gcsFolders',
         'inactive_notify_delete': 'inactiveNotifyDelete',
         'instant_capacity_reservation': 'instantCapacityReservation',
@@ -179,9 +179,11 @@ class V1UserFeatures(object):
         'multicloud_saas': 'multicloudSaas',
         'multiple_studio_versions': 'multipleStudioVersions',
         'nebius': 'nebius',
+        'neocloud_studios': 'neocloudStudios',
         'nerf_fs_nonpaying': 'nerfFsNonpaying',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'org_usage_limits': 'orgUsageLimits',
+        'paygo_free_storage_limit_check': 'paygoFreeStorageLimitCheck',
         'pipelines': 'pipelines',
         'plugin_distributed': 'pluginDistributed',
         'plugin_inference': 'pluginInference',
@@ -218,14 +220,14 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, admin_dashboard: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, custom_instance_types: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcp_local_disk_binding: 'bool' =None, gcs_folders: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stable_vscode_server: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, b2c_experience: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_requests_tab: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcs_folders: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, neocloud_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stable_vscode_server: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_on_stop: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
-        self._admin_dashboard = None
         self._affiliate_links = None
         self._agents_v2 = None
         self._ai_hub_monetization = None
         self._auto_fast_load = None
         self._auto_join_orgs = None
+        self._auto_top_up = None
         self._b2c_experience = None
         self._byoc_litcr = None
         self._cap_add = None
@@ -240,11 +242,11 @@ class V1UserFeatures(object):
         self._concurrent_gpu_limit = None
         self._cost_attribution_settings = None
         self._custom_app_domain = None
-        self._custom_instance_types = None
         self._datasets = None
         self._default_one_cluster = None
         self._deployment_alerts = None
         self._deployment_persistent_disk = None
+        self._deployment_requests_tab = None
         self._dgx_cloud = None
         self._docs_agent = None
         self._drive_v2 = None
@@ -253,7 +255,6 @@ class V1UserFeatures(object):
         self._fair_share = None
         self._featured_studios_admin = None
         self._filestore = None
-        self._gcp_local_disk_binding = None
         self._gcs_folders = None
         self._inactive_notify_delete = None
         self._instant_capacity_reservation = None
@@ -269,9 +270,11 @@ class V1UserFeatures(object):
         self._multicloud_saas = None
         self._multiple_studio_versions = None
         self._nebius = None
+        self._neocloud_studios = None
         self._nerf_fs_nonpaying = None
         self._org_level_member_permissions = None
         self._org_usage_limits = None
+        self._paygo_free_storage_limit_check = None
         self._pipelines = None
         self._plugin_distributed = None
         self._plugin_inference = None
@@ -307,8 +310,6 @@ class V1UserFeatures(object):
         self._vultr = None
         self._weka = None
         self.discriminator = None
-        if admin_dashboard is not None:
-            self.admin_dashboard = admin_dashboard
         if affiliate_links is not None:
             self.affiliate_links = affiliate_links
         if agents_v2 is not None:
@@ -319,6 +320,8 @@ class V1UserFeatures(object):
             self.auto_fast_load = auto_fast_load
         if auto_join_orgs is not None:
             self.auto_join_orgs = auto_join_orgs
+        if auto_top_up is not None:
+            self.auto_top_up = auto_top_up
         if b2c_experience is not None:
             self.b2c_experience = b2c_experience
         if byoc_litcr is not None:
@@ -347,8 +350,6 @@ class V1UserFeatures(object):
             self.cost_attribution_settings = cost_attribution_settings
         if custom_app_domain is not None:
             self.custom_app_domain = custom_app_domain
-        if custom_instance_types is not None:
-            self.custom_instance_types = custom_instance_types
         if datasets is not None:
             self.datasets = datasets
         if default_one_cluster is not None:
@@ -357,6 +358,8 @@ class V1UserFeatures(object):
             self.deployment_alerts = deployment_alerts
         if deployment_persistent_disk is not None:
             self.deployment_persistent_disk = deployment_persistent_disk
+        if deployment_requests_tab is not None:
+            self.deployment_requests_tab = deployment_requests_tab
         if dgx_cloud is not None:
             self.dgx_cloud = dgx_cloud
         if docs_agent is not None:
@@ -373,8 +376,6 @@ class V1UserFeatures(object):
             self.featured_studios_admin = featured_studios_admin
         if filestore is not None:
             self.filestore = filestore
-        if gcp_local_disk_binding is not None:
-            self.gcp_local_disk_binding = gcp_local_disk_binding
         if gcs_folders is not None:
             self.gcs_folders = gcs_folders
         if inactive_notify_delete is not None:
@@ -405,12 +406,16 @@ class V1UserFeatures(object):
             self.multiple_studio_versions = multiple_studio_versions
         if nebius is not None:
             self.nebius = nebius
+        if neocloud_studios is not None:
+            self.neocloud_studios = neocloud_studios
         if nerf_fs_nonpaying is not None:
             self.nerf_fs_nonpaying = nerf_fs_nonpaying
         if org_level_member_permissions is not None:
             self.org_level_member_permissions = org_level_member_permissions
         if org_usage_limits is not None:
             self.org_usage_limits = org_usage_limits
+        if paygo_free_storage_limit_check is not None:
+            self.paygo_free_storage_limit_check = paygo_free_storage_limit_check
         if pipelines is not None:
             self.pipelines = pipelines
         if plugin_distributed is not None:
@@ -479,27 +484,6 @@ class V1UserFeatures(object):
             self.vultr = vultr
         if weka is not None:
             self.weka = weka
-
-    @property
-    def admin_dashboard(self) -> 'bool':
-        """Gets the admin_dashboard of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The admin_dashboard of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._admin_dashboard
-
-    @admin_dashboard.setter
-    def admin_dashboard(self, admin_dashboard: 'bool'):
-        """Sets the admin_dashboard of this V1UserFeatures.
-
-
-        :param admin_dashboard: The admin_dashboard of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._admin_dashboard = admin_dashboard
 
     @property
     def affiliate_links(self) -> 'bool':
@@ -605,6 +589,27 @@ class V1UserFeatures(object):
         """
 
         self._auto_join_orgs = auto_join_orgs
+
+    @property
+    def auto_top_up(self) -> 'bool':
+        """Gets the auto_top_up of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The auto_top_up of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_top_up
+
+    @auto_top_up.setter
+    def auto_top_up(self, auto_top_up: 'bool'):
+        """Sets the auto_top_up of this V1UserFeatures.
+
+
+        :param auto_top_up: The auto_top_up of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_top_up = auto_top_up
 
     @property
     def b2c_experience(self) -> 'bool':
@@ -901,27 +906,6 @@ class V1UserFeatures(object):
         self._custom_app_domain = custom_app_domain
 
     @property
-    def custom_instance_types(self) -> 'bool':
-        """Gets the custom_instance_types of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The custom_instance_types of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._custom_instance_types
-
-    @custom_instance_types.setter
-    def custom_instance_types(self, custom_instance_types: 'bool'):
-        """Sets the custom_instance_types of this V1UserFeatures.
-
-
-        :param custom_instance_types: The custom_instance_types of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._custom_instance_types = custom_instance_types
-
-    @property
     def datasets(self) -> 'bool':
         """Gets the datasets of this V1UserFeatures.  # noqa: E501
 
@@ -1004,6 +988,27 @@ class V1UserFeatures(object):
         """
 
         self._deployment_persistent_disk = deployment_persistent_disk
+
+    @property
+    def deployment_requests_tab(self) -> 'bool':
+        """Gets the deployment_requests_tab of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The deployment_requests_tab of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._deployment_requests_tab
+
+    @deployment_requests_tab.setter
+    def deployment_requests_tab(self, deployment_requests_tab: 'bool'):
+        """Sets the deployment_requests_tab of this V1UserFeatures.
+
+
+        :param deployment_requests_tab: The deployment_requests_tab of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._deployment_requests_tab = deployment_requests_tab
 
     @property
     def dgx_cloud(self) -> 'bool':
@@ -1172,27 +1177,6 @@ class V1UserFeatures(object):
         """
 
         self._filestore = filestore
-
-    @property
-    def gcp_local_disk_binding(self) -> 'bool':
-        """Gets the gcp_local_disk_binding of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The gcp_local_disk_binding of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._gcp_local_disk_binding
-
-    @gcp_local_disk_binding.setter
-    def gcp_local_disk_binding(self, gcp_local_disk_binding: 'bool'):
-        """Sets the gcp_local_disk_binding of this V1UserFeatures.
-
-
-        :param gcp_local_disk_binding: The gcp_local_disk_binding of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._gcp_local_disk_binding = gcp_local_disk_binding
 
     @property
     def gcs_folders(self) -> 'bool':
@@ -1510,6 +1494,27 @@ class V1UserFeatures(object):
         self._nebius = nebius
 
     @property
+    def neocloud_studios(self) -> 'bool':
+        """Gets the neocloud_studios of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The neocloud_studios of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._neocloud_studios
+
+    @neocloud_studios.setter
+    def neocloud_studios(self, neocloud_studios: 'bool'):
+        """Sets the neocloud_studios of this V1UserFeatures.
+
+
+        :param neocloud_studios: The neocloud_studios of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._neocloud_studios = neocloud_studios
+
+    @property
     def nerf_fs_nonpaying(self) -> 'bool':
         """Gets the nerf_fs_nonpaying of this V1UserFeatures.  # noqa: E501
 
@@ -1571,6 +1576,27 @@ class V1UserFeatures(object):
         """
 
         self._org_usage_limits = org_usage_limits
+
+    @property
+    def paygo_free_storage_limit_check(self) -> 'bool':
+        """Gets the paygo_free_storage_limit_check of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The paygo_free_storage_limit_check of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._paygo_free_storage_limit_check
+
+    @paygo_free_storage_limit_check.setter
+    def paygo_free_storage_limit_check(self, paygo_free_storage_limit_check: 'bool'):
+        """Sets the paygo_free_storage_limit_check of this V1UserFeatures.
+
+
+        :param paygo_free_storage_limit_check: The paygo_free_storage_limit_check of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._paygo_free_storage_limit_check = paygo_free_storage_limit_check
 
     @property
     def pipelines(self) -> 'bool':
