@@ -55,12 +55,12 @@ def deploy() -> None:
     """Deploy a LitServe model.
 
     Example:
-        lightning deploy server.py  # deploy to the cloud
+        lightning deploy server.py --cloud # deploy to the cloud
 
     Example:
-        lightning deploy server.py --local  # run locally
+        lightning deploy server.py  # run locally
 
-    You can deploy the API to the cloud by running `lightning deploy server.py`.
+    You can deploy the API to the cloud by running `lightning deploy server.py --cloud`.
     This will build a docker container for the server.py script and deploy it to the Lightning AI platform.
     """
 
@@ -75,11 +75,11 @@ def deploy() -> None:
     help="Generate a client for the model",
 )
 @click.option(
-    "--local",
+    "--cloud",
     is_flag=True,
     default=False,
     flag_value=True,
-    help="Run the model locally",
+    help="Run the model on cloud",
 )
 @click.option("--name", default=None, help="Name of the deployed API (e.g., 'classification-api', 'Llama-api')")
 @click.option(
@@ -147,7 +147,7 @@ def deploy() -> None:
 def api(
     script_path: str,
     easy: bool,
-    local: bool,
+    cloud: bool,
     name: Optional[str],
     non_interactive: bool,
     machine: Optional[str],
@@ -167,7 +167,7 @@ def api(
     return api_impl(
         script_path=script_path,
         easy=easy,
-        local=local,
+        cloud=cloud,
         name=name,
         non_interactive=non_interactive,
         machine=machine,
@@ -188,7 +188,7 @@ def api(
 def api_impl(
     script_path: Union[str, Path],
     easy: bool = False,
-    local: bool = False,
+    cloud: bool = False,
     name: Optional[str] = None,
     tag: Optional[str] = None,
     non_interactive: bool = False,
@@ -219,7 +219,7 @@ def api_impl(
         timestr = datetime.now().strftime("%b-%d-%H_%M")
         name = f"litserve-{timestr}".lower()
 
-    if local:
+    if not cloud:
         try:
             subprocess.run(
                 ["python", str(script_path)],
@@ -615,7 +615,7 @@ def _handle_cloud(
 ) -> None:
     if not is_connected():
         console.print("❌ Internet connection required to deploy to the cloud.", style="red")
-        console.print("To run locally instead, use: `lightning serve [SCRIPT | server.py] --local`")
+        console.print("To run locally instead, use: `lightning serve [SCRIPT | server.py]`")
         return
 
     deployment_name = os.path.basename(repository)

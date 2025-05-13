@@ -37,13 +37,13 @@ def test_serve_help():
 
   Deploy a LitServe model.
 
-  Example:     lightning deploy server.py  # deploy to the cloud
+  Example:     lightning deploy server.py --cloud # deploy to the cloud
 
-  Example:     lightning deploy server.py --local  # run locally
+  Example:     lightning deploy server.py  # run locally
 
-  You can deploy the API to the cloud by running `lightning deploy server.py`.
-  This will build a docker container for the server.py script and deploy it to
-  the Lightning AI platform.
+  You can deploy the API to the cloud by running `lightning deploy server.py
+  --cloud`. This will build a docker container for the server.py script and
+  deploy it to the Lightning AI platform.
 
 Options:
   --help  Show this message and exit.
@@ -66,7 +66,7 @@ def test_api_help():
 
 Options:
   --easy                          Generate a client for the model
-  --local                         Run the model locally
+  --cloud                         Run the model on cloud
   --name TEXT                     Name of the deployed API (e.g.,
                                   'classification-api', 'Llama-api')
   --non-interactive, --non_interactive
@@ -131,7 +131,7 @@ if __name__ == "__main__":
 @pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 @patch("subprocess.run")
 def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
-    serve_api(temp_script, True, local=True)
+    serve_api(temp_script, True, cloud=False)
 
     assert (mock_cwd / "client.py").exists(), "Client file not generated"
     mock_subprocess.assert_called_once_with(
@@ -179,7 +179,7 @@ def test_cloud_deployment(
     # Test with specific repository tag
     repo = "test-repo/model"
     tag = "latest"
-    serve_api(temp_script, local=False, name=repo, tag=tag)
+    serve_api(temp_script, cloud=True, name=repo, tag=tag)
 
     mock_select_teamspace.assert_called_once()
     mock_authenticate.assert_called_once()
@@ -228,7 +228,7 @@ def test_cloud_deployment_non_interactive(
 
     repo = "test-repo/model"
     tag = "latest"
-    serve_api(temp_script, local=False, name=repo, tag=tag, non_interactive=True)
+    serve_api(temp_script, cloud=True, name=repo, tag=tag, non_interactive=True)
 
     mock_authenticate.assert_called_once_with(_AuthMode.DEPLOY, shall_confirm=False)
     mock_poll_verified_status.asssert_called_once()
@@ -244,7 +244,7 @@ def test_cloud_deployment_non_interactive(
 @patch("lightning_sdk.cli.serve.datetime")
 @patch("lightning_sdk.cli.serve.subprocess.run")
 def test_args_with_repository(mock_subprocess, mock_dt, temp_script):
-    serve_api(temp_script, name="test", local=True)
+    serve_api(temp_script, name="test", cloud=False)
     mock_dt.now.assert_not_called()
     mock_subprocess.assert_called_once()
 
@@ -252,7 +252,7 @@ def test_args_with_repository(mock_subprocess, mock_dt, temp_script):
 @patch("lightning_sdk.cli.serve.datetime")
 @patch("lightning_sdk.cli.serve.subprocess.run")
 def test_args_without_repository(mock_subprocess, mock_dt, temp_script):
-    serve_api(temp_script, local=True)
+    serve_api(temp_script, cloud=False)
     mock_dt.now.assert_called()
     mock_subprocess.assert_called_once()
 
@@ -272,9 +272,7 @@ def test_handle_cloud_no_internet(mock_is_connected):
     mock_is_connected.return_value = False
     console = MagicMock()
     _handle_cloud(None, console, teamspace="test", machine=MagicMock())
-    assert (
-        console.print.call_args[0][0] == "To run locally instead, use: `lightning serve [SCRIPT | server.py] --local`"
-    )
+    assert console.print.call_args[0][0] == "To run locally instead, use: `lightning serve [SCRIPT | server.py]`"
 
 
 @patch("lightning_sdk.cli.serve.LitContainerApi")
