@@ -2,6 +2,8 @@ import importlib
 import json
 import os
 import socket
+import threading
+from functools import partial
 from pathlib import Path
 from typing import Optional
 
@@ -91,6 +93,11 @@ class LightningLicense:
             )
         return self._is_valid
 
+    @property
+    def has_required_details(self) -> bool:
+        """Check if the license key and product name are set."""
+        return bool(self.license_key and self.product_name and self.product_type)
+
     @staticmethod
     def _find_package_license_key(package_name: str) -> Optional[str]:
         """Find the license key in the package root as .license_key or in user home as .lightning/licenses.json.
@@ -164,5 +171,66 @@ class LightningLicense:
     def product_version(self) -> Optional[str]:
         """Get the product version."""
         if not self._product_version and self.product_type == "package":
-            self._product_version = self._determine_package_version(self.product_name)
+            self._product_version = self._determine_package_version(self.product_name.replace("-", "_"))
         return self._product_version
+
+
+def check_license(
+    name: str,
+    license_key: Optional[str] = None,
+    product_version: Optional[str] = None,
+    product_type: str = "package",
+    stream_messages: callable = print,
+) -> None:
+    """Run the license check and stream outputs.
+
+    Args:
+        name: The name of the product.
+        license_key: The license key to check.
+        product_version: The version of the product.
+        product_type: The type of the product.
+        stream_messages: A callable to stream messages.
+    """
+    lit_license = LightningLicense(
+        name=name,
+        license_key=license_key,
+        product_version=product_version,
+        product_type=product_type,
+        stream_messages=stream_messages,
+    )
+    if lit_license.is_valid is False:
+        stream_messages(
+            "License key is not valid.\n"
+            f" Key: {lit_license.license_key}\n"
+            " Please make sure you have a valid license key."
+        )
+
+
+def check_license_in_background(
+    name: str,
+    license_key: Optional[str] = None,
+    product_version: Optional[str] = None,
+    product_type: str = "package",
+    stream_messages: callable = print,
+) -> threading.Thread:
+    """Run the license check in a background thread and stream outputs.
+
+    Args:
+        name: The name of the product.
+        license_key: The license key to check.
+        product_version: The version of the product.
+        product_type: The type of the product.
+        stream_messages: A callable to stream messages.
+    """
+    check_license_local = partial(
+        check_license,
+        name=name,
+        license_key=license_key,
+        product_version=product_version,
+        product_type=product_type,
+        stream_messages=stream_messages,
+    )
+
+    thread = threading.Thread(target=check_license_local, daemon=True)
+    thread.start()
+    return thread

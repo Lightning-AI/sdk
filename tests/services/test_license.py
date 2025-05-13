@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-from lightning_sdk.services.license import LightningLicense
+from lightning_sdk.services.license import LightningLicense, check_license
 
 
 @patch("lightning_sdk.services.license.importlib.import_module")
@@ -85,3 +85,47 @@ def test_validate_license_with_all_attributes(mock_api_cls):
         mock_api.valid_license.assert_called_once_with(
             license_key="test_key", product_name="test_product", product_version="1.2.3", product_type="package"
         )
+
+
+def test_check_license_valid(monkeypatch):
+    mock_license_instance = MagicMock(is_valid=True)
+    mock_license = MagicMock(return_value=mock_license_instance)
+    monkeypatch.setattr("lightning_sdk.services.license.LightningLicense", mock_license)
+    mock_stream_messages = MagicMock()
+
+    check_license("test_product", "valid_key", stream_messages=mock_stream_messages)
+
+    mock_license.assert_called_once_with(
+        name="test_product",
+        license_key="valid_key",
+        product_version=None,
+        product_type="package",
+        stream_messages=mock_stream_messages,
+    )
+    mock_stream_messages.assert_not_called()
+
+
+def test_check_license_invalid(monkeypatch):
+    mock_license_instance = MagicMock(is_valid=False)
+    mock_license = MagicMock(return_value=mock_license_instance)
+    monkeypatch.setattr("lightning_sdk.services.license.LightningLicense", mock_license)
+    mock_stream_messages = MagicMock()
+
+    check_license("test_product", "any_key", stream_messages=mock_stream_messages)
+
+    mock_license.assert_called_once_with(
+        name="test_product",
+        license_key="any_key",
+        product_version=None,
+        product_type="package",
+        stream_messages=mock_stream_messages,
+    )
+    mock_stream_messages.assert_called_once()
+    assert "License key is not valid." in mock_stream_messages.call_args[0][0]
+
+
+def test_check_license_in_background_demo():
+    from lightning_sdk.services.license import check_license_in_background
+
+    thread = check_license_in_background("abc")
+    thread.join(timeout=2)
