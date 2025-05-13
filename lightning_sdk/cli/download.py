@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from pathlib import Path
@@ -6,6 +7,7 @@ from typing import Optional
 import click
 from rich.console import Console
 
+from lightning_sdk.api.license_api import LicenseApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.exceptions import StudioCliError
 from lightning_sdk.cli.studios_menu import _StudiosMenu
@@ -208,3 +210,26 @@ def _resolve_studio(studio: Optional[str]) -> Studio:
 
     with skip_studio_init():
         return Studio(**selected_studio)
+
+
+@download.command(name="licenses")
+def licenses() -> None:
+    """Download licenses for all products/packages.
+
+    Example:
+      lightning download licenses
+
+    """
+    user = _get_authed_user()
+    api = LicenseApi()
+    licenses = api.list_user_licenses(user.id)
+
+    user_home = Path.home()
+    lit_dir = user_home / ".lightning"
+    lit_dir.mkdir(parents=True, exist_ok=True)
+    licenses_file = lit_dir / "licenses.json"
+
+    licenses_short = {ll.product_name: ll.license_key for ll in licenses if ll.is_valid}
+    with licenses_file.open("w") as fp:
+        json.dump(licenses_short, fp, indent=4)
+    Console().print(f"Licenses downloaded to {licenses_file}", style="green")

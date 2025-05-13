@@ -34,3 +34,15 @@ class LicenseApi:
         if code != 200:
             raise ConnectionError(f"Failed to validate license key: {code} - {response}")
         return response.valid
+
+    def list_user_licenses(self, user_id: str) -> list:
+        """List all licenses for a user.
+
+        Args:
+            user_id: The ID of the user.
+
+        Returns:
+            A list of licenses for the user.
+        """
+        response = self._client.product_license_service_list_user_licenses(user_id=user_id)
+        return response.licenses

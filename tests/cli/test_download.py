@@ -18,6 +18,7 @@ Commands:
   container  Download a docker container from a teamspace.
   file       Download a file from a Studio.
   folder     Download a folder from a Studio.
+  licenses   Download licenses for all products/packages.
   model      Download a model from a teamspace.
 """
     )
@@ -135,5 +136,23 @@ Options:
                                   The directory where the Model should be
                                   downloaded.
   --help                          Show this message and exit.
+"""
+    )
+
+
+def test_licenses_help():
+    result = subprocess.run("lightning download licenses --help", shell=True, capture_output=True, text=True)
+    result_text = result.stdout + result.stderr
+
+    assert (
+        result_text
+        == """Usage: lightning download licenses [OPTIONS]
+
+  Download licenses for all products/packages.
+
+  Example:   lightning download licenses
+
+Options:
+  --help  Show this message and exit.
 """
     )
