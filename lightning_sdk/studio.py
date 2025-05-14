@@ -8,6 +8,7 @@ from tqdm.auto import tqdm
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.constants import _LIGHTNING_DEBUG
+from lightning_sdk.lightning_cloud.openapi import V1CloudSpaceSourceType
 from lightning_sdk.machine import Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
@@ -56,6 +57,7 @@ class Studio:
         cloud_account: Optional[str] = None,
         create_ok: bool = True,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
+        source: Optional[V1CloudSpaceSourceType] = None,
     ) -> None:
         self._studio_api = StudioApi()
 
@@ -76,7 +78,7 @@ class Studio:
             except ValueError as e:
                 if create_ok:
                     self._studio = self._studio_api.create_studio(
-                        name, self._teamspace.id, cloud_account=self._cloud_account
+                        name, self._teamspace.id, cloud_account=self._cloud_account, source=source
                     )
                 else:
                     raise ValueError(f"Studio {name} does not exist.") from e

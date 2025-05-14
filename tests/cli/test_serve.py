@@ -23,6 +23,7 @@ from lightning_sdk.cli.serve import (
     select_teamspace,
 )
 from lightning_sdk.cli.serve import api_impl as serve_api
+from lightning_sdk.lightning_cloud.openapi import V1CloudSpaceSourceType
 
 _LLITSERVE_AVAILABLE = package_available("litserve")
 
@@ -630,7 +631,9 @@ def test_handle_devbox(
     )
     mock_select_teamspace.assert_called_once_with("test-teamspace", "test-org", "test-user")
     mock_authenticate.assert_called_once_with(_AuthMode.DEVBOX, shall_confirm=True)
-    mock_studio.assert_called_once()
+    mock_studio.assert_called_with(
+        name="test", teamspace=mock_select_teamspace.return_value, source=V1CloudSpaceSourceType.LITSERVE
+    )
     mock_thread.assert_called_once_with(target=mock_studio.return_value.start, args=(Machine.CPU, False))
     mock_thread.return_value.start.assert_called()
     mock_webbrowser.open.assert_called_once_with(mock_get_studio_url.return_value)

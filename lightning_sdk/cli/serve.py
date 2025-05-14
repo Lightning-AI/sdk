@@ -30,7 +30,7 @@ from lightning_sdk.cli.upload import (
 )
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
-from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
+from lightning_sdk.lightning_cloud.openapi import V1CloudSpace, V1CloudSpaceSourceType
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.serve import _LitServeDeployer
 from lightning_sdk.studio import Studio
@@ -534,7 +534,7 @@ def _handle_devbox(
         resolved_teamspace = onboarding.select_teamspace(teamspace, org, user)
     else:
         resolved_teamspace = select_teamspace(teamspace, org, user)
-    studio = Studio(name=name, teamspace=resolved_teamspace)
+    studio = Studio(name=name, teamspace=resolved_teamspace, source=V1CloudSpaceSourceType.LITSERVE)
     studio.install_plugin("custom-port")
     lit_devbox = _LitServeDevbox()
 

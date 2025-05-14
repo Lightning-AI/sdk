@@ -35,6 +35,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
     V1CloudSpaceSeedFile,
+    V1CloudSpaceSourceType,
     V1CloudSpaceState,
     V1EndpointType,
     V1GetCloudSpaceInstanceStatusResponse,
@@ -110,6 +111,7 @@ class StudioApi:
         name: str,
         teamspace_id: str,
         cloud_account: Optional[str] = None,
+        source: Optional[V1CloudSpaceSourceType] = None,
     ) -> V1CloudSpace:
         """Create a Studio with a given name in a given Teamspace on a possibly given cloud_account."""
         body = ProjectIdCloudspacesBody(
@@ -117,6 +119,7 @@ class StudioApi:
             name=name,
             display_name=name,
             seed_files=[V1CloudSpaceSeedFile(path="main.py", contents="print('Hello, Lightning World!')\n")],
+            source=source,
         )
         studio = self._client.cloud_space_service_create_cloud_space(body, teamspace_id)
 
