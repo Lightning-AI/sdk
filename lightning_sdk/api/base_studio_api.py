@@ -16,7 +16,7 @@ class BaseStudioApi:
         """Retrieve the base studio by its ID."""
         try:
             return self._client.cloud_space_environment_template_service_get_cloud_space_environment_template(
-                base_studio_id, org_id
+                base_studio_id, org_id=org_id
             )
         except ValueError as e:
             raise ValueError(f"Base studio {base_studio_id} does not exist") from e
