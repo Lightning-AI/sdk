@@ -55,6 +55,7 @@ class ProjectIdCloudspacesBody(object):
         'requested_run_duration_seconds': 'str',
         'same_compute_on_resume': 'bool',
         'seed_files': 'list[V1CloudSpaceSeedFile]',
+        'source': 'V1CloudSpaceSourceType',
         'spot': 'bool'
     }
 
@@ -73,10 +74,11 @@ class ProjectIdCloudspacesBody(object):
         'requested_run_duration_seconds': 'requestedRunDurationSeconds',
         'same_compute_on_resume': 'sameComputeOnResume',
         'seed_files': 'seedFiles',
+        'source': 'source',
         'spot': 'spot'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, source: 'V1CloudSpaceSourceType' =None, spot: 'bool' =None):  # noqa: E501
         """ProjectIdCloudspacesBody - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cloud_space_environment_template_id = None
@@ -92,6 +94,7 @@ class ProjectIdCloudspacesBody(object):
         self._requested_run_duration_seconds = None
         self._same_compute_on_resume = None
         self._seed_files = None
+        self._source = None
         self._spot = None
         self.discriminator = None
         if can_download_source_code is not None:
@@ -122,6 +125,8 @@ class ProjectIdCloudspacesBody(object):
             self.same_compute_on_resume = same_compute_on_resume
         if seed_files is not None:
             self.seed_files = seed_files
+        if source is not None:
+            self.source = source
         if spot is not None:
             self.spot = spot
 
@@ -418,6 +423,27 @@ class ProjectIdCloudspacesBody(object):
         """
 
         self._seed_files = seed_files
+
+    @property
+    def source(self) -> 'V1CloudSpaceSourceType':
+        """Gets the source of this ProjectIdCloudspacesBody.  # noqa: E501
+
+
+        :return: The source of this ProjectIdCloudspacesBody.  # noqa: E501
+        :rtype: V1CloudSpaceSourceType
+        """
+        return self._source
+
+    @source.setter
+    def source(self, source: 'V1CloudSpaceSourceType'):
+        """Sets the source of this ProjectIdCloudspacesBody.
+
+
+        :param source: The source of this ProjectIdCloudspacesBody.  # noqa: E501
+        :type: V1CloudSpaceSourceType
+        """
+
+        self._source = source
 
     @property
     def spot(self) -> 'bool':
