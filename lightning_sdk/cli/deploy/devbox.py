@@ -16,7 +16,7 @@ from lightning_sdk.cli.deploy._auth import _AuthMode, _Onboarding, authenticate,
 from lightning_sdk.cli.upload import (
     _dump_current_upload_state,
     _resolve_previous_upload_state,
-    _start_parallel_upload,
+    _single_file_upload,
 )
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpaceSourceType
 from lightning_sdk.studio import Studio
@@ -38,7 +38,11 @@ class _LitServeDevbox:
 
     def upload_folder(self, studio: Studio, folder: str, upload_state: Dict[str, str]) -> None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            futures = _start_parallel_upload(executor, studio, upload_state)
+            futures = []
+            for k, v in upload_state.items():
+                futures.append(
+                    executor.submit(_single_file_upload, studio=studio, local_path=k, remote_path=v, progress_bar=False)
+                )
             total_files = len(upload_state)
 
             with Progress(
@@ -54,16 +58,15 @@ class _LitServeDevbox:
                     _dump_current_upload_state(studio, ".", upload_state)
                     progress.update(upload_task, advance=1)
 
+    def _detect_port(self, script_path: Path) -> int:
+        with open(script_path) as f:
+            content = f.read()
 
-def _detect_port(script_path: Path) -> int:
-    with open(script_path) as f:
-        content = f.read()
-
-    # Try to match server.run first and then any variable name and then default port=8000
-    match = re.search(r"server\.run\s*\([^)]*port\s*=\s*(\d+)", content) or re.search(
-        r"\w+\.run\s*\([^)]*port\s*=\s*(\d+)", content
-    )
-    return int(match.group(1)) if match else 8000
+        # Try to match server.run first and then any variable name and then default port=8000
+        match = re.search(r"server\.run\s*\([^)]*port\s*=\s*(\d+)", content) or re.search(
+            r"\w+\.run\s*\([^)]*port\s*=\s*(\d+)", content
+        )
+        return int(match.group(1)) if match else 8000
 
 
 def _handle_devbox(
@@ -81,6 +84,7 @@ def _handle_devbox(
         console.print("❌ Error: Only Python files (.py) are supported for development servers", style="red")
         return
 
+    from_onboarding = False
     authenticate(_AuthMode.DEVBOX, shall_confirm=not non_interactive)
     user_status = poll_verified_status()
     if not user_status["verified"]:
@@ -90,6 +94,7 @@ def _handle_devbox(
         console.print("onboarding user")
         onboarding = _Onboarding(console)
         resolved_teamspace = onboarding.select_teamspace(teamspace, org, user)
+        from_onboarding = True
     else:
         resolved_teamspace = select_teamspace(teamspace, org, user)
     studio = Studio(name=name, teamspace=resolved_teamspace, source=V1CloudSpaceSourceType.LITSERVE)
@@ -109,7 +114,7 @@ def _handle_devbox(
     if non_interactive:
         console.print(f"🌐 [bold]Opening Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
         browser_opened = webbrowser.open(studio_url)
-    else:
+    elif not from_onboarding:
         if Confirm.ask("Would you like to open your Studio in the browser?", default=True):
             console.print(f"🌐 [bold]Opening Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
             browser_opened = webbrowser.open(studio_url)
@@ -139,7 +144,7 @@ def _handle_devbox(
         console.print(f"\n🔄 [bold]To fix:[/bold] Edit your code in Studio and run with: [u]python {script_path}[/u]")
         return
 
-    port = _detect_port(pathlib_path)
+    port = lit_devbox._detect_port(pathlib_path)
     console.print("🔌 Configuring server port...")
     port_url = studio.run_plugin("custom-port", port=port)
 

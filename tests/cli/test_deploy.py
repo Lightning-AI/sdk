@@ -19,7 +19,7 @@ from lightning_sdk.cli.deploy._auth import (
     poll_verified_status,
     select_teamspace,
 )
-from lightning_sdk.cli.deploy.devbox import _detect_port, _handle_devbox
+from lightning_sdk.cli.deploy.devbox import _handle_devbox, _LitServeDevbox
 from lightning_sdk.cli.deploy.serve import _handle_cloud, is_connected
 from lightning_sdk.cli.deploy.serve import api_impl as serve_api
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpaceSourceType
@@ -586,9 +586,10 @@ def test_detect_port(tmpdir):
     test_file2.write("server.run(port=8002)")
     test_file3 = tmpdir.join("test3.py")
     test_file3.write("server.run()")
-    assert _detect_port(Path(test_file1)) == 8001
-    assert _detect_port(Path(test_file2)) == 8002
-    assert _detect_port(Path(test_file3)) == 8000
+    lit_devbox = _LitServeDevbox()
+    assert lit_devbox._detect_port(Path(test_file1)) == 8001
+    assert lit_devbox._detect_port(Path(test_file2)) == 8002
+    assert lit_devbox._detect_port(Path(test_file3)) == 8000
 
 
 @patch("lightning_sdk.cli.deploy.devbox.select_teamspace")
@@ -598,13 +599,11 @@ def test_detect_port(tmpdir):
 @patch("lightning_sdk.cli.deploy.devbox._LitServeDevbox")
 @patch("lightning_sdk.cli.deploy.devbox.Confirm.ask")
 @patch("lightning_sdk.cli.deploy.devbox.Thread")
-@patch("lightning_sdk.cli.deploy.devbox._detect_port")
 @patch("lightning_sdk.cli.deploy.devbox.authenticate")
 @patch("lightning_sdk.cli.deploy.devbox.poll_verified_status")
 def test_handle_devbox(
     mock_poll_verified_status,
     mock_authenticate,
-    mock_detect_port,
     mock_thread,
     mock_ask,
     mock_lit_serve_devbox,
@@ -614,7 +613,7 @@ def test_handle_devbox(
     mock_select_teamspace,
 ):
     mock_ask.return_value = True
-    mock_detect_port.return_value = 8000
+    mock_lit_serve_devbox.return_value._detect_port.return_value = 8000
     mock_lit_serve_devbox.return_value.upload_folder = MagicMock()
     mock_get_studio_url.return_value = "https://lightning.ai"
     mock_console = MagicMock()
