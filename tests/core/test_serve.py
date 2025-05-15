@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from lightning_sdk import Machine
-from lightning_sdk.cli.serve import _LitServeDeployer
+from lightning_sdk.cli.deploy.serve import _LitServeDeployer
 
 
 @pytest.fixture()

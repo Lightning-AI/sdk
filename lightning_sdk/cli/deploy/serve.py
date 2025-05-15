@@ -1,44 +1,31 @@
-import concurrent.futures
 import os
-import re
 import socket
 import subprocess
-import time
 import webbrowser
 from datetime import datetime
-from enum import Enum
 from pathlib import Path
 from threading import Thread
-from typing import Any, Dict, List, Optional, TypedDict, Union
-from urllib.parse import urlencode
+from typing import Optional, Union
 
 import click
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
-from rich.syntax import Syntax
 
 from lightning_sdk import Machine, Teamspace
-from lightning_sdk.api import UserApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_registry_url
-from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
-from lightning_sdk.cli.upload import (
-    _dump_current_upload_state,
-    _resolve_previous_upload_state,
-    _start_parallel_upload,
+from lightning_sdk.cli.deploy._auth import (
+    _AuthMode,
+    _Onboarding,
+    authenticate,
+    poll_verified_status,
+    select_teamspace,
 )
-from lightning_sdk.lightning_cloud import env
-from lightning_sdk.lightning_cloud.login import Auth, AuthServer
-from lightning_sdk.lightning_cloud.openapi import V1CloudSpace, V1CloudSpaceSourceType
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.cli.deploy.devbox import _handle_devbox
 from lightning_sdk.serve import _LitServeDeployer
-from lightning_sdk.studio import Studio
-from lightning_sdk.utils.resolve import _get_authed_user, _get_studio_url, _resolve_teamspace
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
-_POLL_TIMEOUT = 600
-LITSERVE_CODE = os.environ.get("LITSERVE_CODE", "j39bzk903h")
 
 
 class _ServeGroup(click.Group):
@@ -256,175 +243,6 @@ def api_impl(
     )
 
 
-class _AuthMode(Enum):
-    DEVBOX = "dev"
-    DEPLOY = "deploy"
-
-
-class _AuthServer(AuthServer):
-    def __init__(self, mode: _AuthMode, *args: Any, **kwargs: Any) -> None:
-        self._mode = mode
-        super().__init__(*args, **kwargs)
-
-    def get_auth_url(self, port: int) -> str:
-        redirect_uri = f"http://localhost:{port}/login-complete"
-        params = urlencode({"redirectTo": redirect_uri, "mode": self._mode.value, "okbhrt": LITSERVE_CODE})
-        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
-
-
-class _Auth(Auth):
-    def __init__(self, mode: _AuthMode, shall_confirm: bool = False) -> None:
-        super().__init__()
-        self._mode = mode
-        self._shall_confirm = shall_confirm
-
-    def _run_server(self) -> None:
-        if self._shall_confirm:
-            proceed = Confirm.ask(
-                "Authenticating with Lightning AI. This will open a browser window. Continue?", default=True
-            )
-            if not proceed:
-                raise RuntimeError(
-                    "Login cancelled. Please login to Lightning AI to deploy the API."
-                    " Run `lightning login` to login."
-                ) from None
-        print("Opening browser for authentication...")
-        print("Please come back to the terminal after logging in.")
-        time.sleep(3)
-        _AuthServer(self._mode).login_with_browser(self)
-
-
-def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
-    auth = _Auth(mode, shall_confirm)
-    auth.authenticate()
-
-
-def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
-    if teamspace is None:
-        user = _get_authed_user()
-        menu = _TeamspacesMenu()
-        possible_teamspaces = menu._get_possible_teamspaces(user)
-        if len(possible_teamspaces) == 1:
-            name = next(iter(possible_teamspaces.values()))["name"]
-            return Teamspace(name=name, org=org, user=user)
-
-        return menu._resolve_teamspace(teamspace)
-
-    return _resolve_teamspace(teamspace=teamspace, org=org, user=user)
-
-
-class _UserStatus(TypedDict):
-    verified: bool
-    onboarded: bool
-
-
-def poll_verified_status(timeout: int = _POLL_TIMEOUT) -> _UserStatus:
-    """Polls the verified status of the user until it is True or a timeout occurs."""
-    user_api = UserApi()
-    user = _get_authed_user()
-    start_time = datetime.now()
-    result = {"onboarded": False, "verified": False}
-    while True:
-        user_resp = user_api.get_user(name=user.name)
-        result["onboarded"] = user_resp.status.completed_project_onboarding
-        result["verified"] = user_resp.status.verified
-        if user_resp.status.verified:
-            return result
-        if (datetime.now() - start_time).total_seconds() > timeout:
-            break
-        time.sleep(5)
-    return result
-
-
-class _OnboardingStatus(Enum):
-    NOT_VERIFIED = "not_verified"
-    ONBOARDING = "onboarding"
-    ONBOARDED = "onboarded"
-
-
-class _Onboarding:
-    def __init__(self, console: Console) -> None:
-        self.console = console
-        self.user = _get_authed_user()
-        self.user_api = UserApi()
-        self.client = LightningClient(max_tries=7)
-
-    @property
-    def verified(self) -> bool:
-        return self.user_api.get_user(name=self.user.name).status.verified
-
-    @property
-    def is_onboarded(self) -> bool:
-        return self.user_api.get_user(name=self.user.name).status.completed_project_onboarding
-
-    @property
-    def can_join_org(self) -> bool:
-        return len(self.client.organizations_service_list_joinable_organizations().joinable_organizations) > 0
-
-    @property
-    def status(self) -> _OnboardingStatus:
-        if not self.verified:
-            return _OnboardingStatus.NOT_VERIFIED
-        if self.is_onboarded:
-            return _OnboardingStatus.ONBOARDED
-        return _OnboardingStatus.ONBOARDING
-
-    def _wait_user_onboarding(self, timeout: int = _POLL_TIMEOUT) -> None:
-        """Wait for user onboarding if they can join the teamspace otherwise move to select a teamspace."""
-        status = self.status
-        if status == _OnboardingStatus.ONBOARDED:
-            return
-
-        self.console.print("Waiting for account setup. Visit lightning.ai")
-        start_time = datetime.now()
-        while self.status != _OnboardingStatus.ONBOARDED:
-            time.sleep(5)
-            if self.is_onboarded:
-                return
-            if (datetime.now() - start_time).total_seconds() > timeout:
-                break
-
-        raise RuntimeError("Timed out waiting for onboarding status")
-
-    def get_cloudspace_id(self, teamspace: Teamspace) -> Optional[str]:
-        cloudspaces: List[V1CloudSpace] = self.client.cloud_space_service_list_cloud_spaces(teamspace.id).cloudspaces
-        cloudspaces = sorted(cloudspaces, key=lambda cloudspace: cloudspace.created_at, reverse=True)
-        if len(cloudspaces) == 0:
-            raise RuntimeError("Error creating deployment! Finish account setup at lightning.ai first.")
-        # get the first cloudspace
-        cloudspace = cloudspaces[0]
-        if "scratch-studio" in cloudspace.name or "scratch-studio" in cloudspace.display_name:
-            return cloudspace.id
-        return None
-
-    def select_teamspace(self, teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
-        """Select a teamspace while onboarding.
-
-        If user is being onboarded and can't join any org, the teamspace it will be resolved to the default
-         personal teamspace.
-        If user is being onboarded and can join an org then it will select default teamspace from the org.
-        """
-        if self.is_onboarded:
-            return select_teamspace(teamspace, org, user)
-
-        # Run only when user hasn't completed onboarding yet.
-        menu = _TeamspacesMenu()
-        self._wait_user_onboarding()
-        # Onboarding has been completed - user already selected organization if they could
-        possible_teamspaces = menu._get_possible_teamspaces(self.user)
-        if len(possible_teamspaces) == 1:
-            # User didn't select any org
-            value = next(iter(possible_teamspaces.values()))
-            return Teamspace(name=value["name"], org=value["org"], user=value["user"])
-
-        for _, value in possible_teamspaces.items():
-            # User select an org
-            # Onboarding teamspace will be the default teamspace in the selected org
-            if value["org"]:
-                return Teamspace(name=value["name"], org=value["org"], user=value["user"])
-        raise RuntimeError("Unable to select teamspace. Visit lightning.ai")
-
-
 def is_connected(host: str = "8.8.8.8", port: int = 53, timeout: int = 10) -> bool:
     try:
         socket.setdefaulttimeout(timeout)
@@ -464,135 +282,6 @@ def _upload_container(
             return False
     console.print(f"\n✅ Image pushed to {repository}:{tag}")
     return True
-
-
-# TODO: Move the rest of the devbox logic here
-class _LitServeDevbox:
-    """Build LitServe API in a Studio."""
-
-    def resolve_previous_upload(self, studio: Studio, folder: str) -> Dict[str, str]:
-        remote_path = "."
-        pairs = {}
-        for root, _, files in os.walk(folder):
-            rel_root = os.path.relpath(root, folder)
-            for f in files:
-                pairs[os.path.join(root, f)] = os.path.join(remote_path, rel_root, f)
-        return _resolve_previous_upload_state(studio, remote_path, pairs)
-
-    def upload_folder(self, studio: Studio, folder: str, upload_state: Dict[str, str]) -> None:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            futures = _start_parallel_upload(executor, studio, upload_state)
-            total_files = len(upload_state)
-
-            with Progress(
-                SpinnerColumn(),
-                TextColumn("[progress.description]{task.description}"),
-                TimeElapsedColumn(),
-                console=Console(),
-                transient=True,
-            ) as progress:
-                upload_task = progress.add_task(f"[cyan]Uploading {total_files} files to Studio...", total=total_files)
-                for f in concurrent.futures.as_completed(futures):
-                    upload_state.pop(f.result())
-                    _dump_current_upload_state(studio, ".", upload_state)
-                    progress.update(upload_task, advance=1)
-
-
-def _detect_port(script_path: Path) -> int:
-    with open(script_path) as f:
-        content = f.read()
-
-    # Try to match server.run first and then any variable name and then default port=8000
-    match = re.search(r"server\.run\s*\([^)]*port\s*=\s*(\d+)", content) or re.search(
-        r"\w+\.run\s*\([^)]*port\s*=\s*(\d+)", content
-    )
-    return int(match.group(1)) if match else 8000
-
-
-def _handle_devbox(
-    name: str,
-    script_path: Path,
-    console: Console,
-    non_interactive: bool = False,
-    machine: Machine = Machine.CPU,
-    interruptible: bool = False,
-    teamspace: Optional[str] = None,
-    org: Optional[str] = None,
-    user: Optional[str] = None,
-) -> None:
-    if script_path.suffix != ".py":
-        console.print("❌ Error: Only Python files (.py) are supported for development servers", style="red")
-        return
-
-    authenticate(_AuthMode.DEVBOX, shall_confirm=not non_interactive)
-    user_status = poll_verified_status()
-    if not user_status["verified"]:
-        console.print("❌ Verify phone number to continue. Visit lightning.ai.", style="red")
-        return
-    if not user_status["onboarded"]:
-        console.print("onboarding user")
-        onboarding = _Onboarding(console)
-        resolved_teamspace = onboarding.select_teamspace(teamspace, org, user)
-    else:
-        resolved_teamspace = select_teamspace(teamspace, org, user)
-    studio = Studio(name=name, teamspace=resolved_teamspace, source=V1CloudSpaceSourceType.LITSERVE)
-    studio.install_plugin("custom-port")
-    lit_devbox = _LitServeDevbox()
-
-    studio_url = _get_studio_url(studio, turn_on=True)
-    pathlib_path = Path(script_path).resolve()
-    browser_opened = False
-    studio_path = f"{studio.owner.name}/{studio.teamspace.name}/{studio.name}"
-
-    console.print("\n=== Lightning Studio Setup ===")
-    console.print(f"🔧 [bold]Setting up Studio:[/bold] {studio_path}")
-    console.print(f"📁 [bold]Local project:[/bold] {pathlib_path.parent}")
-
-    upload_state = lit_devbox.resolve_previous_upload(studio, str(pathlib_path.parent))
-    if non_interactive:
-        console.print(f"🌐 [bold]Opening Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
-        browser_opened = webbrowser.open(studio_url)
-    else:
-        if Confirm.ask("Would you like to open your Studio in the browser?", default=True):
-            console.print(f"🌐 [bold]Opening Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
-            browser_opened = webbrowser.open(studio_url)
-
-    if not browser_opened:
-        console.print(f"🔗 [bold]Access Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
-
-    # Start the Studio in the background and return immediately using threading
-    console.print("\n⚡ Initializing Studio in the background...")
-    studio_thread = Thread(target=studio.start, args=(machine, interruptible))
-    studio_thread.start()
-
-    console.print("📤 Syncing project files to Studio...")
-    lit_devbox.upload_folder(studio, pathlib_path.parent, upload_state)
-
-    # Wait for the Studio to start
-    console.print("⚡ Waiting for Studio to start...")
-    studio_thread.join()
-
-    try:
-        console.print("🚀 Starting server...")
-        studio.run_and_detach(f"python {script_path}", timeout=10)
-    except Exception as e:
-        console.print("❌ Error while starting server", style="red")
-        syntax = Syntax(f"{e}", "bash", theme="monokai")
-        console.print(syntax)
-        console.print(f"\n🔄 [bold]To fix:[/bold] Edit your code in Studio and run with: [u]python {script_path}[/u]")
-        return
-
-    port = _detect_port(pathlib_path)
-    console.print("🔌 Configuring server port...")
-    port_url = studio.run_plugin("custom-port", port=port)
-
-    # Add completion message with next steps
-    console.print("\n✅ Studio ready!")
-    console.print("\n📋 [bold]Next steps:[/bold]")
-    console.print("  [bold]1.[/bold] Server code will be available in the Studio")
-    console.print("  [bold]2.[/bold] The Studio is now running with the specified configuration")
-    console.print("  [bold]3.[/bold] Modify and run your server directly in the Studio")
-    console.print(f"  [bold]4.[/bold] Your server will be accessible on [link={port_url}]{port_url}[/link]")
 
 
 def _handle_cloud(
