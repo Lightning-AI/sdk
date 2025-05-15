@@ -1,3 +1,4 @@
+import warnings
 from typing import Dict, Generator, List, Optional, Set, Tuple, Union
 
 from lightning_sdk.api.llm_api import LLMApi
@@ -50,18 +51,32 @@ class LLM:
         self._user = user
 
         self._model_provider, self._model_name = self._parse_model_name(name)
+
+        self._llm_api = LLMApi()
+
         try:
             # check if it is a org model
             self._org = _resolve_org(self._model_provider)
+
+            try:
+                # check if user has access to the org
+                self._org_models = self._build_model_lookup(self._get_org_models())
+            except ApiException:
+                warnings.warn(
+                    f"User is not authenticated to access the model in organization: '{self._model_provider}'.\n"
+                    " Proceeding with appropriate org models, user models, or public models.",
+                    UserWarning,
+                )
+                self._model_provider = None
+                raise
         except ApiException:
             if isinstance(self._teamspace.owner, Organization):
                 self._org = self._teamspace.owner
             else:
                 self._org = None
+            self._org_models = self._build_model_lookup(self._get_org_models())
 
-        self._llm_api = LLMApi()
         self._public_models = self._build_model_lookup(self._get_public_models())
-        self._org_models = self._build_model_lookup(self._get_org_models())
         self._user_models = self._build_model_lookup(self._get_user_models())
         self._model = self._get_model()
         self._conversations = {}

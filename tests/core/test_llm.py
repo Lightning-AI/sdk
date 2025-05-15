@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.llm import LLM
 
 
@@ -106,6 +107,25 @@ def test_org_model(monkeypatch, mock_auth, mock_org_model):
         match=re.escape("Model 'dummy-model' not found. \nAvailable models: \nOrg (org-name) Models: org-model1"),
     ):
         LLM("org-123/dummy-model")
+
+
+def test_invalid_org(monkeypatch, mock_auth, mock_public_model, mock_org_model):
+    # there could be a case where the model provider is an org that exists, however, the user does not have access to it
+    # then it would make sense to search for whatever they have availabe in public, teamspace and org
+
+    mock_api = MagicMock()
+    mock_get_org = MagicMock()
+    mock_get_org.side_effect = [ApiException("Unauthorized user"), mock_org_model]
+    monkeypatch.setattr(LLM, "_get_org_models", mock_get_org)
+    mock_api.get_public_models.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    warning_message = (
+        "User is not authenticated to access the model in organization: 'wrong-org'.\n"
+        " Proceeding with appropriate org models, user models, or public models."
+    )
+    with pytest.warns(UserWarning, match=re.escape(warning_message)):
+        LLM("wrong-org/gpt-4o")
 
 
 def test_user_model(monkeypatch, mock_user_model):
