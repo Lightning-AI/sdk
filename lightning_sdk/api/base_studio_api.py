@@ -21,6 +21,12 @@ class BaseStudioApi:
         except ValueError as e:
             raise ValueError(f"Base studio {base_studio_id} does not exist") from e
 
+    def get_all_base_studios(self, org_id: str) -> List[V1CloudSpaceEnvironmentTemplate]:
+        """Retrieve all base studios for a given organization."""
+        return self._client.cloud_space_environment_template_service_list_cloud_space_environment_templates(
+            org_id=org_id
+        )
+
     def update_base_studio(
         self,
         base_studio_id: str,

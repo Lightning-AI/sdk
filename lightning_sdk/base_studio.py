@@ -45,7 +45,12 @@ class BaseStudio:
 
         self._base_studio_api = BaseStudioApi()
 
-        self._base_studio = self._base_studio_api.get_base_studio(name, self._org.id)
+        if name is not None:
+            base_studio = self._base_studio_api.get_base_studio(name, self._org.id)
+
+            if base_studio is None:
+                raise ValueError(f"Base studio with name {name} does not exist in organization {self._org.name}")
+            self._base_studio = base_studio
 
     def update(
         self,
@@ -68,3 +73,11 @@ class BaseStudio:
             setup_script_text=setup_script_text,
             disabled=disabled,
         )
+
+    def list(self) -> List[V1CloudSpaceEnvironmentTemplate]:
+        """List all base studios in the organization.
+
+        Returns:
+            List[V1CloudSpaceEnvironmentTemplate]: A list of base studio templates.
+        """
+        return self._base_studio_api.get_all_base_studios(self._org.id)
