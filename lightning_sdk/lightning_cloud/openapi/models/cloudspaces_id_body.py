@@ -41,6 +41,7 @@ class CloudspacesIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'auto_switch_machine': 'bool',
         'code_url': 'str',
         'data_connection_mounts': 'list[V1DataConnectionMount]',
         'description': 'str',
@@ -69,6 +70,7 @@ class CloudspacesIdBody(object):
     }
 
     attribute_map = {
+        'auto_switch_machine': 'autoSwitchMachine',
         'code_url': 'codeUrl',
         'data_connection_mounts': 'dataConnectionMounts',
         'description': 'description',
@@ -96,8 +98,9 @@ class CloudspacesIdBody(object):
         'user_metadata': 'userMetadata'
     }
 
-    def __init__(self, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
+    def __init__(self, auto_switch_machine: 'bool' =None, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
         """CloudspacesIdBody - a model defined in Swagger"""  # noqa: E501
+        self._auto_switch_machine = None
         self._code_url = None
         self._data_connection_mounts = None
         self._description = None
@@ -124,6 +127,8 @@ class CloudspacesIdBody(object):
         self._thumbnail_file_type = None
         self._user_metadata = None
         self.discriminator = None
+        if auto_switch_machine is not None:
+            self.auto_switch_machine = auto_switch_machine
         if code_url is not None:
             self.code_url = code_url
         if data_connection_mounts is not None:
@@ -174,6 +179,27 @@ class CloudspacesIdBody(object):
             self.thumbnail_file_type = thumbnail_file_type
         if user_metadata is not None:
             self.user_metadata = user_metadata
+
+    @property
+    def auto_switch_machine(self) -> 'bool':
+        """Gets the auto_switch_machine of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The auto_switch_machine of this CloudspacesIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_switch_machine
+
+    @auto_switch_machine.setter
+    def auto_switch_machine(self, auto_switch_machine: 'bool'):
+        """Sets the auto_switch_machine of this CloudspacesIdBody.
+
+
+        :param auto_switch_machine: The auto_switch_machine of this CloudspacesIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_switch_machine = auto_switch_machine
 
     @property
     def code_url(self) -> 'str':

@@ -41,6 +41,7 @@ class OrgsIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'switch_to_default_machine_on_idle': 'bool',
         'alerts_config': 'V1AlertsConfig',
         'allow_aws_saas': 'bool',
         'allow_budgeting': 'bool',
@@ -74,6 +75,7 @@ class OrgsIdBody(object):
     }
 
     attribute_map = {
+        'switch_to_default_machine_on_idle': 'SwitchToDefaultMachineOnIdle',
         'alerts_config': 'alertsConfig',
         'allow_aws_saas': 'allowAwsSaas',
         'allow_budgeting': 'allowBudgeting',
@@ -106,8 +108,9 @@ class OrgsIdBody(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, switch_to_default_machine_on_idle: 'bool' =None, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
+        self._switch_to_default_machine_on_idle = None
         self._alerts_config = None
         self._allow_aws_saas = None
         self._allow_budgeting = None
@@ -139,6 +142,8 @@ class OrgsIdBody(object):
         self._twitter_username = None
         self._workload_max_run_duration = None
         self.discriminator = None
+        if switch_to_default_machine_on_idle is not None:
+            self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
         if alerts_config is not None:
             self.alerts_config = alerts_config
         if allow_aws_saas is not None:
@@ -199,6 +204,27 @@ class OrgsIdBody(object):
             self.twitter_username = twitter_username
         if workload_max_run_duration is not None:
             self.workload_max_run_duration = workload_max_run_duration
+
+    @property
+    def switch_to_default_machine_on_idle(self) -> 'bool':
+        """Gets the switch_to_default_machine_on_idle of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The switch_to_default_machine_on_idle of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._switch_to_default_machine_on_idle
+
+    @switch_to_default_machine_on_idle.setter
+    def switch_to_default_machine_on_idle(self, switch_to_default_machine_on_idle: 'bool'):
+        """Sets the switch_to_default_machine_on_idle of this OrgsIdBody.
+
+
+        :param switch_to_default_machine_on_idle: The switch_to_default_machine_on_idle of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     @property
     def alerts_config(self) -> 'V1AlertsConfig':

@@ -44,6 +44,7 @@ class V1Membership(object):
         'balance': 'float',
         'created_at': 'datetime',
         'creator_id': 'str',
+        'current_storage_bytes': 'str',
         'datastore_count': 'str',
         'description': 'str',
         'display_name': 'str',
@@ -66,6 +67,7 @@ class V1Membership(object):
         'balance': 'balance',
         'created_at': 'createdAt',
         'creator_id': 'creatorId',
+        'current_storage_bytes': 'currentStorageBytes',
         'datastore_count': 'datastoreCount',
         'description': 'description',
         'display_name': 'displayName',
@@ -84,11 +86,12 @@ class V1Membership(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_credits_enabled: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_credits_enabled: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Membership - a model defined in Swagger"""  # noqa: E501
         self._balance = None
         self._created_at = None
         self._creator_id = None
+        self._current_storage_bytes = None
         self._datastore_count = None
         self._description = None
         self._display_name = None
@@ -112,6 +115,8 @@ class V1Membership(object):
             self.created_at = created_at
         if creator_id is not None:
             self.creator_id = creator_id
+        if current_storage_bytes is not None:
+            self.current_storage_bytes = current_storage_bytes
         if datastore_count is not None:
             self.datastore_count = datastore_count
         if description is not None:
@@ -207,6 +212,27 @@ class V1Membership(object):
         """
 
         self._creator_id = creator_id
+
+    @property
+    def current_storage_bytes(self) -> 'str':
+        """Gets the current_storage_bytes of this V1Membership.  # noqa: E501
+
+
+        :return: The current_storage_bytes of this V1Membership.  # noqa: E501
+        :rtype: str
+        """
+        return self._current_storage_bytes
+
+    @current_storage_bytes.setter
+    def current_storage_bytes(self, current_storage_bytes: 'str'):
+        """Sets the current_storage_bytes of this V1Membership.
+
+
+        :param current_storage_bytes: The current_storage_bytes of this V1Membership.  # noqa: E501
+        :type: str
+        """
+
+        self._current_storage_bytes = current_storage_bytes
 
     @property
     def datastore_count(self) -> 'str':

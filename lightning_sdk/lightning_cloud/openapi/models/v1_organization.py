@@ -76,6 +76,7 @@ class V1Organization(object):
         'preferred_deployment_provider': 'str',
         'preferred_studio_provider': 'str',
         'start_studios_on_spot_instance': 'bool',
+        'switch_to_default_machine_on_idle': 'bool',
         'teamspace_default_credits': 'float',
         'twitter_username': 'str',
         'updated_at': 'datetime',
@@ -118,13 +119,14 @@ class V1Organization(object):
         'preferred_deployment_provider': 'preferredDeploymentProvider',
         'preferred_studio_provider': 'preferredStudioProvider',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
+        'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername',
         'updated_at': 'updatedAt',
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_aws_saas = None
@@ -161,6 +163,7 @@ class V1Organization(object):
         self._preferred_deployment_provider = None
         self._preferred_studio_provider = None
         self._start_studios_on_spot_instance = None
+        self._switch_to_default_machine_on_idle = None
         self._teamspace_default_credits = None
         self._twitter_username = None
         self._updated_at = None
@@ -236,6 +239,8 @@ class V1Organization(object):
             self.preferred_studio_provider = preferred_studio_provider
         if start_studios_on_spot_instance is not None:
             self.start_studios_on_spot_instance = start_studios_on_spot_instance
+        if switch_to_default_machine_on_idle is not None:
+            self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
         if teamspace_default_credits is not None:
             self.teamspace_default_credits = teamspace_default_credits
         if twitter_username is not None:
@@ -981,6 +986,27 @@ class V1Organization(object):
         """
 
         self._start_studios_on_spot_instance = start_studios_on_spot_instance
+
+    @property
+    def switch_to_default_machine_on_idle(self) -> 'bool':
+        """Gets the switch_to_default_machine_on_idle of this V1Organization.  # noqa: E501
+
+
+        :return: The switch_to_default_machine_on_idle of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._switch_to_default_machine_on_idle
+
+    @switch_to_default_machine_on_idle.setter
+    def switch_to_default_machine_on_idle(self, switch_to_default_machine_on_idle: 'bool'):
+        """Sets the switch_to_default_machine_on_idle of this V1Organization.
+
+
+        :param switch_to_default_machine_on_idle: The switch_to_default_machine_on_idle of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     @property
     def teamspace_default_credits(self) -> 'float':
