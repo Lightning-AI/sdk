@@ -2,6 +2,7 @@ import os
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from unittest import mock
 from unittest.mock import ANY, MagicMock, call, patch
 
 import pytest
@@ -642,4 +643,33 @@ def test_handle_devbox(
     mock_studio.return_value.run_and_detach.assert_called_once_with("python test.py", timeout=10)
     mock_console.print.assert_called_with(
         "  [bold]4.[/bold] Your server will be accessible on [link=https://lightning.ai]https://lightning.ai[/link]"
+    )
+
+
+@patch("lightning_sdk.cli.serve._handle_devbox")
+@pytest.mark.parametrize("machine", ["CPU", "T4", "A10G_X_4"])
+@pytest.mark.parametrize("interruptible", [True, False])
+@pytest.mark.parametrize("non_interactive", [True, False])
+def test_devbox_with_machine(mock_handle_devbox, temp_script, machine, interruptible, non_interactive):
+    serve_api(
+        temp_script,
+        devbox=machine,
+        name="test-devbox",
+        interruptible=interruptible,
+        non_interactive=non_interactive,
+        teamspace="test-teamspace",
+        org="test-org",
+        user="test-user",
+    )
+    machine = Machine.from_str(machine)
+    mock_handle_devbox.assert_called_once_with(
+        "test-devbox",
+        temp_script,
+        mock.ANY,
+        non_interactive,
+        machine,
+        interruptible,
+        "test-teamspace",
+        "test-org",
+        "test-user",
     )

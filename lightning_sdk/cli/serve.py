@@ -219,7 +219,7 @@ def api_impl(
         timestr = datetime.now().strftime("%b-%d-%H_%M")
         name = f"litserve-{timestr}".lower()
 
-    if not cloud:
+    if not cloud and not devbox:
         try:
             subprocess.run(
                 ["python", str(script_path)],
@@ -232,7 +232,8 @@ def api_impl(
             raise RuntimeError(error_msg) from None
 
     if devbox:
-        return _handle_devbox(name, script_path, console, non_interactive, devbox, interruptible, teamspace, org, user)
+        machine = Machine.from_str(devbox)
+        return _handle_devbox(name, script_path, console, non_interactive, machine, interruptible, teamspace, org, user)
 
     machine = Machine.from_str(machine)
     return _handle_cloud(
@@ -513,7 +514,7 @@ def _handle_devbox(
     script_path: Path,
     console: Console,
     non_interactive: bool = False,
-    devbox: Union[Machine, str] = Machine.CPU,
+    machine: Machine = Machine.CPU,
     interruptible: bool = False,
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
@@ -561,7 +562,7 @@ def _handle_devbox(
 
     # Start the Studio in the background and return immediately using threading
     console.print("\n⚡ Initializing Studio in the background...")
-    studio_thread = Thread(target=studio.start, args=(devbox, interruptible))
+    studio_thread = Thread(target=studio.start, args=(machine, interruptible))
     studio_thread.start()
 
     console.print("📤 Syncing project files to Studio...")
@@ -592,7 +593,6 @@ def _handle_devbox(
     console.print("  [bold]2.[/bold] The Studio is now running with the specified configuration")
     console.print("  [bold]3.[/bold] Modify and run your server directly in the Studio")
     console.print(f"  [bold]4.[/bold] Your server will be accessible on [link={port_url}]{port_url}[/link]")
-    # TODO: Once server running is implemented
 
 
 def _handle_cloud(
