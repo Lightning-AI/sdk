@@ -189,7 +189,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
     assert response == "I'm doing well, thank you!"
 
     # explicitly pass max_tokens
-    response = llm.chat("Hello, how are you?", max_completion_tokens=10)
+    response = llm.chat("Hello, how are you?", max_completion_tokens=10, metadata={"user_api": "123456"})
     mock_api.start_conversation.assert_called_with(
         prompt="Hello, how are you?",
         system_prompt=None,
@@ -199,6 +199,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         billing_project_id="teamspace-123",
         name=None,
         stream=False,
+        metadata={"user_api": "123456"},
     )
 
     # pass conversation and continue conversation
@@ -214,6 +215,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         billing_project_id="teamspace-123",
         name="conv1",
         stream=False,
+        metadata=None,
     )
     mock_api.start_conversation.reset_mock()
     continue_response = llm.chat("Hi again!", conversation="conv1")
@@ -227,6 +229,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         billing_project_id="teamspace-123",
         name="conv1",
         stream=False,
+        metadata=None,
     )
     # check list of conversations
     assert llm._conversations == {"conv1": "conv_123"}
@@ -270,6 +273,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         billing_project_id="teamspace-123",
         name=None,
         stream=True,
+        metadata=None,
     )
 
 

@@ -1,5 +1,5 @@
 import json
-from typing import Generator, List, Optional, Union
+from typing import Dict, Generator, List, Optional, Union
 
 from pip._vendor.urllib3 import HTTPResponse
 
@@ -64,6 +64,7 @@ class LLMApi:
         conversation_id: Optional[str] = None,
         billing_project_id: Optional[str] = None,
         name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
     ) -> Union[V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None]]:
         body = {
@@ -81,6 +82,7 @@ class LLMApi:
             "billing_project_id": billing_project_id,
             "name": name,
             "stream": stream,
+            "metadata": metadata or {},
         }
         result = self._client.assistants_service_start_conversation(body, assistant_id, _preload_content=not stream)
         if not stream:

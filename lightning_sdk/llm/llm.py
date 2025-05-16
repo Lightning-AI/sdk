@@ -165,6 +165,7 @@ class LLM:
         system_prompt: Optional[str] = None,
         max_completion_tokens: Optional[int] = 500,
         conversation: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
     ) -> Union[str, Generator[str, None, None]]:
         if conversation and conversation not in self._conversations:
@@ -178,6 +179,7 @@ class LLM:
             assistant_id=self._model.id,
             conversation_id=conversation_id,
             billing_project_id=self._teamspace.id,
+            metadata=metadata,
             name=conversation,
             stream=stream,
         )
