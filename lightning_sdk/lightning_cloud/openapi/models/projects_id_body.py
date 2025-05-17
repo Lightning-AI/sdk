@@ -58,7 +58,8 @@ class ProjectsIdBody(object):
         'preferred_studio_provider': 'str',
         'quotas': 'V1Quotas',
         'same_compute_on_resume': 'bool',
-        'start_studio_on_spot_instance': 'bool'
+        'start_studio_on_spot_instance': 'bool',
+        'switch_to_default_machine_on_idle': 'bool'
     }
 
     attribute_map = {
@@ -79,10 +80,11 @@ class ProjectsIdBody(object):
         'preferred_studio_provider': 'preferredStudioProvider',
         'quotas': 'quotas',
         'same_compute_on_resume': 'sameComputeOnResume',
-        'start_studio_on_spot_instance': 'startStudioOnSpotInstance'
+        'start_studio_on_spot_instance': 'startStudioOnSpotInstance',
+        'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
         """ProjectsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_dgx_saas = None
@@ -102,6 +104,7 @@ class ProjectsIdBody(object):
         self._quotas = None
         self._same_compute_on_resume = None
         self._start_studio_on_spot_instance = None
+        self._switch_to_default_machine_on_idle = None
         self.discriminator = None
         if allow_aws_saas is not None:
             self.allow_aws_saas = allow_aws_saas
@@ -139,6 +142,8 @@ class ProjectsIdBody(object):
             self.same_compute_on_resume = same_compute_on_resume
         if start_studio_on_spot_instance is not None:
             self.start_studio_on_spot_instance = start_studio_on_spot_instance
+        if switch_to_default_machine_on_idle is not None:
+            self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     @property
     def allow_aws_saas(self) -> 'bool':
@@ -517,6 +522,27 @@ class ProjectsIdBody(object):
         """
 
         self._start_studio_on_spot_instance = start_studio_on_spot_instance
+
+    @property
+    def switch_to_default_machine_on_idle(self) -> 'bool':
+        """Gets the switch_to_default_machine_on_idle of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The switch_to_default_machine_on_idle of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._switch_to_default_machine_on_idle
+
+    @switch_to_default_machine_on_idle.setter
+    def switch_to_default_machine_on_idle(self, switch_to_default_machine_on_idle: 'bool'):
+        """Sets the switch_to_default_machine_on_idle of this ProjectsIdBody.
+
+
+        :param switch_to_default_machine_on_idle: The switch_to_default_machine_on_idle of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

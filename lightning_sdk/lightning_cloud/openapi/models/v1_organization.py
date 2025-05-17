@@ -44,6 +44,7 @@ class V1Organization(object):
         'alerts_config': 'V1AlertsConfig',
         'allow_aws_saas': 'bool',
         'allow_budgeting': 'bool',
+        'allow_credits_auto_replenish': 'bool',
         'allow_dgx_saas': 'bool',
         'allow_external_project_duplication': 'bool',
         'allow_gcp_saas': 'bool',
@@ -57,6 +58,8 @@ class V1Organization(object):
         'auto_invite_by_domain': 'bool',
         'auto_join_domain_validations': 'dict(str, V1AutoJoinDomainValidation)',
         'auto_join_domains': 'list[str]',
+        'auto_replenish_amount': 'float',
+        'auto_replenish_threshold': 'float',
         'auto_switch_machine': 'bool',
         'created_at': 'datetime',
         'default_machine_image_version': 'str',
@@ -87,6 +90,7 @@ class V1Organization(object):
         'alerts_config': 'alertsConfig',
         'allow_aws_saas': 'allowAwsSaas',
         'allow_budgeting': 'allowBudgeting',
+        'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
         'allow_dgx_saas': 'allowDgxSaas',
         'allow_external_project_duplication': 'allowExternalProjectDuplication',
         'allow_gcp_saas': 'allowGcpSaas',
@@ -100,6 +104,8 @@ class V1Organization(object):
         'auto_invite_by_domain': 'autoInviteByDomain',
         'auto_join_domain_validations': 'autoJoinDomainValidations',
         'auto_join_domains': 'autoJoinDomains',
+        'auto_replenish_amount': 'autoReplenishAmount',
+        'auto_replenish_threshold': 'autoReplenishThreshold',
         'auto_switch_machine': 'autoSwitchMachine',
         'created_at': 'createdAt',
         'default_machine_image_version': 'defaultMachineImageVersion',
@@ -126,11 +132,12 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_aws_saas = None
         self._allow_budgeting = None
+        self._allow_credits_auto_replenish = None
         self._allow_dgx_saas = None
         self._allow_external_project_duplication = None
         self._allow_gcp_saas = None
@@ -144,6 +151,8 @@ class V1Organization(object):
         self._auto_invite_by_domain = None
         self._auto_join_domain_validations = None
         self._auto_join_domains = None
+        self._auto_replenish_amount = None
+        self._auto_replenish_threshold = None
         self._auto_switch_machine = None
         self._created_at = None
         self._default_machine_image_version = None
@@ -175,6 +184,8 @@ class V1Organization(object):
             self.allow_aws_saas = allow_aws_saas
         if allow_budgeting is not None:
             self.allow_budgeting = allow_budgeting
+        if allow_credits_auto_replenish is not None:
+            self.allow_credits_auto_replenish = allow_credits_auto_replenish
         if allow_dgx_saas is not None:
             self.allow_dgx_saas = allow_dgx_saas
         if allow_external_project_duplication is not None:
@@ -201,6 +212,10 @@ class V1Organization(object):
             self.auto_join_domain_validations = auto_join_domain_validations
         if auto_join_domains is not None:
             self.auto_join_domains = auto_join_domains
+        if auto_replenish_amount is not None:
+            self.auto_replenish_amount = auto_replenish_amount
+        if auto_replenish_threshold is not None:
+            self.auto_replenish_threshold = auto_replenish_threshold
         if auto_switch_machine is not None:
             self.auto_switch_machine = auto_switch_machine
         if created_at is not None:
@@ -312,6 +327,27 @@ class V1Organization(object):
         """
 
         self._allow_budgeting = allow_budgeting
+
+    @property
+    def allow_credits_auto_replenish(self) -> 'bool':
+        """Gets the allow_credits_auto_replenish of this V1Organization.  # noqa: E501
+
+
+        :return: The allow_credits_auto_replenish of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_credits_auto_replenish
+
+    @allow_credits_auto_replenish.setter
+    def allow_credits_auto_replenish(self, allow_credits_auto_replenish: 'bool'):
+        """Sets the allow_credits_auto_replenish of this V1Organization.
+
+
+        :param allow_credits_auto_replenish: The allow_credits_auto_replenish of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_credits_auto_replenish = allow_credits_auto_replenish
 
     @property
     def allow_dgx_saas(self) -> 'bool':
@@ -587,6 +623,48 @@ class V1Organization(object):
         """
 
         self._auto_join_domains = auto_join_domains
+
+    @property
+    def auto_replenish_amount(self) -> 'float':
+        """Gets the auto_replenish_amount of this V1Organization.  # noqa: E501
+
+
+        :return: The auto_replenish_amount of this V1Organization.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_amount
+
+    @auto_replenish_amount.setter
+    def auto_replenish_amount(self, auto_replenish_amount: 'float'):
+        """Sets the auto_replenish_amount of this V1Organization.
+
+
+        :param auto_replenish_amount: The auto_replenish_amount of this V1Organization.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_amount = auto_replenish_amount
+
+    @property
+    def auto_replenish_threshold(self) -> 'float':
+        """Gets the auto_replenish_threshold of this V1Organization.  # noqa: E501
+
+
+        :return: The auto_replenish_threshold of this V1Organization.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_threshold
+
+    @auto_replenish_threshold.setter
+    def auto_replenish_threshold(self, auto_replenish_threshold: 'float'):
+        """Sets the auto_replenish_threshold of this V1Organization.
+
+
+        :param auto_replenish_threshold: The auto_replenish_threshold of this V1Organization.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_threshold = auto_replenish_threshold
 
     @property
     def auto_switch_machine(self) -> 'bool':

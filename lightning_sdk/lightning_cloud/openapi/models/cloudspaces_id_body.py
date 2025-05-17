@@ -63,6 +63,7 @@ class CloudspacesIdBody(object):
         'paper_org_avatar_url': 'str',
         'paper_url': 'str',
         'publish_with_compute_name': 'str',
+        'switch_to_default_machine_on_idle': 'bool',
         'tags': 'list[V1ResourceTag]',
         'thumbnail': 'str',
         'thumbnail_file_type': 'str',
@@ -92,13 +93,14 @@ class CloudspacesIdBody(object):
         'paper_org_avatar_url': 'paperOrgAvatarUrl',
         'paper_url': 'paperUrl',
         'publish_with_compute_name': 'publishWithComputeName',
+        'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle',
         'tags': 'tags',
         'thumbnail': 'thumbnail',
         'thumbnail_file_type': 'thumbnailFileType',
         'user_metadata': 'userMetadata'
     }
 
-    def __init__(self, auto_switch_machine: 'bool' =None, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
+    def __init__(self, auto_switch_machine: 'bool' =None, code_url: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, env: 'list[V1EnvVar]' =None, featured: 'bool' =None, hide_files: 'bool' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, publish_with_compute_name: 'str' =None, switch_to_default_machine_on_idle: 'bool' =None, tags: 'list[V1ResourceTag]' =None, thumbnail: 'str' =None, thumbnail_file_type: 'str' =None, user_metadata: 'str' =None):  # noqa: E501
         """CloudspacesIdBody - a model defined in Swagger"""  # noqa: E501
         self._auto_switch_machine = None
         self._code_url = None
@@ -122,6 +124,7 @@ class CloudspacesIdBody(object):
         self._paper_org_avatar_url = None
         self._paper_url = None
         self._publish_with_compute_name = None
+        self._switch_to_default_machine_on_idle = None
         self._tags = None
         self._thumbnail = None
         self._thumbnail_file_type = None
@@ -171,6 +174,8 @@ class CloudspacesIdBody(object):
             self.paper_url = paper_url
         if publish_with_compute_name is not None:
             self.publish_with_compute_name = publish_with_compute_name
+        if switch_to_default_machine_on_idle is not None:
+            self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
         if tags is not None:
             self.tags = tags
         if thumbnail is not None:
@@ -641,6 +646,27 @@ class CloudspacesIdBody(object):
         """
 
         self._publish_with_compute_name = publish_with_compute_name
+
+    @property
+    def switch_to_default_machine_on_idle(self) -> 'bool':
+        """Gets the switch_to_default_machine_on_idle of this CloudspacesIdBody.  # noqa: E501
+
+
+        :return: The switch_to_default_machine_on_idle of this CloudspacesIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._switch_to_default_machine_on_idle
+
+    @switch_to_default_machine_on_idle.setter
+    def switch_to_default_machine_on_idle(self, switch_to_default_machine_on_idle: 'bool'):
+        """Sets the switch_to_default_machine_on_idle of this CloudspacesIdBody.
+
+
+        :param switch_to_default_machine_on_idle: The switch_to_default_machine_on_idle of this CloudspacesIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     @property
     def tags(self) -> 'list[V1ResourceTag]':

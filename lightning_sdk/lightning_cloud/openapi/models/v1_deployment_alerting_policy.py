@@ -50,7 +50,8 @@ class V1DeploymentAlertingPolicy(object):
         'operation': 'V1DeploymentAlertingPolicyOperation',
         'project_id': 'str',
         'severity': 'V1DeploymentAlertingPolicySeverity',
-        'type': 'V1DeploymentAlertingPolicyType'
+        'type': 'V1DeploymentAlertingPolicyType',
+        'value': 'float'
     }
 
     attribute_map = {
@@ -63,10 +64,11 @@ class V1DeploymentAlertingPolicy(object):
         'operation': 'operation',
         'project_id': 'projectId',
         'severity': 'severity',
-        'type': 'type'
+        'type': 'type',
+        'value': 'value'
     }
 
-    def __init__(self, deployment_id: 'str' =None, description: 'str' =None, frequency: 'V1DeploymentAlertingPolicyFrequency' =None, id: 'str' =None, limit: 'float' =None, name: 'str' =None, operation: 'V1DeploymentAlertingPolicyOperation' =None, project_id: 'str' =None, severity: 'V1DeploymentAlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None):  # noqa: E501
+    def __init__(self, deployment_id: 'str' =None, description: 'str' =None, frequency: 'V1DeploymentAlertingPolicyFrequency' =None, id: 'str' =None, limit: 'float' =None, name: 'str' =None, operation: 'V1DeploymentAlertingPolicyOperation' =None, project_id: 'str' =None, severity: 'V1DeploymentAlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None, value: 'float' =None):  # noqa: E501
         """V1DeploymentAlertingPolicy - a model defined in Swagger"""  # noqa: E501
         self._deployment_id = None
         self._description = None
@@ -78,6 +80,7 @@ class V1DeploymentAlertingPolicy(object):
         self._project_id = None
         self._severity = None
         self._type = None
+        self._value = None
         self.discriminator = None
         if deployment_id is not None:
             self.deployment_id = deployment_id
@@ -99,6 +102,8 @@ class V1DeploymentAlertingPolicy(object):
             self.severity = severity
         if type is not None:
             self.type = type
+        if value is not None:
+            self.value = value
 
     @property
     def deployment_id(self) -> 'str':
@@ -309,6 +314,27 @@ class V1DeploymentAlertingPolicy(object):
         """
 
         self._type = type
+
+    @property
+    def value(self) -> 'float':
+        """Gets the value of this V1DeploymentAlertingPolicy.  # noqa: E501
+
+
+        :return: The value of this V1DeploymentAlertingPolicy.  # noqa: E501
+        :rtype: float
+        """
+        return self._value
+
+    @value.setter
+    def value(self, value: 'float'):
+        """Sets the value of this V1DeploymentAlertingPolicy.
+
+
+        :param value: The value of this V1DeploymentAlertingPolicy.  # noqa: E501
+        :type: float
+        """
+
+        self._value = value
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

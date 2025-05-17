@@ -41,35 +41,43 @@ class V1ProjectStorage(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'billable_bytes': 'str',
         'cloudspace_storage_bytes': 'str',
         'data_connection_storage_bytes': 'str',
         'display_name': 'str',
         'id': 'str',
         'job_storage_bytes': 'str',
+        'total_billed_per_day': 'float',
         'total_storage_bytes': 'str',
         'upload_storage_bytes': 'str'
     }
 
     attribute_map = {
+        'billable_bytes': 'billableBytes',
         'cloudspace_storage_bytes': 'cloudspaceStorageBytes',
         'data_connection_storage_bytes': 'dataConnectionStorageBytes',
         'display_name': 'displayName',
         'id': 'id',
         'job_storage_bytes': 'jobStorageBytes',
+        'total_billed_per_day': 'totalBilledPerDay',
         'total_storage_bytes': 'totalStorageBytes',
         'upload_storage_bytes': 'uploadStorageBytes'
     }
 
-    def __init__(self, cloudspace_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, display_name: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, display_name: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, total_billed_per_day: 'float' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1ProjectStorage - a model defined in Swagger"""  # noqa: E501
+        self._billable_bytes = None
         self._cloudspace_storage_bytes = None
         self._data_connection_storage_bytes = None
         self._display_name = None
         self._id = None
         self._job_storage_bytes = None
+        self._total_billed_per_day = None
         self._total_storage_bytes = None
         self._upload_storage_bytes = None
         self.discriminator = None
+        if billable_bytes is not None:
+            self.billable_bytes = billable_bytes
         if cloudspace_storage_bytes is not None:
             self.cloudspace_storage_bytes = cloudspace_storage_bytes
         if data_connection_storage_bytes is not None:
@@ -80,10 +88,33 @@ class V1ProjectStorage(object):
             self.id = id
         if job_storage_bytes is not None:
             self.job_storage_bytes = job_storage_bytes
+        if total_billed_per_day is not None:
+            self.total_billed_per_day = total_billed_per_day
         if total_storage_bytes is not None:
             self.total_storage_bytes = total_storage_bytes
         if upload_storage_bytes is not None:
             self.upload_storage_bytes = upload_storage_bytes
+
+    @property
+    def billable_bytes(self) -> 'str':
+        """Gets the billable_bytes of this V1ProjectStorage.  # noqa: E501
+
+
+        :return: The billable_bytes of this V1ProjectStorage.  # noqa: E501
+        :rtype: str
+        """
+        return self._billable_bytes
+
+    @billable_bytes.setter
+    def billable_bytes(self, billable_bytes: 'str'):
+        """Sets the billable_bytes of this V1ProjectStorage.
+
+
+        :param billable_bytes: The billable_bytes of this V1ProjectStorage.  # noqa: E501
+        :type: str
+        """
+
+        self._billable_bytes = billable_bytes
 
     @property
     def cloudspace_storage_bytes(self) -> 'str':
@@ -189,6 +220,27 @@ class V1ProjectStorage(object):
         """
 
         self._job_storage_bytes = job_storage_bytes
+
+    @property
+    def total_billed_per_day(self) -> 'float':
+        """Gets the total_billed_per_day of this V1ProjectStorage.  # noqa: E501
+
+
+        :return: The total_billed_per_day of this V1ProjectStorage.  # noqa: E501
+        :rtype: float
+        """
+        return self._total_billed_per_day
+
+    @total_billed_per_day.setter
+    def total_billed_per_day(self, total_billed_per_day: 'float'):
+        """Sets the total_billed_per_day of this V1ProjectStorage.
+
+
+        :param total_billed_per_day: The total_billed_per_day of this V1ProjectStorage.  # noqa: E501
+        :type: float
+        """
+
+        self._total_billed_per_day = total_billed_per_day
 
     @property
     def total_storage_bytes(self) -> 'str':

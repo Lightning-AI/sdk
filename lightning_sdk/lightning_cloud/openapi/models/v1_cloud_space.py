@@ -82,6 +82,7 @@ class V1CloudSpace(object):
         'published_at': 'datetime',
         'published_to_org_at': 'datetime',
         'state': 'V1CloudSpaceState',
+        'switch_to_default_machine_on_idle': 'bool',
         'sync_duration': 'str',
         'sync_percentage': 'str',
         'tags': 'list[V1ResourceTag]',
@@ -137,6 +138,7 @@ class V1CloudSpace(object):
         'published_at': 'publishedAt',
         'published_to_org_at': 'publishedToOrgAt',
         'state': 'state',
+        'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle',
         'sync_duration': 'syncDuration',
         'sync_percentage': 'syncPercentage',
         'tags': 'tags',
@@ -150,7 +152,7 @@ class V1CloudSpace(object):
         'web_path': 'webPath'
     }
 
-    def __init__(self, auto_switch_machine: 'bool' =None, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, environment_config: 'V1CloudSpaceEnvironmentConfig' =None, environment_template_id: 'str' =None, featured: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, lock_out: 'bool' =None, machine_image_version: 'str' =None, max_run_duration: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, publications: 'list[V1CloudSpaceVersionPublication]' =None, published_at: 'datetime' =None, published_to_org_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, auto_switch_machine: 'bool' =None, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, environment_config: 'V1CloudSpaceEnvironmentConfig' =None, environment_template_id: 'str' =None, featured: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, lock_out: 'bool' =None, machine_image_version: 'str' =None, max_run_duration: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, publications: 'list[V1CloudSpaceVersionPublication]' =None, published_at: 'datetime' =None, published_to_org_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, switch_to_default_machine_on_idle: 'bool' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._auto_switch_machine = None
         self._can_download_source_code = None
@@ -193,6 +195,7 @@ class V1CloudSpace(object):
         self._published_at = None
         self._published_to_org_at = None
         self._state = None
+        self._switch_to_default_machine_on_idle = None
         self._sync_duration = None
         self._sync_percentage = None
         self._tags = None
@@ -287,6 +290,8 @@ class V1CloudSpace(object):
             self.published_to_org_at = published_to_org_at
         if state is not None:
             self.state = state
+        if switch_to_default_machine_on_idle is not None:
+            self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
         if sync_duration is not None:
             self.sync_duration = sync_duration
         if sync_percentage is not None:
@@ -1170,6 +1175,27 @@ class V1CloudSpace(object):
         """
 
         self._state = state
+
+    @property
+    def switch_to_default_machine_on_idle(self) -> 'bool':
+        """Gets the switch_to_default_machine_on_idle of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The switch_to_default_machine_on_idle of this V1CloudSpace.  # noqa: E501
+        :rtype: bool
+        """
+        return self._switch_to_default_machine_on_idle
+
+    @switch_to_default_machine_on_idle.setter
+    def switch_to_default_machine_on_idle(self, switch_to_default_machine_on_idle: 'bool'):
+        """Sets the switch_to_default_machine_on_idle of this V1CloudSpace.
+
+
+        :param switch_to_default_machine_on_idle: The switch_to_default_machine_on_idle of this V1CloudSpace.  # noqa: E501
+        :type: bool
+        """
+
+        self._switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     @property
     def sync_duration(self) -> 'str':

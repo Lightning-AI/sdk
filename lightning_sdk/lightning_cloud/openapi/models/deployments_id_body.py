@@ -54,6 +54,7 @@ class DeploymentsIdBody(object):
         'is_published': 'bool',
         'managed_endpoint_id': 'str',
         'name': 'str',
+        'oncall_notification': 'bool',
         'parameter_spec': 'V1ParameterizationSpec',
         'pipeline_id': 'str',
         'release_id': 'str',
@@ -82,6 +83,7 @@ class DeploymentsIdBody(object):
         'is_published': 'isPublished',
         'managed_endpoint_id': 'managedEndpointId',
         'name': 'name',
+        'oncall_notification': 'oncallNotification',
         'parameter_spec': 'parameterSpec',
         'pipeline_id': 'pipelineId',
         'release_id': 'releaseId',
@@ -96,7 +98,7 @@ class DeploymentsIdBody(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """DeploymentsIdBody - a model defined in Swagger"""  # noqa: E501
         self._api_standard = None
         self._apis = None
@@ -111,6 +113,7 @@ class DeploymentsIdBody(object):
         self._is_published = None
         self._managed_endpoint_id = None
         self._name = None
+        self._oncall_notification = None
         self._parameter_spec = None
         self._pipeline_id = None
         self._release_id = None
@@ -150,6 +153,8 @@ class DeploymentsIdBody(object):
             self.managed_endpoint_id = managed_endpoint_id
         if name is not None:
             self.name = name
+        if oncall_notification is not None:
+            self.oncall_notification = oncall_notification
         if parameter_spec is not None:
             self.parameter_spec = parameter_spec
         if pipeline_id is not None:
@@ -447,6 +452,27 @@ class DeploymentsIdBody(object):
         """
 
         self._name = name
+
+    @property
+    def oncall_notification(self) -> 'bool':
+        """Gets the oncall_notification of this DeploymentsIdBody.  # noqa: E501
+
+
+        :return: The oncall_notification of this DeploymentsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._oncall_notification
+
+    @oncall_notification.setter
+    def oncall_notification(self, oncall_notification: 'bool'):
+        """Sets the oncall_notification of this DeploymentsIdBody.
+
+
+        :param oncall_notification: The oncall_notification of this DeploymentsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._oncall_notification = oncall_notification
 
     @property
     def parameter_spec(self) -> 'V1ParameterizationSpec':

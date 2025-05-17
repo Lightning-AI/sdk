@@ -47,7 +47,8 @@ class DeploymentIdAlertingpoliciesBody(object):
         'name': 'str',
         'operation': 'V1DeploymentAlertingPolicyOperation',
         'severity': 'V1DeploymentAlertingPolicySeverity',
-        'type': 'V1DeploymentAlertingPolicyType'
+        'type': 'V1DeploymentAlertingPolicyType',
+        'value': 'float'
     }
 
     attribute_map = {
@@ -57,10 +58,11 @@ class DeploymentIdAlertingpoliciesBody(object):
         'name': 'name',
         'operation': 'operation',
         'severity': 'severity',
-        'type': 'type'
+        'type': 'type',
+        'value': 'value'
     }
 
-    def __init__(self, description: 'str' =None, frequency: 'V1DeploymentAlertingPolicyFrequency' =None, limit: 'float' =None, name: 'str' =None, operation: 'V1DeploymentAlertingPolicyOperation' =None, severity: 'V1DeploymentAlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None):  # noqa: E501
+    def __init__(self, description: 'str' =None, frequency: 'V1DeploymentAlertingPolicyFrequency' =None, limit: 'float' =None, name: 'str' =None, operation: 'V1DeploymentAlertingPolicyOperation' =None, severity: 'V1DeploymentAlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None, value: 'float' =None):  # noqa: E501
         """DeploymentIdAlertingpoliciesBody - a model defined in Swagger"""  # noqa: E501
         self._description = None
         self._frequency = None
@@ -69,6 +71,7 @@ class DeploymentIdAlertingpoliciesBody(object):
         self._operation = None
         self._severity = None
         self._type = None
+        self._value = None
         self.discriminator = None
         if description is not None:
             self.description = description
@@ -84,6 +87,8 @@ class DeploymentIdAlertingpoliciesBody(object):
             self.severity = severity
         if type is not None:
             self.type = type
+        if value is not None:
+            self.value = value
 
     @property
     def description(self) -> 'str':
@@ -231,6 +236,27 @@ class DeploymentIdAlertingpoliciesBody(object):
         """
 
         self._type = type
+
+    @property
+    def value(self) -> 'float':
+        """Gets the value of this DeploymentIdAlertingpoliciesBody.  # noqa: E501
+
+
+        :return: The value of this DeploymentIdAlertingpoliciesBody.  # noqa: E501
+        :rtype: float
+        """
+        return self._value
+
+    @value.setter
+    def value(self, value: 'float'):
+        """Sets the value of this DeploymentIdAlertingpoliciesBody.
+
+
+        :param value: The value of this DeploymentIdAlertingpoliciesBody.  # noqa: E501
+        :type: float
+        """
+
+        self._value = value
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

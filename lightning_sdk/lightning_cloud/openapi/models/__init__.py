@@ -117,6 +117,7 @@ from lightning_sdk.lightning_cloud.openapi.models.metricsstream_delete_body impo
 from lightning_sdk.lightning_cloud.openapi.models.metricsstream_id_body import MetricsstreamIdBody
 from lightning_sdk.lightning_cloud.openapi.models.model_id_versions_body import ModelIdVersionsBody
 from lightning_sdk.lightning_cloud.openapi.models.model_id_visibility_body import ModelIdVisibilityBody
+from lightning_sdk.lightning_cloud.openapi.models.models_id_body import ModelsIdBody
 from lightning_sdk.lightning_cloud.openapi.models.models_model_id_body import ModelsModelIdBody
 from lightning_sdk.lightning_cloud.openapi.models.multimachinejobs_id_body import MultimachinejobsIdBody
 from lightning_sdk.lightning_cloud.openapi.models.multipartuploads_upload_id_body import MultipartuploadsUploadIdBody

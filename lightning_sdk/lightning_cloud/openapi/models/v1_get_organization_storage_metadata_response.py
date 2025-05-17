@@ -43,6 +43,7 @@ class V1GetOrganizationStorageMetadataResponse(object):
     swagger_types = {
         'id': 'str',
         'project_metadata': 'list[V1ProjectStorage]',
+        'total_billable_bytes': 'str',
         'total_cloudspace_storage_bytes': 'str',
         'total_data_connection_storage_bytes': 'str',
         'total_job_storage_bytes': 'str',
@@ -53,6 +54,7 @@ class V1GetOrganizationStorageMetadataResponse(object):
     attribute_map = {
         'id': 'id',
         'project_metadata': 'projectMetadata',
+        'total_billable_bytes': 'totalBillableBytes',
         'total_cloudspace_storage_bytes': 'totalCloudspaceStorageBytes',
         'total_data_connection_storage_bytes': 'totalDataConnectionStorageBytes',
         'total_job_storage_bytes': 'totalJobStorageBytes',
@@ -60,10 +62,11 @@ class V1GetOrganizationStorageMetadataResponse(object):
         'total_upload_storage_bytes': 'totalUploadStorageBytes'
     }
 
-    def __init__(self, id: 'str' =None, project_metadata: 'list[V1ProjectStorage]' =None, total_cloudspace_storage_bytes: 'str' =None, total_data_connection_storage_bytes: 'str' =None, total_job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, total_upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, id: 'str' =None, project_metadata: 'list[V1ProjectStorage]' =None, total_billable_bytes: 'str' =None, total_cloudspace_storage_bytes: 'str' =None, total_data_connection_storage_bytes: 'str' =None, total_job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, total_upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1GetOrganizationStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
         self._id = None
         self._project_metadata = None
+        self._total_billable_bytes = None
         self._total_cloudspace_storage_bytes = None
         self._total_data_connection_storage_bytes = None
         self._total_job_storage_bytes = None
@@ -74,6 +77,8 @@ class V1GetOrganizationStorageMetadataResponse(object):
             self.id = id
         if project_metadata is not None:
             self.project_metadata = project_metadata
+        if total_billable_bytes is not None:
+            self.total_billable_bytes = total_billable_bytes
         if total_cloudspace_storage_bytes is not None:
             self.total_cloudspace_storage_bytes = total_cloudspace_storage_bytes
         if total_data_connection_storage_bytes is not None:
@@ -126,6 +131,27 @@ class V1GetOrganizationStorageMetadataResponse(object):
         """
 
         self._project_metadata = project_metadata
+
+    @property
+    def total_billable_bytes(self) -> 'str':
+        """Gets the total_billable_bytes of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The total_billable_bytes of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_billable_bytes
+
+    @total_billable_bytes.setter
+    def total_billable_bytes(self, total_billable_bytes: 'str'):
+        """Sets the total_billable_bytes of this V1GetOrganizationStorageMetadataResponse.
+
+
+        :param total_billable_bytes: The total_billable_bytes of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._total_billable_bytes = total_billable_bytes
 
     @property
     def total_cloudspace_storage_bytes(self) -> 'str':

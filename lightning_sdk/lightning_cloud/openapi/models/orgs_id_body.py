@@ -41,10 +41,10 @@ class OrgsIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'switch_to_default_machine_on_idle': 'bool',
         'alerts_config': 'V1AlertsConfig',
         'allow_aws_saas': 'bool',
         'allow_budgeting': 'bool',
+        'allow_credits_auto_replenish': 'bool',
         'allow_dgx_saas': 'bool',
         'allow_external_project_duplication': 'bool',
         'allow_gcp_saas': 'bool',
@@ -57,6 +57,8 @@ class OrgsIdBody(object):
         'allow_vultr_saas': 'bool',
         'auto_invite_by_domain': 'bool',
         'auto_join_domains': 'list[str]',
+        'auto_replenish_amount': 'float',
+        'auto_replenish_threshold': 'float',
         'auto_switch_machine': 'bool',
         'default_machine_type': 'str',
         'description': 'str',
@@ -69,16 +71,17 @@ class OrgsIdBody(object):
         'preferred_deployment_provider': 'str',
         'preferred_studio_provider': 'str',
         'start_studios_on_spot_instance': 'bool',
+        'switch_to_default_machine_on_idle': 'bool',
         'teamspace_default_credits': 'float',
         'twitter_username': 'str',
         'workload_max_run_duration': 'str'
     }
 
     attribute_map = {
-        'switch_to_default_machine_on_idle': 'SwitchToDefaultMachineOnIdle',
         'alerts_config': 'alertsConfig',
         'allow_aws_saas': 'allowAwsSaas',
         'allow_budgeting': 'allowBudgeting',
+        'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
         'allow_dgx_saas': 'allowDgxSaas',
         'allow_external_project_duplication': 'allowExternalProjectDuplication',
         'allow_gcp_saas': 'allowGcpSaas',
@@ -91,6 +94,8 @@ class OrgsIdBody(object):
         'allow_vultr_saas': 'allowVultrSaas',
         'auto_invite_by_domain': 'autoInviteByDomain',
         'auto_join_domains': 'autoJoinDomains',
+        'auto_replenish_amount': 'autoReplenishAmount',
+        'auto_replenish_threshold': 'autoReplenishThreshold',
         'auto_switch_machine': 'autoSwitchMachine',
         'default_machine_type': 'defaultMachineType',
         'description': 'description',
@@ -103,17 +108,18 @@ class OrgsIdBody(object):
         'preferred_deployment_provider': 'preferredDeploymentProvider',
         'preferred_studio_provider': 'preferredStudioProvider',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
+        'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername',
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, switch_to_default_machine_on_idle: 'bool' =None, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
-        self._switch_to_default_machine_on_idle = None
         self._alerts_config = None
         self._allow_aws_saas = None
         self._allow_budgeting = None
+        self._allow_credits_auto_replenish = None
         self._allow_dgx_saas = None
         self._allow_external_project_duplication = None
         self._allow_gcp_saas = None
@@ -126,6 +132,8 @@ class OrgsIdBody(object):
         self._allow_vultr_saas = None
         self._auto_invite_by_domain = None
         self._auto_join_domains = None
+        self._auto_replenish_amount = None
+        self._auto_replenish_threshold = None
         self._auto_switch_machine = None
         self._default_machine_type = None
         self._description = None
@@ -138,18 +146,19 @@ class OrgsIdBody(object):
         self._preferred_deployment_provider = None
         self._preferred_studio_provider = None
         self._start_studios_on_spot_instance = None
+        self._switch_to_default_machine_on_idle = None
         self._teamspace_default_credits = None
         self._twitter_username = None
         self._workload_max_run_duration = None
         self.discriminator = None
-        if switch_to_default_machine_on_idle is not None:
-            self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
         if alerts_config is not None:
             self.alerts_config = alerts_config
         if allow_aws_saas is not None:
             self.allow_aws_saas = allow_aws_saas
         if allow_budgeting is not None:
             self.allow_budgeting = allow_budgeting
+        if allow_credits_auto_replenish is not None:
+            self.allow_credits_auto_replenish = allow_credits_auto_replenish
         if allow_dgx_saas is not None:
             self.allow_dgx_saas = allow_dgx_saas
         if allow_external_project_duplication is not None:
@@ -174,6 +183,10 @@ class OrgsIdBody(object):
             self.auto_invite_by_domain = auto_invite_by_domain
         if auto_join_domains is not None:
             self.auto_join_domains = auto_join_domains
+        if auto_replenish_amount is not None:
+            self.auto_replenish_amount = auto_replenish_amount
+        if auto_replenish_threshold is not None:
+            self.auto_replenish_threshold = auto_replenish_threshold
         if auto_switch_machine is not None:
             self.auto_switch_machine = auto_switch_machine
         if default_machine_type is not None:
@@ -198,33 +211,14 @@ class OrgsIdBody(object):
             self.preferred_studio_provider = preferred_studio_provider
         if start_studios_on_spot_instance is not None:
             self.start_studios_on_spot_instance = start_studios_on_spot_instance
+        if switch_to_default_machine_on_idle is not None:
+            self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
         if teamspace_default_credits is not None:
             self.teamspace_default_credits = teamspace_default_credits
         if twitter_username is not None:
             self.twitter_username = twitter_username
         if workload_max_run_duration is not None:
             self.workload_max_run_duration = workload_max_run_duration
-
-    @property
-    def switch_to_default_machine_on_idle(self) -> 'bool':
-        """Gets the switch_to_default_machine_on_idle of this OrgsIdBody.  # noqa: E501
-
-
-        :return: The switch_to_default_machine_on_idle of this OrgsIdBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._switch_to_default_machine_on_idle
-
-    @switch_to_default_machine_on_idle.setter
-    def switch_to_default_machine_on_idle(self, switch_to_default_machine_on_idle: 'bool'):
-        """Sets the switch_to_default_machine_on_idle of this OrgsIdBody.
-
-
-        :param switch_to_default_machine_on_idle: The switch_to_default_machine_on_idle of this OrgsIdBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     @property
     def alerts_config(self) -> 'V1AlertsConfig':
@@ -288,6 +282,27 @@ class OrgsIdBody(object):
         """
 
         self._allow_budgeting = allow_budgeting
+
+    @property
+    def allow_credits_auto_replenish(self) -> 'bool':
+        """Gets the allow_credits_auto_replenish of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The allow_credits_auto_replenish of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_credits_auto_replenish
+
+    @allow_credits_auto_replenish.setter
+    def allow_credits_auto_replenish(self, allow_credits_auto_replenish: 'bool'):
+        """Sets the allow_credits_auto_replenish of this OrgsIdBody.
+
+
+        :param allow_credits_auto_replenish: The allow_credits_auto_replenish of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_credits_auto_replenish = allow_credits_auto_replenish
 
     @property
     def allow_dgx_saas(self) -> 'bool':
@@ -542,6 +557,48 @@ class OrgsIdBody(object):
         self._auto_join_domains = auto_join_domains
 
     @property
+    def auto_replenish_amount(self) -> 'float':
+        """Gets the auto_replenish_amount of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The auto_replenish_amount of this OrgsIdBody.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_amount
+
+    @auto_replenish_amount.setter
+    def auto_replenish_amount(self, auto_replenish_amount: 'float'):
+        """Sets the auto_replenish_amount of this OrgsIdBody.
+
+
+        :param auto_replenish_amount: The auto_replenish_amount of this OrgsIdBody.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_amount = auto_replenish_amount
+
+    @property
+    def auto_replenish_threshold(self) -> 'float':
+        """Gets the auto_replenish_threshold of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The auto_replenish_threshold of this OrgsIdBody.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_threshold
+
+    @auto_replenish_threshold.setter
+    def auto_replenish_threshold(self, auto_replenish_threshold: 'float'):
+        """Sets the auto_replenish_threshold of this OrgsIdBody.
+
+
+        :param auto_replenish_threshold: The auto_replenish_threshold of this OrgsIdBody.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_threshold = auto_replenish_threshold
+
+    @property
     def auto_switch_machine(self) -> 'bool':
         """Gets the auto_switch_machine of this OrgsIdBody.  # noqa: E501
 
@@ -792,6 +849,27 @@ class OrgsIdBody(object):
         """
 
         self._start_studios_on_spot_instance = start_studios_on_spot_instance
+
+    @property
+    def switch_to_default_machine_on_idle(self) -> 'bool':
+        """Gets the switch_to_default_machine_on_idle of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The switch_to_default_machine_on_idle of this OrgsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._switch_to_default_machine_on_idle
+
+    @switch_to_default_machine_on_idle.setter
+    def switch_to_default_machine_on_idle(self, switch_to_default_machine_on_idle: 'bool'):
+        """Sets the switch_to_default_machine_on_idle of this OrgsIdBody.
+
+
+        :param switch_to_default_machine_on_idle: The switch_to_default_machine_on_idle of this OrgsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     @property
     def teamspace_default_credits(self) -> 'float':
