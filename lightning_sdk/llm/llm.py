@@ -9,7 +9,7 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
 from lightning_sdk.teamspace import Teamspace
-from lightning_sdk.utils.resolve import _get_authed_user, _resolve_org
+from lightning_sdk.utils.resolve import _get_authed_user, _resolve_org, _resolve_teamspace
 
 
 class LLM:
@@ -37,13 +37,26 @@ class LLM:
         user = _get_authed_user()
         possible_teamspaces = menu._get_possible_teamspaces(user)
         if teamspace is None:
-            if len(possible_teamspaces) == 1:
-                teamspace_name = next(iter(possible_teamspaces.values()))["name"]
-                self._teamspace = Teamspace(name=teamspace_name, org=None, user=user)
-            else:
-                self._teamspace = menu._resolve_teamspace(teamspace)
+            # get current teamspace
+            self._teamspace = _resolve_teamspace(teamspace=None, org=None, user=None)
         else:
             self._teamspace = Teamspace(**menu._get_teamspace_from_name(teamspace, possible_teamspaces))
+
+        if self._teamspace is None:
+            # select the first available teamspace
+            first_teamspace = next(iter(possible_teamspaces.values()), None)
+
+            if first_teamspace:
+                self._teamspace = Teamspace(
+                    name=first_teamspace["name"],
+                    org=first_teamspace["org"],
+                    user=first_teamspace["user"],
+                )
+                warnings.warn(
+                    f"No teamspace given. Using teamspace: {self._teamspace.name}.",
+                    UserWarning,
+                    stacklevel=2,
+                )
 
         if self._teamspace is None:
             raise ValueError("Teamspace is required for billing but could not be resolved. ")
@@ -66,6 +79,7 @@ class LLM:
                     f"User is not authenticated to access the model in organization: '{self._model_provider}'.\n"
                     " Proceeding with appropriate org models, user models, or public models.",
                     UserWarning,
+                    stacklevel=2,
                 )
                 self._model_provider = None
                 raise

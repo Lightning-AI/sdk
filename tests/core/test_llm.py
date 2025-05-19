@@ -23,7 +23,7 @@ def mock_auth(monkeypatch):
 
     mock_menu = MagicMock()
     mock_possible_teamspaces = {
-        "teamspace-123": {"name": "teamspace-123"},
+        "teamspace-123": {"name": "teamspace-123", "org": None, "user": "user-name"},
     }
 
     mock_menu._get_possible_teamspaces.return_value = mock_possible_teamspaces
@@ -87,6 +87,40 @@ def test_invalid_format(monkeypatch, mock_auth, mock_model_data):
         LLM("openai/gpt-4o/v1")
 
 
+def test_default_teamspace(monkeypatch, mock_public_model):
+    mock_auth = MagicMock()
+    mock_auth.id = "user-123"
+    mock_auth.name = "user-name"
+
+    monkeypatch.setattr("lightning_sdk.llm.llm._get_authed_user", lambda: mock_auth)
+
+    mock_menu = MagicMock()
+    mock_possible_teamspaces = {
+        "default-teamspace-123": {"name": "default-teamspace-123", "org": None, "user": "user-name"},
+    }
+
+    mock_menu._get_possible_teamspaces.return_value = mock_possible_teamspaces
+
+    monkeypatch.setattr("lightning_sdk.llm.llm._TeamspacesMenu", lambda: mock_menu)
+
+    teamspace = MagicMock()
+    teamspace.id = "default-teamspace-123"
+    teamspace.name = "default-teamspace-123"
+    teamspace.org = None
+    teamspace.user = "user-name"
+    teamspace.owner = mock_auth
+    monkeypatch.setattr("lightning_sdk.llm.llm.Teamspace", lambda **kwargs: teamspace)
+
+    mock_api = MagicMock()
+    mock_api.list_models.return_value = mock_model_data
+    mock_api.get_public_models.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    warning_message = "No teamspace given. Using teamspace: default-teamspace-123."
+    with pytest.warns(UserWarning, match=re.escape(warning_message)):
+        LLM("open-ai/gpt-4o")
+
+
 def test_org_model(monkeypatch, mock_auth, mock_org_model):
     mock_api = MagicMock()
     mock_api.get_org_models.return_value = mock_org_model
@@ -137,7 +171,7 @@ def test_user_model(monkeypatch, mock_user_model):
 
     mock_menu = MagicMock()
     mock_possible_teamspaces = {
-        "teamspace-123": {"name": "teamspace-123"},
+        "teamspace-123": {"name": "teamspace-123", "org": None, "user": "user-name"},
     }
 
     mock_menu._get_possible_teamspaces.return_value = mock_possible_teamspaces
