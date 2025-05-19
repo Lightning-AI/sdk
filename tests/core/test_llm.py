@@ -229,6 +229,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         system_prompt=None,
         max_completion_tokens=10,
         assistant_id=llm._model.id,
+        image_urls=None,
         conversation_id=None,
         billing_project_id="teamspace-123",
         name=None,
@@ -245,6 +246,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         system_prompt=None,
         max_completion_tokens=500,
         assistant_id=llm._model.id,
+        image_urls=None,
         conversation_id=None,
         billing_project_id="teamspace-123",
         name="conv1",
@@ -259,6 +261,7 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         system_prompt=None,
         max_completion_tokens=500,
         assistant_id=llm._model.id,
+        image_urls=None,
         conversation_id="conv_123",
         billing_project_id="teamspace-123",
         name="conv1",
@@ -303,10 +306,30 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         system_prompt=None,
         max_completion_tokens=500,
         assistant_id=llm._model.id,
+        image_urls=None,
         conversation_id=None,
         billing_project_id="teamspace-123",
         name=None,
         stream=True,
+        metadata=None,
+    )
+
+    # test image content type
+    llm = LLM("openai/gpt-4o")
+    response = llm.chat(
+        "Describe the image",
+        image_urls="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+    )
+    mock_api.start_conversation.assert_called_with(
+        prompt="Describe the image",
+        system_prompt=None,
+        max_completion_tokens=500,
+        assistant_id=llm._model.id,
+        image_urls="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+        conversation_id=None,
+        billing_project_id="teamspace-123",
+        name=None,
+        stream=False,
         metadata=None,
     )
 

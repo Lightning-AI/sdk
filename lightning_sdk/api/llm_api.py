@@ -61,6 +61,7 @@ class LLMApi:
         system_prompt: Optional[str],
         max_completion_tokens: int,
         assistant_id: str,
+        image_urls: Optional[Union[List[str], str]] = None,
         conversation_id: Optional[str] = None,
         billing_project_id: Optional[str] = None,
         name: Optional[str] = None,
@@ -71,10 +72,7 @@ class LLMApi:
             "message": {
                 "author": {"role": "user"},
                 "content": [
-                    {
-                        "contentType": "text",
-                        "parts": [prompt],
-                    }
+                    {"contentType": "text", "parts": [prompt]},
                 ],
             },
             "max_completion_tokens": max_completion_tokens,
@@ -84,6 +82,17 @@ class LLMApi:
             "stream": stream,
             "metadata": metadata or {},
         }
+        if image_urls:
+            if isinstance(image_urls, str):
+                image_urls = [image_urls]
+            for image_url in image_urls:
+                body["message"]["content"].append(
+                    {
+                        "contentType": "image",
+                        "parts": [image_url],
+                    }
+                )
+
         result = self._client.assistants_service_start_conversation(body, assistant_id, _preload_content=not stream)
         if not stream:
             return result.result
