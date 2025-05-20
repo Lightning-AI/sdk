@@ -61,7 +61,7 @@ class LLMApi:
         system_prompt: Optional[str],
         max_completion_tokens: int,
         assistant_id: str,
-        image_urls: Optional[Union[List[str], str]] = None,
+        images: Optional[Union[List[str], str]] = None,
         conversation_id: Optional[str] = None,
         billing_project_id: Optional[str] = None,
         name: Optional[str] = None,
@@ -82,14 +82,14 @@ class LLMApi:
             "stream": stream,
             "metadata": metadata or {},
         }
-        if image_urls:
-            if isinstance(image_urls, str):
-                image_urls = [image_urls]
-            for image_url in image_urls:
+        if images:
+            if isinstance(images, str):
+                images = [images]
+            for image in images:
                 body["message"]["content"].append(
                     {
                         "contentType": "image",
-                        "parts": [image_url],
+                        "parts": [image],
                     }
                 )
 
