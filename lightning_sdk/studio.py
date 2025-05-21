@@ -1,10 +1,12 @@
 import glob
 import os
 import warnings
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Tuple, Union
 
 from tqdm.auto import tqdm
 
+from lightning_sdk.api.cluster_api import ClusterApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.constants import _LIGHTNING_DEBUG
@@ -25,6 +27,19 @@ if TYPE_CHECKING:
 _logger = _setup_logger(__name__)
 
 
+class Provider(Enum):
+    # Machine providers based on v1CloudProvider
+    AWS = "AWS"
+    GCP = "GCP"
+    VULTR = "VULTR"
+    LAMBDA_LABS = "LAMBDA_LABS"
+    DGX = "DGX"
+    VOLTAGE_PARK = "VOLTAGE_PARK"
+    NEBIUS = "NEBIUS"
+    CLOUDFLARE = "CLOUDFLARE"
+    LIGHTNING = "LIGHTNING"
+
+
 class Studio:
     """A single Lightning AI Studio.
 
@@ -39,6 +54,8 @@ class Studio:
         cloud_account: the name of the cloud account, the studio should be created on.
             Doesn't matter when the studio already exists.
         create_ok: whether the studio will be created if it does not yet exist. Defaults to True
+        provider: the provider of the machine, the studio should be created on.
+
     Note:
         Since a teamspace can either be owned by an org or by a user directly,
         only one of the arguments can be provided.
@@ -57,15 +74,27 @@ class Studio:
         cloud_account: Optional[str] = None,
         create_ok: bool = True,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
+        provider: Optional[str] = None,
         source: Optional[V1CloudSpaceSourceType] = None,
     ) -> None:
         self._studio_api = StudioApi()
+        self._cluster_api = ClusterApi()
 
         self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         self._cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
         self._setup_done = False
 
         self._plugins = {}
+
+        if provider is not None:
+            if isinstance(provider, str) and provider in Provider.__members__:
+                provider = Provider(provider)
+            else:
+                raise ValueError(f"Invalid provider: {provider}. Must be one of {Provider.__members__.keys()}.")
+            self._cloud_account = self._cluster_api.get_cluster_provider_mapping(
+                self._teamspace.id,
+                self._teamspace.owner.id,
+            )[provider.value]
 
         if name is None:
             studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)

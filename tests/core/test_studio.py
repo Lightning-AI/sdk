@@ -609,6 +609,18 @@ def test_cluster(internal_studio_init_mocker, internal_studio_status_mocker, nam
     assert studio.cloud_account == f"c-{name}"
 
 
+@mock.patch("lightning_sdk.api.cluster_api.ClusterApi.get_cluster_provider_mapping")
+def test_provider(get_cluster_provider_mapping_mocker, internal_studio_init_mocker, internal_studio_status_mocker):
+    get_cluster_provider_mapping_mocker.return_value = {"AWS": "c-test"}
+    studio = Studio(name="my-test", teamspace="ts-abc", org="org-abc", provider="AWS")
+    assert studio.cloud_account == "c-test"
+
+
+def test_provider_invalid(internal_studio_init_mocker, internal_studio_status_mocker):
+    with pytest.raises(ValueError, match="Invalid provider: INVALID. Must be one of"):
+        Studio(name="my-test", teamspace="ts-abc", org="org-abc", provider="INVALID")
+
+
 @pytest.mark.parametrize("machine", [Machine.A10G, Machine.DATA_PREP_MAX])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
