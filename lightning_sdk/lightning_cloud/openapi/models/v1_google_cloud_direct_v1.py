@@ -47,6 +47,7 @@ class V1GoogleCloudDirectV1(object):
         'credentials_secret_id': 'str',
         'credentials_service_account_email': 'str',
         'custom_subnet_mode': 'bool',
+        'migration_bucket_name': 'str',
         'primary_region': 'str',
         'project_id': 'str',
         'project_sa_enabled': 'bool',
@@ -64,6 +65,7 @@ class V1GoogleCloudDirectV1(object):
         'credentials_secret_id': 'credentialsSecretId',
         'credentials_service_account_email': 'credentialsServiceAccountEmail',
         'custom_subnet_mode': 'customSubnetMode',
+        'migration_bucket_name': 'migrationBucketName',
         'primary_region': 'primaryRegion',
         'project_id': 'projectId',
         'project_sa_enabled': 'projectSaEnabled',
@@ -74,7 +76,7 @@ class V1GoogleCloudDirectV1(object):
         'vpcs': 'vpcs'
     }
 
-    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, compute_service_account_email: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None, vpcs: 'list[V1GCPDirectVPC]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, compute_service_account_email: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, migration_bucket_name: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None, vpcs: 'list[V1GCPDirectVPC]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._compute_project_role = None
@@ -82,6 +84,7 @@ class V1GoogleCloudDirectV1(object):
         self._credentials_secret_id = None
         self._credentials_service_account_email = None
         self._custom_subnet_mode = None
+        self._migration_bucket_name = None
         self._primary_region = None
         self._project_id = None
         self._project_sa_enabled = None
@@ -103,6 +106,8 @@ class V1GoogleCloudDirectV1(object):
             self.credentials_service_account_email = credentials_service_account_email
         if custom_subnet_mode is not None:
             self.custom_subnet_mode = custom_subnet_mode
+        if migration_bucket_name is not None:
+            self.migration_bucket_name = migration_bucket_name
         if primary_region is not None:
             self.primary_region = primary_region
         if project_id is not None:
@@ -247,6 +252,27 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._custom_subnet_mode = custom_subnet_mode
+
+    @property
+    def migration_bucket_name(self) -> 'str':
+        """Gets the migration_bucket_name of this V1GoogleCloudDirectV1.  # noqa: E501
+
+
+        :return: The migration_bucket_name of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._migration_bucket_name
+
+    @migration_bucket_name.setter
+    def migration_bucket_name(self, migration_bucket_name: 'str'):
+        """Sets the migration_bucket_name of this V1GoogleCloudDirectV1.
+
+
+        :param migration_bucket_name: The migration_bucket_name of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._migration_bucket_name = migration_bucket_name
 
     @property
     def primary_region(self) -> 'str':

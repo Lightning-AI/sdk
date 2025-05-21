@@ -49,6 +49,7 @@ class AssistantIdConversationsBody(object):
         'metadata': 'dict(str, str)',
         'name': 'str',
         'parent_message_id': 'str',
+        'store': 'bool',
         'stream': 'bool'
     }
 
@@ -61,10 +62,11 @@ class AssistantIdConversationsBody(object):
         'metadata': 'metadata',
         'name': 'name',
         'parent_message_id': 'parentMessageId',
+        'store': 'store',
         'stream': 'stream'
     }
 
-    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, stream: 'bool' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, store: 'bool' =None, stream: 'bool' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._billing_project_id = None
@@ -74,6 +76,7 @@ class AssistantIdConversationsBody(object):
         self._metadata = None
         self._name = None
         self._parent_message_id = None
+        self._store = None
         self._stream = None
         self.discriminator = None
         if auto_name is not None:
@@ -92,6 +95,8 @@ class AssistantIdConversationsBody(object):
             self.name = name
         if parent_message_id is not None:
             self.parent_message_id = parent_message_id
+        if store is not None:
+            self.store = store
         if stream is not None:
             self.stream = stream
 
@@ -262,6 +267,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._parent_message_id = parent_message_id
+
+    @property
+    def store(self) -> 'bool':
+        """Gets the store of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The store of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._store
+
+    @store.setter
+    def store(self, store: 'bool'):
+        """Sets the store of this AssistantIdConversationsBody.
+
+
+        :param store: The store of this AssistantIdConversationsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._store = store
 
     @property
     def stream(self) -> 'bool':

@@ -41,6 +41,7 @@ class V1GetOrganizationStorageMetadataResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'account_limit_bytes': 'str',
         'id': 'str',
         'project_metadata': 'list[V1ProjectStorage]',
         'total_billable_bytes': 'str',
@@ -52,6 +53,7 @@ class V1GetOrganizationStorageMetadataResponse(object):
     }
 
     attribute_map = {
+        'account_limit_bytes': 'accountLimitBytes',
         'id': 'id',
         'project_metadata': 'projectMetadata',
         'total_billable_bytes': 'totalBillableBytes',
@@ -62,8 +64,9 @@ class V1GetOrganizationStorageMetadataResponse(object):
         'total_upload_storage_bytes': 'totalUploadStorageBytes'
     }
 
-    def __init__(self, id: 'str' =None, project_metadata: 'list[V1ProjectStorage]' =None, total_billable_bytes: 'str' =None, total_cloudspace_storage_bytes: 'str' =None, total_data_connection_storage_bytes: 'str' =None, total_job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, total_upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, account_limit_bytes: 'str' =None, id: 'str' =None, project_metadata: 'list[V1ProjectStorage]' =None, total_billable_bytes: 'str' =None, total_cloudspace_storage_bytes: 'str' =None, total_data_connection_storage_bytes: 'str' =None, total_job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, total_upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1GetOrganizationStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
+        self._account_limit_bytes = None
         self._id = None
         self._project_metadata = None
         self._total_billable_bytes = None
@@ -73,6 +76,8 @@ class V1GetOrganizationStorageMetadataResponse(object):
         self._total_storage_bytes = None
         self._total_upload_storage_bytes = None
         self.discriminator = None
+        if account_limit_bytes is not None:
+            self.account_limit_bytes = account_limit_bytes
         if id is not None:
             self.id = id
         if project_metadata is not None:
@@ -89,6 +94,27 @@ class V1GetOrganizationStorageMetadataResponse(object):
             self.total_storage_bytes = total_storage_bytes
         if total_upload_storage_bytes is not None:
             self.total_upload_storage_bytes = total_upload_storage_bytes
+
+    @property
+    def account_limit_bytes(self) -> 'str':
+        """Gets the account_limit_bytes of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The account_limit_bytes of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._account_limit_bytes
+
+    @account_limit_bytes.setter
+    def account_limit_bytes(self, account_limit_bytes: 'str'):
+        """Sets the account_limit_bytes of this V1GetOrganizationStorageMetadataResponse.
+
+
+        :param account_limit_bytes: The account_limit_bytes of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._account_limit_bytes = account_limit_bytes
 
     @property
     def id(self) -> 'str':
