@@ -1,4 +1,5 @@
 import webbrowser
+from contextlib import suppress
 from pathlib import Path
 from typing import Optional
 
@@ -23,7 +24,17 @@ from lightning_sdk.utils.resolve import _get_studio_url
         "If not specified, tries to infer from the environment (e.g. when run from within a Studio.)"
     ),
 )
-def open(path: str = ".", teamspace: Optional[str] = None) -> None:  # noqa: A001
+@click.option(
+    "--cloud-account",
+    "--cloud_account",
+    default=None,
+    help=(
+        "The cloud account to create the studio on. "
+        "If not specified, will try to infer from the environment (e.g. when run from within a Studio.) "
+        "or fall back to the teamspace default."
+    ),
+)
+def open(path: str = ".", teamspace: Optional[str] = None, cloud_account: Optional[str] = None) -> None:  # noqa: A001
     """Open a local file or folder in a Lightning Studio.
 
     Example:
@@ -41,7 +52,15 @@ def open(path: str = ".", teamspace: Optional[str] = None) -> None:  # noqa: A00
         menu = _TeamspacesMenu()
         resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
 
-    new_studio = Studio(name=pathlib_path.stem, teamspace=resolved_teamspace)
+    # default cloud account to current studios cloud account if run from studio
+    # else it will fall back to teamspace default in the backend
+    if cloud_account is None:
+        with suppress(ValueError):
+            s = Studio()
+            if s.teamspace.name == resolved_teamspace.name and s.teamspace.owner.name == resolved_teamspace.owner.name:
+                cloud_account = s.cloud_account
+
+    new_studio = Studio(name=pathlib_path.stem, teamspace=resolved_teamspace, cloud_account=cloud_account)
 
     console.print(
         f"[bold]Uploading {path} to {new_studio.owner.name}/{new_studio.teamspace.name}/{new_studio.name}[/bold]"
