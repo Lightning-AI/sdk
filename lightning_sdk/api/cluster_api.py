@@ -1,4 +1,4 @@
-from lightning_sdk.lightning_cloud.openapi import Externalv1Cluster
+from lightning_sdk.lightning_cloud.openapi import Externalv1Cluster, V1ListClusterAcceleratorsResponse
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
@@ -6,7 +6,7 @@ class ClusterApi:
     """Internal API client for API requests to cluster endpoints."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = LightningClient(max_tries=1)
 
     def get_cluster(self, cluster_id: str, project_id: str, org_id: str) -> Externalv1Cluster:
         """Gets the cluster from given params cluster_id, project_id and owner.
@@ -17,6 +17,21 @@ class ClusterApi:
         :return:
         """
         res = self._client.cluster_service_get_cluster(id=cluster_id, org_id=org_id, project_id=project_id)
+        if not res:
+            raise ValueError(f"Cluster {cluster_id} does not exist")
+        return res
+
+    def list_cluster_accelerators(self, cluster_id: str, org_id: str) -> V1ListClusterAcceleratorsResponse:
+        """Lists the accelerators for a given cluster.
+
+        :param cluster_id: cluster ID test
+        :param project_id: the project the cluster is supposed to be associated with
+        :param org_id: The owning org of this cluster
+        """
+        res = self._client.cluster_service_list_cluster_accelerators(
+            id=cluster_id,
+            org_id=org_id,
+        )
         if not res:
             raise ValueError(f"Cluster {cluster_id} does not exist")
         return res
