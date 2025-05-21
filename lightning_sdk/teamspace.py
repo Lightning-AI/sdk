@@ -1,7 +1,10 @@
+import glob
 import os
 import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional, Tuple, Union
+
+from tqdm.auto import tqdm
 
 import lightning_sdk
 from lightning_sdk.agents import Agent
@@ -400,6 +403,71 @@ class Teamspace:
                 "Model name should not contain a version tag. Please provide the model name without a version."
             )
         return self._teamspace_api.list_model_versions(teamspace_id=self.id, model_name=name)
+
+    def upload_file(self, file_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
+        """Uploads file to given remote path in the Teamspace drive."""
+        if remote_path is None:
+            remote_path = os.path.split(file_path)[1]
+
+        self._teamspace_api.upload_file(
+            teamspace_id=self._teamspace.id,
+            cloud_account=self.default_cloud_account,
+            file_path=file_path,
+            remote_path=os.path.normpath(remote_path),
+            progress_bar=progress_bar,
+        )
+
+    def upload_folder(self, folder_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
+        """Uploads a given folder to a remote path in the Teamspace drive."""
+        if folder_path is None:
+            raise ValueError("Cannot upload a folder that is None.")
+        folder_path = os.path.normpath(folder_path)
+        if os.path.isfile(folder_path):
+            raise NotADirectoryError(f"Cannot upload a file as a folder. '{folder_path}' is a file.")
+        if not os.path.exists(folder_path):
+            raise NotADirectoryError(f"Cannot upload a folder that does not exist. '{folder_path}' is not a directory.")
+        all_files = []
+        for fp in glob.glob(os.path.join(folder_path, "**"), recursive=True):
+            if not os.path.isfile(fp):
+                continue
+            rel_path = os.path.relpath(fp, folder_path)
+            remote_file = os.path.join(remote_path, rel_path) if remote_path else rel_path
+            all_files.append((fp, remote_file))
+
+        if progress_bar:
+            progress_bar = tqdm(total=len(all_files), desc="Uploading files", unit="file")
+        for local_file, remote_path in sorted(all_files, key=lambda p: p[1]):
+            if progress_bar:
+                progress_bar.set_description(f"Uploading {local_file}")
+            self.upload_file(local_file, remote_path=remote_path, progress_bar=False)
+            if progress_bar:
+                progress_bar.update(1)
+        if progress_bar:
+            progress_bar.close()
+
+    def download_file(self, remote_path: str, file_path: Optional[str] = None) -> None:
+        """Downloads a given file in Teamspace drive to a target location."""
+        if file_path is None:
+            file_path = remote_path
+
+        self._teamspace_api.download_file(
+            path=remote_path,
+            target_path=file_path,
+            teamspace_id=self._teamspace.id,
+            cloud_account=self.default_cloud_account,
+        )
+
+    def download_folder(self, remote_path: str, target_path: Optional[str] = None) -> None:
+        """Downloads a folder in the Teamspace drive to a given target path."""
+        if target_path is None:
+            target_path = remote_path
+
+        self._teamspace_api.download_folder(
+            path=remote_path,
+            target_path=target_path,
+            teamspace_id=self._teamspace.id,
+            cloud_account=self.default_cloud_account,
+        )
 
 
 def _list_files(path: Union[str, Path]) -> Tuple[List[Path], List[str]]:

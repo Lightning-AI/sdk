@@ -355,6 +355,10 @@ def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:
     return f"/cloudspaces/{studio_id}/code/content/{path.replace('/teamspace/studios/this_studio/', '')}"
 
 
+def _resolve_teamspace_remote_path(path: str) -> str:
+    return f"/Uploads/{path.replace('/teamspace/studios/', '')}"
+
+
 _DOWNLOAD_REQUEST_CHUNK_SIZE = 10 * _BYTES_PER_MB
 _DOWNLOAD_MIN_CHUNK_SIZE = 100 * _BYTES_PER_KB
 

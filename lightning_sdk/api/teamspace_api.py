@@ -1,10 +1,20 @@
 import os
+import tempfile
+import zipfile
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+import requests
 from tqdm.auto import tqdm
 
-from lightning_sdk.api.utils import _download_model_files, _DummyBody, _get_model_version, _ModelFileUploader
+from lightning_sdk.api.utils import (
+    _download_model_files,
+    _DummyBody,
+    _FileUploader,
+    _get_model_version,
+    _ModelFileUploader,
+    _resolve_teamspace_remote_path,
+)
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
@@ -17,6 +27,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterAccelerator,
     V1Endpoint,
     V1Job,
+    V1LoginRequest,
     V1Model,
     V1ModelVersionArchive,
     V1MultiMachineJob,
@@ -331,3 +342,118 @@ class TeamspaceApi:
             model_id = self.get_model(teamspace_id=teamspace_id, model_name=model_name).id
         response = self.models_api.models_store_list_model_versions(project_id=teamspace_id, model_id=model_id)
         return response.versions
+
+    def upload_file(
+        self,
+        teamspace_id: str,
+        cloud_account: str,
+        file_path: str,
+        remote_path: str,
+        progress_bar: bool,
+    ) -> None:
+        """Uploads file to given remote path in the Teamspace drive."""
+        _FileUploader(
+            client=self._client,
+            teamspace_id=teamspace_id,
+            cloud_account=cloud_account,
+            file_path=file_path,
+            remote_path=_resolve_teamspace_remote_path(remote_path),
+            progress_bar=progress_bar,
+        )()
+
+    def download_file(
+        self,
+        path: str,
+        target_path: str,
+        teamspace_id: str,
+        cloud_account: str,
+        progress_bar: bool = True,
+    ) -> None:
+        """Downloads a given file in Teamspace drive to a target location."""
+        # TODO: Update this endpoint to permit basic auth
+        auth = Auth()
+        auth.authenticate()
+        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+
+        query_params = {
+            "clusterId": cloud_account,
+            "key": _resolve_teamspace_remote_path(path),
+            "token": token,
+        }
+
+        r = requests.get(
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
+            params=query_params,
+            stream=True,
+        )
+        total_length = int(r.headers.get("content-length"))
+
+        if progress_bar:
+            pbar = tqdm(
+                desc=f"Downloading {os.path.split(path)[1]}",
+                total=total_length,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1000,
+            )
+
+            pbar_update = pbar.update
+        else:
+            pbar_update = lambda x: None
+
+        target_dir = os.path.split(target_path)[0]
+        if target_dir:
+            os.makedirs(target_dir, exist_ok=True)
+        with open(target_path, "wb") as f:
+            for chunk in r.iter_content(chunk_size=4096 * 8):
+                f.write(chunk)
+                pbar_update(len(chunk))
+
+    def download_folder(
+        self,
+        path: str,
+        target_path: str,
+        teamspace_id: str,
+        cloud_account: str,
+        progress_bar: bool = True,
+    ) -> None:
+        """Downloads a given folder from Teamspace drive to a target location."""
+        # TODO: Update this endpoint to permit basic auth
+        auth = Auth()
+        auth.authenticate()
+        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+
+        query_params = {
+            "clusterId": cloud_account,
+            "prefix": _resolve_teamspace_remote_path(path),
+            "token": token,
+        }
+
+        r = requests.get(
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
+            params=query_params,
+            stream=True,
+        )
+
+        if progress_bar:
+            pbar = tqdm(
+                desc=f"Downloading {os.path.split(path)[1]}",
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1000,
+            )
+
+            pbar_update = pbar.update
+        else:
+            pbar_update = lambda x: None
+
+        if target_path:
+            os.makedirs(target_path, exist_ok=True)
+
+        with tempfile.TemporaryFile() as f:
+            for chunk in r.iter_content(chunk_size=4096 * 8):
+                f.write(chunk)
+                pbar_update(len(chunk))
+
+            with zipfile.ZipFile(f) as z:
+                z.extractall(target_path)

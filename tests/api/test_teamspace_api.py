@@ -1,10 +1,12 @@
 import os
+import subprocess
 from pathlib import Path
 from unittest import mock
 
 import pytest
 
 from lightning_sdk.api.teamspace_api import TeamspaceApi
+from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
     ModelIdVersionsBody,
     ProjectIdModelsBody,
@@ -238,3 +240,44 @@ def test_get_model_errors(internal_teamspace_api_mocker):
     )
     with pytest.raises(RuntimeError, match="Model name 'model-name' is not a unique with this teamspace."):
         teamspace_api.get_model("xyz", model_name="model-name")
+
+
+@pytest.mark.parametrize("progress_bar", [True, False])
+@mock.patch("lightning_sdk.api.teamspace_api._FileUploader")
+def test_upload_file(
+    uploader_mock,
+    tmpdir,
+    progress_bar,
+):
+    teamspace_api = TeamspaceApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 40MB {filepath}".split(" "))
+
+    os.environ["LIGHTNING_MULTIPART_THRESHOLD"] = str(20 * _BYTES_PER_MB)
+    teamspace_api.upload_file("ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar)
+
+    uploader_mock.assert_called_with(
+        client=mock.ANY,
+        file_path=filepath,
+        remote_path="/Uploads/file1",
+        cloud_account="cluster-abc",
+        teamspace_id="ts-abc",
+        progress_bar=progress_bar,
+    )
+    uploader_mock().assert_called_with()  # .__call__()
+
+
+def test_download_file(tmpdir, internal_teamspace_api_mocker, internal_studio_api_login):
+    teamspace_api = TeamspaceApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    teamspace_api.download_file("file1", filepath, "ts-abc", "cluster-abc")
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.zipfile")
+def test_download_folder(_, tmpdir, internal_teamspace_api_mocker, internal_studio_api_login):
+    teamspace_api = TeamspaceApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    teamspace_api.download_folder("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
