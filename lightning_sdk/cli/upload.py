@@ -197,8 +197,7 @@ def _folder(path: str, studio: Optional[str] = None, remote_path: Optional[str] 
     if not Path(path).is_dir():
         raise StudioCliError(f"The provided path is not a folder: {path}. Use `lightning upload file` instead.")
 
-    menu = _StudiosMenu()
-    selected_studio = menu._resolve_studio(studio)
+    selected_studio = _resolve_studio(studio)
 
     console.print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
 
@@ -247,8 +246,7 @@ def _file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = 
     if not Path(path).exists():
         raise FileNotFoundError(f"The provided path does not exist: {path}.")
 
-    menu = _StudiosMenu()
-    selected_studio = menu._resolve_studio(studio)
+    selected_studio = _resolve_studio(studio)
 
     console.print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
 
