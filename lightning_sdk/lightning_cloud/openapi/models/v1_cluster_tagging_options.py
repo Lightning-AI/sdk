@@ -42,6 +42,7 @@ class V1ClusterTaggingOptions(object):
     """
     swagger_types = {
         'custom_tags': 'list[V1ClusterResourceTag]',
+        'tag_bucket_objects': 'bool',
         'tag_instances_with_teamspace_name': 'bool',
         'tag_instances_with_username': 'bool',
         'tag_instances_with_workload_name': 'bool'
@@ -49,20 +50,24 @@ class V1ClusterTaggingOptions(object):
 
     attribute_map = {
         'custom_tags': 'customTags',
+        'tag_bucket_objects': 'tagBucketObjects',
         'tag_instances_with_teamspace_name': 'tagInstancesWithTeamspaceName',
         'tag_instances_with_username': 'tagInstancesWithUsername',
         'tag_instances_with_workload_name': 'tagInstancesWithWorkloadName'
     }
 
-    def __init__(self, custom_tags: 'list[V1ClusterResourceTag]' =None, tag_instances_with_teamspace_name: 'bool' =None, tag_instances_with_username: 'bool' =None, tag_instances_with_workload_name: 'bool' =None):  # noqa: E501
+    def __init__(self, custom_tags: 'list[V1ClusterResourceTag]' =None, tag_bucket_objects: 'bool' =None, tag_instances_with_teamspace_name: 'bool' =None, tag_instances_with_username: 'bool' =None, tag_instances_with_workload_name: 'bool' =None):  # noqa: E501
         """V1ClusterTaggingOptions - a model defined in Swagger"""  # noqa: E501
         self._custom_tags = None
+        self._tag_bucket_objects = None
         self._tag_instances_with_teamspace_name = None
         self._tag_instances_with_username = None
         self._tag_instances_with_workload_name = None
         self.discriminator = None
         if custom_tags is not None:
             self.custom_tags = custom_tags
+        if tag_bucket_objects is not None:
+            self.tag_bucket_objects = tag_bucket_objects
         if tag_instances_with_teamspace_name is not None:
             self.tag_instances_with_teamspace_name = tag_instances_with_teamspace_name
         if tag_instances_with_username is not None:
@@ -90,6 +95,27 @@ class V1ClusterTaggingOptions(object):
         """
 
         self._custom_tags = custom_tags
+
+    @property
+    def tag_bucket_objects(self) -> 'bool':
+        """Gets the tag_bucket_objects of this V1ClusterTaggingOptions.  # noqa: E501
+
+
+        :return: The tag_bucket_objects of this V1ClusterTaggingOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._tag_bucket_objects
+
+    @tag_bucket_objects.setter
+    def tag_bucket_objects(self, tag_bucket_objects: 'bool'):
+        """Sets the tag_bucket_objects of this V1ClusterTaggingOptions.
+
+
+        :param tag_bucket_objects: The tag_bucket_objects of this V1ClusterTaggingOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._tag_bucket_objects = tag_bucket_objects
 
     @property
     def tag_instances_with_teamspace_name(self) -> 'bool':

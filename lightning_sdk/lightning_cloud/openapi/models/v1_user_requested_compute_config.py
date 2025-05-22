@@ -42,6 +42,7 @@ class V1UserRequestedComputeConfig(object):
     """
     swagger_types = {
         'affinity_identifier': 'str',
+        'cluster_override': 'str',
         'count': 'int',
         'cpu_image_override': 'str',
         'disk_size': 'int',
@@ -56,6 +57,7 @@ class V1UserRequestedComputeConfig(object):
 
     attribute_map = {
         'affinity_identifier': 'affinityIdentifier',
+        'cluster_override': 'clusterOverride',
         'count': 'count',
         'cpu_image_override': 'cpuImageOverride',
         'disk_size': 'diskSize',
@@ -68,9 +70,10 @@ class V1UserRequestedComputeConfig(object):
         'spot': 'spot'
     }
 
-    def __init__(self, affinity_identifier: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, name: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, affinity_identifier: 'str' =None, cluster_override: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, name: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None, spot: 'bool' =None):  # noqa: E501
         """V1UserRequestedComputeConfig - a model defined in Swagger"""  # noqa: E501
         self._affinity_identifier = None
+        self._cluster_override = None
         self._count = None
         self._cpu_image_override = None
         self._disk_size = None
@@ -84,6 +87,8 @@ class V1UserRequestedComputeConfig(object):
         self.discriminator = None
         if affinity_identifier is not None:
             self.affinity_identifier = affinity_identifier
+        if cluster_override is not None:
+            self.cluster_override = cluster_override
         if count is not None:
             self.count = count
         if cpu_image_override is not None:
@@ -127,6 +132,27 @@ class V1UserRequestedComputeConfig(object):
         """
 
         self._affinity_identifier = affinity_identifier
+
+    @property
+    def cluster_override(self) -> 'str':
+        """Gets the cluster_override of this V1UserRequestedComputeConfig.  # noqa: E501
+
+
+        :return: The cluster_override of this V1UserRequestedComputeConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_override
+
+    @cluster_override.setter
+    def cluster_override(self, cluster_override: 'str'):
+        """Sets the cluster_override of this V1UserRequestedComputeConfig.
+
+
+        :param cluster_override: The cluster_override of this V1UserRequestedComputeConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_override = cluster_override
 
     @property
     def count(self) -> 'int':
