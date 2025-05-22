@@ -1,3 +1,4 @@
+import base64
 import json
 from typing import Dict, Generator, List, Optional, Union
 
@@ -55,13 +56,18 @@ class LLMApi:
                 except json.JSONDecodeError:
                     print("Error decoding JSON:", decoded_line)
 
+    def _encode_image_bytes_to_data_url(self, image: str, mime_type: str = "image/jpeg") -> str:
+        with open(image, "rb") as image_file:
+            b64 = base64.b64encode(image_file.read()).decode("utf-8")
+            return f"data:{mime_type};base64,{b64}"
+
     def start_conversation(
         self,
         prompt: str,
         system_prompt: Optional[str],
         max_completion_tokens: int,
         assistant_id: str,
-        images: Optional[Union[List[str], str]] = None,
+        images: Optional[List[str]] = None,
         conversation_id: Optional[str] = None,
         billing_project_id: Optional[str] = None,
         name: Optional[str] = None,
@@ -83,13 +89,15 @@ class LLMApi:
             "metadata": metadata or {},
         }
         if images:
-            if isinstance(images, str):
-                images = [images]
             for image in images:
+                url = image
+                if not image.startswith("http"):
+                    url = self._encode_image_bytes_to_data_url(image)
+
                 body["message"]["content"].append(
                     {
                         "contentType": "image",
-                        "parts": [image],
+                        "parts": [url],
                     }
                 )
 
