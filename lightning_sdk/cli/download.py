@@ -48,12 +48,17 @@ def model(name: str, download_dir: str = ".") -> None:
     "--studio",
     default=None,
     help=(
-        "The name of the studio to upload to. "
+        "The name of the studio to download from. "
         "Will show a menu with user's owned studios for selection if not specified. "
         "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names are case-sensitive. "
         "The teamspace and studio names can be regular expressions to match, "
         "a menu filtered studios will be shown for final selection."
     ),
+)
+@click.option(
+    "--teamspace",
+    default=None,
+    help="The teamspace the drive folder is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.",
 )
 @click.option(
     "--local-path",
@@ -62,32 +67,41 @@ def model(name: str, download_dir: str = ".") -> None:
     type=click.Path(file_okay=False, dir_okay=True),
     help="The path to the directory you want to download the folder to.",
 )
-def folder(path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
-    """Download a folder from a Studio.
+def folder(
+    path: str = "", studio: Optional[str] = None, teamspace: Optional[str] = None, local_path: str = "."
+) -> None:
+    """Download a folder from a Studio or a Teamspace drive folder.
 
     Example:
       lightning download folder PATH
 
-    PATH: The relative path within the Studio you want to download.
-    Defaults to the entire studio.
+    PATH: The relative path within the Studio or drive folder you want to download.
+    Defaults to the entire Studio or drive folder.
     """
     local_path = Path(local_path)
     if not local_path.is_dir():
         raise NotADirectoryError(f"'{local_path}' is not a directory")
 
-    resolved_studio = _resolve_studio(studio)
+    if studio and teamspace:
+        raise ValueError("Either --studio or --teamspace must be provided, not both")
+
+    if studio:
+        resolved_downloader = _resolve_studio(studio)
+    elif teamspace:
+        menu = _TeamspacesMenu()
+        resolved_downloader = menu._resolve_teamspace(teamspace)
 
     if not path:
-        local_path /= resolved_studio.name
+        local_path /= resolved_downloader.name
         path = ""
 
     try:
         if not path:
             raise FileNotFoundError()
-        resolved_studio.download_folder(remote_path=path, target_path=str(local_path))
+        resolved_downloader.download_folder(remote_path=path, target_path=str(local_path))
     except Exception as e:
         raise StudioCliError(
-            f"Could not download the folder from the given Studio {studio}. "
+            f"Could not download the folder from the given Studio {studio} or Teamspace {teamspace}. "
             "Please contact Lightning AI directly to resolve this issue."
         ) from e
 
@@ -106,37 +120,51 @@ def folder(path: str = "", studio: Optional[str] = None, local_path: str = ".") 
     ),
 )
 @click.option(
+    "--teamspace",
+    default=None,
+    help="The teamspace the file is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.",
+)
+@click.option(
     "--local-path",
     "--local_path",
     default=".",
     type=click.Path(file_okay=False, dir_okay=True),
     help="The path to the directory you want to download the file to.",
 )
-def file(path: str = "", studio: Optional[str] = None, local_path: str = ".") -> None:
-    """Download a file from a Studio.
+def file(path: str = "", studio: Optional[str] = None, teamspace: Optional[str] = None, local_path: str = ".") -> None:
+    """Download a file from a Studio or Teamspace drive file.
 
     Example:
       lightning download file PATH
 
-    PATH: The relative path to the file within the Studio you want to download.
+    PATH: The relative path to the file within the Studio or Teamspace drive file you want to download.
     """
     local_path = Path(local_path)
     if not local_path.is_dir():
         raise NotADirectoryError(f"'{local_path}' is not a directory")
 
-    resolved_studio = _resolve_studio(studio)
+    if studio and teamspace:
+        raise ValueError("Either --studio or --teamspace must be provided, not both")
+
+    if studio:
+        resolved_downloader = _resolve_studio(studio)
+    elif teamspace:
+        menu = _TeamspacesMenu()
+        resolved_downloader = menu._resolve_teamspace(teamspace)
+    else:
+        raise ValueError("Either --studio or --teamspace must be provided")
 
     if not path:
-        local_path /= resolved_studio.name
+        local_path /= resolved_downloader.name
         path = ""
 
     try:
         if not path:
             raise FileNotFoundError()
-        resolved_studio.download_file(remote_path=path, file_path=str(local_path / os.path.basename(path)))
+        resolved_downloader.download_file(remote_path=path, file_path=str(local_path / os.path.basename(path)))
     except Exception as e:
         raise StudioCliError(
-            f"Could not download the file from the given Studio {studio}. "
+            f"Could not download the file from the given Studio {studio} or Teamspace {teamspace}. "
             "Please contact Lightning AI directly to resolve this issue."
         ) from e
 
