@@ -43,6 +43,8 @@ Options:
   --machine [CPU_SMALL|CPU|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_8|H100_X_8|H200_X_8]
                                   The machine type to start the studio on.
                                   [default: CPU]
+  --provider [AWS|GCP|VULTR|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|CLOUDFLARE|LIGHTNING]
+                                  The provider to start the studio on.
   --help                          Show this message and exit.
 """  # noqa: E501
     )

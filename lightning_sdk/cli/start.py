@@ -4,8 +4,10 @@ import click
 
 from lightning_sdk import Machine, Studio
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+from lightning_sdk.studio import Provider
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
+_PROVIDER_VALUES = tuple([provider.value for provider in Provider])
 
 
 @click.group("start")
@@ -33,7 +35,14 @@ def start() -> None:
     type=click.Choice(_MACHINE_VALUES),
     help="The machine type to start the studio on.",
 )
-def studio(name: str, teamspace: Optional[str] = None, machine: str = "CPU") -> None:
+@click.option(
+    "--provider",
+    default=None,
+    show_default=True,
+    type=click.Choice(_PROVIDER_VALUES),
+    help="The provider to start the studio on.",
+)
+def studio(name: str, teamspace: Optional[str] = None, machine: str = "CPU", provider: Optional[str] = None) -> None:
     """Start a studio on a given machine.
 
     Example:
@@ -50,9 +59,9 @@ def studio(name: str, teamspace: Optional[str] = None, machine: str = "CPU") -> 
         owner, teamspace = None, None
 
     try:
-        studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False)
+        studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False, provider=provider)
     except (RuntimeError, ValueError, ApiException):
-        studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
+        studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False, provider=provider)
 
     try:
         resolved_machine = getattr(Machine, machine.upper(), Machine(machine, machine))

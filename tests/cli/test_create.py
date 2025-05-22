@@ -50,6 +50,10 @@ Options:
                                   environment (e.g. when run from within a
                                   Studio.) or fall back to the teamspace
                                   default.
+  --provider [AWS|GCP|VULTR|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|CLOUDFLARE|LIGHTNING]
+                                  The provider to create the studio on. If
+                                  --cloud-account is specified, this option is
+                                  prioritized.
   --help                          Show this message and exit.
 """  # noqa: E501
     )
