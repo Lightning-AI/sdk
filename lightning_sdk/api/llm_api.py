@@ -56,10 +56,11 @@ class LLMApi:
                 except json.JSONDecodeError:
                     print("Error decoding JSON:", decoded_line)
 
-    def _encode_image_bytes_to_data_url(self, image: str, mime_type: str = "image/jpeg") -> str:
+    def _encode_image_bytes_to_data_url(self, image: str) -> str:
         with open(image, "rb") as image_file:
             b64 = base64.b64encode(image_file.read()).decode("utf-8")
-            return f"data:{mime_type};base64,{b64}"
+            extension = image.split(".")[-1]
+            return f"data:image/{extension};base64,{b64}"
 
     def start_conversation(
         self,

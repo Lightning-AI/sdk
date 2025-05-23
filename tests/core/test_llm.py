@@ -339,14 +339,14 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
     llm = LLM("openai/gpt-4o")
     response = llm.chat(
         "Describe the image",
-        images=["/home/user/image.jpg", "/home/user/image2.jpg"],
+        images=["/home/user/image.jpg", "/home/user/image2.png", "/home/user/image3.jpeg"],
     )
     mock_api.start_conversation.assert_called_with(
         prompt="Describe the image",
         system_prompt=None,
         max_completion_tokens=500,
         assistant_id=llm._model.id,
-        images=["/home/user/image.jpg", "/home/user/image2.jpg"],
+        images=["/home/user/image.jpg", "/home/user/image2.png", "/home/user/image3.jpeg"],
         conversation_id=None,
         billing_project_id="teamspace-123",
         name=None,
