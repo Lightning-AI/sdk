@@ -32,6 +32,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     IdForkBody1,
     IdStartBody,
     ProjectIdCloudspacesBody,
+    V1Assistant,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
     V1CloudSpaceSeedFile,
@@ -47,6 +48,16 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UserRequestedComputeConfig,
 )
 from lightning_sdk.lightning_cloud.openapi.models import ProjectIdEndpointsBody
+from lightning_sdk.lightning_cloud.openapi.models.project_id_agentmanagedendpoints_body import (
+    ProjectIdAgentmanagedendpointsBody,
+)
+from lightning_sdk.lightning_cloud.openapi.models.project_id_agents_body import (
+    ProjectIdAgentsBody,
+)
+from lightning_sdk.lightning_cloud.openapi.models.v1_endpoint import V1Endpoint
+from lightning_sdk.lightning_cloud.openapi.models.v1_managed_endpoint import V1ManagedEndpoint
+from lightning_sdk.lightning_cloud.openapi.models.v1_managed_model import V1ManagedModel
+from lightning_sdk.lightning_cloud.openapi.models.v1_upstream_managed import V1UpstreamManaged
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
@@ -733,6 +744,56 @@ class StudioApi:
             ),
         )
         return endpoint.urls[0]
+
+    def create_assistant(self, studio_id: str, teamspace_id: str, port: int, assistant_name: str) -> V1Assistant:
+        target_teamspace = self._client.projects_service_get_project(teamspace_id)
+        org_id = ""
+        if target_teamspace.owner_type == "ORGANIZATION":
+            org_id = target_teamspace.owner_id
+        endpoint = self._client.endpoint_service_create_endpoint(
+            project_id=teamspace_id,
+            body=ProjectIdEndpointsBody(
+                ports=[str(port)],
+                cloudspace=V1UpstreamCloudSpace(
+                    cloudspace_id=studio_id,
+                    port=str(port),
+                    type=V1EndpointType.PLUGIN_API,
+                ),
+            ),
+        )
+        valid_url = endpoint.urls[0]
+        managed_endpoint = self._client.assistants_service_create_assistant_managed_endpoint(
+            body=ProjectIdAgentmanagedendpointsBody(
+                endpoint=V1ManagedEndpoint(
+                    name=assistant_name,
+                    base_url=valid_url + "/v1",
+                    models_metadata=[
+                        V1ManagedModel(
+                            name=assistant_name,
+                        )
+                    ],
+                ),
+                org_id=org_id,
+            ),
+            project_id=teamspace_id,
+        )
+
+        body = ProjectIdAgentsBody(
+            endpoint=V1Endpoint(
+                cloudspace=V1UpstreamCloudSpace(cloudspace_id=studio_id),
+                name=assistant_name,
+                managed=V1UpstreamManaged(id=managed_endpoint.endpoint.id),
+            ),
+            name=assistant_name,
+            model=assistant_name,
+            cloudspace_id=studio_id,
+            model_provider="",
+        )
+
+        return self._client.assistants_service_create_assistant(
+            body=body,
+            project_id=teamspace_id,
+        )
 
     def _create_app(
         self, studio_id: str, teamspace_id: str, cloud_account: str, plugin_type: str, **other_arguments: Any

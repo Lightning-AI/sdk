@@ -467,6 +467,19 @@ def test_run_inference(
     )
 
 
+def test_create_assistant(
+    internal_auth_mocker,
+    internal_studio_init_mocker,
+    internal_user_api_mocker,
+    internal_studio_api_start_new_port_mocker,
+    internal_agent_api_create_assistant_managed_endpoint_mocker,
+    internal_agent_api_create_assistant_mocker,
+):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+    studio.create_assistant(name="test-assistant", port=8000)
+    assert studio._assistant_id is not None
+
+
 @pytest.mark.parametrize("progress_bar", [True, False])
 def test_upload_file(
     internal_studio_init_mocker,

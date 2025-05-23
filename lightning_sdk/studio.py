@@ -448,6 +448,14 @@ class Studio:
             interruptible=interruptible,
         )
 
+    def create_assistant(self, name: str, port: int) -> None:
+        assistant = self._studio_api.create_assistant(
+            studio_id=self._studio.id, teamspace_id=self._teamspace.id, port=port, assistant_name=name
+        )
+        assistant_info = f"Created assisant with name: {assistant.name}, ID: {assistant.id}"
+        self._assistant_id = assistant.id
+        _logger.info(assistant_info)
+
     @property
     def auto_sleep(self) -> bool:
         """Returns if a Studio has auto-sleep enabled."""

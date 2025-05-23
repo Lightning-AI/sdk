@@ -60,6 +60,10 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UpstreamOpenAI,
     V1UserRequestedComputeConfig,
 )
+from lightning_sdk.lightning_cloud.openapi.models.v1_create_managed_endpoint_response import (
+    V1CreateManagedEndpointResponse,
+)
+from lightning_sdk.lightning_cloud.openapi.models.v1_managed_endpoint import V1ManagedEndpoint
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -2152,6 +2156,33 @@ def internal_agents_api_get_agent_endpoint_mocker(mocker):
 
     yield [mocker]
 
+    mocker.resetall()
+
+
+@pytest.fixture()
+def internal_agent_api_create_assistant_managed_endpoint_mocker(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.assistants_service_api.AssistantsServiceApi.assistants_service_create_assistant_managed_endpoint",
+        return_value=V1CreateManagedEndpointResponse(endpoint=V1ManagedEndpoint(id="test-managed-endpoint")),
+        autospec=True,
+    )
+
+    yield [mocker]
+    mocker.resetall()
+
+
+@pytest.fixture()
+def internal_agent_api_create_assistant_mocker(mocker):
+    def create_assistant(self, body, project_id):
+        return V1Assistant(id="test-assistant", name="test-assistant")
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.assistants_service_api.AssistantsServiceApi.assistants_service_create_assistant",
+        side_effect=create_assistant,
+        autospec=True,
+    )
+
+    yield [mocker]
     mocker.resetall()
 
 
