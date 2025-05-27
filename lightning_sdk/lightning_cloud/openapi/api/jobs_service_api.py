@@ -3361,6 +3361,7 @@ class JobsServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param str first_request_id:
         :param str last_request_id:
         :param datetime start:
         :param datetime end:
@@ -3389,6 +3390,7 @@ class JobsServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param str first_request_id:
         :param str last_request_id:
         :param datetime start:
         :param datetime end:
@@ -3400,7 +3402,7 @@ class JobsServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'last_request_id', 'start', 'end', 'path', 'status_code', 'limit']  # noqa: E501
+        all_params = ['project_id', 'id', 'first_request_id', 'last_request_id', 'start', 'end', 'path', 'status_code', 'limit']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3433,6 +3435,8 @@ class JobsServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'first_request_id' in params:
+            query_params.append(('firstRequestId', params['first_request_id']))  # noqa: E501
         if 'last_request_id' in params:
             query_params.append(('lastRequestId', params['last_request_id']))  # noqa: E501
         if 'start' in params:

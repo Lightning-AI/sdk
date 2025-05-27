@@ -42,6 +42,7 @@ class V1CloudSpace(object):
     """
     swagger_types = {
         'auto_switch_machine': 'bool',
+        'cache_data_connection_id': 'str',
         'can_download_source_code': 'bool',
         'cluster_id': 'str',
         'code_config': 'V1CloudSpaceInstanceConfig',
@@ -98,6 +99,7 @@ class V1CloudSpace(object):
 
     attribute_map = {
         'auto_switch_machine': 'autoSwitchMachine',
+        'cache_data_connection_id': 'cacheDataConnectionId',
         'can_download_source_code': 'canDownloadSourceCode',
         'cluster_id': 'clusterId',
         'code_config': 'codeConfig',
@@ -152,9 +154,10 @@ class V1CloudSpace(object):
         'web_path': 'webPath'
     }
 
-    def __init__(self, auto_switch_machine: 'bool' =None, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, environment_config: 'V1CloudSpaceEnvironmentConfig' =None, environment_template_id: 'str' =None, featured: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, lock_out: 'bool' =None, machine_image_version: 'str' =None, max_run_duration: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, publications: 'list[V1CloudSpaceVersionPublication]' =None, published_at: 'datetime' =None, published_to_org_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, switch_to_default_machine_on_idle: 'bool' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, auto_switch_machine: 'bool' =None, cache_data_connection_id: 'str' =None, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, environment_config: 'V1CloudSpaceEnvironmentConfig' =None, environment_template_id: 'str' =None, featured: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, lock_out: 'bool' =None, machine_image_version: 'str' =None, max_run_duration: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, publications: 'list[V1CloudSpaceVersionPublication]' =None, published_at: 'datetime' =None, published_to_org_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, switch_to_default_machine_on_idle: 'bool' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._auto_switch_machine = None
+        self._cache_data_connection_id = None
         self._can_download_source_code = None
         self._cluster_id = None
         self._code_config = None
@@ -210,6 +213,8 @@ class V1CloudSpace(object):
         self.discriminator = None
         if auto_switch_machine is not None:
             self.auto_switch_machine = auto_switch_machine
+        if cache_data_connection_id is not None:
+            self.cache_data_connection_id = cache_data_connection_id
         if can_download_source_code is not None:
             self.can_download_source_code = can_download_source_code
         if cluster_id is not None:
@@ -335,6 +340,27 @@ class V1CloudSpace(object):
         """
 
         self._auto_switch_machine = auto_switch_machine
+
+    @property
+    def cache_data_connection_id(self) -> 'str':
+        """Gets the cache_data_connection_id of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The cache_data_connection_id of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._cache_data_connection_id
+
+    @cache_data_connection_id.setter
+    def cache_data_connection_id(self, cache_data_connection_id: 'str'):
+        """Sets the cache_data_connection_id of this V1CloudSpace.
+
+
+        :param cache_data_connection_id: The cache_data_connection_id of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._cache_data_connection_id = cache_data_connection_id
 
     @property
     def can_download_source_code(self) -> 'bool':

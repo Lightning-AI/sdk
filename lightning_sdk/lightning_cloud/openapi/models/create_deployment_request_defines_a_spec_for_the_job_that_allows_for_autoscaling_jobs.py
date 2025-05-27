@@ -52,6 +52,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'name': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
         'parent_template_id': 'str',
+        'recipients': 'V1DeploymentAlertingRecipients',
         'replicas': 'int',
         'spec': 'V1JobSpec',
         'strategy': 'V1DeploymentStrategy'
@@ -69,12 +70,13 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'name': 'name',
         'parameter_spec': 'parameterSpec',
         'parent_template_id': 'parentTemplateId',
+        'recipients': 'recipients',
         'replicas': 'replicas',
         'spec': 'spec',
         'strategy': 'strategy'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs - a model defined in Swagger"""  # noqa: E501
         self._api_standard = None
         self._apis = None
@@ -87,6 +89,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         self._name = None
         self._parameter_spec = None
         self._parent_template_id = None
+        self._recipients = None
         self._replicas = None
         self._spec = None
         self._strategy = None
@@ -113,6 +116,8 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
             self.parameter_spec = parameter_spec
         if parent_template_id is not None:
             self.parent_template_id = parent_template_id
+        if recipients is not None:
+            self.recipients = recipients
         if replicas is not None:
             self.replicas = replicas
         if spec is not None:
@@ -350,6 +355,27 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         """
 
         self._parent_template_id = parent_template_id
+
+    @property
+    def recipients(self) -> 'V1DeploymentAlertingRecipients':
+        """Gets the recipients of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+
+
+        :return: The recipients of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :rtype: V1DeploymentAlertingRecipients
+        """
+        return self._recipients
+
+    @recipients.setter
+    def recipients(self, recipients: 'V1DeploymentAlertingRecipients'):
+        """Sets the recipients of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.
+
+
+        :param recipients: The recipients of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :type: V1DeploymentAlertingRecipients
+        """
+
+        self._recipients = recipients
 
     @property
     def replicas(self) -> 'int':

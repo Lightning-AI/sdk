@@ -49,6 +49,7 @@ class V1DeploymentAlertingPolicy(object):
         'name': 'str',
         'operation': 'V1DeploymentAlertingPolicyOperation',
         'project_id': 'str',
+        'recipients': 'V1DeploymentAlertingRecipients',
         'severity': 'V1DeploymentAlertingPolicySeverity',
         'type': 'V1DeploymentAlertingPolicyType',
         'value': 'float'
@@ -63,12 +64,13 @@ class V1DeploymentAlertingPolicy(object):
         'name': 'name',
         'operation': 'operation',
         'project_id': 'projectId',
+        'recipients': 'recipients',
         'severity': 'severity',
         'type': 'type',
         'value': 'value'
     }
 
-    def __init__(self, deployment_id: 'str' =None, description: 'str' =None, frequency: 'V1DeploymentAlertingPolicyFrequency' =None, id: 'str' =None, limit: 'float' =None, name: 'str' =None, operation: 'V1DeploymentAlertingPolicyOperation' =None, project_id: 'str' =None, severity: 'V1DeploymentAlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None, value: 'float' =None):  # noqa: E501
+    def __init__(self, deployment_id: 'str' =None, description: 'str' =None, frequency: 'V1DeploymentAlertingPolicyFrequency' =None, id: 'str' =None, limit: 'float' =None, name: 'str' =None, operation: 'V1DeploymentAlertingPolicyOperation' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, severity: 'V1DeploymentAlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None, value: 'float' =None):  # noqa: E501
         """V1DeploymentAlertingPolicy - a model defined in Swagger"""  # noqa: E501
         self._deployment_id = None
         self._description = None
@@ -78,6 +80,7 @@ class V1DeploymentAlertingPolicy(object):
         self._name = None
         self._operation = None
         self._project_id = None
+        self._recipients = None
         self._severity = None
         self._type = None
         self._value = None
@@ -98,6 +101,8 @@ class V1DeploymentAlertingPolicy(object):
             self.operation = operation
         if project_id is not None:
             self.project_id = project_id
+        if recipients is not None:
+            self.recipients = recipients
         if severity is not None:
             self.severity = severity
         if type is not None:
@@ -272,6 +277,27 @@ class V1DeploymentAlertingPolicy(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def recipients(self) -> 'V1DeploymentAlertingRecipients':
+        """Gets the recipients of this V1DeploymentAlertingPolicy.  # noqa: E501
+
+
+        :return: The recipients of this V1DeploymentAlertingPolicy.  # noqa: E501
+        :rtype: V1DeploymentAlertingRecipients
+        """
+        return self._recipients
+
+    @recipients.setter
+    def recipients(self, recipients: 'V1DeploymentAlertingRecipients'):
+        """Sets the recipients of this V1DeploymentAlertingPolicy.
+
+
+        :param recipients: The recipients of this V1DeploymentAlertingPolicy.  # noqa: E501
+        :type: V1DeploymentAlertingRecipients
+        """
+
+        self._recipients = recipients
 
     @property
     def severity(self) -> 'V1DeploymentAlertingPolicySeverity':

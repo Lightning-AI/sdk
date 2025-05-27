@@ -47,6 +47,7 @@ class DeploymentIdAlertingpoliciesBody(object):
         'limit': 'float',
         'name': 'str',
         'operation': 'V1DeploymentAlertingPolicyOperation',
+        'recipients': 'V1DeploymentAlertingRecipients',
         'severity': 'V1DeploymentAlertingPolicySeverity',
         'type': 'V1DeploymentAlertingPolicyType',
         'value': 'float'
@@ -59,12 +60,13 @@ class DeploymentIdAlertingpoliciesBody(object):
         'limit': 'limit',
         'name': 'name',
         'operation': 'operation',
+        'recipients': 'recipients',
         'severity': 'severity',
         'type': 'type',
         'value': 'value'
     }
 
-    def __init__(self, description: 'str' =None, frequency: 'V1DeploymentAlertingPolicyFrequency' =None, id: 'str' =None, limit: 'float' =None, name: 'str' =None, operation: 'V1DeploymentAlertingPolicyOperation' =None, severity: 'V1DeploymentAlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None, value: 'float' =None):  # noqa: E501
+    def __init__(self, description: 'str' =None, frequency: 'V1DeploymentAlertingPolicyFrequency' =None, id: 'str' =None, limit: 'float' =None, name: 'str' =None, operation: 'V1DeploymentAlertingPolicyOperation' =None, recipients: 'V1DeploymentAlertingRecipients' =None, severity: 'V1DeploymentAlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None, value: 'float' =None):  # noqa: E501
         """DeploymentIdAlertingpoliciesBody - a model defined in Swagger"""  # noqa: E501
         self._description = None
         self._frequency = None
@@ -72,6 +74,7 @@ class DeploymentIdAlertingpoliciesBody(object):
         self._limit = None
         self._name = None
         self._operation = None
+        self._recipients = None
         self._severity = None
         self._type = None
         self._value = None
@@ -88,6 +91,8 @@ class DeploymentIdAlertingpoliciesBody(object):
             self.name = name
         if operation is not None:
             self.operation = operation
+        if recipients is not None:
+            self.recipients = recipients
         if severity is not None:
             self.severity = severity
         if type is not None:
@@ -220,6 +225,27 @@ class DeploymentIdAlertingpoliciesBody(object):
         """
 
         self._operation = operation
+
+    @property
+    def recipients(self) -> 'V1DeploymentAlertingRecipients':
+        """Gets the recipients of this DeploymentIdAlertingpoliciesBody.  # noqa: E501
+
+
+        :return: The recipients of this DeploymentIdAlertingpoliciesBody.  # noqa: E501
+        :rtype: V1DeploymentAlertingRecipients
+        """
+        return self._recipients
+
+    @recipients.setter
+    def recipients(self, recipients: 'V1DeploymentAlertingRecipients'):
+        """Sets the recipients of this DeploymentIdAlertingpoliciesBody.
+
+
+        :param recipients: The recipients of this DeploymentIdAlertingpoliciesBody.  # noqa: E501
+        :type: V1DeploymentAlertingRecipients
+        """
+
+        self._recipients = recipients
 
     @property
     def severity(self) -> 'V1DeploymentAlertingPolicySeverity':

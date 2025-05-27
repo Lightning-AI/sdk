@@ -1274,6 +1274,7 @@ class AssistantsServiceApi(object):
         :param async_req bool
         :param str assistant_id: (required)
         :param str page_token:
+        :param bool filter_internal:
         :return: V1ListConversationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1296,12 +1297,13 @@ class AssistantsServiceApi(object):
         :param async_req bool
         :param str assistant_id: (required)
         :param str page_token:
+        :param bool filter_internal:
         :return: V1ListConversationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['assistant_id', 'page_token']  # noqa: E501
+        all_params = ['assistant_id', 'page_token', 'filter_internal']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1330,6 +1332,8 @@ class AssistantsServiceApi(object):
         query_params = []
         if 'page_token' in params:
             query_params.append(('pageToken', params['page_token']))  # noqa: E501
+        if 'filter_internal' in params:
+            query_params.append(('filterInternal', params['filter_internal']))  # noqa: E501
 
         header_params = {}
 

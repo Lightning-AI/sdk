@@ -45,6 +45,7 @@ class V1CloudSpaceEnvironmentTemplate(object):
         'created_at': 'datetime',
         'disabled': 'bool',
         'id': 'str',
+        'managed': 'bool',
         'name': 'str',
         'org_id': 'str',
         'updated_at': 'datetime',
@@ -56,18 +57,20 @@ class V1CloudSpaceEnvironmentTemplate(object):
         'created_at': 'createdAt',
         'disabled': 'disabled',
         'id': 'id',
+        'managed': 'managed',
         'name': 'name',
         'org_id': 'orgId',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, config: 'V1CloudSpaceEnvironmentTemplateConfig' =None, created_at: 'datetime' =None, disabled: 'bool' =None, id: 'str' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, config: 'V1CloudSpaceEnvironmentTemplateConfig' =None, created_at: 'datetime' =None, disabled: 'bool' =None, id: 'str' =None, managed: 'bool' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplate - a model defined in Swagger"""  # noqa: E501
         self._config = None
         self._created_at = None
         self._disabled = None
         self._id = None
+        self._managed = None
         self._name = None
         self._org_id = None
         self._updated_at = None
@@ -81,6 +84,8 @@ class V1CloudSpaceEnvironmentTemplate(object):
             self.disabled = disabled
         if id is not None:
             self.id = id
+        if managed is not None:
+            self.managed = managed
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -173,6 +178,27 @@ class V1CloudSpaceEnvironmentTemplate(object):
         """
 
         self._id = id
+
+    @property
+    def managed(self) -> 'bool':
+        """Gets the managed of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+
+
+        :return: The managed of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+        :rtype: bool
+        """
+        return self._managed
+
+    @managed.setter
+    def managed(self, managed: 'bool'):
+        """Sets the managed of this V1CloudSpaceEnvironmentTemplate.
+
+
+        :param managed: The managed of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+        :type: bool
+        """
+
+        self._managed = managed
 
     @property
     def name(self) -> 'str':

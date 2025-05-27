@@ -44,6 +44,7 @@ class AssistantIdConversationsBody(object):
         'auto_name': 'bool',
         'billing_project_id': 'str',
         'conversation_id': 'str',
+        'internal_conversation': 'bool',
         'max_tokens': 'str',
         'message': 'V1Message',
         'metadata': 'dict(str, str)',
@@ -57,6 +58,7 @@ class AssistantIdConversationsBody(object):
         'auto_name': 'autoName',
         'billing_project_id': 'billingProjectId',
         'conversation_id': 'conversationId',
+        'internal_conversation': 'internalConversation',
         'max_tokens': 'maxTokens',
         'message': 'message',
         'metadata': 'metadata',
@@ -66,11 +68,12 @@ class AssistantIdConversationsBody(object):
         'stream': 'stream'
     }
 
-    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, store: 'bool' =None, stream: 'bool' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, store: 'bool' =None, stream: 'bool' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._billing_project_id = None
         self._conversation_id = None
+        self._internal_conversation = None
         self._max_tokens = None
         self._message = None
         self._metadata = None
@@ -85,6 +88,8 @@ class AssistantIdConversationsBody(object):
             self.billing_project_id = billing_project_id
         if conversation_id is not None:
             self.conversation_id = conversation_id
+        if internal_conversation is not None:
+            self.internal_conversation = internal_conversation
         if max_tokens is not None:
             self.max_tokens = max_tokens
         if message is not None:
@@ -162,6 +167,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._conversation_id = conversation_id
+
+    @property
+    def internal_conversation(self) -> 'bool':
+        """Gets the internal_conversation of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The internal_conversation of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._internal_conversation
+
+    @internal_conversation.setter
+    def internal_conversation(self, internal_conversation: 'bool'):
+        """Sets the internal_conversation of this AssistantIdConversationsBody.
+
+
+        :param internal_conversation: The internal_conversation of this AssistantIdConversationsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._internal_conversation = internal_conversation
 
     @property
     def max_tokens(self) -> 'str':

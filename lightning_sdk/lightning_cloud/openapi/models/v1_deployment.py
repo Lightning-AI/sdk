@@ -60,6 +60,7 @@ class V1Deployment(object):
         'parameter_spec': 'V1ParameterizationSpec',
         'pipeline_id': 'str',
         'project_id': 'str',
+        'recipients': 'V1DeploymentAlertingRecipients',
         'release_id': 'str',
         'replicas': 'int',
         'spec': 'V1JobSpec',
@@ -92,6 +93,7 @@ class V1Deployment(object):
         'parameter_spec': 'parameterSpec',
         'pipeline_id': 'pipelineId',
         'project_id': 'projectId',
+        'recipients': 'recipients',
         'release_id': 'releaseId',
         'replicas': 'replicas',
         'spec': 'spec',
@@ -104,7 +106,7 @@ class V1Deployment(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
         self._api_standard = None
         self._apis = None
@@ -125,6 +127,7 @@ class V1Deployment(object):
         self._parameter_spec = None
         self._pipeline_id = None
         self._project_id = None
+        self._recipients = None
         self._release_id = None
         self._replicas = None
         self._spec = None
@@ -174,6 +177,8 @@ class V1Deployment(object):
             self.pipeline_id = pipeline_id
         if project_id is not None:
             self.project_id = project_id
+        if recipients is not None:
+            self.recipients = recipients
         if release_id is not None:
             self.release_id = release_id
         if replicas is not None:
@@ -593,6 +598,27 @@ class V1Deployment(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def recipients(self) -> 'V1DeploymentAlertingRecipients':
+        """Gets the recipients of this V1Deployment.  # noqa: E501
+
+
+        :return: The recipients of this V1Deployment.  # noqa: E501
+        :rtype: V1DeploymentAlertingRecipients
+        """
+        return self._recipients
+
+    @recipients.setter
+    def recipients(self, recipients: 'V1DeploymentAlertingRecipients'):
+        """Sets the recipients of this V1Deployment.
+
+
+        :param recipients: The recipients of this V1Deployment.  # noqa: E501
+        :type: V1DeploymentAlertingRecipients
+        """
+
+        self._recipients = recipients
 
     @property
     def release_id(self) -> 'str':

@@ -53,6 +53,7 @@ class V1CreateDeploymentRequest(object):
         'parameter_spec': 'V1ParameterizationSpec',
         'parent_template_id': 'str',
         'project_id': 'str',
+        'recipients': 'V1DeploymentAlertingRecipients',
         'replicas': 'int',
         'spec': 'V1JobSpec',
         'strategy': 'V1DeploymentStrategy'
@@ -71,12 +72,13 @@ class V1CreateDeploymentRequest(object):
         'parameter_spec': 'parameterSpec',
         'parent_template_id': 'parentTemplateId',
         'project_id': 'projectId',
+        'recipients': 'recipients',
         'replicas': 'replicas',
         'spec': 'spec',
         'strategy': 'strategy'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, project_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """V1CreateDeploymentRequest - a model defined in Swagger"""  # noqa: E501
         self._api_standard = None
         self._apis = None
@@ -90,6 +92,7 @@ class V1CreateDeploymentRequest(object):
         self._parameter_spec = None
         self._parent_template_id = None
         self._project_id = None
+        self._recipients = None
         self._replicas = None
         self._spec = None
         self._strategy = None
@@ -118,6 +121,8 @@ class V1CreateDeploymentRequest(object):
             self.parent_template_id = parent_template_id
         if project_id is not None:
             self.project_id = project_id
+        if recipients is not None:
+            self.recipients = recipients
         if replicas is not None:
             self.replicas = replicas
         if spec is not None:
@@ -376,6 +381,27 @@ class V1CreateDeploymentRequest(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def recipients(self) -> 'V1DeploymentAlertingRecipients':
+        """Gets the recipients of this V1CreateDeploymentRequest.  # noqa: E501
+
+
+        :return: The recipients of this V1CreateDeploymentRequest.  # noqa: E501
+        :rtype: V1DeploymentAlertingRecipients
+        """
+        return self._recipients
+
+    @recipients.setter
+    def recipients(self, recipients: 'V1DeploymentAlertingRecipients'):
+        """Sets the recipients of this V1CreateDeploymentRequest.
+
+
+        :param recipients: The recipients of this V1CreateDeploymentRequest.  # noqa: E501
+        :type: V1DeploymentAlertingRecipients
+        """
+
+        self._recipients = recipients
 
     @property
     def replicas(self) -> 'int':
