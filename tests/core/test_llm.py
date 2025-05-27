@@ -26,6 +26,8 @@ def mock_auth(monkeypatch):
         "teamspace-123": {"name": "teamspace-123", "org": None, "user": "user-name"},
     }
 
+    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", lambda *args, **kwargs: None)
+
     mock_menu._get_possible_teamspaces.return_value = mock_possible_teamspaces
 
     monkeypatch.setattr("lightning_sdk.llm.llm._TeamspacesMenu", lambda: mock_menu)
@@ -102,6 +104,7 @@ def test_default_teamspace(monkeypatch, mock_public_model):
     mock_menu._get_possible_teamspaces.return_value = mock_possible_teamspaces
 
     monkeypatch.setattr("lightning_sdk.llm.llm._TeamspacesMenu", lambda: mock_menu)
+    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", lambda *args, **kwargs: None)
 
     teamspace = MagicMock()
     teamspace.id = "default-teamspace-123"
@@ -187,6 +190,7 @@ def test_user_model(monkeypatch, mock_user_model):
     mock_api = MagicMock()
     mock_api.get_user_models.return_value = mock_user_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", lambda *args, **kwargs: None)
 
     llm = LLM("user-model1", teamspace="user-name/teamspace-123")
     assert llm.owner.name == "user-name"
