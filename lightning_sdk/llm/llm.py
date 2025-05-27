@@ -184,6 +184,7 @@ class LLM:
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
         upload_local_images: bool = False,
+        internal_conversation: bool = False,
     ) -> Union[str, Generator[str, None, None]]:
         if conversation and conversation not in self._conversations:
             self._get_conversations()
@@ -209,6 +210,7 @@ class LLM:
             metadata=metadata,
             name=conversation,
             stream=stream,
+            internal_conversation=internal_conversation,
         )
         if not stream:
             if conversation and not conversation_id:

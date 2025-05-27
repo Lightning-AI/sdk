@@ -74,6 +74,7 @@ class LLMApi:
         name: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
+        internal_conversation: bool = False,
     ) -> Union[V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None]]:
         body = {
             "message": {
@@ -88,6 +89,7 @@ class LLMApi:
             "name": name,
             "stream": stream,
             "metadata": metadata or {},
+            "internal_conversation": internal_conversation,
         }
         if images:
             for image in images:
