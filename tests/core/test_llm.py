@@ -239,7 +239,6 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         name=None,
         stream=False,
         metadata={"user_api": "123456"},
-        internal_conversation=False,
     )
 
     # pass conversation and continue conversation
@@ -257,7 +256,6 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         name="conv1",
         stream=False,
         metadata=None,
-        internal_conversation=False,
     )
     mock_api.start_conversation.reset_mock()
     continue_response = llm.chat("Hi again!", conversation="conv1")
@@ -273,7 +271,6 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         name="conv1",
         stream=False,
         metadata=None,
-        internal_conversation=False,
     )
     # check list of conversations
     assert llm._conversations == {"conv1": "conv_123"}
@@ -319,7 +316,6 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         name=None,
         stream=True,
         metadata=None,
-        internal_conversation=False,
     )
 
     # test image content type
@@ -341,7 +337,6 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         name=None,
         stream=False,
         metadata=None,
-        internal_conversation=False,
     )
 
     # local images
@@ -361,23 +356,6 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         name=None,
         stream=False,
         metadata=None,
-        internal_conversation=False,
-    )
-
-    # internal conversation
-    response = llm.chat("Hello, how are you?", internal_conversation=True)
-    mock_api.start_conversation.assert_called_with(
-        prompt="Hello, how are you?",
-        system_prompt=None,
-        max_completion_tokens=500,
-        assistant_id=llm._model.id,
-        images=None,
-        conversation_id=None,
-        billing_project_id="teamspace-123",
-        name=None,
-        stream=False,
-        metadata=None,
-        internal_conversation=True,
     )
 
 

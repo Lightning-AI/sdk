@@ -1,5 +1,6 @@
 import base64
 import json
+import os
 from typing import Dict, Generator, List, Optional, Union
 
 from pip._vendor.urllib3 import HTTPResponse
@@ -74,8 +75,8 @@ class LLMApi:
         name: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
-        internal_conversation: bool = False,
     ) -> Union[V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None]]:
+        is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
         body = {
             "message": {
                 "author": {"role": "user"},
@@ -89,7 +90,7 @@ class LLMApi:
             "name": name,
             "stream": stream,
             "metadata": metadata or {},
-            "internal_conversation": internal_conversation,
+            "internal_conversation": is_internal_conversation,
         }
         if images:
             for image in images:
