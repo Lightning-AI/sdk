@@ -46,7 +46,6 @@ class V1Project(object):
         'creator_id': 'str',
         'description': 'str',
         'display_name': 'str',
-        'gcp_bucket_name': 'str',
         'id': 'str',
         'is_default': 'bool',
         'lock_out_uploads': 'bool',
@@ -67,7 +66,6 @@ class V1Project(object):
         'creator_id': 'creatorId',
         'description': 'description',
         'display_name': 'displayName',
-        'gcp_bucket_name': 'gcpBucketName',
         'id': 'id',
         'is_default': 'isDefault',
         'lock_out_uploads': 'lockOutUploads',
@@ -82,14 +80,13 @@ class V1Project(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, display_name: 'str' =None, gcp_bucket_name: 'str' =None, id: 'str' =None, is_default: 'bool' =None, lock_out_uploads: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, is_default: 'bool' =None, lock_out_uploads: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Project - a model defined in Swagger"""  # noqa: E501
         self._abac_enabled = None
         self._created_at = None
         self._creator_id = None
         self._description = None
         self._display_name = None
-        self._gcp_bucket_name = None
         self._id = None
         self._is_default = None
         self._lock_out_uploads = None
@@ -113,8 +110,6 @@ class V1Project(object):
             self.description = description
         if display_name is not None:
             self.display_name = display_name
-        if gcp_bucket_name is not None:
-            self.gcp_bucket_name = gcp_bucket_name
         if id is not None:
             self.id = id
         if is_default is not None:
@@ -244,27 +239,6 @@ class V1Project(object):
         """
 
         self._display_name = display_name
-
-    @property
-    def gcp_bucket_name(self) -> 'str':
-        """Gets the gcp_bucket_name of this V1Project.  # noqa: E501
-
-
-        :return: The gcp_bucket_name of this V1Project.  # noqa: E501
-        :rtype: str
-        """
-        return self._gcp_bucket_name
-
-    @gcp_bucket_name.setter
-    def gcp_bucket_name(self, gcp_bucket_name: 'str'):
-        """Sets the gcp_bucket_name of this V1Project.
-
-
-        :param gcp_bucket_name: The gcp_bucket_name of this V1Project.  # noqa: E501
-        :type: str
-        """
-
-        self._gcp_bucket_name = gcp_bucket_name
 
     @property
     def id(self) -> 'str':

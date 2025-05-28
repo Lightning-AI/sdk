@@ -112,6 +112,7 @@ class V1UserFeatures(object):
         'project_selector': 'bool',
         'publish_pipelines': 'bool',
         'r2_data_connections': 'bool',
+        'reserved_machines_tab': 'bool',
         'restartable_jobs': 'bool',
         'runnable_public_studio_page': 'bool',
         'security_docs': 'bool',
@@ -205,6 +206,7 @@ class V1UserFeatures(object):
         'project_selector': 'projectSelector',
         'publish_pipelines': 'publishPipelines',
         'r2_data_connections': 'r2DataConnections',
+        'reserved_machines_tab': 'reservedMachinesTab',
         'restartable_jobs': 'restartableJobs',
         'runnable_public_studio_page': 'runnablePublicStudioPage',
         'security_docs': 'securityDocs',
@@ -226,7 +228,7 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, big_default_cpus: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_requests_tab: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, down_switch_machine: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcs_folders: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, manage_storage_costs: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, neocloud_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, big_default_cpus: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_requests_tab: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, down_switch_machine: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcs_folders: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, manage_storage_costs: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, neocloud_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -299,6 +301,7 @@ class V1UserFeatures(object):
         self._project_selector = None
         self._publish_pipelines = None
         self._r2_data_connections = None
+        self._reserved_machines_tab = None
         self._restartable_jobs = None
         self._runnable_public_studio_page = None
         self._security_docs = None
@@ -461,6 +464,8 @@ class V1UserFeatures(object):
             self.publish_pipelines = publish_pipelines
         if r2_data_connections is not None:
             self.r2_data_connections = r2_data_connections
+        if reserved_machines_tab is not None:
+            self.reserved_machines_tab = reserved_machines_tab
         if restartable_jobs is not None:
             self.restartable_jobs = restartable_jobs
         if runnable_public_studio_page is not None:
@@ -1990,6 +1995,27 @@ class V1UserFeatures(object):
         """
 
         self._r2_data_connections = r2_data_connections
+
+    @property
+    def reserved_machines_tab(self) -> 'bool':
+        """Gets the reserved_machines_tab of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The reserved_machines_tab of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._reserved_machines_tab
+
+    @reserved_machines_tab.setter
+    def reserved_machines_tab(self, reserved_machines_tab: 'bool'):
+        """Sets the reserved_machines_tab of this V1UserFeatures.
+
+
+        :param reserved_machines_tab: The reserved_machines_tab of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._reserved_machines_tab = reserved_machines_tab
 
     @property
     def restartable_jobs(self) -> 'bool':
