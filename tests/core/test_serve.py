@@ -46,6 +46,7 @@ def test_run_on_cloud(mock_deployment, mock_autoscale, deployer):
         cloud_account=None,
         include_credentials=True,
         cloudspace_id=None,
+        from_litserve=True,
         from_onboarding=False,
         command="",
     )

@@ -225,6 +225,7 @@ class DeploymentApi:
         self,
         deployment: V1Deployment,
         from_onboarding: Optional[bool] = None,
+        from_litserve: Optional[bool] = None,
     ) -> V1Deployment:
         return self._client.jobs_service_create_deployment(
             project_id=deployment.project_id,
@@ -238,6 +239,7 @@ class DeploymentApi:
                 spec=deployment.spec,
                 strategy=deployment.strategy,
                 from_onboarding=from_onboarding,
+                from_litserve=from_litserve,
             ),
         )
 

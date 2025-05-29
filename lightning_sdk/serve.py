@@ -299,6 +299,7 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
             ports=[port],
             include_credentials=include_credentials,
             cloudspace_id=cloudspace_id,
+            from_litserve=True,
             from_onboarding=from_onboarding,
             command="",
         )

@@ -129,6 +129,7 @@ class Deployment:
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
         from_onboarding: Optional[bool] = None,
+        from_litserve: Optional[bool] = None,
     ) -> None:
         """The Lightning AI Deployment.
 
@@ -228,6 +229,7 @@ class Deployment:
                 strategy=to_strategy(release_strategy),
             ),
             from_onboarding=from_onboarding,
+            from_litserve=from_litserve,
         )
 
         # Overrides the name
