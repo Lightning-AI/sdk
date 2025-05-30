@@ -41,6 +41,7 @@ class V1UserFeatures(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'accurate_billing': 'bool',
         'affiliate_links': 'bool',
         'agents_v2': 'bool',
         'ai_hub_monetization': 'bool',
@@ -50,6 +51,7 @@ class V1UserFeatures(object):
         'auto_top_up_teamspace': 'bool',
         'b2c_experience': 'bool',
         'big_default_cpus': 'bool',
+        'blog_route': 'bool',
         'byoc_litcr': 'bool',
         'cap_add': 'list[str]',
         'cap_drop': 'list[str]',
@@ -78,14 +80,13 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'bool',
         'filestore': 'bool',
         'gcs_folders': 'bool',
-        'inactive_notify_delete': 'bool',
         'instant_capacity_reservation': 'bool',
         'job_artifacts_v2': 'bool',
         'lambda_labs': 'bool',
+        'lambda_labs_studios': 'bool',
         'landing_studios': 'bool',
         'lightning_cloud': 'bool',
         'lit_logger': 'bool',
-        'manage_storage_costs': 'bool',
         'marketplace': 'bool',
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
@@ -93,6 +94,8 @@ class V1UserFeatures(object):
         'multicloud_saas': 'bool',
         'multiple_studio_versions': 'bool',
         'nebius': 'bool',
+        'nebius_cpu_studios': 'bool',
+        'nebius_gpu_studios': 'bool',
         'neocloud_studios': 'bool',
         'nerf_fs_nonpaying': 'bool',
         'org_level_member_permissions': 'bool',
@@ -130,11 +133,13 @@ class V1UserFeatures(object):
         'trainium2': 'bool',
         'use_rclone_mounts_only': 'bool',
         'voltage_park': 'bool',
+        'voltage_park_studios': 'bool',
         'vultr': 'bool',
         'weka': 'bool'
     }
 
     attribute_map = {
+        'accurate_billing': 'accurateBilling',
         'affiliate_links': 'affiliateLinks',
         'agents_v2': 'agentsV2',
         'ai_hub_monetization': 'aiHubMonetization',
@@ -144,6 +149,7 @@ class V1UserFeatures(object):
         'auto_top_up_teamspace': 'autoTopUpTeamspace',
         'b2c_experience': 'b2cExperience',
         'big_default_cpus': 'bigDefaultCpus',
+        'blog_route': 'blogRoute',
         'byoc_litcr': 'byocLitcr',
         'cap_add': 'capAdd',
         'cap_drop': 'capDrop',
@@ -172,14 +178,13 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'featuredStudiosAdmin',
         'filestore': 'filestore',
         'gcs_folders': 'gcsFolders',
-        'inactive_notify_delete': 'inactiveNotifyDelete',
         'instant_capacity_reservation': 'instantCapacityReservation',
         'job_artifacts_v2': 'jobArtifactsV2',
         'lambda_labs': 'lambdaLabs',
+        'lambda_labs_studios': 'lambdaLabsStudios',
         'landing_studios': 'landingStudios',
         'lightning_cloud': 'lightningCloud',
         'lit_logger': 'litLogger',
-        'manage_storage_costs': 'manageStorageCosts',
         'marketplace': 'marketplace',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
@@ -187,6 +192,8 @@ class V1UserFeatures(object):
         'multicloud_saas': 'multicloudSaas',
         'multiple_studio_versions': 'multipleStudioVersions',
         'nebius': 'nebius',
+        'nebius_cpu_studios': 'nebiusCpuStudios',
+        'nebius_gpu_studios': 'nebiusGpuStudios',
         'neocloud_studios': 'neocloudStudios',
         'nerf_fs_nonpaying': 'nerfFsNonpaying',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
@@ -224,12 +231,14 @@ class V1UserFeatures(object):
         'trainium2': 'trainium2',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
         'voltage_park': 'voltagePark',
+        'voltage_park_studios': 'voltageParkStudios',
         'vultr': 'vultr',
         'weka': 'weka'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, big_default_cpus: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_requests_tab: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, down_switch_machine: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcs_folders: 'bool' =None, inactive_notify_delete: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, manage_storage_costs: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, neocloud_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, big_default_cpus: 'bool' =None, blog_route: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_requests_tab: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, down_switch_machine: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, neocloud_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
+        self._accurate_billing = None
         self._affiliate_links = None
         self._agents_v2 = None
         self._ai_hub_monetization = None
@@ -239,6 +248,7 @@ class V1UserFeatures(object):
         self._auto_top_up_teamspace = None
         self._b2c_experience = None
         self._big_default_cpus = None
+        self._blog_route = None
         self._byoc_litcr = None
         self._cap_add = None
         self._cap_drop = None
@@ -267,14 +277,13 @@ class V1UserFeatures(object):
         self._featured_studios_admin = None
         self._filestore = None
         self._gcs_folders = None
-        self._inactive_notify_delete = None
         self._instant_capacity_reservation = None
         self._job_artifacts_v2 = None
         self._lambda_labs = None
+        self._lambda_labs_studios = None
         self._landing_studios = None
         self._lightning_cloud = None
         self._lit_logger = None
-        self._manage_storage_costs = None
         self._marketplace = None
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
@@ -282,6 +291,8 @@ class V1UserFeatures(object):
         self._multicloud_saas = None
         self._multiple_studio_versions = None
         self._nebius = None
+        self._nebius_cpu_studios = None
+        self._nebius_gpu_studios = None
         self._neocloud_studios = None
         self._nerf_fs_nonpaying = None
         self._org_level_member_permissions = None
@@ -319,9 +330,12 @@ class V1UserFeatures(object):
         self._trainium2 = None
         self._use_rclone_mounts_only = None
         self._voltage_park = None
+        self._voltage_park_studios = None
         self._vultr = None
         self._weka = None
         self.discriminator = None
+        if accurate_billing is not None:
+            self.accurate_billing = accurate_billing
         if affiliate_links is not None:
             self.affiliate_links = affiliate_links
         if agents_v2 is not None:
@@ -340,6 +354,8 @@ class V1UserFeatures(object):
             self.b2c_experience = b2c_experience
         if big_default_cpus is not None:
             self.big_default_cpus = big_default_cpus
+        if blog_route is not None:
+            self.blog_route = blog_route
         if byoc_litcr is not None:
             self.byoc_litcr = byoc_litcr
         if cap_add is not None:
@@ -396,22 +412,20 @@ class V1UserFeatures(object):
             self.filestore = filestore
         if gcs_folders is not None:
             self.gcs_folders = gcs_folders
-        if inactive_notify_delete is not None:
-            self.inactive_notify_delete = inactive_notify_delete
         if instant_capacity_reservation is not None:
             self.instant_capacity_reservation = instant_capacity_reservation
         if job_artifacts_v2 is not None:
             self.job_artifacts_v2 = job_artifacts_v2
         if lambda_labs is not None:
             self.lambda_labs = lambda_labs
+        if lambda_labs_studios is not None:
+            self.lambda_labs_studios = lambda_labs_studios
         if landing_studios is not None:
             self.landing_studios = landing_studios
         if lightning_cloud is not None:
             self.lightning_cloud = lightning_cloud
         if lit_logger is not None:
             self.lit_logger = lit_logger
-        if manage_storage_costs is not None:
-            self.manage_storage_costs = manage_storage_costs
         if marketplace is not None:
             self.marketplace = marketplace
         if mmt_fault_tolerance is not None:
@@ -426,6 +440,10 @@ class V1UserFeatures(object):
             self.multiple_studio_versions = multiple_studio_versions
         if nebius is not None:
             self.nebius = nebius
+        if nebius_cpu_studios is not None:
+            self.nebius_cpu_studios = nebius_cpu_studios
+        if nebius_gpu_studios is not None:
+            self.nebius_gpu_studios = nebius_gpu_studios
         if neocloud_studios is not None:
             self.neocloud_studios = neocloud_studios
         if nerf_fs_nonpaying is not None:
@@ -500,10 +518,33 @@ class V1UserFeatures(object):
             self.use_rclone_mounts_only = use_rclone_mounts_only
         if voltage_park is not None:
             self.voltage_park = voltage_park
+        if voltage_park_studios is not None:
+            self.voltage_park_studios = voltage_park_studios
         if vultr is not None:
             self.vultr = vultr
         if weka is not None:
             self.weka = weka
+
+    @property
+    def accurate_billing(self) -> 'bool':
+        """Gets the accurate_billing of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The accurate_billing of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._accurate_billing
+
+    @accurate_billing.setter
+    def accurate_billing(self, accurate_billing: 'bool'):
+        """Sets the accurate_billing of this V1UserFeatures.
+
+
+        :param accurate_billing: The accurate_billing of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._accurate_billing = accurate_billing
 
     @property
     def affiliate_links(self) -> 'bool':
@@ -693,6 +734,27 @@ class V1UserFeatures(object):
         """
 
         self._big_default_cpus = big_default_cpus
+
+    @property
+    def blog_route(self) -> 'bool':
+        """Gets the blog_route of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The blog_route of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._blog_route
+
+    @blog_route.setter
+    def blog_route(self, blog_route: 'bool'):
+        """Sets the blog_route of this V1UserFeatures.
+
+
+        :param blog_route: The blog_route of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._blog_route = blog_route
 
     @property
     def byoc_litcr(self) -> 'bool':
@@ -1283,27 +1345,6 @@ class V1UserFeatures(object):
         self._gcs_folders = gcs_folders
 
     @property
-    def inactive_notify_delete(self) -> 'bool':
-        """Gets the inactive_notify_delete of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The inactive_notify_delete of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._inactive_notify_delete
-
-    @inactive_notify_delete.setter
-    def inactive_notify_delete(self, inactive_notify_delete: 'bool'):
-        """Sets the inactive_notify_delete of this V1UserFeatures.
-
-
-        :param inactive_notify_delete: The inactive_notify_delete of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._inactive_notify_delete = inactive_notify_delete
-
-    @property
     def instant_capacity_reservation(self) -> 'bool':
         """Gets the instant_capacity_reservation of this V1UserFeatures.  # noqa: E501
 
@@ -1367,6 +1408,27 @@ class V1UserFeatures(object):
         self._lambda_labs = lambda_labs
 
     @property
+    def lambda_labs_studios(self) -> 'bool':
+        """Gets the lambda_labs_studios of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The lambda_labs_studios of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._lambda_labs_studios
+
+    @lambda_labs_studios.setter
+    def lambda_labs_studios(self, lambda_labs_studios: 'bool'):
+        """Sets the lambda_labs_studios of this V1UserFeatures.
+
+
+        :param lambda_labs_studios: The lambda_labs_studios of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._lambda_labs_studios = lambda_labs_studios
+
+    @property
     def landing_studios(self) -> 'bool':
         """Gets the landing_studios of this V1UserFeatures.  # noqa: E501
 
@@ -1428,27 +1490,6 @@ class V1UserFeatures(object):
         """
 
         self._lit_logger = lit_logger
-
-    @property
-    def manage_storage_costs(self) -> 'bool':
-        """Gets the manage_storage_costs of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The manage_storage_costs of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._manage_storage_costs
-
-    @manage_storage_costs.setter
-    def manage_storage_costs(self, manage_storage_costs: 'bool'):
-        """Sets the manage_storage_costs of this V1UserFeatures.
-
-
-        :param manage_storage_costs: The manage_storage_costs of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._manage_storage_costs = manage_storage_costs
 
     @property
     def marketplace(self) -> 'bool':
@@ -1596,6 +1637,48 @@ class V1UserFeatures(object):
         """
 
         self._nebius = nebius
+
+    @property
+    def nebius_cpu_studios(self) -> 'bool':
+        """Gets the nebius_cpu_studios of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The nebius_cpu_studios of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._nebius_cpu_studios
+
+    @nebius_cpu_studios.setter
+    def nebius_cpu_studios(self, nebius_cpu_studios: 'bool'):
+        """Sets the nebius_cpu_studios of this V1UserFeatures.
+
+
+        :param nebius_cpu_studios: The nebius_cpu_studios of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._nebius_cpu_studios = nebius_cpu_studios
+
+    @property
+    def nebius_gpu_studios(self) -> 'bool':
+        """Gets the nebius_gpu_studios of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The nebius_gpu_studios of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._nebius_gpu_studios
+
+    @nebius_gpu_studios.setter
+    def nebius_gpu_studios(self, nebius_gpu_studios: 'bool'):
+        """Sets the nebius_gpu_studios of this V1UserFeatures.
+
+
+        :param nebius_gpu_studios: The nebius_gpu_studios of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._nebius_gpu_studios = nebius_gpu_studios
 
     @property
     def neocloud_studios(self) -> 'bool':
@@ -2373,6 +2456,27 @@ class V1UserFeatures(object):
         """
 
         self._voltage_park = voltage_park
+
+    @property
+    def voltage_park_studios(self) -> 'bool':
+        """Gets the voltage_park_studios of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The voltage_park_studios of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._voltage_park_studios
+
+    @voltage_park_studios.setter
+    def voltage_park_studios(self, voltage_park_studios: 'bool'):
+        """Sets the voltage_park_studios of this V1UserFeatures.
+
+
+        :param voltage_park_studios: The voltage_park_studios of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._voltage_park_studios = voltage_park_studios
 
     @property
     def vultr(self) -> 'bool':

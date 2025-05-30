@@ -142,6 +142,7 @@ from lightning_sdk.lightning_cloud.openapi.models.id_reportlogsactivity_body imp
 from lightning_sdk.lightning_cloud.openapi.models.id_reportrestarttimings_body import IdReportrestarttimingsBody
 from lightning_sdk.lightning_cloud.openapi.models.id_start_body import IdStartBody
 from lightning_sdk.lightning_cloud.openapi.models.id_storage_body import IdStorageBody
+from lightning_sdk.lightning_cloud.openapi.models.id_transfer_body import IdTransferBody
 from lightning_sdk.lightning_cloud.openapi.models.id_uploads_body import IdUploadsBody
 from lightning_sdk.lightning_cloud.openapi.models.id_uploads_body1 import IdUploadsBody1
 from lightning_sdk.lightning_cloud.openapi.models.id_visibility_body import IdVisibilityBody
@@ -892,6 +893,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_system_metrics_list import 
 from lightning_sdk.lightning_cloud.openapi.models.v1_telemetry import V1Telemetry
 from lightning_sdk.lightning_cloud.openapi.models.v1_timestamp_code_telemetry import V1TimestampCodeTelemetry
 from lightning_sdk.lightning_cloud.openapi.models.v1_transaction import V1Transaction
+from lightning_sdk.lightning_cloud.openapi.models.v1_transfer_cloud_space_response import V1TransferCloudSpaceResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_transfer_org_balance_response import V1TransferOrgBalanceResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_transfer_project_balance_response import V1TransferProjectBalanceResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_transfer_user_balance_request import V1TransferUserBalanceRequest

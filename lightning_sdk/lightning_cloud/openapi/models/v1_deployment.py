@@ -41,6 +41,7 @@ class V1Deployment(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'source': 'str',
         'api_standard': 'str',
         'apis': 'list[V1DeploymentAPI]',
         'assistant_id': 'str',
@@ -74,6 +75,7 @@ class V1Deployment(object):
     }
 
     attribute_map = {
+        'source': 'Source',
         'api_standard': 'apiStandard',
         'apis': 'apis',
         'assistant_id': 'assistantId',
@@ -106,8 +108,9 @@ class V1Deployment(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, source: 'str' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
+        self._source = None
         self._api_standard = None
         self._apis = None
         self._assistant_id = None
@@ -139,6 +142,8 @@ class V1Deployment(object):
         self._user_id = None
         self._visibility = None
         self.discriminator = None
+        if source is not None:
+            self.source = source
         if api_standard is not None:
             self.api_standard = api_standard
         if apis is not None:
@@ -199,6 +204,27 @@ class V1Deployment(object):
             self.user_id = user_id
         if visibility is not None:
             self.visibility = visibility
+
+    @property
+    def source(self) -> 'str':
+        """Gets the source of this V1Deployment.  # noqa: E501
+
+
+        :return: The source of this V1Deployment.  # noqa: E501
+        :rtype: str
+        """
+        return self._source
+
+    @source.setter
+    def source(self, source: 'str'):
+        """Sets the source of this V1Deployment.
+
+
+        :param source: The source of this V1Deployment.  # noqa: E501
+        :type: str
+        """
+
+        self._source = source
 
     @property
     def api_standard(self) -> 'str':

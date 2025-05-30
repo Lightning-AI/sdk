@@ -44,43 +44,55 @@ class V1GetProjectStorageMetadataResponse(object):
         'account_limit_bytes': 'str',
         'cloudspace_storage_bytes': 'str',
         'cloudspaces': 'list[V1StorageAsset]',
+        'container_registry_storage_bytes': 'str',
         'data_connection_storage_bytes': 'str',
         'data_connections': 'list[V1StorageAsset]',
         'display_name': 'str',
+        'folder_storage_bytes': 'str',
+        'folders': 'list[V1StorageAsset]',
         'id': 'str',
         'job_storage_bytes': 'str',
         'jobs': 'list[V1StorageAsset]',
         'total_storage_bytes': 'str',
-        'upload_storage_bytes': 'str'
+        'upload_storage_bytes': 'str',
+        'uploads': 'V1StorageAsset'
     }
 
     attribute_map = {
         'account_limit_bytes': 'accountLimitBytes',
         'cloudspace_storage_bytes': 'cloudspaceStorageBytes',
         'cloudspaces': 'cloudspaces',
+        'container_registry_storage_bytes': 'containerRegistryStorageBytes',
         'data_connection_storage_bytes': 'dataConnectionStorageBytes',
         'data_connections': 'dataConnections',
         'display_name': 'displayName',
+        'folder_storage_bytes': 'folderStorageBytes',
+        'folders': 'folders',
         'id': 'id',
         'job_storage_bytes': 'jobStorageBytes',
         'jobs': 'jobs',
         'total_storage_bytes': 'totalStorageBytes',
-        'upload_storage_bytes': 'uploadStorageBytes'
+        'upload_storage_bytes': 'uploadStorageBytes',
+        'uploads': 'uploads'
     }
 
-    def __init__(self, account_limit_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, account_limit_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, folder_storage_bytes: 'str' =None, folders: 'list[V1StorageAsset]' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None, uploads: 'V1StorageAsset' =None):  # noqa: E501
         """V1GetProjectStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
         self._account_limit_bytes = None
         self._cloudspace_storage_bytes = None
         self._cloudspaces = None
+        self._container_registry_storage_bytes = None
         self._data_connection_storage_bytes = None
         self._data_connections = None
         self._display_name = None
+        self._folder_storage_bytes = None
+        self._folders = None
         self._id = None
         self._job_storage_bytes = None
         self._jobs = None
         self._total_storage_bytes = None
         self._upload_storage_bytes = None
+        self._uploads = None
         self.discriminator = None
         if account_limit_bytes is not None:
             self.account_limit_bytes = account_limit_bytes
@@ -88,12 +100,18 @@ class V1GetProjectStorageMetadataResponse(object):
             self.cloudspace_storage_bytes = cloudspace_storage_bytes
         if cloudspaces is not None:
             self.cloudspaces = cloudspaces
+        if container_registry_storage_bytes is not None:
+            self.container_registry_storage_bytes = container_registry_storage_bytes
         if data_connection_storage_bytes is not None:
             self.data_connection_storage_bytes = data_connection_storage_bytes
         if data_connections is not None:
             self.data_connections = data_connections
         if display_name is not None:
             self.display_name = display_name
+        if folder_storage_bytes is not None:
+            self.folder_storage_bytes = folder_storage_bytes
+        if folders is not None:
+            self.folders = folders
         if id is not None:
             self.id = id
         if job_storage_bytes is not None:
@@ -104,6 +122,8 @@ class V1GetProjectStorageMetadataResponse(object):
             self.total_storage_bytes = total_storage_bytes
         if upload_storage_bytes is not None:
             self.upload_storage_bytes = upload_storage_bytes
+        if uploads is not None:
+            self.uploads = uploads
 
     @property
     def account_limit_bytes(self) -> 'str':
@@ -169,6 +189,27 @@ class V1GetProjectStorageMetadataResponse(object):
         self._cloudspaces = cloudspaces
 
     @property
+    def container_registry_storage_bytes(self) -> 'str':
+        """Gets the container_registry_storage_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The container_registry_storage_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._container_registry_storage_bytes
+
+    @container_registry_storage_bytes.setter
+    def container_registry_storage_bytes(self, container_registry_storage_bytes: 'str'):
+        """Sets the container_registry_storage_bytes of this V1GetProjectStorageMetadataResponse.
+
+
+        :param container_registry_storage_bytes: The container_registry_storage_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._container_registry_storage_bytes = container_registry_storage_bytes
+
+    @property
     def data_connection_storage_bytes(self) -> 'str':
         """Gets the data_connection_storage_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
 
@@ -230,6 +271,48 @@ class V1GetProjectStorageMetadataResponse(object):
         """
 
         self._display_name = display_name
+
+    @property
+    def folder_storage_bytes(self) -> 'str':
+        """Gets the folder_storage_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The folder_storage_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._folder_storage_bytes
+
+    @folder_storage_bytes.setter
+    def folder_storage_bytes(self, folder_storage_bytes: 'str'):
+        """Sets the folder_storage_bytes of this V1GetProjectStorageMetadataResponse.
+
+
+        :param folder_storage_bytes: The folder_storage_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._folder_storage_bytes = folder_storage_bytes
+
+    @property
+    def folders(self) -> 'list[V1StorageAsset]':
+        """Gets the folders of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The folders of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: list[V1StorageAsset]
+        """
+        return self._folders
+
+    @folders.setter
+    def folders(self, folders: 'list[V1StorageAsset]'):
+        """Sets the folders of this V1GetProjectStorageMetadataResponse.
+
+
+        :param folders: The folders of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: list[V1StorageAsset]
+        """
+
+        self._folders = folders
 
     @property
     def id(self) -> 'str':
@@ -335,6 +418,27 @@ class V1GetProjectStorageMetadataResponse(object):
         """
 
         self._upload_storage_bytes = upload_storage_bytes
+
+    @property
+    def uploads(self) -> 'V1StorageAsset':
+        """Gets the uploads of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The uploads of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: V1StorageAsset
+        """
+        return self._uploads
+
+    @uploads.setter
+    def uploads(self, uploads: 'V1StorageAsset'):
+        """Sets the uploads of this V1GetProjectStorageMetadataResponse.
+
+
+        :param uploads: The uploads of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: V1StorageAsset
+        """
+
+        self._uploads = uploads
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

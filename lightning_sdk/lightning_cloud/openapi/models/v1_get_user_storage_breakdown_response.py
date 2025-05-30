@@ -43,6 +43,7 @@ class V1GetUserStorageBreakdownResponse(object):
     swagger_types = {
         'cloudspace_storage_bytes': 'str',
         'data_connection_storage_bytes': 'str',
+        'folder_storage_bytes': 'str',
         'job_storage_bytes': 'str',
         'limit_bytes': 'str',
         'projects': 'list[V1ProjectStorage]',
@@ -53,6 +54,7 @@ class V1GetUserStorageBreakdownResponse(object):
     attribute_map = {
         'cloudspace_storage_bytes': 'cloudspaceStorageBytes',
         'data_connection_storage_bytes': 'dataConnectionStorageBytes',
+        'folder_storage_bytes': 'folderStorageBytes',
         'job_storage_bytes': 'jobStorageBytes',
         'limit_bytes': 'limitBytes',
         'projects': 'projects',
@@ -60,10 +62,11 @@ class V1GetUserStorageBreakdownResponse(object):
         'upload_storage_bytes': 'uploadStorageBytes'
     }
 
-    def __init__(self, cloudspace_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, job_storage_bytes: 'str' =None, limit_bytes: 'str' =None, projects: 'list[V1ProjectStorage]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, folder_storage_bytes: 'str' =None, job_storage_bytes: 'str' =None, limit_bytes: 'str' =None, projects: 'list[V1ProjectStorage]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1GetUserStorageBreakdownResponse - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_storage_bytes = None
         self._data_connection_storage_bytes = None
+        self._folder_storage_bytes = None
         self._job_storage_bytes = None
         self._limit_bytes = None
         self._projects = None
@@ -74,6 +77,8 @@ class V1GetUserStorageBreakdownResponse(object):
             self.cloudspace_storage_bytes = cloudspace_storage_bytes
         if data_connection_storage_bytes is not None:
             self.data_connection_storage_bytes = data_connection_storage_bytes
+        if folder_storage_bytes is not None:
+            self.folder_storage_bytes = folder_storage_bytes
         if job_storage_bytes is not None:
             self.job_storage_bytes = job_storage_bytes
         if limit_bytes is not None:
@@ -126,6 +131,27 @@ class V1GetUserStorageBreakdownResponse(object):
         """
 
         self._data_connection_storage_bytes = data_connection_storage_bytes
+
+    @property
+    def folder_storage_bytes(self) -> 'str':
+        """Gets the folder_storage_bytes of this V1GetUserStorageBreakdownResponse.  # noqa: E501
+
+
+        :return: The folder_storage_bytes of this V1GetUserStorageBreakdownResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._folder_storage_bytes
+
+    @folder_storage_bytes.setter
+    def folder_storage_bytes(self, folder_storage_bytes: 'str'):
+        """Sets the folder_storage_bytes of this V1GetUserStorageBreakdownResponse.
+
+
+        :param folder_storage_bytes: The folder_storage_bytes of this V1GetUserStorageBreakdownResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._folder_storage_bytes = folder_storage_bytes
 
     @property
     def job_storage_bytes(self) -> 'str':

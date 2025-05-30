@@ -42,12 +42,15 @@ class ProjectsIdBody(object):
     """
     swagger_types = {
         'allow_aws_saas': 'bool',
+        'allow_credits_auto_replenish': 'bool',
         'allow_dgx_saas': 'bool',
         'allow_external_project_duplication': 'bool',
         'allow_gcp_saas': 'bool',
         'allow_lambda_saas': 'bool',
         'allow_lightning_saas': 'bool',
         'allow_vultr_saas': 'bool',
+        'auto_replenish_amount': 'float',
+        'auto_replenish_threshold': 'float',
         'auto_switch_machine': 'bool',
         'default_machine_type': 'str',
         'description': 'str',
@@ -64,12 +67,15 @@ class ProjectsIdBody(object):
 
     attribute_map = {
         'allow_aws_saas': 'allowAwsSaas',
+        'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
         'allow_dgx_saas': 'allowDgxSaas',
         'allow_external_project_duplication': 'allowExternalProjectDuplication',
         'allow_gcp_saas': 'allowGcpSaas',
         'allow_lambda_saas': 'allowLambdaSaas',
         'allow_lightning_saas': 'allowLightningSaas',
         'allow_vultr_saas': 'allowVultrSaas',
+        'auto_replenish_amount': 'autoReplenishAmount',
+        'auto_replenish_threshold': 'autoReplenishThreshold',
         'auto_switch_machine': 'autoSwitchMachine',
         'default_machine_type': 'defaultMachineType',
         'description': 'description',
@@ -84,15 +90,18 @@ class ProjectsIdBody(object):
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
         """ProjectsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
+        self._allow_credits_auto_replenish = None
         self._allow_dgx_saas = None
         self._allow_external_project_duplication = None
         self._allow_gcp_saas = None
         self._allow_lambda_saas = None
         self._allow_lightning_saas = None
         self._allow_vultr_saas = None
+        self._auto_replenish_amount = None
+        self._auto_replenish_threshold = None
         self._auto_switch_machine = None
         self._default_machine_type = None
         self._description = None
@@ -108,6 +117,8 @@ class ProjectsIdBody(object):
         self.discriminator = None
         if allow_aws_saas is not None:
             self.allow_aws_saas = allow_aws_saas
+        if allow_credits_auto_replenish is not None:
+            self.allow_credits_auto_replenish = allow_credits_auto_replenish
         if allow_dgx_saas is not None:
             self.allow_dgx_saas = allow_dgx_saas
         if allow_external_project_duplication is not None:
@@ -120,6 +131,10 @@ class ProjectsIdBody(object):
             self.allow_lightning_saas = allow_lightning_saas
         if allow_vultr_saas is not None:
             self.allow_vultr_saas = allow_vultr_saas
+        if auto_replenish_amount is not None:
+            self.auto_replenish_amount = auto_replenish_amount
+        if auto_replenish_threshold is not None:
+            self.auto_replenish_threshold = auto_replenish_threshold
         if auto_switch_machine is not None:
             self.auto_switch_machine = auto_switch_machine
         if default_machine_type is not None:
@@ -165,6 +180,27 @@ class ProjectsIdBody(object):
         """
 
         self._allow_aws_saas = allow_aws_saas
+
+    @property
+    def allow_credits_auto_replenish(self) -> 'bool':
+        """Gets the allow_credits_auto_replenish of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The allow_credits_auto_replenish of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_credits_auto_replenish
+
+    @allow_credits_auto_replenish.setter
+    def allow_credits_auto_replenish(self, allow_credits_auto_replenish: 'bool'):
+        """Sets the allow_credits_auto_replenish of this ProjectsIdBody.
+
+
+        :param allow_credits_auto_replenish: The allow_credits_auto_replenish of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_credits_auto_replenish = allow_credits_auto_replenish
 
     @property
     def allow_dgx_saas(self) -> 'bool':
@@ -291,6 +327,48 @@ class ProjectsIdBody(object):
         """
 
         self._allow_vultr_saas = allow_vultr_saas
+
+    @property
+    def auto_replenish_amount(self) -> 'float':
+        """Gets the auto_replenish_amount of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The auto_replenish_amount of this ProjectsIdBody.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_amount
+
+    @auto_replenish_amount.setter
+    def auto_replenish_amount(self, auto_replenish_amount: 'float'):
+        """Sets the auto_replenish_amount of this ProjectsIdBody.
+
+
+        :param auto_replenish_amount: The auto_replenish_amount of this ProjectsIdBody.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_amount = auto_replenish_amount
+
+    @property
+    def auto_replenish_threshold(self) -> 'float':
+        """Gets the auto_replenish_threshold of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The auto_replenish_threshold of this ProjectsIdBody.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_threshold
+
+    @auto_replenish_threshold.setter
+    def auto_replenish_threshold(self, auto_replenish_threshold: 'float'):
+        """Sets the auto_replenish_threshold of this ProjectsIdBody.
+
+
+        :param auto_replenish_threshold: The auto_replenish_threshold of this ProjectsIdBody.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_threshold = auto_replenish_threshold
 
     @property
     def auto_switch_machine(self) -> 'bool':

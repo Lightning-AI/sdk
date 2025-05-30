@@ -43,8 +43,10 @@ class V1ProjectStorage(object):
     swagger_types = {
         'billable_bytes': 'str',
         'cloudspace_storage_bytes': 'str',
+        'container_registry_storage_bytes': 'str',
         'data_connection_storage_bytes': 'str',
         'display_name': 'str',
+        'folder_storage_bytes': 'str',
         'id': 'str',
         'job_storage_bytes': 'str',
         'total_billed_per_day': 'float',
@@ -55,8 +57,10 @@ class V1ProjectStorage(object):
     attribute_map = {
         'billable_bytes': 'billableBytes',
         'cloudspace_storage_bytes': 'cloudspaceStorageBytes',
+        'container_registry_storage_bytes': 'containerRegistryStorageBytes',
         'data_connection_storage_bytes': 'dataConnectionStorageBytes',
         'display_name': 'displayName',
+        'folder_storage_bytes': 'folderStorageBytes',
         'id': 'id',
         'job_storage_bytes': 'jobStorageBytes',
         'total_billed_per_day': 'totalBilledPerDay',
@@ -64,12 +68,14 @@ class V1ProjectStorage(object):
         'upload_storage_bytes': 'uploadStorageBytes'
     }
 
-    def __init__(self, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, display_name: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, total_billed_per_day: 'float' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, display_name: 'str' =None, folder_storage_bytes: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, total_billed_per_day: 'float' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1ProjectStorage - a model defined in Swagger"""  # noqa: E501
         self._billable_bytes = None
         self._cloudspace_storage_bytes = None
+        self._container_registry_storage_bytes = None
         self._data_connection_storage_bytes = None
         self._display_name = None
+        self._folder_storage_bytes = None
         self._id = None
         self._job_storage_bytes = None
         self._total_billed_per_day = None
@@ -80,10 +86,14 @@ class V1ProjectStorage(object):
             self.billable_bytes = billable_bytes
         if cloudspace_storage_bytes is not None:
             self.cloudspace_storage_bytes = cloudspace_storage_bytes
+        if container_registry_storage_bytes is not None:
+            self.container_registry_storage_bytes = container_registry_storage_bytes
         if data_connection_storage_bytes is not None:
             self.data_connection_storage_bytes = data_connection_storage_bytes
         if display_name is not None:
             self.display_name = display_name
+        if folder_storage_bytes is not None:
+            self.folder_storage_bytes = folder_storage_bytes
         if id is not None:
             self.id = id
         if job_storage_bytes is not None:
@@ -138,6 +148,27 @@ class V1ProjectStorage(object):
         self._cloudspace_storage_bytes = cloudspace_storage_bytes
 
     @property
+    def container_registry_storage_bytes(self) -> 'str':
+        """Gets the container_registry_storage_bytes of this V1ProjectStorage.  # noqa: E501
+
+
+        :return: The container_registry_storage_bytes of this V1ProjectStorage.  # noqa: E501
+        :rtype: str
+        """
+        return self._container_registry_storage_bytes
+
+    @container_registry_storage_bytes.setter
+    def container_registry_storage_bytes(self, container_registry_storage_bytes: 'str'):
+        """Sets the container_registry_storage_bytes of this V1ProjectStorage.
+
+
+        :param container_registry_storage_bytes: The container_registry_storage_bytes of this V1ProjectStorage.  # noqa: E501
+        :type: str
+        """
+
+        self._container_registry_storage_bytes = container_registry_storage_bytes
+
+    @property
     def data_connection_storage_bytes(self) -> 'str':
         """Gets the data_connection_storage_bytes of this V1ProjectStorage.  # noqa: E501
 
@@ -178,6 +209,27 @@ class V1ProjectStorage(object):
         """
 
         self._display_name = display_name
+
+    @property
+    def folder_storage_bytes(self) -> 'str':
+        """Gets the folder_storage_bytes of this V1ProjectStorage.  # noqa: E501
+
+
+        :return: The folder_storage_bytes of this V1ProjectStorage.  # noqa: E501
+        :rtype: str
+        """
+        return self._folder_storage_bytes
+
+    @folder_storage_bytes.setter
+    def folder_storage_bytes(self, folder_storage_bytes: 'str'):
+        """Sets the folder_storage_bytes of this V1ProjectStorage.
+
+
+        :param folder_storage_bytes: The folder_storage_bytes of this V1ProjectStorage.  # noqa: E501
+        :type: str
+        """
+
+        self._folder_storage_bytes = folder_storage_bytes
 
     @property
     def id(self) -> 'str':

@@ -65,6 +65,12 @@ class V1Organization(object):
         'default_machine_image_version': 'str',
         'default_machine_type': 'str',
         'description': 'str',
+        'disallow_aws_saas': 'bool',
+        'disallow_dgx_saas': 'bool',
+        'disallow_gcp_saas': 'bool',
+        'disallow_lambda_saas': 'bool',
+        'disallow_lightning_saas': 'bool',
+        'disallow_vultr_saas': 'bool',
         'display_name': 'str',
         'domain': 'str',
         'email': 'str',
@@ -111,6 +117,12 @@ class V1Organization(object):
         'default_machine_image_version': 'defaultMachineImageVersion',
         'default_machine_type': 'defaultMachineType',
         'description': 'description',
+        'disallow_aws_saas': 'disallowAwsSaas',
+        'disallow_dgx_saas': 'disallowDgxSaas',
+        'disallow_gcp_saas': 'disallowGcpSaas',
+        'disallow_lambda_saas': 'disallowLambdaSaas',
+        'disallow_lightning_saas': 'disallowLightningSaas',
+        'disallow_vultr_saas': 'disallowVultrSaas',
         'display_name': 'displayName',
         'domain': 'domain',
         'email': 'email',
@@ -132,7 +144,7 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_aws_saas: 'bool' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_guest: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_aws_saas = None
@@ -158,6 +170,12 @@ class V1Organization(object):
         self._default_machine_image_version = None
         self._default_machine_type = None
         self._description = None
+        self._disallow_aws_saas = None
+        self._disallow_dgx_saas = None
+        self._disallow_gcp_saas = None
+        self._disallow_lambda_saas = None
+        self._disallow_lightning_saas = None
+        self._disallow_vultr_saas = None
         self._display_name = None
         self._domain = None
         self._email = None
@@ -226,6 +244,18 @@ class V1Organization(object):
             self.default_machine_type = default_machine_type
         if description is not None:
             self.description = description
+        if disallow_aws_saas is not None:
+            self.disallow_aws_saas = disallow_aws_saas
+        if disallow_dgx_saas is not None:
+            self.disallow_dgx_saas = disallow_dgx_saas
+        if disallow_gcp_saas is not None:
+            self.disallow_gcp_saas = disallow_gcp_saas
+        if disallow_lambda_saas is not None:
+            self.disallow_lambda_saas = disallow_lambda_saas
+        if disallow_lightning_saas is not None:
+            self.disallow_lightning_saas = disallow_lightning_saas
+        if disallow_vultr_saas is not None:
+            self.disallow_vultr_saas = disallow_vultr_saas
         if display_name is not None:
             self.display_name = display_name
         if domain is not None:
@@ -770,6 +800,132 @@ class V1Organization(object):
         """
 
         self._description = description
+
+    @property
+    def disallow_aws_saas(self) -> 'bool':
+        """Gets the disallow_aws_saas of this V1Organization.  # noqa: E501
+
+
+        :return: The disallow_aws_saas of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disallow_aws_saas
+
+    @disallow_aws_saas.setter
+    def disallow_aws_saas(self, disallow_aws_saas: 'bool'):
+        """Sets the disallow_aws_saas of this V1Organization.
+
+
+        :param disallow_aws_saas: The disallow_aws_saas of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._disallow_aws_saas = disallow_aws_saas
+
+    @property
+    def disallow_dgx_saas(self) -> 'bool':
+        """Gets the disallow_dgx_saas of this V1Organization.  # noqa: E501
+
+
+        :return: The disallow_dgx_saas of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disallow_dgx_saas
+
+    @disallow_dgx_saas.setter
+    def disallow_dgx_saas(self, disallow_dgx_saas: 'bool'):
+        """Sets the disallow_dgx_saas of this V1Organization.
+
+
+        :param disallow_dgx_saas: The disallow_dgx_saas of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._disallow_dgx_saas = disallow_dgx_saas
+
+    @property
+    def disallow_gcp_saas(self) -> 'bool':
+        """Gets the disallow_gcp_saas of this V1Organization.  # noqa: E501
+
+
+        :return: The disallow_gcp_saas of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disallow_gcp_saas
+
+    @disallow_gcp_saas.setter
+    def disallow_gcp_saas(self, disallow_gcp_saas: 'bool'):
+        """Sets the disallow_gcp_saas of this V1Organization.
+
+
+        :param disallow_gcp_saas: The disallow_gcp_saas of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._disallow_gcp_saas = disallow_gcp_saas
+
+    @property
+    def disallow_lambda_saas(self) -> 'bool':
+        """Gets the disallow_lambda_saas of this V1Organization.  # noqa: E501
+
+
+        :return: The disallow_lambda_saas of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disallow_lambda_saas
+
+    @disallow_lambda_saas.setter
+    def disallow_lambda_saas(self, disallow_lambda_saas: 'bool'):
+        """Sets the disallow_lambda_saas of this V1Organization.
+
+
+        :param disallow_lambda_saas: The disallow_lambda_saas of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._disallow_lambda_saas = disallow_lambda_saas
+
+    @property
+    def disallow_lightning_saas(self) -> 'bool':
+        """Gets the disallow_lightning_saas of this V1Organization.  # noqa: E501
+
+
+        :return: The disallow_lightning_saas of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disallow_lightning_saas
+
+    @disallow_lightning_saas.setter
+    def disallow_lightning_saas(self, disallow_lightning_saas: 'bool'):
+        """Sets the disallow_lightning_saas of this V1Organization.
+
+
+        :param disallow_lightning_saas: The disallow_lightning_saas of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._disallow_lightning_saas = disallow_lightning_saas
+
+    @property
+    def disallow_vultr_saas(self) -> 'bool':
+        """Gets the disallow_vultr_saas of this V1Organization.  # noqa: E501
+
+
+        :return: The disallow_vultr_saas of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disallow_vultr_saas
+
+    @disallow_vultr_saas.setter
+    def disallow_vultr_saas(self, disallow_vultr_saas: 'bool'):
+        """Sets the disallow_vultr_saas of this V1Organization.
+
+
+        :param disallow_vultr_saas: The disallow_vultr_saas of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._disallow_vultr_saas = disallow_vultr_saas
 
     @property
     def display_name(self) -> 'str':
