@@ -76,6 +76,7 @@ class V1RuleResource(object):
     LITLOGGER = "litLogger"
     PIPELINE = "pipeline"
     CLOUDSPACEENVIRONMENTTEMPLATE = "cloudSpaceEnvironmentTemplate"
+    ORGSTORAGE = "orgStorage"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

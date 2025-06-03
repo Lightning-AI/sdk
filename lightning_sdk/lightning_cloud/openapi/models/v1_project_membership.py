@@ -52,6 +52,7 @@ class V1ProjectMembership(object):
         'email': 'str',
         'first_name': 'str',
         'free_credits_enabled': 'bool',
+        'free_storage_bytes': 'str',
         'inactive': 'bool',
         'is_default': 'bool',
         'job_count': 'str',
@@ -83,6 +84,7 @@ class V1ProjectMembership(object):
         'email': 'email',
         'first_name': 'firstName',
         'free_credits_enabled': 'freeCreditsEnabled',
+        'free_storage_bytes': 'freeStorageBytes',
         'inactive': 'inactive',
         'is_default': 'isDefault',
         'job_count': 'jobCount',
@@ -102,7 +104,7 @@ class V1ProjectMembership(object):
         'username': 'username'
     }
 
-    def __init__(self, avatar_url: 'str' =None, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, email: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant: 'str' =None, organization: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, avatar_url: 'str' =None, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, email: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, free_storage_bytes: 'str' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant: 'str' =None, organization: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
         """V1ProjectMembership - a model defined in Swagger"""  # noqa: E501
         self._avatar_url = None
         self._balance = None
@@ -115,6 +117,7 @@ class V1ProjectMembership(object):
         self._email = None
         self._first_name = None
         self._free_credits_enabled = None
+        self._free_storage_bytes = None
         self._inactive = None
         self._is_default = None
         self._job_count = None
@@ -155,6 +158,8 @@ class V1ProjectMembership(object):
             self.first_name = first_name
         if free_credits_enabled is not None:
             self.free_credits_enabled = free_credits_enabled
+        if free_storage_bytes is not None:
+            self.free_storage_bytes = free_storage_bytes
         if inactive is not None:
             self.inactive = inactive
         if is_default is not None:
@@ -420,6 +425,27 @@ class V1ProjectMembership(object):
         """
 
         self._free_credits_enabled = free_credits_enabled
+
+    @property
+    def free_storage_bytes(self) -> 'str':
+        """Gets the free_storage_bytes of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The free_storage_bytes of this V1ProjectMembership.  # noqa: E501
+        :rtype: str
+        """
+        return self._free_storage_bytes
+
+    @free_storage_bytes.setter
+    def free_storage_bytes(self, free_storage_bytes: 'str'):
+        """Sets the free_storage_bytes of this V1ProjectMembership.
+
+
+        :param free_storage_bytes: The free_storage_bytes of this V1ProjectMembership.  # noqa: E501
+        :type: str
+        """
+
+        self._free_storage_bytes = free_storage_bytes
 
     @property
     def inactive(self) -> 'bool':

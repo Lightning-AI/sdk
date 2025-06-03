@@ -42,23 +42,38 @@ class V1DailyUsage(object):
     """
     swagger_types = {
         'day': 'datetime',
-        'total_cost': 'float'
+        'total_completion_tokens': 'str',
+        'total_cost': 'float',
+        'total_num_messages': 'str',
+        'total_prompt_tokens': 'str'
     }
 
     attribute_map = {
         'day': 'day',
-        'total_cost': 'totalCost'
+        'total_completion_tokens': 'totalCompletionTokens',
+        'total_cost': 'totalCost',
+        'total_num_messages': 'totalNumMessages',
+        'total_prompt_tokens': 'totalPromptTokens'
     }
 
-    def __init__(self, day: 'datetime' =None, total_cost: 'float' =None):  # noqa: E501
+    def __init__(self, day: 'datetime' =None, total_completion_tokens: 'str' =None, total_cost: 'float' =None, total_num_messages: 'str' =None, total_prompt_tokens: 'str' =None):  # noqa: E501
         """V1DailyUsage - a model defined in Swagger"""  # noqa: E501
         self._day = None
+        self._total_completion_tokens = None
         self._total_cost = None
+        self._total_num_messages = None
+        self._total_prompt_tokens = None
         self.discriminator = None
         if day is not None:
             self.day = day
+        if total_completion_tokens is not None:
+            self.total_completion_tokens = total_completion_tokens
         if total_cost is not None:
             self.total_cost = total_cost
+        if total_num_messages is not None:
+            self.total_num_messages = total_num_messages
+        if total_prompt_tokens is not None:
+            self.total_prompt_tokens = total_prompt_tokens
 
     @property
     def day(self) -> 'datetime':
@@ -82,6 +97,27 @@ class V1DailyUsage(object):
         self._day = day
 
     @property
+    def total_completion_tokens(self) -> 'str':
+        """Gets the total_completion_tokens of this V1DailyUsage.  # noqa: E501
+
+
+        :return: The total_completion_tokens of this V1DailyUsage.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_completion_tokens
+
+    @total_completion_tokens.setter
+    def total_completion_tokens(self, total_completion_tokens: 'str'):
+        """Sets the total_completion_tokens of this V1DailyUsage.
+
+
+        :param total_completion_tokens: The total_completion_tokens of this V1DailyUsage.  # noqa: E501
+        :type: str
+        """
+
+        self._total_completion_tokens = total_completion_tokens
+
+    @property
     def total_cost(self) -> 'float':
         """Gets the total_cost of this V1DailyUsage.  # noqa: E501
 
@@ -101,6 +137,48 @@ class V1DailyUsage(object):
         """
 
         self._total_cost = total_cost
+
+    @property
+    def total_num_messages(self) -> 'str':
+        """Gets the total_num_messages of this V1DailyUsage.  # noqa: E501
+
+
+        :return: The total_num_messages of this V1DailyUsage.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_num_messages
+
+    @total_num_messages.setter
+    def total_num_messages(self, total_num_messages: 'str'):
+        """Sets the total_num_messages of this V1DailyUsage.
+
+
+        :param total_num_messages: The total_num_messages of this V1DailyUsage.  # noqa: E501
+        :type: str
+        """
+
+        self._total_num_messages = total_num_messages
+
+    @property
+    def total_prompt_tokens(self) -> 'str':
+        """Gets the total_prompt_tokens of this V1DailyUsage.  # noqa: E501
+
+
+        :return: The total_prompt_tokens of this V1DailyUsage.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_prompt_tokens
+
+    @total_prompt_tokens.setter
+    def total_prompt_tokens(self, total_prompt_tokens: 'str'):
+        """Sets the total_prompt_tokens of this V1DailyUsage.
+
+
+        :param total_prompt_tokens: The total_prompt_tokens of this V1DailyUsage.  # noqa: E501
+        :type: str
+        """
+
+        self._total_prompt_tokens = total_prompt_tokens
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

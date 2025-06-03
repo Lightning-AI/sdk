@@ -50,7 +50,6 @@ class V1UserFeatures(object):
         'auto_top_up': 'bool',
         'auto_top_up_teamspace': 'bool',
         'b2c_experience': 'bool',
-        'big_default_cpus': 'bool',
         'blog_route': 'bool',
         'byoc_litcr': 'bool',
         'cap_add': 'list[str]',
@@ -131,6 +130,7 @@ class V1UserFeatures(object):
         'studios_dashboard_system_metrics': 'bool',
         'teamspace_storage_tab': 'bool',
         'trainium2': 'bool',
+        'transfer_studios': 'bool',
         'use_rclone_mounts_only': 'bool',
         'voltage_park': 'bool',
         'voltage_park_studios': 'bool',
@@ -148,7 +148,6 @@ class V1UserFeatures(object):
         'auto_top_up': 'autoTopUp',
         'auto_top_up_teamspace': 'autoTopUpTeamspace',
         'b2c_experience': 'b2cExperience',
-        'big_default_cpus': 'bigDefaultCpus',
         'blog_route': 'blogRoute',
         'byoc_litcr': 'byocLitcr',
         'cap_add': 'capAdd',
@@ -229,6 +228,7 @@ class V1UserFeatures(object):
         'studios_dashboard_system_metrics': 'studiosDashboardSystemMetrics',
         'teamspace_storage_tab': 'teamspaceStorageTab',
         'trainium2': 'trainium2',
+        'transfer_studios': 'transferStudios',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
         'voltage_park': 'voltagePark',
         'voltage_park_studios': 'voltageParkStudios',
@@ -236,7 +236,7 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, big_default_cpus: 'bool' =None, blog_route: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_requests_tab: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, down_switch_machine: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, neocloud_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, blog_route: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_requests_tab: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, down_switch_machine: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, neocloud_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, studios_dashboard: 'bool' =None, studios_dashboard_system_metrics: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, transfer_studios: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._accurate_billing = None
         self._affiliate_links = None
@@ -247,7 +247,6 @@ class V1UserFeatures(object):
         self._auto_top_up = None
         self._auto_top_up_teamspace = None
         self._b2c_experience = None
-        self._big_default_cpus = None
         self._blog_route = None
         self._byoc_litcr = None
         self._cap_add = None
@@ -328,6 +327,7 @@ class V1UserFeatures(object):
         self._studios_dashboard_system_metrics = None
         self._teamspace_storage_tab = None
         self._trainium2 = None
+        self._transfer_studios = None
         self._use_rclone_mounts_only = None
         self._voltage_park = None
         self._voltage_park_studios = None
@@ -352,8 +352,6 @@ class V1UserFeatures(object):
             self.auto_top_up_teamspace = auto_top_up_teamspace
         if b2c_experience is not None:
             self.b2c_experience = b2c_experience
-        if big_default_cpus is not None:
-            self.big_default_cpus = big_default_cpus
         if blog_route is not None:
             self.blog_route = blog_route
         if byoc_litcr is not None:
@@ -514,6 +512,8 @@ class V1UserFeatures(object):
             self.teamspace_storage_tab = teamspace_storage_tab
         if trainium2 is not None:
             self.trainium2 = trainium2
+        if transfer_studios is not None:
+            self.transfer_studios = transfer_studios
         if use_rclone_mounts_only is not None:
             self.use_rclone_mounts_only = use_rclone_mounts_only
         if voltage_park is not None:
@@ -713,27 +713,6 @@ class V1UserFeatures(object):
         """
 
         self._b2c_experience = b2c_experience
-
-    @property
-    def big_default_cpus(self) -> 'bool':
-        """Gets the big_default_cpus of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The big_default_cpus of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._big_default_cpus
-
-    @big_default_cpus.setter
-    def big_default_cpus(self, big_default_cpus: 'bool'):
-        """Sets the big_default_cpus of this V1UserFeatures.
-
-
-        :param big_default_cpus: The big_default_cpus of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._big_default_cpus = big_default_cpus
 
     @property
     def blog_route(self) -> 'bool':
@@ -2414,6 +2393,27 @@ class V1UserFeatures(object):
         """
 
         self._trainium2 = trainium2
+
+    @property
+    def transfer_studios(self) -> 'bool':
+        """Gets the transfer_studios of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The transfer_studios of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._transfer_studios
+
+    @transfer_studios.setter
+    def transfer_studios(self, transfer_studios: 'bool'):
+        """Sets the transfer_studios of this V1UserFeatures.
+
+
+        :param transfer_studios: The transfer_studios of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._transfer_studios = transfer_studios
 
     @property
     def use_rclone_mounts_only(self) -> 'bool':

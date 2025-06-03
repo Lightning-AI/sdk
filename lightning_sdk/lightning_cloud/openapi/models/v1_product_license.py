@@ -41,6 +41,7 @@ class V1ProductLicense(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'active': 'bool',
         'created_at': 'datetime',
         'expires_at': 'datetime',
         'is_valid': 'bool',
@@ -56,6 +57,7 @@ class V1ProductLicense(object):
     }
 
     attribute_map = {
+        'active': 'active',
         'created_at': 'createdAt',
         'expires_at': 'expiresAt',
         'is_valid': 'isValid',
@@ -70,8 +72,9 @@ class V1ProductLicense(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, is_valid: 'bool' =None, license_id: 'str' =None, license_key: 'str' =None, license_type: 'str' =None, owner_name: 'str' =None, owner_type: 'str' =None, product_name: 'str' =None, product_type: 'str' =None, product_version: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, active: 'bool' =None, created_at: 'datetime' =None, expires_at: 'datetime' =None, is_valid: 'bool' =None, license_id: 'str' =None, license_key: 'str' =None, license_type: 'str' =None, owner_name: 'str' =None, owner_type: 'str' =None, product_name: 'str' =None, product_type: 'str' =None, product_version: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1ProductLicense - a model defined in Swagger"""  # noqa: E501
+        self._active = None
         self._created_at = None
         self._expires_at = None
         self._is_valid = None
@@ -85,6 +88,8 @@ class V1ProductLicense(object):
         self._product_version = None
         self._updated_at = None
         self.discriminator = None
+        if active is not None:
+            self.active = active
         if created_at is not None:
             self.created_at = created_at
         if expires_at is not None:
@@ -109,6 +114,27 @@ class V1ProductLicense(object):
             self.product_version = product_version
         if updated_at is not None:
             self.updated_at = updated_at
+
+    @property
+    def active(self) -> 'bool':
+        """Gets the active of this V1ProductLicense.  # noqa: E501
+
+
+        :return: The active of this V1ProductLicense.  # noqa: E501
+        :rtype: bool
+        """
+        return self._active
+
+    @active.setter
+    def active(self, active: 'bool'):
+        """Sets the active of this V1ProductLicense.
+
+
+        :param active: The active of this V1ProductLicense.  # noqa: E501
+        :type: bool
+        """
+
+        self._active = active
 
     @property
     def created_at(self) -> 'datetime':

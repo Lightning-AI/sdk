@@ -49,6 +49,7 @@ class V1Message(object):
         'created_at': 'datetime',
         'executable': 'bool',
         'id': 'str',
+        'metadata': 'dict(str, str)',
         'model': 'str',
         'prompt_tokens': 'str',
         'throughput': 'float'
@@ -63,12 +64,13 @@ class V1Message(object):
         'created_at': 'createdAt',
         'executable': 'executable',
         'id': 'id',
+        'metadata': 'metadata',
         'model': 'model',
         'prompt_tokens': 'promptTokens',
         'throughput': 'throughput'
     }
 
-    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._assistant_id = None
         self._author = None
@@ -78,6 +80,7 @@ class V1Message(object):
         self._created_at = None
         self._executable = None
         self._id = None
+        self._metadata = None
         self._model = None
         self._prompt_tokens = None
         self._throughput = None
@@ -98,6 +101,8 @@ class V1Message(object):
             self.executable = executable
         if id is not None:
             self.id = id
+        if metadata is not None:
+            self.metadata = metadata
         if model is not None:
             self.model = model
         if prompt_tokens is not None:
@@ -272,6 +277,27 @@ class V1Message(object):
         """
 
         self._id = id
+
+    @property
+    def metadata(self) -> 'dict(str, str)':
+        """Gets the metadata of this V1Message.  # noqa: E501
+
+
+        :return: The metadata of this V1Message.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, metadata: 'dict(str, str)'):
+        """Sets the metadata of this V1Message.
+
+
+        :param metadata: The metadata of this V1Message.  # noqa: E501
+        :type: dict(str, str)
+        """
+
+        self._metadata = metadata
 
     @property
     def model(self) -> 'str':

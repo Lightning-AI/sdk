@@ -44,8 +44,10 @@ class V1Project(object):
         'abac_enabled': 'bool',
         'created_at': 'datetime',
         'creator_id': 'str',
+        'current_storage_bytes': 'str',
         'description': 'str',
         'display_name': 'str',
+        'free_storage_bytes': 'str',
         'id': 'str',
         'is_default': 'bool',
         'lock_out_uploads': 'bool',
@@ -64,8 +66,10 @@ class V1Project(object):
         'abac_enabled': 'abacEnabled',
         'created_at': 'createdAt',
         'creator_id': 'creatorId',
+        'current_storage_bytes': 'currentStorageBytes',
         'description': 'description',
         'display_name': 'displayName',
+        'free_storage_bytes': 'freeStorageBytes',
         'id': 'id',
         'is_default': 'isDefault',
         'lock_out_uploads': 'lockOutUploads',
@@ -80,13 +84,15 @@ class V1Project(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, display_name: 'str' =None, id: 'str' =None, is_default: 'bool' =None, lock_out_uploads: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_storage_bytes: 'str' =None, id: 'str' =None, is_default: 'bool' =None, lock_out_uploads: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Project - a model defined in Swagger"""  # noqa: E501
         self._abac_enabled = None
         self._created_at = None
         self._creator_id = None
+        self._current_storage_bytes = None
         self._description = None
         self._display_name = None
+        self._free_storage_bytes = None
         self._id = None
         self._is_default = None
         self._lock_out_uploads = None
@@ -106,10 +112,14 @@ class V1Project(object):
             self.created_at = created_at
         if creator_id is not None:
             self.creator_id = creator_id
+        if current_storage_bytes is not None:
+            self.current_storage_bytes = current_storage_bytes
         if description is not None:
             self.description = description
         if display_name is not None:
             self.display_name = display_name
+        if free_storage_bytes is not None:
+            self.free_storage_bytes = free_storage_bytes
         if id is not None:
             self.id = id
         if is_default is not None:
@@ -199,6 +209,27 @@ class V1Project(object):
         self._creator_id = creator_id
 
     @property
+    def current_storage_bytes(self) -> 'str':
+        """Gets the current_storage_bytes of this V1Project.  # noqa: E501
+
+
+        :return: The current_storage_bytes of this V1Project.  # noqa: E501
+        :rtype: str
+        """
+        return self._current_storage_bytes
+
+    @current_storage_bytes.setter
+    def current_storage_bytes(self, current_storage_bytes: 'str'):
+        """Sets the current_storage_bytes of this V1Project.
+
+
+        :param current_storage_bytes: The current_storage_bytes of this V1Project.  # noqa: E501
+        :type: str
+        """
+
+        self._current_storage_bytes = current_storage_bytes
+
+    @property
     def description(self) -> 'str':
         """Gets the description of this V1Project.  # noqa: E501
 
@@ -239,6 +270,27 @@ class V1Project(object):
         """
 
         self._display_name = display_name
+
+    @property
+    def free_storage_bytes(self) -> 'str':
+        """Gets the free_storage_bytes of this V1Project.  # noqa: E501
+
+
+        :return: The free_storage_bytes of this V1Project.  # noqa: E501
+        :rtype: str
+        """
+        return self._free_storage_bytes
+
+    @free_storage_bytes.setter
+    def free_storage_bytes(self, free_storage_bytes: 'str'):
+        """Sets the free_storage_bytes of this V1Project.
+
+
+        :param free_storage_bytes: The free_storage_bytes of this V1Project.  # noqa: E501
+        :type: str
+        """
+
+        self._free_storage_bytes = free_storage_bytes
 
     @property
     def id(self) -> 'str':
