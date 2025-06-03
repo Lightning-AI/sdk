@@ -338,6 +338,7 @@ class BlogPostsServiceApi(object):
         :param str category:
         :param str page_token:
         :param str limit:
+        :param bool include_unpublished:
         :return: V1ListBlogPostsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -361,12 +362,13 @@ class BlogPostsServiceApi(object):
         :param str category:
         :param str page_token:
         :param str limit:
+        :param bool include_unpublished:
         :return: V1ListBlogPostsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['category', 'page_token', 'limit']  # noqa: E501
+        all_params = ['category', 'page_token', 'limit', 'include_unpublished']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -393,6 +395,8 @@ class BlogPostsServiceApi(object):
             query_params.append(('pageToken', params['page_token']))  # noqa: E501
         if 'limit' in params:
             query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'include_unpublished' in params:
+            query_params.append(('includeUnpublished', params['include_unpublished']))  # noqa: E501
 
         header_params = {}
 

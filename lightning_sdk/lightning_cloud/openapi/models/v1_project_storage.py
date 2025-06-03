@@ -46,10 +46,10 @@ class V1ProjectStorage(object):
         'container_registry_storage_bytes': 'str',
         'data_connection_storage_bytes': 'str',
         'display_name': 'str',
+        'estimated_daily_cost': 'float',
         'folder_storage_bytes': 'str',
         'id': 'str',
         'job_storage_bytes': 'str',
-        'total_billed_per_day': 'float',
         'total_storage_bytes': 'str',
         'upload_storage_bytes': 'str'
     }
@@ -60,25 +60,25 @@ class V1ProjectStorage(object):
         'container_registry_storage_bytes': 'containerRegistryStorageBytes',
         'data_connection_storage_bytes': 'dataConnectionStorageBytes',
         'display_name': 'displayName',
+        'estimated_daily_cost': 'estimatedDailyCost',
         'folder_storage_bytes': 'folderStorageBytes',
         'id': 'id',
         'job_storage_bytes': 'jobStorageBytes',
-        'total_billed_per_day': 'totalBilledPerDay',
         'total_storage_bytes': 'totalStorageBytes',
         'upload_storage_bytes': 'uploadStorageBytes'
     }
 
-    def __init__(self, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, display_name: 'str' =None, folder_storage_bytes: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, total_billed_per_day: 'float' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, display_name: 'str' =None, estimated_daily_cost: 'float' =None, folder_storage_bytes: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1ProjectStorage - a model defined in Swagger"""  # noqa: E501
         self._billable_bytes = None
         self._cloudspace_storage_bytes = None
         self._container_registry_storage_bytes = None
         self._data_connection_storage_bytes = None
         self._display_name = None
+        self._estimated_daily_cost = None
         self._folder_storage_bytes = None
         self._id = None
         self._job_storage_bytes = None
-        self._total_billed_per_day = None
         self._total_storage_bytes = None
         self._upload_storage_bytes = None
         self.discriminator = None
@@ -92,14 +92,14 @@ class V1ProjectStorage(object):
             self.data_connection_storage_bytes = data_connection_storage_bytes
         if display_name is not None:
             self.display_name = display_name
+        if estimated_daily_cost is not None:
+            self.estimated_daily_cost = estimated_daily_cost
         if folder_storage_bytes is not None:
             self.folder_storage_bytes = folder_storage_bytes
         if id is not None:
             self.id = id
         if job_storage_bytes is not None:
             self.job_storage_bytes = job_storage_bytes
-        if total_billed_per_day is not None:
-            self.total_billed_per_day = total_billed_per_day
         if total_storage_bytes is not None:
             self.total_storage_bytes = total_storage_bytes
         if upload_storage_bytes is not None:
@@ -211,6 +211,27 @@ class V1ProjectStorage(object):
         self._display_name = display_name
 
     @property
+    def estimated_daily_cost(self) -> 'float':
+        """Gets the estimated_daily_cost of this V1ProjectStorage.  # noqa: E501
+
+
+        :return: The estimated_daily_cost of this V1ProjectStorage.  # noqa: E501
+        :rtype: float
+        """
+        return self._estimated_daily_cost
+
+    @estimated_daily_cost.setter
+    def estimated_daily_cost(self, estimated_daily_cost: 'float'):
+        """Sets the estimated_daily_cost of this V1ProjectStorage.
+
+
+        :param estimated_daily_cost: The estimated_daily_cost of this V1ProjectStorage.  # noqa: E501
+        :type: float
+        """
+
+        self._estimated_daily_cost = estimated_daily_cost
+
+    @property
     def folder_storage_bytes(self) -> 'str':
         """Gets the folder_storage_bytes of this V1ProjectStorage.  # noqa: E501
 
@@ -272,27 +293,6 @@ class V1ProjectStorage(object):
         """
 
         self._job_storage_bytes = job_storage_bytes
-
-    @property
-    def total_billed_per_day(self) -> 'float':
-        """Gets the total_billed_per_day of this V1ProjectStorage.  # noqa: E501
-
-
-        :return: The total_billed_per_day of this V1ProjectStorage.  # noqa: E501
-        :rtype: float
-        """
-        return self._total_billed_per_day
-
-    @total_billed_per_day.setter
-    def total_billed_per_day(self, total_billed_per_day: 'float'):
-        """Sets the total_billed_per_day of this V1ProjectStorage.
-
-
-        :param total_billed_per_day: The total_billed_per_day of this V1ProjectStorage.  # noqa: E501
-        :type: float
-        """
-
-        self._total_billed_per_day = total_billed_per_day
 
     @property
     def total_storage_bytes(self) -> 'str':
