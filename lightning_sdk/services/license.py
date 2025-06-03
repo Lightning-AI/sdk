@@ -3,9 +3,11 @@ import json
 import os
 import socket
 import threading
+from contextlib import suppress
 from functools import partial
+from importlib import metadata
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
 from lightning_sdk.api.license_api import LicenseApi
 from lightning_sdk.lightning_cloud.login import Auth
@@ -34,36 +36,53 @@ class LightningLicense:
         self._license_api = None
         self._stream_messages = stream_messages
 
+    @property
+    def license_api(self) -> LicenseApi:
+        """Get the LicenseApi instance."""
+        if not self._license_api:
+            with suppress(ValueError):
+                self._license_api = LicenseApi()
+        return self._license_api
+
     def validate_license(self) -> bool:
         """Validate the license key."""
         if not self.is_online():
             raise ConnectionError("No internet connection.")
+        if not self.license_api:
+            # todo: this need to be exposed with public API
+            raise RuntimeError("License validation is allowed only for authenticated users.")
 
-        self._license_api = LicenseApi()
-        if self.has_required_details:
-            return self._license_api.valid_license(
-                license_key=self.license_key,
-                product_name=self.product_name,
-                product_version=self.product_version,
-                product_type=self.product_type,
-            )
-        # try to check if the session has logged-in user and if the user has a valid license
-        self._stream_messages(
-            "Missing required details for license validation. "
-            "Attempting to validate license using authenticated user details."
+        return self.license_api.valid_license(
+            license_key=self.license_key,
+            product_name=self.product_name,
+            product_version=self.product_version,
+            product_type=self.product_type,
         )
-        return self._check_user_license()
 
-    def _check_user_license(self) -> bool:
+    def _auth_user_id(self) -> Tuple[Optional[str], Optional[str]]:
+        """Get the authenticated user ID."""
+        try:
+            auth = Auth()
+        except ValueError:
+            return None, "No user credentials found. Please run `lightning login` to authenticate."
+        return auth.user_id, None
+
+    def _check_user_license(self, user_id: Optional[str] = None) -> bool:
         """Check if the authenticated user has a valid license for this product."""
-        auth = Auth()
-        if not auth.load():
-            self._stream_messages("No user credentials found. Please run `lightning login` to authenticate.")
+        if not user_id:
+            user_id, msg = self._auth_user_id()
+            if msg:
+                self._stream_messages(msg)
+            if not user_id:
+                return False
+        if not self.license_api:
+            self._stream_messages(
+                "No authenticated user found or license API is not available."
+                " Please make sure you are logged in and have a valid license."
+            )
             return False
-        if not auth.user_id or not auth.api_key:
-            self._stream_messages("User ID or API key is missing. Please run `lightning login` to authenticate.")
-            return False
-        licenses = self._license_api.list_user_licenses(user_id=auth.user_id)
+
+        licenses = self.license_api.list_user_licenses(user_id=user_id)
         for license_info in licenses:
             if (
                 license_info.product_name == self.product_name
@@ -71,6 +90,10 @@ class LightningLicense:
                 and license_info.is_valid
             ):
                 return True
+        self._stream_messages(
+            f"No valid license found for authenticated user for product {self.product_name}."
+            " Please make sure you have a approved product license or contact support."
+        )
         return False
 
     @staticmethod
@@ -102,22 +125,35 @@ class LightningLicense:
         if isinstance(self._is_valid, bool):
             # if the license key is already validated, return the cached value
             return self._is_valid
-        if not self.product_version:
-            self._stream_messages("Product version is not set correctly, consider leave it empty for auto-determine.")
-        if not self.license_key:
+        is_online = self.is_online()
+        if is_online:
+            if self.license_key:
+                self._is_valid = self.validate_license()
+            else:
+                # try to check if the session has logged-in user and if the user has a valid license
+                self._stream_messages(
+                    "Missing required license key for license validation."
+                    f" Attempting to check if the authenticated user has a valid license for {self.product_name}."
+                )
+                user_id, auth_msg = self._auth_user_id()
+                if not user_id:
+                    self._is_valid = False
+                    if auth_msg:
+                        self._stream_messages(auth_msg)
+                else:
+                    self._is_valid = self._check_user_license(user_id=user_id)
+        elif self.license_key:
+            self._stream_messages(
+                f"License key ({self.license_key[:5]}...{self.license_key[-5:]}) is set but the system is offline."
+                " Please make sure you have a valid license key and the system is online."
+            )
+        else:
             self._stream_messages(
                 "License key is not set neither cannot be found in the package root or user home."
                 " Please make sure you have signed the license agreement and set the license key."
                 " For more information, please refer to the documentation.",
             )
-        is_online = self.is_online()
-        if self.license_key and is_online:
-            self._is_valid = self.validate_license()
-        elif not is_online:
-            self._stream_messages(
-                "License key is set but the system is offline. "
-                "Please make sure you have a valid license key and the system is online."
-            )
+
         return self._is_valid
 
     @property
@@ -176,8 +212,8 @@ class LightningLicense:
             package_name: The name of the package. If not provided, it will be determined from the current module.
         """
         try:
-            return importlib.metadata.version(package_name)
-        except importlib.metadata.PackageNotFoundError:
+            return metadata.version(package_name)
+        except metadata.PackageNotFoundError:
             return None
 
     @property
@@ -229,7 +265,7 @@ def check_license(
     )
     if lit_license.is_valid is False:
         stream_messages(
-            "License key is not valid.\n"
+            f"License key for `{lit_license.product_name}` is not valid.\n"
             f" Key: {lit_license.license_key}\n"
             " Please make sure you have a valid license key."
         )
