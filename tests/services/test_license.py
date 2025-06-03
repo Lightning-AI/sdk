@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import ANY, MagicMock, mock_open, patch
 
 import pytest
 
@@ -6,11 +6,12 @@ from lightning_sdk.lightning_cloud.openapi import V1ProductLicense
 from lightning_sdk.services.license import LightningLicense, check_license
 
 
-@patch("lightning_sdk.services.license.importlib.import_module")
-def test_determine_package_version_found(mock_import):
-    mock_pkg = MagicMock(__version__="0.1.0")
-    mock_import.return_value = mock_pkg
-    assert LightningLicense._determine_package_version("any") == "0.1.0"
+@patch("importlib.metadata.version")
+def test_determine_package_version_found(mock_metadata_version):
+    mock_metadata_version.return_value = "0.1.0"
+    result = LightningLicense._determine_package_version("any")
+    mock_metadata_version.assert_called_once_with(ANY)
+    assert result == "0.1.0"
 
 
 @patch("importlib.util.find_spec")
@@ -51,11 +52,10 @@ def test_find_user_license_key_missing(mock_open, mock_home):
     assert mock_home.call_count == 1
 
 
-@patch("lightning_sdk.services.license.importlib.import_module")
+@patch("importlib.metadata.version")
 @pytest.mark.parametrize("license_source", ["package", "user"])
-def test_license_autofilled_properties(mock_import, license_source):
-    mock_pkg = MagicMock(__version__="0.1.0")
-    mock_import.return_value = mock_pkg
+def test_license_autofilled_properties(mock_metadata_version, license_source):
+    mock_metadata_version.return_value = "0.1.0"
     if license_source == "package":
         LightningLicense._find_package_license_key = MagicMock(return_value="package_key")
         LightningLicense._find_user_license_key = MagicMock()

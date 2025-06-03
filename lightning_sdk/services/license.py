@@ -134,14 +134,17 @@ class LightningLicense:
         """
         if not package_name:
             return None
+        pkg_spec = importlib.util.find_spec(package_name)
+        if pkg_spec is None:
+            return None
+        pkg_locations = pkg_spec.submodule_search_locations
+        if not pkg_locations:
+            return None
         try:
-            pkg_locations = importlib.util.find_spec(package_name).submodule_search_locations
-            if not pkg_locations:
-                return None
             license_file = os.path.join(pkg_locations[0], ".license_key")
             with open(license_file) as fp:
                 return fp.read().strip()
-        except (FileNotFoundError, ModuleNotFoundError):
+        except FileNotFoundError:
             return None
 
     @staticmethod
@@ -173,9 +176,8 @@ class LightningLicense:
             package_name: The name of the package. If not provided, it will be determined from the current module.
         """
         try:
-            pkg = importlib.import_module(package_name)
-            return getattr(pkg, "__version__", None)
-        except ImportError:
+            return importlib.metadata.version(package_name)
+        except importlib.metadata.PackageNotFoundError:
             return None
 
     @property
