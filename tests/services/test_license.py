@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
+from lightning_sdk.lightning_cloud.openapi import V1ProductLicense
 from lightning_sdk.services.license import LightningLicense, check_license
 
 
@@ -129,3 +130,113 @@ def test_check_license_in_background_demo():
 
     thread = check_license_in_background("abc")
     thread.join(timeout=2)
+
+
+@patch("lightning_sdk.services.license.LicenseApi")
+@patch("lightning_sdk.services.license.Auth")
+def test_check_user_license_valid(mock_auth, mock_license_api):
+    """1. User is authenticated, and a valid license for the product exists."""
+    mock_auth_instance = mock_auth.return_value
+    mock_auth_instance.load.return_value = True
+    mock_auth_instance.user_id = "test_user"
+    mock_auth_instance.api_key = "test_api_key"
+
+    mock_license_api_instance = mock_license_api.return_value
+    mock_license_api_instance.list_user_licenses.return_value = [
+        V1ProductLicense(product_name="test_product", product_type="package", is_valid=True),
+        V1ProductLicense(product_name="other_product", product_type="package", is_valid=True),
+    ]
+
+    lit_license = LightningLicense(name="test_product", product_type="package")
+    lit_license._license_api = mock_license_api_instance  # Assign mocked API
+    assert lit_license._check_user_license() is True
+    mock_auth_instance.load.assert_called_once()
+    mock_license_api_instance.list_user_licenses.assert_called_once_with(user_id="test_user")
+
+
+@patch("lightning_sdk.services.license.LicenseApi")
+@patch("lightning_sdk.services.license.Auth")
+def test_check_user_license_no_matching_product(mock_auth, mock_license_api):
+    """2. User is authenticated, but no license for the product exists."""
+    mock_auth_instance = mock_auth.return_value
+    mock_auth_instance.load.return_value = True
+    mock_auth_instance.user_id = "test_user"
+    mock_auth_instance.api_key = "test_api_key"
+
+    mock_license_api_instance = mock_license_api.return_value
+    mock_license_api_instance.list_user_licenses.return_value = [
+        V1ProductLicense(product_name="other_product", product_type="package", is_valid=True),
+    ]
+    mock_stream_messages = MagicMock()
+
+    lit_license = LightningLicense(name="test_product", product_type="package", stream_messages=mock_stream_messages)
+    lit_license._license_api = mock_license_api_instance
+    assert lit_license._check_user_license() is False
+    mock_auth_instance.load.assert_called_once()
+    mock_license_api_instance.list_user_licenses.assert_called_once_with(user_id="test_user")
+    mock_stream_messages.assert_not_called()  # No message if license not found but user is auth
+
+
+@patch("lightning_sdk.services.license.LicenseApi")
+@patch("lightning_sdk.services.license.Auth")
+def test_check_user_license_invalid_license_for_product(mock_auth, mock_license_api):
+    """3. User is authenticated, but the existing license for the product is invalid."""
+    mock_auth_instance = mock_auth.return_value
+    mock_auth_instance.load.return_value = True
+    mock_auth_instance.user_id = "test_user"
+    mock_auth_instance.api_key = "test_api_key"
+
+    mock_license_api_instance = mock_license_api.return_value
+    mock_license_api_instance.list_user_licenses.return_value = [
+        V1ProductLicense(product_name="test_product", product_type="package", is_valid=False),
+    ]
+    mock_stream_messages = MagicMock()
+
+    lit_license = LightningLicense(name="test_product", product_type="package", stream_messages=mock_stream_messages)
+    lit_license._license_api = mock_license_api_instance
+    assert lit_license._check_user_license() is False
+    mock_auth_instance.load.assert_called_once()
+    mock_license_api_instance.list_user_licenses.assert_called_once_with(user_id="test_user")
+    mock_stream_messages.assert_not_called()  # No message if license invalid but user is auth
+
+
+@patch("lightning_sdk.services.license.LicenseApi")
+@patch("lightning_sdk.services.license.Auth")
+def test_check_user_license_not_authenticated(mock_auth, mock_license_api):
+    """4. User is not authenticated (no credentials found)."""
+    mock_auth_instance = mock_auth.return_value
+    mock_auth_instance.load.return_value = False  # Simulate no credentials
+    mock_stream_messages = MagicMock()
+    mock_license_api_instance = mock_license_api.return_value
+
+    lit_license = LightningLicense(name="test_product", stream_messages=mock_stream_messages)
+    lit_license._license_api = mock_license_api_instance
+    assert lit_license._check_user_license() is False
+    mock_auth_instance.load.assert_called_once()
+    mock_license_api_instance.list_user_licenses.assert_not_called()
+    mock_stream_messages.assert_called_once_with(
+        "No user credentials found. Please run `lightning login` to authenticate."
+    )
+
+
+@pytest.mark.parametrize(("param_user_id", "param_api_key"), [(None, "test_api_key"), ("test_user", None)])
+@patch("lightning_sdk.services.license.LicenseApi")
+@patch("lightning_sdk.services.license.Auth")
+def test_check_user_license_missing_auth_details(mock_auth, mock_license_api, param_user_id, param_api_key):
+    """5. User is authenticated, but user_id or api_key is missing."""
+    mock_auth_instance = mock_auth.return_value
+    mock_auth_instance.load.return_value = True
+    mock_auth_instance.user_id = param_user_id
+    mock_auth_instance.api_key = param_api_key
+    mock_stream_messages = MagicMock()
+    mock_license_api_instance = mock_license_api.return_value
+
+    lit_license = LightningLicense(name="test_product", stream_messages=mock_stream_messages)
+    lit_license._license_api = mock_license_api_instance
+
+    assert lit_license._check_user_license() is False
+    mock_auth_instance.load.assert_called_once()
+    mock_license_api_instance.list_user_licenses.assert_not_called()
+    mock_stream_messages.assert_called_once_with(
+        "User ID or API key is missing. Please run `lightning login` to authenticate."
+    )

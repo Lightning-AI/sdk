@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from lightning_sdk.api.license_api import LicenseApi
+from lightning_sdk.lightning_cloud.login import Auth
 
 
 class LightningLicense:
@@ -39,12 +40,38 @@ class LightningLicense:
             raise ConnectionError("No internet connection.")
 
         self._license_api = LicenseApi()
-        return self._license_api.valid_license(
-            license_key=self.license_key,
-            product_name=self.product_name,
-            product_version=self.product_version,
-            product_type=self.product_type,
+        if self.has_required_details:
+            return self._license_api.valid_license(
+                license_key=self.license_key,
+                product_name=self.product_name,
+                product_version=self.product_version,
+                product_type=self.product_type,
+            )
+        # try to check if the session has logged-in user and if the user has a valid license
+        self._stream_messages(
+            "Missing required details for license validation. "
+            "Attempting to validate license using authenticated user details."
         )
+        return self._check_user_license()
+
+    def _check_user_license(self) -> bool:
+        """Check if the authenticated user has a valid license for this product."""
+        auth = Auth()
+        if not auth.load():
+            self._stream_messages("No user credentials found. Please run `lightning login` to authenticate.")
+            return False
+        if not auth.user_id or not auth.api_key:
+            self._stream_messages("User ID or API key is missing. Please run `lightning login` to authenticate.")
+            return False
+        licenses = self._license_api.list_user_licenses(user_id=auth.user_id)
+        for license_info in licenses:
+            if (
+                license_info.product_name == self.product_name
+                and license_info.product_type == self.product_type
+                and license_info.is_valid
+            ):
+                return True
+        return False
 
     @staticmethod
     def is_online(timeout: float = 2.0) -> bool:
