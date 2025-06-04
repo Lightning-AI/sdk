@@ -256,6 +256,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_assistant import V1Assistan
 from lightning_sdk.lightning_cloud.openapi.models.v1_assistant_knowledge_item_status import V1AssistantKnowledgeItemStatus
 from lightning_sdk.lightning_cloud.openapi.models.v1_assistant_knowledge_status import V1AssistantKnowledgeStatus
 from lightning_sdk.lightning_cloud.openapi.models.v1_assistant_model_status import V1AssistantModelStatus
+from lightning_sdk.lightning_cloud.openapi.models.v1_author import V1Author
 from lightning_sdk.lightning_cloud.openapi.models.v1_auto_join_domain_validation import V1AutoJoinDomainValidation
 from lightning_sdk.lightning_cloud.openapi.models.v1_auto_join_org_response import V1AutoJoinOrgResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_autoscaling_spec import V1AutoscalingSpec
@@ -485,7 +486,6 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_drive_status import V1Drive
 from lightning_sdk.lightning_cloud.openapi.models.v1_drive_type import V1DriveType
 from lightning_sdk.lightning_cloud.openapi.models.v1_drive_type_spec import V1DriveTypeSpec
 from lightning_sdk.lightning_cloud.openapi.models.v1_drive_type_status import V1DriveTypeStatus
-from lightning_sdk.lightning_cloud.openapi.models.v1_ebs import V1Ebs
 from lightning_sdk.lightning_cloud.openapi.models.v1_efs_config import V1EfsConfig
 from lightning_sdk.lightning_cloud.openapi.models.v1_endpoint import V1Endpoint
 from lightning_sdk.lightning_cloud.openapi.models.v1_endpoint_auth import V1EndpointAuth

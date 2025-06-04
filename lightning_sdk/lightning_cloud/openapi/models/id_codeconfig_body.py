@@ -46,7 +46,8 @@ class IdCodeconfigBody(object):
         'disable_auto_shutdown': 'bool',
         'ide': 'str',
         'idle_shutdown_seconds': 'int',
-        'port_plugin_port': 'str'
+        'port_plugin_port': 'str',
+        'switch_to_default_machine_on_idle': 'bool'
     }
 
     attribute_map = {
@@ -55,10 +56,11 @@ class IdCodeconfigBody(object):
         'disable_auto_shutdown': 'disableAutoShutdown',
         'ide': 'ide',
         'idle_shutdown_seconds': 'idleShutdownSeconds',
-        'port_plugin_port': 'portPluginPort'
+        'port_plugin_port': 'portPluginPort',
+        'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle'
     }
 
-    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, ide: 'str' =None, idle_shutdown_seconds: 'int' =None, port_plugin_port: 'str' =None):  # noqa: E501
+    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, ide: 'str' =None, idle_shutdown_seconds: 'int' =None, port_plugin_port: 'str' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
         """IdCodeconfigBody - a model defined in Swagger"""  # noqa: E501
         self._compute_config = None
         self._data_connection_mounts = None
@@ -66,6 +68,7 @@ class IdCodeconfigBody(object):
         self._ide = None
         self._idle_shutdown_seconds = None
         self._port_plugin_port = None
+        self._switch_to_default_machine_on_idle = None
         self.discriminator = None
         if compute_config is not None:
             self.compute_config = compute_config
@@ -79,6 +82,8 @@ class IdCodeconfigBody(object):
             self.idle_shutdown_seconds = idle_shutdown_seconds
         if port_plugin_port is not None:
             self.port_plugin_port = port_plugin_port
+        if switch_to_default_machine_on_idle is not None:
+            self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     @property
     def compute_config(self) -> 'V1UserRequestedComputeConfig':
@@ -205,6 +210,27 @@ class IdCodeconfigBody(object):
         """
 
         self._port_plugin_port = port_plugin_port
+
+    @property
+    def switch_to_default_machine_on_idle(self) -> 'bool':
+        """Gets the switch_to_default_machine_on_idle of this IdCodeconfigBody.  # noqa: E501
+
+
+        :return: The switch_to_default_machine_on_idle of this IdCodeconfigBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._switch_to_default_machine_on_idle
+
+    @switch_to_default_machine_on_idle.setter
+    def switch_to_default_machine_on_idle(self, switch_to_default_machine_on_idle: 'bool'):
+        """Sets the switch_to_default_machine_on_idle of this IdCodeconfigBody.
+
+
+        :param switch_to_default_machine_on_idle: The switch_to_default_machine_on_idle of this IdCodeconfigBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

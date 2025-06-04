@@ -44,6 +44,7 @@ class V1Transaction(object):
         'amount': 'float',
         'created_at': 'datetime',
         'display_name': 'str',
+        'project_name': 'str',
         'type': 'str'
     }
 
@@ -51,14 +52,16 @@ class V1Transaction(object):
         'amount': 'amount',
         'created_at': 'createdAt',
         'display_name': 'displayName',
+        'project_name': 'projectName',
         'type': 'type'
     }
 
-    def __init__(self, amount: 'float' =None, created_at: 'datetime' =None, display_name: 'str' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, amount: 'float' =None, created_at: 'datetime' =None, display_name: 'str' =None, project_name: 'str' =None, type: 'str' =None):  # noqa: E501
         """V1Transaction - a model defined in Swagger"""  # noqa: E501
         self._amount = None
         self._created_at = None
         self._display_name = None
+        self._project_name = None
         self._type = None
         self.discriminator = None
         if amount is not None:
@@ -67,6 +70,8 @@ class V1Transaction(object):
             self.created_at = created_at
         if display_name is not None:
             self.display_name = display_name
+        if project_name is not None:
+            self.project_name = project_name
         if type is not None:
             self.type = type
 
@@ -132,6 +137,27 @@ class V1Transaction(object):
         """
 
         self._display_name = display_name
+
+    @property
+    def project_name(self) -> 'str':
+        """Gets the project_name of this V1Transaction.  # noqa: E501
+
+
+        :return: The project_name of this V1Transaction.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_name
+
+    @project_name.setter
+    def project_name(self, project_name: 'str'):
+        """Sets the project_name of this V1Transaction.
+
+
+        :param project_name: The project_name of this V1Transaction.  # noqa: E501
+        :type: str
+        """
+
+        self._project_name = project_name
 
     @property
     def type(self) -> 'str':

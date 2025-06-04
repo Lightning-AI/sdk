@@ -73,12 +73,16 @@ class V1Organization(object):
         'full_story_start_date': 'datetime',
         'general_teamspace': 'bool',
         'id': 'str',
+        'last_storage_overuse_notification_sent_at': 'datetime',
         'location': 'str',
         'name': 'str',
         'preferred_cluster': 'str',
         'preferred_deployment_provider': 'str',
         'preferred_studio_provider': 'str',
         'start_studios_on_spot_instance': 'bool',
+        'storage_overuse_bytes': 'str',
+        'storage_overuse_deletion_at': 'datetime',
+        'storage_overuse_notification_count': 'int',
         'switch_to_default_machine_on_idle': 'bool',
         'teamspace_default_credits': 'float',
         'twitter_username': 'str',
@@ -119,12 +123,16 @@ class V1Organization(object):
         'full_story_start_date': 'fullStoryStartDate',
         'general_teamspace': 'generalTeamspace',
         'id': 'id',
+        'last_storage_overuse_notification_sent_at': 'lastStorageOveruseNotificationSentAt',
         'location': 'location',
         'name': 'name',
         'preferred_cluster': 'preferredCluster',
         'preferred_deployment_provider': 'preferredDeploymentProvider',
         'preferred_studio_provider': 'preferredStudioProvider',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
+        'storage_overuse_bytes': 'storageOveruseBytes',
+        'storage_overuse_deletion_at': 'storageOveruseDeletionAt',
+        'storage_overuse_notification_count': 'storageOveruseNotificationCount',
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'twitter_username': 'twitterUsername',
@@ -132,7 +140,7 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
@@ -166,12 +174,16 @@ class V1Organization(object):
         self._full_story_start_date = None
         self._general_teamspace = None
         self._id = None
+        self._last_storage_overuse_notification_sent_at = None
         self._location = None
         self._name = None
         self._preferred_cluster = None
         self._preferred_deployment_provider = None
         self._preferred_studio_provider = None
         self._start_studios_on_spot_instance = None
+        self._storage_overuse_bytes = None
+        self._storage_overuse_deletion_at = None
+        self._storage_overuse_notification_count = None
         self._switch_to_default_machine_on_idle = None
         self._teamspace_default_credits = None
         self._twitter_username = None
@@ -242,6 +254,8 @@ class V1Organization(object):
             self.general_teamspace = general_teamspace
         if id is not None:
             self.id = id
+        if last_storage_overuse_notification_sent_at is not None:
+            self.last_storage_overuse_notification_sent_at = last_storage_overuse_notification_sent_at
         if location is not None:
             self.location = location
         if name is not None:
@@ -254,6 +268,12 @@ class V1Organization(object):
             self.preferred_studio_provider = preferred_studio_provider
         if start_studios_on_spot_instance is not None:
             self.start_studios_on_spot_instance = start_studios_on_spot_instance
+        if storage_overuse_bytes is not None:
+            self.storage_overuse_bytes = storage_overuse_bytes
+        if storage_overuse_deletion_at is not None:
+            self.storage_overuse_deletion_at = storage_overuse_deletion_at
+        if storage_overuse_notification_count is not None:
+            self.storage_overuse_notification_count = storage_overuse_notification_count
         if switch_to_default_machine_on_idle is not None:
             self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
         if teamspace_default_credits is not None:
@@ -940,6 +960,27 @@ class V1Organization(object):
         self._id = id
 
     @property
+    def last_storage_overuse_notification_sent_at(self) -> 'datetime':
+        """Gets the last_storage_overuse_notification_sent_at of this V1Organization.  # noqa: E501
+
+
+        :return: The last_storage_overuse_notification_sent_at of this V1Organization.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._last_storage_overuse_notification_sent_at
+
+    @last_storage_overuse_notification_sent_at.setter
+    def last_storage_overuse_notification_sent_at(self, last_storage_overuse_notification_sent_at: 'datetime'):
+        """Sets the last_storage_overuse_notification_sent_at of this V1Organization.
+
+
+        :param last_storage_overuse_notification_sent_at: The last_storage_overuse_notification_sent_at of this V1Organization.  # noqa: E501
+        :type: datetime
+        """
+
+        self._last_storage_overuse_notification_sent_at = last_storage_overuse_notification_sent_at
+
+    @property
     def location(self) -> 'str':
         """Gets the location of this V1Organization.  # noqa: E501
 
@@ -1064,6 +1105,69 @@ class V1Organization(object):
         """
 
         self._start_studios_on_spot_instance = start_studios_on_spot_instance
+
+    @property
+    def storage_overuse_bytes(self) -> 'str':
+        """Gets the storage_overuse_bytes of this V1Organization.  # noqa: E501
+
+
+        :return: The storage_overuse_bytes of this V1Organization.  # noqa: E501
+        :rtype: str
+        """
+        return self._storage_overuse_bytes
+
+    @storage_overuse_bytes.setter
+    def storage_overuse_bytes(self, storage_overuse_bytes: 'str'):
+        """Sets the storage_overuse_bytes of this V1Organization.
+
+
+        :param storage_overuse_bytes: The storage_overuse_bytes of this V1Organization.  # noqa: E501
+        :type: str
+        """
+
+        self._storage_overuse_bytes = storage_overuse_bytes
+
+    @property
+    def storage_overuse_deletion_at(self) -> 'datetime':
+        """Gets the storage_overuse_deletion_at of this V1Organization.  # noqa: E501
+
+
+        :return: The storage_overuse_deletion_at of this V1Organization.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._storage_overuse_deletion_at
+
+    @storage_overuse_deletion_at.setter
+    def storage_overuse_deletion_at(self, storage_overuse_deletion_at: 'datetime'):
+        """Sets the storage_overuse_deletion_at of this V1Organization.
+
+
+        :param storage_overuse_deletion_at: The storage_overuse_deletion_at of this V1Organization.  # noqa: E501
+        :type: datetime
+        """
+
+        self._storage_overuse_deletion_at = storage_overuse_deletion_at
+
+    @property
+    def storage_overuse_notification_count(self) -> 'int':
+        """Gets the storage_overuse_notification_count of this V1Organization.  # noqa: E501
+
+
+        :return: The storage_overuse_notification_count of this V1Organization.  # noqa: E501
+        :rtype: int
+        """
+        return self._storage_overuse_notification_count
+
+    @storage_overuse_notification_count.setter
+    def storage_overuse_notification_count(self, storage_overuse_notification_count: 'int'):
+        """Sets the storage_overuse_notification_count of this V1Organization.
+
+
+        :param storage_overuse_notification_count: The storage_overuse_notification_count of this V1Organization.  # noqa: E501
+        :type: int
+        """
+
+        self._storage_overuse_notification_count = storage_overuse_notification_count
 
     @property
     def switch_to_default_machine_on_idle(self) -> 'bool':

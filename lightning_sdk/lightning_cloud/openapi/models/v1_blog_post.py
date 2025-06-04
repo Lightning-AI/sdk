@@ -41,41 +41,49 @@ class V1BlogPost(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'author': 'V1Author',
         'author_id': 'str',
         'category': 'str',
         'created_at': 'datetime',
         'description': 'str',
         'id': 'str',
         'image_url': 'str',
+        'lit_page': 'V1LitPage',
         'lit_page_id': 'str',
         'title': 'str',
         'updated_at': 'datetime'
     }
 
     attribute_map = {
+        'author': 'author',
         'author_id': 'authorId',
         'category': 'category',
         'created_at': 'createdAt',
         'description': 'description',
         'id': 'id',
         'image_url': 'imageUrl',
+        'lit_page': 'litPage',
         'lit_page_id': 'litPageId',
         'title': 'title',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, author_id: 'str' =None, category: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, id: 'str' =None, image_url: 'str' =None, lit_page_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, author: 'V1Author' =None, author_id: 'str' =None, category: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, id: 'str' =None, image_url: 'str' =None, lit_page: 'V1LitPage' =None, lit_page_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1BlogPost - a model defined in Swagger"""  # noqa: E501
+        self._author = None
         self._author_id = None
         self._category = None
         self._created_at = None
         self._description = None
         self._id = None
         self._image_url = None
+        self._lit_page = None
         self._lit_page_id = None
         self._title = None
         self._updated_at = None
         self.discriminator = None
+        if author is not None:
+            self.author = author
         if author_id is not None:
             self.author_id = author_id
         if category is not None:
@@ -88,12 +96,35 @@ class V1BlogPost(object):
             self.id = id
         if image_url is not None:
             self.image_url = image_url
+        if lit_page is not None:
+            self.lit_page = lit_page
         if lit_page_id is not None:
             self.lit_page_id = lit_page_id
         if title is not None:
             self.title = title
         if updated_at is not None:
             self.updated_at = updated_at
+
+    @property
+    def author(self) -> 'V1Author':
+        """Gets the author of this V1BlogPost.  # noqa: E501
+
+
+        :return: The author of this V1BlogPost.  # noqa: E501
+        :rtype: V1Author
+        """
+        return self._author
+
+    @author.setter
+    def author(self, author: 'V1Author'):
+        """Sets the author of this V1BlogPost.
+
+
+        :param author: The author of this V1BlogPost.  # noqa: E501
+        :type: V1Author
+        """
+
+        self._author = author
 
     @property
     def author_id(self) -> 'str':
@@ -220,6 +251,27 @@ class V1BlogPost(object):
         """
 
         self._image_url = image_url
+
+    @property
+    def lit_page(self) -> 'V1LitPage':
+        """Gets the lit_page of this V1BlogPost.  # noqa: E501
+
+
+        :return: The lit_page of this V1BlogPost.  # noqa: E501
+        :rtype: V1LitPage
+        """
+        return self._lit_page
+
+    @lit_page.setter
+    def lit_page(self, lit_page: 'V1LitPage'):
+        """Sets the lit_page of this V1BlogPost.
+
+
+        :param lit_page: The lit_page of this V1BlogPost.  # noqa: E501
+        :type: V1LitPage
+        """
+
+        self._lit_page = lit_page
 
     @property
     def lit_page_id(self) -> 'str':
