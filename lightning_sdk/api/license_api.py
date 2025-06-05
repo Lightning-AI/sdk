@@ -25,14 +25,12 @@ class LicenseApi:
         Returns:
             True if the license key is valid, False otherwise.
         """
-        response, code, _ = self._client.product_license_service_validate_product_license_with_http_info(
+        response = self._client.product_license_service_validate_product_license(
             license_key=license_key,
             product_name=product_name,
             product_version=product_version,
             product_type=product_type,
         )
-        if code != 200:
-            raise ConnectionError(f"Failed to validate license key: {code} - {response}")
         return response.valid
 
     def list_user_licenses(self, user_id: str) -> list:
