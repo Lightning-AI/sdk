@@ -2,8 +2,7 @@ import os
 import time
 from datetime import datetime
 from enum import Enum
-from typing import Any, List, Optional, TypedDict
-from urllib.parse import urlencode
+from typing import List, Optional, TypedDict
 
 from rich.console import Console
 from rich.prompt import Confirm
@@ -11,7 +10,6 @@ from rich.prompt import Confirm
 from lightning_sdk import Teamspace
 from lightning_sdk.api import UserApi
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
-from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -26,18 +24,7 @@ class _AuthMode(Enum):
     DEPLOY = "deploy"
 
 
-class _AuthServer(AuthServer):
-    def __init__(self, mode: _AuthMode, *args: Any, **kwargs: Any) -> None:
-        self._mode = mode
-        super().__init__(*args, **kwargs)
-
-    def get_auth_url(self, port: int) -> str:
-        redirect_uri = f"http://localhost:{port}/login-complete"
-        params = urlencode({"redirectTo": redirect_uri, "mode": self._mode.value, "okbhrt": LITSERVE_CODE})
-        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
-
-
-class _Auth(Auth):
+class _AuthLitServe(Auth):
     def __init__(self, mode: _AuthMode, shall_confirm: bool = False) -> None:
         super().__init__()
         self._mode = mode
@@ -51,15 +38,20 @@ class _Auth(Auth):
             if not proceed:
                 raise RuntimeError(
                     "Login cancelled. Please login to Lightning AI to deploy the API. Run `lightning login` to login."
-                ) from None
+                )
         print("Opening browser for authentication...")
         print("Please come back to the terminal after logging in.")
         time.sleep(3)
-        _AuthServer(self._mode).login_with_browser(self)
+        AuthServer({"mode": self._mode, "okbhrt": LITSERVE_CODE}).login_with_browser(self)
 
 
 def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
-    auth = _Auth(mode, shall_confirm)
+    """Authenticate with Lightning AI.
+
+    This will open a browser window for authentication.
+    If `shall_confirm` is True, it will ask for confirmation before proceeding.
+    """
+    auth = _AuthLitServe(mode, shall_confirm)
     auth.authenticate()
 
 
@@ -87,7 +79,7 @@ def poll_verified_status(timeout: int = _POLL_TIMEOUT) -> _UserStatus:
     user_api = UserApi()
     user = _get_authed_user()
     start_time = datetime.now()
-    result = {"onboarded": False, "verified": False}
+    result = _UserStatus(onboarded=False, verified=False)
     while True:
         user_resp = user_api.get_user(name=user.name)
         result["onboarded"] = user_resp.status.completed_project_onboarding

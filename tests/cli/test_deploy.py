@@ -11,7 +11,7 @@ from lightning_utilities.core.imports import package_available
 
 from lightning_sdk import Machine
 from lightning_sdk.cli.deploy._auth import (
-    _Auth,
+    _AuthLitServe,
     _AuthMode,
     _Onboarding,
     _OnboardingStatus,
@@ -398,18 +398,18 @@ def test_handle_cloud_deployment_api(
     assert "Deployment started, access at" in mock_console.print.call_args[0][0]
 
 
-@patch("lightning_sdk.cli.deploy._auth._Auth")
+@patch("lightning_sdk.cli.deploy._auth._AuthLitServe")
 def test_authenticate(mock_auth_class):
     authenticate(_AuthMode.DEPLOY)
     mock_auth_class.return_value.authenticate.assert_called_once()
 
 
-@patch("lightning_sdk.cli.deploy._auth._AuthServer")
+@patch("lightning_sdk.cli.deploy._auth.AuthServer")
 @patch("lightning_sdk.lightning_cloud.login.Auth.auth_header")
 def test_auth_run_server(_, mock_authserver):
     mock_authserver.return_value.login_with_browser = MagicMock()
 
-    auth = _Auth(_AuthMode.DEPLOY)
+    auth = _AuthLitServe(_AuthMode.DEPLOY)
     auth.load = MagicMock(return_value=False)
     auth._with_env_var = False
     auth.authenticate()
@@ -418,13 +418,13 @@ def test_auth_run_server(_, mock_authserver):
     mock_authserver.return_value.login_with_browser.assert_called_once()
 
 
-@patch("lightning_sdk.cli.deploy._auth._AuthServer")
+@patch("lightning_sdk.cli.deploy._auth.AuthServer")
 @patch("lightning_sdk.lightning_cloud.login.Auth.auth_header")
 @patch("lightning_sdk.cli.deploy._auth.Confirm")
 def test_auth_run_server_confirm_browser_open(mock_auth_confirm, _, mock_authserver):
     mock_authserver.return_value.login_with_browser = MagicMock()
 
-    auth = _Auth(_AuthMode.DEPLOY, shall_confirm=True)
+    auth = _AuthLitServe(_AuthMode.DEPLOY, shall_confirm=True)
     auth.load = MagicMock(return_value=False)
     auth._with_env_var = False
     auth.authenticate()
