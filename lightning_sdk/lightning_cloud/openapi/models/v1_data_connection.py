@@ -53,6 +53,7 @@ class V1DataConnection(object):
         'gcs_folder': 'V1GCSFolderDataConnection',
         'id': 'str',
         'index': 'V1Index',
+        'is_billable_folder': 'bool',
         'is_cache': 'bool',
         'is_managed': 'bool',
         'lock_out': 'bool',
@@ -84,6 +85,7 @@ class V1DataConnection(object):
         'gcs_folder': 'gcsFolder',
         'id': 'id',
         'index': 'index',
+        'is_billable_folder': 'isBillableFolder',
         'is_cache': 'isCache',
         'is_managed': 'isManaged',
         'lock_out': 'lockOut',
@@ -102,7 +104,7 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
@@ -116,6 +118,7 @@ class V1DataConnection(object):
         self._gcs_folder = None
         self._id = None
         self._index = None
+        self._is_billable_folder = None
         self._is_cache = None
         self._is_managed = None
         self._lock_out = None
@@ -157,6 +160,8 @@ class V1DataConnection(object):
             self.id = id
         if index is not None:
             self.index = index
+        if is_billable_folder is not None:
+            self.is_billable_folder = is_billable_folder
         if is_cache is not None:
             self.is_cache = is_cache
         if is_managed is not None:
@@ -441,6 +446,27 @@ class V1DataConnection(object):
         """
 
         self._index = index
+
+    @property
+    def is_billable_folder(self) -> 'bool':
+        """Gets the is_billable_folder of this V1DataConnection.  # noqa: E501
+
+
+        :return: The is_billable_folder of this V1DataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_billable_folder
+
+    @is_billable_folder.setter
+    def is_billable_folder(self, is_billable_folder: 'bool'):
+        """Sets the is_billable_folder of this V1DataConnection.
+
+
+        :param is_billable_folder: The is_billable_folder of this V1DataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_billable_folder = is_billable_folder
 
     @property
     def is_cache(self) -> 'bool':

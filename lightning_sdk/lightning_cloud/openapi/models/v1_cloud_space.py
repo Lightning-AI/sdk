@@ -78,6 +78,7 @@ class V1CloudSpace(object):
         'paper_org': 'str',
         'paper_org_avatar_url': 'str',
         'paper_url': 'str',
+        'persistent_disk_id': 'str',
         'project_id': 'str',
         'publications': 'list[V1CloudSpaceVersionPublication]',
         'published_at': 'datetime',
@@ -135,6 +136,7 @@ class V1CloudSpace(object):
         'paper_org': 'paperOrg',
         'paper_org_avatar_url': 'paperOrgAvatarUrl',
         'paper_url': 'paperUrl',
+        'persistent_disk_id': 'persistentDiskId',
         'project_id': 'projectId',
         'publications': 'publications',
         'published_at': 'publishedAt',
@@ -154,7 +156,7 @@ class V1CloudSpace(object):
         'web_path': 'webPath'
     }
 
-    def __init__(self, auto_switch_machine: 'bool' =None, cache_data_connection_id: 'str' =None, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, environment_config: 'V1CloudSpaceEnvironmentConfig' =None, environment_template_id: 'str' =None, featured: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, lock_out: 'bool' =None, machine_image_version: 'str' =None, max_run_duration: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, project_id: 'str' =None, publications: 'list[V1CloudSpaceVersionPublication]' =None, published_at: 'datetime' =None, published_to_org_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, switch_to_default_machine_on_idle: 'bool' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
+    def __init__(self, auto_switch_machine: 'bool' =None, cache_data_connection_id: 'str' =None, can_download_source_code: 'bool' =None, cluster_id: 'str' =None, code_config: 'V1CloudSpaceInstanceConfig' =None, code_status: 'V1GetCloudSpaceInstanceStatusResponse' =None, code_url: 'str' =None, created_at: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, description: 'str' =None, display_name: 'str' =None, engagement_counts: 'dict(str, str)' =None, env: 'list[V1EnvVar]' =None, environment_config: 'V1CloudSpaceEnvironmentConfig' =None, environment_template_id: 'str' =None, featured: 'bool' =None, hide_files: 'bool' =None, id: 'str' =None, image_status: 'V1ImageState' =None, is_cloudspace_private: 'bool' =None, is_code_private: 'bool' =None, is_favorite: 'bool' =None, is_published: 'bool' =None, license: 'str' =None, license_url: 'str' =None, lock_out: 'bool' =None, machine_image_version: 'str' =None, max_run_duration: 'str' =None, message: 'str' =None, multi_user_edit: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, operating_cost: 'str' =None, paper_authors: 'str' =None, paper_org: 'str' =None, paper_org_avatar_url: 'str' =None, paper_url: 'str' =None, persistent_disk_id: 'str' =None, project_id: 'str' =None, publications: 'list[V1CloudSpaceVersionPublication]' =None, published_at: 'datetime' =None, published_to_org_at: 'datetime' =None, state: 'V1CloudSpaceState' =None, switch_to_default_machine_on_idle: 'bool' =None, sync_duration: 'str' =None, sync_percentage: 'str' =None, tags: 'list[V1ResourceTag]' =None, thumbnail_file_type: 'str' =None, thumbnail_updated_at: 'datetime' =None, thumbnail_url: 'str' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, user_metadata: 'str' =None, web_path: 'str' =None):  # noqa: E501
         """V1CloudSpace - a model defined in Swagger"""  # noqa: E501
         self._auto_switch_machine = None
         self._cache_data_connection_id = None
@@ -193,6 +195,7 @@ class V1CloudSpace(object):
         self._paper_org = None
         self._paper_org_avatar_url = None
         self._paper_url = None
+        self._persistent_disk_id = None
         self._project_id = None
         self._publications = None
         self._published_at = None
@@ -285,6 +288,8 @@ class V1CloudSpace(object):
             self.paper_org_avatar_url = paper_org_avatar_url
         if paper_url is not None:
             self.paper_url = paper_url
+        if persistent_disk_id is not None:
+            self.persistent_disk_id = persistent_disk_id
         if project_id is not None:
             self.project_id = project_id
         if publications is not None:
@@ -1096,6 +1101,27 @@ class V1CloudSpace(object):
         """
 
         self._paper_url = paper_url
+
+    @property
+    def persistent_disk_id(self) -> 'str':
+        """Gets the persistent_disk_id of this V1CloudSpace.  # noqa: E501
+
+
+        :return: The persistent_disk_id of this V1CloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._persistent_disk_id
+
+    @persistent_disk_id.setter
+    def persistent_disk_id(self, persistent_disk_id: 'str'):
+        """Sets the persistent_disk_id of this V1CloudSpace.
+
+
+        :param persistent_disk_id: The persistent_disk_id of this V1CloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._persistent_disk_id = persistent_disk_id
 
     @property
     def project_id(self) -> 'str':

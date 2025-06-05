@@ -49,6 +49,7 @@ class V1Membership(object):
         'description': 'str',
         'display_name': 'str',
         'free_credits_enabled': 'bool',
+        'free_storage_bytes': 'str',
         'is_default': 'bool',
         'job_count': 'str',
         'membership_count': 'str',
@@ -72,6 +73,7 @@ class V1Membership(object):
         'description': 'description',
         'display_name': 'displayName',
         'free_credits_enabled': 'freeCreditsEnabled',
+        'free_storage_bytes': 'freeStorageBytes',
         'is_default': 'isDefault',
         'job_count': 'jobCount',
         'membership_count': 'membershipCount',
@@ -86,7 +88,7 @@ class V1Membership(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_credits_enabled: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_credits_enabled: 'bool' =None, free_storage_bytes: 'str' =None, is_default: 'bool' =None, job_count: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Membership - a model defined in Swagger"""  # noqa: E501
         self._balance = None
         self._created_at = None
@@ -96,6 +98,7 @@ class V1Membership(object):
         self._description = None
         self._display_name = None
         self._free_credits_enabled = None
+        self._free_storage_bytes = None
         self._is_default = None
         self._job_count = None
         self._membership_count = None
@@ -125,6 +128,8 @@ class V1Membership(object):
             self.display_name = display_name
         if free_credits_enabled is not None:
             self.free_credits_enabled = free_credits_enabled
+        if free_storage_bytes is not None:
+            self.free_storage_bytes = free_storage_bytes
         if is_default is not None:
             self.is_default = is_default
         if job_count is not None:
@@ -317,6 +322,27 @@ class V1Membership(object):
         """
 
         self._free_credits_enabled = free_credits_enabled
+
+    @property
+    def free_storage_bytes(self) -> 'str':
+        """Gets the free_storage_bytes of this V1Membership.  # noqa: E501
+
+
+        :return: The free_storage_bytes of this V1Membership.  # noqa: E501
+        :rtype: str
+        """
+        return self._free_storage_bytes
+
+    @free_storage_bytes.setter
+    def free_storage_bytes(self, free_storage_bytes: 'str'):
+        """Sets the free_storage_bytes of this V1Membership.
+
+
+        :param free_storage_bytes: The free_storage_bytes of this V1Membership.  # noqa: E501
+        :type: str
+        """
+
+        self._free_storage_bytes = free_storage_bytes
 
     @property
     def is_default(self) -> 'bool':

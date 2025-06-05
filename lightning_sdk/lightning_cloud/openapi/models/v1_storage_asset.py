@@ -46,6 +46,7 @@ class V1StorageAsset(object):
         'id': 'str',
         'name': 'str',
         'storage_bytes': 'str',
+        'sub_type': 'str',
         'type': 'V1StorageAssetType'
     }
 
@@ -55,16 +56,18 @@ class V1StorageAsset(object):
         'id': 'id',
         'name': 'name',
         'storage_bytes': 'storageBytes',
+        'sub_type': 'subType',
         'type': 'type'
     }
 
-    def __init__(self, created_at: 'datetime' =None, created_by: 'str' =None, id: 'str' =None, name: 'str' =None, storage_bytes: 'str' =None, type: 'V1StorageAssetType' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, created_by: 'str' =None, id: 'str' =None, name: 'str' =None, storage_bytes: 'str' =None, sub_type: 'str' =None, type: 'V1StorageAssetType' =None):  # noqa: E501
         """V1StorageAsset - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._created_by = None
         self._id = None
         self._name = None
         self._storage_bytes = None
+        self._sub_type = None
         self._type = None
         self.discriminator = None
         if created_at is not None:
@@ -77,6 +80,8 @@ class V1StorageAsset(object):
             self.name = name
         if storage_bytes is not None:
             self.storage_bytes = storage_bytes
+        if sub_type is not None:
+            self.sub_type = sub_type
         if type is not None:
             self.type = type
 
@@ -184,6 +189,27 @@ class V1StorageAsset(object):
         """
 
         self._storage_bytes = storage_bytes
+
+    @property
+    def sub_type(self) -> 'str':
+        """Gets the sub_type of this V1StorageAsset.  # noqa: E501
+
+
+        :return: The sub_type of this V1StorageAsset.  # noqa: E501
+        :rtype: str
+        """
+        return self._sub_type
+
+    @sub_type.setter
+    def sub_type(self, sub_type: 'str'):
+        """Sets the sub_type of this V1StorageAsset.
+
+
+        :param sub_type: The sub_type of this V1StorageAsset.  # noqa: E501
+        :type: str
+        """
+
+        self._sub_type = sub_type
 
     @property
     def type(self) -> 'V1StorageAssetType':
