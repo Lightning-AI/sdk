@@ -43,8 +43,8 @@ class Auth:
         for key in Keys:
             setattr(self, key.suffix, os.environ.get(key.value, None))
 
-        self._with_env_var = bool(
-            self.user_id and self.api_key)  # used by authenticate method
+        # used by authenticate method
+        self._with_env_var = bool(self.user_id and self.api_key)
         if self.api_key and not self.user_id:
             raise ValueError(
                 f"{Keys.USER_ID.value} is missing from env variables. "

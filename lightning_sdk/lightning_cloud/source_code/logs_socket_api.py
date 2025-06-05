@@ -11,11 +11,17 @@ class LightningLogsSocketAPI:
         if api_client is None:
             api_client = ApiClient()
         self.api_client = api_client
+        self._auth = None
+        self._auth_service = None
+
+    def _init_auth(self):
         self._auth = Auth()
         self._auth.authenticate()
-        self._auth_service = AuthServiceApi(api_client)
+        self._auth_service = AuthServiceApi(self.api_client)
 
     def _get_api_token(self):
+        if not self._auth_service:
+            self._init_auth()
         token_resp = self._auth_service.auth_service_login(body=V1LoginRequest(
             username=self._auth.user_id,
             api_key=self._auth.api_key,
@@ -83,13 +89,12 @@ class LightningLogsSocketAPI:
         -------
         WebSocketApp of the wanted socket
         """
-        _token = self._get_api_token()
         clean_ws_host = urlparse(self.api_client.configuration.host).netloc
         socket_url = self._socket_url(
             host=clean_ws_host,
             project_id=project_id,
             app_id=app_id,
-            token=_token,
+            token=self._get_api_token(),
             component=component,
         )
 
