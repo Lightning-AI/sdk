@@ -24,6 +24,7 @@ from __future__ import absolute_import
 from lightning_sdk.lightning_cloud.openapi.models.affiliatelinks_id_body import AffiliatelinksIdBody
 from lightning_sdk.lightning_cloud.openapi.models.agentmanagedendpoints_id_body import AgentmanagedendpointsIdBody
 from lightning_sdk.lightning_cloud.openapi.models.agents_id_body import AgentsIdBody
+from lightning_sdk.lightning_cloud.openapi.models.alertingevents_id_body import AlertingeventsIdBody
 from lightning_sdk.lightning_cloud.openapi.models.alerts_config_billing import AlertsConfigBilling
 from lightning_sdk.lightning_cloud.openapi.models.alerts_config_studios import AlertsConfigStudios
 from lightning_sdk.lightning_cloud.openapi.models.app_id_works_body import AppIdWorksBody
