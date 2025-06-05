@@ -43,6 +43,7 @@ class V1GetOrganizationStorageMetadataResponse(object):
     swagger_types = {
         'account_limit_bytes': 'str',
         'estimated_daily_cost': 'float',
+        'estimated_daily_efs_cost': 'float',
         'id': 'str',
         'project_metadata': 'list[V1ProjectStorage]',
         'total_billable_bytes': 'str',
@@ -58,6 +59,7 @@ class V1GetOrganizationStorageMetadataResponse(object):
     attribute_map = {
         'account_limit_bytes': 'accountLimitBytes',
         'estimated_daily_cost': 'estimatedDailyCost',
+        'estimated_daily_efs_cost': 'estimatedDailyEfsCost',
         'id': 'id',
         'project_metadata': 'projectMetadata',
         'total_billable_bytes': 'totalBillableBytes',
@@ -70,10 +72,11 @@ class V1GetOrganizationStorageMetadataResponse(object):
         'total_upload_storage_bytes': 'totalUploadStorageBytes'
     }
 
-    def __init__(self, account_limit_bytes: 'str' =None, estimated_daily_cost: 'float' =None, id: 'str' =None, project_metadata: 'list[V1ProjectStorage]' =None, total_billable_bytes: 'str' =None, total_cloudspace_storage_bytes: 'str' =None, total_container_registry_storage_bytes: 'str' =None, total_data_connection_storage_bytes: 'str' =None, total_folder_storage_bytes: 'str' =None, total_job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, total_upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, account_limit_bytes: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, id: 'str' =None, project_metadata: 'list[V1ProjectStorage]' =None, total_billable_bytes: 'str' =None, total_cloudspace_storage_bytes: 'str' =None, total_container_registry_storage_bytes: 'str' =None, total_data_connection_storage_bytes: 'str' =None, total_folder_storage_bytes: 'str' =None, total_job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, total_upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1GetOrganizationStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
         self._account_limit_bytes = None
         self._estimated_daily_cost = None
+        self._estimated_daily_efs_cost = None
         self._id = None
         self._project_metadata = None
         self._total_billable_bytes = None
@@ -89,6 +92,8 @@ class V1GetOrganizationStorageMetadataResponse(object):
             self.account_limit_bytes = account_limit_bytes
         if estimated_daily_cost is not None:
             self.estimated_daily_cost = estimated_daily_cost
+        if estimated_daily_efs_cost is not None:
+            self.estimated_daily_efs_cost = estimated_daily_efs_cost
         if id is not None:
             self.id = id
         if project_metadata is not None:
@@ -151,6 +156,27 @@ class V1GetOrganizationStorageMetadataResponse(object):
         """
 
         self._estimated_daily_cost = estimated_daily_cost
+
+    @property
+    def estimated_daily_efs_cost(self) -> 'float':
+        """Gets the estimated_daily_efs_cost of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The estimated_daily_efs_cost of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+        :rtype: float
+        """
+        return self._estimated_daily_efs_cost
+
+    @estimated_daily_efs_cost.setter
+    def estimated_daily_efs_cost(self, estimated_daily_efs_cost: 'float'):
+        """Sets the estimated_daily_efs_cost of this V1GetOrganizationStorageMetadataResponse.
+
+
+        :param estimated_daily_efs_cost: The estimated_daily_efs_cost of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+        :type: float
+        """
+
+        self._estimated_daily_efs_cost = estimated_daily_efs_cost
 
     @property
     def id(self) -> 'str':

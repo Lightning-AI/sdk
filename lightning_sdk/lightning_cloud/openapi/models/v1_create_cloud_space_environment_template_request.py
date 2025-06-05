@@ -47,6 +47,7 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         'machine_image_version': 'str',
         'name': 'str',
         'org_id': 'str',
+        'plugins': 'list[str]',
         'setup_script_text': 'str'
     }
 
@@ -57,10 +58,11 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         'machine_image_version': 'machineImageVersion',
         'name': 'name',
         'org_id': 'orgId',
+        'plugins': 'plugins',
         'setup_script_text': 'setupScriptText'
     }
 
-    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, setup_script_text: 'str' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, setup_script_text: 'str' =None):  # noqa: E501
         """V1CreateCloudSpaceEnvironmentTemplateRequest - a model defined in Swagger"""  # noqa: E501
         self._allowed_machines = None
         self._default_machine = None
@@ -68,6 +70,7 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         self._machine_image_version = None
         self._name = None
         self._org_id = None
+        self._plugins = None
         self._setup_script_text = None
         self.discriminator = None
         if allowed_machines is not None:
@@ -82,6 +85,8 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
             self.name = name
         if org_id is not None:
             self.org_id = org_id
+        if plugins is not None:
+            self.plugins = plugins
         if setup_script_text is not None:
             self.setup_script_text = setup_script_text
 
@@ -210,6 +215,27 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         """
 
         self._org_id = org_id
+
+    @property
+    def plugins(self) -> 'list[str]':
+        """Gets the plugins of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+
+
+        :return: The plugins of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._plugins
+
+    @plugins.setter
+    def plugins(self, plugins: 'list[str]'):
+        """Sets the plugins of this V1CreateCloudSpaceEnvironmentTemplateRequest.
+
+
+        :param plugins: The plugins of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._plugins = plugins
 
     @property
     def setup_script_text(self) -> 'str':

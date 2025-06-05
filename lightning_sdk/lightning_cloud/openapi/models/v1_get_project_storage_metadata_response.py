@@ -44,11 +44,13 @@ class V1GetProjectStorageMetadataResponse(object):
         'account_limit_bytes': 'str',
         'cloudspace_storage_bytes': 'str',
         'cloudspaces': 'list[V1StorageAsset]',
+        'container_registry_repositories': 'list[V1StorageAsset]',
         'container_registry_storage_bytes': 'str',
         'data_connection_storage_bytes': 'str',
         'data_connections': 'list[V1StorageAsset]',
         'display_name': 'str',
         'estimated_daily_cost': 'float',
+        'estimated_daily_efs_cost': 'float',
         'folder_storage_bytes': 'str',
         'folders': 'list[V1StorageAsset]',
         'id': 'str',
@@ -63,11 +65,13 @@ class V1GetProjectStorageMetadataResponse(object):
         'account_limit_bytes': 'accountLimitBytes',
         'cloudspace_storage_bytes': 'cloudspaceStorageBytes',
         'cloudspaces': 'cloudspaces',
+        'container_registry_repositories': 'containerRegistryRepositories',
         'container_registry_storage_bytes': 'containerRegistryStorageBytes',
         'data_connection_storage_bytes': 'dataConnectionStorageBytes',
         'data_connections': 'dataConnections',
         'display_name': 'displayName',
         'estimated_daily_cost': 'estimatedDailyCost',
+        'estimated_daily_efs_cost': 'estimatedDailyEfsCost',
         'folder_storage_bytes': 'folderStorageBytes',
         'folders': 'folders',
         'id': 'id',
@@ -78,16 +82,18 @@ class V1GetProjectStorageMetadataResponse(object):
         'uploads': 'uploads'
     }
 
-    def __init__(self, account_limit_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, estimated_daily_cost: 'float' =None, folder_storage_bytes: 'str' =None, folders: 'list[V1StorageAsset]' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None, uploads: 'V1StorageAsset' =None):  # noqa: E501
+    def __init__(self, account_limit_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, container_registry_repositories: 'list[V1StorageAsset]' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, folder_storage_bytes: 'str' =None, folders: 'list[V1StorageAsset]' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None, uploads: 'V1StorageAsset' =None):  # noqa: E501
         """V1GetProjectStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
         self._account_limit_bytes = None
         self._cloudspace_storage_bytes = None
         self._cloudspaces = None
+        self._container_registry_repositories = None
         self._container_registry_storage_bytes = None
         self._data_connection_storage_bytes = None
         self._data_connections = None
         self._display_name = None
         self._estimated_daily_cost = None
+        self._estimated_daily_efs_cost = None
         self._folder_storage_bytes = None
         self._folders = None
         self._id = None
@@ -103,6 +109,8 @@ class V1GetProjectStorageMetadataResponse(object):
             self.cloudspace_storage_bytes = cloudspace_storage_bytes
         if cloudspaces is not None:
             self.cloudspaces = cloudspaces
+        if container_registry_repositories is not None:
+            self.container_registry_repositories = container_registry_repositories
         if container_registry_storage_bytes is not None:
             self.container_registry_storage_bytes = container_registry_storage_bytes
         if data_connection_storage_bytes is not None:
@@ -113,6 +121,8 @@ class V1GetProjectStorageMetadataResponse(object):
             self.display_name = display_name
         if estimated_daily_cost is not None:
             self.estimated_daily_cost = estimated_daily_cost
+        if estimated_daily_efs_cost is not None:
+            self.estimated_daily_efs_cost = estimated_daily_efs_cost
         if folder_storage_bytes is not None:
             self.folder_storage_bytes = folder_storage_bytes
         if folders is not None:
@@ -192,6 +202,27 @@ class V1GetProjectStorageMetadataResponse(object):
         """
 
         self._cloudspaces = cloudspaces
+
+    @property
+    def container_registry_repositories(self) -> 'list[V1StorageAsset]':
+        """Gets the container_registry_repositories of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The container_registry_repositories of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: list[V1StorageAsset]
+        """
+        return self._container_registry_repositories
+
+    @container_registry_repositories.setter
+    def container_registry_repositories(self, container_registry_repositories: 'list[V1StorageAsset]'):
+        """Sets the container_registry_repositories of this V1GetProjectStorageMetadataResponse.
+
+
+        :param container_registry_repositories: The container_registry_repositories of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: list[V1StorageAsset]
+        """
+
+        self._container_registry_repositories = container_registry_repositories
 
     @property
     def container_registry_storage_bytes(self) -> 'str':
@@ -297,6 +328,27 @@ class V1GetProjectStorageMetadataResponse(object):
         """
 
         self._estimated_daily_cost = estimated_daily_cost
+
+    @property
+    def estimated_daily_efs_cost(self) -> 'float':
+        """Gets the estimated_daily_efs_cost of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The estimated_daily_efs_cost of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: float
+        """
+        return self._estimated_daily_efs_cost
+
+    @estimated_daily_efs_cost.setter
+    def estimated_daily_efs_cost(self, estimated_daily_efs_cost: 'float'):
+        """Sets the estimated_daily_efs_cost of this V1GetProjectStorageMetadataResponse.
+
+
+        :param estimated_daily_efs_cost: The estimated_daily_efs_cost of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: float
+        """
+
+        self._estimated_daily_efs_cost = estimated_daily_efs_cost
 
     @property
     def folder_storage_bytes(self) -> 'str':

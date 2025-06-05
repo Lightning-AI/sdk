@@ -44,9 +44,13 @@ class V1ProjectStorage(object):
         'billable_bytes': 'str',
         'cloudspace_storage_bytes': 'str',
         'container_registry_storage_bytes': 'str',
+        'daily_read_bytes': 'str',
+        'daily_write_bytes': 'str',
         'data_connection_storage_bytes': 'str',
         'display_name': 'str',
+        'efs_folder_bytes': 'str',
         'estimated_daily_cost': 'float',
+        'estimated_efs_cost': 'float',
         'folder_storage_bytes': 'str',
         'id': 'str',
         'job_storage_bytes': 'str',
@@ -58,9 +62,13 @@ class V1ProjectStorage(object):
         'billable_bytes': 'billableBytes',
         'cloudspace_storage_bytes': 'cloudspaceStorageBytes',
         'container_registry_storage_bytes': 'containerRegistryStorageBytes',
+        'daily_read_bytes': 'dailyReadBytes',
+        'daily_write_bytes': 'dailyWriteBytes',
         'data_connection_storage_bytes': 'dataConnectionStorageBytes',
         'display_name': 'displayName',
+        'efs_folder_bytes': 'efsFolderBytes',
         'estimated_daily_cost': 'estimatedDailyCost',
+        'estimated_efs_cost': 'estimatedEfsCost',
         'folder_storage_bytes': 'folderStorageBytes',
         'id': 'id',
         'job_storage_bytes': 'jobStorageBytes',
@@ -68,14 +76,18 @@ class V1ProjectStorage(object):
         'upload_storage_bytes': 'uploadStorageBytes'
     }
 
-    def __init__(self, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, display_name: 'str' =None, estimated_daily_cost: 'float' =None, folder_storage_bytes: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, container_registry_storage_bytes: 'str' =None, daily_read_bytes: 'str' =None, daily_write_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, display_name: 'str' =None, efs_folder_bytes: 'str' =None, estimated_daily_cost: 'float' =None, estimated_efs_cost: 'float' =None, folder_storage_bytes: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1ProjectStorage - a model defined in Swagger"""  # noqa: E501
         self._billable_bytes = None
         self._cloudspace_storage_bytes = None
         self._container_registry_storage_bytes = None
+        self._daily_read_bytes = None
+        self._daily_write_bytes = None
         self._data_connection_storage_bytes = None
         self._display_name = None
+        self._efs_folder_bytes = None
         self._estimated_daily_cost = None
+        self._estimated_efs_cost = None
         self._folder_storage_bytes = None
         self._id = None
         self._job_storage_bytes = None
@@ -88,12 +100,20 @@ class V1ProjectStorage(object):
             self.cloudspace_storage_bytes = cloudspace_storage_bytes
         if container_registry_storage_bytes is not None:
             self.container_registry_storage_bytes = container_registry_storage_bytes
+        if daily_read_bytes is not None:
+            self.daily_read_bytes = daily_read_bytes
+        if daily_write_bytes is not None:
+            self.daily_write_bytes = daily_write_bytes
         if data_connection_storage_bytes is not None:
             self.data_connection_storage_bytes = data_connection_storage_bytes
         if display_name is not None:
             self.display_name = display_name
+        if efs_folder_bytes is not None:
+            self.efs_folder_bytes = efs_folder_bytes
         if estimated_daily_cost is not None:
             self.estimated_daily_cost = estimated_daily_cost
+        if estimated_efs_cost is not None:
+            self.estimated_efs_cost = estimated_efs_cost
         if folder_storage_bytes is not None:
             self.folder_storage_bytes = folder_storage_bytes
         if id is not None:
@@ -169,6 +189,48 @@ class V1ProjectStorage(object):
         self._container_registry_storage_bytes = container_registry_storage_bytes
 
     @property
+    def daily_read_bytes(self) -> 'str':
+        """Gets the daily_read_bytes of this V1ProjectStorage.  # noqa: E501
+
+
+        :return: The daily_read_bytes of this V1ProjectStorage.  # noqa: E501
+        :rtype: str
+        """
+        return self._daily_read_bytes
+
+    @daily_read_bytes.setter
+    def daily_read_bytes(self, daily_read_bytes: 'str'):
+        """Sets the daily_read_bytes of this V1ProjectStorage.
+
+
+        :param daily_read_bytes: The daily_read_bytes of this V1ProjectStorage.  # noqa: E501
+        :type: str
+        """
+
+        self._daily_read_bytes = daily_read_bytes
+
+    @property
+    def daily_write_bytes(self) -> 'str':
+        """Gets the daily_write_bytes of this V1ProjectStorage.  # noqa: E501
+
+
+        :return: The daily_write_bytes of this V1ProjectStorage.  # noqa: E501
+        :rtype: str
+        """
+        return self._daily_write_bytes
+
+    @daily_write_bytes.setter
+    def daily_write_bytes(self, daily_write_bytes: 'str'):
+        """Sets the daily_write_bytes of this V1ProjectStorage.
+
+
+        :param daily_write_bytes: The daily_write_bytes of this V1ProjectStorage.  # noqa: E501
+        :type: str
+        """
+
+        self._daily_write_bytes = daily_write_bytes
+
+    @property
     def data_connection_storage_bytes(self) -> 'str':
         """Gets the data_connection_storage_bytes of this V1ProjectStorage.  # noqa: E501
 
@@ -211,6 +273,27 @@ class V1ProjectStorage(object):
         self._display_name = display_name
 
     @property
+    def efs_folder_bytes(self) -> 'str':
+        """Gets the efs_folder_bytes of this V1ProjectStorage.  # noqa: E501
+
+
+        :return: The efs_folder_bytes of this V1ProjectStorage.  # noqa: E501
+        :rtype: str
+        """
+        return self._efs_folder_bytes
+
+    @efs_folder_bytes.setter
+    def efs_folder_bytes(self, efs_folder_bytes: 'str'):
+        """Sets the efs_folder_bytes of this V1ProjectStorage.
+
+
+        :param efs_folder_bytes: The efs_folder_bytes of this V1ProjectStorage.  # noqa: E501
+        :type: str
+        """
+
+        self._efs_folder_bytes = efs_folder_bytes
+
+    @property
     def estimated_daily_cost(self) -> 'float':
         """Gets the estimated_daily_cost of this V1ProjectStorage.  # noqa: E501
 
@@ -230,6 +313,27 @@ class V1ProjectStorage(object):
         """
 
         self._estimated_daily_cost = estimated_daily_cost
+
+    @property
+    def estimated_efs_cost(self) -> 'float':
+        """Gets the estimated_efs_cost of this V1ProjectStorage.  # noqa: E501
+
+
+        :return: The estimated_efs_cost of this V1ProjectStorage.  # noqa: E501
+        :rtype: float
+        """
+        return self._estimated_efs_cost
+
+    @estimated_efs_cost.setter
+    def estimated_efs_cost(self, estimated_efs_cost: 'float'):
+        """Sets the estimated_efs_cost of this V1ProjectStorage.
+
+
+        :param estimated_efs_cost: The estimated_efs_cost of this V1ProjectStorage.  # noqa: E501
+        :type: float
+        """
+
+        self._estimated_efs_cost = estimated_efs_cost
 
     @property
     def folder_storage_bytes(self) -> 'str':

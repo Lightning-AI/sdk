@@ -65,6 +65,8 @@ class V1DataConnection(object):
         's3_folder': 'V1S3FolderDataConnection',
         'snowflake': 'V1SnowflakeDataConnection',
         'state': 'V1DataConnectionState',
+        'total_daily_read_bytes': 'str',
+        'total_daily_write_bytes': 'str',
         'total_size_bytes': 'str',
         'type': 'str',
         'updated_at': 'datetime',
@@ -97,6 +99,8 @@ class V1DataConnection(object):
         's3_folder': 's3Folder',
         'snowflake': 'snowflake',
         'state': 'state',
+        'total_daily_read_bytes': 'totalDailyReadBytes',
+        'total_daily_write_bytes': 'totalDailyWriteBytes',
         'total_size_bytes': 'totalSizeBytes',
         'type': 'type',
         'updated_at': 'updatedAt',
@@ -104,7 +108,7 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
@@ -130,6 +134,8 @@ class V1DataConnection(object):
         self._s3_folder = None
         self._snowflake = None
         self._state = None
+        self._total_daily_read_bytes = None
+        self._total_daily_write_bytes = None
         self._total_size_bytes = None
         self._type = None
         self._updated_at = None
@@ -184,6 +190,10 @@ class V1DataConnection(object):
             self.snowflake = snowflake
         if state is not None:
             self.state = state
+        if total_daily_read_bytes is not None:
+            self.total_daily_read_bytes = total_daily_read_bytes
+        if total_daily_write_bytes is not None:
+            self.total_daily_write_bytes = total_daily_write_bytes
         if total_size_bytes is not None:
             self.total_size_bytes = total_size_bytes
         if type is not None:
@@ -698,6 +708,48 @@ class V1DataConnection(object):
         """
 
         self._state = state
+
+    @property
+    def total_daily_read_bytes(self) -> 'str':
+        """Gets the total_daily_read_bytes of this V1DataConnection.  # noqa: E501
+
+
+        :return: The total_daily_read_bytes of this V1DataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_daily_read_bytes
+
+    @total_daily_read_bytes.setter
+    def total_daily_read_bytes(self, total_daily_read_bytes: 'str'):
+        """Sets the total_daily_read_bytes of this V1DataConnection.
+
+
+        :param total_daily_read_bytes: The total_daily_read_bytes of this V1DataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._total_daily_read_bytes = total_daily_read_bytes
+
+    @property
+    def total_daily_write_bytes(self) -> 'str':
+        """Gets the total_daily_write_bytes of this V1DataConnection.  # noqa: E501
+
+
+        :return: The total_daily_write_bytes of this V1DataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_daily_write_bytes
+
+    @total_daily_write_bytes.setter
+    def total_daily_write_bytes(self, total_daily_write_bytes: 'str'):
+        """Sets the total_daily_write_bytes of this V1DataConnection.
+
+
+        :param total_daily_write_bytes: The total_daily_write_bytes of this V1DataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._total_daily_write_bytes = total_daily_write_bytes
 
     @property
     def total_size_bytes(self) -> 'str':
