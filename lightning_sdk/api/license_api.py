@@ -4,8 +4,20 @@ from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 class LicenseApi:
-    def __init__(self) -> None:
-        self._client = LightningClient(retry=False, max_tries=0)
+    _client_authenticated: LightningClient = None
+    _client_public: LightningClient = None
+
+    @property
+    def client_public(self) -> LightningClient:
+        if not self._client_public:
+            self._client_public = LightningClient(retry=False, max_tries=0, with_auth=False)
+        return self._client_public
+
+    @property
+    def client_authenticated(self) -> LightningClient:
+        if not self._client_authenticated:
+            self._client_authenticated = LightningClient(retry=True, max_tries=3, with_auth=True)
+        return self._client_authenticated
 
     def valid_license(
         self,
@@ -25,7 +37,7 @@ class LicenseApi:
         Returns:
             True if the license key is valid, False otherwise.
         """
-        response = self._client.product_license_service_validate_product_license(
+        response = self.client_public.product_license_service_validate_product_license(
             license_key=license_key,
             product_name=product_name,
             product_version=product_version,
@@ -42,5 +54,5 @@ class LicenseApi:
         Returns:
             A list of licenses for the user.
         """
-        response = self._client.product_license_service_list_user_licenses(user_id=user_id)
+        response = self.client_authenticated.product_license_service_list_user_licenses(user_id=user_id)
         return response.licenses
