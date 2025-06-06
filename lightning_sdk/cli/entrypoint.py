@@ -1,4 +1,5 @@
 import sys
+import traceback
 from types import TracebackType
 from typing import Type
 
@@ -27,11 +28,13 @@ from lightning_sdk.cli.start import start
 from lightning_sdk.cli.stop import stop
 from lightning_sdk.cli.switch import switch
 from lightning_sdk.cli.upload import upload
+from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.login import Auth
 
 
 def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:
     """CLI won't show tracebacks, just print the exception message."""
+    # if debug mode, print the traceback using rich
     console = Console()
     if value.args:
         message = str(value.args[0]) if value.args[0] else str(value)
@@ -41,6 +44,12 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
     error_content = Text()
     error_content.append(f"{exception_type.__name__}: ", style="bold red")
     error_content.append(message, style="white")
+
+    if _LIGHTNING_DEBUG:
+        error_content.append("\n\nFull traceback:\n", style="bold yellow")
+        tb_lines = traceback.format_exception(exception_type, value, tb)
+        error_content.append("".join(tb_lines), style="dim white")
+
     console.print(Panel(error_content, title="⚡ Lightning CLI Error", border_style="red"))
 
 
