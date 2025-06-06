@@ -1,6 +1,17 @@
 from typing import Optional
+from urllib.parse import urlencode
 
+from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
+
+LICENSE_CODE = "we843fiji89"
+# https://lightning.ai/home?settings=licenses
+LICENSE_SIGNING_URL = f"{env.LIGHTNING_CLOUD_URL}/home?settings=licenses"
+
+
+def generate_url_user_settings(redirect_to: str = LICENSE_SIGNING_URL) -> str:
+    params = urlencode({"redirectTo": redirect_to, "mode": "licenses", "okbhrt": LICENSE_CODE})
+    return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
 
 class LicenseApi:

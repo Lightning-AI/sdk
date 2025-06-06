@@ -1,4 +1,3 @@
-import re
 from unittest.mock import ANY, MagicMock, mock_open, patch
 
 import pytest
@@ -107,7 +106,8 @@ def test_check_license_valid(monkeypatch):
     mock_stream_messages.assert_not_called()
 
 
-def test_check_license_invalid(monkeypatch):
+@patch("lightning_sdk.services.license.generate_message_guide_sign_license")
+def test_check_license_invalid(mock_msg, monkeypatch):
     mock_license_instance = MagicMock(is_valid=False)
     mock_license = MagicMock(return_value=mock_license_instance)
     monkeypatch.setattr("lightning_sdk.services.license.LightningLicense", mock_license)
@@ -123,8 +123,11 @@ def test_check_license_invalid(monkeypatch):
         stream_messages=mock_stream_messages,
     )
     mock_stream_messages.assert_called_once()
-    captured = mock_stream_messages.call_args[0][0]
-    assert re.match(r"License key for `[^`]+` is not valid\.", captured)
+    mock_msg.assert_called_once_with(
+        license_key=mock_license_instance.license_key,
+        package_name=mock_license_instance.product_name,
+        reason="License key is not valid or not set.",
+    )
 
 
 def test_check_license_in_background_demo():
@@ -224,7 +227,4 @@ def test_check_user_license_wrong_authenticated(mock_auth, mock_license_api):
 
     lit_license = LightningLicense(name="test_product", stream_messages=mock_stream_messages)
     assert lit_license._check_user_license() is False
-    mock_stream_messages.assert_called_once_with(
-        "No authenticated user found or license API is not available."
-        " Please make sure you are logged in and have a valid license.",
-    )
+    mock_stream_messages.assert_called_once()

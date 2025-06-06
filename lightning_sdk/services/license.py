@@ -9,8 +9,76 @@ from importlib import metadata
 from pathlib import Path
 from typing import Optional, Tuple
 
-from lightning_sdk.api.license_api import LicenseApi
+from lightning_sdk.api.license_api import LICENSE_SIGNING_URL, LicenseApi, generate_url_user_settings
 from lightning_sdk.lightning_cloud.login import Auth
+
+MESSAGE_NOT_AUTHENTICATED = (
+    "┌─────────────────────────────────────────────────────────────────────────┐\n"
+    "│ ⚠️  No authenticated user found or license API is not available.        │\n"
+    "│                                                                         │\n"
+    "│   Please make sure you are logged in and have a valid license.          │\n"
+    "│   If you're not logged in, you can use the following command:           │\n"
+    "│                                                                         │\n"
+    "│     lightning login                                                     │\n"
+    "└─────────────────────────────────────────────────────────────────────────┘"
+)
+MESSAGE_AUTH_NO_LICENSE = (
+    "┌──────────────────────────────────────────────────────────────────────────────────────────────┐\n"
+    "│ ⚠️ No valid license found for the authenticated user for product '{self.product_name}'.      │\n"
+    "│                                                                                              │\n"
+    "│   Please ensure you have an approved license for this product.                               │\n"
+    "│   If you believe this is an error, please contact support.                                   │\n"
+    "│                                                                                              │\n"
+    "│   You can review or update your license settings here:                                       │\n"
+    f"│     {LICENSE_SIGNING_URL:<89}│\n"
+    "└──────────────────────────────────────────────────────────────────────────────────────────────┘"
+)
+MESSAGE_GUIDE_SIGN_LICENSE = (
+    "┌───────────────────────────────────────────────────────────────────────────────────────────────────────────┐\n"
+    "│ ⚠️ {reason} │\n"
+    "│ Details: license key ({license_strats}...{license_ends}) for package {package_name:<56} │\n"
+    "│ Please make sure you have signed the license agreement and set the license key.                           │\n"
+    "│                                                                                                           │\n"
+    f"│ If you already have a Lightning account, sign the license agreement here:                                 │\n"
+    f"│   {LICENSE_SIGNING_URL:<103} │\n"
+    "│                                                                                                           │\n"
+    "│ Or create a new account, and after signing in, you'll be redirected to license approval:                  │\n"
+    f"│   {generate_url_user_settings():<102}\n"
+    "│                                                                                                           │\n"
+    "│ Once you have the license key, you may need to reinstall this package to activate it. Use the commands:   │\n"
+    "│                                                                                                           │\n"
+    "│   export LIGHTNING_LICENSE_KEY=<your_license_key>                                                         │\n"
+    "│   pip install --force-reinstall --no-deps {package_name:<63} │\n"
+    "│                                                                                                           │\n"
+    "│ For more information, please refer to the documentation.                                                  │\n"
+    "└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘"
+)
+
+
+def generate_message_guide_sign_license(package_name: str, reason: str, license_key: str = "") -> str:
+    """Generate a default message for signing the license agreement."""
+    if not license_key:
+        license_key = "." * 64
+    return MESSAGE_GUIDE_SIGN_LICENSE.format(
+        package_name=package_name,
+        reason=reason.ljust(102, " "),
+        license_strats=license_key[:5],
+        license_ends=license_key[-5:],
+    )
+
+
+MESSAGE_WITH_KEY_OFFLINE = (
+    "┌──────────────────────────────────────────────────────────────────────────────────────┐\n"
+    "│ ⚠️ License key ({license_strats}...{license_ends}) is set, but the system is offline.                    │\n"
+    "│                                                                                      │\n"
+    "│ Please ensure your license key is valid and that the system is connected online.     │\n"
+    "└──────────────────────────────────────────────────────────────────────────────────────┘"
+)
+
+
+def generate_message_with_key_offline(license_key: str) -> str:
+    """Generate a message for when the license key is set but the system is offline."""
+    return MESSAGE_WITH_KEY_OFFLINE.format(license_strats=license_key[:5], license_ends=license_key[-5:])
 
 
 class LightningLicense:
@@ -48,9 +116,6 @@ class LightningLicense:
         """Validate the license key."""
         if not self.is_online():
             raise ConnectionError("No internet connection.")
-        if not self.license_api:
-            # todo: this need to be exposed with public API
-            raise RuntimeError("License validation is allowed only for authenticated users.")
 
         return self.license_api.valid_license(
             license_key=self.license_key,
@@ -76,10 +141,7 @@ class LightningLicense:
             if not user_id:
                 return False
         if not self.license_api:
-            self._stream_messages(
-                "No authenticated user found or license API is not available."
-                " Please make sure you are logged in and have a valid license."
-            )
+            self._stream_messages(MESSAGE_NOT_AUTHENTICATED)
             return False
 
         licenses = self.license_api.list_user_licenses(user_id=user_id)
@@ -90,10 +152,7 @@ class LightningLicense:
                 and license_info.is_valid
             ):
                 return True
-        self._stream_messages(
-            f"No valid license found for authenticated user for product {self.product_name}."
-            " Please make sure you have a approved product license or contact support."
-        )
+        self._stream_messages(MESSAGE_AUTH_NO_LICENSE)
         return False
 
     @staticmethod
@@ -143,15 +202,13 @@ class LightningLicense:
                 else:
                     self._is_valid = self._check_user_license(user_id=user_id)
         elif self.license_key:
-            self._stream_messages(
-                f"License key ({self.license_key[:5]}...{self.license_key[-5:]}) is set but the system is offline."
-                " Please make sure you have a valid license key and the system is online."
-            )
+            self._stream_messages(generate_message_with_key_offline(self.license_key))
         else:
             self._stream_messages(
-                "License key is not set neither cannot be found in the package root or user home."
-                " Please make sure you have signed the license agreement and set the license key."
-                " For more information, please refer to the documentation.",
+                generate_message_guide_sign_license(
+                    package_name=self.product_name,
+                    reason="License key is not set neither cannot be found in the package root or user home.",
+                )
             )
 
         return self._is_valid
@@ -265,9 +322,11 @@ def check_license(
     )
     if lit_license.is_valid is False:
         stream_messages(
-            f"License key for `{lit_license.product_name}` is not valid.\n"
-            f" Key: {lit_license.license_key}\n"
-            " Please make sure you have a valid license key."
+            generate_message_guide_sign_license(
+                package_name=lit_license.product_name,
+                reason="License key is not valid or not set.",
+                license_key=lit_license.license_key,
+            )
         )
 
 
