@@ -5,6 +5,7 @@ from typing import Type
 import click
 from rich.console import Console
 from rich.panel import Panel
+from rich.text import Text
 
 from lightning_sdk import __version__
 from lightning_sdk.api.studio_api import _cloud_url
@@ -29,10 +30,18 @@ from lightning_sdk.cli.upload import upload
 from lightning_sdk.lightning_cloud.login import Auth
 
 
-def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:  # No
+def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:
     """CLI won't show tracebacks, just print the exception message."""
     console = Console()
-    console.print(Panel(value))
+    if value.args:
+        message = str(value.args[0]) if value.args[0] else str(value)
+    else:
+        message = str(value) or "An unknown error occurred"
+
+    error_content = Text()
+    error_content.append(f"{exception_type.__name__}: ", style="bold red")
+    error_content.append(message, style="white")
+    console.print(Panel(error_content, title="⚡ Lightning CLI Error", border_style="red"))
 
 
 @click.group(name="lightning", help="Command line interface (CLI) to interact with/manage Lightning AI Studios.")
