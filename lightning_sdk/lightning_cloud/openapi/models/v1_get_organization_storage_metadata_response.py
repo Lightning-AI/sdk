@@ -51,6 +51,7 @@ class V1GetOrganizationStorageMetadataResponse(object):
         'total_container_registry_storage_bytes': 'str',
         'total_data_connection_storage_bytes': 'str',
         'total_folder_storage_bytes': 'str',
+        'total_free_storage_bytes': 'str',
         'total_job_storage_bytes': 'str',
         'total_storage_bytes': 'str',
         'total_upload_storage_bytes': 'str'
@@ -67,12 +68,13 @@ class V1GetOrganizationStorageMetadataResponse(object):
         'total_container_registry_storage_bytes': 'totalContainerRegistryStorageBytes',
         'total_data_connection_storage_bytes': 'totalDataConnectionStorageBytes',
         'total_folder_storage_bytes': 'totalFolderStorageBytes',
+        'total_free_storage_bytes': 'totalFreeStorageBytes',
         'total_job_storage_bytes': 'totalJobStorageBytes',
         'total_storage_bytes': 'totalStorageBytes',
         'total_upload_storage_bytes': 'totalUploadStorageBytes'
     }
 
-    def __init__(self, account_limit_bytes: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, id: 'str' =None, project_metadata: 'list[V1ProjectStorage]' =None, total_billable_bytes: 'str' =None, total_cloudspace_storage_bytes: 'str' =None, total_container_registry_storage_bytes: 'str' =None, total_data_connection_storage_bytes: 'str' =None, total_folder_storage_bytes: 'str' =None, total_job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, total_upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, account_limit_bytes: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, id: 'str' =None, project_metadata: 'list[V1ProjectStorage]' =None, total_billable_bytes: 'str' =None, total_cloudspace_storage_bytes: 'str' =None, total_container_registry_storage_bytes: 'str' =None, total_data_connection_storage_bytes: 'str' =None, total_folder_storage_bytes: 'str' =None, total_free_storage_bytes: 'str' =None, total_job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, total_upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1GetOrganizationStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
         self._account_limit_bytes = None
         self._estimated_daily_cost = None
@@ -84,6 +86,7 @@ class V1GetOrganizationStorageMetadataResponse(object):
         self._total_container_registry_storage_bytes = None
         self._total_data_connection_storage_bytes = None
         self._total_folder_storage_bytes = None
+        self._total_free_storage_bytes = None
         self._total_job_storage_bytes = None
         self._total_storage_bytes = None
         self._total_upload_storage_bytes = None
@@ -108,6 +111,8 @@ class V1GetOrganizationStorageMetadataResponse(object):
             self.total_data_connection_storage_bytes = total_data_connection_storage_bytes
         if total_folder_storage_bytes is not None:
             self.total_folder_storage_bytes = total_folder_storage_bytes
+        if total_free_storage_bytes is not None:
+            self.total_free_storage_bytes = total_free_storage_bytes
         if total_job_storage_bytes is not None:
             self.total_job_storage_bytes = total_job_storage_bytes
         if total_storage_bytes is not None:
@@ -324,6 +329,27 @@ class V1GetOrganizationStorageMetadataResponse(object):
         """
 
         self._total_folder_storage_bytes = total_folder_storage_bytes
+
+    @property
+    def total_free_storage_bytes(self) -> 'str':
+        """Gets the total_free_storage_bytes of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The total_free_storage_bytes of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_free_storage_bytes
+
+    @total_free_storage_bytes.setter
+    def total_free_storage_bytes(self, total_free_storage_bytes: 'str'):
+        """Sets the total_free_storage_bytes of this V1GetOrganizationStorageMetadataResponse.
+
+
+        :param total_free_storage_bytes: The total_free_storage_bytes of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._total_free_storage_bytes = total_free_storage_bytes
 
     @property
     def total_job_storage_bytes(self) -> 'str':

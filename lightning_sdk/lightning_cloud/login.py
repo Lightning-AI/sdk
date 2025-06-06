@@ -140,30 +140,13 @@ class Auth:
 
 
 class AuthServer:
-    """A server that handles the authentication flow with Lightning Cloud."""
-
-    def __init__(self, extra_url_params: Optional[dict] = None) -> None:
-        """Initialize the AuthServer.
-
-        Args:
-            extra_url_params: Additional parameters to include in the authentication URL.
-        """
-        self._extra_url_params = extra_url_params or {}
 
     def get_auth_url(self, port: int) -> str:
-        """Generate the authentication URL for Lightning Cloud.
-
-        Args:
-            port: The port on which the server will run.
-        Returns:
-            str: The authentication URL.
-        """
         redirect_uri = f"http://localhost:{port}/login-complete"
-        params = urlencode(dict(redirectTo=redirect_uri, **self._extra_url_params))
+        params = urlencode(dict(redirectTo=redirect_uri))
         return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
     def login_with_browser(self, auth: Auth) -> None:
-        """Start a server to handle the authentication flow with Lightning Cloud."""
         from lightning_sdk.lightning_cloud.utils.network import find_free_network_port
 
         app = FastAPI()

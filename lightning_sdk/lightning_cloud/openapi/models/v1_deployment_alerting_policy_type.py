@@ -47,6 +47,7 @@ class V1DeploymentAlertingPolicyType(object):
     STATUSCODES1XX = "StatusCodes1xx"
     THROUGHPUT = "Throughput"
     LATENCYQ95 = "LatencyQ95"
+    DEPLOYMENTSUSPENDED = "DeploymentSuspended"
     """
     Attributes:
       swagger_types (dict): The key is attribute name
