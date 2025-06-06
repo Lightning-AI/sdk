@@ -44,6 +44,7 @@ class V1StorageAssetType(object):
     FOLDER = "FOLDER"
     UPLOAD = "UPLOAD"
     CONTAINER_REPOSITORY = "CONTAINER_REPOSITORY"
+    MODEL = "MODEL"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

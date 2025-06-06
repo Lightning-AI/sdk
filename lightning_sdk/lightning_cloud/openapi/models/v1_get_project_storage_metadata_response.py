@@ -56,6 +56,8 @@ class V1GetProjectStorageMetadataResponse(object):
         'id': 'str',
         'job_storage_bytes': 'str',
         'jobs': 'list[V1StorageAsset]',
+        'model_storage_bytes': 'str',
+        'models': 'list[V1StorageAsset]',
         'total_storage_bytes': 'str',
         'upload_storage_bytes': 'str',
         'uploads': 'V1StorageAsset'
@@ -77,12 +79,14 @@ class V1GetProjectStorageMetadataResponse(object):
         'id': 'id',
         'job_storage_bytes': 'jobStorageBytes',
         'jobs': 'jobs',
+        'model_storage_bytes': 'modelStorageBytes',
+        'models': 'models',
         'total_storage_bytes': 'totalStorageBytes',
         'upload_storage_bytes': 'uploadStorageBytes',
         'uploads': 'uploads'
     }
 
-    def __init__(self, account_limit_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, container_registry_repositories: 'list[V1StorageAsset]' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, folder_storage_bytes: 'str' =None, folders: 'list[V1StorageAsset]' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None, uploads: 'V1StorageAsset' =None):  # noqa: E501
+    def __init__(self, account_limit_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, container_registry_repositories: 'list[V1StorageAsset]' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, folder_storage_bytes: 'str' =None, folders: 'list[V1StorageAsset]' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, model_storage_bytes: 'str' =None, models: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None, uploads: 'V1StorageAsset' =None):  # noqa: E501
         """V1GetProjectStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
         self._account_limit_bytes = None
         self._cloudspace_storage_bytes = None
@@ -99,6 +103,8 @@ class V1GetProjectStorageMetadataResponse(object):
         self._id = None
         self._job_storage_bytes = None
         self._jobs = None
+        self._model_storage_bytes = None
+        self._models = None
         self._total_storage_bytes = None
         self._upload_storage_bytes = None
         self._uploads = None
@@ -133,6 +139,10 @@ class V1GetProjectStorageMetadataResponse(object):
             self.job_storage_bytes = job_storage_bytes
         if jobs is not None:
             self.jobs = jobs
+        if model_storage_bytes is not None:
+            self.model_storage_bytes = model_storage_bytes
+        if models is not None:
+            self.models = models
         if total_storage_bytes is not None:
             self.total_storage_bytes = total_storage_bytes
         if upload_storage_bytes is not None:
@@ -454,6 +464,48 @@ class V1GetProjectStorageMetadataResponse(object):
         """
 
         self._jobs = jobs
+
+    @property
+    def model_storage_bytes(self) -> 'str':
+        """Gets the model_storage_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The model_storage_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._model_storage_bytes
+
+    @model_storage_bytes.setter
+    def model_storage_bytes(self, model_storage_bytes: 'str'):
+        """Sets the model_storage_bytes of this V1GetProjectStorageMetadataResponse.
+
+
+        :param model_storage_bytes: The model_storage_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._model_storage_bytes = model_storage_bytes
+
+    @property
+    def models(self) -> 'list[V1StorageAsset]':
+        """Gets the models of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The models of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: list[V1StorageAsset]
+        """
+        return self._models
+
+    @models.setter
+    def models(self, models: 'list[V1StorageAsset]'):
+        """Sets the models of this V1GetProjectStorageMetadataResponse.
+
+
+        :param models: The models of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: list[V1StorageAsset]
+        """
+
+        self._models = models
 
     @property
     def total_storage_bytes(self) -> 'str':

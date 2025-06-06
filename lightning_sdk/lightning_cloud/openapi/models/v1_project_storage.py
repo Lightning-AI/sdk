@@ -54,6 +54,7 @@ class V1ProjectStorage(object):
         'folder_storage_bytes': 'str',
         'id': 'str',
         'job_storage_bytes': 'str',
+        'model_storage_bytes': 'str',
         'total_storage_bytes': 'str',
         'upload_storage_bytes': 'str'
     }
@@ -72,11 +73,12 @@ class V1ProjectStorage(object):
         'folder_storage_bytes': 'folderStorageBytes',
         'id': 'id',
         'job_storage_bytes': 'jobStorageBytes',
+        'model_storage_bytes': 'modelStorageBytes',
         'total_storage_bytes': 'totalStorageBytes',
         'upload_storage_bytes': 'uploadStorageBytes'
     }
 
-    def __init__(self, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, container_registry_storage_bytes: 'str' =None, daily_read_bytes: 'str' =None, daily_write_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, display_name: 'str' =None, efs_folder_bytes: 'str' =None, estimated_daily_cost: 'float' =None, estimated_efs_cost: 'float' =None, folder_storage_bytes: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, container_registry_storage_bytes: 'str' =None, daily_read_bytes: 'str' =None, daily_write_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, display_name: 'str' =None, efs_folder_bytes: 'str' =None, estimated_daily_cost: 'float' =None, estimated_efs_cost: 'float' =None, folder_storage_bytes: 'str' =None, id: 'str' =None, job_storage_bytes: 'str' =None, model_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1ProjectStorage - a model defined in Swagger"""  # noqa: E501
         self._billable_bytes = None
         self._cloudspace_storage_bytes = None
@@ -91,6 +93,7 @@ class V1ProjectStorage(object):
         self._folder_storage_bytes = None
         self._id = None
         self._job_storage_bytes = None
+        self._model_storage_bytes = None
         self._total_storage_bytes = None
         self._upload_storage_bytes = None
         self.discriminator = None
@@ -120,6 +123,8 @@ class V1ProjectStorage(object):
             self.id = id
         if job_storage_bytes is not None:
             self.job_storage_bytes = job_storage_bytes
+        if model_storage_bytes is not None:
+            self.model_storage_bytes = model_storage_bytes
         if total_storage_bytes is not None:
             self.total_storage_bytes = total_storage_bytes
         if upload_storage_bytes is not None:
@@ -397,6 +402,27 @@ class V1ProjectStorage(object):
         """
 
         self._job_storage_bytes = job_storage_bytes
+
+    @property
+    def model_storage_bytes(self) -> 'str':
+        """Gets the model_storage_bytes of this V1ProjectStorage.  # noqa: E501
+
+
+        :return: The model_storage_bytes of this V1ProjectStorage.  # noqa: E501
+        :rtype: str
+        """
+        return self._model_storage_bytes
+
+    @model_storage_bytes.setter
+    def model_storage_bytes(self, model_storage_bytes: 'str'):
+        """Sets the model_storage_bytes of this V1ProjectStorage.
+
+
+        :param model_storage_bytes: The model_storage_bytes of this V1ProjectStorage.  # noqa: E501
+        :type: str
+        """
+
+        self._model_storage_bytes = model_storage_bytes
 
     @property
     def total_storage_bytes(self) -> 'str':
