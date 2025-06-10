@@ -43,6 +43,7 @@ class V1CloudSpaceEnvironmentTemplate(object):
     swagger_types = {
         'config': 'V1CloudSpaceEnvironmentTemplateConfig',
         'created_at': 'datetime',
+        'description': 'str',
         'disabled': 'bool',
         'id': 'str',
         'managed': 'bool',
@@ -56,6 +57,7 @@ class V1CloudSpaceEnvironmentTemplate(object):
     attribute_map = {
         'config': 'config',
         'created_at': 'createdAt',
+        'description': 'description',
         'disabled': 'disabled',
         'id': 'id',
         'managed': 'managed',
@@ -66,10 +68,11 @@ class V1CloudSpaceEnvironmentTemplate(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, config: 'V1CloudSpaceEnvironmentTemplateConfig' =None, created_at: 'datetime' =None, disabled: 'bool' =None, id: 'str' =None, managed: 'bool' =None, managed_id: 'str' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, config: 'V1CloudSpaceEnvironmentTemplateConfig' =None, created_at: 'datetime' =None, description: 'str' =None, disabled: 'bool' =None, id: 'str' =None, managed: 'bool' =None, managed_id: 'str' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplate - a model defined in Swagger"""  # noqa: E501
         self._config = None
         self._created_at = None
+        self._description = None
         self._disabled = None
         self._id = None
         self._managed = None
@@ -83,6 +86,8 @@ class V1CloudSpaceEnvironmentTemplate(object):
             self.config = config
         if created_at is not None:
             self.created_at = created_at
+        if description is not None:
+            self.description = description
         if disabled is not None:
             self.disabled = disabled
         if id is not None:
@@ -141,6 +146,27 @@ class V1CloudSpaceEnvironmentTemplate(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def description(self) -> 'str':
+        """Gets the description of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+
+
+        :return: The description of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description: 'str'):
+        """Sets the description of this V1CloudSpaceEnvironmentTemplate.
+
+
+        :param description: The description of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
 
     @property
     def disabled(self) -> 'bool':

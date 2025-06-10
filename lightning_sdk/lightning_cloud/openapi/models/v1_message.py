@@ -49,8 +49,10 @@ class V1Message(object):
         'created_at': 'datetime',
         'executable': 'bool',
         'id': 'str',
+        'internal_message': 'bool',
         'metadata': 'dict(str, str)',
         'model': 'str',
+        'parent_message_id': 'str',
         'prompt_tokens': 'str',
         'throughput': 'float'
     }
@@ -64,13 +66,15 @@ class V1Message(object):
         'created_at': 'createdAt',
         'executable': 'executable',
         'id': 'id',
+        'internal_message': 'internalMessage',
         'metadata': 'metadata',
         'model': 'model',
+        'parent_message_id': 'parentMessageId',
         'prompt_tokens': 'promptTokens',
         'throughput': 'throughput'
     }
 
-    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._assistant_id = None
         self._author = None
@@ -80,8 +84,10 @@ class V1Message(object):
         self._created_at = None
         self._executable = None
         self._id = None
+        self._internal_message = None
         self._metadata = None
         self._model = None
+        self._parent_message_id = None
         self._prompt_tokens = None
         self._throughput = None
         self.discriminator = None
@@ -101,10 +107,14 @@ class V1Message(object):
             self.executable = executable
         if id is not None:
             self.id = id
+        if internal_message is not None:
+            self.internal_message = internal_message
         if metadata is not None:
             self.metadata = metadata
         if model is not None:
             self.model = model
+        if parent_message_id is not None:
+            self.parent_message_id = parent_message_id
         if prompt_tokens is not None:
             self.prompt_tokens = prompt_tokens
         if throughput is not None:
@@ -279,6 +289,27 @@ class V1Message(object):
         self._id = id
 
     @property
+    def internal_message(self) -> 'bool':
+        """Gets the internal_message of this V1Message.  # noqa: E501
+
+
+        :return: The internal_message of this V1Message.  # noqa: E501
+        :rtype: bool
+        """
+        return self._internal_message
+
+    @internal_message.setter
+    def internal_message(self, internal_message: 'bool'):
+        """Sets the internal_message of this V1Message.
+
+
+        :param internal_message: The internal_message of this V1Message.  # noqa: E501
+        :type: bool
+        """
+
+        self._internal_message = internal_message
+
+    @property
     def metadata(self) -> 'dict(str, str)':
         """Gets the metadata of this V1Message.  # noqa: E501
 
@@ -319,6 +350,27 @@ class V1Message(object):
         """
 
         self._model = model
+
+    @property
+    def parent_message_id(self) -> 'str':
+        """Gets the parent_message_id of this V1Message.  # noqa: E501
+
+
+        :return: The parent_message_id of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_message_id
+
+    @parent_message_id.setter
+    def parent_message_id(self, parent_message_id: 'str'):
+        """Sets the parent_message_id of this V1Message.
+
+
+        :param parent_message_id: The parent_message_id of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_message_id = parent_message_id
 
     @property
     def prompt_tokens(self) -> 'str':
