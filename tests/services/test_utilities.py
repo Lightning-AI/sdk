@@ -5,10 +5,16 @@ from unittest.mock import MagicMock
 import pytest
 
 from lightning_sdk.lightning_cloud.openapi import (
+    Externalv1Cluster,
+    V1AWSDirectV1,
+    V1ClusterSpec,
     V1DownloadServiceExecutionArtifactResponse,
+    V1LambdaLabsDirectV1,
+    V1ListClustersResponse,
     V1ListMembershipsResponse,
     V1ListProjectClusterBindingsResponse,
     V1Membership,
+    V1NebiusDirectV1,
     V1ProjectArtifact,
     V1ProjectClusterBinding,
 )
@@ -53,7 +59,7 @@ def test_get_cluster():
     client_mock.projects_service_list_project_cluster_bindings.return_value = V1ListProjectClusterBindingsResponse(
         clusters=[V1ProjectClusterBinding(cluster_id="1")]
     )
-    assert _get_cluster(client_mock, project_id="project_id").cluster_id == "1"
+    assert _get_cluster(client_mock, project_id="project_id", allow_neoclouds=True).cluster_id == "1"
 
     client_mock.projects_service_list_project_cluster_bindings.return_value = V1ListProjectClusterBindingsResponse(
         clusters=[
@@ -61,7 +67,7 @@ def test_get_cluster():
             V1ProjectClusterBinding(cluster_id="2", created_at=2),
         ]
     )
-    assert _get_cluster(client_mock, project_id="project_id").cluster_id == "1"
+    assert _get_cluster(client_mock, project_id="project_id", allow_neoclouds=True).cluster_id == "1"
 
     client_mock.projects_service_list_project_cluster_bindings.return_value = V1ListProjectClusterBindingsResponse(
         clusters=[
@@ -69,7 +75,7 @@ def test_get_cluster():
             V1ProjectClusterBinding(cluster_id="2", created_at=1),
         ]
     )
-    assert _get_cluster(client_mock, project_id="project_id").cluster_id == "2"
+    assert _get_cluster(client_mock, project_id="project_id", allow_neoclouds=True).cluster_id == "2"
 
     client_mock.projects_service_list_project_cluster_bindings.return_value = V1ListProjectClusterBindingsResponse(
         clusters=[
@@ -81,6 +87,25 @@ def test_get_cluster():
 
     with pytest.raises(ValueError, match=re.escape("No valid cluster found with the provided 3.Found ['1', '2'].")):
         _get_cluster(client_mock, project_id="project_id", cluster_id="3")
+
+    # filter out neoclouds
+    client_mock.projects_service_list_project_cluster_bindings.return_value = V1ListProjectClusterBindingsResponse(
+        clusters=[
+            V1ProjectClusterBinding(cluster_id="1", created_at=2),
+            V1ProjectClusterBinding(cluster_id="2", created_at=1),
+            V1ProjectClusterBinding(cluster_id="3", created_at=3),
+        ]
+    )
+
+    client_mock.cluster_service_list_clusters.return_value = V1ListClustersResponse(
+        clusters=[
+            Externalv1Cluster(id="1", spec=V1ClusterSpec(lambda_labs_v1=V1LambdaLabsDirectV1())),
+            Externalv1Cluster(id="2", spec=V1ClusterSpec(nebius_v1=V1NebiusDirectV1())),
+            Externalv1Cluster(id="3", spec=V1ClusterSpec(aws_v1=V1AWSDirectV1())),
+        ]
+    )
+
+    assert _get_cluster(client_mock, project_id="project_id").cluster_id == "3"
 
 
 def test_download_file(monkeypatch, tmpdir):

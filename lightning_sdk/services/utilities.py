@@ -35,7 +35,9 @@ def _get_project(client: LightningClient, project_name: Optional[str] = None) ->
     raise ValueError("No valid projects found. Please reach out to lightning.ai team to create a project")
 
 
-def _get_cluster(client: LightningClient, project_id: str, cluster_id: Optional[str] = None) -> V1ProjectClusterBinding:
+def _get_cluster(
+    client: LightningClient, project_id: str, cluster_id: Optional[str] = None, allow_neoclouds: bool = False
+) -> V1ProjectClusterBinding:
     """Get a project membership for the user from the backend."""
     clusters = client.projects_service_list_project_cluster_bindings(project_id=project_id)
     if cluster_id:
@@ -46,6 +48,18 @@ def _get_cluster(client: LightningClient, project_id: str, cluster_id: Optional[
             f"No valid cluster found with the provided {cluster_id}."
             f"Found {[c.cluster_id for c in clusters.clusters]}."
         )
+
+    # filter neoclouds out
+    if not allow_neoclouds:
+        cluster_objs = client.cluster_service_list_clusters(project_id=project_id)
+        # filter for aws or gcp cluster
+        valid_clusters = filter(
+            lambda c: c.spec.aws_v1 is not None or c.spec.google_cloud_v1 is not None, cluster_objs.clusters
+        )
+        valid_clusters = {c.id for c in valid_clusters}
+
+        if len(valid_clusters):
+            clusters.clusters = list(filter(lambda c: c.cluster_id in valid_clusters, clusters.clusters))
 
     clusters = sorted(clusters.clusters, key=lambda x: x.created_at)
     if len(clusters):
