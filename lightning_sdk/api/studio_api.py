@@ -151,7 +151,7 @@ class StudioApi:
             id=studio_id,
         )
 
-    @backoff.on_exception(backoff.expo, AttributeError, max_tries=10)
+    @backoff.on_exception(backoff.expo, AttributeError, max_tries=15, max_time=15 * 60)
     def _check_code_status_top_up_restore_finished(self, studio_id: str, teamspace_id: str) -> bool:
         """Retries checking the top_up_restore_finished value of the code status when there's an AttributeError."""
         startup_status = self.get_studio_status(studio_id, teamspace_id).in_use.startup_status
