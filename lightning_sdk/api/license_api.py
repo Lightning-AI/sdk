@@ -5,9 +5,9 @@ from urllib.parse import urlencode
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
-LICENSE_CODE = os.environ.get("LICENSE_CODE", "we843fiji89")
+LICENSE_CODE = os.environ.get("LICENSE_CODE", "d9s79g79ss")
 # https://lightning.ai/home?settings=licenses
-LICENSE_SIGNING_URL = f"{env.LIGHTNING_CLOUD_URL}/ai-hub?settings=licenses"
+LICENSE_SIGNING_URL = f"{env.LIGHTNING_CLOUD_URL}?settings=licenses"
 
 
 def generate_url_user_settings(redirect_to: str = LICENSE_SIGNING_URL) -> str:
