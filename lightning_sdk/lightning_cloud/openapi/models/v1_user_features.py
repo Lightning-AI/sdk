@@ -50,8 +50,6 @@ class V1UserFeatures(object):
         'auto_top_up': 'bool',
         'auto_top_up_teamspace': 'bool',
         'b2c_experience': 'bool',
-        'blog_route': 'bool',
-        'byoc_litcr': 'bool',
         'cap_add': 'list[str]',
         'cap_drop': 'list[str]',
         'capacity_reservation_byoc': 'bool',
@@ -67,9 +65,7 @@ class V1UserFeatures(object):
         'custom_app_domain': 'bool',
         'datasets': 'bool',
         'default_one_cluster': 'bool',
-        'deployment_alerts': 'bool',
         'deployment_persistent_disk': 'bool',
-        'deployment_requests_tab': 'bool',
         'dgx_cloud': 'bool',
         'docs_agent': 'bool',
         'drive_v2': 'bool',
@@ -125,7 +121,6 @@ class V1UserFeatures(object):
         'single_wallet': 'bool',
         'slurm': 'bool',
         'slurm_machine_selector': 'bool',
-        'stop_ide_container_on_shutdown': 'bool',
         'storage_overuse_deletion': 'bool',
         'studio_config': 'bool',
         'studio_version_visibility': 'bool',
@@ -149,8 +144,6 @@ class V1UserFeatures(object):
         'auto_top_up': 'autoTopUp',
         'auto_top_up_teamspace': 'autoTopUpTeamspace',
         'b2c_experience': 'b2cExperience',
-        'blog_route': 'blogRoute',
-        'byoc_litcr': 'byocLitcr',
         'cap_add': 'capAdd',
         'cap_drop': 'capDrop',
         'capacity_reservation_byoc': 'capacityReservationByoc',
@@ -166,9 +159,7 @@ class V1UserFeatures(object):
         'custom_app_domain': 'customAppDomain',
         'datasets': 'datasets',
         'default_one_cluster': 'defaultOneCluster',
-        'deployment_alerts': 'deploymentAlerts',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
-        'deployment_requests_tab': 'deploymentRequestsTab',
         'dgx_cloud': 'dgxCloud',
         'docs_agent': 'docsAgent',
         'drive_v2': 'driveV2',
@@ -224,7 +215,6 @@ class V1UserFeatures(object):
         'single_wallet': 'singleWallet',
         'slurm': 'slurm',
         'slurm_machine_selector': 'slurmMachineSelector',
-        'stop_ide_container_on_shutdown': 'stopIdeContainerOnShutdown',
         'storage_overuse_deletion': 'storageOveruseDeletion',
         'studio_config': 'studioConfig',
         'studio_version_visibility': 'studioVersionVisibility',
@@ -238,7 +228,7 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, blog_route: 'bool' =None, byoc_litcr: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_alerts: 'bool' =None, deployment_persistent_disk: 'bool' =None, deployment_requests_tab: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, neocloud_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plg_control_center: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, stop_ide_container_on_shutdown: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, transfer_studios: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, neocloud_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plg_control_center: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, transfer_studios: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._accurate_billing = None
         self._affiliate_links = None
@@ -249,8 +239,6 @@ class V1UserFeatures(object):
         self._auto_top_up = None
         self._auto_top_up_teamspace = None
         self._b2c_experience = None
-        self._blog_route = None
-        self._byoc_litcr = None
         self._cap_add = None
         self._cap_drop = None
         self._capacity_reservation_byoc = None
@@ -266,9 +254,7 @@ class V1UserFeatures(object):
         self._custom_app_domain = None
         self._datasets = None
         self._default_one_cluster = None
-        self._deployment_alerts = None
         self._deployment_persistent_disk = None
-        self._deployment_requests_tab = None
         self._dgx_cloud = None
         self._docs_agent = None
         self._drive_v2 = None
@@ -324,7 +310,6 @@ class V1UserFeatures(object):
         self._single_wallet = None
         self._slurm = None
         self._slurm_machine_selector = None
-        self._stop_ide_container_on_shutdown = None
         self._storage_overuse_deletion = None
         self._studio_config = None
         self._studio_version_visibility = None
@@ -355,10 +340,6 @@ class V1UserFeatures(object):
             self.auto_top_up_teamspace = auto_top_up_teamspace
         if b2c_experience is not None:
             self.b2c_experience = b2c_experience
-        if blog_route is not None:
-            self.blog_route = blog_route
-        if byoc_litcr is not None:
-            self.byoc_litcr = byoc_litcr
         if cap_add is not None:
             self.cap_add = cap_add
         if cap_drop is not None:
@@ -389,12 +370,8 @@ class V1UserFeatures(object):
             self.datasets = datasets
         if default_one_cluster is not None:
             self.default_one_cluster = default_one_cluster
-        if deployment_alerts is not None:
-            self.deployment_alerts = deployment_alerts
         if deployment_persistent_disk is not None:
             self.deployment_persistent_disk = deployment_persistent_disk
-        if deployment_requests_tab is not None:
-            self.deployment_requests_tab = deployment_requests_tab
         if dgx_cloud is not None:
             self.dgx_cloud = dgx_cloud
         if docs_agent is not None:
@@ -505,8 +482,6 @@ class V1UserFeatures(object):
             self.slurm = slurm
         if slurm_machine_selector is not None:
             self.slurm_machine_selector = slurm_machine_selector
-        if stop_ide_container_on_shutdown is not None:
-            self.stop_ide_container_on_shutdown = stop_ide_container_on_shutdown
         if storage_overuse_deletion is not None:
             self.storage_overuse_deletion = storage_overuse_deletion
         if studio_config is not None:
@@ -718,48 +693,6 @@ class V1UserFeatures(object):
         """
 
         self._b2c_experience = b2c_experience
-
-    @property
-    def blog_route(self) -> 'bool':
-        """Gets the blog_route of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The blog_route of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._blog_route
-
-    @blog_route.setter
-    def blog_route(self, blog_route: 'bool'):
-        """Sets the blog_route of this V1UserFeatures.
-
-
-        :param blog_route: The blog_route of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._blog_route = blog_route
-
-    @property
-    def byoc_litcr(self) -> 'bool':
-        """Gets the byoc_litcr of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The byoc_litcr of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._byoc_litcr
-
-    @byoc_litcr.setter
-    def byoc_litcr(self, byoc_litcr: 'bool'):
-        """Sets the byoc_litcr of this V1UserFeatures.
-
-
-        :param byoc_litcr: The byoc_litcr of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._byoc_litcr = byoc_litcr
 
     @property
     def cap_add(self) -> 'list[str]':
@@ -1077,27 +1010,6 @@ class V1UserFeatures(object):
         self._default_one_cluster = default_one_cluster
 
     @property
-    def deployment_alerts(self) -> 'bool':
-        """Gets the deployment_alerts of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The deployment_alerts of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._deployment_alerts
-
-    @deployment_alerts.setter
-    def deployment_alerts(self, deployment_alerts: 'bool'):
-        """Sets the deployment_alerts of this V1UserFeatures.
-
-
-        :param deployment_alerts: The deployment_alerts of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._deployment_alerts = deployment_alerts
-
-    @property
     def deployment_persistent_disk(self) -> 'bool':
         """Gets the deployment_persistent_disk of this V1UserFeatures.  # noqa: E501
 
@@ -1117,27 +1029,6 @@ class V1UserFeatures(object):
         """
 
         self._deployment_persistent_disk = deployment_persistent_disk
-
-    @property
-    def deployment_requests_tab(self) -> 'bool':
-        """Gets the deployment_requests_tab of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The deployment_requests_tab of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._deployment_requests_tab
-
-    @deployment_requests_tab.setter
-    def deployment_requests_tab(self, deployment_requests_tab: 'bool'):
-        """Sets the deployment_requests_tab of this V1UserFeatures.
-
-
-        :param deployment_requests_tab: The deployment_requests_tab of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._deployment_requests_tab = deployment_requests_tab
 
     @property
     def dgx_cloud(self) -> 'bool':
@@ -2293,27 +2184,6 @@ class V1UserFeatures(object):
         """
 
         self._slurm_machine_selector = slurm_machine_selector
-
-    @property
-    def stop_ide_container_on_shutdown(self) -> 'bool':
-        """Gets the stop_ide_container_on_shutdown of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The stop_ide_container_on_shutdown of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._stop_ide_container_on_shutdown
-
-    @stop_ide_container_on_shutdown.setter
-    def stop_ide_container_on_shutdown(self, stop_ide_container_on_shutdown: 'bool'):
-        """Sets the stop_ide_container_on_shutdown of this V1UserFeatures.
-
-
-        :param stop_ide_container_on_shutdown: The stop_ide_container_on_shutdown of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._stop_ide_container_on_shutdown = stop_ide_container_on_shutdown
 
     @property
     def storage_overuse_deletion(self) -> 'bool':

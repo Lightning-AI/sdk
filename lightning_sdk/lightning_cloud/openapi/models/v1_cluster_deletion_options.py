@@ -42,21 +42,26 @@ class V1ClusterDeletionOptions(object):
     """
     swagger_types = {
         'delete_artifacts': 'bool',
+        'delete_filesystems': 'bool',
         'delete_system_logs': 'bool'
     }
 
     attribute_map = {
         'delete_artifacts': 'deleteArtifacts',
+        'delete_filesystems': 'deleteFilesystems',
         'delete_system_logs': 'deleteSystemLogs'
     }
 
-    def __init__(self, delete_artifacts: 'bool' =None, delete_system_logs: 'bool' =None):  # noqa: E501
+    def __init__(self, delete_artifacts: 'bool' =None, delete_filesystems: 'bool' =None, delete_system_logs: 'bool' =None):  # noqa: E501
         """V1ClusterDeletionOptions - a model defined in Swagger"""  # noqa: E501
         self._delete_artifacts = None
+        self._delete_filesystems = None
         self._delete_system_logs = None
         self.discriminator = None
         if delete_artifacts is not None:
             self.delete_artifacts = delete_artifacts
+        if delete_filesystems is not None:
+            self.delete_filesystems = delete_filesystems
         if delete_system_logs is not None:
             self.delete_system_logs = delete_system_logs
 
@@ -80,6 +85,27 @@ class V1ClusterDeletionOptions(object):
         """
 
         self._delete_artifacts = delete_artifacts
+
+    @property
+    def delete_filesystems(self) -> 'bool':
+        """Gets the delete_filesystems of this V1ClusterDeletionOptions.  # noqa: E501
+
+
+        :return: The delete_filesystems of this V1ClusterDeletionOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._delete_filesystems
+
+    @delete_filesystems.setter
+    def delete_filesystems(self, delete_filesystems: 'bool'):
+        """Sets the delete_filesystems of this V1ClusterDeletionOptions.
+
+
+        :param delete_filesystems: The delete_filesystems of this V1ClusterDeletionOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._delete_filesystems = delete_filesystems
 
     @property
     def delete_system_logs(self) -> 'bool':
