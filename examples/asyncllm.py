@@ -3,7 +3,6 @@ from lightning_sdk.llm import LLM
 
 import asyncio
 import time
-from lightning_sdk.llm import AsyncLLM
 
 def benchmark_sync():
     llm = LLM(name="openai/gpt-4o")
@@ -22,7 +21,7 @@ async def send_request(async_llm, i):
     print(f"Response {i+1}: {response}")
 
 async def benchmark_async():
-    async_llm = AsyncLLM(name="openai/gpt-4o")
+    async_llm = LLM(name="openai/gpt-4o", is_async=True)
     start = time.time()
 
     # Send all 10 requests concurrently

@@ -1,6 +1,6 @@
 import os
 import warnings
-from typing import Dict, Generator, List, Optional, Set, Tuple, Union
+from typing import AsyncGenerator, Dict, Generator, List, Optional, Set, Tuple, Union
 
 from lightning_sdk.api.llm_api import LLMApi
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
@@ -18,6 +18,7 @@ class LLM:
         self,
         name: str,
         teamspace: Optional[str] = None,
+        is_async: Optional[bool] = False,
     ) -> None:
         """Initializes the LLM instance with teamspace information, which is required for billing purposes.
 
@@ -30,6 +31,7 @@ class LLM:
             name (str): The name of the model or resource.
             teamspace (Optional[str]): The specified teamspace for billing. If not provided, it will be resolved
                                        through the above methods.
+            is_async (Optional[bool]): Enable async requests
 
         Raises:
             ValueError: If teamspace information cannot be resolved.
@@ -67,6 +69,7 @@ class LLM:
         self._model_provider, self._model_name = self._parse_model_name(name)
 
         self._llm_api = LLMApi()
+        self._is_async = is_async
 
         try:
             # check if it is a org model
@@ -174,6 +177,36 @@ class LLM:
         for line in result:
             yield line.choices[0].delta.content
 
+    async def _async_chat(
+        self,
+        prompt: str,
+        system_prompt: Optional[str] = None,
+        max_completion_tokens: Optional[int] = 500,
+        images: Optional[Union[List[str], str]] = None,
+        conversation: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        stream: bool = False,
+        upload_local_images: bool = False,
+    ) -> Union[str, AsyncGenerator[str, None]]:
+        conversation_id = self._conversations.get(conversation) if conversation else None
+        output = await self._llm_api.async_start_conversation(
+            prompt=prompt,
+            system_prompt=system_prompt,
+            max_completion_tokens=max_completion_tokens,
+            images=images,
+            assistant_id=self._model.id,
+            conversation_id=conversation_id,
+            billing_project_id=self._teamspace.id,
+            metadata=metadata,
+            name=conversation,
+            stream=stream,
+        )
+        if not stream:
+            if conversation and not conversation_id:
+                self._conversations[conversation] = output.conversation_id
+            return output.choices[0].delta.content
+        raise NotImplementedError("Streaming is not supported in this client.")
+
     def chat(
         self,
         prompt: str,
@@ -198,6 +231,19 @@ class LLM:
                     self._teamspace.upload_file(file_path=image, remote_path=f"images/{os.path.basename(image)}")
 
         conversation_id = self._conversations.get(conversation) if conversation else None
+
+        if self._is_async:
+            return self._async_chat(
+                prompt,
+                system_prompt,
+                max_completion_tokens,
+                images,
+                conversation,
+                metadata,
+                stream,
+                upload_local_images,
+            )
+
         output = self._llm_api.start_conversation(
             prompt=prompt,
             system_prompt=system_prompt,

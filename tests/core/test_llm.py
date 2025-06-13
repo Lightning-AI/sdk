@@ -1,6 +1,6 @@
 import re
 from typing import Generator
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -378,3 +378,35 @@ def test_chat_backend(monkeypatch, mock_auth, mock_public_model):
     # should be able to retrieve conversation "test1"
     conversations = llm2.list_conversations()
     assert set(conversations) == {"test1"}
+
+
+@pytest.mark.asyncio()
+async def test_async_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
+    mock_api = MagicMock()
+    mock_api.list_models.return_value = mock_model_data
+    mock_api.get_public_models.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    llm = LLM(name="gpt-4o", is_async=True)
+
+    llm._model = MagicMock()
+    llm._model.id = "model-id"
+    llm._teamspace = MagicMock()
+    llm._teamspace.id = "teamspace-id"
+    llm._conversations = {}
+
+    # Setup mock output
+    mock_output = MagicMock()
+    mock_output.choices = [MagicMock(delta=MagicMock(content="Hello!"))]
+    mock_output.conversation_id = "new-conv-id"
+
+    llm._llm_api = MagicMock()
+    llm._llm_api.async_start_conversation = AsyncMock(return_value=mock_output)
+
+    # Call chat
+    result = await llm.chat("Hi", conversation="test-convo")
+
+    # Assertions
+    llm._llm_api.async_start_conversation.assert_awaited_once()
+    assert result == "Hello!"
+    assert llm._conversations["test-convo"] == "new-conv-id"
