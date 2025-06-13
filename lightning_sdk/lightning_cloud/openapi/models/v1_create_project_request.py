@@ -41,6 +41,9 @@ class V1CreateProjectRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allow_credits_auto_replenish': 'bool',
+        'auto_replenish_amount': 'float',
+        'auto_replenish_threshold': 'float',
         'default_machine_image_version': 'str',
         'default_machine_type': 'str',
         'description': 'str',
@@ -52,6 +55,9 @@ class V1CreateProjectRequest(object):
     }
 
     attribute_map = {
+        'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
+        'auto_replenish_amount': 'autoReplenishAmount',
+        'auto_replenish_threshold': 'autoReplenishThreshold',
         'default_machine_image_version': 'defaultMachineImageVersion',
         'default_machine_type': 'defaultMachineType',
         'description': 'description',
@@ -62,8 +68,11 @@ class V1CreateProjectRequest(object):
         'quotas': 'quotas'
     }
 
-    def __init__(self, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
+    def __init__(self, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
         """V1CreateProjectRequest - a model defined in Swagger"""  # noqa: E501
+        self._allow_credits_auto_replenish = None
+        self._auto_replenish_amount = None
+        self._auto_replenish_threshold = None
         self._default_machine_image_version = None
         self._default_machine_type = None
         self._description = None
@@ -73,6 +82,12 @@ class V1CreateProjectRequest(object):
         self._preferred_cluster = None
         self._quotas = None
         self.discriminator = None
+        if allow_credits_auto_replenish is not None:
+            self.allow_credits_auto_replenish = allow_credits_auto_replenish
+        if auto_replenish_amount is not None:
+            self.auto_replenish_amount = auto_replenish_amount
+        if auto_replenish_threshold is not None:
+            self.auto_replenish_threshold = auto_replenish_threshold
         if default_machine_image_version is not None:
             self.default_machine_image_version = default_machine_image_version
         if default_machine_type is not None:
@@ -89,6 +104,69 @@ class V1CreateProjectRequest(object):
             self.preferred_cluster = preferred_cluster
         if quotas is not None:
             self.quotas = quotas
+
+    @property
+    def allow_credits_auto_replenish(self) -> 'bool':
+        """Gets the allow_credits_auto_replenish of this V1CreateProjectRequest.  # noqa: E501
+
+
+        :return: The allow_credits_auto_replenish of this V1CreateProjectRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_credits_auto_replenish
+
+    @allow_credits_auto_replenish.setter
+    def allow_credits_auto_replenish(self, allow_credits_auto_replenish: 'bool'):
+        """Sets the allow_credits_auto_replenish of this V1CreateProjectRequest.
+
+
+        :param allow_credits_auto_replenish: The allow_credits_auto_replenish of this V1CreateProjectRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_credits_auto_replenish = allow_credits_auto_replenish
+
+    @property
+    def auto_replenish_amount(self) -> 'float':
+        """Gets the auto_replenish_amount of this V1CreateProjectRequest.  # noqa: E501
+
+
+        :return: The auto_replenish_amount of this V1CreateProjectRequest.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_amount
+
+    @auto_replenish_amount.setter
+    def auto_replenish_amount(self, auto_replenish_amount: 'float'):
+        """Sets the auto_replenish_amount of this V1CreateProjectRequest.
+
+
+        :param auto_replenish_amount: The auto_replenish_amount of this V1CreateProjectRequest.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_amount = auto_replenish_amount
+
+    @property
+    def auto_replenish_threshold(self) -> 'float':
+        """Gets the auto_replenish_threshold of this V1CreateProjectRequest.  # noqa: E501
+
+
+        :return: The auto_replenish_threshold of this V1CreateProjectRequest.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_threshold
+
+    @auto_replenish_threshold.setter
+    def auto_replenish_threshold(self, auto_replenish_threshold: 'float'):
+        """Sets the auto_replenish_threshold of this V1CreateProjectRequest.
+
+
+        :param auto_replenish_threshold: The auto_replenish_threshold of this V1CreateProjectRequest.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_threshold = auto_replenish_threshold
 
     @property
     def default_machine_image_version(self) -> 'str':

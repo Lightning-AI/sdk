@@ -45,6 +45,7 @@ class V1CloudSpaceEnvironmentTemplate(object):
         'created_at': 'datetime',
         'description': 'str',
         'disabled': 'bool',
+        'icon': 'str',
         'id': 'str',
         'managed': 'bool',
         'managed_id': 'str',
@@ -59,6 +60,7 @@ class V1CloudSpaceEnvironmentTemplate(object):
         'created_at': 'createdAt',
         'description': 'description',
         'disabled': 'disabled',
+        'icon': 'icon',
         'id': 'id',
         'managed': 'managed',
         'managed_id': 'managedId',
@@ -68,12 +70,13 @@ class V1CloudSpaceEnvironmentTemplate(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, config: 'V1CloudSpaceEnvironmentTemplateConfig' =None, created_at: 'datetime' =None, description: 'str' =None, disabled: 'bool' =None, id: 'str' =None, managed: 'bool' =None, managed_id: 'str' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, config: 'V1CloudSpaceEnvironmentTemplateConfig' =None, created_at: 'datetime' =None, description: 'str' =None, disabled: 'bool' =None, icon: 'str' =None, id: 'str' =None, managed: 'bool' =None, managed_id: 'str' =None, name: 'str' =None, org_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplate - a model defined in Swagger"""  # noqa: E501
         self._config = None
         self._created_at = None
         self._description = None
         self._disabled = None
+        self._icon = None
         self._id = None
         self._managed = None
         self._managed_id = None
@@ -90,6 +93,8 @@ class V1CloudSpaceEnvironmentTemplate(object):
             self.description = description
         if disabled is not None:
             self.disabled = disabled
+        if icon is not None:
+            self.icon = icon
         if id is not None:
             self.id = id
         if managed is not None:
@@ -188,6 +193,27 @@ class V1CloudSpaceEnvironmentTemplate(object):
         """
 
         self._disabled = disabled
+
+    @property
+    def icon(self) -> 'str':
+        """Gets the icon of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+
+
+        :return: The icon of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+        :rtype: str
+        """
+        return self._icon
+
+    @icon.setter
+    def icon(self, icon: 'str'):
+        """Sets the icon of this V1CloudSpaceEnvironmentTemplate.
+
+
+        :param icon: The icon of this V1CloudSpaceEnvironmentTemplate.  # noqa: E501
+        :type: str
+        """
+
+        self._icon = icon
 
     @property
     def id(self) -> 'str':

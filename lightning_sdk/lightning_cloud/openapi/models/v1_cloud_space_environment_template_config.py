@@ -44,6 +44,7 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         'allowed_machines': 'list[str]',
         'default_machine': 'str',
         'environment_type': 'V1CloudSpaceEnvironmentType',
+        'initial_setup_script_text': 'str',
         'machine_image_version': 'str',
         'plugins': 'list[str]',
         'setup_script_text': 'str'
@@ -53,16 +54,18 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         'allowed_machines': 'allowedMachines',
         'default_machine': 'defaultMachine',
         'environment_type': 'environmentType',
+        'initial_setup_script_text': 'initialSetupScriptText',
         'machine_image_version': 'machineImageVersion',
         'plugins': 'plugins',
         'setup_script_text': 'setupScriptText'
     }
 
-    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, machine_image_version: 'str' =None, plugins: 'list[str]' =None, setup_script_text: 'str' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, plugins: 'list[str]' =None, setup_script_text: 'str' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplateConfig - a model defined in Swagger"""  # noqa: E501
         self._allowed_machines = None
         self._default_machine = None
         self._environment_type = None
+        self._initial_setup_script_text = None
         self._machine_image_version = None
         self._plugins = None
         self._setup_script_text = None
@@ -73,6 +76,8 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
             self.default_machine = default_machine
         if environment_type is not None:
             self.environment_type = environment_type
+        if initial_setup_script_text is not None:
+            self.initial_setup_script_text = initial_setup_script_text
         if machine_image_version is not None:
             self.machine_image_version = machine_image_version
         if plugins is not None:
@@ -142,6 +147,27 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         """
 
         self._environment_type = environment_type
+
+    @property
+    def initial_setup_script_text(self) -> 'str':
+        """Gets the initial_setup_script_text of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+
+
+        :return: The initial_setup_script_text of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._initial_setup_script_text
+
+    @initial_setup_script_text.setter
+    def initial_setup_script_text(self, initial_setup_script_text: 'str'):
+        """Sets the initial_setup_script_text of this V1CloudSpaceEnvironmentTemplateConfig.
+
+
+        :param initial_setup_script_text: The initial_setup_script_text of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._initial_setup_script_text = initial_setup_script_text
 
     @property
     def machine_image_version(self) -> 'str':

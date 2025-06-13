@@ -43,7 +43,10 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
     swagger_types = {
         'allowed_machines': 'list[str]',
         'default_machine': 'str',
+        'description': 'str',
         'environment_type': 'V1CloudSpaceEnvironmentType',
+        'icon': 'str',
+        'initial_setup_script_text': 'str',
         'machine_image_version': 'str',
         'name': 'str',
         'org_id': 'str',
@@ -54,7 +57,10 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
     attribute_map = {
         'allowed_machines': 'allowedMachines',
         'default_machine': 'defaultMachine',
+        'description': 'description',
         'environment_type': 'environmentType',
+        'icon': 'icon',
+        'initial_setup_script_text': 'initialSetupScriptText',
         'machine_image_version': 'machineImageVersion',
         'name': 'name',
         'org_id': 'orgId',
@@ -62,11 +68,14 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         'setup_script_text': 'setupScriptText'
     }
 
-    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, setup_script_text: 'str' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, description: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, icon: 'str' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, setup_script_text: 'str' =None):  # noqa: E501
         """V1CreateCloudSpaceEnvironmentTemplateRequest - a model defined in Swagger"""  # noqa: E501
         self._allowed_machines = None
         self._default_machine = None
+        self._description = None
         self._environment_type = None
+        self._icon = None
+        self._initial_setup_script_text = None
         self._machine_image_version = None
         self._name = None
         self._org_id = None
@@ -77,8 +86,14 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
             self.allowed_machines = allowed_machines
         if default_machine is not None:
             self.default_machine = default_machine
+        if description is not None:
+            self.description = description
         if environment_type is not None:
             self.environment_type = environment_type
+        if icon is not None:
+            self.icon = icon
+        if initial_setup_script_text is not None:
+            self.initial_setup_script_text = initial_setup_script_text
         if machine_image_version is not None:
             self.machine_image_version = machine_image_version
         if name is not None:
@@ -133,6 +148,27 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         self._default_machine = default_machine
 
     @property
+    def description(self) -> 'str':
+        """Gets the description of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+
+
+        :return: The description of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description: 'str'):
+        """Sets the description of this V1CreateCloudSpaceEnvironmentTemplateRequest.
+
+
+        :param description: The description of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
+
+    @property
     def environment_type(self) -> 'V1CloudSpaceEnvironmentType':
         """Gets the environment_type of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
 
@@ -152,6 +188,48 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         """
 
         self._environment_type = environment_type
+
+    @property
+    def icon(self) -> 'str':
+        """Gets the icon of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+
+
+        :return: The icon of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._icon
+
+    @icon.setter
+    def icon(self, icon: 'str'):
+        """Sets the icon of this V1CreateCloudSpaceEnvironmentTemplateRequest.
+
+
+        :param icon: The icon of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._icon = icon
+
+    @property
+    def initial_setup_script_text(self) -> 'str':
+        """Gets the initial_setup_script_text of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+
+
+        :return: The initial_setup_script_text of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._initial_setup_script_text
+
+    @initial_setup_script_text.setter
+    def initial_setup_script_text(self, initial_setup_script_text: 'str'):
+        """Sets the initial_setup_script_text of this V1CreateCloudSpaceEnvironmentTemplateRequest.
+
+
+        :param initial_setup_script_text: The initial_setup_script_text of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._initial_setup_script_text = initial_setup_script_text
 
     @property
     def machine_image_version(self) -> 'str':

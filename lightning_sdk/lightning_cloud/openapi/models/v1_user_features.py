@@ -66,21 +66,17 @@ class V1UserFeatures(object):
         'datasets': 'bool',
         'default_one_cluster': 'bool',
         'deployment_persistent_disk': 'bool',
-        'dgx_cloud': 'bool',
         'docs_agent': 'bool',
         'drive_v2': 'bool',
-        'enable_storage_limits': 'bool',
         'enterprise_compute_admin': 'bool',
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
-        'filestore': 'bool',
         'gcs_folders': 'bool',
         'instant_capacity_reservation': 'bool',
         'job_artifacts_v2': 'bool',
         'lambda_labs': 'bool',
         'lambda_labs_studios': 'bool',
         'landing_studios': 'bool',
-        'lightning_cloud': 'bool',
         'lit_logger': 'bool',
         'marketplace': 'bool',
         'mmt_fault_tolerance': 'bool',
@@ -92,7 +88,6 @@ class V1UserFeatures(object):
         'nebius': 'bool',
         'nebius_cpu_studios': 'bool',
         'nebius_gpu_studios': 'bool',
-        'neocloud_studios': 'bool',
         'nerf_fs_nonpaying': 'bool',
         'org_level_member_permissions': 'bool',
         'org_usage_limits': 'bool',
@@ -126,7 +121,6 @@ class V1UserFeatures(object):
         'studio_version_visibility': 'bool',
         'teamspace_storage_tab': 'bool',
         'trainium2': 'bool',
-        'transfer_studios': 'bool',
         'use_rclone_mounts_only': 'bool',
         'voltage_park': 'bool',
         'voltage_park_studios': 'bool',
@@ -160,21 +154,17 @@ class V1UserFeatures(object):
         'datasets': 'datasets',
         'default_one_cluster': 'defaultOneCluster',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
-        'dgx_cloud': 'dgxCloud',
         'docs_agent': 'docsAgent',
         'drive_v2': 'driveV2',
-        'enable_storage_limits': 'enableStorageLimits',
         'enterprise_compute_admin': 'enterpriseComputeAdmin',
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
-        'filestore': 'filestore',
         'gcs_folders': 'gcsFolders',
         'instant_capacity_reservation': 'instantCapacityReservation',
         'job_artifacts_v2': 'jobArtifactsV2',
         'lambda_labs': 'lambdaLabs',
         'lambda_labs_studios': 'lambdaLabsStudios',
         'landing_studios': 'landingStudios',
-        'lightning_cloud': 'lightningCloud',
         'lit_logger': 'litLogger',
         'marketplace': 'marketplace',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
@@ -186,7 +176,6 @@ class V1UserFeatures(object):
         'nebius': 'nebius',
         'nebius_cpu_studios': 'nebiusCpuStudios',
         'nebius_gpu_studios': 'nebiusGpuStudios',
-        'neocloud_studios': 'neocloudStudios',
         'nerf_fs_nonpaying': 'nerfFsNonpaying',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'org_usage_limits': 'orgUsageLimits',
@@ -220,7 +209,6 @@ class V1UserFeatures(object):
         'studio_version_visibility': 'studioVersionVisibility',
         'teamspace_storage_tab': 'teamspaceStorageTab',
         'trainium2': 'trainium2',
-        'transfer_studios': 'transferStudios',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
         'voltage_park': 'voltagePark',
         'voltage_park_studios': 'voltageParkStudios',
@@ -228,7 +216,7 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, dgx_cloud: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enable_storage_limits: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, filestore: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lightning_cloud: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, neocloud_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plg_control_center: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, transfer_studios: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plg_control_center: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._accurate_billing = None
         self._affiliate_links = None
@@ -255,21 +243,17 @@ class V1UserFeatures(object):
         self._datasets = None
         self._default_one_cluster = None
         self._deployment_persistent_disk = None
-        self._dgx_cloud = None
         self._docs_agent = None
         self._drive_v2 = None
-        self._enable_storage_limits = None
         self._enterprise_compute_admin = None
         self._fair_share = None
         self._featured_studios_admin = None
-        self._filestore = None
         self._gcs_folders = None
         self._instant_capacity_reservation = None
         self._job_artifacts_v2 = None
         self._lambda_labs = None
         self._lambda_labs_studios = None
         self._landing_studios = None
-        self._lightning_cloud = None
         self._lit_logger = None
         self._marketplace = None
         self._mmt_fault_tolerance = None
@@ -281,7 +265,6 @@ class V1UserFeatures(object):
         self._nebius = None
         self._nebius_cpu_studios = None
         self._nebius_gpu_studios = None
-        self._neocloud_studios = None
         self._nerf_fs_nonpaying = None
         self._org_level_member_permissions = None
         self._org_usage_limits = None
@@ -315,7 +298,6 @@ class V1UserFeatures(object):
         self._studio_version_visibility = None
         self._teamspace_storage_tab = None
         self._trainium2 = None
-        self._transfer_studios = None
         self._use_rclone_mounts_only = None
         self._voltage_park = None
         self._voltage_park_studios = None
@@ -372,22 +354,16 @@ class V1UserFeatures(object):
             self.default_one_cluster = default_one_cluster
         if deployment_persistent_disk is not None:
             self.deployment_persistent_disk = deployment_persistent_disk
-        if dgx_cloud is not None:
-            self.dgx_cloud = dgx_cloud
         if docs_agent is not None:
             self.docs_agent = docs_agent
         if drive_v2 is not None:
             self.drive_v2 = drive_v2
-        if enable_storage_limits is not None:
-            self.enable_storage_limits = enable_storage_limits
         if enterprise_compute_admin is not None:
             self.enterprise_compute_admin = enterprise_compute_admin
         if fair_share is not None:
             self.fair_share = fair_share
         if featured_studios_admin is not None:
             self.featured_studios_admin = featured_studios_admin
-        if filestore is not None:
-            self.filestore = filestore
         if gcs_folders is not None:
             self.gcs_folders = gcs_folders
         if instant_capacity_reservation is not None:
@@ -400,8 +376,6 @@ class V1UserFeatures(object):
             self.lambda_labs_studios = lambda_labs_studios
         if landing_studios is not None:
             self.landing_studios = landing_studios
-        if lightning_cloud is not None:
-            self.lightning_cloud = lightning_cloud
         if lit_logger is not None:
             self.lit_logger = lit_logger
         if marketplace is not None:
@@ -424,8 +398,6 @@ class V1UserFeatures(object):
             self.nebius_cpu_studios = nebius_cpu_studios
         if nebius_gpu_studios is not None:
             self.nebius_gpu_studios = nebius_gpu_studios
-        if neocloud_studios is not None:
-            self.neocloud_studios = neocloud_studios
         if nerf_fs_nonpaying is not None:
             self.nerf_fs_nonpaying = nerf_fs_nonpaying
         if org_level_member_permissions is not None:
@@ -492,8 +464,6 @@ class V1UserFeatures(object):
             self.teamspace_storage_tab = teamspace_storage_tab
         if trainium2 is not None:
             self.trainium2 = trainium2
-        if transfer_studios is not None:
-            self.transfer_studios = transfer_studios
         if use_rclone_mounts_only is not None:
             self.use_rclone_mounts_only = use_rclone_mounts_only
         if voltage_park is not None:
@@ -1031,27 +1001,6 @@ class V1UserFeatures(object):
         self._deployment_persistent_disk = deployment_persistent_disk
 
     @property
-    def dgx_cloud(self) -> 'bool':
-        """Gets the dgx_cloud of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The dgx_cloud of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._dgx_cloud
-
-    @dgx_cloud.setter
-    def dgx_cloud(self, dgx_cloud: 'bool'):
-        """Sets the dgx_cloud of this V1UserFeatures.
-
-
-        :param dgx_cloud: The dgx_cloud of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._dgx_cloud = dgx_cloud
-
-    @property
     def docs_agent(self) -> 'bool':
         """Gets the docs_agent of this V1UserFeatures.  # noqa: E501
 
@@ -1092,27 +1041,6 @@ class V1UserFeatures(object):
         """
 
         self._drive_v2 = drive_v2
-
-    @property
-    def enable_storage_limits(self) -> 'bool':
-        """Gets the enable_storage_limits of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The enable_storage_limits of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._enable_storage_limits
-
-    @enable_storage_limits.setter
-    def enable_storage_limits(self, enable_storage_limits: 'bool'):
-        """Sets the enable_storage_limits of this V1UserFeatures.
-
-
-        :param enable_storage_limits: The enable_storage_limits of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._enable_storage_limits = enable_storage_limits
 
     @property
     def enterprise_compute_admin(self) -> 'bool':
@@ -1176,27 +1104,6 @@ class V1UserFeatures(object):
         """
 
         self._featured_studios_admin = featured_studios_admin
-
-    @property
-    def filestore(self) -> 'bool':
-        """Gets the filestore of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The filestore of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._filestore
-
-    @filestore.setter
-    def filestore(self, filestore: 'bool'):
-        """Sets the filestore of this V1UserFeatures.
-
-
-        :param filestore: The filestore of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._filestore = filestore
 
     @property
     def gcs_folders(self) -> 'bool':
@@ -1323,27 +1230,6 @@ class V1UserFeatures(object):
         """
 
         self._landing_studios = landing_studios
-
-    @property
-    def lightning_cloud(self) -> 'bool':
-        """Gets the lightning_cloud of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The lightning_cloud of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._lightning_cloud
-
-    @lightning_cloud.setter
-    def lightning_cloud(self, lightning_cloud: 'bool'):
-        """Sets the lightning_cloud of this V1UserFeatures.
-
-
-        :param lightning_cloud: The lightning_cloud of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._lightning_cloud = lightning_cloud
 
     @property
     def lit_logger(self) -> 'bool':
@@ -1575,27 +1461,6 @@ class V1UserFeatures(object):
         """
 
         self._nebius_gpu_studios = nebius_gpu_studios
-
-    @property
-    def neocloud_studios(self) -> 'bool':
-        """Gets the neocloud_studios of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The neocloud_studios of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._neocloud_studios
-
-    @neocloud_studios.setter
-    def neocloud_studios(self, neocloud_studios: 'bool'):
-        """Sets the neocloud_studios of this V1UserFeatures.
-
-
-        :param neocloud_studios: The neocloud_studios of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._neocloud_studios = neocloud_studios
 
     @property
     def nerf_fs_nonpaying(self) -> 'bool':
@@ -2289,27 +2154,6 @@ class V1UserFeatures(object):
         """
 
         self._trainium2 = trainium2
-
-    @property
-    def transfer_studios(self) -> 'bool':
-        """Gets the transfer_studios of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The transfer_studios of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._transfer_studios
-
-    @transfer_studios.setter
-    def transfer_studios(self, transfer_studios: 'bool'):
-        """Sets the transfer_studios of this V1UserFeatures.
-
-
-        :param transfer_studios: The transfer_studios of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._transfer_studios = transfer_studios
 
     @property
     def use_rclone_mounts_only(self) -> 'bool':

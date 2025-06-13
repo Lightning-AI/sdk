@@ -46,6 +46,7 @@ class V1RoutingTelemetry(object):
         'method': 'str',
         'path': 'str',
         'received_at': 'datetime',
+        'resource_id': 'str',
         'status_code': 'int'
     }
 
@@ -55,16 +56,18 @@ class V1RoutingTelemetry(object):
         'method': 'method',
         'path': 'path',
         'received_at': 'receivedAt',
+        'resource_id': 'resourceId',
         'status_code': 'statusCode'
     }
 
-    def __init__(self, duration: 'float' =None, id: 'str' =None, method: 'str' =None, path: 'str' =None, received_at: 'datetime' =None, status_code: 'int' =None):  # noqa: E501
+    def __init__(self, duration: 'float' =None, id: 'str' =None, method: 'str' =None, path: 'str' =None, received_at: 'datetime' =None, resource_id: 'str' =None, status_code: 'int' =None):  # noqa: E501
         """V1RoutingTelemetry - a model defined in Swagger"""  # noqa: E501
         self._duration = None
         self._id = None
         self._method = None
         self._path = None
         self._received_at = None
+        self._resource_id = None
         self._status_code = None
         self.discriminator = None
         if duration is not None:
@@ -77,6 +80,8 @@ class V1RoutingTelemetry(object):
             self.path = path
         if received_at is not None:
             self.received_at = received_at
+        if resource_id is not None:
+            self.resource_id = resource_id
         if status_code is not None:
             self.status_code = status_code
 
@@ -184,6 +189,27 @@ class V1RoutingTelemetry(object):
         """
 
         self._received_at = received_at
+
+    @property
+    def resource_id(self) -> 'str':
+        """Gets the resource_id of this V1RoutingTelemetry.  # noqa: E501
+
+
+        :return: The resource_id of this V1RoutingTelemetry.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_id
+
+    @resource_id.setter
+    def resource_id(self, resource_id: 'str'):
+        """Sets the resource_id of this V1RoutingTelemetry.
+
+
+        :param resource_id: The resource_id of this V1RoutingTelemetry.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_id = resource_id
 
     @property
     def status_code(self) -> 'int':
