@@ -387,7 +387,7 @@ async def test_async_chat(monkeypatch, mock_auth, mock_model_data, mock_public_m
     mock_api.get_public_models.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
-    llm = LLM(name="gpt-4o", is_async=True)
+    llm = LLM(name="gpt-4o", enable_async=True)
 
     llm._model = MagicMock()
     llm._model.id = "model-id"

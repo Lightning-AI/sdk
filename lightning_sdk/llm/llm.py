@@ -18,7 +18,7 @@ class LLM:
         self,
         name: str,
         teamspace: Optional[str] = None,
-        is_async: Optional[bool] = False,
+        enable_async: Optional[bool] = False,
     ) -> None:
         """Initializes the LLM instance with teamspace information, which is required for billing purposes.
 
@@ -31,7 +31,7 @@ class LLM:
             name (str): The name of the model or resource.
             teamspace (Optional[str]): The specified teamspace for billing. If not provided, it will be resolved
                                        through the above methods.
-            is_async (Optional[bool]): Enable async requests
+            enable_async (Optional[bool]): Enable async requests
 
         Raises:
             ValueError: If teamspace information cannot be resolved.
@@ -69,7 +69,7 @@ class LLM:
         self._model_provider, self._model_name = self._parse_model_name(name)
 
         self._llm_api = LLMApi()
-        self._is_async = is_async
+        self._enable_async = enable_async
 
         try:
             # check if it is a org model
@@ -232,7 +232,7 @@ class LLM:
 
         conversation_id = self._conversations.get(conversation) if conversation else None
 
-        if self._is_async:
+        if self._enable_async:
             return self._async_chat(
                 prompt,
                 system_prompt,

@@ -21,7 +21,7 @@ async def send_request(async_llm, i):
     print(f"Response {i+1}: {response}")
 
 async def benchmark_async():
-    async_llm = LLM(name="openai/gpt-4o", is_async=True)
+    async_llm = LLM(name="openai/gpt-4o", enable_async=True)
     start = time.time()
 
     # Send all 10 requests concurrently
