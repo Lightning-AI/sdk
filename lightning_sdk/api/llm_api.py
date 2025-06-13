@@ -1,7 +1,8 @@
+import asyncio
 import base64
 import json
 import os
-from typing import Dict, Generator, List, Optional, Union
+from typing import AsyncGenerator, Dict, Generator, List, Optional, Union
 
 from pip._vendor.urllib3 import HTTPResponse
 
@@ -109,6 +110,57 @@ class LLMApi:
         if not stream:
             return result.result
         return self._stream_chat_response(result)
+
+    async def async_start_conversation(
+        self,
+        prompt: str,
+        system_prompt: Optional[str],
+        max_completion_tokens: int,
+        assistant_id: str,
+        images: Optional[List[str]] = None,
+        conversation_id: Optional[str] = None,
+        billing_project_id: Optional[str] = None,
+        name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        stream: bool = False,
+    ) -> Union[V1ConversationResponseChunk, AsyncGenerator[V1ConversationResponseChunk, None]]:
+        is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
+        body = {
+            "message": {
+                "author": {"role": "user"},
+                "content": [
+                    {"contentType": "text", "parts": [prompt]},
+                ],
+            },
+            "max_completion_tokens": max_completion_tokens,
+            "conversation_id": conversation_id,
+            "billing_project_id": billing_project_id,
+            "name": name,
+            "stream": stream,
+            "metadata": metadata or {},
+            "internal_conversation": is_internal_conversation,
+        }
+        if images:
+            for image in images:
+                url = image
+                if not image.startswith("http"):
+                    url = self._encode_image_bytes_to_data_url(image)
+
+                body["message"]["content"].append(
+                    {
+                        "contentType": "image",
+                        "parts": [url],
+                    }
+                )
+
+        if not stream:
+            thread = await asyncio.to_thread(
+                self._client.assistants_service_start_conversation, body, assistant_id, async_req=True
+            )
+            result = await asyncio.to_thread(thread.get)
+            return result.result
+
+        raise NotImplementedError("Streaming is not supported in this client.")
 
     def list_conversations(self, assistant_id: str) -> List[str]:
         result = self._client.assistants_service_list_conversations(assistant_id)
