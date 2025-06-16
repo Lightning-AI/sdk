@@ -14,8 +14,8 @@ jobs:
     runs-on: "ubuntu-22.04"
     timeout-minutes: 10
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: 3.8
 
@@ -48,7 +48,7 @@ jobs:
     - run: ls -lh dist/
 
     - name: Upload to release
-      uses: AButler/upload-release-assets@v2.0
+      uses: AButler/upload-release-assets@v3.0
       with:
         files: 'dist/*'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -68,7 +68,7 @@ jobs:
 
     # We do this, since failures on test.pypi aren't that bad
     - name: Publish to Test PyPI
-      uses: pypa/gh-action-pypi-publish@v1.8.10
+      uses: pypa/gh-action-pypi-publish@v1.12.4
       with:
         user: __token__
         password: ${{ secrets.TEST_PYPI_PASSWORD }}
@@ -76,12 +76,12 @@ jobs:
         verbose: true
 
     - name: Delay releasing
-      uses: juliangruber/sleep-action@v1
+      uses: juliangruber/sleep-action@v2
       with:
         time: 2m
 
     - name: Publish distribution 📦 to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.8.10
+      uses: pypa/gh-action-pypi-publish@v1.12.4
       with:
         user: __token__
         password: ${{ secrets.PYPI_PASSWORD }}
