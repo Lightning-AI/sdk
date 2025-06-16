@@ -4,7 +4,7 @@ from typing import Optional
 
 import click
 
-from lightning_sdk.cli.configure import ssh as configure_ssh
+from lightning_sdk.cli.configure import _configure_ssh_internal
 from lightning_sdk.cli.studios_menu import _StudiosMenu
 
 
@@ -22,7 +22,7 @@ def connect() -> None:
 )
 def studio(name: Optional[str], teamspace: Optional[str]) -> None:
     """Connect to a studio via SSH."""
-    configure_ssh(name=name, teamspace=teamspace, overwrite=False)
+    _configure_ssh_internal(name=name, teamspace=teamspace, overwrite=False)
 
     menu = _StudiosMenu()
     studio = menu._get_studio(name=name, teamspace=teamspace)
