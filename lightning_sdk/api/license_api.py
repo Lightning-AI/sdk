@@ -11,7 +11,7 @@ LICENSE_SIGNING_URL = f"{env.LIGHTNING_CLOUD_URL}?settings=licenses"
 
 
 def generate_url_user_settings(redirect_to: str = LICENSE_SIGNING_URL) -> str:
-    params = urlencode({"redirectTo": redirect_to, "mode": "licenses", "okbhrt": LICENSE_CODE})
+    params = urlencode({"redirectTo": redirect_to, "okbhrt": LICENSE_CODE})
     return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
 
