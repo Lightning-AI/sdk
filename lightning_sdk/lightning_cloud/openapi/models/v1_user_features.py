@@ -111,15 +111,12 @@ class V1UserFeatures(object):
         'restartable_jobs': 'bool',
         'runnable_public_studio_page': 'bool',
         'security_docs': 'bool',
-        'seoul_aws_region': 'bool',
         'show_dev_admin': 'bool',
         'single_wallet': 'bool',
         'slurm': 'bool',
-        'slurm_machine_selector': 'bool',
         'storage_overuse_deletion': 'bool',
         'studio_config': 'bool',
         'studio_version_visibility': 'bool',
-        'teamspace_storage_tab': 'bool',
         'trainium2': 'bool',
         'use_rclone_mounts_only': 'bool',
         'voltage_park': 'bool',
@@ -199,15 +196,12 @@ class V1UserFeatures(object):
         'restartable_jobs': 'restartableJobs',
         'runnable_public_studio_page': 'runnablePublicStudioPage',
         'security_docs': 'securityDocs',
-        'seoul_aws_region': 'seoulAwsRegion',
         'show_dev_admin': 'showDevAdmin',
         'single_wallet': 'singleWallet',
         'slurm': 'slurm',
-        'slurm_machine_selector': 'slurmMachineSelector',
         'storage_overuse_deletion': 'storageOveruseDeletion',
         'studio_config': 'studioConfig',
         'studio_version_visibility': 'studioVersionVisibility',
-        'teamspace_storage_tab': 'teamspaceStorageTab',
         'trainium2': 'trainium2',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
         'voltage_park': 'voltagePark',
@@ -216,7 +210,7 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plg_control_center: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, seoul_aws_region: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, slurm_machine_selector: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, teamspace_storage_tab: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plg_control_center: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._accurate_billing = None
         self._affiliate_links = None
@@ -288,15 +282,12 @@ class V1UserFeatures(object):
         self._restartable_jobs = None
         self._runnable_public_studio_page = None
         self._security_docs = None
-        self._seoul_aws_region = None
         self._show_dev_admin = None
         self._single_wallet = None
         self._slurm = None
-        self._slurm_machine_selector = None
         self._storage_overuse_deletion = None
         self._studio_config = None
         self._studio_version_visibility = None
-        self._teamspace_storage_tab = None
         self._trainium2 = None
         self._use_rclone_mounts_only = None
         self._voltage_park = None
@@ -444,24 +435,18 @@ class V1UserFeatures(object):
             self.runnable_public_studio_page = runnable_public_studio_page
         if security_docs is not None:
             self.security_docs = security_docs
-        if seoul_aws_region is not None:
-            self.seoul_aws_region = seoul_aws_region
         if show_dev_admin is not None:
             self.show_dev_admin = show_dev_admin
         if single_wallet is not None:
             self.single_wallet = single_wallet
         if slurm is not None:
             self.slurm = slurm
-        if slurm_machine_selector is not None:
-            self.slurm_machine_selector = slurm_machine_selector
         if storage_overuse_deletion is not None:
             self.storage_overuse_deletion = storage_overuse_deletion
         if studio_config is not None:
             self.studio_config = studio_config
         if studio_version_visibility is not None:
             self.studio_version_visibility = studio_version_visibility
-        if teamspace_storage_tab is not None:
-            self.teamspace_storage_tab = teamspace_storage_tab
         if trainium2 is not None:
             self.trainium2 = trainium2
         if use_rclone_mounts_only is not None:
@@ -1946,27 +1931,6 @@ class V1UserFeatures(object):
         self._security_docs = security_docs
 
     @property
-    def seoul_aws_region(self) -> 'bool':
-        """Gets the seoul_aws_region of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The seoul_aws_region of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._seoul_aws_region
-
-    @seoul_aws_region.setter
-    def seoul_aws_region(self, seoul_aws_region: 'bool'):
-        """Sets the seoul_aws_region of this V1UserFeatures.
-
-
-        :param seoul_aws_region: The seoul_aws_region of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._seoul_aws_region = seoul_aws_region
-
-    @property
     def show_dev_admin(self) -> 'bool':
         """Gets the show_dev_admin of this V1UserFeatures.  # noqa: E501
 
@@ -2030,27 +1994,6 @@ class V1UserFeatures(object):
         self._slurm = slurm
 
     @property
-    def slurm_machine_selector(self) -> 'bool':
-        """Gets the slurm_machine_selector of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The slurm_machine_selector of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._slurm_machine_selector
-
-    @slurm_machine_selector.setter
-    def slurm_machine_selector(self, slurm_machine_selector: 'bool'):
-        """Sets the slurm_machine_selector of this V1UserFeatures.
-
-
-        :param slurm_machine_selector: The slurm_machine_selector of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._slurm_machine_selector = slurm_machine_selector
-
-    @property
     def storage_overuse_deletion(self) -> 'bool':
         """Gets the storage_overuse_deletion of this V1UserFeatures.  # noqa: E501
 
@@ -2112,27 +2055,6 @@ class V1UserFeatures(object):
         """
 
         self._studio_version_visibility = studio_version_visibility
-
-    @property
-    def teamspace_storage_tab(self) -> 'bool':
-        """Gets the teamspace_storage_tab of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The teamspace_storage_tab of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._teamspace_storage_tab
-
-    @teamspace_storage_tab.setter
-    def teamspace_storage_tab(self, teamspace_storage_tab: 'bool'):
-        """Sets the teamspace_storage_tab of this V1UserFeatures.
-
-
-        :param teamspace_storage_tab: The teamspace_storage_tab of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._teamspace_storage_tab = teamspace_storage_tab
 
     @property
     def trainium2(self) -> 'bool':

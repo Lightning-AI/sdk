@@ -2726,7 +2726,6 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param bool include_pricing:
         :param str cloud_provider:
         :param str project_id:
         :return: V1ListDefaultClusterAcceleratorsResponse
@@ -2749,7 +2748,6 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param bool include_pricing:
         :param str cloud_provider:
         :param str project_id:
         :return: V1ListDefaultClusterAcceleratorsResponse
@@ -2757,7 +2755,7 @@ class ClusterServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['include_pricing', 'cloud_provider', 'project_id']  # noqa: E501
+        all_params = ['cloud_provider', 'project_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2778,8 +2776,6 @@ class ClusterServiceApi(object):
         path_params = {}
 
         query_params = []
-        if 'include_pricing' in params:
-            query_params.append(('includePricing', params['include_pricing']))  # noqa: E501
         if 'cloud_provider' in params:
             query_params.append(('cloudProvider', params['cloud_provider']))  # noqa: E501
         if 'project_id' in params:

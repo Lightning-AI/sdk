@@ -42,7 +42,10 @@ class V1GetUserResponse(object):
     """
     swagger_types = {
         'agree_to_terms_and_conditions': 'bool',
+        'allow_credits_auto_replenish': 'bool',
         'api_key': 'str',
+        'auto_replenish_amount': 'float',
+        'auto_replenish_threshold': 'float',
         'country': 'str',
         'discounted_pro_plan': 'bool',
         'email': 'str',
@@ -80,7 +83,10 @@ class V1GetUserResponse(object):
 
     attribute_map = {
         'agree_to_terms_and_conditions': 'agreeToTermsAndConditions',
+        'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
         'api_key': 'apiKey',
+        'auto_replenish_amount': 'autoReplenishAmount',
+        'auto_replenish_threshold': 'autoReplenishThreshold',
         'country': 'country',
         'discounted_pro_plan': 'discountedProPlan',
         'email': 'email',
@@ -116,10 +122,13 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, api_key: 'str' =None, country: 'str' =None, discounted_pro_plan: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, country: 'str' =None, discounted_pro_plan: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
+        self._allow_credits_auto_replenish = None
         self._api_key = None
+        self._auto_replenish_amount = None
+        self._auto_replenish_threshold = None
         self._country = None
         self._discounted_pro_plan = None
         self._email = None
@@ -156,8 +165,14 @@ class V1GetUserResponse(object):
         self.discriminator = None
         if agree_to_terms_and_conditions is not None:
             self.agree_to_terms_and_conditions = agree_to_terms_and_conditions
+        if allow_credits_auto_replenish is not None:
+            self.allow_credits_auto_replenish = allow_credits_auto_replenish
         if api_key is not None:
             self.api_key = api_key
+        if auto_replenish_amount is not None:
+            self.auto_replenish_amount = auto_replenish_amount
+        if auto_replenish_threshold is not None:
+            self.auto_replenish_threshold = auto_replenish_threshold
         if country is not None:
             self.country = country
         if discounted_pro_plan is not None:
@@ -247,6 +262,27 @@ class V1GetUserResponse(object):
         self._agree_to_terms_and_conditions = agree_to_terms_and_conditions
 
     @property
+    def allow_credits_auto_replenish(self) -> 'bool':
+        """Gets the allow_credits_auto_replenish of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The allow_credits_auto_replenish of this V1GetUserResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_credits_auto_replenish
+
+    @allow_credits_auto_replenish.setter
+    def allow_credits_auto_replenish(self, allow_credits_auto_replenish: 'bool'):
+        """Sets the allow_credits_auto_replenish of this V1GetUserResponse.
+
+
+        :param allow_credits_auto_replenish: The allow_credits_auto_replenish of this V1GetUserResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_credits_auto_replenish = allow_credits_auto_replenish
+
+    @property
     def api_key(self) -> 'str':
         """Gets the api_key of this V1GetUserResponse.  # noqa: E501
 
@@ -266,6 +302,48 @@ class V1GetUserResponse(object):
         """
 
         self._api_key = api_key
+
+    @property
+    def auto_replenish_amount(self) -> 'float':
+        """Gets the auto_replenish_amount of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The auto_replenish_amount of this V1GetUserResponse.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_amount
+
+    @auto_replenish_amount.setter
+    def auto_replenish_amount(self, auto_replenish_amount: 'float'):
+        """Sets the auto_replenish_amount of this V1GetUserResponse.
+
+
+        :param auto_replenish_amount: The auto_replenish_amount of this V1GetUserResponse.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_amount = auto_replenish_amount
+
+    @property
+    def auto_replenish_threshold(self) -> 'float':
+        """Gets the auto_replenish_threshold of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The auto_replenish_threshold of this V1GetUserResponse.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_threshold
+
+    @auto_replenish_threshold.setter
+    def auto_replenish_threshold(self, auto_replenish_threshold: 'float'):
+        """Sets the auto_replenish_threshold of this V1GetUserResponse.
+
+
+        :param auto_replenish_threshold: The auto_replenish_threshold of this V1GetUserResponse.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_threshold = auto_replenish_threshold
 
     @property
     def country(self) -> 'str':
