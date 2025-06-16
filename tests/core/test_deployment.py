@@ -375,6 +375,7 @@ def test_deployment_update(monkeypatch):
         release_strategy=deployment_api_module.RollingUpdateReleaseStrategy(),
         health_check=HttpHealthCheck(path="/health", port=8000),
         include_credentials=True,
+        command="python server.py",
     )
     client.jobs_service_update_deployment.assert_called()
     assert client.jobs_service_update_deployment._mock_mock_calls[0].kwargs["body"].spec.entrypoint == "new_entrypoint"
@@ -384,6 +385,8 @@ def test_deployment_update(monkeypatch):
     assert deployment.release_id == "release-id"
     assert deployment.quantity == 2
     assert deployment.include_credentials is True
+    assert deployment.entrypoint == "new_entrypoint"
+    assert deployment.command == "python server.py"
 
     deployment.update(
         entrypoint="new_entrypoint",
@@ -399,11 +402,94 @@ def test_deployment_update(monkeypatch):
     assert deployment.release_id == "release-id"
     assert deployment.quantity == 2
     assert deployment.include_credentials is False
+    assert deployment.entrypoint == "new_entrypoint"
+    assert deployment.command == "python server.py"
 
-    deployment.update(include_credentials=None)
+    deployment.update(include_credentials=None, command="python server2.py")
     assert deployment.include_credentials is False
     assert readiness_probe.http_get.path == "/health"
     assert readiness_probe.http_get.port == 8000
+    assert deployment.entrypoint == "new_entrypoint"
+    assert deployment.command == "python server2.py"
+
+
+def test_deployment_update_name(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+
+    client = MagicMock()
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(name="ollama", spec=V1JobSpec())
+
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="ollama")
+
+    with pytest.raises(RuntimeError, match="When doing a new release, a release strategy needs to be defined."):
+        deployment.update(entrypoint="new_entrypoint")
+
+    assert deployment.name == "ollama"
+    deployment.update(name="new_entrypoint")
+    assert deployment.name == "new_entrypoint"
+
+
+def test_deployment_update_replicas(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+
+    client = MagicMock()
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(replicas=1, spec=V1JobSpec())
+
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="ollama")
+
+    with pytest.raises(RuntimeError, match="When doing a new release, a release strategy needs to be defined."):
+        deployment.update(entrypoint="new_entrypoint")
+
+    assert deployment.replicas == 1
+    deployment.update()
+    assert deployment.replicas == 1
+    deployment.update(replicas=0)
+    assert deployment.replicas == 0
+
+
+def test_deployment_update_strategy(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+
+    client = MagicMock()
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(spec=V1JobSpec())
+
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="ollama")
+
+    with pytest.raises(RuntimeError, match="When doing a new release, a release strategy needs to be defined."):
+        deployment.update(entrypoint="new_entrypoint")
+
+    assert deployment._deployment.strategy is None
+    deployment.update()
+    assert deployment._deployment.strategy is not None
+    deployment.update(release_strategy=deployment_api_module.RollingUpdateReleaseStrategy())
+    assert deployment._deployment.strategy is not None
 
 
 def test_deployment_stop(monkeypatch):

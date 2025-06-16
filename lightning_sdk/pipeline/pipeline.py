@@ -63,7 +63,7 @@ class Pipeline:
         pipeline = None
 
         if name.startswith("pip_"):
-            pipeline = self._pipeline_api.get_pipeline_by_id(name, self._teamspace.id)
+            pipeline = self._pipeline_api.get_pipeline_by_id(self._teamspace.id, name)
 
         if pipeline:
             self._name = pipeline.name

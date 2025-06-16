@@ -282,12 +282,11 @@ class DeploymentApi:
 
         requires_release = False
         requires_release |= apply_change(deployment.spec, "image", image)
+
         requires_release |= apply_change(deployment.spec, "entrypoint", entrypoint)
         requires_release |= apply_change(deployment.spec, "command", command)
         requires_release |= apply_change(deployment.spec, "env", to_env(env))
-
         requires_release |= apply_change(deployment.spec, "readiness_probe", to_health_check(health_check, False))
-
         requires_release |= apply_change(deployment.spec, "cluster_id", cloud_account)
         requires_release |= apply_change(deployment.spec, "spot", spot)
         requires_release |= apply_change(deployment.spec, "quantity", quantity)

@@ -276,8 +276,8 @@ class Deployment:
             cloud_account=cloud_account,
             machine=machine,
             image=image,
-            entrypoint=entrypoint or "",
-            command=command or "",
+            entrypoint=entrypoint,
+            command=command,
             ports=ports,
             custom_domain=custom_domain,
             auth=auth,
@@ -465,6 +465,20 @@ class Deployment:
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return self._deployment.spec.image
+        return None
+
+    @property
+    def entrypoint(self) -> Optional[str]:
+        if self._deployment:
+            self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
+            return self._deployment.spec.entrypoint
+        return None
+
+    @property
+    def command(self) -> Optional[str]:
+        if self._deployment:
+            self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
+            return self._deployment.spec.command
         return None
 
     @property
