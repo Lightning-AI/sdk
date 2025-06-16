@@ -285,7 +285,9 @@ class DeploymentApi:
         requires_release |= apply_change(deployment.spec, "entrypoint", entrypoint)
         requires_release |= apply_change(deployment.spec, "command", command)
         requires_release |= apply_change(deployment.spec, "env", to_env(env))
-        requires_release |= apply_change(deployment.spec, "readiness_probe", to_health_check(health_check))
+
+        requires_release |= apply_change(deployment.spec, "readiness_probe", to_health_check(health_check, False))
+
         requires_release |= apply_change(deployment.spec, "cluster_id", cloud_account)
         requires_release |= apply_change(deployment.spec, "spot", spot)
         requires_release |= apply_change(deployment.spec, "quantity", quantity)
@@ -524,8 +526,12 @@ def to_endpoint(
 
 
 def to_health_check(
-    health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None
+    health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
+    use_default: bool = True,
 ) -> Optional[V1JobHealthCheckConfig]:
+    if health_check is None and not use_default:
+        return None
+
     # Use Default health check if none is provided
     if not health_check:
         return V1JobHealthCheckConfig(

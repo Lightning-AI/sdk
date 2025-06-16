@@ -6,6 +6,7 @@ import pytest
 from lightning_sdk import organization as organization_module
 from lightning_sdk import teamspace, user
 from lightning_sdk.api import deployment_api as deployment_api_module
+from lightning_sdk.api.deployment_api import apply_change, to_env, to_health_check
 from lightning_sdk.deployment import deployment as deployment_module
 from lightning_sdk.deployment.deployment import AutoScaleConfig, Env, HttpHealthCheck, Secret
 from lightning_sdk.lightning_cloud.openapi import (
@@ -401,6 +402,8 @@ def test_deployment_update(monkeypatch):
 
     deployment.update(include_credentials=None)
     assert deployment.include_credentials is False
+    assert readiness_probe.http_get.path == "/health"
+    assert readiness_probe.http_get.port == 8000
 
 
 def test_deployment_stop(monkeypatch):
@@ -626,9 +629,25 @@ def test_compose_commands():
     assert command == "( python server.py & ) && ls && ( python server.py & )"
 
 
-def to_health_check_empty():
+def test_to_health_check_empty():
     health_check = deployment_api_module.to_health_check()
     assert health_check.failure_threshold == 600
-    assert health_check.initial_delay_seconds == 600
-    assert health_check.interval_seconds == 600
+    assert health_check.initial_delay_seconds == 0
+    assert health_check.interval_seconds == 1
     assert health_check.timeout_seconds == 600
+
+    health_check = deployment_api_module.to_health_check(None, False)
+    assert health_check is None
+
+
+def test_apply_change():
+    to_health_check()
+
+    spec = V1JobSpec()
+    assert apply_change(spec, "env", to_env({"NAME": "VALUE"}))
+
+    spec = V1JobSpec()
+    assert not apply_change(spec, "env", to_env(None))
+
+    spec = V1JobSpec()
+    assert apply_change(spec, "readiness_probe", to_health_check(None))

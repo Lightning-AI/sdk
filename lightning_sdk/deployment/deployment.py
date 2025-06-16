@@ -340,7 +340,7 @@ class Deployment:
         return None
 
     @property
-    def readiness_probe(self) -> Optional[Union[HttpHealthCheck, ExecHealthCheck]]:
+    def health_check(self) -> Optional[Union[HttpHealthCheck, ExecHealthCheck]]:
         """The health check to validate the replicas are ready to receive traffic."""
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
