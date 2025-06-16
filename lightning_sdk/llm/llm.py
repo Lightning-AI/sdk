@@ -177,6 +177,11 @@ class LLM:
         for line in result:
             yield line.choices[0].delta.content
 
+    async def _async_stream_text(self, output: str) -> AsyncGenerator[str, None]:
+        async for chunk in output:
+            if chunk.choices and chunk.choices[0].delta:
+                yield chunk.choices[0].delta.content
+
     async def _async_chat(
         self,
         prompt: str,
@@ -205,7 +210,7 @@ class LLM:
             if conversation and not conversation_id:
                 self._conversations[conversation] = output.conversation_id
             return output.choices[0].delta.content
-        raise NotImplementedError("Streaming is not supported in this client.")
+        return self._async_stream_text(output)
 
     def chat(
         self,

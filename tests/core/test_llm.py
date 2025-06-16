@@ -410,3 +410,32 @@ async def test_async_chat(monkeypatch, mock_auth, mock_model_data, mock_public_m
     llm._llm_api.async_start_conversation.assert_awaited_once()
     assert result == "Hello!"
     assert llm._conversations["test-convo"] == "new-conv-id"
+
+
+@pytest.mark.asyncio()
+async def test_async_stream_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
+    mock_api = MagicMock()
+    mock_api.list_models.return_value = mock_model_data
+    mock_api.get_public_models.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+    llm = LLM(name="gpt-4o", enable_async=True)
+
+    llm._model = MagicMock()
+    llm._model.id = "model-id"
+    llm._teamspace = MagicMock()
+    llm._teamspace.id = "teamspace-id"
+    llm._conversations = {}
+
+    async def mock_stream_response(*args, **kwargs):
+        for chunk in ["Hello", ", ", "world", "!"]:
+            yield MagicMock(choices=[MagicMock(delta=MagicMock(content=chunk))])
+
+    llm._llm_api = MagicMock()
+    llm._llm_api.async_start_conversation = AsyncMock(return_value=mock_stream_response())
+
+    # Call chat
+    result = ""
+    async for token in await llm.chat("Hi there", stream=True, conversation="test"):
+        result += token
+    assert result == "Hello, world!"
+    llm._llm_api.async_start_conversation.assert_awaited_once()

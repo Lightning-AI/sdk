@@ -2,7 +2,9 @@ import asyncio
 import base64
 import json
 import os
-from typing import AsyncGenerator, Dict, Generator, List, Optional, Union
+import threading
+import warnings
+from typing import Any, AsyncGenerator, Dict, Generator, List, Optional, Union
 
 from pip._vendor.urllib3 import HTTPResponse
 
@@ -28,35 +30,40 @@ class LLMApi:
         result = self._client.assistants_service_list_assistants(user_id=user_id)
         return result.assistants
 
+    def _parse_stream_line(self, decoded_line: str) -> Optional[V1ConversationResponseChunk]:
+        try:
+            payload = json.loads(decoded_line)
+            result_data = payload.get("result", {})
+
+            choices = []
+            for choice in result_data.get("choices", []):
+                delta = choice.get("delta", {})
+                choices.append(
+                    V1ResponseChoice(
+                        delta=V1ResponseChoiceDelta(**delta),
+                        finish_reason=choice.get("finishReason"),
+                        index=choice.get("index"),
+                    )
+                )
+
+            return V1ConversationResponseChunk(
+                choices=choices,
+                conversation_id=result_data.get("conversationId"),
+                executable=result_data.get("executable"),
+                id=result_data.get("id"),
+                throughput=result_data.get("throughput"),
+            )
+        except json.JSONDecodeError:
+            warnings.warn("Error decoding JSON:", decoded_line)
+            return None
+
     def _stream_chat_response(self, result: HTTPResponse) -> Generator[V1ConversationResponseChunk, None, None]:
         for line in result.stream():
             decoded_lines = line.decode("utf-8").strip()
             for decoded_line in decoded_lines.splitlines():
-                try:
-                    payload = json.loads(decoded_line)
-                    result_data = payload.get("result", {})
-
-                    choices = []
-                    for choice in result_data.get("choices", []):
-                        delta = choice.get("delta", {})
-                        choices.append(
-                            V1ResponseChoice(
-                                delta=V1ResponseChoiceDelta(**delta),
-                                finish_reason=choice.get("finishReason"),
-                                index=choice.get("index"),
-                            )
-                        )
-
-                    yield V1ConversationResponseChunk(
-                        choices=choices,
-                        conversation_id=result_data.get("conversationId"),
-                        executable=result_data.get("executable"),
-                        id=result_data.get("id"),
-                        throughput=result_data.get("throughput"),
-                    )
-
-                except json.JSONDecodeError:
-                    print("Error decoding JSON:", decoded_line)
+                chunk = self._parse_stream_line(decoded_line)
+                if chunk:
+                    yield chunk
 
     def _encode_image_bytes_to_data_url(self, image: str) -> str:
         with open(image, "rb") as image_file:
@@ -160,7 +167,40 @@ class LLMApi:
             result = await asyncio.to_thread(thread.get)
             return result.result
 
-        raise NotImplementedError("Streaming is not supported in this client.")
+        conversation_thread = await asyncio.to_thread(
+            self._client.assistants_service_start_conversation,
+            body,
+            assistant_id,
+            async_req=True,
+            _preload_content=False,
+        )
+
+        return self.stream_response(conversation_thread)
+
+    async def stream_response(self, thread: Any) -> AsyncGenerator[V1ConversationResponseChunk, None]:
+        loop = asyncio.get_event_loop()
+        response = await asyncio.to_thread(thread.get)
+
+        queue = asyncio.Queue()
+
+        def enqueue() -> None:
+            try:
+                for line in response:
+                    decoded_lines = line.decode("utf-8").strip()
+                    for decoded_line in decoded_lines.splitlines():
+                        chunk = self._parse_stream_line(decoded_line)
+                        if chunk:
+                            asyncio.run_coroutine_threadsafe(queue.put(chunk), loop)
+            finally:
+                asyncio.run_coroutine_threadsafe(queue.put(None), loop)
+
+        threading.Thread(target=enqueue, daemon=True).start()
+
+        while True:
+            item = await queue.get()
+            if item is None:
+                break
+            yield item
 
     def list_conversations(self, assistant_id: str) -> List[str]:
         result = self._client.assistants_service_list_conversations(assistant_id)
