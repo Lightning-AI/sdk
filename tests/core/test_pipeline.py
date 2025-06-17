@@ -138,7 +138,7 @@ def test_pipeline_run(monkeypatch):
 
     args = pipeline_api_mock().create_pipeline._mock_mock_calls[0].args
 
-    assert args[0] == "first-pipeline"
+    assert "get_pipeline_by_id().name" in str(args[0])
 
     generated = pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[2]
 
@@ -387,10 +387,12 @@ def test_shared_filesystem(monkeypatch):
         ]
     )
 
-    assert len(pipeline_api_mock().create_pipeline._mock_mock_calls[0].args)
-    assert pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[-2] is False
-    assert isinstance(pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[-1], list)
-    assert len(pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[-1]) == 0
+    mock_calls = pipeline_api_mock().create_pipeline._mock_mock_calls
+    assert len(mock_calls[0].args)
+    assert mock_calls[0].args[-3] is False
+    assert isinstance(mock_calls[0].args[-2], list)
+    assert len(mock_calls[0].args[-2]) == 0
+    assert "get_pipeline_by_id().id" in str(mock_calls[0].args[-1])
 
     pipeline._shared_filesystem = True
 

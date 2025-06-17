@@ -66,8 +66,7 @@ class Pipeline:
 
         pipeline = None
 
-        if name.startswith("pip_"):
-            pipeline = self._pipeline_api.get_pipeline_by_id(self._teamspace.id, name)
+        pipeline = self._pipeline_api.get_pipeline_by_id(self._teamspace.id, name)
 
         if pipeline:
             self._name = pipeline.name
@@ -96,6 +95,7 @@ class Pipeline:
             proto_steps,
             self._shared_filesystem or False,
             schedules,
+            None if self._pipeline is None else self._pipeline.id,
         )
 
         printer = PipelinePrinter(self._pipeline, self._teamspace, proto_steps, schedules)

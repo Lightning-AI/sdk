@@ -22,13 +22,23 @@ class PipelineApi:
     def __init__(self) -> None:
         self._client = LightningClient(retry=False, max_tries=0)
 
-    def get_pipeline_by_id(self, project_id: str, pipeline_id: str) -> Optional[V1Pipeline]:
-        try:
-            return self._client.jobs_service_get_deployment(project_id=project_id, id=pipeline_id)
-        except ApiException as ex:
-            if "Reason: Not Found" in str(ex):
-                return None
-            raise ex
+    def get_pipeline_by_id(self, project_id: str, pipeline_id_or_name: str) -> Optional[V1Pipeline]:
+        if pipeline_id_or_name.startswith("pip_"):
+            try:
+                return self._client.pipelines_service_get_pipeline(project_id=project_id, id=pipeline_id_or_name)
+            except ApiException as ex:
+                if "not found" in str(ex):
+                    return None
+                raise ex
+        else:
+            try:
+                return self._client.pipelines_service_get_pipeline_by_name(
+                    project_id=project_id, name=pipeline_id_or_name
+                )
+            except ApiException as ex:
+                if "not found" in str(ex):
+                    return None
+                raise ex
 
     def create_pipeline(
         self,
@@ -37,6 +47,7 @@ class PipelineApi:
         steps: List["V1PipelineStep"],
         shared_filesystem: bool,
         schedules: List["Schedule"],
+        parent_pipeline_id: Optional[str],
     ) -> V1Pipeline:
         body = ProjectIdPipelinesBody(
             name=name,
@@ -44,8 +55,16 @@ class PipelineApi:
             shared_filesystem=V1SharedFilesystem(
                 enabled=shared_filesystem,
             ),
+            parent_pipeline_id=parent_pipeline_id or "",
         )
+
         pipeline = self._client.pipelines_service_create_pipeline(body, project_id)
+
+        # Delete the previous schedules
+        if parent_pipeline_id is not None:
+            current_schedules = self._client.schedules_service_list_schedules(project_id).schedules
+            for schedule in current_schedules:
+                self._client.schedules_service_delete_schedule(project_id, schedule.id)
 
         if len(schedules):
             for schedule in schedules:
@@ -53,6 +72,7 @@ class PipelineApi:
                     cron_expression=schedule.cron_expression,
                     display_name=schedule.name,
                     resource_id=pipeline.id,
+                    parent_resource_id=parent_pipeline_id or "",
                     resource_type=V1ScheduleResourceType.PIPELINE,
                 )
 
