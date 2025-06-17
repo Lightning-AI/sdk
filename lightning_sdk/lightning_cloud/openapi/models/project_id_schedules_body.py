@@ -43,6 +43,7 @@ class ProjectIdSchedulesBody(object):
     swagger_types = {
         'cron_expression': 'str',
         'display_name': 'str',
+        'parent_resource_id': 'str',
         'resource_id': 'str',
         'resource_type': 'V1ScheduleResourceType'
     }
@@ -50,14 +51,16 @@ class ProjectIdSchedulesBody(object):
     attribute_map = {
         'cron_expression': 'cronExpression',
         'display_name': 'displayName',
+        'parent_resource_id': 'parentResourceId',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType'
     }
 
-    def __init__(self, cron_expression: 'str' =None, display_name: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None):  # noqa: E501
+    def __init__(self, cron_expression: 'str' =None, display_name: 'str' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None):  # noqa: E501
         """ProjectIdSchedulesBody - a model defined in Swagger"""  # noqa: E501
         self._cron_expression = None
         self._display_name = None
+        self._parent_resource_id = None
         self._resource_id = None
         self._resource_type = None
         self.discriminator = None
@@ -65,6 +68,8 @@ class ProjectIdSchedulesBody(object):
             self.cron_expression = cron_expression
         if display_name is not None:
             self.display_name = display_name
+        if parent_resource_id is not None:
+            self.parent_resource_id = parent_resource_id
         if resource_id is not None:
             self.resource_id = resource_id
         if resource_type is not None:
@@ -111,6 +116,27 @@ class ProjectIdSchedulesBody(object):
         """
 
         self._display_name = display_name
+
+    @property
+    def parent_resource_id(self) -> 'str':
+        """Gets the parent_resource_id of this ProjectIdSchedulesBody.  # noqa: E501
+
+
+        :return: The parent_resource_id of this ProjectIdSchedulesBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_resource_id
+
+    @parent_resource_id.setter
+    def parent_resource_id(self, parent_resource_id: 'str'):
+        """Sets the parent_resource_id of this ProjectIdSchedulesBody.
+
+
+        :param parent_resource_id: The parent_resource_id of this ProjectIdSchedulesBody.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_resource_id = parent_resource_id
 
     @property
     def resource_id(self) -> 'str':

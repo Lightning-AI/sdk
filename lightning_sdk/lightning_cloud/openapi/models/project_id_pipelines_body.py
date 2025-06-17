@@ -44,6 +44,7 @@ class ProjectIdPipelinesBody(object):
         'cluster_id': 'str',
         'name': 'str',
         'parameters': 'list[V1PipelineParameter]',
+        'parent_pipeline_id': 'str',
         'shared_filesystem': 'V1SharedFilesystem',
         'steps': 'list[V1PipelineStep]'
     }
@@ -52,15 +53,17 @@ class ProjectIdPipelinesBody(object):
         'cluster_id': 'clusterId',
         'name': 'name',
         'parameters': 'parameters',
+        'parent_pipeline_id': 'parentPipelineId',
         'shared_filesystem': 'sharedFilesystem',
         'steps': 'steps'
     }
 
-    def __init__(self, cluster_id: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
         """ProjectIdPipelinesBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._name = None
         self._parameters = None
+        self._parent_pipeline_id = None
         self._shared_filesystem = None
         self._steps = None
         self.discriminator = None
@@ -70,6 +73,8 @@ class ProjectIdPipelinesBody(object):
             self.name = name
         if parameters is not None:
             self.parameters = parameters
+        if parent_pipeline_id is not None:
+            self.parent_pipeline_id = parent_pipeline_id
         if shared_filesystem is not None:
             self.shared_filesystem = shared_filesystem
         if steps is not None:
@@ -137,6 +142,27 @@ class ProjectIdPipelinesBody(object):
         """
 
         self._parameters = parameters
+
+    @property
+    def parent_pipeline_id(self) -> 'str':
+        """Gets the parent_pipeline_id of this ProjectIdPipelinesBody.  # noqa: E501
+
+
+        :return: The parent_pipeline_id of this ProjectIdPipelinesBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_pipeline_id
+
+    @parent_pipeline_id.setter
+    def parent_pipeline_id(self, parent_pipeline_id: 'str'):
+        """Sets the parent_pipeline_id of this ProjectIdPipelinesBody.
+
+
+        :param parent_pipeline_id: The parent_pipeline_id of this ProjectIdPipelinesBody.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_pipeline_id = parent_pipeline_id
 
     @property
     def shared_filesystem(self) -> 'V1SharedFilesystem':

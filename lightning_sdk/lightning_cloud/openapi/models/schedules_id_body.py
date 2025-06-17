@@ -46,6 +46,7 @@ class SchedulesIdBody(object):
         'display_name': 'str',
         'name': 'str',
         'next': 'datetime',
+        'parent_resource_id': 'str',
         'resource_id': 'str',
         'resource_type': 'V1ScheduleResourceType',
         'state': 'str',
@@ -60,6 +61,7 @@ class SchedulesIdBody(object):
         'display_name': 'displayName',
         'name': 'name',
         'next': 'next',
+        'parent_resource_id': 'parentResourceId',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'state': 'state',
@@ -68,13 +70,14 @@ class SchedulesIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, name: 'str' =None, next: 'datetime' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, name: 'str' =None, next: 'datetime' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """SchedulesIdBody - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._cron_expression = None
         self._display_name = None
         self._name = None
         self._next = None
+        self._parent_resource_id = None
         self._resource_id = None
         self._resource_type = None
         self._state = None
@@ -92,6 +95,8 @@ class SchedulesIdBody(object):
             self.name = name
         if next is not None:
             self.next = next
+        if parent_resource_id is not None:
+            self.parent_resource_id = parent_resource_id
         if resource_id is not None:
             self.resource_id = resource_id
         if resource_type is not None:
@@ -209,6 +214,27 @@ class SchedulesIdBody(object):
         """
 
         self._next = next
+
+    @property
+    def parent_resource_id(self) -> 'str':
+        """Gets the parent_resource_id of this SchedulesIdBody.  # noqa: E501
+
+
+        :return: The parent_resource_id of this SchedulesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_resource_id
+
+    @parent_resource_id.setter
+    def parent_resource_id(self, parent_resource_id: 'str'):
+        """Sets the parent_resource_id of this SchedulesIdBody.
+
+
+        :param parent_resource_id: The parent_resource_id of this SchedulesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_resource_id = parent_resource_id
 
     @property
     def resource_id(self) -> 'str':

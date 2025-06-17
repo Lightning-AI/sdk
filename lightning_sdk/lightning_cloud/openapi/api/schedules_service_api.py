@@ -364,6 +364,7 @@ class SchedulesServiceApi(object):
         :param str page_token:
         :param int limit:
         :param str state:
+        :param str parent_resource_id:
         :return: V1ListSchedulesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -389,12 +390,13 @@ class SchedulesServiceApi(object):
         :param str page_token:
         :param int limit:
         :param str state:
+        :param str parent_resource_id:
         :return: V1ListSchedulesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'resource_id', 'page_token', 'limit', 'state']  # noqa: E501
+        all_params = ['project_id', 'resource_id', 'page_token', 'limit', 'state', 'parent_resource_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -429,6 +431,8 @@ class SchedulesServiceApi(object):
             query_params.append(('limit', params['limit']))  # noqa: E501
         if 'state' in params:
             query_params.append(('state', params['state']))  # noqa: E501
+        if 'parent_resource_id' in params:
+            query_params.append(('parentResourceId', params['parent_resource_id']))  # noqa: E501
 
         header_params = {}
 

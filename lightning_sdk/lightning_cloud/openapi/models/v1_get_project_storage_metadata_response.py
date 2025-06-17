@@ -42,6 +42,7 @@ class V1GetProjectStorageMetadataResponse(object):
     """
     swagger_types = {
         'account_limit_bytes': 'str',
+        'billable_bytes': 'str',
         'cloudspace_storage_bytes': 'str',
         'cloudspaces': 'list[V1StorageAsset]',
         'container_registry_repositories': 'list[V1StorageAsset]',
@@ -65,6 +66,7 @@ class V1GetProjectStorageMetadataResponse(object):
 
     attribute_map = {
         'account_limit_bytes': 'accountLimitBytes',
+        'billable_bytes': 'billableBytes',
         'cloudspace_storage_bytes': 'cloudspaceStorageBytes',
         'cloudspaces': 'cloudspaces',
         'container_registry_repositories': 'containerRegistryRepositories',
@@ -86,9 +88,10 @@ class V1GetProjectStorageMetadataResponse(object):
         'uploads': 'uploads'
     }
 
-    def __init__(self, account_limit_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, container_registry_repositories: 'list[V1StorageAsset]' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, folder_storage_bytes: 'str' =None, folders: 'list[V1StorageAsset]' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, model_storage_bytes: 'str' =None, models: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None, uploads: 'V1StorageAsset' =None):  # noqa: E501
+    def __init__(self, account_limit_bytes: 'str' =None, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, container_registry_repositories: 'list[V1StorageAsset]' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, folder_storage_bytes: 'str' =None, folders: 'list[V1StorageAsset]' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, model_storage_bytes: 'str' =None, models: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None, uploads: 'V1StorageAsset' =None):  # noqa: E501
         """V1GetProjectStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
         self._account_limit_bytes = None
+        self._billable_bytes = None
         self._cloudspace_storage_bytes = None
         self._cloudspaces = None
         self._container_registry_repositories = None
@@ -111,6 +114,8 @@ class V1GetProjectStorageMetadataResponse(object):
         self.discriminator = None
         if account_limit_bytes is not None:
             self.account_limit_bytes = account_limit_bytes
+        if billable_bytes is not None:
+            self.billable_bytes = billable_bytes
         if cloudspace_storage_bytes is not None:
             self.cloudspace_storage_bytes = cloudspace_storage_bytes
         if cloudspaces is not None:
@@ -170,6 +175,27 @@ class V1GetProjectStorageMetadataResponse(object):
         """
 
         self._account_limit_bytes = account_limit_bytes
+
+    @property
+    def billable_bytes(self) -> 'str':
+        """Gets the billable_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The billable_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._billable_bytes
+
+    @billable_bytes.setter
+    def billable_bytes(self, billable_bytes: 'str'):
+        """Sets the billable_bytes of this V1GetProjectStorageMetadataResponse.
+
+
+        :param billable_bytes: The billable_bytes of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._billable_bytes = billable_bytes
 
     @property
     def cloudspace_storage_bytes(self) -> 'str':

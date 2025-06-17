@@ -47,6 +47,7 @@ class V1Schedule(object):
         'id': 'str',
         'name': 'str',
         'next': 'datetime',
+        'parent_resource_id': 'str',
         'project_id': 'str',
         'resource_id': 'str',
         'resource_type': 'V1ScheduleResourceType',
@@ -63,6 +64,7 @@ class V1Schedule(object):
         'id': 'id',
         'name': 'name',
         'next': 'next',
+        'parent_resource_id': 'parentResourceId',
         'project_id': 'projectId',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
@@ -72,7 +74,7 @@ class V1Schedule(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, next: 'datetime' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, next: 'datetime' =None, parent_resource_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Schedule - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._cron_expression = None
@@ -80,6 +82,7 @@ class V1Schedule(object):
         self._id = None
         self._name = None
         self._next = None
+        self._parent_resource_id = None
         self._project_id = None
         self._resource_id = None
         self._resource_type = None
@@ -100,6 +103,8 @@ class V1Schedule(object):
             self.name = name
         if next is not None:
             self.next = next
+        if parent_resource_id is not None:
+            self.parent_resource_id = parent_resource_id
         if project_id is not None:
             self.project_id = project_id
         if resource_id is not None:
@@ -240,6 +245,27 @@ class V1Schedule(object):
         """
 
         self._next = next
+
+    @property
+    def parent_resource_id(self) -> 'str':
+        """Gets the parent_resource_id of this V1Schedule.  # noqa: E501
+
+
+        :return: The parent_resource_id of this V1Schedule.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_resource_id
+
+    @parent_resource_id.setter
+    def parent_resource_id(self, parent_resource_id: 'str'):
+        """Sets the parent_resource_id of this V1Schedule.
+
+
+        :param parent_resource_id: The parent_resource_id of this V1Schedule.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_resource_id = parent_resource_id
 
     @property
     def project_id(self) -> 'str':

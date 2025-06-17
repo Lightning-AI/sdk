@@ -47,6 +47,8 @@ class V1GetUserStorageBreakdownResponse(object):
         'job_storage_bytes': 'str',
         'limit_bytes': 'str',
         'projects': 'list[V1ProjectStorage]',
+        'total_billable_bytes': 'str',
+        'total_free_bytes': 'str',
         'total_model_storage_bytes': 'str',
         'total_storage_bytes': 'str',
         'upload_storage_bytes': 'str'
@@ -59,12 +61,14 @@ class V1GetUserStorageBreakdownResponse(object):
         'job_storage_bytes': 'jobStorageBytes',
         'limit_bytes': 'limitBytes',
         'projects': 'projects',
+        'total_billable_bytes': 'totalBillableBytes',
+        'total_free_bytes': 'totalFreeBytes',
         'total_model_storage_bytes': 'totalModelStorageBytes',
         'total_storage_bytes': 'totalStorageBytes',
         'upload_storage_bytes': 'uploadStorageBytes'
     }
 
-    def __init__(self, cloudspace_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, folder_storage_bytes: 'str' =None, job_storage_bytes: 'str' =None, limit_bytes: 'str' =None, projects: 'list[V1ProjectStorage]' =None, total_model_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, folder_storage_bytes: 'str' =None, job_storage_bytes: 'str' =None, limit_bytes: 'str' =None, projects: 'list[V1ProjectStorage]' =None, total_billable_bytes: 'str' =None, total_free_bytes: 'str' =None, total_model_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1GetUserStorageBreakdownResponse - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_storage_bytes = None
         self._data_connection_storage_bytes = None
@@ -72,6 +76,8 @@ class V1GetUserStorageBreakdownResponse(object):
         self._job_storage_bytes = None
         self._limit_bytes = None
         self._projects = None
+        self._total_billable_bytes = None
+        self._total_free_bytes = None
         self._total_model_storage_bytes = None
         self._total_storage_bytes = None
         self._upload_storage_bytes = None
@@ -88,6 +94,10 @@ class V1GetUserStorageBreakdownResponse(object):
             self.limit_bytes = limit_bytes
         if projects is not None:
             self.projects = projects
+        if total_billable_bytes is not None:
+            self.total_billable_bytes = total_billable_bytes
+        if total_free_bytes is not None:
+            self.total_free_bytes = total_free_bytes
         if total_model_storage_bytes is not None:
             self.total_model_storage_bytes = total_model_storage_bytes
         if total_storage_bytes is not None:
@@ -220,6 +230,48 @@ class V1GetUserStorageBreakdownResponse(object):
         """
 
         self._projects = projects
+
+    @property
+    def total_billable_bytes(self) -> 'str':
+        """Gets the total_billable_bytes of this V1GetUserStorageBreakdownResponse.  # noqa: E501
+
+
+        :return: The total_billable_bytes of this V1GetUserStorageBreakdownResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_billable_bytes
+
+    @total_billable_bytes.setter
+    def total_billable_bytes(self, total_billable_bytes: 'str'):
+        """Sets the total_billable_bytes of this V1GetUserStorageBreakdownResponse.
+
+
+        :param total_billable_bytes: The total_billable_bytes of this V1GetUserStorageBreakdownResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._total_billable_bytes = total_billable_bytes
+
+    @property
+    def total_free_bytes(self) -> 'str':
+        """Gets the total_free_bytes of this V1GetUserStorageBreakdownResponse.  # noqa: E501
+
+
+        :return: The total_free_bytes of this V1GetUserStorageBreakdownResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_free_bytes
+
+    @total_free_bytes.setter
+    def total_free_bytes(self, total_free_bytes: 'str'):
+        """Sets the total_free_bytes of this V1GetUserStorageBreakdownResponse.
+
+
+        :param total_free_bytes: The total_free_bytes of this V1GetUserStorageBreakdownResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._total_free_bytes = total_free_bytes
 
     @property
     def total_model_storage_bytes(self) -> 'str':

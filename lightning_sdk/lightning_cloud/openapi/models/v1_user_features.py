@@ -66,7 +66,6 @@ class V1UserFeatures(object):
         'datasets': 'bool',
         'default_one_cluster': 'bool',
         'deployment_persistent_disk': 'bool',
-        'docs_agent': 'bool',
         'drive_v2': 'bool',
         'enterprise_compute_admin': 'bool',
         'fair_share': 'bool',
@@ -151,7 +150,6 @@ class V1UserFeatures(object):
         'datasets': 'datasets',
         'default_one_cluster': 'defaultOneCluster',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
-        'docs_agent': 'docsAgent',
         'drive_v2': 'driveV2',
         'enterprise_compute_admin': 'enterpriseComputeAdmin',
         'fair_share': 'fairShare',
@@ -210,7 +208,7 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, docs_agent: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plg_control_center: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plg_control_center: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._accurate_billing = None
         self._affiliate_links = None
@@ -237,7 +235,6 @@ class V1UserFeatures(object):
         self._datasets = None
         self._default_one_cluster = None
         self._deployment_persistent_disk = None
-        self._docs_agent = None
         self._drive_v2 = None
         self._enterprise_compute_admin = None
         self._fair_share = None
@@ -345,8 +342,6 @@ class V1UserFeatures(object):
             self.default_one_cluster = default_one_cluster
         if deployment_persistent_disk is not None:
             self.deployment_persistent_disk = deployment_persistent_disk
-        if docs_agent is not None:
-            self.docs_agent = docs_agent
         if drive_v2 is not None:
             self.drive_v2 = drive_v2
         if enterprise_compute_admin is not None:
@@ -984,27 +979,6 @@ class V1UserFeatures(object):
         """
 
         self._deployment_persistent_disk = deployment_persistent_disk
-
-    @property
-    def docs_agent(self) -> 'bool':
-        """Gets the docs_agent of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The docs_agent of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._docs_agent
-
-    @docs_agent.setter
-    def docs_agent(self, docs_agent: 'bool'):
-        """Sets the docs_agent of this V1UserFeatures.
-
-
-        :param docs_agent: The docs_agent of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._docs_agent = docs_agent
 
     @property
     def drive_v2(self) -> 'bool':
