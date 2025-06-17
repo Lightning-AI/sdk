@@ -55,7 +55,7 @@ class Deployment:
         cloud_account: Optional[str] = None,
         custom_domain: Optional[str] = None,
         quantity: Optional[int] = None,
-        wait_for: Union[str, List[str]] = DEFAULT,
+        wait_for: Optional[Union[str, List[str]]] = DEFAULT,
     ) -> None:
         self.name = name
         self.machine = machine
@@ -132,7 +132,7 @@ class Job:
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
-        wait_for: Union[str, List[str]] = DEFAULT,
+        wait_for: Union[str, List[str], None] = DEFAULT,
     ) -> None:
         self.name = name
         self.machine = machine
@@ -207,7 +207,7 @@ class MMT:
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
-        wait_for: Union[str, List[str]] = DEFAULT,
+        wait_for: Optional[Union[str, List[str]]] = DEFAULT,
     ) -> None:
         self.machine = machine
         self.num_machines = num_machines

@@ -1,4 +1,4 @@
-from lightning_sdk.pipeline import Pipeline, Job, Deployment, MMT
+from lightning_sdk.pipeline import Pipeline, Job, Deployment, MMT, Schedule
 from lightning_sdk.machine import Machine
 
 pipeline = Pipeline(name='first-pipeline')
@@ -23,7 +23,8 @@ pipeline.run(
             machine=Machine.CPU,
             command="echo 'Hello, World!'",
         ),
-    ]
+    ],
+    schedules=[Schedule("my_schedule", "0 17 * * *")]
 )
 
 pipeline = Pipeline(name='second-pipeline')
@@ -53,6 +54,7 @@ pipeline.run(
             image="nginx",
             machine=Machine.CPU,
             ports=[8000],
+            wait_for=None,
         ),
     ]
 )

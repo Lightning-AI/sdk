@@ -1,6 +1,6 @@
 from typing import List
 
-from lightning_sdk.lightning_cloud.openapi.models import V1PipelineStep, V1PipelineStepType
+from lightning_sdk.lightning_cloud.openapi.models import V1PipelineStep
 
 DEFAULT = "DEFAULT"
 
@@ -50,20 +50,5 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
 
                 if name_to_idx[name] >= name_to_idx[current_step.name]:
                     raise ValueError("You can only reference prior steps")
-
-    print()
-    print("===== Generated Pipeline =====")
-    for step_idx, step in enumerate(steps):
-        step_type = ""
-        if step.type == V1PipelineStepType.DEPLOYMENT:
-            step_type = "Deployment"
-        elif step.type == V1PipelineStepType.JOB:
-            step_type = "Job"
-        else:
-            step_type = "MMT"
-        wait_for = "nothing" if len(step.wait_for) == 0 else step.wait_for
-        print(f"{step_idx} - {step_type}['{step.name}'] wait_for {wait_for}")
-    print("===== ================== =====")
-    print()
 
     return steps

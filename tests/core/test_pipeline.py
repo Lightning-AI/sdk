@@ -15,6 +15,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
 from lightning_sdk.machine import Machine
 from lightning_sdk.pipeline import MMT, Deployment, Job, Pipeline
 from lightning_sdk.pipeline import pipeline as pipeline_module
+from lightning_sdk.pipeline.printer import PipelinePrinter
 from lightning_sdk.pipeline.utils import DEFAULT, prepare_steps
 from lightning_sdk.utils.resolve import skip_studio_init
 
@@ -387,7 +388,9 @@ def test_shared_filesystem(monkeypatch):
     )
 
     assert len(pipeline_api_mock().create_pipeline._mock_mock_calls[0].args)
-    assert pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[-1] is False
+    assert pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[-2] is False
+    assert isinstance(pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[-1], list)
+    assert len(pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[-1]) == 0
 
     pipeline._shared_filesystem = True
 
@@ -450,3 +453,95 @@ def test_pipeline_with_studio_job(monkeypatch):
                 ),
             ]
         )
+
+
+class TestPrinter(PipelinePrinter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.values = []
+
+    def _print(self, value):
+        self.values.append(value)
+
+    def get_output_as_string(self):
+        """Helper to join all captured lines into a single string for easy searching."""
+        return "\n".join(self.values)
+
+
+def test_print_summary_with_multiple_clusters():
+    """
+    Tests the main scenario: a full pipeline with steps, schedules,
+    and multiple unique cloud accounts (clusters).
+    """
+    # 1. Arrange: Set up all the mock objects
+    pipeline = MagicMock()
+    pipeline.name = "my-multi-cluster-pipeline"
+    teamspace = MagicMock()
+    teamspace.owner.name = "test-user"
+    teamspace.name = "test-team"
+
+    # Create mock steps with different types and cluster IDs
+    step1 = MagicMock()
+    step1.name = "data-prep"
+    step1.type = V1PipelineStepType.JOB
+    step1.wait_for = []
+    step1.job.spec.cluster_id = "cluster-A"
+
+    step2 = MagicMock(type=V1PipelineStepType.DEPLOYMENT, wait_for=["data-prep"])
+    step2.name = "training"
+    step2.deployment.spec.cluster_id = "cluster-B"
+
+    # Add a third step that re-uses a cluster ID to test the `set` logic
+    step3 = MagicMock(type=V1PipelineStepType.JOB, wait_for=["training"])
+    step3.name = "eval"
+    step3.job.spec.cluster_id = "cluster-A"
+
+    schedule1 = MagicMock(cron_expression="0 0 * * *")
+    schedule1.name = "daily-run"
+
+    # 2. Act: Run the method on the test class
+    test_printer = TestPrinter(
+        pipeline=pipeline, teamspace=teamspace, proto_steps=[step1, step2, step3], schedules=[schedule1]
+    )
+    test_printer.print_summary()
+    output = test_printer.get_output_as_string()
+
+    assert (
+        output
+        == "\n────────────────────────────────────────────────────────────\n✅ Pipeline 'my-multi-cluster-pipeline' created successfully!\n────────────────────────────────────────────────────────────\n\nWorkflow Steps:\n  ➡️ 1. Job 'data-prep' - (runs first)\n  ➡️ 2. Deployment 'training' -  waits for data-prep\n  ➡️ 3. Job 'eval' -  waits for training\n\n🗓️ Schedules:\n  - 'daily-run' runs on cron schedule: `0 0 * * *`\n\nCloud accounts:\n  - cluster-A\n  - cluster-B\n\n────────────────────────────────────────────────────────────\n🔗 View your pipeline in the browser:\n   https://lightning.ai/test-user/test-team/pipelines/my-multi-cluster-pipeline?app_id=pipeline&section=Graph\n────────────────────────────────────────────────────────────\n"  # noqa: E501
+    )
+
+
+def test_print_summary_with_single_cluster():
+    """Tests that the cloud account label is singular when all steps use the same cluster."""
+    pipeline = MagicMock(name="my-single-cluster-pipeline")
+    teamspace = MagicMock(name="test-team", owner=MagicMock(name="test-user"))
+
+    step1 = MagicMock(name="step-a", type=V1PipelineStepType.JOB, wait_for=[])
+    step1.job.spec.cluster_id = "the-only-cluster"
+
+    step2 = MagicMock(name="step-b", type=V1PipelineStepType.DEPLOYMENT, wait_for=["step-a"])
+    step2.deployment.spec.cluster_id = "the-only-cluster"
+
+    test_printer = TestPrinter(pipeline, teamspace, [step1, step2], schedules=[])
+    test_printer.print_summary()
+    output = test_printer.get_output_as_string()
+
+    assert "Cloud account:" in output  # Note: singular, no "'s"
+    assert "Cloud account's':" not in output
+    assert "  - the-only-cluster" in output
+
+
+def test_print_summary_with_no_steps():
+    """Tests that the cloud account section is omitted when there are no steps."""
+    pipeline = MagicMock(name="no-steps-pipeline")
+    teamspace = MagicMock(name="test-team", owner=MagicMock(name="test-user"))
+
+    test_printer = TestPrinter(pipeline, teamspace, proto_steps=[], schedules=[])
+    test_printer.print_summary()
+    output = test_printer.get_output_as_string()
+
+    assert "Workflow Steps:" in output
+    assert "  - No steps defined." in output
+    # Assert that the entire "Cloud account" section is missing
+    assert "Cloud account" not in output

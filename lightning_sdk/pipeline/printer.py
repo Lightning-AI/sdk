@@ -1,0 +1,98 @@
+import os
+from typing import Any, ClassVar, Dict, List
+
+from lightning_sdk.lightning_cloud.openapi.models import V1JobSpec, V1PipelineStepType
+
+
+class PipelinePrinter:
+    """A helper class to print a formatted summary of a pipeline."""
+
+    STEP_TYPE_MAP: ClassVar[Dict[str, str]] = {
+        V1PipelineStepType.DEPLOYMENT: "Deployment",
+        V1PipelineStepType.JOB: "Job",
+        V1PipelineStepType.MMT: "MMT",
+    }
+
+    def __init__(self, pipeline: Any, teamspace: Any, proto_steps: List[Any], schedules: List[Any]) -> None:
+        self._pipeline = pipeline
+        self._teamspace = teamspace
+        self._proto_steps = proto_steps
+        self._schedules = schedules
+
+    def print_summary(self) -> None:
+        """Prints the full, formatted summary of the created pipeline."""
+        self._print("\n" + "─" * 60)
+        self._print(f"✅ Pipeline '{self._pipeline.name}' created successfully!")
+        self._print("─" * 60)
+
+        self._print_steps()
+        self._print_schedules()
+        self._print_cloud_account()
+        self._print_footer()
+
+    def _print(self, value: str) -> None:
+        print(value)
+
+    def _print_steps(self) -> None:
+        """Prints the formatted list of pipeline steps."""
+        self._print("\nWorkflow Steps:")
+        if not self._proto_steps:
+            self._print("  - No steps defined.")
+            return
+
+        for i, step in enumerate(self._proto_steps):
+            step_type = self.STEP_TYPE_MAP.get(step.type, "Unknown Step")
+
+            # Format the 'wait_for' list for cleaner output
+            if not step.wait_for:
+                wait_for_str = "(runs first)"
+            else:
+                # e.g., "'step_a', 'step_b'"
+                wait_for_str = f" waits for {', '.join([f'{w}' for w in step.wait_for])}"
+
+            self._print(f"  ➡️ {i+1}. {step_type} '{step.name}' - {wait_for_str}")
+
+    def _print_schedules(self) -> None:
+        """Prints the formatted list of schedules."""
+        self._print("\n🗓️ Schedules:")
+        if not self._schedules:
+            self._print("  - No schedules defined.")
+            return
+
+        for schedule in self._schedules:
+            self._print(f"  - '{schedule.name}' runs on cron schedule: `{schedule.cron_expression}`")
+
+    def _print_footer(self) -> None:
+        """Prints the final link and closing message."""
+        cloud_url = os.getenv("LIGHTNING_CLOUD_URL", "https://lightning.ai").replace(":443", "")
+
+        # Using properties of assumed objects for a cleaner look
+        owner: str = self._teamspace.owner.name
+        team: str = self._teamspace.name
+        pipeline_name: str = self._pipeline.name
+
+        pipeline_url = f"{cloud_url}/{owner}/{team}/pipelines/{pipeline_name}?app_id=pipeline&section=Graph"
+
+        self._print("\n" + "─" * 60)
+        self._print(f"🔗 View your pipeline in the browser:\n   {pipeline_url}")
+        self._print("─" * 60 + "\n")
+
+    def _print_cloud_account(self) -> None:
+        if not self._proto_steps:
+            return
+
+        cluster_ids: set[str] = set()
+        for step in self._proto_steps:
+            job_spec = self._get_spec(step)
+            cluster_ids.add(job_spec.cluster_id)
+
+        self._print(f"\nCloud account{'s' if len(cluster_ids) > 1 else ''}:")
+        for cluster_id in sorted(cluster_ids):
+            self._print(f"  - {cluster_id}")
+
+    def _get_spec(self, step: Any) -> V1JobSpec:
+        if step.type == V1PipelineStepType.DEPLOYMENT:
+            return step.deployment.spec
+        if step.type == V1PipelineStepType.MMT:
+            return step.mmt.spec
+        return step.job.spec

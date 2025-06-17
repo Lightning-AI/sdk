@@ -1,15 +1,19 @@
-from typing import List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional, Union
 
 from lightning_sdk.api import UserApi
 from lightning_sdk.api.pipeline_api import PipelineApi
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.organization import Organization
+from lightning_sdk.pipeline.printer import PipelinePrinter
 from lightning_sdk.pipeline.types import MMT, Deployment, Job
 from lightning_sdk.pipeline.utils import prepare_steps
 from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace, _resolve_user
+
+if TYPE_CHECKING:
+    from lightning_sdk.pipeline.schedule import Schedule
 
 
 class Pipeline:
@@ -70,7 +74,7 @@ class Pipeline:
             self._is_created = True
             self._pipeline = pipeline
 
-    def run(self, steps: List[Union[Job, Deployment, MMT]]) -> None:
+    def run(self, steps: List[Union[Job, Deployment, MMT]], schedules: Optional[List["Schedule"]] = None) -> None:
         if len(steps) == 0:
             raise ValueError("The provided steps is empty")
 
@@ -83,12 +87,19 @@ class Pipeline:
             for step in steps
         ]
 
+        proto_steps = prepare_steps(steps)
+        schedules = schedules or []
+
         self._pipeline = self._pipeline_api.create_pipeline(
             self._name,
             self._teamspace.id,
-            prepare_steps(steps),
+            proto_steps,
             self._shared_filesystem or False,
+            schedules,
         )
+
+        printer = PipelinePrinter(self._pipeline, self._teamspace, proto_steps, schedules)
+        printer.print_summary()
 
     def stop(self) -> None:
         if self._pipeline is None:
@@ -103,7 +114,7 @@ class Pipeline:
         self._pipeline_api.delete(self._teamspace.id, self._pipeline.id)
 
     @property
-    def name(self) -> str:
+    def name(self) -> Optional[str]:
         if self._pipeline:
             return self._pipeline.name
         return None
