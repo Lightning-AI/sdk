@@ -24,7 +24,7 @@ pipeline.run(
             command="echo 'Hello, World!'",
         ),
     ],
-    schedules=[Schedule("my_schedule", "0 17 * * *")]
+    schedules=[Schedule("my_schedule", "* * * * *")]
 )
 
 pipeline = Pipeline(name='second-pipeline')

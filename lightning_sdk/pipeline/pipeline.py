@@ -91,16 +91,20 @@ class Pipeline:
         proto_steps = prepare_steps(steps)
         schedules = schedules or []
 
+        parent_pipeline_id = None if self._pipeline is None else self._pipeline.id
+
         self._pipeline = self._pipeline_api.create_pipeline(
             self._name,
             self._teamspace.id,
             proto_steps,
             self._shared_filesystem or False,
             schedules,
-            None if self._pipeline is None else self._pipeline.id,
+            parent_pipeline_id,
         )
 
-        printer = PipelinePrinter(self._pipeline, self._teamspace, proto_steps, schedules)
+        printer = PipelinePrinter(
+            self._name, parent_pipeline_id is None, self._pipeline, self._teamspace, proto_steps, schedules
+        )
         printer.print_summary()
 
     def stop(self) -> None:

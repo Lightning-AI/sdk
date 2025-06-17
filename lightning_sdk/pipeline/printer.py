@@ -13,7 +13,11 @@ class PipelinePrinter:
         V1PipelineStepType.MMT: "MMT",
     }
 
-    def __init__(self, pipeline: Any, teamspace: Any, proto_steps: List[Any], schedules: List[Any]) -> None:
+    def __init__(
+        self, name: str, initial: bool, pipeline: Any, teamspace: Any, proto_steps: List[Any], schedules: List[Any]
+    ) -> None:
+        self._name = name
+        self._initial = initial
         self._pipeline = pipeline
         self._teamspace = teamspace
         self._proto_steps = proto_steps
@@ -22,7 +26,7 @@ class PipelinePrinter:
     def print_summary(self) -> None:
         """Prints the full, formatted summary of the created pipeline."""
         self._print("\n" + "─" * 60)
-        self._print(f"✅ Pipeline '{self._pipeline.name}' created successfully!")
+        self._print(f"✅ Pipeline '{self._name}' {'created' if self._initial else 'updated'} successfully!")
         self._print("─" * 60)
 
         self._print_steps()
@@ -69,7 +73,7 @@ class PipelinePrinter:
         # Using properties of assumed objects for a cleaner look
         owner: str = self._teamspace.owner.name
         team: str = self._teamspace.name
-        pipeline_name: str = self._pipeline.name
+        pipeline_name: str = self._name
 
         pipeline_url = f"{cloud_url}/{owner}/{team}/pipelines/{pipeline_name}?app_id=pipeline&section=Graph"
 

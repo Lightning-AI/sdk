@@ -506,7 +506,12 @@ def test_print_summary_with_multiple_clusters():
 
     # 2. Act: Run the method on the test class
     test_printer = TestPrinter(
-        pipeline=pipeline, teamspace=teamspace, proto_steps=[step1, step2, step3], schedules=[schedule1]
+        "my-multi-cluster-pipeline",
+        True,
+        pipeline=pipeline,
+        teamspace=teamspace,
+        proto_steps=[step1, step2, step3],
+        schedules=[schedule1],
     )
     test_printer.print_summary()
     output = test_printer.get_output_as_string()
@@ -528,7 +533,7 @@ def test_print_summary_with_single_cluster():
     step2 = MagicMock(name="step-b", type=V1PipelineStepType.DEPLOYMENT, wait_for=["step-a"])
     step2.deployment.spec.cluster_id = "the-only-cluster"
 
-    test_printer = TestPrinter(pipeline, teamspace, [step1, step2], schedules=[])
+    test_printer = TestPrinter("my-single-cluster-pipeline", True, pipeline, teamspace, [step1, step2], schedules=[])
     test_printer.print_summary()
     output = test_printer.get_output_as_string()
 
@@ -542,7 +547,7 @@ def test_print_summary_with_no_steps():
     pipeline = MagicMock(name="no-steps-pipeline")
     teamspace = MagicMock(name="test-team", owner=MagicMock(name="test-user"))
 
-    test_printer = TestPrinter(pipeline, teamspace, proto_steps=[], schedules=[])
+    test_printer = TestPrinter("no-steps-pipeline", True, pipeline, teamspace, proto_steps=[], schedules=[])
     test_printer.print_summary()
     output = test_printer.get_output_as_string()
 
@@ -550,3 +555,16 @@ def test_print_summary_with_no_steps():
     assert "  - No steps defined." in output
     # Assert that the entire "Cloud account" section is missing
     assert "Cloud account" not in output
+
+
+def test_print_summary_updated():
+    """Tests that the cloud account section is omitted when there are no steps."""
+    pipeline = MagicMock(name="no-steps-pipeline")
+    teamspace = MagicMock(name="test-team", owner=MagicMock(name="test-user"))
+
+    test_printer = TestPrinter("update-pipeline", False, pipeline, teamspace, proto_steps=[], schedules=[])
+    test_printer.print_summary()
+    output = test_printer.get_output_as_string()
+
+    assert "Pipeline 'update-pipeline' updated successfully!" in output
+    assert "/pipelines/update-pipeline?app_id=pipeline&section=Graph" in output
