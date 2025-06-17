@@ -116,6 +116,8 @@ def test_pipeline_run(monkeypatch):
             ]
         )
 
+    pipeline._pipeline = None
+
     pipeline.run(
         steps=[
             Job(
@@ -139,6 +141,7 @@ def test_pipeline_run(monkeypatch):
     args = pipeline_api_mock().create_pipeline._mock_mock_calls[0].args
 
     assert "get_pipeline_by_id().name" in str(args[0])
+    assert args[-1] is None
 
     generated = pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[2]
 

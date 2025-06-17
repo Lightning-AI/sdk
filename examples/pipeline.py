@@ -54,7 +54,6 @@ pipeline.run(
             image="nginx",
             machine=Machine.CPU,
             ports=[8000],
-            wait_for=None,
         ),
     ]
 )

@@ -72,6 +72,8 @@ class Pipeline:
             self._name = pipeline.name
             self._is_created = True
             self._pipeline = pipeline
+        else:
+            self._pipeline = None
 
     def run(self, steps: List[Union[Job, Deployment, MMT]], schedules: Optional[List["Schedule"]] = None) -> None:
         if len(steps) == 0:
