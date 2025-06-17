@@ -241,8 +241,8 @@ def _resolve_studio(studio: Optional[str]) -> Studio:
 
 
 @download.command(name="licenses")
-def licenses() -> None:
-    """Download licenses for all products/packages.
+def download_licenses() -> None:
+    """Download licenses for all user's products/packages.
 
     Example:
       lightning download licenses
@@ -261,3 +261,39 @@ def licenses() -> None:
     with licenses_file.open("w") as fp:
         json.dump(licenses_short, fp, indent=4)
     Console().print(f"Licenses downloaded to {licenses_file}", style="green")
+
+
+@download.command(name="license")
+@click.argument("name")
+def download_license(name: str) -> None:
+    """Download license for specific products/packages.
+
+    Example:
+      lightning download license NAME
+
+    NAME: The name of the product/package to download the license for.
+    """
+    user = _get_authed_user()
+    api = LicenseApi()
+    licenses = api.list_user_licenses(user.id)
+    licenses_short = {ll.product_name: ll.license_key for ll in licenses if ll.is_valid}
+
+    if name not in licenses_short:
+        Console().print(f"Missing valid license for {name}", style="red")
+        return
+
+    user_home = Path.home()
+    lit_dir = user_home / ".lightning"
+    lit_dir.mkdir(parents=True, exist_ok=True)
+    licenses_file = lit_dir / "licenses.json"
+
+    licenses_loaded = {}
+    if licenses_file.exists():
+        with licenses_file.open("r") as fp:
+            licenses_loaded = json.load(fp)
+
+    licenses_loaded[name] = licenses_short[name]
+
+    with licenses_file.open("w") as fp:
+        json.dump(licenses_loaded, fp, indent=4)
+    Console().print(f"Updated license for {name} in {licenses_file}", style="green")

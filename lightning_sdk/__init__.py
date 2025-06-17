@@ -31,6 +31,6 @@ __all__ = [
     "User",
 ]
 
-__version__ = "0.2.21"
+__version__ = "0.2.22dev"
 _check_version_and_prompt_upgrade(__version__)
 _set_tqdm_envvars_noninteractive()
