@@ -39,8 +39,8 @@ MESSAGE_GUIDE_SIGN_LICENSE = (
     "│ Details: license key ({license_strats}...{license_ends}) for package {package_name:<56} │\n"
     "│ Please make sure you have signed the license agreement and set the license key.                           │\n"
     "│                                                                                                           │\n"
-    f"│ Sign the license agreement here (if you dont have Lightning account, you will asked to create one):       │\n"
-    f"│   {generate_url_user_settings():<102}\n"
+    "│ Sign the license agreement here (if you dont have Lightning account, you will asked to create one):       │\n"
+    "│   {link}\n"
     "│                                                                                                           │\n"
     "│ Once you have the license key, you may need to reinstall this package to activate it. Use the commands:   │\n"
     "│                                                                                                           │\n"
@@ -57,6 +57,7 @@ def generate_message_guide_sign_license(package_name: str, reason: str, license_
     if not license_key:
         license_key = "." * 64
     return MESSAGE_GUIDE_SIGN_LICENSE.format(
+        link=generate_url_user_settings(name=package_name),
         package_name=package_name,
         reason=reason.ljust(102, " "),
         license_strats=license_key[:5],

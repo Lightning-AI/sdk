@@ -10,8 +10,8 @@ LICENSE_CODE = os.environ.get("LICENSE_CODE", "d9s79g79ss")
 LICENSE_SIGNING_URL = f"{env.LIGHTNING_CLOUD_URL}?settings=licenses"
 
 
-def generate_url_user_settings(redirect_to: str = LICENSE_SIGNING_URL) -> str:
-    params = urlencode({"redirectTo": redirect_to, "okbhrt": LICENSE_CODE})
+def generate_url_user_settings(name: str, redirect_to: str = LICENSE_SIGNING_URL) -> str:
+    params = urlencode({"redirectTo": redirect_to, "okbhrt": LICENSE_CODE, "licenseName": name})
     return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
 
