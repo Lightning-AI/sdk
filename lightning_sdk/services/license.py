@@ -273,12 +273,17 @@ class LightningLicense:
     @property
     def license_key(self) -> Optional[str]:
         """Get the license key."""
+        name = self.product_name.replace("-", "_")
         if not self._license_key:
-            # If the license key is not set, fist try to find it in the package root
-            self._license_key = self._find_package_license_key(self.product_name.replace("-", "_"))
+            # If the license key is not set, first try to find it env variables
+            self._license_key = os.environ.get(f"LIGHTNING_{name.upper()}_LICENSE_KEY", None)
+        if not self._license_key:
+            # If the license key is not set, second try to find it in the package root
+            self._license_key = self._find_package_license_key(name)
+        # If not found, try to find it in the user home
+        if not self._license_key:
             # If not found, try to find it in the user home
-            if not self._license_key:
-                self._license_key = self._find_user_license_key(self.product_name)
+            self._license_key = self._find_user_license_key(self.product_name)
         return self._license_key
 
     @property

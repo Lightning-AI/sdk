@@ -53,18 +53,20 @@ def test_find_user_license_key_missing(mock_open, mock_home):
 
 
 @patch("importlib.metadata.version")
-@pytest.mark.parametrize("license_source", ["package", "user"])
-def test_license_autofilled_properties(mock_metadata_version, license_source):
+@pytest.mark.parametrize("license_source", ["env", "package", "user"])
+def test_license_autofilled_properties(mock_metadata_version, license_source, monkeypatch):
     mock_metadata_version.return_value = "0.1.0"
+    if license_source == "env":
+        monkeypatch.setenv("LIGHTNING_DEMO_CASE_LICENSE_KEY", "env_key")
     if license_source == "package":
         LightningLicense._find_package_license_key = MagicMock(return_value="package_key")
         LightningLicense._find_user_license_key = MagicMock()
-    else:
+    elif license_source == "user":
         LightningLicense._find_package_license_key = MagicMock(return_value=None)
         LightningLicense._find_user_license_key = MagicMock(return_value="user_key")
 
-    lit_license = LightningLicense("abc")
-    assert lit_license.product_name == "abc"
+    lit_license = LightningLicense("demo-case")
+    assert lit_license.product_name == "demo-case"
     assert lit_license.product_version == "0.1.0"
     assert lit_license.license_key == f"{license_source}_key"
 
