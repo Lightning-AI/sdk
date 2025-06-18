@@ -48,6 +48,7 @@ class V1CloudProvider(object):
     NEBIUS = "NEBIUS"
     CLOUDFLARE = "CLOUDFLARE"
     LIGHTNING = "LIGHTNING"
+    LIGHTNING_AGGREGATE = "LIGHTNING_AGGREGATE"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

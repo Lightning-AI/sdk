@@ -46,6 +46,7 @@ class V1ClusterSpec(object):
         'aws_v1': 'V1AWSDirectV1',
         'cloudflare_v1': 'V1CloudflareV1',
         'cluster_type': 'V1ClusterType',
+        'compute_cluster_ids': 'list[str]',
         'deletion_options': 'V1ClusterDeletionOptions',
         'desired_state': 'V1ClusterState',
         'domain': 'str',
@@ -78,6 +79,7 @@ class V1ClusterSpec(object):
         'aws_v1': 'awsV1',
         'cloudflare_v1': 'cloudflareV1',
         'cluster_type': 'clusterType',
+        'compute_cluster_ids': 'computeClusterIds',
         'deletion_options': 'deletionOptions',
         'desired_state': 'desiredState',
         'domain': 'domain',
@@ -104,13 +106,14 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_accelerators = None
         self._aws_v1 = None
         self._cloudflare_v1 = None
         self._cluster_type = None
+        self._compute_cluster_ids = None
         self._deletion_options = None
         self._desired_state = None
         self._domain = None
@@ -146,6 +149,8 @@ class V1ClusterSpec(object):
             self.cloudflare_v1 = cloudflare_v1
         if cluster_type is not None:
             self.cluster_type = cluster_type
+        if compute_cluster_ids is not None:
+            self.compute_cluster_ids = compute_cluster_ids
         if deletion_options is not None:
             self.deletion_options = deletion_options
         if desired_state is not None:
@@ -299,6 +304,27 @@ class V1ClusterSpec(object):
         """
 
         self._cluster_type = cluster_type
+
+    @property
+    def compute_cluster_ids(self) -> 'list[str]':
+        """Gets the compute_cluster_ids of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The compute_cluster_ids of this V1ClusterSpec.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._compute_cluster_ids
+
+    @compute_cluster_ids.setter
+    def compute_cluster_ids(self, compute_cluster_ids: 'list[str]'):
+        """Sets the compute_cluster_ids of this V1ClusterSpec.
+
+
+        :param compute_cluster_ids: The compute_cluster_ids of this V1ClusterSpec.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._compute_cluster_ids = compute_cluster_ids
 
     @property
     def deletion_options(self) -> 'V1ClusterDeletionOptions':

@@ -462,6 +462,7 @@ class PipelinesServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str parent_pipeline_id:
+        :param str original_pipeline_id:
         :param str page_token:
         :param int limit:
         :param str state:
@@ -488,6 +489,7 @@ class PipelinesServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str parent_pipeline_id:
+        :param str original_pipeline_id:
         :param str page_token:
         :param int limit:
         :param str state:
@@ -497,7 +499,7 @@ class PipelinesServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'parent_pipeline_id', 'page_token', 'limit', 'state', 'standalone']  # noqa: E501
+        all_params = ['project_id', 'parent_pipeline_id', 'original_pipeline_id', 'page_token', 'limit', 'state', 'standalone']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -526,6 +528,8 @@ class PipelinesServiceApi(object):
         query_params = []
         if 'parent_pipeline_id' in params:
             query_params.append(('parentPipelineId', params['parent_pipeline_id']))  # noqa: E501
+        if 'original_pipeline_id' in params:
+            query_params.append(('originalPipelineId', params['original_pipeline_id']))  # noqa: E501
         if 'page_token' in params:
             query_params.append(('pageToken', params['page_token']))  # noqa: E501
         if 'limit' in params:
