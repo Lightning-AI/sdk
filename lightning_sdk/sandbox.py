@@ -1,3 +1,4 @@
+import ast
 import types
 from dataclasses import dataclass
 from datetime import datetime
@@ -19,6 +20,8 @@ class Output:
 
 class Sandbox:
     """Sandbox runs AI generated code safely and discards the machine after use.
+
+    Users can run any arbitrary code in a sandbox with sudo permissions.
 
     Example:
         with Sandbox() as sandbox:
@@ -77,8 +80,47 @@ class Sandbox:
             raise Exception(f"Command failed with exit code {exit_code}: {output}")
         return Output(text=output, exit_code=exit_code)
 
+    @staticmethod
+    def _validate_python_code(code: str) -> None:
+        """Validates Python code for syntax errors.
+
+        Args:
+            code: The Python code string to validate
+
+        Raises:
+            SyntaxError: If the code has syntax errors
+            ValueError: If the code is empty or only whitespace
+            IndentationError: If the code has improper indentation
+
+        Note:
+            This validation only catches syntax-level errors. Runtime errors like
+            NameError or TypeError can only be caught when the code is actually executed.
+        """
+        if not code or not code.strip():
+            raise ValueError("Code cannot be empty or only whitespace")
+
+        try:
+            ast.parse(code)
+        except (SyntaxError, IndentationError) as e:
+            error_type = type(e).__name__
+            raise type(e)(f"Invalid Python {error_type.lower()}: {e}") from e
+
     def run_python_code(self, code: str) -> Output:
-        """Runs the python code and returns the output."""
+        """Runs the python code and returns the output.
+
+        Args:
+            code: The Python code string to execute
+
+        Returns:
+            Output: The result of executing the code
+
+        Raises:
+            SyntaxError: If the code has syntax errors
+            ValueError: If the code is empty or only whitespace
+        """
+        # Validate the code before running
+        self._validate_python_code(code)
+
         command = f"python - <<EOF\n{code}\nEOF"
         return self.run(command)
 

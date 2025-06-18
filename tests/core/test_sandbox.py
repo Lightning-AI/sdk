@@ -56,3 +56,11 @@ def test_delete_not_created(mock_studio):
     mock_studio.return_value.status = Status.NotCreated
     with pytest.raises(RuntimeError, match="not created."), Sandbox(teamspace="growth", org="lightning-ai") as sandbox:
         sandbox.delete()
+
+
+def test_validate_python_code():
+    with pytest.raises(ValueError, match="Code cannot be empty or only whitespace"):
+        Sandbox._validate_python_code("")
+
+    with pytest.raises(SyntaxError, match="Invalid Python syntax"):
+        Sandbox._validate_python_code("for i in range(10): print(i) if i == 5: print('five')")
