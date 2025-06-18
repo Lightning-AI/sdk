@@ -77,6 +77,11 @@ class Sandbox:
             raise Exception(f"Command failed with exit code {exit_code}: {output}")
         return Output(text=output, exit_code=exit_code)
 
+    def run_python_code(self, code: str) -> Output:
+        """Runs the python code and returns the output."""
+        command = f"python - <<EOF\n{code}\nEOF"
+        return self.run(command)
+
     def __enter__(self) -> "Sandbox":
         """Starts the sandbox if it is not running and returns the sandbox."""
         self.start()

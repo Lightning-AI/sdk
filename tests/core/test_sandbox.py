@@ -4,6 +4,7 @@ import pytest
 
 from lightning_sdk import Sandbox
 from lightning_sdk.machine import Machine
+from lightning_sdk.sandbox import Output
 from lightning_sdk.status import Status
 
 
@@ -13,6 +14,15 @@ def test_sandbox(mock_studio):
     with Sandbox(teamspace="growth", org="lightning-ai") as sandbox:
         output = sandbox.run("python --version")
         assert output.text == "Python 3.10.0"
+        assert output.exit_code == 0
+
+
+@patch("lightning_sdk.sandbox.Studio")
+@patch("lightning_sdk.sandbox.Sandbox.run", return_value=Output(text="hello world", exit_code=0))
+def test_run_python_code(mock_run, mock_studio):
+    with Sandbox(teamspace="growth", org="lightning-ai") as sandbox:
+        output = sandbox.run_python_code("print('hello world')")
+        assert output.text == "hello world"
         assert output.exit_code == 0
 
 
