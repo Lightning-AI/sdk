@@ -48,6 +48,28 @@ class Sandbox:
     def is_running(self) -> bool:
         return self._studio.status == Status.Running
 
+    def start(self) -> None:
+        """Starts the sandbox if it is not already running."""
+        if self._studio.status == Status.Running:
+            raise RuntimeError(
+                "Cannot start sandbox: it is already running.\n\n"
+                "To ensure proper lifecycle management, either:\n"
+                "  • Avoid calling `start()` multiple times manually, or\n"
+                "  • Use the sandbox as a context manager:\n"
+                "      with Sandbox() as sandbox:\n"
+                "          # your code here\n"
+            )
+
+        if self._studio.status == Status.Pending:
+            raise RuntimeError("Cannot start sandbox: it is already starting. Wait for it to finish starting.")
+        self._studio.start(machine=self._machine, interruptible=self._interruptible)
+
+    def delete(self) -> None:
+        """Deletes the sandbox if it is not already deleted."""
+        if self._studio.status == Status.NotCreated:
+            raise RuntimeError("Cannot delete sandbox: it is not created.")
+        self._studio.delete()
+
     def run(self, command: str) -> Output:
         """Runs the command and returns the output."""
         output, exit_code = self._studio.run_with_exit_code(command)
@@ -57,8 +79,7 @@ class Sandbox:
 
     def __enter__(self) -> "Sandbox":
         """Starts the sandbox if it is not running and returns the sandbox."""
-        if not self.is_running:
-            self._studio.start(machine=self._machine, interruptible=self._interruptible)
+        self.start()
         return self
 
     def __exit__(
