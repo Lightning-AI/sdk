@@ -56,12 +56,14 @@ class V1LightningRun(object):
         'is_headless': 'bool',
         'is_published': 'bool',
         'network_config': 'list[V1NetworkConfig]',
+        'number_of_files': 'str',
         'parent_id': 'str',
         'project_id': 'str',
         'published_at': 'datetime',
         'should_mount_cloudspace_content': 'bool',
         'source_code_url': 'str',
         'source_upload_url': 'str',
+        'total_size_bytes': 'str',
         'unique_id': 'str',
         'user_id': 'str',
         'user_requested_flow_compute_config': 'V1UserRequestedFlowComputeConfig',
@@ -85,12 +87,14 @@ class V1LightningRun(object):
         'is_headless': 'isHeadless',
         'is_published': 'isPublished',
         'network_config': 'networkConfig',
+        'number_of_files': 'numberOfFiles',
         'parent_id': 'parentId',
         'project_id': 'projectId',
         'published_at': 'publishedAt',
         'should_mount_cloudspace_content': 'shouldMountCloudspaceContent',
         'source_code_url': 'sourceCodeUrl',
         'source_upload_url': 'sourceUploadUrl',
+        'total_size_bytes': 'totalSizeBytes',
         'unique_id': 'uniqueId',
         'user_id': 'userId',
         'user_requested_flow_compute_config': 'userRequestedFlowComputeConfig',
@@ -98,7 +102,7 @@ class V1LightningRun(object):
         'works': 'works'
     }
 
-    def __init__(self, app_entrypoint_file: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dependency_cache_key: 'str' =None, description: 'str' =None, enable_app_server: 'bool' =None, env: 'list[V1EnvVar]' =None, flow_servers: 'list[V1Flowserver]' =None, id: 'str' =None, image_id: 'str' =None, image_spec: 'V1ImageSpec' =None, is_headless: 'bool' =None, is_published: 'bool' =None, network_config: 'list[V1NetworkConfig]' =None, parent_id: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, should_mount_cloudspace_content: 'bool' =None, source_code_url: 'str' =None, source_upload_url: 'str' =None, unique_id: 'str' =None, user_id: 'str' =None, user_requested_flow_compute_config: 'V1UserRequestedFlowComputeConfig' =None, version: 'str' =None, works: 'list[V1Work]' =None):  # noqa: E501
+    def __init__(self, app_entrypoint_file: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dependency_cache_key: 'str' =None, description: 'str' =None, enable_app_server: 'bool' =None, env: 'list[V1EnvVar]' =None, flow_servers: 'list[V1Flowserver]' =None, id: 'str' =None, image_id: 'str' =None, image_spec: 'V1ImageSpec' =None, is_headless: 'bool' =None, is_published: 'bool' =None, network_config: 'list[V1NetworkConfig]' =None, number_of_files: 'str' =None, parent_id: 'str' =None, project_id: 'str' =None, published_at: 'datetime' =None, should_mount_cloudspace_content: 'bool' =None, source_code_url: 'str' =None, source_upload_url: 'str' =None, total_size_bytes: 'str' =None, unique_id: 'str' =None, user_id: 'str' =None, user_requested_flow_compute_config: 'V1UserRequestedFlowComputeConfig' =None, version: 'str' =None, works: 'list[V1Work]' =None):  # noqa: E501
         """V1LightningRun - a model defined in Swagger"""  # noqa: E501
         self._app_entrypoint_file = None
         self._cloudspace_id = None
@@ -115,12 +119,14 @@ class V1LightningRun(object):
         self._is_headless = None
         self._is_published = None
         self._network_config = None
+        self._number_of_files = None
         self._parent_id = None
         self._project_id = None
         self._published_at = None
         self._should_mount_cloudspace_content = None
         self._source_code_url = None
         self._source_upload_url = None
+        self._total_size_bytes = None
         self._unique_id = None
         self._user_id = None
         self._user_requested_flow_compute_config = None
@@ -157,6 +163,8 @@ class V1LightningRun(object):
             self.is_published = is_published
         if network_config is not None:
             self.network_config = network_config
+        if number_of_files is not None:
+            self.number_of_files = number_of_files
         if parent_id is not None:
             self.parent_id = parent_id
         if project_id is not None:
@@ -169,6 +177,8 @@ class V1LightningRun(object):
             self.source_code_url = source_code_url
         if source_upload_url is not None:
             self.source_upload_url = source_upload_url
+        if total_size_bytes is not None:
+            self.total_size_bytes = total_size_bytes
         if unique_id is not None:
             self.unique_id = unique_id
         if user_id is not None:
@@ -496,6 +506,27 @@ class V1LightningRun(object):
         self._network_config = network_config
 
     @property
+    def number_of_files(self) -> 'str':
+        """Gets the number_of_files of this V1LightningRun.  # noqa: E501
+
+
+        :return: The number_of_files of this V1LightningRun.  # noqa: E501
+        :rtype: str
+        """
+        return self._number_of_files
+
+    @number_of_files.setter
+    def number_of_files(self, number_of_files: 'str'):
+        """Sets the number_of_files of this V1LightningRun.
+
+
+        :param number_of_files: The number_of_files of this V1LightningRun.  # noqa: E501
+        :type: str
+        """
+
+        self._number_of_files = number_of_files
+
+    @property
     def parent_id(self) -> 'str':
         """Gets the parent_id of this V1LightningRun.  # noqa: E501
 
@@ -622,6 +653,27 @@ class V1LightningRun(object):
         """
 
         self._source_upload_url = source_upload_url
+
+    @property
+    def total_size_bytes(self) -> 'str':
+        """Gets the total_size_bytes of this V1LightningRun.  # noqa: E501
+
+
+        :return: The total_size_bytes of this V1LightningRun.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_size_bytes
+
+    @total_size_bytes.setter
+    def total_size_bytes(self, total_size_bytes: 'str'):
+        """Sets the total_size_bytes of this V1LightningRun.
+
+
+        :param total_size_bytes: The total_size_bytes of this V1LightningRun.  # noqa: E501
+        :type: str
+        """
+
+        self._total_size_bytes = total_size_bytes
 
     @property
     def unique_id(self) -> 'str':

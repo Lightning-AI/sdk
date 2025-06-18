@@ -43,6 +43,7 @@ class V1Pipeline(object):
     swagger_types = {
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'created_from_ui': 'bool',
         'display_name': 'str',
         'error': 'str',
         'id': 'str',
@@ -64,6 +65,7 @@ class V1Pipeline(object):
     attribute_map = {
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'created_from_ui': 'createdFromUi',
         'display_name': 'displayName',
         'error': 'error',
         'id': 'id',
@@ -82,10 +84,11 @@ class V1Pipeline(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, project_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'V1PipelineState' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, created_from_ui: 'bool' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, project_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'V1PipelineState' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Pipeline - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
+        self._created_from_ui = None
         self._display_name = None
         self._error = None
         self._id = None
@@ -107,6 +110,8 @@ class V1Pipeline(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if created_from_ui is not None:
+            self.created_from_ui = created_from_ui
         if display_name is not None:
             self.display_name = display_name
         if error is not None:
@@ -181,6 +186,27 @@ class V1Pipeline(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def created_from_ui(self) -> 'bool':
+        """Gets the created_from_ui of this V1Pipeline.  # noqa: E501
+
+
+        :return: The created_from_ui of this V1Pipeline.  # noqa: E501
+        :rtype: bool
+        """
+        return self._created_from_ui
+
+    @created_from_ui.setter
+    def created_from_ui(self, created_from_ui: 'bool'):
+        """Sets the created_from_ui of this V1Pipeline.
+
+
+        :param created_from_ui: The created_from_ui of this V1Pipeline.  # noqa: E501
+        :type: bool
+        """
+
+        self._created_from_ui = created_from_ui
 
     @property
     def display_name(self) -> 'str':
