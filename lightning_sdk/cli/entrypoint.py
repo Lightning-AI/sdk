@@ -4,8 +4,9 @@ from types import TracebackType
 from typing import Type
 
 import click
-from rich.console import Console
+from rich.console import Console, Group
 from rich.panel import Panel
+from rich.syntax import Syntax
 from rich.text import Text
 
 from lightning_sdk import __version__
@@ -34,23 +35,24 @@ from lightning_sdk.lightning_cloud.login import Auth
 
 def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:
     """CLI won't show tracebacks, just print the exception message."""
-    # if debug mode, print the traceback using rich
     console = Console()
-    if value.args:
-        message = str(value.args[0]) if value.args[0] else str(value)
-    else:
-        message = str(value) or "An unknown error occurred"
 
-    error_content = Text()
-    error_content.append(f"{exception_type.__name__}: ", style="bold red")
-    error_content.append(message, style="white")
+    message = str(value.args[0]) if value.args else str(value) or "An unknown error occurred"
+
+    error_text = Text()
+    error_text.append(f"{exception_type.__name__}: ", style="bold red")
+    error_text.append(message, style="white")
+
+    renderables = [error_text]
 
     if _LIGHTNING_DEBUG:
-        error_content.append("\n\nFull traceback:\n", style="bold yellow")
-        tb_lines = traceback.format_exception(exception_type, value, tb)
-        error_content.append("".join(tb_lines), style="dim white")
+        tb_text = "".join(traceback.format_exception(exception_type, value, tb))
+        renderables.append(Text("\n\nFull traceback:\n", style="bold yellow"))
+        renderables.append(Syntax(tb_text, "python", theme="monokai", line_numbers=False, word_wrap=True))
+    else:
+        renderables.append(Text("\n\nTo see the full traceback, set the LIGHTNING_DEBUG environment variable to 1."))
 
-    console.print(Panel(error_content, title="⚡ Lightning CLI Error", border_style="red"))
+    console.print(Panel(Group(*renderables), title="⚡ Lightning CLI Error", border_style="red"))
 
 
 @click.group(name="lightning", help="Command line interface (CLI) to interact with/manage Lightning AI Studios.")
