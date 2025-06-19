@@ -1,4 +1,9 @@
 import subprocess
+from unittest.mock import patch
+
+from click.testing import CliRunner
+
+from lightning_sdk.cli import start as start_cli
 
 
 def test_start_help():
@@ -48,3 +53,15 @@ Options:
   --help                          Show this message and exit.
 """  # noqa: E501
     )
+
+
+@patch("lightning_sdk.cli.start.Studio")
+def test_start_cli(mock_studio_class):
+    mock_studio_instance = mock_studio_class.return_value
+    mock_studio_instance.start.side_effect = Exception("Studio not found")
+
+    runner = CliRunner()
+    result = runner.invoke(start_cli.studio, ["test", "--teamspace", "aniket/test"])
+
+    assert result.exit_code != 0
+    assert "Studio not found" in str(result.exception)

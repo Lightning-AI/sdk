@@ -60,8 +60,11 @@ def studio(name: str, teamspace: Optional[str] = None, machine: str = "CPU", pro
 
     try:
         studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False, provider=provider)
-    except (RuntimeError, ValueError, ApiException):
-        studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False, provider=provider)
+    except (RuntimeError, ValueError, ApiException) as first_error:
+        try:
+            studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False, provider=provider)
+        except (RuntimeError, ValueError, ApiException) as second_error:
+            raise first_error from second_error
 
     try:
         resolved_machine = getattr(Machine, machine.upper(), Machine(machine, machine))
