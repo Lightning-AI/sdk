@@ -1,7 +1,7 @@
 import os
 from typing import Any, ClassVar, Dict, List
 
-from lightning_sdk.lightning_cloud.openapi.models import V1JobSpec, V1PipelineStepType
+from lightning_sdk.lightning_cloud.openapi.models import V1JobSpec, V1Pipeline, V1PipelineStepType
 
 
 class PipelinePrinter:
@@ -14,14 +14,26 @@ class PipelinePrinter:
     }
 
     def __init__(
-        self, name: str, initial: bool, pipeline: Any, teamspace: Any, proto_steps: List[Any], schedules: List[Any]
+        self,
+        name: str,
+        initial: bool,
+        pipeline: V1Pipeline,
+        teamspace: Any,
+        proto_steps: List[Any],
+        schedules: List[Any],
     ) -> None:
         self._name = name
         self._initial = initial
         self._pipeline = pipeline
         self._teamspace = teamspace
         self._proto_steps = proto_steps
+        self._shared_filesystem = pipeline.shared_filesystem
         self._schedules = schedules
+        cluster_ids: set[str] = set()
+        for step in self._proto_steps:
+            job_spec = self._get_spec(step)
+            cluster_ids.add(job_spec.cluster_id)
+        self._cluster_ids = cluster_ids
 
     def print_summary(self) -> None:
         """Prints the full, formatted summary of the created pipeline."""
@@ -32,6 +44,7 @@ class PipelinePrinter:
         self._print_steps()
         self._print_schedules()
         self._print_cloud_account()
+        self._print_shared_filesystem()
         self._print_footer()
 
     def _print(self, value: str) -> None:
@@ -85,14 +98,20 @@ class PipelinePrinter:
         if not self._proto_steps:
             return
 
-        cluster_ids: set[str] = set()
-        for step in self._proto_steps:
-            job_spec = self._get_spec(step)
-            cluster_ids.add(job_spec.cluster_id)
-
-        self._print(f"\nCloud account{'s' if len(cluster_ids) > 1 else ''}:")
-        for cluster_id in sorted(cluster_ids):
+        self._print(f"\nCloud account{'s' if len(self._cluster_ids) > 1 else ''}:")
+        for cluster_id in sorted(self._cluster_ids):
             self._print(f"  - {cluster_id}")
+
+    def _print_shared_filesystem(self) -> None:
+        self._print(f"\nShared filesystem: {self._shared_filesystem.enabled}")
+
+        if self._shared_filesystem.enabled and len(self._cluster_ids) == 1:
+            shared_path = ""
+            if self._pipeline.shared_filesystem.s3_folder:
+                cluster_id = list(self._cluster_ids)[0]  # noqa: RUF015
+                shared_path = f"/teamspace/s3_folders/pipelines-{cluster_id}"
+            if shared_path:
+                self._print(f"  - {shared_path}")
 
     def _get_spec(self, step: Any) -> V1JobSpec:
         if step.type == V1PipelineStepType.DEPLOYMENT:

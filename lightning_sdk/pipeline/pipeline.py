@@ -5,9 +5,10 @@ from lightning_sdk.api.pipeline_api import PipelineApi
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.organization import Organization
 from lightning_sdk.pipeline.printer import PipelinePrinter
-from lightning_sdk.pipeline.types import MMT, Deployment, Job
+from lightning_sdk.pipeline.types import MMT, Deployment, Job, _get_studio
 from lightning_sdk.pipeline.utils import prepare_steps
 from lightning_sdk.services.utilities import _get_cluster
+from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace, _resolve_user
@@ -25,6 +26,7 @@ class Pipeline:
         user: Union[str, "User", None] = None,
         cloud_account: Optional[str] = None,
         shared_filesystem: Optional[bool] = None,
+        studio: Optional[Union[Studio, str]] = None,
     ) -> None:
         """The Lightning Pipeline can be used to create complex DAG.
 
@@ -58,10 +60,12 @@ class Pipeline:
         )
 
         self._pipeline_api = PipelineApi()
-        self._cloud_account = _get_cluster(
+        self._cloud_account = cloud_account
+        self._default_cluster = _get_cluster(
             client=self._pipeline_api._client, project_id=self._teamspace.id, cluster_id=cloud_account
         )
-        self._shared_filesystem = shared_filesystem
+        self._shared_filesystem = shared_filesystem if shared_filesystem is not None else True
+        self._studio = _get_studio(studio)
         self._is_created = False
 
         pipeline = None
@@ -79,14 +83,23 @@ class Pipeline:
         if len(steps) == 0:
             raise ValueError("The provided steps is empty")
 
-        for step_idx, step in enumerate(steps):
-            if step.name in [None, ""]:
-                raise ValueError(f"The step {step_idx} requires a name")
+        for step_idx, pipeline_step in enumerate(steps):
+            if pipeline_step.name in [None, ""]:
+                pipeline_step.name = f"step-{step_idx}"
 
-        steps = [
-            step.to_proto(self._teamspace, self._cloud_account.cluster_id or "", self._shared_filesystem)
-            for step in steps
-        ]
+            if (
+                self._studio is not None
+                and (pipeline_step.image == "" or pipeline_step.image is None)
+                and pipeline_step.studio is None
+            ):
+                pipeline_step.cloud_account = self._studio.cloud_account
+                pipeline_step.studio = self._studio
+
+        cluster_ids = set(step.cloud_account for step in steps if step.cloud_account not in ["", None])  # noqa: C401
+
+        cloud_account = list(cluster_ids)[0] if len(cluster_ids) == 1 and self._cloud_account is None else ""  # noqa: RUF015
+
+        steps = [step.to_proto(self._teamspace, cloud_account, self._shared_filesystem) for step in steps]
 
         proto_steps = prepare_steps(steps)
         schedules = schedules or []
@@ -97,13 +110,18 @@ class Pipeline:
             self._name,
             self._teamspace.id,
             proto_steps,
-            self._shared_filesystem or False,
+            self._shared_filesystem,
             schedules,
             parent_pipeline_id,
         )
 
         printer = PipelinePrinter(
-            self._name, parent_pipeline_id is None, self._pipeline, self._teamspace, proto_steps, schedules
+            self._name,
+            parent_pipeline_id is None,
+            self._pipeline,
+            self._teamspace,
+            proto_steps,
+            schedules,
         )
         printer.print_summary()
 

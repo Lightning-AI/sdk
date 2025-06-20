@@ -20,12 +20,13 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1CreateDeploymentRequest,
     V1PipelineStep,
     V1PipelineStepType,
+    V1SharedFilesystem,
 )
+from lightning_sdk.machine import Machine
 from lightning_sdk.mmt.v2 import MMTApiV2
 from lightning_sdk.studio import Studio
 
 if TYPE_CHECKING:
-    from lightning_sdk.machine import Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
@@ -40,32 +41,42 @@ class Deployment:
     def __init__(
         self,
         name: Optional[str] = None,
+        studio: Optional[Union[str, Studio]] = None,
         machine: Optional["Machine"] = None,
         image: Optional[str] = None,
-        autoscale: Optional["AutoScaleConfig"] = None,
-        ports: Optional[List[float]] = None,
-        release_strategy: Optional["ReleaseStrategy"] = None,
+        autoscale: Optional[AutoScaleConfig] = None,
+        ports: Optional[Union[float, List[float]]] = None,
+        release_strategy: Optional[ReleaseStrategy] = None,
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
-        env: Union[List[Union["Secret", "Env"]], Dict[str, str], None] = None,
+        commands: Optional[List[str]] = None,
+        env: Union[List[Union[Secret, Env]], Dict[str, str], None] = None,
         spot: Optional[bool] = None,
         replicas: Optional[int] = None,
-        health_check: Optional[Union["HttpHealthCheck", "ExecHealthCheck"]] = None,
-        auth: Optional[Union["BasicAuth", "TokenAuth"]] = None,
+        health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
+        auth: Optional[Union[BasicAuth, TokenAuth]] = None,
         cloud_account: Optional[str] = None,
         custom_domain: Optional[str] = None,
         quantity: Optional[int] = None,
+        include_credentials: Optional[bool] = None,
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
     ) -> None:
         self.name = name
-        self.machine = machine
+        self.studio = _get_studio(studio)
+        if cloud_account and studio and cloud_account != studio.cloud_account != cloud_account:
+            raise ValueError(
+                f"The provided cloud account `{cloud_account}` doesn't match"
+                f" the Studio cloud account {self.studio.cloud_account}"
+            )
+
+        self.machine = machine or Machine.CPU
         self.image = image
         self.autoscale = autoscale or AutoScaleConfig(
             min_replicas=0,
             max_replicas=1,
             target_metrics=[
                 AutoScalingMetric(
-                    name="CPU" if machine.is_cpu() else "GPU",
+                    name="CPU" if self.machine.is_cpu() else "GPU",
                     target=80,
                 )
             ],
@@ -74,17 +85,21 @@ class Deployment:
         self.release_strategy = release_strategy
         self.entrypoint = entrypoint
         self.command = command
+        self.commands = commands
         self.env = env
         self.spot = spot
         self.replicas = replicas or 1
         self.health_check = health_check
         self.auth = auth
-        self.cloud_account = cloud_account or ""
+        self.cloud_account = cloud_account or "" if self.studio is None else self.studio.cloud_account
         self.custom_domain = custom_domain
         self.quantity = quantity
+        self.include_credentials = include_credentials or True
         self.wait_for = wait_for
 
-    def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
+    def to_proto(
+        self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
+    ) -> V1PipelineStep:
         _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
         return V1PipelineStep(
             name=self.name,
@@ -106,6 +121,8 @@ class Deployment:
                     machine=self.machine,
                     health_check=self.health_check,
                     quantity=self.quantity,
+                    cloudspace_id=self.studio._studio.id if self.studio else None,
+                    include_credentials=self.include_credentials,
                 ),
                 strategy=to_strategy(self.release_strategy),
             ),
@@ -117,7 +134,7 @@ class Job:
 
     def __init__(
         self,
-        machine: Union["Machine", str],
+        machine: Optional[Union["Machine", str]] = None,
         name: Optional[str] = None,
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
@@ -135,14 +152,21 @@ class Job:
         wait_for: Union[str, List[str], None] = DEFAULT,
     ) -> None:
         self.name = name
-        self.machine = machine
+        self.machine = machine or Machine.CPU
         self.command = command
-        self.studio = studio
+        self.studio = _get_studio(studio)
+
+        if cloud_account and self.studio and cloud_account != self.studio.cloud_account != cloud_account:
+            raise ValueError(
+                f"The provided cloud account `{cloud_account}` doesn't match"
+                f" the Studio cloud account {self.studio.cloud_account}"
+            )
+
         self.image = image
         self.teamspace = teamspace
         self.org = org
         self.user = user
-        self.cloud_account = cloud_account
+        self.cloud_account = cloud_account or "" if self.studio is None else self.studio.cloud_account
         self.env = env
         self.interruptible = interruptible
         self.image_credentials = image_credentials
@@ -151,7 +175,9 @@ class Job:
         self.path_mappings = path_mappings
         self.wait_for = wait_for
 
-    def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
+    def to_proto(
+        self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
+    ) -> V1PipelineStep:
         studio = _get_studio(self.studio)
         if isinstance(studio, Studio):
             if self.cloud_account is None:
@@ -209,16 +235,22 @@ class MMT:
         path_mappings: Optional[Dict[str, str]] = None,
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
     ) -> None:
-        self.machine = machine
+        self.machine = machine or Machine.CPU
         self.num_machines = num_machines
         self.name = name
         self.command = command
-        self.studio = studio
+        self.studio = _get_studio(studio)
+
+        if cloud_account and self.studio and cloud_account != self.studio.cloud_account != cloud_account:
+            raise ValueError(
+                f"The provided cloud account `{cloud_account}` doesn't match"
+                f" the Studio cloud account {self.studio.cloud_account}"
+            )
         self.image = image
         self.teamspace = teamspace
         self.org = org
         self.user = user
-        self.cloud_account = cloud_account
+        self.cloud_account = cloud_account or "" if self.studio is None else self.studio.cloud_account
         self.env = env
         self.interruptible = interruptible
         self.image_credentials = image_credentials
@@ -227,7 +259,9 @@ class MMT:
         self.path_mappings = path_mappings
         self.wait_for = wait_for
 
-    def to_proto(self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: bool) -> V1PipelineStep:
+    def to_proto(
+        self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
+    ) -> V1PipelineStep:
         studio = _get_studio(self.studio)
         if isinstance(studio, Studio):
             if self.cloud_account is None:
@@ -273,13 +307,18 @@ def to_wait_for(wait_for: Optional[Union[str, List[str]]]) -> Optional[List[str]
     return wait_for if isinstance(wait_for, list) else [wait_for]
 
 
-def _validate_cloud_account(pipeline_cloud_account: str, step_cloud_account: str, shared_filesystem: bool) -> None:
-    if not shared_filesystem:
+def _validate_cloud_account(
+    pipeline_cloud_account: str, step_cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
+) -> None:
+    shared_filesystem_enable = (
+        shared_filesystem.enabled if isinstance(shared_filesystem, V1SharedFilesystem) else shared_filesystem
+    )
+    if not shared_filesystem_enable:
         return
 
     if pipeline_cloud_account != "" and step_cloud_account != "" and pipeline_cloud_account != step_cloud_account:
         raise ValueError(
-            "With shared filesystem enabled, all the pipeline steps wait_for to be on the same cluster."
+            "With shared filesystem enabled, all the pipeline steps requires to be on the same cluster."
             f" Found {pipeline_cloud_account} and {step_cloud_account}"
         )
 

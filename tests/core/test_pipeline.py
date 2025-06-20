@@ -11,6 +11,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1JobSpec,
     V1PipelineStep,
     V1PipelineStepType,
+    V1SharedFilesystem,
 )
 from lightning_sdk.machine import Machine
 from lightning_sdk.pipeline import MMT, Deployment, Job, Pipeline
@@ -41,17 +42,6 @@ def test_pipeline_run(monkeypatch):
 
     assert resolve_teamspace_mock._mock_mock_calls[0].kwargs["org"] == "org"
     assert resolve_teamspace_mock._mock_mock_calls[0].kwargs["user"] == "user"
-
-    with pytest.raises(ValueError, match="The step 0 requires a name"):
-        pipeline.run(
-            steps=[
-                Job(
-                    machine=Machine.CPU,
-                    command="echo 'Hello, World!'",
-                    image="ubuntu:latest",
-                ),
-            ]
-        )
 
     with pytest.raises(ValueError, match="You can only reference prior steps"):
         pipeline.run(
@@ -392,28 +382,12 @@ def test_shared_filesystem(monkeypatch):
 
     mock_calls = pipeline_api_mock().create_pipeline._mock_mock_calls
     assert len(mock_calls[0].args)
-    assert mock_calls[0].args[-3] is False
+    assert mock_calls[0].args[-3] is True
     assert isinstance(mock_calls[0].args[-2], list)
     assert len(mock_calls[0].args[-2]) == 0
     assert "get_pipeline_by_id().id" in str(mock_calls[0].args[-1])
 
     pipeline._shared_filesystem = True
-
-    with pytest.raises(
-        ValueError,
-        match="With shared filesystem enabled, all the pipeline steps wait_for to be on the same cluster. Found cluster_id_1 and cluster_id_2",  # noqa: E501
-    ):
-        pipeline.run(
-            steps=[
-                Job(
-                    name="job-0",
-                    machine=Machine.CPU,
-                    command="echo 'Hello, World!'",
-                    image="ubuntu:latest",
-                    cloud_account="cluster_id_2",
-                ),
-            ]
-        )
 
 
 def test_pipeline_with_studio_job(monkeypatch):
@@ -435,7 +409,7 @@ def test_pipeline_with_studio_job(monkeypatch):
         cloud_account_mock.cluster_id = "cluster_id_1"
         pipeline._cloud_account = cloud_account_mock
 
-        with pytest.raises(ValueError, match="The provided cloud account doesn't match the studio"):
+        with pytest.raises(ValueError, match="The provided cloud account"):
             pipeline.run(
                 steps=[
                     Job(
@@ -481,6 +455,7 @@ def test_print_summary_with_multiple_clusters():
     # 1. Arrange: Set up all the mock objects
     pipeline = MagicMock()
     pipeline.name = "my-multi-cluster-pipeline"
+    pipeline.shared_filesystem = V1SharedFilesystem(enabled=True, s3_folder=True)
     teamspace = MagicMock()
     teamspace.owner.name = "test-user"
     teamspace.name = "test-team"
@@ -518,7 +493,7 @@ def test_print_summary_with_multiple_clusters():
 
     assert (
         output
-        == "\n────────────────────────────────────────────────────────────\n✅ Pipeline 'my-multi-cluster-pipeline' created successfully!\n────────────────────────────────────────────────────────────\n\nWorkflow Steps:\n  ➡️ 1. Job 'data-prep' - (runs first)\n  ➡️ 2. Deployment 'training' -  waits for data-prep\n  ➡️ 3. Job 'eval' -  waits for training\n\n🗓️ Schedules:\n  - 'daily-run' runs on cron schedule: `0 0 * * *`\n\nCloud accounts:\n  - cluster-A\n  - cluster-B\n\n────────────────────────────────────────────────────────────\n🔗 View your pipeline in the browser:\n   https://lightning.ai/test-user/test-team/pipelines/my-multi-cluster-pipeline?app_id=pipeline\n────────────────────────────────────────────────────────────\n"  # noqa: E501
+        == "\n────────────────────────────────────────────────────────────\n✅ Pipeline 'my-multi-cluster-pipeline' created successfully!\n────────────────────────────────────────────────────────────\n\nWorkflow Steps:\n  ➡️ 1. Job 'data-prep' - (runs first)\n  ➡️ 2. Deployment 'training' -  waits for data-prep\n  ➡️ 3. Job 'eval' -  waits for training\n\n🗓️ Schedules:\n  - 'daily-run' runs on cron schedule: `0 0 * * *`\n\nCloud accounts:\n  - cluster-A\n  - cluster-B\n\nShared filesystem: True\n\n────────────────────────────────────────────────────────────\n🔗 View your pipeline in the browser:\n   https://lightning.ai/test-user/test-team/pipelines/my-multi-cluster-pipeline?app_id=pipeline\n────────────────────────────────────────────────────────────\n"  # noqa: E501
     )
 
 

@@ -54,6 +54,7 @@ class PipelineApi:
             steps=steps,
             shared_filesystem=V1SharedFilesystem(
                 enabled=shared_filesystem,
+                s3_folder=True,
             ),
             parent_pipeline_id=parent_pipeline_id or "",
         )

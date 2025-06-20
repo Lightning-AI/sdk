@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
 class Schedule:
-    name: str
     cron_expression: str
+    name: Optional[str] = None

@@ -41,34 +41,80 @@ class V1SharedFilesystem(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'efs': 'bool',
         'enabled': 'bool',
+        'filestore': 'bool',
+        'gcs_folder': 'bool',
+        'r2_folder': 'bool',
         'resource_id': 'str',
         'resource_name': 'str',
+        's3_folder': 'bool',
         'state': 'str'
     }
 
     attribute_map = {
+        'efs': 'efs',
         'enabled': 'enabled',
+        'filestore': 'filestore',
+        'gcs_folder': 'gcsFolder',
+        'r2_folder': 'r2Folder',
         'resource_id': 'resourceId',
         'resource_name': 'resourceName',
+        's3_folder': 's3Folder',
         'state': 'state'
     }
 
-    def __init__(self, enabled: 'bool' =None, resource_id: 'str' =None, resource_name: 'str' =None, state: 'str' =None):  # noqa: E501
+    def __init__(self, efs: 'bool' =None, enabled: 'bool' =None, filestore: 'bool' =None, gcs_folder: 'bool' =None, r2_folder: 'bool' =None, resource_id: 'str' =None, resource_name: 'str' =None, s3_folder: 'bool' =None, state: 'str' =None):  # noqa: E501
         """V1SharedFilesystem - a model defined in Swagger"""  # noqa: E501
+        self._efs = None
         self._enabled = None
+        self._filestore = None
+        self._gcs_folder = None
+        self._r2_folder = None
         self._resource_id = None
         self._resource_name = None
+        self._s3_folder = None
         self._state = None
         self.discriminator = None
+        if efs is not None:
+            self.efs = efs
         if enabled is not None:
             self.enabled = enabled
+        if filestore is not None:
+            self.filestore = filestore
+        if gcs_folder is not None:
+            self.gcs_folder = gcs_folder
+        if r2_folder is not None:
+            self.r2_folder = r2_folder
         if resource_id is not None:
             self.resource_id = resource_id
         if resource_name is not None:
             self.resource_name = resource_name
+        if s3_folder is not None:
+            self.s3_folder = s3_folder
         if state is not None:
             self.state = state
+
+    @property
+    def efs(self) -> 'bool':
+        """Gets the efs of this V1SharedFilesystem.  # noqa: E501
+
+
+        :return: The efs of this V1SharedFilesystem.  # noqa: E501
+        :rtype: bool
+        """
+        return self._efs
+
+    @efs.setter
+    def efs(self, efs: 'bool'):
+        """Sets the efs of this V1SharedFilesystem.
+
+
+        :param efs: The efs of this V1SharedFilesystem.  # noqa: E501
+        :type: bool
+        """
+
+        self._efs = efs
 
     @property
     def enabled(self) -> 'bool':
@@ -90,6 +136,69 @@ class V1SharedFilesystem(object):
         """
 
         self._enabled = enabled
+
+    @property
+    def filestore(self) -> 'bool':
+        """Gets the filestore of this V1SharedFilesystem.  # noqa: E501
+
+
+        :return: The filestore of this V1SharedFilesystem.  # noqa: E501
+        :rtype: bool
+        """
+        return self._filestore
+
+    @filestore.setter
+    def filestore(self, filestore: 'bool'):
+        """Sets the filestore of this V1SharedFilesystem.
+
+
+        :param filestore: The filestore of this V1SharedFilesystem.  # noqa: E501
+        :type: bool
+        """
+
+        self._filestore = filestore
+
+    @property
+    def gcs_folder(self) -> 'bool':
+        """Gets the gcs_folder of this V1SharedFilesystem.  # noqa: E501
+
+
+        :return: The gcs_folder of this V1SharedFilesystem.  # noqa: E501
+        :rtype: bool
+        """
+        return self._gcs_folder
+
+    @gcs_folder.setter
+    def gcs_folder(self, gcs_folder: 'bool'):
+        """Sets the gcs_folder of this V1SharedFilesystem.
+
+
+        :param gcs_folder: The gcs_folder of this V1SharedFilesystem.  # noqa: E501
+        :type: bool
+        """
+
+        self._gcs_folder = gcs_folder
+
+    @property
+    def r2_folder(self) -> 'bool':
+        """Gets the r2_folder of this V1SharedFilesystem.  # noqa: E501
+
+
+        :return: The r2_folder of this V1SharedFilesystem.  # noqa: E501
+        :rtype: bool
+        """
+        return self._r2_folder
+
+    @r2_folder.setter
+    def r2_folder(self, r2_folder: 'bool'):
+        """Sets the r2_folder of this V1SharedFilesystem.
+
+
+        :param r2_folder: The r2_folder of this V1SharedFilesystem.  # noqa: E501
+        :type: bool
+        """
+
+        self._r2_folder = r2_folder
 
     @property
     def resource_id(self) -> 'str':
@@ -132,6 +241,27 @@ class V1SharedFilesystem(object):
         """
 
         self._resource_name = resource_name
+
+    @property
+    def s3_folder(self) -> 'bool':
+        """Gets the s3_folder of this V1SharedFilesystem.  # noqa: E501
+
+
+        :return: The s3_folder of this V1SharedFilesystem.  # noqa: E501
+        :rtype: bool
+        """
+        return self._s3_folder
+
+    @s3_folder.setter
+    def s3_folder(self, s3_folder: 'bool'):
+        """Sets the s3_folder of this V1SharedFilesystem.
+
+
+        :param s3_folder: The s3_folder of this V1SharedFilesystem.  # noqa: E501
+        :type: bool
+        """
+
+        self._s3_folder = s3_folder
 
     @property
     def state(self) -> 'str':
