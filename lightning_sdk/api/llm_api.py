@@ -99,6 +99,7 @@ class LLMApi:
             "stream": stream,
             "metadata": metadata or {},
             "internal_conversation": is_internal_conversation,
+            "system_prompt": system_prompt,
         }
         if images:
             for image in images:
@@ -146,6 +147,7 @@ class LLMApi:
             "stream": stream,
             "metadata": metadata or {},
             "internal_conversation": is_internal_conversation,
+            "system_prompt": system_prompt,
         }
         if images:
             for image in images:

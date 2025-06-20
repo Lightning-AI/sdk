@@ -358,6 +358,23 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
         metadata=None,
     )
 
+    # system prompt
+    response = llm.chat(
+        "Hello, how are you?", system_prompt="user prompt", max_completion_tokens=10, metadata={"user_api": "123456"}
+    )
+    mock_api.start_conversation.assert_called_with(
+        prompt="Hello, how are you?",
+        system_prompt="user prompt",
+        max_completion_tokens=10,
+        assistant_id=llm._model.id,
+        images=None,
+        conversation_id=None,
+        billing_project_id="teamspace-123",
+        name=None,
+        stream=False,
+        metadata={"user_api": "123456"},
+    )
+
 
 def test_chat_backend(monkeypatch, mock_auth, mock_public_model):
     mock_api = MagicMock()
