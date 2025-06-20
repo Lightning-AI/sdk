@@ -518,7 +518,7 @@ def test_print_summary_with_multiple_clusters():
 
     assert (
         output
-        == "\n────────────────────────────────────────────────────────────\n✅ Pipeline 'my-multi-cluster-pipeline' created successfully!\n────────────────────────────────────────────────────────────\n\nWorkflow Steps:\n  ➡️ 1. Job 'data-prep' - (runs first)\n  ➡️ 2. Deployment 'training' -  waits for data-prep\n  ➡️ 3. Job 'eval' -  waits for training\n\n🗓️ Schedules:\n  - 'daily-run' runs on cron schedule: `0 0 * * *`\n\nCloud accounts:\n  - cluster-A\n  - cluster-B\n\n────────────────────────────────────────────────────────────\n🔗 View your pipeline in the browser:\n   https://lightning.ai/test-user/test-team/pipelines/my-multi-cluster-pipeline?app_id=pipeline&section=Graph\n────────────────────────────────────────────────────────────\n"  # noqa: E501
+        == "\n────────────────────────────────────────────────────────────\n✅ Pipeline 'my-multi-cluster-pipeline' created successfully!\n────────────────────────────────────────────────────────────\n\nWorkflow Steps:\n  ➡️ 1. Job 'data-prep' - (runs first)\n  ➡️ 2. Deployment 'training' -  waits for data-prep\n  ➡️ 3. Job 'eval' -  waits for training\n\n🗓️ Schedules:\n  - 'daily-run' runs on cron schedule: `0 0 * * *`\n\nCloud accounts:\n  - cluster-A\n  - cluster-B\n\n────────────────────────────────────────────────────────────\n🔗 View your pipeline in the browser:\n   https://lightning.ai/test-user/test-team/pipelines/my-multi-cluster-pipeline?app_id=pipeline\n────────────────────────────────────────────────────────────\n"  # noqa: E501
     )
 
 
@@ -567,4 +567,4 @@ def test_print_summary_updated():
     output = test_printer.get_output_as_string()
 
     assert "Pipeline 'update-pipeline' updated successfully!" in output
-    assert "/pipelines/update-pipeline?app_id=pipeline&section=Graph" in output
+    assert "/pipelines/update-pipeline?app_id=pipeline" in output

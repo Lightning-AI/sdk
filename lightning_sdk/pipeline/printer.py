@@ -75,7 +75,7 @@ class PipelinePrinter:
         team: str = self._teamspace.name
         pipeline_name: str = self._name
 
-        pipeline_url = f"{cloud_url}/{owner}/{team}/pipelines/{pipeline_name}?app_id=pipeline&section=Graph"
+        pipeline_url = f"{cloud_url}/{owner}/{team}/pipelines/{pipeline_name}?app_id=pipeline"
 
         self._print("\n" + "─" * 60)
         self._print(f"🔗 View your pipeline in the browser:\n   {pipeline_url}")
