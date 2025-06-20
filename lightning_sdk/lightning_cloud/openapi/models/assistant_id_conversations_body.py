@@ -51,7 +51,8 @@ class AssistantIdConversationsBody(object):
         'name': 'str',
         'parent_message_id': 'str',
         'store': 'bool',
-        'stream': 'bool'
+        'stream': 'bool',
+        'system_prompt': 'str'
     }
 
     attribute_map = {
@@ -65,10 +66,11 @@ class AssistantIdConversationsBody(object):
         'name': 'name',
         'parent_message_id': 'parentMessageId',
         'store': 'store',
-        'stream': 'stream'
+        'stream': 'stream',
+        'system_prompt': 'systemPrompt'
     }
 
-    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, store: 'bool' =None, stream: 'bool' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._billing_project_id = None
@@ -81,6 +83,7 @@ class AssistantIdConversationsBody(object):
         self._parent_message_id = None
         self._store = None
         self._stream = None
+        self._system_prompt = None
         self.discriminator = None
         if auto_name is not None:
             self.auto_name = auto_name
@@ -104,6 +107,8 @@ class AssistantIdConversationsBody(object):
             self.store = store
         if stream is not None:
             self.stream = stream
+        if system_prompt is not None:
+            self.system_prompt = system_prompt
 
     @property
     def auto_name(self) -> 'bool':
@@ -335,6 +340,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._stream = stream
+
+    @property
+    def system_prompt(self) -> 'str':
+        """Gets the system_prompt of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The system_prompt of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._system_prompt
+
+    @system_prompt.setter
+    def system_prompt(self, system_prompt: 'str'):
+        """Sets the system_prompt of this AssistantIdConversationsBody.
+
+
+        :param system_prompt: The system_prompt of this AssistantIdConversationsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._system_prompt = system_prompt
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
