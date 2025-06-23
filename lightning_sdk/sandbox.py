@@ -18,7 +18,7 @@ class Output:
     exit_code: int
 
 
-class Sandbox:
+class _Sandbox:
     """Sandbox runs AI generated code safely and discards the machine after use.
 
     Users can run any arbitrary code in a sandbox with sudo permissions.
@@ -124,7 +124,7 @@ class Sandbox:
         command = f"python - <<EOF\n{code}\nEOF"
         return self.run(command)
 
-    def __enter__(self) -> "Sandbox":
+    def __enter__(self) -> "_Sandbox":
         """Starts the sandbox if it is not running and returns the sandbox."""
         self.start()
         return self
