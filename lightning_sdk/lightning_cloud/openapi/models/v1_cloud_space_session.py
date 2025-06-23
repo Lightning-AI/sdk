@@ -43,20 +43,23 @@ class V1CloudSpaceSession(object):
     swagger_types = {
         'command': 'str',
         'id': 'str',
-        'name': 'str'
+        'name': 'str',
+        'timestamp': 'datetime'
     }
 
     attribute_map = {
         'command': 'command',
         'id': 'id',
-        'name': 'name'
+        'name': 'name',
+        'timestamp': 'timestamp'
     }
 
-    def __init__(self, command: 'str' =None, id: 'str' =None, name: 'str' =None):  # noqa: E501
+    def __init__(self, command: 'str' =None, id: 'str' =None, name: 'str' =None, timestamp: 'datetime' =None):  # noqa: E501
         """V1CloudSpaceSession - a model defined in Swagger"""  # noqa: E501
         self._command = None
         self._id = None
         self._name = None
+        self._timestamp = None
         self.discriminator = None
         if command is not None:
             self.command = command
@@ -64,6 +67,8 @@ class V1CloudSpaceSession(object):
             self.id = id
         if name is not None:
             self.name = name
+        if timestamp is not None:
+            self.timestamp = timestamp
 
     @property
     def command(self) -> 'str':
@@ -127,6 +132,27 @@ class V1CloudSpaceSession(object):
         """
 
         self._name = name
+
+    @property
+    def timestamp(self) -> 'datetime':
+        """Gets the timestamp of this V1CloudSpaceSession.  # noqa: E501
+
+
+        :return: The timestamp of this V1CloudSpaceSession.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._timestamp
+
+    @timestamp.setter
+    def timestamp(self, timestamp: 'datetime'):
+        """Sets the timestamp of this V1CloudSpaceSession.
+
+
+        :param timestamp: The timestamp of this V1CloudSpaceSession.  # noqa: E501
+        :type: datetime
+        """
+
+        self._timestamp = timestamp
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

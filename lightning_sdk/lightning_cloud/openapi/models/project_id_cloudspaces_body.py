@@ -48,6 +48,7 @@ class ProjectIdCloudspacesBody(object):
         'cluster_id': 'str',
         'compute_name': 'str',
         'data_connection_mounts': 'list[V1DataConnectionMount]',
+        'disable_secrets': 'bool',
         'disk_size': 'str',
         'display_name': 'str',
         'name': 'str',
@@ -67,6 +68,7 @@ class ProjectIdCloudspacesBody(object):
         'cluster_id': 'clusterId',
         'compute_name': 'computeName',
         'data_connection_mounts': 'dataConnectionMounts',
+        'disable_secrets': 'disableSecrets',
         'disk_size': 'diskSize',
         'display_name': 'displayName',
         'name': 'name',
@@ -78,7 +80,7 @@ class ProjectIdCloudspacesBody(object):
         'spot': 'spot'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, source: 'V1CloudSpaceSourceType' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_secrets: 'bool' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, source: 'V1CloudSpaceSourceType' =None, spot: 'bool' =None):  # noqa: E501
         """ProjectIdCloudspacesBody - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cloud_space_environment_template_id = None
@@ -87,6 +89,7 @@ class ProjectIdCloudspacesBody(object):
         self._cluster_id = None
         self._compute_name = None
         self._data_connection_mounts = None
+        self._disable_secrets = None
         self._disk_size = None
         self._display_name = None
         self._name = None
@@ -111,6 +114,8 @@ class ProjectIdCloudspacesBody(object):
             self.compute_name = compute_name
         if data_connection_mounts is not None:
             self.data_connection_mounts = data_connection_mounts
+        if disable_secrets is not None:
+            self.disable_secrets = disable_secrets
         if disk_size is not None:
             self.disk_size = disk_size
         if display_name is not None:
@@ -276,6 +281,27 @@ class ProjectIdCloudspacesBody(object):
         """
 
         self._data_connection_mounts = data_connection_mounts
+
+    @property
+    def disable_secrets(self) -> 'bool':
+        """Gets the disable_secrets of this ProjectIdCloudspacesBody.  # noqa: E501
+
+
+        :return: The disable_secrets of this ProjectIdCloudspacesBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_secrets
+
+    @disable_secrets.setter
+    def disable_secrets(self, disable_secrets: 'bool'):
+        """Sets the disable_secrets of this ProjectIdCloudspacesBody.
+
+
+        :param disable_secrets: The disable_secrets of this ProjectIdCloudspacesBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_secrets = disable_secrets
 
     @property
     def disk_size(self) -> 'str':

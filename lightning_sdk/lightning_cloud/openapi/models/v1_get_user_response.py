@@ -75,6 +75,7 @@ class V1GetUserResponse(object):
         'sb': 'bool',
         'status': 'Externalv1UserStatus',
         'storage_bytes': 'str',
+        'storage_overuse_deletion_at': 'datetime',
         'user_metadata': 'str',
         'username': 'str',
         'waitlisted': 'bool',
@@ -116,13 +117,14 @@ class V1GetUserResponse(object):
         'sb': 'sb',
         'status': 'status',
         'storage_bytes': 'storageBytes',
+        'storage_overuse_deletion_at': 'storageOveruseDeletionAt',
         'user_metadata': 'userMetadata',
         'username': 'username',
         'waitlisted': 'waitlisted',
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, country: 'str' =None, discounted_pro_plan: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, country: 'str' =None, discounted_pro_plan: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
@@ -158,6 +160,7 @@ class V1GetUserResponse(object):
         self._sb = None
         self._status = None
         self._storage_bytes = None
+        self._storage_overuse_deletion_at = None
         self._user_metadata = None
         self._username = None
         self._waitlisted = None
@@ -231,6 +234,8 @@ class V1GetUserResponse(object):
             self.status = status
         if storage_bytes is not None:
             self.storage_bytes = storage_bytes
+        if storage_overuse_deletion_at is not None:
+            self.storage_overuse_deletion_at = storage_overuse_deletion_at
         if user_metadata is not None:
             self.user_metadata = user_metadata
         if username is not None:
@@ -953,6 +958,27 @@ class V1GetUserResponse(object):
         """
 
         self._storage_bytes = storage_bytes
+
+    @property
+    def storage_overuse_deletion_at(self) -> 'datetime':
+        """Gets the storage_overuse_deletion_at of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The storage_overuse_deletion_at of this V1GetUserResponse.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._storage_overuse_deletion_at
+
+    @storage_overuse_deletion_at.setter
+    def storage_overuse_deletion_at(self, storage_overuse_deletion_at: 'datetime'):
+        """Sets the storage_overuse_deletion_at of this V1GetUserResponse.
+
+
+        :param storage_overuse_deletion_at: The storage_overuse_deletion_at of this V1GetUserResponse.  # noqa: E501
+        :type: datetime
+        """
+
+        self._storage_overuse_deletion_at = storage_overuse_deletion_at
 
     @property
     def user_metadata(self) -> 'str':
