@@ -1,3 +1,4 @@
+import os
 from typing import TYPE_CHECKING, List, Optional, Union
 
 from lightning_sdk.api import UserApi
@@ -5,7 +6,7 @@ from lightning_sdk.api.pipeline_api import PipelineApi
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.organization import Organization
 from lightning_sdk.pipeline.printer import PipelinePrinter
-from lightning_sdk.pipeline.types import MMT, Deployment, Job, _get_studio
+from lightning_sdk.pipeline.steps import DeploymentStep, JobStep, MMTStep, _get_studio
 from lightning_sdk.pipeline.utils import prepare_steps
 from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.studio import Studio
@@ -79,7 +80,9 @@ class Pipeline:
         else:
             self._pipeline = None
 
-    def run(self, steps: List[Union[Job, Deployment, MMT]], schedules: Optional[List["Schedule"]] = None) -> None:
+    def run(
+        self, steps: List[Union[JobStep, DeploymentStep, MMTStep]], schedules: Optional[List["Schedule"]] = None
+    ) -> None:
         if len(steps) == 0:
             raise ValueError("The provided steps is empty")
 
@@ -142,3 +145,7 @@ class Pipeline:
         if self._pipeline:
             return self._pipeline.name
         return None
+
+    @classmethod
+    def from_env(cls) -> "Pipeline":
+        return Pipeline(name=os.getenv("LIGHTNING_PIPELINE_ID", ""))

@@ -14,7 +14,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1SharedFilesystem,
 )
 from lightning_sdk.machine import Machine
-from lightning_sdk.pipeline import MMT, Deployment, Job, Pipeline
+from lightning_sdk.pipeline import DeploymentReleaseStep, DeploymentStep, JobStep, MMTStep, Pipeline
 from lightning_sdk.pipeline import pipeline as pipeline_module
 from lightning_sdk.pipeline.printer import PipelinePrinter
 from lightning_sdk.pipeline.utils import DEFAULT, prepare_steps
@@ -46,13 +46,13 @@ def test_pipeline_run(monkeypatch):
     with pytest.raises(ValueError, match="You can only reference prior steps"):
         pipeline.run(
             steps=[
-                Job(
+                JobStep(
                     name="job-0",
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
                     image="ubuntu:latest",
                 ),
-                Job(
+                JobStep(
                     name="job-1",
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
@@ -65,13 +65,13 @@ def test_pipeline_run(monkeypatch):
     with pytest.raises(ValueError, match="The step 1 doesn't have a valid wait_for. Found job-3"):
         pipeline.run(
             steps=[
-                Job(
+                JobStep(
                     name="job-0",
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
                     image="ubuntu:latest",
                 ),
-                Job(
+                JobStep(
                     name="job-1",
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
@@ -84,20 +84,20 @@ def test_pipeline_run(monkeypatch):
     with pytest.raises(ValueError, match="You can only reference prior steps"):
         pipeline.run(
             steps=[
-                Job(
+                JobStep(
                     name="job-0",
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
                     image="ubuntu:latest",
                 ),
-                Job(
+                JobStep(
                     name="job-1",
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
                     image="ubuntu:latest",
                     wait_for=["job-2"],
                 ),
-                Job(
+                JobStep(
                     name="job-2",
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
@@ -110,16 +110,16 @@ def test_pipeline_run(monkeypatch):
 
     pipeline.run(
         steps=[
-            Job(
+            JobStep(
                 name="job-0",
                 machine=Machine.CPU,
                 command="echo 'Hello, World!'",
                 image="ubuntu:latest",
             ),
-            Job(
+            JobStep(
                 name="job-1", machine=Machine.CPU, command="echo 'Hello, World!'", image="ubuntu:latest", wait_for=None
             ),
-            Job(
+            JobStep(
                 name="job-2",
                 machine=Machine.CPU,
                 command="echo 'Hello, World!'",
@@ -211,10 +211,10 @@ def test_pipeline_run(monkeypatch):
 
 def test_job_parameters_stay_in_sync():
     from lightning_sdk.job import Job
-    from lightning_sdk.pipeline.types import Job as JobType
+    from lightning_sdk.pipeline.steps import JobStep
 
     job_signature = inspect.signature(Job.run)
-    job_type_signature = inspect.signature(JobType.__init__)
+    job_type_signature = inspect.signature(JobStep.__init__)
 
     job_keys = job_signature.parameters.keys()
     job_type_keys = job_type_signature.parameters.keys()
@@ -287,19 +287,19 @@ def test_prepare_steps():
 
 
 def test_deployment_default():
-    deployment = Deployment(machine=Machine.CPU)
+    deployment = DeploymentStep(machine=Machine.CPU)
     assert deployment.replicas == 1
     assert deployment.autoscale.min_replicas == 0
     assert deployment.autoscale.max_replicas == 1
     assert deployment.autoscale.target_metrics[0].name == "CPU"
     assert deployment.autoscale.target_metrics[0].target == 80
 
-    deployment = Deployment(machine=Machine.A10G)
+    deployment = DeploymentStep(machine=Machine.A10G)
     assert deployment.autoscale.target_metrics[0].name == "GPU"
 
 
 def test_mmt():
-    mmt = MMT(name="mmt-0", machine=Machine.CPU)
+    mmt = MMTStep(name="mmt-0", machine=Machine.CPU)
     proto = mmt.to_proto(MagicMock(), "", False)
     assert proto.type == V1PipelineStepType.MMT
     assert proto.name == "mmt-0"
@@ -370,7 +370,7 @@ def test_shared_filesystem(monkeypatch):
 
     pipeline.run(
         steps=[
-            Job(
+            JobStep(
                 name="job-0",
                 machine=Machine.CPU,
                 command="echo 'Hello, World!'",
@@ -390,7 +390,7 @@ def test_shared_filesystem(monkeypatch):
     pipeline._shared_filesystem = True
 
 
-def test_pipeline_with_studio_job(monkeypatch):
+def test_pipeline_with_studio_job_step(monkeypatch):
     with skip_studio_init():
         monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
         monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
@@ -412,7 +412,7 @@ def test_pipeline_with_studio_job(monkeypatch):
         with pytest.raises(ValueError, match="The provided cloud account"):
             pipeline.run(
                 steps=[
-                    Job(
+                    JobStep(
                         name="job-0",
                         machine=Machine.CPU,
                         command="echo 'Hello, World!'",
@@ -424,7 +424,7 @@ def test_pipeline_with_studio_job(monkeypatch):
 
         pipeline.run(
             steps=[
-                Job(
+                JobStep(
                     name="job-0",
                     machine=Machine.CPU,
                     command="echo 'Hello, World!'",
@@ -543,3 +543,14 @@ def test_print_summary_updated():
 
     assert "Pipeline 'update-pipeline' updated successfully!" in output
     assert "/pipelines/update-pipeline?app_id=pipeline" in output
+
+
+def test_deployment_release_step():
+    teamspace = MagicMock()
+    step = DeploymentReleaseStep(deployment_name="prod", command="python server.py", ports=[8000], image="nginx")
+    step_proto = step.to_proto(teamspace, "test-8", True)
+    assert step_proto.deployment.name == "prod"
+    assert step_proto.deployment.spec.image == "nginx"
+    assert step_proto.deployment.spec.command == "python server.py"
+    assert step_proto.deployment.spec.cluster_id == "test-8"
+    assert step_proto.deployment.endpoint.ports == ["8000"]

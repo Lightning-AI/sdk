@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from lightning_sdk.api.deployment_api import (
     AutoScaleConfig,
@@ -24,6 +24,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
 )
 from lightning_sdk.machine import Machine
 from lightning_sdk.mmt.v2 import MMTApiV2
+from lightning_sdk.pipeline.utils import DEFAULT, _get_studio, _to_wait_for, _validate_cloud_account
 from lightning_sdk.studio import Studio
 
 if TYPE_CHECKING:
@@ -32,10 +33,7 @@ if TYPE_CHECKING:
     from lightning_sdk.user import User
 
 
-from lightning_sdk.pipeline.utils import DEFAULT
-
-
-class Deployment:
+class DeploymentStep:
     # Note: This class is only temporary while pipeline is wip
 
     def __init__(
@@ -104,7 +102,7 @@ class Deployment:
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.DEPLOYMENT,
-            wait_for=to_wait_for(self.wait_for),
+            wait_for=_to_wait_for(self.wait_for),
             deployment=V1CreateDeploymentRequest(
                 autoscaling=to_autoscaling(self.autoscale, self.replicas),
                 endpoint=to_endpoint(self.ports, self.auth, self.custom_domain),
@@ -129,7 +127,7 @@ class Deployment:
         )
 
 
-class Job:
+class JobStep:
     # Note: This class is only temporary while pipeline is wip
 
     def __init__(
@@ -207,12 +205,12 @@ class Job:
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.JOB,
-            wait_for=to_wait_for(self.wait_for),
+            wait_for=_to_wait_for(self.wait_for),
             job=body,
         )
 
 
-class MMT:
+class MMTStep:
     # Note: This class is only temporary while pipeline is wip
 
     def __init__(
@@ -292,42 +290,23 @@ class MMT:
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.MMT,
-            wait_for=to_wait_for(self.wait_for),
+            wait_for=_to_wait_for(self.wait_for),
             mmt=body,
         )
 
 
-def to_wait_for(wait_for: Optional[Union[str, List[str]]]) -> Optional[List[str]]:
-    if wait_for == DEFAULT:
-        return wait_for
+class DeploymentReleaseStep(DeploymentStep):
+    def __init__(self, *args: Any, deployment_name: Optional[str] = None, **kwargs: Any) -> None:
+        if not deployment_name:
+            raise ValueError("The deployment name is required")
+        self._deployment_name = deployment_name
+        super().__init__(*args, **kwargs)
 
-    if wait_for is None:
-        return []
-
-    return wait_for if isinstance(wait_for, list) else [wait_for]
-
-
-def _validate_cloud_account(
-    pipeline_cloud_account: str, step_cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
-) -> None:
-    shared_filesystem_enable = (
-        shared_filesystem.enabled if isinstance(shared_filesystem, V1SharedFilesystem) else shared_filesystem
-    )
-    if not shared_filesystem_enable:
-        return
-
-    if pipeline_cloud_account != "" and step_cloud_account != "" and pipeline_cloud_account != step_cloud_account:
-        raise ValueError(
-            "With shared filesystem enabled, all the pipeline steps requires to be on the same cluster."
-            f" Found {pipeline_cloud_account} and {step_cloud_account}"
-        )
+    def to_proto(self, *args: Any, **kwargs: Any) -> V1PipelineStep:
+        proto: V1PipelineStep = super().to_proto(*args, **kwargs)
+        proto.deployment.name = self._deployment_name
+        proto.deployment.pipeline_reuse_deployment_between_runs = True
+        return proto
 
 
-def _get_studio(studio: Union["Studio", str, None]) -> Union[Studio, None]:
-    if studio is None:
-        return None
-
-    if isinstance(studio, Studio):
-        return studio
-
-    return Studio(studio)
+__all__ = ["JobStep", "MMTStep", "DeploymentStep", "DeploymentReleaseStep"]

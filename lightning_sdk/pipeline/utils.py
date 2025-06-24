@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Literal, Optional, Union
 
-from lightning_sdk.lightning_cloud.openapi.models import V1PipelineStep
+from lightning_sdk.lightning_cloud.openapi.models import V1PipelineStep, V1SharedFilesystem
+from lightning_sdk.studio import Studio
 
 DEFAULT = "DEFAULT"
 
@@ -52,3 +53,39 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
                     raise ValueError("You can only reference prior steps")
 
     return steps
+
+
+def _get_studio(studio: Union["Studio", str, None]) -> Union[Studio, None]:
+    if studio is None:
+        return None
+
+    if isinstance(studio, Studio):
+        return studio
+
+    return Studio(studio)
+
+
+def _validate_cloud_account(
+    pipeline_cloud_account: str, step_cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
+) -> None:
+    shared_filesystem_enable = (
+        shared_filesystem.enabled if isinstance(shared_filesystem, V1SharedFilesystem) else shared_filesystem
+    )
+    if not shared_filesystem_enable:
+        return
+
+    if pipeline_cloud_account != "" and step_cloud_account != "" and pipeline_cloud_account != step_cloud_account:
+        raise ValueError(
+            "With shared filesystem enabled, all the pipeline steps requires to be on the same cluster."
+            f" Found {pipeline_cloud_account} and {step_cloud_account}"
+        )
+
+
+def _to_wait_for(wait_for: Optional[Union[str, List[str]]]) -> Optional[Union[List[str], Literal["DEFAULT"]]]:
+    if wait_for == DEFAULT:
+        return wait_for
+
+    if wait_for is None:
+        return []
+
+    return wait_for if isinstance(wait_for, list) else [wait_for]
