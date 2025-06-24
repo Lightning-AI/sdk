@@ -44,6 +44,7 @@ class MetricsstreamCreateBody(object):
         'app_id': 'str',
         'cloudspace_id': 'str',
         'dark_color': 'str',
+        'experiment_project_name': 'str',
         'job_id': 'str',
         'light_color': 'str',
         'name': 'str',
@@ -59,6 +60,7 @@ class MetricsstreamCreateBody(object):
         'app_id': 'appId',
         'cloudspace_id': 'cloudspaceId',
         'dark_color': 'darkColor',
+        'experiment_project_name': 'experimentProjectName',
         'job_id': 'jobId',
         'light_color': 'lightColor',
         'name': 'name',
@@ -70,11 +72,12 @@ class MetricsstreamCreateBody(object):
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, job_id: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, version: 'datetime' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, experiment_project_name: 'str' =None, job_id: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, version: 'datetime' =None, work_id: 'str' =None):  # noqa: E501
         """MetricsstreamCreateBody - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
         self._dark_color = None
+        self._experiment_project_name = None
         self._job_id = None
         self._light_color = None
         self._name = None
@@ -91,6 +94,8 @@ class MetricsstreamCreateBody(object):
             self.cloudspace_id = cloudspace_id
         if dark_color is not None:
             self.dark_color = dark_color
+        if experiment_project_name is not None:
+            self.experiment_project_name = experiment_project_name
         if job_id is not None:
             self.job_id = job_id
         if light_color is not None:
@@ -172,6 +177,27 @@ class MetricsstreamCreateBody(object):
         """
 
         self._dark_color = dark_color
+
+    @property
+    def experiment_project_name(self) -> 'str':
+        """Gets the experiment_project_name of this MetricsstreamCreateBody.  # noqa: E501
+
+
+        :return: The experiment_project_name of this MetricsstreamCreateBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._experiment_project_name
+
+    @experiment_project_name.setter
+    def experiment_project_name(self, experiment_project_name: 'str'):
+        """Sets the experiment_project_name of this MetricsstreamCreateBody.
+
+
+        :param experiment_project_name: The experiment_project_name of this MetricsstreamCreateBody.  # noqa: E501
+        :type: str
+        """
+
+        self._experiment_project_name = experiment_project_name
 
     @property
     def job_id(self) -> 'str':

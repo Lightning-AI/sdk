@@ -43,6 +43,7 @@ class V1InstanceOverprovisioningSpec(object):
     swagger_types = {
         'instance_type': 'str',
         'is_spot': 'bool',
+        'machine_image_version': 'str',
         'maximum_count': 'int',
         'minimum_count': 'int',
         'region': 'str',
@@ -53,6 +54,7 @@ class V1InstanceOverprovisioningSpec(object):
     attribute_map = {
         'instance_type': 'instanceType',
         'is_spot': 'isSpot',
+        'machine_image_version': 'machineImageVersion',
         'maximum_count': 'maximumCount',
         'minimum_count': 'minimumCount',
         'region': 'region',
@@ -60,10 +62,11 @@ class V1InstanceOverprovisioningSpec(object):
         'volume_size': 'volumeSize'
     }
 
-    def __init__(self, instance_type: 'str' =None, is_spot: 'bool' =None, maximum_count: 'int' =None, minimum_count: 'int' =None, region: 'str' =None, resource_type: 'str' =None, volume_size: 'int' =None):  # noqa: E501
+    def __init__(self, instance_type: 'str' =None, is_spot: 'bool' =None, machine_image_version: 'str' =None, maximum_count: 'int' =None, minimum_count: 'int' =None, region: 'str' =None, resource_type: 'str' =None, volume_size: 'int' =None):  # noqa: E501
         """V1InstanceOverprovisioningSpec - a model defined in Swagger"""  # noqa: E501
         self._instance_type = None
         self._is_spot = None
+        self._machine_image_version = None
         self._maximum_count = None
         self._minimum_count = None
         self._region = None
@@ -74,6 +77,8 @@ class V1InstanceOverprovisioningSpec(object):
             self.instance_type = instance_type
         if is_spot is not None:
             self.is_spot = is_spot
+        if machine_image_version is not None:
+            self.machine_image_version = machine_image_version
         if maximum_count is not None:
             self.maximum_count = maximum_count
         if minimum_count is not None:
@@ -126,6 +131,29 @@ class V1InstanceOverprovisioningSpec(object):
         """
 
         self._is_spot = is_spot
+
+    @property
+    def machine_image_version(self) -> 'str':
+        """Gets the machine_image_version of this V1InstanceOverprovisioningSpec.  # noqa: E501
+
+        Version of the images, Ubuntu 20.04, etc.  # noqa: E501
+
+        :return: The machine_image_version of this V1InstanceOverprovisioningSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._machine_image_version
+
+    @machine_image_version.setter
+    def machine_image_version(self, machine_image_version: 'str'):
+        """Sets the machine_image_version of this V1InstanceOverprovisioningSpec.
+
+        Version of the images, Ubuntu 20.04, etc.  # noqa: E501
+
+        :param machine_image_version: The machine_image_version of this V1InstanceOverprovisioningSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._machine_image_version = machine_image_version
 
     @property
     def maximum_count(self) -> 'int':
