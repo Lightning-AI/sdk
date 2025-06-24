@@ -43,14 +43,11 @@ class V1Volume(object):
     swagger_types = {
         'attached_at': 'datetime',
         'availability_zone': 'str',
-        'cluster_id': 'str',
-        'created_at': 'datetime',
         'detached_at': 'datetime',
         'encrypted': 'bool',
-        'id': 'str',
         'iops': 'str',
+        'metadata': 'V1Metadata',
         'path': 'str',
-        'project_id': 'str',
         'provider': 'str',
         'provider_id': 'str',
         'region': 'str',
@@ -69,14 +66,11 @@ class V1Volume(object):
     attribute_map = {
         'attached_at': 'attachedAt',
         'availability_zone': 'availabilityZone',
-        'cluster_id': 'clusterId',
-        'created_at': 'createdAt',
         'detached_at': 'detachedAt',
         'encrypted': 'encrypted',
-        'id': 'id',
         'iops': 'iops',
+        'metadata': 'metadata',
         'path': 'path',
-        'project_id': 'projectId',
         'provider': 'provider',
         'provider_id': 'providerId',
         'region': 'region',
@@ -92,18 +86,15 @@ class V1Volume(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, attached_at: 'datetime' =None, availability_zone: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, detached_at: 'datetime' =None, encrypted: 'bool' =None, id: 'str' =None, iops: 'str' =None, path: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_id: 'str' =None, region: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, retention_period: 'str' =None, server_id: 'str' =None, size_gb: 'str' =None, state: 'V1VolumeState' =None, throughput: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, attached_at: 'datetime' =None, availability_zone: 'str' =None, detached_at: 'datetime' =None, encrypted: 'bool' =None, iops: 'str' =None, metadata: 'V1Metadata' =None, path: 'str' =None, provider: 'str' =None, provider_id: 'str' =None, region: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, retention_period: 'str' =None, server_id: 'str' =None, size_gb: 'str' =None, state: 'V1VolumeState' =None, throughput: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Volume - a model defined in Swagger"""  # noqa: E501
         self._attached_at = None
         self._availability_zone = None
-        self._cluster_id = None
-        self._created_at = None
         self._detached_at = None
         self._encrypted = None
-        self._id = None
         self._iops = None
+        self._metadata = None
         self._path = None
-        self._project_id = None
         self._provider = None
         self._provider_id = None
         self._region = None
@@ -122,22 +113,16 @@ class V1Volume(object):
             self.attached_at = attached_at
         if availability_zone is not None:
             self.availability_zone = availability_zone
-        if cluster_id is not None:
-            self.cluster_id = cluster_id
-        if created_at is not None:
-            self.created_at = created_at
         if detached_at is not None:
             self.detached_at = detached_at
         if encrypted is not None:
             self.encrypted = encrypted
-        if id is not None:
-            self.id = id
         if iops is not None:
             self.iops = iops
+        if metadata is not None:
+            self.metadata = metadata
         if path is not None:
             self.path = path
-        if project_id is not None:
-            self.project_id = project_id
         if provider is not None:
             self.provider = provider
         if provider_id is not None:
@@ -208,48 +193,6 @@ class V1Volume(object):
         self._availability_zone = availability_zone
 
     @property
-    def cluster_id(self) -> 'str':
-        """Gets the cluster_id of this V1Volume.  # noqa: E501
-
-
-        :return: The cluster_id of this V1Volume.  # noqa: E501
-        :rtype: str
-        """
-        return self._cluster_id
-
-    @cluster_id.setter
-    def cluster_id(self, cluster_id: 'str'):
-        """Sets the cluster_id of this V1Volume.
-
-
-        :param cluster_id: The cluster_id of this V1Volume.  # noqa: E501
-        :type: str
-        """
-
-        self._cluster_id = cluster_id
-
-    @property
-    def created_at(self) -> 'datetime':
-        """Gets the created_at of this V1Volume.  # noqa: E501
-
-
-        :return: The created_at of this V1Volume.  # noqa: E501
-        :rtype: datetime
-        """
-        return self._created_at
-
-    @created_at.setter
-    def created_at(self, created_at: 'datetime'):
-        """Sets the created_at of this V1Volume.
-
-
-        :param created_at: The created_at of this V1Volume.  # noqa: E501
-        :type: datetime
-        """
-
-        self._created_at = created_at
-
-    @property
     def detached_at(self) -> 'datetime':
         """Gets the detached_at of this V1Volume.  # noqa: E501
 
@@ -292,27 +235,6 @@ class V1Volume(object):
         self._encrypted = encrypted
 
     @property
-    def id(self) -> 'str':
-        """Gets the id of this V1Volume.  # noqa: E501
-
-
-        :return: The id of this V1Volume.  # noqa: E501
-        :rtype: str
-        """
-        return self._id
-
-    @id.setter
-    def id(self, id: 'str'):
-        """Sets the id of this V1Volume.
-
-
-        :param id: The id of this V1Volume.  # noqa: E501
-        :type: str
-        """
-
-        self._id = id
-
-    @property
     def iops(self) -> 'str':
         """Gets the iops of this V1Volume.  # noqa: E501
 
@@ -334,6 +256,27 @@ class V1Volume(object):
         self._iops = iops
 
     @property
+    def metadata(self) -> 'V1Metadata':
+        """Gets the metadata of this V1Volume.  # noqa: E501
+
+
+        :return: The metadata of this V1Volume.  # noqa: E501
+        :rtype: V1Metadata
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, metadata: 'V1Metadata'):
+        """Sets the metadata of this V1Volume.
+
+
+        :param metadata: The metadata of this V1Volume.  # noqa: E501
+        :type: V1Metadata
+        """
+
+        self._metadata = metadata
+
+    @property
     def path(self) -> 'str':
         """Gets the path of this V1Volume.  # noqa: E501
 
@@ -353,27 +296,6 @@ class V1Volume(object):
         """
 
         self._path = path
-
-    @property
-    def project_id(self) -> 'str':
-        """Gets the project_id of this V1Volume.  # noqa: E501
-
-
-        :return: The project_id of this V1Volume.  # noqa: E501
-        :rtype: str
-        """
-        return self._project_id
-
-    @project_id.setter
-    def project_id(self, project_id: 'str'):
-        """Sets the project_id of this V1Volume.
-
-
-        :param project_id: The project_id of this V1Volume.  # noqa: E501
-        :type: str
-        """
-
-        self._project_id = project_id
 
     @property
     def provider(self) -> 'str':
