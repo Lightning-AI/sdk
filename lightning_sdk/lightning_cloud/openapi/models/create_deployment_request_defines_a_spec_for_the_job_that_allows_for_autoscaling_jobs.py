@@ -52,6 +52,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'name': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
         'parent_template_id': 'str',
+        'pipeline_reuse_deployment_between_runs': 'bool',
         'recipients': 'V1DeploymentAlertingRecipients',
         'replicas': 'int',
         'spec': 'V1JobSpec',
@@ -70,13 +71,14 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         'name': 'name',
         'parameter_spec': 'parameterSpec',
         'parent_template_id': 'parentTemplateId',
+        'pipeline_reuse_deployment_between_runs': 'pipelineReuseDeploymentBetweenRuns',
         'recipients': 'recipients',
         'replicas': 'replicas',
         'spec': 'spec',
         'strategy': 'strategy'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, recipients: 'V1DeploymentAlertingRecipients' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs - a model defined in Swagger"""  # noqa: E501
         self._api_standard = None
         self._apis = None
@@ -89,6 +91,7 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         self._name = None
         self._parameter_spec = None
         self._parent_template_id = None
+        self._pipeline_reuse_deployment_between_runs = None
         self._recipients = None
         self._replicas = None
         self._spec = None
@@ -116,6 +119,8 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
             self.parameter_spec = parameter_spec
         if parent_template_id is not None:
             self.parent_template_id = parent_template_id
+        if pipeline_reuse_deployment_between_runs is not None:
+            self.pipeline_reuse_deployment_between_runs = pipeline_reuse_deployment_between_runs
         if recipients is not None:
             self.recipients = recipients
         if replicas is not None:
@@ -355,6 +360,27 @@ class CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(o
         """
 
         self._parent_template_id = parent_template_id
+
+    @property
+    def pipeline_reuse_deployment_between_runs(self) -> 'bool':
+        """Gets the pipeline_reuse_deployment_between_runs of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+
+
+        :return: The pipeline_reuse_deployment_between_runs of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :rtype: bool
+        """
+        return self._pipeline_reuse_deployment_between_runs
+
+    @pipeline_reuse_deployment_between_runs.setter
+    def pipeline_reuse_deployment_between_runs(self, pipeline_reuse_deployment_between_runs: 'bool'):
+        """Sets the pipeline_reuse_deployment_between_runs of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.
+
+
+        :param pipeline_reuse_deployment_between_runs: The pipeline_reuse_deployment_between_runs of this CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs.  # noqa: E501
+        :type: bool
+        """
+
+        self._pipeline_reuse_deployment_between_runs = pipeline_reuse_deployment_between_runs
 
     @property
     def recipients(self) -> 'V1DeploymentAlertingRecipients':
