@@ -56,8 +56,10 @@ class V1Volume(object):
         'region': 'str',
         'resource_id': 'str',
         'resource_type': 'str',
+        'retention_period': 'str',
         'server_id': 'str',
         'size_gb': 'str',
+        'state': 'V1VolumeState',
         'throughput': 'str',
         'type': 'str',
         'updated_at': 'datetime',
@@ -80,15 +82,17 @@ class V1Volume(object):
         'region': 'region',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
+        'retention_period': 'retentionPeriod',
         'server_id': 'serverId',
         'size_gb': 'sizeGb',
+        'state': 'state',
         'throughput': 'throughput',
         'type': 'type',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, attached_at: 'datetime' =None, availability_zone: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, detached_at: 'datetime' =None, encrypted: 'bool' =None, id: 'str' =None, iops: 'str' =None, path: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_id: 'str' =None, region: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_id: 'str' =None, size_gb: 'str' =None, throughput: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, attached_at: 'datetime' =None, availability_zone: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, detached_at: 'datetime' =None, encrypted: 'bool' =None, id: 'str' =None, iops: 'str' =None, path: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_id: 'str' =None, region: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, retention_period: 'str' =None, server_id: 'str' =None, size_gb: 'str' =None, state: 'V1VolumeState' =None, throughput: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Volume - a model defined in Swagger"""  # noqa: E501
         self._attached_at = None
         self._availability_zone = None
@@ -105,8 +109,10 @@ class V1Volume(object):
         self._region = None
         self._resource_id = None
         self._resource_type = None
+        self._retention_period = None
         self._server_id = None
         self._size_gb = None
+        self._state = None
         self._throughput = None
         self._type = None
         self._updated_at = None
@@ -142,10 +148,14 @@ class V1Volume(object):
             self.resource_id = resource_id
         if resource_type is not None:
             self.resource_type = resource_type
+        if retention_period is not None:
+            self.retention_period = retention_period
         if server_id is not None:
             self.server_id = server_id
         if size_gb is not None:
             self.size_gb = size_gb
+        if state is not None:
+            self.state = state
         if throughput is not None:
             self.throughput = throughput
         if type is not None:
@@ -471,6 +481,27 @@ class V1Volume(object):
         self._resource_type = resource_type
 
     @property
+    def retention_period(self) -> 'str':
+        """Gets the retention_period of this V1Volume.  # noqa: E501
+
+
+        :return: The retention_period of this V1Volume.  # noqa: E501
+        :rtype: str
+        """
+        return self._retention_period
+
+    @retention_period.setter
+    def retention_period(self, retention_period: 'str'):
+        """Sets the retention_period of this V1Volume.
+
+
+        :param retention_period: The retention_period of this V1Volume.  # noqa: E501
+        :type: str
+        """
+
+        self._retention_period = retention_period
+
+    @property
     def server_id(self) -> 'str':
         """Gets the server_id of this V1Volume.  # noqa: E501
 
@@ -511,6 +542,27 @@ class V1Volume(object):
         """
 
         self._size_gb = size_gb
+
+    @property
+    def state(self) -> 'V1VolumeState':
+        """Gets the state of this V1Volume.  # noqa: E501
+
+
+        :return: The state of this V1Volume.  # noqa: E501
+        :rtype: V1VolumeState
+        """
+        return self._state
+
+    @state.setter
+    def state(self, state: 'V1VolumeState'):
+        """Sets the state of this V1Volume.
+
+
+        :param state: The state of this V1Volume.  # noqa: E501
+        :type: V1VolumeState
+        """
+
+        self._state = state
 
     @property
     def throughput(self) -> 'str':

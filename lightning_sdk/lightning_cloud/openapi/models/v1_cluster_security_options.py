@@ -52,6 +52,7 @@ class V1ClusterSecurityOptions(object):
         'exposed_ports': 'list[str]',
         'extra_firewall_cidr_ranges': 'list[str]',
         'extra_policy': 'str',
+        'extra_sa_scopes': 'list[str]',
         'kms_key_id': 'str',
         'protect_instance_metadata': 'bool',
         'rootless_docker': 'bool',
@@ -71,6 +72,7 @@ class V1ClusterSecurityOptions(object):
         'exposed_ports': 'exposedPorts',
         'extra_firewall_cidr_ranges': 'extraFirewallCidrRanges',
         'extra_policy': 'extraPolicy',
+        'extra_sa_scopes': 'extraSaScopes',
         'kms_key_id': 'kmsKeyId',
         'protect_instance_metadata': 'protectInstanceMetadata',
         'rootless_docker': 'rootlessDocker',
@@ -78,7 +80,7 @@ class V1ClusterSecurityOptions(object):
         'ssh_disabled': 'sshDisabled'
     }
 
-    def __init__(self, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, exposed_ports: 'list[str]' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_policy: 'str' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
+    def __init__(self, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, exposed_ports: 'list[str]' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_policy: 'str' =None, extra_sa_scopes: 'list[str]' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
         self._bucket_kms_key = None
         self._cloud_init_boot_cmds = None
@@ -91,6 +93,7 @@ class V1ClusterSecurityOptions(object):
         self._exposed_ports = None
         self._extra_firewall_cidr_ranges = None
         self._extra_policy = None
+        self._extra_sa_scopes = None
         self._kms_key_id = None
         self._protect_instance_metadata = None
         self._rootless_docker = None
@@ -119,6 +122,8 @@ class V1ClusterSecurityOptions(object):
             self.extra_firewall_cidr_ranges = extra_firewall_cidr_ranges
         if extra_policy is not None:
             self.extra_policy = extra_policy
+        if extra_sa_scopes is not None:
+            self.extra_sa_scopes = extra_sa_scopes
         if kms_key_id is not None:
             self.kms_key_id = kms_key_id
         if protect_instance_metadata is not None:
@@ -360,6 +365,27 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._extra_policy = extra_policy
+
+    @property
+    def extra_sa_scopes(self) -> 'list[str]':
+        """Gets the extra_sa_scopes of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The extra_sa_scopes of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._extra_sa_scopes
+
+    @extra_sa_scopes.setter
+    def extra_sa_scopes(self, extra_sa_scopes: 'list[str]'):
+        """Sets the extra_sa_scopes of this V1ClusterSecurityOptions.
+
+
+        :param extra_sa_scopes: The extra_sa_scopes of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._extra_sa_scopes = extra_sa_scopes
 
     @property
     def kms_key_id(self) -> 'str':

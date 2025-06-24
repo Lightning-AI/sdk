@@ -679,6 +679,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_lit_page_type import V1LitP
 from lightning_sdk.lightning_cloud.openapi.models.v1_lit_registry_artifact import V1LitRegistryArtifact
 from lightning_sdk.lightning_cloud.openapi.models.v1_lit_registry_project import V1LitRegistryProject
 from lightning_sdk.lightning_cloud.openapi.models.v1_lit_repository import V1LitRepository
+from lightning_sdk.lightning_cloud.openapi.models.v1_lite_published_cloud_space_response import V1LitePublishedCloudSpaceResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_locked_resource import V1LockedResource
 from lightning_sdk.lightning_cloud.openapi.models.v1_log_page import V1LogPage
 from lightning_sdk.lightning_cloud.openapi.models.v1_logger_artifact import V1LoggerArtifact
@@ -920,6 +921,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_validate_managed_model_resp
 from lightning_sdk.lightning_cloud.openapi.models.v1_verify_verification_response import V1VerifyVerificationResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_voltage_park_direct_v1 import V1VoltageParkDirectV1
 from lightning_sdk.lightning_cloud.openapi.models.v1_volume import V1Volume
+from lightning_sdk.lightning_cloud.openapi.models.v1_volume_state import V1VolumeState
 from lightning_sdk.lightning_cloud.openapi.models.v1_vultr_direct_v1 import V1VultrDirectV1
 from lightning_sdk.lightning_cloud.openapi.models.v1_weka_data_connection import V1WekaDataConnection
 from lightning_sdk.lightning_cloud.openapi.models.v1_work import V1Work

@@ -47,8 +47,6 @@ class V1UserFeatures(object):
         'ai_hub_monetization': 'bool',
         'auto_fast_load': 'bool',
         'auto_join_orgs': 'bool',
-        'auto_top_up': 'bool',
-        'auto_top_up_teamspace': 'bool',
         'b2c_experience': 'bool',
         'cap_add': 'list[str]',
         'cap_drop': 'list[str]',
@@ -133,8 +131,6 @@ class V1UserFeatures(object):
         'ai_hub_monetization': 'aiHubMonetization',
         'auto_fast_load': 'autoFastLoad',
         'auto_join_orgs': 'autoJoinOrgs',
-        'auto_top_up': 'autoTopUp',
-        'auto_top_up_teamspace': 'autoTopUpTeamspace',
         'b2c_experience': 'b2cExperience',
         'cap_add': 'capAdd',
         'cap_drop': 'capDrop',
@@ -212,7 +208,7 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, auto_top_up: 'bool' =None, auto_top_up_teamspace: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plg_control_center: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plg_control_center: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._accurate_billing = None
         self._affiliate_links = None
@@ -220,8 +216,6 @@ class V1UserFeatures(object):
         self._ai_hub_monetization = None
         self._auto_fast_load = None
         self._auto_join_orgs = None
-        self._auto_top_up = None
-        self._auto_top_up_teamspace = None
         self._b2c_experience = None
         self._cap_add = None
         self._cap_drop = None
@@ -310,10 +304,6 @@ class V1UserFeatures(object):
             self.auto_fast_load = auto_fast_load
         if auto_join_orgs is not None:
             self.auto_join_orgs = auto_join_orgs
-        if auto_top_up is not None:
-            self.auto_top_up = auto_top_up
-        if auto_top_up_teamspace is not None:
-            self.auto_top_up_teamspace = auto_top_up_teamspace
         if b2c_experience is not None:
             self.b2c_experience = b2c_experience
         if cap_add is not None:
@@ -590,48 +580,6 @@ class V1UserFeatures(object):
         """
 
         self._auto_join_orgs = auto_join_orgs
-
-    @property
-    def auto_top_up(self) -> 'bool':
-        """Gets the auto_top_up of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The auto_top_up of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._auto_top_up
-
-    @auto_top_up.setter
-    def auto_top_up(self, auto_top_up: 'bool'):
-        """Sets the auto_top_up of this V1UserFeatures.
-
-
-        :param auto_top_up: The auto_top_up of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._auto_top_up = auto_top_up
-
-    @property
-    def auto_top_up_teamspace(self) -> 'bool':
-        """Gets the auto_top_up_teamspace of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The auto_top_up_teamspace of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._auto_top_up_teamspace
-
-    @auto_top_up_teamspace.setter
-    def auto_top_up_teamspace(self, auto_top_up_teamspace: 'bool'):
-        """Sets the auto_top_up_teamspace of this V1UserFeatures.
-
-
-        :param auto_top_up_teamspace: The auto_top_up_teamspace of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._auto_top_up_teamspace = auto_top_up_teamspace
 
     @property
     def b2c_experience(self) -> 'bool':
