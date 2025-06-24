@@ -23,13 +23,23 @@ from lightning_sdk.teamspace import Teamspace
 @pytest.mark.parametrize("create_ok", [True, False])
 @pytest.mark.parametrize("cluster", [None, "c-abc"])
 @pytest.mark.parametrize("name", ["st-abc", "st-xyz"])
-def test_studio_init(internal_studio_init_mocker, internal_studio_status_mocker, name, cluster, create_ok):
+@pytest.mark.parametrize("disable_secrets", [True, False])
+def test_studio_init(
+    internal_studio_init_mocker, internal_studio_status_mocker, name, cluster, create_ok, disable_secrets
+):
     # st-xyz does not exist and should not be created
     error_out = bool(name == "st-xyz" and not create_ok)
     contextman = pytest.raises(ValueError, match="Studio st-xyz does not exist") if error_out else nullcontext()
 
     with contextman:
-        studio = Studio(name=name, teamspace="ts-abc", org="org-abc", cloud_account=cluster, create_ok=create_ok)
+        studio = Studio(
+            name=name,
+            teamspace="ts-abc",
+            org="org-abc",
+            cloud_account=cluster,
+            create_ok=create_ok,
+            disable_secrets=disable_secrets,
+        )
 
     if error_out:
         return
@@ -37,6 +47,7 @@ def test_studio_init(internal_studio_init_mocker, internal_studio_status_mocker,
     assert studio.teamspace.name == "ts-abc"
     assert studio.owner.name == "org-abc"
     assert studio.name == name
+    assert studio._disable_secrets == disable_secrets
 
 
 @pytest.mark.parametrize(

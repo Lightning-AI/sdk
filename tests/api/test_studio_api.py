@@ -45,6 +45,7 @@ def test_create_studio(internal_studio_api_mocker_create_studio, cloud_account):
             name="st-abc",
             display_name="st-abc",
             seed_files=[V1CloudSpaceSeedFile(path="main.py", contents="print('Hello, Lightning World!')\n")],
+            disable_secrets=False,
         ),
         mock.ANY,
     )

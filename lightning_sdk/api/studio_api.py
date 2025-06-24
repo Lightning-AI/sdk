@@ -123,6 +123,7 @@ class StudioApi:
         teamspace_id: str,
         cloud_account: Optional[str] = None,
         source: Optional[V1CloudSpaceSourceType] = None,
+        disable_secrets: bool = False,
     ) -> V1CloudSpace:
         """Create a Studio with a given name in a given Teamspace on a possibly given cloud_account."""
         body = ProjectIdCloudspacesBody(
@@ -131,6 +132,7 @@ class StudioApi:
             display_name=name,
             seed_files=[V1CloudSpaceSeedFile(path="main.py", contents="print('Hello, Lightning World!')\n")],
             source=source,
+            disable_secrets=disable_secrets,
         )
         studio = self._client.cloud_space_service_create_cloud_space(body, teamspace_id)
 

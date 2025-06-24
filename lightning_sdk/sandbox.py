@@ -23,6 +23,16 @@ class _Sandbox:
 
     Users can run any arbitrary code in a sandbox with sudo permissions.
 
+    Args:
+        name: The name of the sandbox.
+        machine: The machine to use for the sandbox.
+        interruptible: Whether the sandbox is interruptible.
+        teamspace: The teamspace to use for the sandbox.
+        org: The organization to use for the sandbox.
+        user: The user to use for the sandbox.
+        cloud_account: The cloud account to use for the sandbox.
+        disable_secrets: If true, user secrets such as LIGHTNING_API_KEY are not stored in the sandbox.
+
     Example:
         with Sandbox() as sandbox:
             output = sandbox.run("python --version")
@@ -38,6 +48,7 @@ class _Sandbox:
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
         cloud_account: Optional[str] = None,
+        disable_secrets: bool = True,
     ) -> None:
         if name is None:
             timestr = datetime.now().strftime("%b-%d-%H_%M")
@@ -45,7 +56,14 @@ class _Sandbox:
 
         self._machine = machine or Machine.CPU
         self._interruptible = interruptible
-        self._studio = Studio(name=name, teamspace=teamspace, org=org, user=user, cloud_account=cloud_account)
+        self._studio = Studio(
+            name=name,
+            teamspace=teamspace,
+            org=org,
+            user=user,
+            cloud_account=cloud_account,
+            disable_secrets=disable_secrets,
+        )
 
     @property
     def is_running(self) -> bool:

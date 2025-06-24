@@ -76,6 +76,7 @@ class Studio:
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         provider: Optional[str] = None,
         source: Optional[V1CloudSpaceSourceType] = None,
+        disable_secrets: bool = False,
     ) -> None:
         self._studio_api = StudioApi()
         self._cluster_api = ClusterApi()
@@ -83,6 +84,7 @@ class Studio:
         self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         self._cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
         self._setup_done = False
+        self._disable_secrets = disable_secrets
 
         self._plugins = {}
 
@@ -107,7 +109,11 @@ class Studio:
             except ValueError as e:
                 if create_ok:
                     self._studio = self._studio_api.create_studio(
-                        name, self._teamspace.id, cloud_account=self._cloud_account, source=source
+                        name,
+                        self._teamspace.id,
+                        cloud_account=self._cloud_account,
+                        source=source,
+                        disable_secrets=self._disable_secrets,
                     )
                 else:
                     raise ValueError(f"Studio {name} does not exist.") from e
