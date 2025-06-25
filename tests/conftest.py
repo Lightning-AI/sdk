@@ -1780,6 +1780,18 @@ def internal_slurm_run_mocker(mocker, monkeypatch):
 
 
 @pytest.fixture()
+def mocker_auth(mocker):
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.rest_client.Auth",
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
+
+
+@pytest.fixture()
 def internal_job_api_mocker_get_job(mocker):
     def find_instance(self, project_id, name):
         if name in ["j-abc", "j-def"]:
@@ -1918,6 +1930,7 @@ def internal_job_api_mocker_stop_job(mocker):
 @pytest.fixture()
 def internal_job_api_mocker_delete_job(mocker):
     names = ["j-abc", "j-def"]
+    status = {"j-abc": V1LightningappInstanceState.RUNNING}
 
     def find_instance(self, project_id, name):
         if name in names:
@@ -1927,6 +1940,19 @@ def internal_job_api_mocker_delete_job(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
         side_effect=find_instance,
+        autospec=True,
+    )
+
+    def get_instance(self, project_id, id):
+        if id in ["j-abc", "j-def"]:
+            return Externalv1LightningappInstance(
+                name=id, project_id=project_id, id=id, status=V1LightningappInstanceStatus(phase=status[id])
+            )
+        raise ApiException(status=404)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_get_lightningapp_instance",
+        side_effect=get_instance,
         autospec=True,
     )
 

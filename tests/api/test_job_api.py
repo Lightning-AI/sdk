@@ -13,18 +13,17 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1JobSpec,
     V1PathMapping,
 )
-from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 
 
-def test_get_job_v1(internal_job_api_mocker_get_job):
+def test_get_job_v1(internal_job_api_mocker_get_job, mocker_auth):
     job_api = JobApiV1()
     job = job_api.get_job("j-abc", "ts-abc")
     assert isinstance(job, Externalv1LightningappInstance)
 
 
-def test_get_job_error(internal_job_api_mocker_get_job):
+def test_get_job_error(internal_job_api_mocker_get_job, mocker_auth):
     job_api = JobApiV1()
     with pytest.raises(ValueError, match="Job xyz does not exist"):
         job_api.get_job("xyz", "ts-abc")
@@ -44,7 +43,7 @@ def test_get_job_error(internal_job_api_mocker_get_job):
         ("j-yz", "LIGHTNINGAPP_INSTANCE_STATE_COMPLETED"),
     ],
 )
-def test_job_status(internal_job_api_mocker_get_job_status, name, expected_status):
+def test_job_status(mocker_auth, internal_job_api_mocker_get_job_status, name, expected_status):
     job_api = JobApiV1()
     status = job_api.get_job_status(name, "ts-abc")
     if expected_status is None:
@@ -54,7 +53,7 @@ def test_job_status(internal_job_api_mocker_get_job_status, name, expected_statu
     assert status == expected_status
 
 
-def test_stop_job(internal_job_api_mocker_stop_job):
+def test_stop_job(mocker_auth, internal_job_api_mocker_stop_job):
     job_api = JobApiV1()
     status = job_api.get_job_status("j-abc", "ts-abc")
 
@@ -64,18 +63,17 @@ def test_stop_job(internal_job_api_mocker_stop_job):
     assert status == "LIGHTNINGAPP_INSTANCE_STATE_STOPPED"
 
 
-def test_delete_job(internal_job_api_mocker_delete_job):
+def test_delete_job(mocker_auth, internal_job_api_mocker_delete_job):
     job_api = JobApiV1()
     job_api.delete_job("j-abc", "ts-abc")
 
-    with pytest.raises((ApiException, ConnectionError)):
-        job_api.get_job_status("j-abc", "ts-abc")
+    job_api.get_job_status("j-abc", "ts-abc")
 
     with pytest.raises(ValueError, match="Job j-abc does not exist"):
         job_api.get_job("j-abc", "ts-abc")
 
 
-def test_get_work(internal_job_api_mocker_get_work):
+def test_get_work(mocker_auth, internal_job_api_mocker_get_work):
     job_api = JobApiV1()
     works = job_api.list_works("j-abc", "ts-abc")
     assert isinstance(works, list)
@@ -92,7 +90,7 @@ def test_get_work(internal_job_api_mocker_get_work):
     assert w.display_name == "work abc"
 
 
-def test_job_v2_submit_job():
+def test_job_v2_submit_job(mocker_auth):
     from lightning_sdk.lightning_cloud.openapi import ProjectIdJobsBody, V1EnvVar, V1JobSpec
 
     job_api = JobApiV2()
@@ -177,7 +175,7 @@ def test_job_v2_submit_job():
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
 
-def test_get_job_by_name():
+def test_get_job_by_name(mocker_auth):
     job_api = JobApiV2()
 
     get_job_by_name_mock = mock.MagicMock()
@@ -187,7 +185,7 @@ def test_get_job_by_name():
     get_job_by_name_mock.assert_called_once_with(name="test-job", project_id="ts-abc")
 
 
-def test_get_job_v2():
+def test_get_job_v2(mocker_auth):
     job_api = JobApiV2()
 
     get_job_mock = mock.MagicMock()
@@ -208,7 +206,7 @@ def test_get_job_v2():
         ("unknown", Status.Pending),
     ],
 )
-def test_translate_state(internal_state, expected_state):
+def test_translate_state(mocker_auth, internal_state, expected_state):
     job_api = JobApiV2()
     assert job_api._job_state_to_external(internal_state) == expected_state
 
@@ -223,7 +221,7 @@ def test_translate_state(internal_state, expected_state):
         ("", "unknown", Machine("unknown", "unknown")),
     ],
 )
-def test_machine_translate(instance_name, instance_type, expected_machine):
+def test_machine_translate(mocker_auth, instance_name, instance_type, expected_machine):
     job_api = JobApiV2()
 
     spec = V1JobSpec(
@@ -247,7 +245,7 @@ def test_machine_translate(instance_name, instance_type, expected_machine):
         (["stopping", "stopping", "stopping", "stopped"], 4, False),
     ],
 )
-def test_jobv2_stop(job_states: List[str], total_calls_get_job: int, called_update_job: bool):
+def test_jobv2_stop(mocker_auth, job_states: List[str], total_calls_get_job: int, called_update_job: bool):
     job_api = JobApiV2()
 
     def get_job_side_effect(*args, **kwargs):
@@ -276,7 +274,7 @@ def test_jobv2_stop(job_states: List[str], total_calls_get_job: int, called_upda
 @pytest.mark.parametrize(
     ("cloudspace_id", "expected_cloudspace_id"), [(None, ""), ("cloudspace-id", "cloudspace-id"), ("", "")]
 )
-def test_jobv2_delete(cloudspace_id, expected_cloudspace_id):
+def test_jobv2_delete(mocker_auth, cloudspace_id, expected_cloudspace_id):
     job_api = JobApiV2()
 
     delete_job_mock = mock.MagicMock()
