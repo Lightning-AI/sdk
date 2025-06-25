@@ -1,6 +1,11 @@
-from typing import List, Literal, Optional, Union
+from typing import Any, List, Literal, Optional, Union
 
-from lightning_sdk.lightning_cloud.openapi.models import V1PipelineStep, V1SharedFilesystem
+from lightning_sdk.lightning_cloud.openapi.models import (
+    V1JobSpec,
+    V1PipelineStep,
+    V1PipelineStepType,
+    V1SharedFilesystem,
+)
 from lightning_sdk.studio import Studio
 
 DEFAULT = "DEFAULT"
@@ -89,3 +94,23 @@ def _to_wait_for(wait_for: Optional[Union[str, List[str]]]) -> Optional[Union[Li
         return []
 
     return wait_for if isinstance(wait_for, list) else [wait_for]
+
+
+def _get_cloud_account(steps: List[V1PipelineStep]) -> Optional[str]:
+    if len(steps) == 0:
+        return None
+
+    cluster_ids: set[str] = set()
+    for step in steps:
+        job_spec = _get_spec(step)
+        cluster_ids.add(job_spec.cluster_id)
+
+    return sorted(cluster_ids)[0]
+
+
+def _get_spec(step: Any) -> V1JobSpec:
+    if step.type == V1PipelineStepType.DEPLOYMENT:
+        return step.deployment.spec
+    if step.type == V1PipelineStepType.MMT:
+        return step.mmt.spec
+    return step.job.spec

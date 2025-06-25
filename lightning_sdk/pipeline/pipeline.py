@@ -111,7 +111,7 @@ class Pipeline:
 
         self._pipeline = self._pipeline_api.create_pipeline(
             self._name,
-            self._teamspace.id,
+            self._teamspace,
             proto_steps,
             self._shared_filesystem,
             schedules,

@@ -1,5 +1,6 @@
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List, Optional, Union
 
+from lightning_sdk.api.cluster_api import ClusterApi
 from lightning_sdk.lightning_cloud.openapi.models import (
     ProjectIdPipelinesBody,
     ProjectIdSchedulesBody,
@@ -11,6 +12,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.teamspace import Teamspace
 
 if TYPE_CHECKING:
     from lightning_sdk.pipeline.schedule import Schedule
@@ -20,7 +22,8 @@ class PipelineApi:
     """Internal API client for Pipeline requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(retry=False, max_tries=0)
+        self._client = LightningClient(max_tries=0, retry=False)
+        self._cluster_api = ClusterApi()
 
     def get_pipeline_by_id(self, project_id: str, pipeline_id_or_name: str) -> Optional[V1Pipeline]:
         if pipeline_id_or_name.startswith("pip_"):
@@ -43,7 +46,7 @@ class PipelineApi:
     def create_pipeline(
         self,
         name: str,
-        project_id: str,
+        teamspace: Teamspace,
         steps: List["V1PipelineStep"],
         shared_filesystem: bool,
         schedules: List["Schedule"],
@@ -52,20 +55,17 @@ class PipelineApi:
         body = ProjectIdPipelinesBody(
             name=name,
             steps=steps,
-            shared_filesystem=V1SharedFilesystem(
-                enabled=shared_filesystem,
-                s3_folder=True,
-            ),
+            shared_filesystem=self._prepare_shared_filesytem(shared_filesystem, steps, teamspace),
             parent_pipeline_id=parent_pipeline_id or "",
         )
 
-        pipeline = self._client.pipelines_service_create_pipeline(body, project_id)
+        pipeline = self._client.pipelines_service_create_pipeline(body, teamspace.id)
 
         # Delete the previous schedules
         if parent_pipeline_id is not None:
-            current_schedules = self._client.schedules_service_list_schedules(project_id).schedules
+            current_schedules = self._client.schedules_service_list_schedules(teamspace.id).schedules
             for schedule in current_schedules:
-                self._client.schedules_service_delete_schedule(project_id, schedule.id)
+                self._client.schedules_service_delete_schedule(teamspace.id, schedule.id)
 
         if len(schedules):
             for schedule in schedules:
@@ -77,7 +77,7 @@ class PipelineApi:
                     resource_type=V1ScheduleResourceType.PIPELINE,
                 )
 
-                self._client.schedules_service_create_schedule(body, project_id)
+                self._client.schedules_service_create_schedule(body, teamspace.id)
 
         return pipeline
 
@@ -88,3 +88,23 @@ class PipelineApi:
 
     def delete(self, project_id: str, pipeline_id: str) -> V1DeletePipelineResponse:
         return self._client.pipelines_service_delete_pipeline(project_id, pipeline_id)
+
+    def _prepare_shared_filesytem(
+        self, shared_filesystem: Union[bool, V1SharedFilesystem], steps: List["V1PipelineStep"], teamspace: Teamspace
+    ) -> V1SharedFilesystem:
+        if not shared_filesystem:
+            return V1SharedFilesystem(enabled=False)
+
+        from lightning_sdk.pipeline.utils import _get_cloud_account
+
+        cluster = self._cluster_api.get_cluster(
+            cluster_id=_get_cloud_account(steps), project_id=teamspace.id, org_id=teamspace.owner.id
+        )
+
+        if cluster.spec.aws_v1:
+            return V1SharedFilesystem(enabled=True, s3_folder=True)
+
+        if cluster.spec.google_cloud_v1:
+            return V1SharedFilesystem(enabled=True, gcs_folder=True)
+
+        raise NotImplementedError("This cluster isn't support yet")

@@ -1,7 +1,8 @@
 import os
 from typing import Any, ClassVar, Dict, List
 
-from lightning_sdk.lightning_cloud.openapi.models import V1JobSpec, V1Pipeline, V1PipelineStepType
+from lightning_sdk.lightning_cloud.openapi.models import V1Pipeline, V1PipelineStepType
+from lightning_sdk.pipeline.utils import _get_spec
 
 
 class PipelinePrinter:
@@ -31,7 +32,7 @@ class PipelinePrinter:
         self._schedules = schedules
         cluster_ids: set[str] = set()
         for step in self._proto_steps:
-            job_spec = self._get_spec(step)
+            job_spec = _get_spec(step)
             cluster_ids.add(job_spec.cluster_id)
         self._cluster_ids = cluster_ids
 
@@ -107,15 +108,15 @@ class PipelinePrinter:
 
         if self._shared_filesystem.enabled and len(self._cluster_ids) == 1:
             shared_path = ""
+            cluster_id = list(self._cluster_ids)[0]  # noqa: RUF015
             if self._pipeline.shared_filesystem.s3_folder:
-                cluster_id = list(self._cluster_ids)[0]  # noqa: RUF015
                 shared_path = f"/teamspace/s3_folders/pipelines-{cluster_id}"
+            if self._pipeline.shared_filesystem.gcs_folder:
+                shared_path = f"/teamspace/gcs_folders/pipelines-{cluster_id}"
+            if self._pipeline.shared_filesystem.efs:
+                shared_path = f"/teamspace/efs_connections/pipelines-{cluster_id}"
+            if self._pipeline.shared_filesystem.filestore:
+                shared_path = f"/teamspace/gcs_connections/pipelines-{cluster_id}"
+
             if shared_path:
                 self._print(f"  - {shared_path}")
-
-    def _get_spec(self, step: Any) -> V1JobSpec:
-        if step.type == V1PipelineStepType.DEPLOYMENT:
-            return step.deployment.spec
-        if step.type == V1PipelineStepType.MMT:
-            return step.mmt.spec
-        return step.job.spec
