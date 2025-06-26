@@ -102,10 +102,10 @@ class ExecHealthCheck(HealthCheck):
     def __init__(
         self,
         command: str,
-        timeout_seconds: int = 60,
-        initial_delay_seconds: int = 5,
-        failure_threshold: int = 12,
-        interval_seconds: int = 5,
+        initial_delay_seconds: int = 0,
+        failure_threshold: int = 600,
+        interval_seconds: int = 1,
+        timeout_seconds: int = 30,
     ) -> None:
         self.command = command
         self.timeout_seconds = timeout_seconds
@@ -131,17 +131,17 @@ class HttpHealthCheck(HealthCheck):
         self,
         path: str,
         port: float,
-        timeout_seconds: int = 60,
-        initial_delay_seconds: int = 5,
-        failure_threshold: int = 12,
-        interval_seconds: int = 5,
+        initial_delay_seconds: int = 0,
+        failure_threshold: int = 600,
+        interval_seconds: int = 1,
+        timeout_seconds: int = 30,
     ) -> None:
         self.path = path
         self.port = port
-        self.timeout_seconds = timeout_seconds
         self.initial_delay_seconds = initial_delay_seconds
         self.failure_threshold = failure_threshold
         self.interval_seconds = interval_seconds
+        self.timeout_seconds = timeout_seconds
 
 
 class AutoScalingMetric:
