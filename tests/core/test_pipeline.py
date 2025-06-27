@@ -121,7 +121,7 @@ def test_pipeline_run(monkeypatch):
             ),
             JobStep(
                 name="job-2",
-                machine=Machine.CPU,
+                machine="cpu-8",
                 command="echo 'Hello, World!'",
                 image="ubuntu:latest",
             ),
@@ -191,7 +191,7 @@ def test_pipeline_run(monkeypatch):
                 command="echo 'Hello, World!'",
                 entrypoint="sh -c",
                 image="ubuntu:latest",
-                instance_name="cpu-4",
+                instance_name="cpu-8",
                 cluster_id="",
                 cloudspace_id="",
                 env=[],

@@ -69,12 +69,15 @@ class DeploymentStep:
 
         self.machine = machine or Machine.CPU
         self.image = image
+        autoscaling_metric_name = (
+            ("CPU" if self.machine.is_cpu() else "GPU") if isinstance(self.machine, Machine) else "CPU"
+        )
         self.autoscale = autoscale or AutoScaleConfig(
             min_replicas=0,
             max_replicas=1,
             target_metrics=[
                 AutoScalingMetric(
-                    name="CPU" if self.machine.is_cpu() else "GPU",
+                    name=autoscaling_metric_name,
                     target=80,
                 )
             ],

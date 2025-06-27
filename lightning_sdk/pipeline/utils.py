@@ -26,7 +26,7 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
         else:
             raise ValueError(f"A step with the name {current_step.name} already exists.")
 
-    if steps[0].wait_for != DEFAULT:
+    if steps[0].wait_for not in [None, DEFAULT, []]:
         raise ValueError("The first step isn't allowed to receive `wait_for=...`.")
 
     steps[0].wait_for = []

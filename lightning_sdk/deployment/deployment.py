@@ -197,11 +197,13 @@ class Deployment:
         if commands is not None:
             command = compose_commands(commands)
 
+        autoscaling_metric_name = ("CPU" if machine.is_cpu() else "GPU") if isinstance(machine, Machine) else "CPU"
+
         if autoscale is None:
             autoscale = AutoScaleConfig(
                 min_replicas=0,
                 max_replicas=1,
-                metric="CPU" if machine.is_cpu() else "GPU",
+                metric=autoscaling_metric_name,
                 threshold=90,
             )
 

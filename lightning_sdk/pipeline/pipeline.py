@@ -107,6 +107,10 @@ class Pipeline:
         proto_steps = prepare_steps(steps)
         schedules = schedules or []
 
+        for schedule_idx, schedule in enumerate(schedules):
+            if schedule.name is None:
+                schedule.name = f"schedule-{schedule_idx}"
+
         parent_pipeline_id = None if self._pipeline is None else self._pipeline.id
 
         self._pipeline = self._pipeline_api.create_pipeline(
