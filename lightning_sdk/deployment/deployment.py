@@ -382,27 +382,35 @@ class Deployment:
         return None
 
     @property
-    def pending_replicas(self) -> Optional[List[str]]:
+    def pending_replicas(self) -> Optional[int]:
         """The number of pending replicas."""
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
-            return self._deployment.status.pending_replicas
+            return int(self._deployment.status.pending_replicas)
         return None
 
     @property
-    def failing_replicas(self) -> Optional[List[str]]:
+    def running_replicas(self) -> Optional[int]:
         """The number of failing replicas."""
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
-            return self._deployment.status.failing_replicas
+            return int(self._deployment.status.ready_replicas)
         return None
 
     @property
-    def deleting_replicas(self) -> Optional[List[str]]:
+    def failing_replicas(self) -> Optional[int]:
+        """The number of failing replicas."""
+        if self._deployment:
+            self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
+            return int(self._deployment.status.failing_replicas)
+        return None
+
+    @property
+    def deleting_replicas(self) -> Optional[int]:
         """The number of deleting replicas."""
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
-            return self._deployment.status.deleting_replicas
+            return int(self._deployment.status.deleting_replicas)
         return None
 
     @property

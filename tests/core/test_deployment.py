@@ -324,6 +324,22 @@ def test_deployment_start_first_time(monkeypatch):
     with pytest.raises(RuntimeError, match="This deployment has already been started."):
         deployment.start()
 
+    _deployment_api_mock = MagicMock()
+    deployment._deployment_api = _deployment_api_mock
+    status = V1DeploymentStatus(
+        deleting_replicas=1,
+        failing_replicas=2,
+        pending_replicas=3,
+        ready_replicas=4,
+    )
+    _deployment_mock = MagicMock()
+    _deployment_mock.status = status
+    _deployment_api_mock.get_deployment_by_name = MagicMock(return_value=_deployment_mock)
+    assert deployment.deleting_replicas == 1
+    assert deployment.failing_replicas == 2
+    assert deployment.pending_replicas == 3
+    assert deployment.running_replicas == 4
+
 
 def test_deployment_start_already_exist(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
