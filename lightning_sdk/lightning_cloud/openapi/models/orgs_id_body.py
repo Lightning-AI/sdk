@@ -55,6 +55,7 @@ class OrgsIdBody(object):
         'auto_replenish_threshold': 'float',
         'auto_switch_machine': 'bool',
         'default_machine_type': 'str',
+        'default_project_id': 'str',
         'description': 'str',
         'disallow_aws_saas': 'bool',
         'disallow_dgx_saas': 'bool',
@@ -92,6 +93,7 @@ class OrgsIdBody(object):
         'auto_replenish_threshold': 'autoReplenishThreshold',
         'auto_switch_machine': 'autoSwitchMachine',
         'default_machine_type': 'defaultMachineType',
+        'default_project_id': 'defaultProjectId',
         'description': 'description',
         'disallow_aws_saas': 'disallowAwsSaas',
         'disallow_dgx_saas': 'disallowDgxSaas',
@@ -114,7 +116,7 @@ class OrgsIdBody(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """OrgsIdBody - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
@@ -130,6 +132,7 @@ class OrgsIdBody(object):
         self._auto_replenish_threshold = None
         self._auto_switch_machine = None
         self._default_machine_type = None
+        self._default_project_id = None
         self._description = None
         self._disallow_aws_saas = None
         self._disallow_dgx_saas = None
@@ -179,6 +182,8 @@ class OrgsIdBody(object):
             self.auto_switch_machine = auto_switch_machine
         if default_machine_type is not None:
             self.default_machine_type = default_machine_type
+        if default_project_id is not None:
+            self.default_project_id = default_project_id
         if description is not None:
             self.description = description
         if disallow_aws_saas is not None:
@@ -513,6 +518,27 @@ class OrgsIdBody(object):
         """
 
         self._default_machine_type = default_machine_type
+
+    @property
+    def default_project_id(self) -> 'str':
+        """Gets the default_project_id of this OrgsIdBody.  # noqa: E501
+
+
+        :return: The default_project_id of this OrgsIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_project_id
+
+    @default_project_id.setter
+    def default_project_id(self, default_project_id: 'str'):
+        """Sets the default_project_id of this OrgsIdBody.
+
+
+        :param default_project_id: The default_project_id of this OrgsIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._default_project_id = default_project_id
 
     @property
     def description(self) -> 'str':

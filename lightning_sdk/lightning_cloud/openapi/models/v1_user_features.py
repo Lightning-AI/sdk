@@ -53,7 +53,6 @@ class V1UserFeatures(object):
         'capacity_reservation_byoc': 'bool',
         'capacity_reservation_dry_run': 'bool',
         'chat_models': 'bool',
-        'cloud_space_environment_templates': 'bool',
         'cloudy_vibe_code': 'bool',
         'code_tab': 'bool',
         'collab_screen_sharing': 'bool',
@@ -116,11 +115,13 @@ class V1UserFeatures(object):
         'studio_config': 'bool',
         'studio_version_visibility': 'bool',
         'trainium2': 'bool',
+        'use_internal_data_connection_mounts': 'bool',
         'use_rclone_mounts_only': 'bool',
         'voltage_park': 'bool',
         'voltage_park_studios': 'bool',
         'vultr': 'bool',
-        'weka': 'bool'
+        'weka': 'bool',
+        'writable_s3_connections': 'bool'
     }
 
     attribute_map = {
@@ -136,7 +137,6 @@ class V1UserFeatures(object):
         'capacity_reservation_byoc': 'capacityReservationByoc',
         'capacity_reservation_dry_run': 'capacityReservationDryRun',
         'chat_models': 'chatModels',
-        'cloud_space_environment_templates': 'cloudSpaceEnvironmentTemplates',
         'cloudy_vibe_code': 'cloudyVibeCode',
         'code_tab': 'codeTab',
         'collab_screen_sharing': 'collabScreenSharing',
@@ -199,14 +199,16 @@ class V1UserFeatures(object):
         'studio_config': 'studioConfig',
         'studio_version_visibility': 'studioVersionVisibility',
         'trainium2': 'trainium2',
+        'use_internal_data_connection_mounts': 'useInternalDataConnectionMounts',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
         'voltage_park': 'voltagePark',
         'voltage_park_studios': 'voltageParkStudios',
         'vultr': 'vultr',
-        'weka': 'weka'
+        'weka': 'weka',
+        'writable_s3_connections': 'writableS3Connections'
     }
 
-    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloud_space_environment_templates: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._accurate_billing = None
         self._affiliate_links = None
@@ -220,7 +222,6 @@ class V1UserFeatures(object):
         self._capacity_reservation_byoc = None
         self._capacity_reservation_dry_run = None
         self._chat_models = None
-        self._cloud_space_environment_templates = None
         self._cloudy_vibe_code = None
         self._code_tab = None
         self._collab_screen_sharing = None
@@ -283,11 +284,13 @@ class V1UserFeatures(object):
         self._studio_config = None
         self._studio_version_visibility = None
         self._trainium2 = None
+        self._use_internal_data_connection_mounts = None
         self._use_rclone_mounts_only = None
         self._voltage_park = None
         self._voltage_park_studios = None
         self._vultr = None
         self._weka = None
+        self._writable_s3_connections = None
         self.discriminator = None
         if accurate_billing is not None:
             self.accurate_billing = accurate_billing
@@ -313,8 +316,6 @@ class V1UserFeatures(object):
             self.capacity_reservation_dry_run = capacity_reservation_dry_run
         if chat_models is not None:
             self.chat_models = chat_models
-        if cloud_space_environment_templates is not None:
-            self.cloud_space_environment_templates = cloud_space_environment_templates
         if cloudy_vibe_code is not None:
             self.cloudy_vibe_code = cloudy_vibe_code
         if code_tab is not None:
@@ -439,6 +440,8 @@ class V1UserFeatures(object):
             self.studio_version_visibility = studio_version_visibility
         if trainium2 is not None:
             self.trainium2 = trainium2
+        if use_internal_data_connection_mounts is not None:
+            self.use_internal_data_connection_mounts = use_internal_data_connection_mounts
         if use_rclone_mounts_only is not None:
             self.use_rclone_mounts_only = use_rclone_mounts_only
         if voltage_park is not None:
@@ -449,6 +452,8 @@ class V1UserFeatures(object):
             self.vultr = vultr
         if weka is not None:
             self.weka = weka
+        if writable_s3_connections is not None:
+            self.writable_s3_connections = writable_s3_connections
 
     @property
     def accurate_billing(self) -> 'bool':
@@ -701,27 +706,6 @@ class V1UserFeatures(object):
         """
 
         self._chat_models = chat_models
-
-    @property
-    def cloud_space_environment_templates(self) -> 'bool':
-        """Gets the cloud_space_environment_templates of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The cloud_space_environment_templates of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._cloud_space_environment_templates
-
-    @cloud_space_environment_templates.setter
-    def cloud_space_environment_templates(self, cloud_space_environment_templates: 'bool'):
-        """Sets the cloud_space_environment_templates of this V1UserFeatures.
-
-
-        :param cloud_space_environment_templates: The cloud_space_environment_templates of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._cloud_space_environment_templates = cloud_space_environment_templates
 
     @property
     def cloudy_vibe_code(self) -> 'bool':
@@ -2026,6 +2010,27 @@ class V1UserFeatures(object):
         self._trainium2 = trainium2
 
     @property
+    def use_internal_data_connection_mounts(self) -> 'bool':
+        """Gets the use_internal_data_connection_mounts of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The use_internal_data_connection_mounts of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._use_internal_data_connection_mounts
+
+    @use_internal_data_connection_mounts.setter
+    def use_internal_data_connection_mounts(self, use_internal_data_connection_mounts: 'bool'):
+        """Sets the use_internal_data_connection_mounts of this V1UserFeatures.
+
+
+        :param use_internal_data_connection_mounts: The use_internal_data_connection_mounts of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._use_internal_data_connection_mounts = use_internal_data_connection_mounts
+
+    @property
     def use_rclone_mounts_only(self) -> 'bool':
         """Gets the use_rclone_mounts_only of this V1UserFeatures.  # noqa: E501
 
@@ -2129,6 +2134,27 @@ class V1UserFeatures(object):
         """
 
         self._weka = weka
+
+    @property
+    def writable_s3_connections(self) -> 'bool':
+        """Gets the writable_s3_connections of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The writable_s3_connections of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._writable_s3_connections
+
+    @writable_s3_connections.setter
+    def writable_s3_connections(self, writable_s3_connections: 'bool'):
+        """Sets the writable_s3_connections of this V1UserFeatures.
+
+
+        :param writable_s3_connections: The writable_s3_connections of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._writable_s3_connections = writable_s3_connections
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -121,25 +121,9 @@ def _get_next_backoff_time(num_retries: int,
     return min(_DEFAULT_BACKOFF_MAX, next_backoff_value)
 
 
-def _should_retry(ex: BaseException) -> bool:
-    if isinstance(ex, urllib3.exceptions.HTTPError):
-        return True
-
-    if str(ex.status).startswith("4") and ex.status not in (400, 401, 404):
-        return True
-
-    if str(ex.status).startswith("5") and 'not found' not in str(ex.body):
-        return True
-
-    return False
-
-
-def _retry_wrapper(
-        self,
-        func: Callable,
-        max_tries: Optional[int] = None,
-        should_retry_fn: Callable = _should_retry
-    ) -> Callable:
+def _retry_wrapper(self,
+                   func: Callable,
+                   max_tries: Optional[int] = None) -> Callable:
     """Returns the function decorated by a wrapper that retries the call several times if a connection error occurs.
 
     The retries follow an exponential backoff.
@@ -154,7 +138,7 @@ def _retry_wrapper(
             try:
                 return func(self, *args, **kwargs)
             except (ApiException, urllib3.exceptions.HTTPError) as ex:
-                if not should_retry_fn(ex):
+                if not _should_retry(ex):
                     raise ex
 
                 consecutive_errors += 1
@@ -175,6 +159,19 @@ def _retry_wrapper(
                 time.sleep(backoff_time)
 
     return wrapped
+
+
+def _should_retry(ex: BaseException) -> bool:
+    if isinstance(ex, urllib3.exceptions.HTTPError):
+        return True
+
+    if str(ex.status).startswith("4") and ex.status not in (400, 401, 404):
+        return True
+
+    if str(ex.status).startswith("5"):
+        return True
+
+    return False
 
 
 class LightningClient(GridRestClient):

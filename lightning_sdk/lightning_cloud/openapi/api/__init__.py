@@ -11,6 +11,7 @@ from lightning_sdk.lightning_cloud.openapi.api.billing_service_api import Billin
 from lightning_sdk.lightning_cloud.openapi.api.blog_posts_service_api import BlogPostsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.cloud_space_environment_template_service_api import CloudSpaceEnvironmentTemplateServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import CloudSpaceServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.cloudy_service_api import CloudyServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.cluster_service_api import ClusterServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.data_connection_service_api import DataConnectionServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.dataset_service_api import DatasetServiceApi

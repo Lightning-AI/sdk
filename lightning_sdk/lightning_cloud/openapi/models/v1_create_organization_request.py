@@ -41,9 +41,12 @@ class V1CreateOrganizationRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allow_credits_auto_replenish': 'bool',
         'allow_marketplace': 'bool',
         'auto_invite_by_domain': 'bool',
         'auto_join_domains': 'list[str]',
+        'auto_replenish_amount': 'float',
+        'auto_replenish_threshold': 'float',
         'description': 'str',
         'display_name': 'str',
         'domain': 'str',
@@ -57,9 +60,12 @@ class V1CreateOrganizationRequest(object):
     }
 
     attribute_map = {
+        'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
         'allow_marketplace': 'allowMarketplace',
         'auto_invite_by_domain': 'autoInviteByDomain',
         'auto_join_domains': 'autoJoinDomains',
+        'auto_replenish_amount': 'autoReplenishAmount',
+        'auto_replenish_threshold': 'autoReplenishThreshold',
         'description': 'description',
         'display_name': 'displayName',
         'domain': 'domain',
@@ -72,11 +78,14 @@ class V1CreateOrganizationRequest(object):
         'type': 'type'
     }
 
-    def __init__(self, allow_marketplace: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, allow_credits_auto_replenish: 'bool' =None, allow_marketplace: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
         """V1CreateOrganizationRequest - a model defined in Swagger"""  # noqa: E501
+        self._allow_credits_auto_replenish = None
         self._allow_marketplace = None
         self._auto_invite_by_domain = None
         self._auto_join_domains = None
+        self._auto_replenish_amount = None
+        self._auto_replenish_threshold = None
         self._description = None
         self._display_name = None
         self._domain = None
@@ -88,12 +97,18 @@ class V1CreateOrganizationRequest(object):
         self._twitter_username = None
         self._type = None
         self.discriminator = None
+        if allow_credits_auto_replenish is not None:
+            self.allow_credits_auto_replenish = allow_credits_auto_replenish
         if allow_marketplace is not None:
             self.allow_marketplace = allow_marketplace
         if auto_invite_by_domain is not None:
             self.auto_invite_by_domain = auto_invite_by_domain
         if auto_join_domains is not None:
             self.auto_join_domains = auto_join_domains
+        if auto_replenish_amount is not None:
+            self.auto_replenish_amount = auto_replenish_amount
+        if auto_replenish_threshold is not None:
+            self.auto_replenish_threshold = auto_replenish_threshold
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -114,6 +129,27 @@ class V1CreateOrganizationRequest(object):
             self.twitter_username = twitter_username
         if type is not None:
             self.type = type
+
+    @property
+    def allow_credits_auto_replenish(self) -> 'bool':
+        """Gets the allow_credits_auto_replenish of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The allow_credits_auto_replenish of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_credits_auto_replenish
+
+    @allow_credits_auto_replenish.setter
+    def allow_credits_auto_replenish(self, allow_credits_auto_replenish: 'bool'):
+        """Sets the allow_credits_auto_replenish of this V1CreateOrganizationRequest.
+
+
+        :param allow_credits_auto_replenish: The allow_credits_auto_replenish of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_credits_auto_replenish = allow_credits_auto_replenish
 
     @property
     def allow_marketplace(self) -> 'bool':
@@ -177,6 +213,48 @@ class V1CreateOrganizationRequest(object):
         """
 
         self._auto_join_domains = auto_join_domains
+
+    @property
+    def auto_replenish_amount(self) -> 'float':
+        """Gets the auto_replenish_amount of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The auto_replenish_amount of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_amount
+
+    @auto_replenish_amount.setter
+    def auto_replenish_amount(self, auto_replenish_amount: 'float'):
+        """Sets the auto_replenish_amount of this V1CreateOrganizationRequest.
+
+
+        :param auto_replenish_amount: The auto_replenish_amount of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_amount = auto_replenish_amount
+
+    @property
+    def auto_replenish_threshold(self) -> 'float':
+        """Gets the auto_replenish_threshold of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The auto_replenish_threshold of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: float
+        """
+        return self._auto_replenish_threshold
+
+    @auto_replenish_threshold.setter
+    def auto_replenish_threshold(self, auto_replenish_threshold: 'float'):
+        """Sets the auto_replenish_threshold of this V1CreateOrganizationRequest.
+
+
+        :param auto_replenish_threshold: The auto_replenish_threshold of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: float
+        """
+
+        self._auto_replenish_threshold = auto_replenish_threshold
 
     @property
     def description(self) -> 'str':
