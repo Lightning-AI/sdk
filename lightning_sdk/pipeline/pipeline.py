@@ -98,9 +98,14 @@ class Pipeline:
                 pipeline_step.cloud_account = self._studio.cloud_account
                 pipeline_step.studio = self._studio
 
+            if not pipeline_step.cloud_account and isinstance(self._cloud_account, str):
+                pipeline_step.cloud_account = self._cloud_account
+
         cluster_ids = set(step.cloud_account for step in steps if step.cloud_account not in ["", None])  # noqa: C401
 
-        cloud_account = list(cluster_ids)[0] if len(cluster_ids) == 1 and self._cloud_account is None else ""  # noqa: RUF015
+        cloud_account = (
+            list(cluster_ids)[0] if len(cluster_ids) == 1 and self._cloud_account is None else ""  # noqa: RUF015
+        )
 
         steps = [step.to_proto(self._teamspace, cloud_account, self._shared_filesystem) for step in steps]
 

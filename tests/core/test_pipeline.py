@@ -35,7 +35,7 @@ def test_pipeline_run(monkeypatch):
     resolve_teamspace_mock = MagicMock()
     monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
 
-    pipeline = Pipeline(name="first-pipeline", org="org", user="user")
+    pipeline = Pipeline(name="first-pipeline", org="org", user="user", cloud_account="cluster-id")
     cloud_account_mock = MagicMock()
     cloud_account_mock.cluster_id = ""
     pipeline._cloud_account = cloud_account_mock
