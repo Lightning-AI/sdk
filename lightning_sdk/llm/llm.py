@@ -1,4 +1,3 @@
-import os
 import warnings
 from typing import AsyncGenerator, Dict, Generator, List, Optional, Set, Tuple, Union
 
@@ -191,7 +190,6 @@ class LLM:
         conversation: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
-        upload_local_images: bool = False,
     ) -> Union[str, AsyncGenerator[str, None]]:
         conversation_id = self._conversations.get(conversation) if conversation else None
         output = await self._llm_api.async_start_conversation(
@@ -221,7 +219,6 @@ class LLM:
         conversation: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
-        upload_local_images: bool = False,
     ) -> Union[str, Generator[str, None, None]]:
         if conversation and conversation not in self._conversations:
             self._get_conversations()
@@ -232,8 +229,6 @@ class LLM:
             for image in images:
                 if not isinstance(image, str):
                     raise NotImplementedError(f"Image type {type(image)} are not supported yet.")
-                if not image.startswith("http") and upload_local_images:
-                    self._teamspace.upload_file(file_path=image, remote_path=f"images/{os.path.basename(image)}")
 
         conversation_id = self._conversations.get(conversation) if conversation else None
 
@@ -246,7 +241,6 @@ class LLM:
                 conversation,
                 metadata,
                 stream,
-                upload_local_images,
             )
 
         output = self._llm_api.start_conversation(
