@@ -1,15 +1,14 @@
+import os
 import warnings
 from typing import AsyncGenerator, Dict, Generator, List, Optional, Set, Tuple, Union
 
+from lightning_sdk.api import OrgApi, TeamspaceApi
 from lightning_sdk.api.llm_api import LLMApi
-from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi import V1Assistant
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
-from lightning_sdk.teamspace import Teamspace
-from lightning_sdk.utils.resolve import _get_authed_user, _resolve_org, _resolve_teamspace
+from lightning_sdk.utils.resolve import _resolve_org
 
 
 class LLM:
@@ -35,36 +34,8 @@ class LLM:
         Raises:
             ValueError: If teamspace information cannot be resolved.
         """
-        menu = _TeamspacesMenu()
-        user = _get_authed_user()
-        possible_teamspaces = menu._get_possible_teamspaces(user)
-        if teamspace is None:
-            # get current teamspace
-            self._teamspace = _resolve_teamspace(teamspace=None, org=None, user=None)
-        else:
-            self._teamspace = Teamspace(**menu._get_teamspace_from_name(teamspace, possible_teamspaces))
-
-        if self._teamspace is None:
-            # select the first available teamspace
-            first_teamspace = next(iter(possible_teamspaces.values()), None)
-
-            if first_teamspace:
-                self._teamspace = Teamspace(
-                    name=first_teamspace["name"],
-                    org=first_teamspace["org"],
-                    user=first_teamspace["user"],
-                )
-                warnings.warn(
-                    f"No teamspace given. Using teamspace: {self._teamspace.name}.",
-                    UserWarning,
-                    stacklevel=2,
-                )
-
-        if self._teamspace is None:
-            raise ValueError("Teamspace is required for billing but could not be resolved. ")
-
-        self._user = user
-
+        # TODO support user input teamspace
+        self._get_auth_info()
         self._model_provider, self._model_name = self._parse_model_name(name)
 
         self._llm_api = LLMApi()
@@ -87,12 +58,7 @@ class LLM:
                 self._model_provider = None
                 raise
         except ApiException:
-            if isinstance(self._teamspace.owner, Organization):
-                self._org = self._teamspace.owner
-            else:
-                self._org = None
             self._org_models = self._build_model_lookup(self._get_org_models())
-
         self._public_models = self._build_model_lookup(self._get_public_models())
         self._user_models = self._build_model_lookup(self._get_user_models())
         self._model = self._get_model()
@@ -109,6 +75,26 @@ class LLM:
     @property
     def owner(self) -> Optional[Owner]:
         return self._teamspace.owner
+
+    def _get_auth_info(self) -> None:
+        teamspace_name = os.environ.get("LIGHTNING_TEAMSPACE", None)
+        if teamspace_name is None:
+            raise ValueError(
+                "Teamspace name must be provided either through",
+                " the environment variable LIGHTNING_TEAMSPACE or as an argument.",
+            )
+        self._teamspace_name = teamspace_name
+        self._teamspace_id = os.environ.get("LIGHTNING_CLOUD_PROJECT_ID", None)
+        if self._teamspace_id:
+            teamspace_api = TeamspaceApi()
+            self._teamspace = teamspace_api._get_teamspace_by_id(self._teamspace_id)
+        self._user_name = os.environ.get("LIGHTNING_USERNAME", None)
+        self._user_id = os.environ.get("LIGHTNING_USER_ID", None)
+        self._org_name = os.environ.get("LIGHTNING_ORG", None)
+        self._org = None
+        if self._org_name:
+            org_api = OrgApi()
+            self._org = org_api.get_org(name=self._org_name)
 
     def _parse_model_name(self, name: str) -> Tuple[str, str]:
         parts = name.split("/")
@@ -134,7 +120,7 @@ class LLM:
         return self._llm_api.get_org_models(self._org.id) if self._org else []
 
     def _get_user_models(self) -> List[str]:
-        return self._llm_api.get_user_models(self._user.id) if self._user else []
+        return self._llm_api.get_user_models(self._user_id) if self._user_id else []
 
     def _get_model(self) -> V1Assistant:
         # TODO how to handle multiple models with same model type? For now, just use the first one
@@ -152,8 +138,8 @@ class LLM:
         if self._org and self._org_models:
             available_models.append(f"Org ({self._org.name}) Models: {', '.join(self._org_models.keys())}")
 
-        if self._user and self._user_models:
-            available_models.append(f"User ({self._user.name}) Models: {', '.join(self._user_models.keys())}")
+        if self._user_name and self._user_models:
+            available_models.append(f"User ({self._user_name}) Models: {', '.join(self._user_models.keys())}")
 
         available_models_str = "\n".join(available_models)
         raise ValueError(f"Model '{self._model_name}' not found. \nAvailable models: \n{available_models_str}")
@@ -199,7 +185,7 @@ class LLM:
             images=images,
             assistant_id=self._model.id,
             conversation_id=conversation_id,
-            billing_project_id=self._teamspace.id,
+            billing_project_id=self._teamspace_id,
             metadata=metadata,
             name=conversation,
             stream=stream,
@@ -250,7 +236,7 @@ class LLM:
             images=images,
             assistant_id=self._model.id,
             conversation_id=conversation_id,
-            billing_project_id=self._teamspace.id,
+            billing_project_id=self._teamspace_id,
             metadata=metadata,
             name=conversation,
             stream=stream,

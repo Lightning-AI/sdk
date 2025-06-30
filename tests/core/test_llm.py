@@ -8,36 +8,33 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.llm import LLM
 
 
+@pytest.fixture(autouse=True)
+def mock_env(monkeypatch):
+    monkeypatch.setenv("LIGHTNING_TEAMSPACE", "teamspace-name")
+    monkeypatch.setenv("LIGHTNING_CLOUD_PROJECT_ID", "teamspace-123")
+    monkeypatch.setenv("LIGHTNING_USERNAME", "user-name")
+    monkeypatch.setenv("LIGHTNING_USER_ID", "user-123")
+    return monkeypatch
+
+
 @pytest.fixture()
 def mock_auth(monkeypatch):
-    mock_auth = MagicMock()
-    mock_auth.id = "user-123"
-    mock_auth.name = "user-name"
-
-    monkeypatch.setattr("lightning_sdk.llm.llm._get_authed_user", lambda: mock_auth)
-
     mock_org = MagicMock()
     mock_org.id = "org-123"
     mock_org.name = "org-name"
+    mock_org_api = MagicMock()
+    mock_org_api.get_org.return_value = mock_org
     monkeypatch.setattr("lightning_sdk.llm.llm._resolve_org", lambda org: mock_org)
+    monkeypatch.setattr("lightning_sdk.llm.llm.OrgApi", lambda: mock_org_api)
 
-    mock_menu = MagicMock()
-    mock_possible_teamspaces = {
-        "teamspace-123": {"name": "teamspace-123", "org": None, "user": "user-name"},
-    }
-
-    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", lambda *args, **kwargs: None)
-
-    mock_menu._get_possible_teamspaces.return_value = mock_possible_teamspaces
-
-    monkeypatch.setattr("lightning_sdk.llm.llm._TeamspacesMenu", lambda: mock_menu)
-
-    teamspace = MagicMock()
-    teamspace.id = "teamspace-123"
-    teamspace.name = "teamspace-123"
-    teamspace.owner = mock_org
-    monkeypatch.setattr("lightning_sdk.llm.llm.Teamspace", lambda **kwargs: teamspace)
-    return mock_menu
+    mock_teamspace = MagicMock()
+    mock_teamspace.id = "teamspace-123"
+    mock_teamspace.name = "teamspace-name"
+    mock_teamspace.owner = mock_org
+    mock_teamspace_api = MagicMock()
+    mock_teamspace_api._get_teamspace_by_id.return_value = mock_teamspace
+    monkeypatch.setattr("lightning_sdk.llm.llm.TeamspaceApi", lambda: mock_teamspace_api)
+    return mock_teamspace
 
 
 @pytest.fixture()
@@ -89,41 +86,6 @@ def test_invalid_format(monkeypatch, mock_auth, mock_model_data):
         LLM("openai/gpt-4o/v1")
 
 
-def test_default_teamspace(monkeypatch, mock_public_model):
-    mock_auth = MagicMock()
-    mock_auth.id = "user-123"
-    mock_auth.name = "user-name"
-
-    monkeypatch.setattr("lightning_sdk.llm.llm._get_authed_user", lambda: mock_auth)
-
-    mock_menu = MagicMock()
-    mock_possible_teamspaces = {
-        "default-teamspace-123": {"name": "default-teamspace-123", "org": None, "user": "user-name"},
-    }
-
-    mock_menu._get_possible_teamspaces.return_value = mock_possible_teamspaces
-
-    monkeypatch.setattr("lightning_sdk.llm.llm._TeamspacesMenu", lambda: mock_menu)
-    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", lambda *args, **kwargs: None)
-
-    teamspace = MagicMock()
-    teamspace.id = "default-teamspace-123"
-    teamspace.name = "default-teamspace-123"
-    teamspace.org = None
-    teamspace.user = "user-name"
-    teamspace.owner = mock_auth
-    monkeypatch.setattr("lightning_sdk.llm.llm.Teamspace", lambda **kwargs: teamspace)
-
-    mock_api = MagicMock()
-    mock_api.list_models.return_value = mock_model_data
-    mock_api.get_public_models.return_value = mock_public_model
-    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
-
-    warning_message = "No teamspace given. Using teamspace: default-teamspace-123."
-    with pytest.warns(UserWarning, match=re.escape(warning_message)):
-        LLM("open-ai/gpt-4o")
-
-
 def test_org_model(monkeypatch, mock_auth, mock_org_model):
     mock_api = MagicMock()
     mock_api.get_org_models.return_value = mock_org_model
@@ -133,11 +95,6 @@ def test_org_model(monkeypatch, mock_auth, mock_org_model):
     assert llm._org.id == "org-123"
     assert llm.owner.name == "org-name"
     assert llm.provider == "org-name"
-
-    llm = LLM("org-model1", teamspace="org-name")
-    assert llm._org.id == "org-123"
-    assert llm.owner.name == "org-name"
-    assert llm.provider is None
 
     with pytest.raises(
         ValueError,
@@ -166,36 +123,20 @@ def test_invalid_org(monkeypatch, mock_auth, mock_public_model, mock_org_model):
 
 
 def test_user_model(monkeypatch, mock_user_model):
-    mock_auth = MagicMock()
-    mock_auth.id = "user-123"
-    mock_auth.name = "user-name"
-
-    monkeypatch.setattr("lightning_sdk.llm.llm._get_authed_user", lambda: mock_auth)
-
-    mock_menu = MagicMock()
-    mock_possible_teamspaces = {
-        "teamspace-123": {"name": "teamspace-123", "org": None, "user": "user-name"},
-    }
-
-    mock_menu._get_possible_teamspaces.return_value = mock_possible_teamspaces
-
-    monkeypatch.setattr("lightning_sdk.llm.llm._TeamspacesMenu", lambda: mock_menu)
-
-    teamspace = MagicMock()
-    teamspace.id = "teamspace-123"
-    teamspace.name = "teamspace-123"
-    teamspace.owner = mock_auth
-    monkeypatch.setattr("lightning_sdk.llm.llm.Teamspace", lambda **kwargs: teamspace)
-
     mock_api = MagicMock()
     mock_api.get_user_models.return_value = mock_user_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
-    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", lambda *args, **kwargs: None)
+    user = MagicMock()
+    user.name = "user-name"
+    user.id = "user-123"
 
-    llm = LLM("user-model1", teamspace="user-name/teamspace-123")
-    assert llm.owner.name == "user-name"
-    assert llm.name == "user-model1"
-    assert llm.provider is None
+    mock_teamspace = MagicMock()
+    mock_teamspace.id = "teamspace-123"
+    mock_teamspace.name = "teamspace-name"
+    mock_teamspace.owner = user
+    mock_teamspace_api = MagicMock()
+    mock_teamspace_api._get_teamspace_by_id.return_value = mock_teamspace
+    monkeypatch.setattr("lightning_sdk.llm.llm.TeamspaceApi", lambda: mock_teamspace_api)
 
     llm = LLM("user-name/user-model1")
     assert llm.owner.name == "user-name"
