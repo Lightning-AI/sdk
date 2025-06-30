@@ -50,6 +50,13 @@ def test_studio_init(
     assert studio._disable_secrets == disable_secrets
 
 
+def test_studio_init_no_teamspace(internal_studio_init_mocker, internal_studio_status_mocker):
+    with pytest.raises(ValueError, match="Couldn't resolve teamspace from the provided name, org, or user"):
+        Studio(
+            name="st-xyz",
+        )
+
+
 @pytest.mark.parametrize(
     ("name", "expected_status"),
     [

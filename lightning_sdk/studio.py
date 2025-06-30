@@ -88,6 +88,9 @@ class Studio:
 
         self._plugins = {}
 
+        if self._teamspace is None:
+            raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
+
         if provider is not None:
             if isinstance(provider, str) and provider in Provider.__members__:
                 provider = Provider(provider)
