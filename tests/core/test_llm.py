@@ -16,23 +16,22 @@ def mock_env(monkeypatch):
     return monkeypatch
 
 
-@pytest.fixture()
-def mock_auth(monkeypatch):
-    mock_org = MagicMock()
-    mock_org.id = "org-123"
-    mock_org.name = "org-name"
-    mock_org_api = MagicMock()
-    mock_org_api.get_org.return_value = mock_org
-    monkeypatch.setattr("lightning_sdk.llm.llm.OrgApi", lambda: mock_org_api)
+# @pytest.fixture()
+# def mock_auth(monkeypatch):
+#     mock_org = MagicMock()
+#     mock_org.id = "org-123"
+#     mock_org.name = "org-name"
+#     mock_org_api = MagicMock()
+#     mock_org_api.get_org.return_value = mock_org
+#     # monkeypatch.setattr("lightning_sdk.llm.llm.OrgApi", lambda: mock_org_api)
 
-    mock_teamspace = MagicMock()
-    mock_teamspace.id = "teamspace-123"
-    mock_teamspace.name = "teamspace-name"
-    mock_teamspace.owner = mock_org
-    mock_teamspace_api = MagicMock()
-    mock_teamspace_api._get_teamspace_by_id.return_value = mock_teamspace
-    monkeypatch.setattr("lightning_sdk.llm.llm.TeamspaceApi", lambda: mock_teamspace_api)
-    return mock_teamspace
+#     mock_teamspace = MagicMock()
+#     mock_teamspace.id = "teamspace-123"
+#     mock_teamspace.name = "teamspace-name"
+#     mock_teamspace_api = MagicMock()
+#     mock_teamspace_api._get_teamspace_by_id.return_value = mock_teamspace
+#     # monkeypatch.setattr("lightning_sdk.llm.llm.TeamspaceApi", lambda: mock_teamspace_api)
+#     return mock_teamspace
 
 
 @pytest.fixture()
@@ -48,10 +47,10 @@ def mock_model_data():
 
 @pytest.fixture()
 def mock_public_model():
-    public_model_meta = MagicMock()
-    public_model_meta.model = "gpt-4o"
-    public_model_meta.id = "ast_123"
-    return [public_model_meta]
+    mock_model = MagicMock()
+    mock_model.name = "gpt-4o"
+    mock_model.id = "openai"
+    return mock_model
 
 
 @pytest.fixture()
@@ -65,14 +64,13 @@ def mock_org_model():
 
 @pytest.fixture()
 def mock_user_model():
-    user_model_meta = MagicMock()
-    user_model_meta.model = "user-model1"
-    user_model_meta.id = "ast_456"
-    user_model_meta.user_id = "user-123"
-    return [user_model_meta]
+    mock_model = MagicMock()
+    mock_model.name = "user-model1"
+    mock_model.id = "model-123"
+    return mock_model
 
 
-def test_invalid_format(monkeypatch, mock_auth, mock_model_data):
+def test_invalid_format(monkeypatch, mock_model_data):
     mock_api = MagicMock()
     mock_api.list_models.return_value = mock_model_data
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
@@ -84,16 +82,15 @@ def test_invalid_format(monkeypatch, mock_auth, mock_model_data):
         LLM("openai/gpt-4o/v1")
 
 
-def test_org_model(monkeypatch, mock_auth):
+def test_org_model(monkeypatch):
     mock_api = MagicMock()
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
     llm = LLM("org-name/org-model1")
-    assert llm.owner.name == "org-name"
     assert llm.provider == "org-name"
 
 
-def test_invalid_org(monkeypatch, mock_auth, mock_public_model, mock_org_model):
+def test_invalid_org(monkeypatch):
     # there could be a case where the model provider is an org that exists, however, the user does not have access to it
     # then it would make sense to search for whatever they have availabe in public, teamspace and org
 
@@ -112,31 +109,19 @@ def test_invalid_org(monkeypatch, mock_auth, mock_public_model, mock_org_model):
 
 
 def test_user_model(monkeypatch, mock_user_model):
+    # Patch LLMApi to return a mock instance with get_assistant mocked
     mock_api = MagicMock()
-    mock_api.get_user_models.return_value = mock_user_model
+    mock_api.get_assistant.return_value = mock_user_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
-    user = MagicMock()
-    user.name = "user-name"
-    user.id = "user-123"
-
-    mock_teamspace = MagicMock()
-    mock_teamspace.id = "teamspace-123"
-    mock_teamspace.name = "teamspace-name"
-    mock_teamspace.owner = user
-    mock_teamspace_api = MagicMock()
-    mock_teamspace_api._get_teamspace_by_id.return_value = mock_teamspace
-    monkeypatch.setattr("lightning_sdk.llm.llm.TeamspaceApi", lambda: mock_teamspace_api)
 
     llm = LLM("user-name/user-model1")
-    assert llm.owner.name == "user-name"
     assert llm.name == "user-model1"
     assert llm.provider == "user-name"
 
 
-def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
+def test_chat(monkeypatch, mock_public_model):
     mock_api = MagicMock()
-    mock_api.list_models.return_value = mock_model_data
-    mock_api.get_public_models.return_value = mock_public_model
+    mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
     mock_response = MagicMock()
@@ -300,9 +285,9 @@ def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
     )
 
 
-def test_chat_backend(monkeypatch, mock_auth, mock_public_model):
+def test_chat_backend(monkeypatch, mock_public_model):
     mock_api = MagicMock()
-    mock_api.get_public_models.return_value = mock_public_model
+    mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
     mock_conv1 = MagicMock()
@@ -322,10 +307,9 @@ def test_chat_backend(monkeypatch, mock_auth, mock_public_model):
 
 
 @pytest.mark.asyncio()
-async def test_async_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
+async def test_async_chat(monkeypatch, mock_public_model):
     mock_api = MagicMock()
-    mock_api.list_models.return_value = mock_model_data
-    mock_api.get_public_models.return_value = mock_public_model
+    mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
     llm = LLM(name="gpt-4o", enable_async=True)
@@ -354,10 +338,9 @@ async def test_async_chat(monkeypatch, mock_auth, mock_model_data, mock_public_m
 
 
 @pytest.mark.asyncio()
-async def test_async_stream_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):
+async def test_async_stream_chat(monkeypatch):
     mock_api = MagicMock()
-    mock_api.list_models.return_value = mock_model_data
-    mock_api.get_public_models.return_value = mock_public_model
+    mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
     llm = LLM(name="gpt-4o", enable_async=True)
 

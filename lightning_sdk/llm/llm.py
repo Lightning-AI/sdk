@@ -1,11 +1,9 @@
 import os
 from typing import AsyncGenerator, Dict, Generator, List, Optional, Tuple, Union
 
-from lightning_sdk.api import OrgApi, TeamspaceApi
 from lightning_sdk.api.llm_api import LLMApi
 from lightning_sdk.lightning_cloud.openapi import V1Assistant
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
-from lightning_sdk.owner import Owner
 
 PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
     "openai": "OpenAI",
@@ -55,10 +53,6 @@ class LLM:
     def provider(self) -> str:
         return self._model_provider
 
-    @property
-    def owner(self) -> Optional[Owner]:
-        return self._teamspace.owner
-
     def _get_auth_info(self) -> None:
         teamspace_name = os.environ.get("LIGHTNING_TEAMSPACE", None)
         if teamspace_name is None:
@@ -68,16 +62,10 @@ class LLM:
             )
         self._teamspace_name = teamspace_name
         self._teamspace_id = os.environ.get("LIGHTNING_CLOUD_PROJECT_ID", None)
-        if self._teamspace_id:
-            teamspace_api = TeamspaceApi()
-            self._teamspace = teamspace_api._get_teamspace_by_id(self._teamspace_id)
         self._user_name = os.environ.get("LIGHTNING_USERNAME", "")
         self._user_id = os.environ.get("LIGHTNING_USER_ID", None)
         self._org_name = os.environ.get("LIGHTNING_ORG", "")
         self._org = None
-        if self._org_name:
-            org_api = OrgApi()
-            self._org = org_api.get_org(name=self._org_name)
 
     def _parse_model_name(self, name: str) -> Tuple[str, str]:
         parts = name.split("/")
