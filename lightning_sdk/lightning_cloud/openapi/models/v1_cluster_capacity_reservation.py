@@ -41,6 +41,7 @@ class V1ClusterCapacityReservation(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'aggregate_availability': 'str',
         'capacity_reservation_type': 'str',
         'cloud_provider_capacity_reservation_id': 'str',
         'cluster_id': 'str',
@@ -58,6 +59,7 @@ class V1ClusterCapacityReservation(object):
     }
 
     attribute_map = {
+        'aggregate_availability': 'aggregateAvailability',
         'capacity_reservation_type': 'capacityReservationType',
         'cloud_provider_capacity_reservation_id': 'cloudProviderCapacityReservationId',
         'cluster_id': 'clusterId',
@@ -74,8 +76,9 @@ class V1ClusterCapacityReservation(object):
         'zone': 'zone'
     }
 
-    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, in_use: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
+    def __init__(self, aggregate_availability: 'str' =None, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, in_use: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
         """V1ClusterCapacityReservation - a model defined in Swagger"""  # noqa: E501
+        self._aggregate_availability = None
         self._capacity_reservation_type = None
         self._cloud_provider_capacity_reservation_id = None
         self._cluster_id = None
@@ -91,6 +94,8 @@ class V1ClusterCapacityReservation(object):
         self._start_time = None
         self._zone = None
         self.discriminator = None
+        if aggregate_availability is not None:
+            self.aggregate_availability = aggregate_availability
         if capacity_reservation_type is not None:
             self.capacity_reservation_type = capacity_reservation_type
         if cloud_provider_capacity_reservation_id is not None:
@@ -119,6 +124,27 @@ class V1ClusterCapacityReservation(object):
             self.start_time = start_time
         if zone is not None:
             self.zone = zone
+
+    @property
+    def aggregate_availability(self) -> 'str':
+        """Gets the aggregate_availability of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The aggregate_availability of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: str
+        """
+        return self._aggregate_availability
+
+    @aggregate_availability.setter
+    def aggregate_availability(self, aggregate_availability: 'str'):
+        """Sets the aggregate_availability of this V1ClusterCapacityReservation.
+
+
+        :param aggregate_availability: The aggregate_availability of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: str
+        """
+
+        self._aggregate_availability = aggregate_availability
 
     @property
     def capacity_reservation_type(self) -> 'str':

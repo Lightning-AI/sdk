@@ -55,6 +55,7 @@ class ProjectIdCloudspacesBody(object):
         'plugins': 'list[str]',
         'requested_run_duration_seconds': 'str',
         'same_compute_on_resume': 'bool',
+        'sandbox': 'bool',
         'seed_files': 'list[V1CloudSpaceSeedFile]',
         'source': 'V1CloudSpaceSourceType',
         'spot': 'bool'
@@ -75,12 +76,13 @@ class ProjectIdCloudspacesBody(object):
         'plugins': 'plugins',
         'requested_run_duration_seconds': 'requestedRunDurationSeconds',
         'same_compute_on_resume': 'sameComputeOnResume',
+        'sandbox': 'sandbox',
         'seed_files': 'seedFiles',
         'source': 'source',
         'spot': 'spot'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_secrets: 'bool' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, source: 'V1CloudSpaceSourceType' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, cluster_id: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_secrets: 'bool' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, sandbox: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, source: 'V1CloudSpaceSourceType' =None, spot: 'bool' =None):  # noqa: E501
         """ProjectIdCloudspacesBody - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cloud_space_environment_template_id = None
@@ -96,6 +98,7 @@ class ProjectIdCloudspacesBody(object):
         self._plugins = None
         self._requested_run_duration_seconds = None
         self._same_compute_on_resume = None
+        self._sandbox = None
         self._seed_files = None
         self._source = None
         self._spot = None
@@ -128,6 +131,8 @@ class ProjectIdCloudspacesBody(object):
             self.requested_run_duration_seconds = requested_run_duration_seconds
         if same_compute_on_resume is not None:
             self.same_compute_on_resume = same_compute_on_resume
+        if sandbox is not None:
+            self.sandbox = sandbox
         if seed_files is not None:
             self.seed_files = seed_files
         if source is not None:
@@ -428,6 +433,27 @@ class ProjectIdCloudspacesBody(object):
         """
 
         self._same_compute_on_resume = same_compute_on_resume
+
+    @property
+    def sandbox(self) -> 'bool':
+        """Gets the sandbox of this ProjectIdCloudspacesBody.  # noqa: E501
+
+
+        :return: The sandbox of this ProjectIdCloudspacesBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._sandbox
+
+    @sandbox.setter
+    def sandbox(self, sandbox: 'bool'):
+        """Sets the sandbox of this ProjectIdCloudspacesBody.
+
+
+        :param sandbox: The sandbox of this ProjectIdCloudspacesBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._sandbox = sandbox
 
     @property
     def seed_files(self) -> 'list[V1CloudSpaceSeedFile]':

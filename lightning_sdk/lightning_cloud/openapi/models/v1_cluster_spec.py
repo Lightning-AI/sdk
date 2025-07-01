@@ -55,6 +55,7 @@ class V1ClusterSpec(object):
         'freeze_accelerators': 'bool',
         'google_cloud_v1': 'V1GoogleCloudDirectV1',
         'insurer_disabled': 'bool',
+        'kubernetes_v1': 'V1KubernetesDirectV1',
         'lambda_labs_v1': 'V1LambdaLabsDirectV1',
         'lock_overprovisioning': 'bool',
         'locked_zones': 'list[str]',
@@ -90,6 +91,7 @@ class V1ClusterSpec(object):
         'freeze_accelerators': 'freezeAccelerators',
         'google_cloud_v1': 'googleCloudV1',
         'insurer_disabled': 'insurerDisabled',
+        'kubernetes_v1': 'kubernetesV1',
         'lambda_labs_v1': 'lambdaLabsV1',
         'lock_overprovisioning': 'lockOverprovisioning',
         'locked_zones': 'lockedZones',
@@ -110,7 +112,7 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_accelerators = None
@@ -126,6 +128,7 @@ class V1ClusterSpec(object):
         self._freeze_accelerators = None
         self._google_cloud_v1 = None
         self._insurer_disabled = None
+        self._kubernetes_v1 = None
         self._lambda_labs_v1 = None
         self._lock_overprovisioning = None
         self._locked_zones = None
@@ -173,6 +176,8 @@ class V1ClusterSpec(object):
             self.google_cloud_v1 = google_cloud_v1
         if insurer_disabled is not None:
             self.insurer_disabled = insurer_disabled
+        if kubernetes_v1 is not None:
+            self.kubernetes_v1 = kubernetes_v1
         if lambda_labs_v1 is not None:
             self.lambda_labs_v1 = lambda_labs_v1
         if lock_overprovisioning is not None:
@@ -505,6 +510,27 @@ class V1ClusterSpec(object):
         """
 
         self._insurer_disabled = insurer_disabled
+
+    @property
+    def kubernetes_v1(self) -> 'V1KubernetesDirectV1':
+        """Gets the kubernetes_v1 of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The kubernetes_v1 of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1KubernetesDirectV1
+        """
+        return self._kubernetes_v1
+
+    @kubernetes_v1.setter
+    def kubernetes_v1(self, kubernetes_v1: 'V1KubernetesDirectV1'):
+        """Sets the kubernetes_v1 of this V1ClusterSpec.
+
+
+        :param kubernetes_v1: The kubernetes_v1 of this V1ClusterSpec.  # noqa: E501
+        :type: V1KubernetesDirectV1
+        """
+
+        self._kubernetes_v1 = kubernetes_v1
 
     @property
     def lambda_labs_v1(self) -> 'V1LambdaLabsDirectV1':

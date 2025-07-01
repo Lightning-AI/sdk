@@ -65,6 +65,7 @@ class V1UpdateUserRequest(object):
         'saw_create_first_project_dialog': 'bool',
         'saw_forums_login_merge_dialog': 'bool',
         'saw_free_credits_notification': 'bool',
+        'should_auto_verify': 'bool',
         'user_metadata': 'str',
         'username': 'str',
         'website': 'str'
@@ -95,12 +96,13 @@ class V1UpdateUserRequest(object):
         'saw_create_first_project_dialog': 'sawCreateFirstProjectDialog',
         'saw_forums_login_merge_dialog': 'sawForumsLoginMergeDialog',
         'saw_free_credits_notification': 'sawFreeCreditsNotification',
+        'should_auto_verify': 'shouldAutoVerify',
         'user_metadata': 'userMetadata',
         'username': 'username',
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, discounted_pro_plan: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, discounted_pro_plan: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, should_auto_verify: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1UpdateUserRequest - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
@@ -126,6 +128,7 @@ class V1UpdateUserRequest(object):
         self._saw_create_first_project_dialog = None
         self._saw_forums_login_merge_dialog = None
         self._saw_free_credits_notification = None
+        self._should_auto_verify = None
         self._user_metadata = None
         self._username = None
         self._website = None
@@ -178,6 +181,8 @@ class V1UpdateUserRequest(object):
             self.saw_forums_login_merge_dialog = saw_forums_login_merge_dialog
         if saw_free_credits_notification is not None:
             self.saw_free_credits_notification = saw_free_credits_notification
+        if should_auto_verify is not None:
+            self.should_auto_verify = should_auto_verify
         if user_metadata is not None:
             self.user_metadata = user_metadata
         if username is not None:
@@ -688,6 +693,27 @@ class V1UpdateUserRequest(object):
         """
 
         self._saw_free_credits_notification = saw_free_credits_notification
+
+    @property
+    def should_auto_verify(self) -> 'bool':
+        """Gets the should_auto_verify of this V1UpdateUserRequest.  # noqa: E501
+
+
+        :return: The should_auto_verify of this V1UpdateUserRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._should_auto_verify
+
+    @should_auto_verify.setter
+    def should_auto_verify(self, should_auto_verify: 'bool'):
+        """Sets the should_auto_verify of this V1UpdateUserRequest.
+
+
+        :param should_auto_verify: The should_auto_verify of this V1UpdateUserRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._should_auto_verify = should_auto_verify
 
     @property
     def user_metadata(self) -> 'str':

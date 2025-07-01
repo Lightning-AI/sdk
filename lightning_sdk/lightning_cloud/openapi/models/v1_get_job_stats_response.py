@@ -41,6 +41,8 @@ class V1GetJobStatsResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'queued_deployments': 'int',
+        'queued_jobs': 'int',
         'running_deployments': 'int',
         'running_jobs': 'int',
         'running_pipelines': 'int',
@@ -48,19 +50,27 @@ class V1GetJobStatsResponse(object):
     }
 
     attribute_map = {
+        'queued_deployments': 'queuedDeployments',
+        'queued_jobs': 'queuedJobs',
         'running_deployments': 'runningDeployments',
         'running_jobs': 'runningJobs',
         'running_pipelines': 'runningPipelines',
         'total_jobs': 'totalJobs'
     }
 
-    def __init__(self, running_deployments: 'int' =None, running_jobs: 'int' =None, running_pipelines: 'int' =None, total_jobs: 'int' =None):  # noqa: E501
+    def __init__(self, queued_deployments: 'int' =None, queued_jobs: 'int' =None, running_deployments: 'int' =None, running_jobs: 'int' =None, running_pipelines: 'int' =None, total_jobs: 'int' =None):  # noqa: E501
         """V1GetJobStatsResponse - a model defined in Swagger"""  # noqa: E501
+        self._queued_deployments = None
+        self._queued_jobs = None
         self._running_deployments = None
         self._running_jobs = None
         self._running_pipelines = None
         self._total_jobs = None
         self.discriminator = None
+        if queued_deployments is not None:
+            self.queued_deployments = queued_deployments
+        if queued_jobs is not None:
+            self.queued_jobs = queued_jobs
         if running_deployments is not None:
             self.running_deployments = running_deployments
         if running_jobs is not None:
@@ -69,6 +79,48 @@ class V1GetJobStatsResponse(object):
             self.running_pipelines = running_pipelines
         if total_jobs is not None:
             self.total_jobs = total_jobs
+
+    @property
+    def queued_deployments(self) -> 'int':
+        """Gets the queued_deployments of this V1GetJobStatsResponse.  # noqa: E501
+
+
+        :return: The queued_deployments of this V1GetJobStatsResponse.  # noqa: E501
+        :rtype: int
+        """
+        return self._queued_deployments
+
+    @queued_deployments.setter
+    def queued_deployments(self, queued_deployments: 'int'):
+        """Sets the queued_deployments of this V1GetJobStatsResponse.
+
+
+        :param queued_deployments: The queued_deployments of this V1GetJobStatsResponse.  # noqa: E501
+        :type: int
+        """
+
+        self._queued_deployments = queued_deployments
+
+    @property
+    def queued_jobs(self) -> 'int':
+        """Gets the queued_jobs of this V1GetJobStatsResponse.  # noqa: E501
+
+
+        :return: The queued_jobs of this V1GetJobStatsResponse.  # noqa: E501
+        :rtype: int
+        """
+        return self._queued_jobs
+
+    @queued_jobs.setter
+    def queued_jobs(self, queued_jobs: 'int'):
+        """Sets the queued_jobs of this V1GetJobStatsResponse.
+
+
+        :param queued_jobs: The queued_jobs of this V1GetJobStatsResponse.  # noqa: E501
+        :type: int
+        """
+
+        self._queued_jobs = queued_jobs
 
     @property
     def running_deployments(self) -> 'int':

@@ -44,6 +44,7 @@ class V1ClusterStatus(object):
         'aws_v1_region_status': 'list[V1AWSDirectV1Status]',
         'dependency_service_health': 'list[V1ServiceHealth]',
         'gcp_v1_status': 'V1GoogleCloudDirectV1Status',
+        'kubernetes_v1_status': 'V1KubernetesDirectV1Status',
         'last_healthcheck_timestamp': 'datetime',
         'phase': 'V1ClusterState',
         'prometheus_endpoint': 'str',
@@ -58,6 +59,7 @@ class V1ClusterStatus(object):
         'aws_v1_region_status': 'awsV1RegionStatus',
         'dependency_service_health': 'dependencyServiceHealth',
         'gcp_v1_status': 'gcpV1Status',
+        'kubernetes_v1_status': 'kubernetesV1Status',
         'last_healthcheck_timestamp': 'lastHealthcheckTimestamp',
         'phase': 'phase',
         'prometheus_endpoint': 'prometheusEndpoint',
@@ -68,11 +70,12 @@ class V1ClusterStatus(object):
         'storage_endpoint': 'storageEndpoint'
     }
 
-    def __init__(self, aws_v1_region_status: 'list[V1AWSDirectV1Status]' =None, dependency_service_health: 'list[V1ServiceHealth]' =None, gcp_v1_status: 'V1GoogleCloudDirectV1Status' =None, last_healthcheck_timestamp: 'datetime' =None, phase: 'V1ClusterState' =None, prometheus_endpoint: 'str' =None, queue_endpoint: 'str' =None, reason: 'str' =None, slurm_v1_status: 'V1SlurmV1Status' =None, ssh_gateway_endpoint: 'str' =None, storage_endpoint: 'str' =None):  # noqa: E501
+    def __init__(self, aws_v1_region_status: 'list[V1AWSDirectV1Status]' =None, dependency_service_health: 'list[V1ServiceHealth]' =None, gcp_v1_status: 'V1GoogleCloudDirectV1Status' =None, kubernetes_v1_status: 'V1KubernetesDirectV1Status' =None, last_healthcheck_timestamp: 'datetime' =None, phase: 'V1ClusterState' =None, prometheus_endpoint: 'str' =None, queue_endpoint: 'str' =None, reason: 'str' =None, slurm_v1_status: 'V1SlurmV1Status' =None, ssh_gateway_endpoint: 'str' =None, storage_endpoint: 'str' =None):  # noqa: E501
         """V1ClusterStatus - a model defined in Swagger"""  # noqa: E501
         self._aws_v1_region_status = None
         self._dependency_service_health = None
         self._gcp_v1_status = None
+        self._kubernetes_v1_status = None
         self._last_healthcheck_timestamp = None
         self._phase = None
         self._prometheus_endpoint = None
@@ -88,6 +91,8 @@ class V1ClusterStatus(object):
             self.dependency_service_health = dependency_service_health
         if gcp_v1_status is not None:
             self.gcp_v1_status = gcp_v1_status
+        if kubernetes_v1_status is not None:
+            self.kubernetes_v1_status = kubernetes_v1_status
         if last_healthcheck_timestamp is not None:
             self.last_healthcheck_timestamp = last_healthcheck_timestamp
         if phase is not None:
@@ -167,6 +172,27 @@ class V1ClusterStatus(object):
         """
 
         self._gcp_v1_status = gcp_v1_status
+
+    @property
+    def kubernetes_v1_status(self) -> 'V1KubernetesDirectV1Status':
+        """Gets the kubernetes_v1_status of this V1ClusterStatus.  # noqa: E501
+
+
+        :return: The kubernetes_v1_status of this V1ClusterStatus.  # noqa: E501
+        :rtype: V1KubernetesDirectV1Status
+        """
+        return self._kubernetes_v1_status
+
+    @kubernetes_v1_status.setter
+    def kubernetes_v1_status(self, kubernetes_v1_status: 'V1KubernetesDirectV1Status'):
+        """Sets the kubernetes_v1_status of this V1ClusterStatus.
+
+
+        :param kubernetes_v1_status: The kubernetes_v1_status of this V1ClusterStatus.  # noqa: E501
+        :type: V1KubernetesDirectV1Status
+        """
+
+        self._kubernetes_v1_status = kubernetes_v1_status
 
     @property
     def last_healthcheck_timestamp(self) -> 'datetime':

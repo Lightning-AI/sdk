@@ -68,9 +68,11 @@ class V1UserFeatures(object):
         'enterprise_compute_admin': 'bool',
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
+        'gcs_connections_optimized': 'bool',
         'gcs_folders': 'bool',
         'instant_capacity_reservation': 'bool',
         'job_artifacts_v2': 'bool',
+        'kubernetes_clusters': 'bool',
         'lambda_labs': 'bool',
         'lambda_labs_studios': 'bool',
         'landing_studios': 'bool',
@@ -111,6 +113,7 @@ class V1UserFeatures(object):
         'show_dev_admin': 'bool',
         'single_wallet': 'bool',
         'slurm': 'bool',
+        'specialised_studios': 'bool',
         'storage_overuse_deletion': 'bool',
         'studio_config': 'bool',
         'studio_version_visibility': 'bool',
@@ -152,9 +155,11 @@ class V1UserFeatures(object):
         'enterprise_compute_admin': 'enterpriseComputeAdmin',
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
+        'gcs_connections_optimized': 'gcsConnectionsOptimized',
         'gcs_folders': 'gcsFolders',
         'instant_capacity_reservation': 'instantCapacityReservation',
         'job_artifacts_v2': 'jobArtifactsV2',
+        'kubernetes_clusters': 'kubernetesClusters',
         'lambda_labs': 'lambdaLabs',
         'lambda_labs_studios': 'lambdaLabsStudios',
         'landing_studios': 'landingStudios',
@@ -195,6 +200,7 @@ class V1UserFeatures(object):
         'show_dev_admin': 'showDevAdmin',
         'single_wallet': 'singleWallet',
         'slurm': 'slurm',
+        'specialised_studios': 'specialisedStudios',
         'storage_overuse_deletion': 'storageOveruseDeletion',
         'studio_config': 'studioConfig',
         'studio_version_visibility': 'studioVersionVisibility',
@@ -208,7 +214,7 @@ class V1UserFeatures(object):
         'writable_s3_connections': 'writableS3Connections'
     }
 
-    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_clusters: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._accurate_billing = None
         self._affiliate_links = None
@@ -237,9 +243,11 @@ class V1UserFeatures(object):
         self._enterprise_compute_admin = None
         self._fair_share = None
         self._featured_studios_admin = None
+        self._gcs_connections_optimized = None
         self._gcs_folders = None
         self._instant_capacity_reservation = None
         self._job_artifacts_v2 = None
+        self._kubernetes_clusters = None
         self._lambda_labs = None
         self._lambda_labs_studios = None
         self._landing_studios = None
@@ -280,6 +288,7 @@ class V1UserFeatures(object):
         self._show_dev_admin = None
         self._single_wallet = None
         self._slurm = None
+        self._specialised_studios = None
         self._storage_overuse_deletion = None
         self._studio_config = None
         self._studio_version_visibility = None
@@ -346,12 +355,16 @@ class V1UserFeatures(object):
             self.fair_share = fair_share
         if featured_studios_admin is not None:
             self.featured_studios_admin = featured_studios_admin
+        if gcs_connections_optimized is not None:
+            self.gcs_connections_optimized = gcs_connections_optimized
         if gcs_folders is not None:
             self.gcs_folders = gcs_folders
         if instant_capacity_reservation is not None:
             self.instant_capacity_reservation = instant_capacity_reservation
         if job_artifacts_v2 is not None:
             self.job_artifacts_v2 = job_artifacts_v2
+        if kubernetes_clusters is not None:
+            self.kubernetes_clusters = kubernetes_clusters
         if lambda_labs is not None:
             self.lambda_labs = lambda_labs
         if lambda_labs_studios is not None:
@@ -432,6 +445,8 @@ class V1UserFeatures(object):
             self.single_wallet = single_wallet
         if slurm is not None:
             self.slurm = slurm
+        if specialised_studios is not None:
+            self.specialised_studios = specialised_studios
         if storage_overuse_deletion is not None:
             self.storage_overuse_deletion = storage_overuse_deletion
         if studio_config is not None:
@@ -1023,6 +1038,27 @@ class V1UserFeatures(object):
         self._featured_studios_admin = featured_studios_admin
 
     @property
+    def gcs_connections_optimized(self) -> 'bool':
+        """Gets the gcs_connections_optimized of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The gcs_connections_optimized of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._gcs_connections_optimized
+
+    @gcs_connections_optimized.setter
+    def gcs_connections_optimized(self, gcs_connections_optimized: 'bool'):
+        """Sets the gcs_connections_optimized of this V1UserFeatures.
+
+
+        :param gcs_connections_optimized: The gcs_connections_optimized of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._gcs_connections_optimized = gcs_connections_optimized
+
+    @property
     def gcs_folders(self) -> 'bool':
         """Gets the gcs_folders of this V1UserFeatures.  # noqa: E501
 
@@ -1084,6 +1120,27 @@ class V1UserFeatures(object):
         """
 
         self._job_artifacts_v2 = job_artifacts_v2
+
+    @property
+    def kubernetes_clusters(self) -> 'bool':
+        """Gets the kubernetes_clusters of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The kubernetes_clusters of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._kubernetes_clusters
+
+    @kubernetes_clusters.setter
+    def kubernetes_clusters(self, kubernetes_clusters: 'bool'):
+        """Sets the kubernetes_clusters of this V1UserFeatures.
+
+
+        :param kubernetes_clusters: The kubernetes_clusters of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._kubernetes_clusters = kubernetes_clusters
 
     @property
     def lambda_labs(self) -> 'bool':
@@ -1924,6 +1981,27 @@ class V1UserFeatures(object):
         """
 
         self._slurm = slurm
+
+    @property
+    def specialised_studios(self) -> 'bool':
+        """Gets the specialised_studios of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The specialised_studios of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._specialised_studios
+
+    @specialised_studios.setter
+    def specialised_studios(self, specialised_studios: 'bool'):
+        """Sets the specialised_studios of this V1UserFeatures.
+
+
+        :param specialised_studios: The specialised_studios of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._specialised_studios = specialised_studios
 
     @property
     def storage_overuse_deletion(self) -> 'bool':

@@ -43,7 +43,7 @@ class PipelinesServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def pipelines_service_create_child_pipeline(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
+    def pipelines_service_create_child_pipeline(self, body: 'PipelinesIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
         """pipelines_service_create_child_pipeline  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param PipelinesIdBody1 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1Pipeline
@@ -66,7 +66,7 @@ class PipelinesServiceApi(object):
             (data) = self.pipelines_service_create_child_pipeline_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def pipelines_service_create_child_pipeline_with_http_info(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
+    def pipelines_service_create_child_pipeline_with_http_info(self, body: 'PipelinesIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
         """pipelines_service_create_child_pipeline  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -75,7 +75,7 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param PipelinesIdBody1 body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1Pipeline
