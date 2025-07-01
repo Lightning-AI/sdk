@@ -1,5 +1,5 @@
 import os
-from typing import AsyncGenerator, Dict, Generator, List, Optional, Tuple, Union
+from typing import AsyncGenerator, ClassVar, Dict, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api.llm_api import LLMApi
 from lightning_sdk.lightning_cloud.openapi import V1Assistant
@@ -13,6 +13,13 @@ PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
 
 
 class LLM:
+    _auth_info_cached: ClassVar[bool] = False
+    _cached_auth_info: ClassVar[Dict[str, Optional[str]]] = {}
+    _llm_api_cache: ClassVar[Dict[Optional[str], LLMApi]] = {}
+
+    def __new__(cls, name: str, teamspace: Optional[str] = None, enable_async: Optional[bool] = False) -> "LLM":
+        return super().__new__(cls)
+
     def __init__(
         self,
         name: str,
@@ -36,12 +43,18 @@ class LLM:
             ValueError: If teamspace information cannot be resolved.
         """
         # TODO support user input teamspace
-        self._get_auth_info()
-        self._model_provider, self._model_name = self._parse_model_name(name)
+        if not LLM._auth_info_cached:
+            self._get_auth_info()
+            LLM._auth_info_cached = True
 
+        self._model_provider, self._model_name = self._parse_model_name(name)
         self._enable_async = enable_async
 
-        self._llm_api = LLMApi()
+        # Reuse LLMApi per teamspace (as billing is based on teamspace)
+        if teamspace not in LLM._llm_api_cache:
+            LLM._llm_api_cache[teamspace] = LLMApi()
+        self._llm_api = LLM._llm_api_cache[teamspace]
+
         self._model = self._get_model()
         self._conversations = {}
 
@@ -54,17 +67,28 @@ class LLM:
         return self._model_provider
 
     def _get_auth_info(self) -> None:
-        teamspace_name = os.environ.get("LIGHTNING_TEAMSPACE", None)
-        if teamspace_name is None:
-            raise ValueError(
-                "Teamspace name must be provided either through",
-                " the environment variable LIGHTNING_TEAMSPACE or as an argument.",
-            )
-        self._teamspace_name = teamspace_name
-        self._teamspace_id = os.environ.get("LIGHTNING_CLOUD_PROJECT_ID", None)
-        self._user_name = os.environ.get("LIGHTNING_USERNAME", "")
-        self._user_id = os.environ.get("LIGHTNING_USER_ID", None)
-        self._org_name = os.environ.get("LIGHTNING_ORG", "")
+        if not LLM._auth_info_cached:
+            teamspace_name = os.environ.get("LIGHTNING_TEAMSPACE", None)
+            if teamspace_name is None:
+                raise ValueError(
+                    "Teamspace name must be provided either through "
+                    "the environment variable LIGHTNING_TEAMSPACE or as an argument."
+                )
+            LLM._cached_auth_info = {
+                "teamspace_name": teamspace_name,
+                "teamspace_id": os.environ.get("LIGHTNING_CLOUD_PROJECT_ID", None),
+                "user_name": os.environ.get("LIGHTNING_USERNAME", ""),
+                "user_id": os.environ.get("LIGHTNING_USER_ID", None),
+                "org_name": os.environ.get("LIGHTNING_ORG", ""),
+            }
+            LLM._auth_info_cached = True
+
+        # Always assign to the current instance
+        self._teamspace_name = LLM._cached_auth_info["teamspace_name"]
+        self._teamspace_id = LLM._cached_auth_info["teamspace_id"]
+        self._user_name = LLM._cached_auth_info["user_name"]
+        self._user_id = LLM._cached_auth_info["user_id"]
+        self._org_name = LLM._cached_auth_info["org_name"]
         self._org = None
 
     def _parse_model_name(self, name: str) -> Tuple[str, str]:

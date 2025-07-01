@@ -16,24 +16,6 @@ def mock_env(monkeypatch):
     return monkeypatch
 
 
-# @pytest.fixture()
-# def mock_auth(monkeypatch):
-#     mock_org = MagicMock()
-#     mock_org.id = "org-123"
-#     mock_org.name = "org-name"
-#     mock_org_api = MagicMock()
-#     mock_org_api.get_org.return_value = mock_org
-#     # monkeypatch.setattr("lightning_sdk.llm.llm.OrgApi", lambda: mock_org_api)
-
-#     mock_teamspace = MagicMock()
-#     mock_teamspace.id = "teamspace-123"
-#     mock_teamspace.name = "teamspace-name"
-#     mock_teamspace_api = MagicMock()
-#     mock_teamspace_api._get_teamspace_by_id.return_value = mock_teamspace
-#     # monkeypatch.setattr("lightning_sdk.llm.llm.TeamspaceApi", lambda: mock_teamspace_api)
-#     return mock_teamspace
-
-
 @pytest.fixture()
 def mock_model_data():
     model_meta = MagicMock()
@@ -93,6 +75,9 @@ def test_org_model(monkeypatch):
 def test_invalid_org(monkeypatch):
     # there could be a case where the model provider is an org that exists, however, the user does not have access to it
     # then it would make sense to search for whatever they have availabe in public, teamspace and org
+    from lightning_sdk.llm import LLM as LLMCLIENT
+
+    LLMCLIENT._llm_api_cache.clear()
 
     mock_api = MagicMock()
     mock_api.get_assistant.side_effect = [
@@ -109,7 +94,9 @@ def test_invalid_org(monkeypatch):
 
 
 def test_user_model(monkeypatch, mock_user_model):
-    # Patch LLMApi to return a mock instance with get_assistant mocked
+    from lightning_sdk.llm import LLM as LLMCLIENT
+
+    LLMCLIENT._llm_api_cache.clear()
     mock_api = MagicMock()
     mock_api.get_assistant.return_value = mock_user_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
@@ -120,6 +107,11 @@ def test_user_model(monkeypatch, mock_user_model):
 
 
 def test_chat(monkeypatch, mock_public_model):
+    from lightning_sdk.llm import LLM as LLMCLIENT
+
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
+
     mock_api = MagicMock()
     mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
@@ -210,6 +202,9 @@ def test_chat(monkeypatch, mock_public_model):
     assert "conv1" not in llm._conversations
 
     # test streaming
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
+
     llm = LLM("openai/gpt-4o")
     response = llm.chat("Hello, how are you?", stream=True)
 
@@ -228,6 +223,8 @@ def test_chat(monkeypatch, mock_public_model):
     )
 
     # test image content type
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
     llm = LLM("openai/gpt-4o")
     response = llm.chat(
         "Describe the image",
@@ -249,6 +246,8 @@ def test_chat(monkeypatch, mock_public_model):
     )
 
     # local images
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
     llm = LLM("openai/gpt-4o")
     response = llm.chat(
         "Describe the image",
@@ -286,6 +285,11 @@ def test_chat(monkeypatch, mock_public_model):
 
 
 def test_chat_backend(monkeypatch, mock_public_model):
+    from lightning_sdk.llm import LLM as LLMCLIENT
+
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
+
     mock_api = MagicMock()
     mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
@@ -308,6 +312,11 @@ def test_chat_backend(monkeypatch, mock_public_model):
 
 @pytest.mark.asyncio()
 async def test_async_chat(monkeypatch, mock_public_model):
+    from lightning_sdk.llm import LLM as LLMCLIENT
+
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
+
     mock_api = MagicMock()
     mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
@@ -339,6 +348,11 @@ async def test_async_chat(monkeypatch, mock_public_model):
 
 @pytest.mark.asyncio()
 async def test_async_stream_chat(monkeypatch):
+    from lightning_sdk.llm import LLM as LLMCLIENT
+
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
+
     mock_api = MagicMock()
     mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
