@@ -1,14 +1,17 @@
 import os
-import warnings
-from typing import AsyncGenerator, Dict, Generator, List, Optional, Set, Tuple, Union
+from typing import AsyncGenerator, Dict, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import OrgApi, TeamspaceApi
 from lightning_sdk.api.llm_api import LLMApi
 from lightning_sdk.lightning_cloud.openapi import V1Assistant
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
-from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.owner import Owner
-from lightning_sdk.utils.resolve import _resolve_org
+
+PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
+    "openai": "OpenAI",
+    "anthropic": "Anthropic",
+    "google": "Google",
+}
 
 
 class LLM:
@@ -38,29 +41,9 @@ class LLM:
         self._get_auth_info()
         self._model_provider, self._model_name = self._parse_model_name(name)
 
-        self._llm_api = LLMApi()
         self._enable_async = enable_async
 
-        try:
-            # check if it is a org model
-            self._org = _resolve_org(self._model_provider)
-
-            try:
-                # check if user has access to the org
-                self._org_models = self._build_model_lookup(self._get_org_models())
-            except ApiException:
-                warnings.warn(
-                    f"User is not authenticated to access the model in organization: '{self._model_provider}'.\n"
-                    " Proceeding with appropriate org models, user models, or public models.",
-                    UserWarning,
-                    stacklevel=2,
-                )
-                self._model_provider = None
-                raise
-        except ApiException:
-            self._org_models = self._build_model_lookup(self._get_org_models())
-        self._public_models = self._build_model_lookup(self._get_public_models())
-        self._user_models = self._build_model_lookup(self._get_user_models())
+        self._llm_api = LLMApi()
         self._model = self._get_model()
         self._conversations = {}
 
@@ -88,9 +71,9 @@ class LLM:
         if self._teamspace_id:
             teamspace_api = TeamspaceApi()
             self._teamspace = teamspace_api._get_teamspace_by_id(self._teamspace_id)
-        self._user_name = os.environ.get("LIGHTNING_USERNAME", None)
+        self._user_name = os.environ.get("LIGHTNING_USERNAME", "")
         self._user_id = os.environ.get("LIGHTNING_USER_ID", None)
-        self._org_name = os.environ.get("LIGHTNING_ORG", None)
+        self._org_name = os.environ.get("LIGHTNING_ORG", "")
         self._org = None
         if self._org_name:
             org_api = OrgApi()
@@ -107,42 +90,44 @@ class LLM:
             f"Model name must be in the format `organization/model_name` or `model_name`, but got '{name}'."
         )
 
-    def _build_model_lookup(self, endpoints: List[str]) -> Dict[str, Set[str]]:
-        result = {}
-        for endpoint in endpoints:
-            result.setdefault(endpoint.model, []).append(endpoint)
-        return result
-
-    def _get_public_models(self) -> List[str]:
-        return self._llm_api.get_public_models()
-
-    def _get_org_models(self) -> List[str]:
-        return self._llm_api.get_org_models(self._org.id) if self._org else []
-
-    def _get_user_models(self) -> List[str]:
-        return self._llm_api.get_user_models(self._user_id) if self._user_id else []
-
     def _get_model(self) -> V1Assistant:
-        # TODO how to handle multiple models with same model type? For now, just use the first one
-        if self._model_name in self._public_models:
-            return self._public_models.get(self._model_name)[0]
-        if self._model_name in self._org_models:
-            return self._org_models.get(self._model_name)[0]
-        if self._model_name in self._user_models:
-            return self._user_models.get(self._model_name)[0]
+        if self._model_provider in PUBLIC_MODEL_PROVIDERS:
+            try:
+                return self._llm_api.get_assistant(
+                    model_provider=PUBLIC_MODEL_PROVIDERS[self._model_provider],
+                    model_name=self._model_name,
+                    user_name="",
+                    org_name="",
+                )
+            except Exception as e:
+                raise ValueError(
+                    f"Public model '{self._model_provider}/{self._model_name}' not found. "
+                    "Please check the model name or provider."
+                ) from e
 
-        available_models = []
-        if self._public_models:
-            available_models.append(f"Public Models: {', '.join(self._public_models.keys())}")
+        # Try organization model
+        try:
+            return self._llm_api.get_assistant(
+                model_provider="",
+                model_name=self._model_name,
+                user_name="",
+                org_name=self._model_provider,
+            )
+        except Exception:
+            pass
 
-        if self._org and self._org_models:
-            available_models.append(f"Org ({self._org.name}) Models: {', '.join(self._org_models.keys())}")
-
-        if self._user_name and self._user_models:
-            available_models.append(f"User ({self._user_name}) Models: {', '.join(self._user_models.keys())}")
-
-        available_models_str = "\n".join(available_models)
-        raise ValueError(f"Model '{self._model_name}' not found. \nAvailable models: \n{available_models_str}")
+        # Try user model
+        try:
+            return self._llm_api.get_assistant(
+                model_provider="",
+                model_name=self._model_name,
+                user_name=self._model_provider,
+                org_name="",
+            )
+        except Exception as user_error:
+            raise ValueError(
+                f"Model '{self._model_provider}/{self._model_name}' not found as either an org or user model.\n"
+            ) from user_error
 
     def _get_conversations(self) -> None:
         conversations = self._llm_api.list_conversations(assistant_id=self._model.id)

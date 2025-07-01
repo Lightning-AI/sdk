@@ -4,7 +4,6 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.llm import LLM
 
 
@@ -24,7 +23,6 @@ def mock_auth(monkeypatch):
     mock_org.name = "org-name"
     mock_org_api = MagicMock()
     mock_org_api.get_org.return_value = mock_org
-    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_org", lambda org: mock_org)
     monkeypatch.setattr("lightning_sdk.llm.llm.OrgApi", lambda: mock_org_api)
 
     mock_teamspace = MagicMock()
@@ -86,21 +84,13 @@ def test_invalid_format(monkeypatch, mock_auth, mock_model_data):
         LLM("openai/gpt-4o/v1")
 
 
-def test_org_model(monkeypatch, mock_auth, mock_org_model):
+def test_org_model(monkeypatch, mock_auth):
     mock_api = MagicMock()
-    mock_api.get_org_models.return_value = mock_org_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
     llm = LLM("org-name/org-model1")
-    assert llm._org.id == "org-123"
     assert llm.owner.name == "org-name"
     assert llm.provider == "org-name"
-
-    with pytest.raises(
-        ValueError,
-        match=re.escape("Model 'dummy-model' not found. \nAvailable models: \nOrg (org-name) Models: org-model1"),
-    ):
-        LLM("org-123/dummy-model")
 
 
 def test_invalid_org(monkeypatch, mock_auth, mock_public_model, mock_org_model):
@@ -108,18 +98,17 @@ def test_invalid_org(monkeypatch, mock_auth, mock_public_model, mock_org_model):
     # then it would make sense to search for whatever they have availabe in public, teamspace and org
 
     mock_api = MagicMock()
-    mock_get_org = MagicMock()
-    mock_get_org.side_effect = [ApiException("Unauthorized user"), mock_org_model]
-    monkeypatch.setattr(LLM, "_get_org_models", mock_get_org)
-    mock_api.get_public_models.return_value = mock_public_model
-    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+    mock_api.get_assistant.side_effect = [
+        Exception("org model error"),
+        Exception("user model error"),
+    ]
 
-    warning_message = (
-        "User is not authenticated to access the model in organization: 'wrong-org'.\n"
-        " Proceeding with appropriate org models, user models, or public models."
-    )
-    with pytest.warns(UserWarning, match=re.escape(warning_message)):
-        LLM("wrong-org/gpt-4o")
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+    with pytest.raises(
+        ValueError,
+        match=re.escape("Model 'org-123/dummy-model' not found as either an org or user model.\n"),
+    ):
+        LLM("org-123/dummy-model")
 
 
 def test_user_model(monkeypatch, mock_user_model):
@@ -142,12 +131,6 @@ def test_user_model(monkeypatch, mock_user_model):
     assert llm.owner.name == "user-name"
     assert llm.name == "user-model1"
     assert llm.provider == "user-name"
-
-    with pytest.raises(
-        ValueError,
-        match=re.escape("Model 'dummy-model' not found. \nAvailable models: \nUser (user-name) Models: user-model1"),
-    ):
-        LLM("dummy-model", teamspace="user-name/teamspace-123")
 
 
 def test_chat(monkeypatch, mock_auth, mock_model_data, mock_public_model):

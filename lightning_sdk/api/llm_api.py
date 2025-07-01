@@ -8,6 +8,7 @@ from typing import Any, AsyncGenerator, Dict, Generator, List, Optional, Union
 
 from pip._vendor.urllib3 import HTTPResponse
 
+from lightning_sdk.lightning_cloud.openapi import V1Assistant
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
 from lightning_sdk.lightning_cloud.openapi.models.v1_response_choice import V1ResponseChoice
 from lightning_sdk.lightning_cloud.openapi.models.v1_response_choice_delta import V1ResponseChoiceDelta
@@ -18,17 +19,10 @@ class LLMApi:
     def __init__(self) -> None:
         self._client = LightningClient(retry=False, max_tries=0)
 
-    def get_public_models(self) -> List[str]:
-        result = self._client.assistants_service_list_assistants(published=True)
-        return result.assistants
-
-    def get_org_models(self, org_id: str) -> List[str]:
-        result = self._client.assistants_service_list_assistants(org_id=org_id)
-        return result.assistants
-
-    def get_user_models(self, user_id: str) -> List[str]:
-        result = self._client.assistants_service_list_assistants(user_id=user_id)
-        return result.assistants
+    def get_assistant(self, model_provider: str, model_name: str, user_name: str, org_name: str) -> V1Assistant:
+        return self._client.assistants_service_get_managed_model_assistant(
+            model_provider=model_provider, model_name=model_name, user_name=user_name, org_name=org_name
+        )
 
     def _parse_stream_line(self, decoded_line: str) -> Optional[V1ConversationResponseChunk]:
         try:
