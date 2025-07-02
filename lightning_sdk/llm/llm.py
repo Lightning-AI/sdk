@@ -43,9 +43,7 @@ class LLM:
             ValueError: If teamspace information cannot be resolved.
         """
         # TODO support user input teamspace
-        if not LLM._auth_info_cached:
-            self._get_auth_info()
-            LLM._auth_info_cached = True
+        self._get_auth_info()
 
         self._model_provider, self._model_name = self._parse_model_name(name)
         self._enable_async = enable_async

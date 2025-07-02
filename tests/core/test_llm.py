@@ -202,9 +202,6 @@ def test_chat(monkeypatch, mock_public_model):
     assert "conv1" not in llm._conversations
 
     # test streaming
-    LLMCLIENT._auth_info_cached = False
-    LLMCLIENT._llm_api_cache.clear()
-
     llm = LLM("openai/gpt-4o")
     response = llm.chat("Hello, how are you?", stream=True)
 
@@ -223,8 +220,6 @@ def test_chat(monkeypatch, mock_public_model):
     )
 
     # test image content type
-    LLMCLIENT._auth_info_cached = False
-    LLMCLIENT._llm_api_cache.clear()
     llm = LLM("openai/gpt-4o")
     response = llm.chat(
         "Describe the image",
@@ -246,8 +241,6 @@ def test_chat(monkeypatch, mock_public_model):
     )
 
     # local images
-    LLMCLIENT._auth_info_cached = False
-    LLMCLIENT._llm_api_cache.clear()
     llm = LLM("openai/gpt-4o")
     response = llm.chat(
         "Describe the image",
