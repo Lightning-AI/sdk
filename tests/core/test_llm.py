@@ -133,7 +133,7 @@ def test_chat(monkeypatch, mock_public_model):
         prompt="Hello, how are you?",
         system_prompt=None,
         max_completion_tokens=10,
-        assistant_id=llm._model.id,
+        assistant_id=llm._model_id,
         images=None,
         conversation_id=None,
         billing_project_id="teamspace-123",
@@ -150,7 +150,7 @@ def test_chat(monkeypatch, mock_public_model):
         prompt="Hello, how are you?",
         system_prompt=None,
         max_completion_tokens=500,
-        assistant_id=llm._model.id,
+        assistant_id=llm._model_id,
         images=None,
         conversation_id=None,
         billing_project_id="teamspace-123",
@@ -165,7 +165,7 @@ def test_chat(monkeypatch, mock_public_model):
         prompt="Hi again!",
         system_prompt=None,
         max_completion_tokens=500,
-        assistant_id=llm._model.id,
+        assistant_id=llm._model_id,
         images=None,
         conversation_id="conv_123",
         billing_project_id="teamspace-123",
@@ -210,7 +210,7 @@ def test_chat(monkeypatch, mock_public_model):
         prompt="Hello, how are you?",
         system_prompt=None,
         max_completion_tokens=500,
-        assistant_id=llm._model.id,
+        assistant_id=llm._model_id,
         images=None,
         conversation_id=None,
         billing_project_id="teamspace-123",
@@ -229,7 +229,7 @@ def test_chat(monkeypatch, mock_public_model):
         prompt="Describe the image",
         system_prompt=None,
         max_completion_tokens=500,
-        assistant_id=llm._model.id,
+        assistant_id=llm._model_id,
         images=[
             "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
         ],
@@ -250,7 +250,7 @@ def test_chat(monkeypatch, mock_public_model):
         prompt="Describe the image",
         system_prompt=None,
         max_completion_tokens=500,
-        assistant_id=llm._model.id,
+        assistant_id=llm._model_id,
         images=["/home/user/image.jpg", "/home/user/image2.png", "/home/user/image3.jpeg"],
         conversation_id=None,
         billing_project_id="teamspace-123",
@@ -267,7 +267,7 @@ def test_chat(monkeypatch, mock_public_model):
         prompt="Hello, how are you?",
         system_prompt="user prompt",
         max_completion_tokens=10,
-        assistant_id=llm._model.id,
+        assistant_id=llm._model_id,
         images=None,
         conversation_id=None,
         billing_project_id="teamspace-123",
@@ -316,8 +316,7 @@ async def test_async_chat(monkeypatch, mock_public_model):
 
     llm = LLM(name="gpt-4o", enable_async=True)
 
-    llm._model = MagicMock()
-    llm._model.id = "model-id"
+    llm._model_id = "model-id"
     llm._teamspace = MagicMock()
     llm._teamspace.id = "teamspace-id"
     llm._conversations = {}
@@ -351,8 +350,7 @@ async def test_async_stream_chat(monkeypatch):
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
     llm = LLM(name="gpt-4o", enable_async=True)
 
-    llm._model = MagicMock()
-    llm._model.id = "model-id"
+    llm._model_id = "model-id"
     llm._teamspace = MagicMock()
     llm._teamspace.id = "teamspace-id"
     llm._conversations = {}
