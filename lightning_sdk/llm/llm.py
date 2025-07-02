@@ -114,22 +114,24 @@ class LLM:
     def _get_model_id(self) -> str:
         if self._model_provider in PUBLIC_MODEL_PROVIDERS:
             # if prod
-            if self._cloud_url == "https://lightning.ai":
-                if LLM._public_assistants and f"{self._model_provider}/{self._model_name}" in LLM._public_assistants:
-                    return LLM._public_assistants[f"{self._model_provider}/{self._model_name}"]
-            else:
-                try:
-                    return self._llm_api.get_assistant(
-                        model_provider=PUBLIC_MODEL_PROVIDERS[self._model_provider],
-                        model_name=self._model_name,
-                        user_name="",
-                        org_name="",
-                    )
-                except Exception as e:
-                    raise ValueError(
-                        f"Public model '{self._model_provider}/{self._model_name}' not found. "
-                        "Please check the model name or provider."
-                    ) from e
+            if (
+                self._cloud_url == "https://lightning.ai"
+                and LLM._public_assistants
+                and f"{self._model_provider}/{self._model_name}" in LLM._public_assistants
+            ):
+                return LLM._public_assistants[f"{self._model_provider}/{self._model_name}"]
+            try:
+                return self._llm_api.get_assistant(
+                    model_provider=PUBLIC_MODEL_PROVIDERS[self._model_provider],
+                    model_name=self._model_name,
+                    user_name="",
+                    org_name="",
+                )
+            except Exception as e:
+                raise ValueError(
+                    f"Public model '{self._model_provider}/{self._model_name}' not found. "
+                    "Please check the model name or provider."
+                ) from e
 
         # Try organization model
         try:

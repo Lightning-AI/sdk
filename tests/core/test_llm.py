@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from lightning_sdk.llm import LLM
+from lightning_sdk.llm import LLM as LLMCLIENT
 
 
 @pytest.fixture(autouse=True)
@@ -52,6 +53,19 @@ def mock_user_model():
     return mock_model
 
 
+def test_get_model_id_uses_cache():
+    # Reset shared class state to avoid side effects
+    LLMCLIENT._llm_api_cache.clear()
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._cached_auth_info = {}
+    LLMCLIENT._llm_api_cache = {}
+    LLMCLIENT._public_assistants = {"openai/gpt-4o": "assistant-id-123"}
+
+    llm = LLM(name="openai/gpt-4o")
+
+    assert llm._model_id == "assistant-id-123"
+
+
 def test_invalid_format(monkeypatch, mock_model_data):
     mock_api = MagicMock()
     mock_api.list_models.return_value = mock_model_data
@@ -64,8 +78,10 @@ def test_invalid_format(monkeypatch, mock_model_data):
         LLM("openai/gpt-4o/v1")
 
 
-def test_org_model(monkeypatch):
+def test_org_model(monkeypatch, mock_org_model):
+    LLMCLIENT._llm_api_cache.clear()
     mock_api = MagicMock()
+    mock_api.get_assistant.return_value = mock_org_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
     llm = LLM("org-name/org-model1")
@@ -75,8 +91,6 @@ def test_org_model(monkeypatch):
 def test_invalid_org(monkeypatch):
     # there could be a case where the model provider is an org that exists, however, the user does not have access to it
     # then it would make sense to search for whatever they have availabe in public, teamspace and org
-    from lightning_sdk.llm import LLM as LLMCLIENT
-
     LLMCLIENT._llm_api_cache.clear()
 
     mock_api = MagicMock()
@@ -94,8 +108,6 @@ def test_invalid_org(monkeypatch):
 
 
 def test_user_model(monkeypatch, mock_user_model):
-    from lightning_sdk.llm import LLM as LLMCLIENT
-
     LLMCLIENT._llm_api_cache.clear()
     mock_api = MagicMock()
     mock_api.get_assistant.return_value = mock_user_model
@@ -107,8 +119,6 @@ def test_user_model(monkeypatch, mock_user_model):
 
 
 def test_chat(monkeypatch, mock_public_model):
-    from lightning_sdk.llm import LLM as LLMCLIENT
-
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
 
@@ -278,8 +288,6 @@ def test_chat(monkeypatch, mock_public_model):
 
 
 def test_chat_backend(monkeypatch, mock_public_model):
-    from lightning_sdk.llm import LLM as LLMCLIENT
-
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
 
@@ -305,8 +313,6 @@ def test_chat_backend(monkeypatch, mock_public_model):
 
 @pytest.mark.asyncio()
 async def test_async_chat(monkeypatch, mock_public_model):
-    from lightning_sdk.llm import LLM as LLMCLIENT
-
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
 
@@ -340,8 +346,6 @@ async def test_async_chat(monkeypatch, mock_public_model):
 
 @pytest.mark.asyncio()
 async def test_async_stream_chat(monkeypatch):
-    from lightning_sdk.llm import LLM as LLMCLIENT
-
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
 
