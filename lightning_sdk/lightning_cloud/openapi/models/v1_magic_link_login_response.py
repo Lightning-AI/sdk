@@ -43,25 +43,30 @@ class V1MagicLinkLoginResponse(object):
     swagger_types = {
         'auth_start_url': 'str',
         'sso_enabled': 'bool',
+        'verified': 'bool',
         'waitlisted': 'bool'
     }
 
     attribute_map = {
         'auth_start_url': 'authStartUrl',
         'sso_enabled': 'ssoEnabled',
+        'verified': 'verified',
         'waitlisted': 'waitlisted'
     }
 
-    def __init__(self, auth_start_url: 'str' =None, sso_enabled: 'bool' =None, waitlisted: 'bool' =None):  # noqa: E501
+    def __init__(self, auth_start_url: 'str' =None, sso_enabled: 'bool' =None, verified: 'bool' =None, waitlisted: 'bool' =None):  # noqa: E501
         """V1MagicLinkLoginResponse - a model defined in Swagger"""  # noqa: E501
         self._auth_start_url = None
         self._sso_enabled = None
+        self._verified = None
         self._waitlisted = None
         self.discriminator = None
         if auth_start_url is not None:
             self.auth_start_url = auth_start_url
         if sso_enabled is not None:
             self.sso_enabled = sso_enabled
+        if verified is not None:
+            self.verified = verified
         if waitlisted is not None:
             self.waitlisted = waitlisted
 
@@ -106,6 +111,27 @@ class V1MagicLinkLoginResponse(object):
         """
 
         self._sso_enabled = sso_enabled
+
+    @property
+    def verified(self) -> 'bool':
+        """Gets the verified of this V1MagicLinkLoginResponse.  # noqa: E501
+
+
+        :return: The verified of this V1MagicLinkLoginResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._verified
+
+    @verified.setter
+    def verified(self, verified: 'bool'):
+        """Sets the verified of this V1MagicLinkLoginResponse.
+
+
+        :param verified: The verified of this V1MagicLinkLoginResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._verified = verified
 
     @property
     def waitlisted(self) -> 'bool':

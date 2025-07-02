@@ -47,7 +47,6 @@ class V1InstanceOverprovisioningSpec(object):
         'maximum_count': 'int',
         'minimum_count': 'int',
         'region': 'str',
-        'resource_type': 'str',
         'volume_size': 'int'
     }
 
@@ -58,11 +57,10 @@ class V1InstanceOverprovisioningSpec(object):
         'maximum_count': 'maximumCount',
         'minimum_count': 'minimumCount',
         'region': 'region',
-        'resource_type': 'resourceType',
         'volume_size': 'volumeSize'
     }
 
-    def __init__(self, instance_type: 'str' =None, is_spot: 'bool' =None, machine_image_version: 'str' =None, maximum_count: 'int' =None, minimum_count: 'int' =None, region: 'str' =None, resource_type: 'str' =None, volume_size: 'int' =None):  # noqa: E501
+    def __init__(self, instance_type: 'str' =None, is_spot: 'bool' =None, machine_image_version: 'str' =None, maximum_count: 'int' =None, minimum_count: 'int' =None, region: 'str' =None, volume_size: 'int' =None):  # noqa: E501
         """V1InstanceOverprovisioningSpec - a model defined in Swagger"""  # noqa: E501
         self._instance_type = None
         self._is_spot = None
@@ -70,7 +68,6 @@ class V1InstanceOverprovisioningSpec(object):
         self._maximum_count = None
         self._minimum_count = None
         self._region = None
-        self._resource_type = None
         self._volume_size = None
         self.discriminator = None
         if instance_type is not None:
@@ -85,8 +82,6 @@ class V1InstanceOverprovisioningSpec(object):
             self.minimum_count = minimum_count
         if region is not None:
             self.region = region
-        if resource_type is not None:
-            self.resource_type = resource_type
         if volume_size is not None:
             self.volume_size = volume_size
 
@@ -217,27 +212,6 @@ class V1InstanceOverprovisioningSpec(object):
         """
 
         self._region = region
-
-    @property
-    def resource_type(self) -> 'str':
-        """Gets the resource_type of this V1InstanceOverprovisioningSpec.  # noqa: E501
-
-
-        :return: The resource_type of this V1InstanceOverprovisioningSpec.  # noqa: E501
-        :rtype: str
-        """
-        return self._resource_type
-
-    @resource_type.setter
-    def resource_type(self, resource_type: 'str'):
-        """Sets the resource_type of this V1InstanceOverprovisioningSpec.
-
-
-        :param resource_type: The resource_type of this V1InstanceOverprovisioningSpec.  # noqa: E501
-        :type: str
-        """
-
-        self._resource_type = resource_type
 
     @property
     def volume_size(self) -> 'int':

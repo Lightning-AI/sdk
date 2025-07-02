@@ -50,6 +50,7 @@ class AssistantIdConversationsBody(object):
         'metadata': 'dict(str, str)',
         'name': 'str',
         'parent_message_id': 'str',
+        'reasoning_effort': 'str',
         'store': 'bool',
         'stream': 'bool',
         'system_prompt': 'str'
@@ -65,12 +66,13 @@ class AssistantIdConversationsBody(object):
         'metadata': 'metadata',
         'name': 'name',
         'parent_message_id': 'parentMessageId',
+        'reasoning_effort': 'reasoningEffort',
         'store': 'store',
         'stream': 'stream',
         'system_prompt': 'systemPrompt'
     }
 
-    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._billing_project_id = None
@@ -81,6 +83,7 @@ class AssistantIdConversationsBody(object):
         self._metadata = None
         self._name = None
         self._parent_message_id = None
+        self._reasoning_effort = None
         self._store = None
         self._stream = None
         self._system_prompt = None
@@ -103,6 +106,8 @@ class AssistantIdConversationsBody(object):
             self.name = name
         if parent_message_id is not None:
             self.parent_message_id = parent_message_id
+        if reasoning_effort is not None:
+            self.reasoning_effort = reasoning_effort
         if store is not None:
             self.store = store
         if stream is not None:
@@ -298,6 +303,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._parent_message_id = parent_message_id
+
+    @property
+    def reasoning_effort(self) -> 'str':
+        """Gets the reasoning_effort of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The reasoning_effort of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._reasoning_effort
+
+    @reasoning_effort.setter
+    def reasoning_effort(self, reasoning_effort: 'str'):
+        """Sets the reasoning_effort of this AssistantIdConversationsBody.
+
+
+        :param reasoning_effort: The reasoning_effort of this AssistantIdConversationsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._reasoning_effort = reasoning_effort
 
     @property
     def store(self) -> 'bool':
