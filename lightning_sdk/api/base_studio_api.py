@@ -1,10 +1,13 @@
 from typing import Any, List, Optional
 
+from lightning_sdk.lightning_cloud.openapi import (
+    V1CloudSpaceEnvironmentType,
+    V1ListCloudSpaceEnvironmentTemplatesResponse,
+)
 from lightning_sdk.lightning_cloud.openapi.models.update import Update as BaseStudioUpdateBody
 from lightning_sdk.lightning_cloud.openapi.models.v1_cloud_space_environment_template import (
     V1CloudSpaceEnvironmentTemplate,
 )
-from lightning_sdk.lightning_cloud.openapi.models.v1_cloud_space_environment_type import V1CloudSpaceEnvironmentType
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
@@ -21,8 +24,12 @@ class BaseStudioApi:
         except ValueError as e:
             raise ValueError(f"Base studio {base_studio_id} does not exist") from e
 
-    def get_all_base_studios(self, org_id: str) -> List[V1CloudSpaceEnvironmentTemplate]:
+    def get_all_base_studios(self, org_id: str, managed: bool = True) -> V1ListCloudSpaceEnvironmentTemplatesResponse:
         """Retrieve all base studios for a given organization."""
+        if managed:
+            return self._client.cloud_space_environment_template_service_list_managed_cloud_space_environment_templates(
+                org_id=org_id
+            )
         return self._client.cloud_space_environment_template_service_list_cloud_space_environment_templates(
             org_id=org_id
         )

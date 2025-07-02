@@ -1,9 +1,12 @@
 from unittest.mock import MagicMock
 
+import pytest
+
 from lightning_sdk import base_studio as base_studio_module
 from lightning_sdk.api import base_studio_api as base_studio_api_module
-from lightning_sdk.lightning_cloud.openapi.models.v1_cloud_space_environment_template import (
+from lightning_sdk.lightning_cloud.openapi.models import (
     V1CloudSpaceEnvironmentTemplate,
+    V1ListCloudSpaceEnvironmentTemplatesResponse,
 )
 
 
@@ -47,7 +50,8 @@ def test_base_studio_update(monkeypatch):
     assert call_body.allowed_machines == ["machine1", "machine2"]
 
 
-def test_base_studio_list(monkeypatch):
+@pytest.mark.parametrize("managed", [True, False])
+def test_base_studio_list(monkeypatch, managed):
     resolve_user_mock = MagicMock()
     monkeypatch.setattr(base_studio_module, "_resolve_user", resolve_user_mock)
 
@@ -61,8 +65,8 @@ def test_base_studio_list(monkeypatch):
     base_studio = base_studio_module.BaseStudio(org=mock_org, user="user")
 
     mock_get_all = MagicMock()
-    mock_get_all.return_value = {
-        "templates": [
+    mock_get_all.return_value = V1ListCloudSpaceEnvironmentTemplatesResponse(
+        templates=[
             V1CloudSpaceEnvironmentTemplate(
                 id="test-template-id",
                 name="some-template",
@@ -75,13 +79,13 @@ def test_base_studio_list(monkeypatch):
                 ),
             )
         ]
-    }
+    )
     base_studio._base_studio_api.get_all_base_studios = mock_get_all
 
-    a = base_studio.list()
+    a = base_studio.list(managed=managed)
 
     assert mock_get_all.called
     assert mock_get_all.call_count == 1
 
-    assert len(a["templates"]) == 1
-    assert a["templates"][0].id == "test-template-id"
+    assert len(a) == 1
+    assert a[0].id == "test-template-id"

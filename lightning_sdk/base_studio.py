@@ -74,10 +74,10 @@ class BaseStudio:
             disabled=disabled,
         )
 
-    def list(self) -> List[V1CloudSpaceEnvironmentTemplate]:
+    def list(self, managed: bool = True) -> List[V1CloudSpaceEnvironmentTemplate]:
         """List all base studios in the organization.
 
         Returns:
             List[V1CloudSpaceEnvironmentTemplate]: A list of base studio templates.
         """
-        return self._base_studio_api.get_all_base_studios(self._org.id)
+        return self._base_studio_api.get_all_base_studios(self._org.id, managed).templates
