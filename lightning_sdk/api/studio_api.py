@@ -125,6 +125,7 @@ class StudioApi:
         source: Optional[V1CloudSpaceSourceType] = None,
         disable_secrets: bool = False,
         sandbox: bool = False,
+        cloud_space_environment_template_id: Optional[str] = None,
     ) -> V1CloudSpace:
         """Create a Studio with a given name in a given Teamspace on a possibly given cloud_account."""
         body = ProjectIdCloudspacesBody(
@@ -135,6 +136,7 @@ class StudioApi:
             source=source,
             disable_secrets=disable_secrets,
             sandbox=sandbox,
+            cloud_space_environment_template_id=cloud_space_environment_template_id,
         )
         studio = self._client.cloud_space_service_create_cloud_space(body, teamspace_id)
 
