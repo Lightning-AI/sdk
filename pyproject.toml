@@ -48,6 +48,12 @@ version = {attr = "lightning_sdk.__version__"}
 [tool.setuptools.packages.find]
 exclude = ["tests*", "examples*"]
 
+[tool.setuptools.package-data]
+"lightning_sdk.llm" = ["*.json"]
+
+[tool.setuptools]
+include-package-data = true
+
 [tool.black]
 # https://github.com/psf/black
 line-length = 120

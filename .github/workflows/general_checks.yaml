@@ -34,6 +34,10 @@ jobs:
           "LIGHTNING_USER_ID": "dummy-user-id",
           "LIGHTNING_API_KEY": "dummy-api-key"
         }
+      # adding testing that the JSON are included in the package
+      custom-import-code: |
+        from lightning_sdk.llm.llm import _load_public_assistants
+        assert len(_load_public_assistants())
 
   pre-commit:
     runs-on: ubuntu-24.04

@@ -12,6 +12,17 @@ PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
 }
 
 
+def _load_public_assistants() -> Dict[str, str]:
+    """Load public assistants from a JSON file."""
+    try:
+        json_path = os.path.join(os.path.dirname(__file__), "public_assistants.json")
+        with open(json_path) as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[warning] Failed to load public_assistants.json: {e}")
+        return {}
+
+
 class LLM:
     _auth_info_cached: ClassVar[bool] = False
     _cached_auth_info: ClassVar[Dict[str, Optional[str]]] = {}
@@ -83,13 +94,7 @@ class LLM:
             }
             LLM._auth_info_cached = True
             if LLM._public_assistants is None:
-                try:
-                    json_path = os.path.join(os.path.dirname(__file__), "public_assistants.json")
-                    with open(json_path) as f:
-                        LLM._public_assistants = json.load(f)
-                except Exception as e:
-                    print(f"[warning] Failed to load public_assistants.json: {e}")
-                    LLM._public_assistants = {}
+                LLM._public_assistants = _load_public_assistants()
         # Always assign to the current instance
         self._teamspace_name = LLM._cached_auth_info["teamspace_name"]
         self._teamspace_id = LLM._cached_auth_info["teamspace_id"]
