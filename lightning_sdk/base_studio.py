@@ -1,15 +1,21 @@
+from dataclasses import dataclass
 from typing import List, Optional, Union
 
 from lightning_sdk.api.base_studio_api import BaseStudioApi
 from lightning_sdk.api.user_api import UserApi
 from lightning_sdk.lightning_cloud import login
-from lightning_sdk.lightning_cloud.openapi.models.v1_cloud_space_environment_template import (
-    V1CloudSpaceEnvironmentTemplate,
-)
 from lightning_sdk.lightning_cloud.openapi.models.v1_cloud_space_environment_type import V1CloudSpaceEnvironmentType
 from lightning_sdk.organization import Organization
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _resolve_org, _resolve_user
+
+
+@dataclass
+class BaseStudioInfo:
+    id: str
+    name: str
+    managed_id: str
+    description: str
 
 
 class BaseStudio:
@@ -61,7 +67,7 @@ class BaseStudio:
         environment_type: Optional[V1CloudSpaceEnvironmentType] = None,
         machine_image_version: Optional[str] = None,
         setup_script_text: Optional[str] = None,
-    ) -> V1CloudSpaceEnvironmentTemplate:
+    ) -> None:
         self._base_studio = self._base_studio_api.update_base_studio(
             self._base_studio.id,
             self._org.id,
@@ -74,10 +80,20 @@ class BaseStudio:
             disabled=disabled,
         )
 
-    def list(self, managed: bool = True) -> List[V1CloudSpaceEnvironmentTemplate]:
+    def list(self, managed: bool = True) -> List[BaseStudioInfo]:
         """List all base studios in the organization.
 
         Returns:
             List[V1CloudSpaceEnvironmentTemplate]: A list of base studio templates.
         """
-        return self._base_studio_api.get_all_base_studios(self._org.id, managed).templates
+        result = []
+        for template in self._base_studio_api.get_all_base_studios(self._org.id, managed).templates:
+            result.append(
+                BaseStudioInfo(
+                    id=template.id,
+                    name=template.name,
+                    managed_id=template.managed_id,
+                    description=template.description,
+                ),
+            )
+        return result
