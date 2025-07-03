@@ -44,6 +44,7 @@ class AssistantIdConversationsBody(object):
         'auto_name': 'bool',
         'billing_project_id': 'str',
         'conversation_id': 'str',
+        'ephemeral': 'bool',
         'internal_conversation': 'bool',
         'max_tokens': 'str',
         'message': 'V1Message',
@@ -60,6 +61,7 @@ class AssistantIdConversationsBody(object):
         'auto_name': 'autoName',
         'billing_project_id': 'billingProjectId',
         'conversation_id': 'conversationId',
+        'ephemeral': 'ephemeral',
         'internal_conversation': 'internalConversation',
         'max_tokens': 'maxTokens',
         'message': 'message',
@@ -72,11 +74,12 @@ class AssistantIdConversationsBody(object):
         'system_prompt': 'systemPrompt'
     }
 
-    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._billing_project_id = None
         self._conversation_id = None
+        self._ephemeral = None
         self._internal_conversation = None
         self._max_tokens = None
         self._message = None
@@ -94,6 +97,8 @@ class AssistantIdConversationsBody(object):
             self.billing_project_id = billing_project_id
         if conversation_id is not None:
             self.conversation_id = conversation_id
+        if ephemeral is not None:
+            self.ephemeral = ephemeral
         if internal_conversation is not None:
             self.internal_conversation = internal_conversation
         if max_tokens is not None:
@@ -177,6 +182,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._conversation_id = conversation_id
+
+    @property
+    def ephemeral(self) -> 'bool':
+        """Gets the ephemeral of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The ephemeral of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._ephemeral
+
+    @ephemeral.setter
+    def ephemeral(self, ephemeral: 'bool'):
+        """Sets the ephemeral of this AssistantIdConversationsBody.
+
+
+        :param ephemeral: The ephemeral of this AssistantIdConversationsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._ephemeral = ephemeral
 
     @property
     def internal_conversation(self) -> 'bool':

@@ -77,6 +77,7 @@ class V1UserFeatures(object):
         'lambda_labs_studios': 'bool',
         'landing_studios': 'bool',
         'lit_logger': 'bool',
+        'litcr_byoc_gcp': 'bool',
         'machine_selector_v2': 'bool',
         'marketplace': 'bool',
         'mmt_fault_tolerance': 'bool',
@@ -92,6 +93,7 @@ class V1UserFeatures(object):
         'org_level_member_permissions': 'bool',
         'org_usage_limits': 'bool',
         'paygo_free_storage_limit_check': 'bool',
+        'persistent_disk': 'bool',
         'pipelines': 'bool',
         'plugin_distributed': 'bool',
         'plugin_inference': 'bool',
@@ -164,6 +166,7 @@ class V1UserFeatures(object):
         'lambda_labs_studios': 'lambdaLabsStudios',
         'landing_studios': 'landingStudios',
         'lit_logger': 'litLogger',
+        'litcr_byoc_gcp': 'litcrByocGcp',
         'machine_selector_v2': 'machineSelectorV2',
         'marketplace': 'marketplace',
         'mmt_fault_tolerance': 'mmtFaultTolerance',
@@ -179,6 +182,7 @@ class V1UserFeatures(object):
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'org_usage_limits': 'orgUsageLimits',
         'paygo_free_storage_limit_check': 'paygoFreeStorageLimitCheck',
+        'persistent_disk': 'persistentDisk',
         'pipelines': 'pipelines',
         'plugin_distributed': 'pluginDistributed',
         'plugin_inference': 'pluginInference',
@@ -214,7 +218,7 @@ class V1UserFeatures(object):
         'writable_s3_connections': 'writableS3Connections'
     }
 
-    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_clusters: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_clusters: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, litcr_byoc_gcp: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, persistent_disk: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._accurate_billing = None
         self._affiliate_links = None
@@ -252,6 +256,7 @@ class V1UserFeatures(object):
         self._lambda_labs_studios = None
         self._landing_studios = None
         self._lit_logger = None
+        self._litcr_byoc_gcp = None
         self._machine_selector_v2 = None
         self._marketplace = None
         self._mmt_fault_tolerance = None
@@ -267,6 +272,7 @@ class V1UserFeatures(object):
         self._org_level_member_permissions = None
         self._org_usage_limits = None
         self._paygo_free_storage_limit_check = None
+        self._persistent_disk = None
         self._pipelines = None
         self._plugin_distributed = None
         self._plugin_inference = None
@@ -373,6 +379,8 @@ class V1UserFeatures(object):
             self.landing_studios = landing_studios
         if lit_logger is not None:
             self.lit_logger = lit_logger
+        if litcr_byoc_gcp is not None:
+            self.litcr_byoc_gcp = litcr_byoc_gcp
         if machine_selector_v2 is not None:
             self.machine_selector_v2 = machine_selector_v2
         if marketplace is not None:
@@ -403,6 +411,8 @@ class V1UserFeatures(object):
             self.org_usage_limits = org_usage_limits
         if paygo_free_storage_limit_check is not None:
             self.paygo_free_storage_limit_check = paygo_free_storage_limit_check
+        if persistent_disk is not None:
+            self.persistent_disk = persistent_disk
         if pipelines is not None:
             self.pipelines = pipelines
         if plugin_distributed is not None:
@@ -1227,6 +1237,27 @@ class V1UserFeatures(object):
         self._lit_logger = lit_logger
 
     @property
+    def litcr_byoc_gcp(self) -> 'bool':
+        """Gets the litcr_byoc_gcp of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The litcr_byoc_gcp of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._litcr_byoc_gcp
+
+    @litcr_byoc_gcp.setter
+    def litcr_byoc_gcp(self, litcr_byoc_gcp: 'bool'):
+        """Sets the litcr_byoc_gcp of this V1UserFeatures.
+
+
+        :param litcr_byoc_gcp: The litcr_byoc_gcp of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._litcr_byoc_gcp = litcr_byoc_gcp
+
+    @property
     def machine_selector_v2(self) -> 'bool':
         """Gets the machine_selector_v2 of this V1UserFeatures.  # noqa: E501
 
@@ -1540,6 +1571,27 @@ class V1UserFeatures(object):
         """
 
         self._paygo_free_storage_limit_check = paygo_free_storage_limit_check
+
+    @property
+    def persistent_disk(self) -> 'bool':
+        """Gets the persistent_disk of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The persistent_disk of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._persistent_disk
+
+    @persistent_disk.setter
+    def persistent_disk(self, persistent_disk: 'bool'):
+        """Sets the persistent_disk of this V1UserFeatures.
+
+
+        :param persistent_disk: The persistent_disk of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._persistent_disk = persistent_disk
 
     @property
     def pipelines(self) -> 'bool':

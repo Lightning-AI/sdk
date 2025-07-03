@@ -1274,6 +1274,8 @@ class AssistantsServiceApi(object):
         :param bool published:
         :param str internal_name:
         :param str user_id:
+        :param bool cloudy_compatible:
+        :param bool model_assistants_only:
         :return: V1ListAssistantsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1300,12 +1302,14 @@ class AssistantsServiceApi(object):
         :param bool published:
         :param str internal_name:
         :param str user_id:
+        :param bool cloudy_compatible:
+        :param bool model_assistants_only:
         :return: V1ListAssistantsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_id', 'cloudspace_id', 'published', 'internal_name', 'user_id']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'cloudspace_id', 'published', 'internal_name', 'user_id', 'cloudy_compatible', 'model_assistants_only']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1338,6 +1342,10 @@ class AssistantsServiceApi(object):
             query_params.append(('internalName', params['internal_name']))  # noqa: E501
         if 'user_id' in params:
             query_params.append(('userId', params['user_id']))  # noqa: E501
+        if 'cloudy_compatible' in params:
+            query_params.append(('cloudyCompatible', params['cloudy_compatible']))  # noqa: E501
+        if 'model_assistants_only' in params:
+            query_params.append(('modelAssistantsOnly', params['model_assistants_only']))  # noqa: E501
 
         header_params = {}
 

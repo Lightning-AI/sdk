@@ -47,7 +47,8 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         'initial_setup_script_text': 'str',
         'machine_image_version': 'str',
         'plugins': 'list[str]',
-        'setup_script_text': 'str'
+        'setup_script_text': 'str',
+        'specialized_view': 'V1CloudSpaceSpecializedView'
     }
 
     attribute_map = {
@@ -57,10 +58,11 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         'initial_setup_script_text': 'initialSetupScriptText',
         'machine_image_version': 'machineImageVersion',
         'plugins': 'plugins',
-        'setup_script_text': 'setupScriptText'
+        'setup_script_text': 'setupScriptText',
+        'specialized_view': 'specializedView'
     }
 
-    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, plugins: 'list[str]' =None, setup_script_text: 'str' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, plugins: 'list[str]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplateConfig - a model defined in Swagger"""  # noqa: E501
         self._allowed_machines = None
         self._default_machine = None
@@ -69,6 +71,7 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         self._machine_image_version = None
         self._plugins = None
         self._setup_script_text = None
+        self._specialized_view = None
         self.discriminator = None
         if allowed_machines is not None:
             self.allowed_machines = allowed_machines
@@ -84,6 +87,8 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
             self.plugins = plugins
         if setup_script_text is not None:
             self.setup_script_text = setup_script_text
+        if specialized_view is not None:
+            self.specialized_view = specialized_view
 
     @property
     def allowed_machines(self) -> 'list[str]':
@@ -231,6 +236,27 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         """
 
         self._setup_script_text = setup_script_text
+
+    @property
+    def specialized_view(self) -> 'V1CloudSpaceSpecializedView':
+        """Gets the specialized_view of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+
+
+        :return: The specialized_view of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :rtype: V1CloudSpaceSpecializedView
+        """
+        return self._specialized_view
+
+    @specialized_view.setter
+    def specialized_view(self, specialized_view: 'V1CloudSpaceSpecializedView'):
+        """Sets the specialized_view of this V1CloudSpaceEnvironmentTemplateConfig.
+
+
+        :param specialized_view: The specialized_view of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :type: V1CloudSpaceSpecializedView
+        """
+
+        self._specialized_view = specialized_view
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

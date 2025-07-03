@@ -42,6 +42,7 @@ class ProjectIdAgentsBody(object):
     """
     swagger_types = {
         'cloudspace_id': 'str',
+        'cloudy_compatible': 'bool',
         'cluster_id': 'str',
         'description': 'str',
         'endpoint': 'V1Endpoint',
@@ -61,6 +62,7 @@ class ProjectIdAgentsBody(object):
 
     attribute_map = {
         'cloudspace_id': 'cloudspaceId',
+        'cloudy_compatible': 'cloudyCompatible',
         'cluster_id': 'clusterId',
         'description': 'description',
         'endpoint': 'endpoint',
@@ -78,9 +80,10 @@ class ProjectIdAgentsBody(object):
         'thumbnail_url': 'thumbnailUrl'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, description: 'str' =None, endpoint: 'V1Endpoint' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, thumbnail_url: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cloudy_compatible: 'bool' =None, cluster_id: 'str' =None, description: 'str' =None, endpoint: 'V1Endpoint' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, model: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, thumbnail_url: 'str' =None):  # noqa: E501
         """ProjectIdAgentsBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
+        self._cloudy_compatible = None
         self._cluster_id = None
         self._description = None
         self._endpoint = None
@@ -99,6 +102,8 @@ class ProjectIdAgentsBody(object):
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
+        if cloudy_compatible is not None:
+            self.cloudy_compatible = cloudy_compatible
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if description is not None:
@@ -150,6 +155,27 @@ class ProjectIdAgentsBody(object):
         """
 
         self._cloudspace_id = cloudspace_id
+
+    @property
+    def cloudy_compatible(self) -> 'bool':
+        """Gets the cloudy_compatible of this ProjectIdAgentsBody.  # noqa: E501
+
+
+        :return: The cloudy_compatible of this ProjectIdAgentsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._cloudy_compatible
+
+    @cloudy_compatible.setter
+    def cloudy_compatible(self, cloudy_compatible: 'bool'):
+        """Sets the cloudy_compatible of this ProjectIdAgentsBody.
+
+
+        :param cloudy_compatible: The cloudy_compatible of this ProjectIdAgentsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._cloudy_compatible = cloudy_compatible
 
     @property
     def cluster_id(self) -> 'str':

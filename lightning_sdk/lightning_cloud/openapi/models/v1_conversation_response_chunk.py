@@ -46,7 +46,8 @@ class V1ConversationResponseChunk(object):
         'executable': 'bool',
         'id': 'str',
         'object': 'str',
-        'throughput': 'float'
+        'throughput': 'float',
+        'usage': 'V1TokenUsage'
     }
 
     attribute_map = {
@@ -55,10 +56,11 @@ class V1ConversationResponseChunk(object):
         'executable': 'executable',
         'id': 'id',
         'object': 'object',
-        'throughput': 'throughput'
+        'throughput': 'throughput',
+        'usage': 'usage'
     }
 
-    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, executable: 'bool' =None, id: 'str' =None, object: 'str' =None, throughput: 'float' =None):  # noqa: E501
+    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, executable: 'bool' =None, id: 'str' =None, object: 'str' =None, throughput: 'float' =None, usage: 'V1TokenUsage' =None):  # noqa: E501
         """V1ConversationResponseChunk - a model defined in Swagger"""  # noqa: E501
         self._choices = None
         self._conversation_id = None
@@ -66,6 +68,7 @@ class V1ConversationResponseChunk(object):
         self._id = None
         self._object = None
         self._throughput = None
+        self._usage = None
         self.discriminator = None
         if choices is not None:
             self.choices = choices
@@ -79,6 +82,8 @@ class V1ConversationResponseChunk(object):
             self.object = object
         if throughput is not None:
             self.throughput = throughput
+        if usage is not None:
+            self.usage = usage
 
     @property
     def choices(self) -> 'list[V1ResponseChoice]':
@@ -205,6 +210,27 @@ class V1ConversationResponseChunk(object):
         """
 
         self._throughput = throughput
+
+    @property
+    def usage(self) -> 'V1TokenUsage':
+        """Gets the usage of this V1ConversationResponseChunk.  # noqa: E501
+
+
+        :return: The usage of this V1ConversationResponseChunk.  # noqa: E501
+        :rtype: V1TokenUsage
+        """
+        return self._usage
+
+    @usage.setter
+    def usage(self, usage: 'V1TokenUsage'):
+        """Sets the usage of this V1ConversationResponseChunk.
+
+
+        :param usage: The usage of this V1ConversationResponseChunk.  # noqa: E501
+        :type: V1TokenUsage
+        """
+
+        self._usage = usage
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
