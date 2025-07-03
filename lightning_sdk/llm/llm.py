@@ -110,7 +110,7 @@ class LLM:
             # a user model or a org model
             return None, parts[0]
         if len(parts) == 2:
-            return parts[0], parts[1]
+            return parts[0].lower(), parts[1]
         raise ValueError(
             f"Model name must be in the format `organization/model_name` or `model_name`, but got '{name}'."
         )

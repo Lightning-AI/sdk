@@ -126,6 +126,10 @@ def test_chat(monkeypatch, mock_public_model):
     mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
+    # lower case model provider
+    llm = LLM("OpenAI/gpt-4o")
+    assert llm._model_provider == "openai"
+
     mock_response = MagicMock()
     mock_response.conversation_id = "conv_123"
     mock_response.choices[0].delta.content = "I'm doing well, thank you!"
