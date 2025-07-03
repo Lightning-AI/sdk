@@ -86,6 +86,12 @@ class Pipeline:
         if len(steps) == 0:
             raise ValueError("The provided steps is empty")
 
+        provided_cloud_account = None
+        if self._cloud_account:
+            provided_cloud_account = self._cloud_account
+        elif self._default_cluster:
+            provided_cloud_account = self._default_cluster.cluster_id
+
         for step_idx, pipeline_step in enumerate(steps):
             if pipeline_step.name in [None, ""]:
                 pipeline_step.name = f"step-{step_idx}"
@@ -98,8 +104,8 @@ class Pipeline:
                 pipeline_step.cloud_account = self._studio.cloud_account
                 pipeline_step.studio = self._studio
 
-            if not pipeline_step.cloud_account and isinstance(self._cloud_account, str):
-                pipeline_step.cloud_account = self._cloud_account
+            if not pipeline_step.cloud_account and isinstance(provided_cloud_account, str):
+                pipeline_step.cloud_account = provided_cloud_account
 
         cluster_ids = set(step.cloud_account for step in steps if step.cloud_account not in ["", None])  # noqa: C401
 
