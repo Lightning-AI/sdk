@@ -118,6 +118,35 @@ def test_user_model(monkeypatch, mock_user_model):
     assert llm.provider == "user-name"
 
 
+def test_ephemeral(monkeypatch, mock_public_model):
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
+
+    mock_api = MagicMock()
+    mock_api.get_assistant.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    llm = LLM("openai/gpt-4o")
+    _ = llm.chat("Hello, how are you?", conversation="test")
+
+    monkeypatch.setenv("LIGHTNING_EPHEMERAL", "true")
+    llm = LLM("openai/gpt-4o")
+    _ = llm.chat("Hello, how are you?", conversation="test")
+
+    mock_api.start_conversation.assert_called_with(
+        prompt="Hello, how are you?",
+        system_prompt=None,
+        max_completion_tokens=500,
+        assistant_id=llm._model_id,
+        images=None,
+        conversation_id=None,  # no conversation ID for ephemeral
+        billing_project_id="teamspace-123",
+        name="test",
+        stream=False,
+        metadata=None,
+    )
+
+
 def test_chat(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()

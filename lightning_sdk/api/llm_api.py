@@ -69,7 +69,7 @@ class LLMApi:
         self,
         prompt: str,
         system_prompt: Optional[str],
-        max_completion_tokens: int,
+        max_completion_tokens: Optional[int],
         assistant_id: str,
         images: Optional[List[str]] = None,
         conversation_id: Optional[str] = None,
@@ -79,6 +79,10 @@ class LLMApi:
         stream: bool = False,
     ) -> Union[V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None]]:
         is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
+        ephemeral = os.getenv("LIGHTNING_EPHEMERAL", "false").lower() == "true"
+        if ephemeral:
+            conversation_id = None
+            name = None
         body = {
             "message": {
                 "author": {"role": "user"},
@@ -94,6 +98,7 @@ class LLMApi:
             "metadata": metadata or {},
             "internal_conversation": is_internal_conversation,
             "system_prompt": system_prompt,
+            "ephemeral": ephemeral,
         }
         if images:
             for image in images:
@@ -117,7 +122,7 @@ class LLMApi:
         self,
         prompt: str,
         system_prompt: Optional[str],
-        max_completion_tokens: int,
+        max_completion_tokens: Optional[int],
         assistant_id: str,
         images: Optional[List[str]] = None,
         conversation_id: Optional[str] = None,
@@ -127,6 +132,10 @@ class LLMApi:
         stream: bool = False,
     ) -> Union[V1ConversationResponseChunk, AsyncGenerator[V1ConversationResponseChunk, None]]:
         is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
+        ephemeral = os.getenv("LIGHTNING_EPHEMERAL", "false").lower() == "true"
+        if ephemeral:
+            conversation_id = None
+            name = None
         body = {
             "message": {
                 "author": {"role": "user"},
@@ -142,6 +151,7 @@ class LLMApi:
             "metadata": metadata or {},
             "internal_conversation": is_internal_conversation,
             "system_prompt": system_prompt,
+            "ephemeral": ephemeral,
         }
         if images:
             for image in images:
