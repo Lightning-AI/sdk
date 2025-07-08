@@ -77,6 +77,7 @@ class LLMApi:
         name: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
+        **kwargs: Any,
     ) -> Union[V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None]]:
         is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
         ephemeral = os.getenv("LIGHTNING_EPHEMERAL", "false").lower() == "true"
@@ -99,6 +100,8 @@ class LLMApi:
             "internal_conversation": is_internal_conversation,
             "system_prompt": system_prompt,
             "ephemeral": ephemeral,
+            "parent_conversation_id": kwargs.get("parent_conversation_id", ""),
+            "parent_message_id": kwargs.get("parent_message_id", ""),
         }
         if images:
             for image in images:
@@ -130,6 +133,7 @@ class LLMApi:
         name: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
+        **kwargs: Any,
     ) -> Union[V1ConversationResponseChunk, AsyncGenerator[V1ConversationResponseChunk, None]]:
         is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
         ephemeral = os.getenv("LIGHTNING_EPHEMERAL", "false").lower() == "true"
@@ -152,6 +156,8 @@ class LLMApi:
             "internal_conversation": is_internal_conversation,
             "system_prompt": system_prompt,
             "ephemeral": ephemeral,
+            "parent_conversation_id": kwargs.get("parent_conversation_id", ""),
+            "parent_message_id": kwargs.get("parent_message_id", ""),
         }
         if images:
             for image in images:

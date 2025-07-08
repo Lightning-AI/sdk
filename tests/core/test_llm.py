@@ -319,6 +319,20 @@ def test_chat(monkeypatch, mock_public_model):
         metadata={"user_api": "123456"},
     )
 
+    # check kwargs
+    response = llm.chat(
+        "Hello, how are you?",
+        system_prompt="user prompt",
+        max_completion_tokens=10,
+        metadata={"user_api": "123456"},
+        parent_conversation_id="test-parent-conv-id",
+        parent_message_id="test-parent-msg-id",
+    )
+
+    kwargs_passed = mock_api.start_conversation.call_args.kwargs
+    assert kwargs_passed.get("parent_conversation_id") == "test-parent-conv-id"
+    assert kwargs_passed.get("parent_message_id") == "test-parent-msg-id"
+
 
 def test_chat_backend(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False

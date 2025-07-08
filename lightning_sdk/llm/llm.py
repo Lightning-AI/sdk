@@ -1,6 +1,6 @@
 import json
 import os
-from typing import AsyncGenerator, ClassVar, Dict, Generator, List, Optional, Tuple, Union
+from typing import Any, AsyncGenerator, ClassVar, Dict, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api.llm_api import LLMApi
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
@@ -194,6 +194,7 @@ class LLM:
         conversation: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
+        **kwargs: Any,
     ) -> Union[str, AsyncGenerator[str, None]]:
         conversation_id = self._conversations.get(conversation) if conversation else None
         output = await self._llm_api.async_start_conversation(
@@ -207,6 +208,7 @@ class LLM:
             metadata=metadata,
             name=conversation,
             stream=stream,
+            **kwargs,
         )
         if not stream:
             if conversation and not conversation_id:
@@ -223,6 +225,7 @@ class LLM:
         conversation: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
+        **kwargs: Any,
     ) -> Union[str, Generator[str, None, None]]:
         if conversation and conversation not in self._conversations:
             self._get_conversations()
@@ -245,6 +248,7 @@ class LLM:
                 conversation,
                 metadata,
                 stream,
+                **kwargs,
             )
 
         output = self._llm_api.start_conversation(
@@ -258,6 +262,7 @@ class LLM:
             metadata=metadata,
             name=conversation,
             stream=stream,
+            **kwargs,
         )
         if not stream:
             if conversation and not conversation_id:
