@@ -48,7 +48,6 @@ class Externalv1UserStatus(object):
         'completed_signup': 'bool',
         'has_received_free_months': 'bool',
         'installed_grid': 'bool',
-        'should_auto_verify': 'bool',
         'verified': 'bool',
         'verified_at': 'datetime'
     }
@@ -61,12 +60,11 @@ class Externalv1UserStatus(object):
         'completed_signup': 'completedSignup',
         'has_received_free_months': 'hasReceivedFreeMonths',
         'installed_grid': 'installedGrid',
-        'should_auto_verify': 'shouldAutoVerify',
         'verified': 'verified',
         'verified_at': 'verifiedAt'
     }
 
-    def __init__(self, acked_storage_violation: 'bool' =None, auto_verify_reason: 'str' =None, auto_verify_response: 'bool' =None, completed_project_onboarding: 'bool' =None, completed_signup: 'bool' =None, has_received_free_months: 'bool' =None, installed_grid: 'bool' =None, should_auto_verify: 'bool' =None, verified: 'bool' =None, verified_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, acked_storage_violation: 'bool' =None, auto_verify_reason: 'str' =None, auto_verify_response: 'bool' =None, completed_project_onboarding: 'bool' =None, completed_signup: 'bool' =None, has_received_free_months: 'bool' =None, installed_grid: 'bool' =None, verified: 'bool' =None, verified_at: 'datetime' =None):  # noqa: E501
         """Externalv1UserStatus - a model defined in Swagger"""  # noqa: E501
         self._acked_storage_violation = None
         self._auto_verify_reason = None
@@ -75,7 +73,6 @@ class Externalv1UserStatus(object):
         self._completed_signup = None
         self._has_received_free_months = None
         self._installed_grid = None
-        self._should_auto_verify = None
         self._verified = None
         self._verified_at = None
         self.discriminator = None
@@ -93,8 +90,6 @@ class Externalv1UserStatus(object):
             self.has_received_free_months = has_received_free_months
         if installed_grid is not None:
             self.installed_grid = installed_grid
-        if should_auto_verify is not None:
-            self.should_auto_verify = should_auto_verify
         if verified is not None:
             self.verified = verified
         if verified_at is not None:
@@ -246,27 +241,6 @@ class Externalv1UserStatus(object):
         """
 
         self._installed_grid = installed_grid
-
-    @property
-    def should_auto_verify(self) -> 'bool':
-        """Gets the should_auto_verify of this Externalv1UserStatus.  # noqa: E501
-
-
-        :return: The should_auto_verify of this Externalv1UserStatus.  # noqa: E501
-        :rtype: bool
-        """
-        return self._should_auto_verify
-
-    @should_auto_verify.setter
-    def should_auto_verify(self, should_auto_verify: 'bool'):
-        """Sets the should_auto_verify of this Externalv1UserStatus.
-
-
-        :param should_auto_verify: The should_auto_verify of this Externalv1UserStatus.  # noqa: E501
-        :type: bool
-        """
-
-        self._should_auto_verify = should_auto_verify
 
     @property
     def verified(self) -> 'bool':

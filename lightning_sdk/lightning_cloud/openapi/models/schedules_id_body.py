@@ -41,6 +41,7 @@ class SchedulesIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'action_type': 'V1ScheduleActionType',
         'created_at': 'datetime',
         'cron_expression': 'str',
         'display_name': 'str',
@@ -56,6 +57,7 @@ class SchedulesIdBody(object):
     }
 
     attribute_map = {
+        'action_type': 'actionType',
         'created_at': 'createdAt',
         'cron_expression': 'cronExpression',
         'display_name': 'displayName',
@@ -70,8 +72,9 @@ class SchedulesIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, name: 'str' =None, next: 'datetime' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, action_type: 'V1ScheduleActionType' =None, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, name: 'str' =None, next: 'datetime' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """SchedulesIdBody - a model defined in Swagger"""  # noqa: E501
+        self._action_type = None
         self._created_at = None
         self._cron_expression = None
         self._display_name = None
@@ -85,6 +88,8 @@ class SchedulesIdBody(object):
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
+        if action_type is not None:
+            self.action_type = action_type
         if created_at is not None:
             self.created_at = created_at
         if cron_expression is not None:
@@ -109,6 +114,27 @@ class SchedulesIdBody(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def action_type(self) -> 'V1ScheduleActionType':
+        """Gets the action_type of this SchedulesIdBody.  # noqa: E501
+
+
+        :return: The action_type of this SchedulesIdBody.  # noqa: E501
+        :rtype: V1ScheduleActionType
+        """
+        return self._action_type
+
+    @action_type.setter
+    def action_type(self, action_type: 'V1ScheduleActionType'):
+        """Sets the action_type of this SchedulesIdBody.
+
+
+        :param action_type: The action_type of this SchedulesIdBody.  # noqa: E501
+        :type: V1ScheduleActionType
+        """
+
+        self._action_type = action_type
 
     @property
     def created_at(self) -> 'datetime':

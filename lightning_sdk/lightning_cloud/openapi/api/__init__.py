@@ -44,3 +44,4 @@ from lightning_sdk.lightning_cloud.openapi.api.snowflake_service_api import Snow
 from lightning_sdk.lightning_cloud.openapi.api.storage_service_api import StorageServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.studio_jobs_service_api import StudioJobsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.user_service_api import UserServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.volume_service_api import VolumeServiceApi

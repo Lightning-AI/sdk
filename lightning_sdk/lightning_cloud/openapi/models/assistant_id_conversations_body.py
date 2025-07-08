@@ -50,6 +50,7 @@ class AssistantIdConversationsBody(object):
         'message': 'V1Message',
         'metadata': 'dict(str, str)',
         'name': 'str',
+        'parent_conversation_id': 'str',
         'parent_message_id': 'str',
         'reasoning_effort': 'str',
         'store': 'bool',
@@ -67,6 +68,7 @@ class AssistantIdConversationsBody(object):
         'message': 'message',
         'metadata': 'metadata',
         'name': 'name',
+        'parent_conversation_id': 'parentConversationId',
         'parent_message_id': 'parentMessageId',
         'reasoning_effort': 'reasoningEffort',
         'store': 'store',
@@ -74,7 +76,7 @@ class AssistantIdConversationsBody(object):
         'system_prompt': 'systemPrompt'
     }
 
-    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._billing_project_id = None
@@ -85,6 +87,7 @@ class AssistantIdConversationsBody(object):
         self._message = None
         self._metadata = None
         self._name = None
+        self._parent_conversation_id = None
         self._parent_message_id = None
         self._reasoning_effort = None
         self._store = None
@@ -109,6 +112,8 @@ class AssistantIdConversationsBody(object):
             self.metadata = metadata
         if name is not None:
             self.name = name
+        if parent_conversation_id is not None:
+            self.parent_conversation_id = parent_conversation_id
         if parent_message_id is not None:
             self.parent_message_id = parent_message_id
         if reasoning_effort is not None:
@@ -308,6 +313,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._name = name
+
+    @property
+    def parent_conversation_id(self) -> 'str':
+        """Gets the parent_conversation_id of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The parent_conversation_id of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_conversation_id
+
+    @parent_conversation_id.setter
+    def parent_conversation_id(self, parent_conversation_id: 'str'):
+        """Sets the parent_conversation_id of this AssistantIdConversationsBody.
+
+
+        :param parent_conversation_id: The parent_conversation_id of this AssistantIdConversationsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_conversation_id = parent_conversation_id
 
     @property
     def parent_message_id(self) -> 'str':

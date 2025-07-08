@@ -41,7 +41,9 @@ class V1UserFeatures(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'academic_tier': 'bool',
         'accurate_billing': 'bool',
+        'add_data_v2': 'bool',
         'affiliate_links': 'bool',
         'agents_v2': 'bool',
         'ai_hub_monetization': 'bool',
@@ -53,6 +55,7 @@ class V1UserFeatures(object):
         'capacity_reservation_byoc': 'bool',
         'capacity_reservation_dry_run': 'bool',
         'chat_models': 'bool',
+        'cloudspace_schedules': 'bool',
         'cloudy_vibe_code': 'bool',
         'code_tab': 'bool',
         'collab_screen_sharing': 'bool',
@@ -70,6 +73,7 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'bool',
         'gcs_connections_optimized': 'bool',
         'gcs_folders': 'bool',
+        'gcs_fuse': 'bool',
         'instant_capacity_reservation': 'bool',
         'job_artifacts_v2': 'bool',
         'kubernetes_clusters': 'bool',
@@ -90,11 +94,11 @@ class V1UserFeatures(object):
         'nebius_cpu_studios': 'bool',
         'nebius_gpu_studios': 'bool',
         'nerf_fs_nonpaying': 'bool',
+        'onboarding_v2': 'bool',
         'org_level_member_permissions': 'bool',
         'org_usage_limits': 'bool',
         'paygo_free_storage_limit_check': 'bool',
         'persistent_disk': 'bool',
-        'pipelines': 'bool',
         'plugin_distributed': 'bool',
         'plugin_inference': 'bool',
         'plugin_label_studio': 'bool',
@@ -118,6 +122,7 @@ class V1UserFeatures(object):
         'specialised_studios': 'bool',
         'storage_overuse_deletion': 'bool',
         'studio_config': 'bool',
+        'studio_sharing_v2': 'bool',
         'studio_version_visibility': 'bool',
         'trainium2': 'bool',
         'use_internal_data_connection_mounts': 'bool',
@@ -130,7 +135,9 @@ class V1UserFeatures(object):
     }
 
     attribute_map = {
+        'academic_tier': 'academicTier',
         'accurate_billing': 'accurateBilling',
+        'add_data_v2': 'addDataV2',
         'affiliate_links': 'affiliateLinks',
         'agents_v2': 'agentsV2',
         'ai_hub_monetization': 'aiHubMonetization',
@@ -142,6 +149,7 @@ class V1UserFeatures(object):
         'capacity_reservation_byoc': 'capacityReservationByoc',
         'capacity_reservation_dry_run': 'capacityReservationDryRun',
         'chat_models': 'chatModels',
+        'cloudspace_schedules': 'cloudspaceSchedules',
         'cloudy_vibe_code': 'cloudyVibeCode',
         'code_tab': 'codeTab',
         'collab_screen_sharing': 'collabScreenSharing',
@@ -159,6 +167,7 @@ class V1UserFeatures(object):
         'featured_studios_admin': 'featuredStudiosAdmin',
         'gcs_connections_optimized': 'gcsConnectionsOptimized',
         'gcs_folders': 'gcsFolders',
+        'gcs_fuse': 'gcsFuse',
         'instant_capacity_reservation': 'instantCapacityReservation',
         'job_artifacts_v2': 'jobArtifactsV2',
         'kubernetes_clusters': 'kubernetesClusters',
@@ -179,11 +188,11 @@ class V1UserFeatures(object):
         'nebius_cpu_studios': 'nebiusCpuStudios',
         'nebius_gpu_studios': 'nebiusGpuStudios',
         'nerf_fs_nonpaying': 'nerfFsNonpaying',
+        'onboarding_v2': 'onboardingV2',
         'org_level_member_permissions': 'orgLevelMemberPermissions',
         'org_usage_limits': 'orgUsageLimits',
         'paygo_free_storage_limit_check': 'paygoFreeStorageLimitCheck',
         'persistent_disk': 'persistentDisk',
-        'pipelines': 'pipelines',
         'plugin_distributed': 'pluginDistributed',
         'plugin_inference': 'pluginInference',
         'plugin_label_studio': 'pluginLabelStudio',
@@ -207,6 +216,7 @@ class V1UserFeatures(object):
         'specialised_studios': 'specialisedStudios',
         'storage_overuse_deletion': 'storageOveruseDeletion',
         'studio_config': 'studioConfig',
+        'studio_sharing_v2': 'studioSharingV2',
         'studio_version_visibility': 'studioVersionVisibility',
         'trainium2': 'trainium2',
         'use_internal_data_connection_mounts': 'useInternalDataConnectionMounts',
@@ -218,9 +228,11 @@ class V1UserFeatures(object):
         'writable_s3_connections': 'writableS3Connections'
     }
 
-    def __init__(self, accurate_billing: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_clusters: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, litcr_byoc_gcp: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, persistent_disk: 'bool' =None, pipelines: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, academic_tier: 'bool' =None, accurate_billing: 'bool' =None, add_data_v2: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, gcs_fuse: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_clusters: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, litcr_byoc_gcp: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, onboarding_v2: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
+        self._academic_tier = None
         self._accurate_billing = None
+        self._add_data_v2 = None
         self._affiliate_links = None
         self._agents_v2 = None
         self._ai_hub_monetization = None
@@ -232,6 +244,7 @@ class V1UserFeatures(object):
         self._capacity_reservation_byoc = None
         self._capacity_reservation_dry_run = None
         self._chat_models = None
+        self._cloudspace_schedules = None
         self._cloudy_vibe_code = None
         self._code_tab = None
         self._collab_screen_sharing = None
@@ -249,6 +262,7 @@ class V1UserFeatures(object):
         self._featured_studios_admin = None
         self._gcs_connections_optimized = None
         self._gcs_folders = None
+        self._gcs_fuse = None
         self._instant_capacity_reservation = None
         self._job_artifacts_v2 = None
         self._kubernetes_clusters = None
@@ -269,11 +283,11 @@ class V1UserFeatures(object):
         self._nebius_cpu_studios = None
         self._nebius_gpu_studios = None
         self._nerf_fs_nonpaying = None
+        self._onboarding_v2 = None
         self._org_level_member_permissions = None
         self._org_usage_limits = None
         self._paygo_free_storage_limit_check = None
         self._persistent_disk = None
-        self._pipelines = None
         self._plugin_distributed = None
         self._plugin_inference = None
         self._plugin_label_studio = None
@@ -297,6 +311,7 @@ class V1UserFeatures(object):
         self._specialised_studios = None
         self._storage_overuse_deletion = None
         self._studio_config = None
+        self._studio_sharing_v2 = None
         self._studio_version_visibility = None
         self._trainium2 = None
         self._use_internal_data_connection_mounts = None
@@ -307,8 +322,12 @@ class V1UserFeatures(object):
         self._weka = None
         self._writable_s3_connections = None
         self.discriminator = None
+        if academic_tier is not None:
+            self.academic_tier = academic_tier
         if accurate_billing is not None:
             self.accurate_billing = accurate_billing
+        if add_data_v2 is not None:
+            self.add_data_v2 = add_data_v2
         if affiliate_links is not None:
             self.affiliate_links = affiliate_links
         if agents_v2 is not None:
@@ -331,6 +350,8 @@ class V1UserFeatures(object):
             self.capacity_reservation_dry_run = capacity_reservation_dry_run
         if chat_models is not None:
             self.chat_models = chat_models
+        if cloudspace_schedules is not None:
+            self.cloudspace_schedules = cloudspace_schedules
         if cloudy_vibe_code is not None:
             self.cloudy_vibe_code = cloudy_vibe_code
         if code_tab is not None:
@@ -365,6 +386,8 @@ class V1UserFeatures(object):
             self.gcs_connections_optimized = gcs_connections_optimized
         if gcs_folders is not None:
             self.gcs_folders = gcs_folders
+        if gcs_fuse is not None:
+            self.gcs_fuse = gcs_fuse
         if instant_capacity_reservation is not None:
             self.instant_capacity_reservation = instant_capacity_reservation
         if job_artifacts_v2 is not None:
@@ -405,6 +428,8 @@ class V1UserFeatures(object):
             self.nebius_gpu_studios = nebius_gpu_studios
         if nerf_fs_nonpaying is not None:
             self.nerf_fs_nonpaying = nerf_fs_nonpaying
+        if onboarding_v2 is not None:
+            self.onboarding_v2 = onboarding_v2
         if org_level_member_permissions is not None:
             self.org_level_member_permissions = org_level_member_permissions
         if org_usage_limits is not None:
@@ -413,8 +438,6 @@ class V1UserFeatures(object):
             self.paygo_free_storage_limit_check = paygo_free_storage_limit_check
         if persistent_disk is not None:
             self.persistent_disk = persistent_disk
-        if pipelines is not None:
-            self.pipelines = pipelines
         if plugin_distributed is not None:
             self.plugin_distributed = plugin_distributed
         if plugin_inference is not None:
@@ -461,6 +484,8 @@ class V1UserFeatures(object):
             self.storage_overuse_deletion = storage_overuse_deletion
         if studio_config is not None:
             self.studio_config = studio_config
+        if studio_sharing_v2 is not None:
+            self.studio_sharing_v2 = studio_sharing_v2
         if studio_version_visibility is not None:
             self.studio_version_visibility = studio_version_visibility
         if trainium2 is not None:
@@ -479,6 +504,27 @@ class V1UserFeatures(object):
             self.weka = weka
         if writable_s3_connections is not None:
             self.writable_s3_connections = writable_s3_connections
+
+    @property
+    def academic_tier(self) -> 'bool':
+        """Gets the academic_tier of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The academic_tier of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._academic_tier
+
+    @academic_tier.setter
+    def academic_tier(self, academic_tier: 'bool'):
+        """Sets the academic_tier of this V1UserFeatures.
+
+
+        :param academic_tier: The academic_tier of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._academic_tier = academic_tier
 
     @property
     def accurate_billing(self) -> 'bool':
@@ -500,6 +546,27 @@ class V1UserFeatures(object):
         """
 
         self._accurate_billing = accurate_billing
+
+    @property
+    def add_data_v2(self) -> 'bool':
+        """Gets the add_data_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The add_data_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._add_data_v2
+
+    @add_data_v2.setter
+    def add_data_v2(self, add_data_v2: 'bool'):
+        """Sets the add_data_v2 of this V1UserFeatures.
+
+
+        :param add_data_v2: The add_data_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._add_data_v2 = add_data_v2
 
     @property
     def affiliate_links(self) -> 'bool':
@@ -731,6 +798,27 @@ class V1UserFeatures(object):
         """
 
         self._chat_models = chat_models
+
+    @property
+    def cloudspace_schedules(self) -> 'bool':
+        """Gets the cloudspace_schedules of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The cloudspace_schedules of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._cloudspace_schedules
+
+    @cloudspace_schedules.setter
+    def cloudspace_schedules(self, cloudspace_schedules: 'bool'):
+        """Sets the cloudspace_schedules of this V1UserFeatures.
+
+
+        :param cloudspace_schedules: The cloudspace_schedules of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._cloudspace_schedules = cloudspace_schedules
 
     @property
     def cloudy_vibe_code(self) -> 'bool':
@@ -1088,6 +1176,27 @@ class V1UserFeatures(object):
         """
 
         self._gcs_folders = gcs_folders
+
+    @property
+    def gcs_fuse(self) -> 'bool':
+        """Gets the gcs_fuse of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The gcs_fuse of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._gcs_fuse
+
+    @gcs_fuse.setter
+    def gcs_fuse(self, gcs_fuse: 'bool'):
+        """Sets the gcs_fuse of this V1UserFeatures.
+
+
+        :param gcs_fuse: The gcs_fuse of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._gcs_fuse = gcs_fuse
 
     @property
     def instant_capacity_reservation(self) -> 'bool':
@@ -1510,6 +1619,27 @@ class V1UserFeatures(object):
         self._nerf_fs_nonpaying = nerf_fs_nonpaying
 
     @property
+    def onboarding_v2(self) -> 'bool':
+        """Gets the onboarding_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The onboarding_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._onboarding_v2
+
+    @onboarding_v2.setter
+    def onboarding_v2(self, onboarding_v2: 'bool'):
+        """Sets the onboarding_v2 of this V1UserFeatures.
+
+
+        :param onboarding_v2: The onboarding_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._onboarding_v2 = onboarding_v2
+
+    @property
     def org_level_member_permissions(self) -> 'bool':
         """Gets the org_level_member_permissions of this V1UserFeatures.  # noqa: E501
 
@@ -1592,27 +1722,6 @@ class V1UserFeatures(object):
         """
 
         self._persistent_disk = persistent_disk
-
-    @property
-    def pipelines(self) -> 'bool':
-        """Gets the pipelines of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The pipelines of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._pipelines
-
-    @pipelines.setter
-    def pipelines(self, pipelines: 'bool'):
-        """Sets the pipelines of this V1UserFeatures.
-
-
-        :param pipelines: The pipelines of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._pipelines = pipelines
 
     @property
     def plugin_distributed(self) -> 'bool':
@@ -2096,6 +2205,27 @@ class V1UserFeatures(object):
         """
 
         self._studio_config = studio_config
+
+    @property
+    def studio_sharing_v2(self) -> 'bool':
+        """Gets the studio_sharing_v2 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The studio_sharing_v2 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._studio_sharing_v2
+
+    @studio_sharing_v2.setter
+    def studio_sharing_v2(self, studio_sharing_v2: 'bool'):
+        """Sets the studio_sharing_v2 of this V1UserFeatures.
+
+
+        :param studio_sharing_v2: The studio_sharing_v2 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._studio_sharing_v2 = studio_sharing_v2
 
     @property
     def studio_version_visibility(self) -> 'bool':

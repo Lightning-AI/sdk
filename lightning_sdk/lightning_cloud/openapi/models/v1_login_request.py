@@ -43,30 +43,25 @@ class V1LoginRequest(object):
     swagger_types = {
         'api_key': 'str',
         'duration': 'str',
-        'should_auto_verify': 'bool',
         'username': 'str'
     }
 
     attribute_map = {
         'api_key': 'apiKey',
         'duration': 'duration',
-        'should_auto_verify': 'shouldAutoVerify',
         'username': 'username'
     }
 
-    def __init__(self, api_key: 'str' =None, duration: 'str' =None, should_auto_verify: 'bool' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, duration: 'str' =None, username: 'str' =None):  # noqa: E501
         """V1LoginRequest - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._duration = None
-        self._should_auto_verify = None
         self._username = None
         self.discriminator = None
         if api_key is not None:
             self.api_key = api_key
         if duration is not None:
             self.duration = duration
-        if should_auto_verify is not None:
-            self.should_auto_verify = should_auto_verify
         if username is not None:
             self.username = username
 
@@ -111,27 +106,6 @@ class V1LoginRequest(object):
         """
 
         self._duration = duration
-
-    @property
-    def should_auto_verify(self) -> 'bool':
-        """Gets the should_auto_verify of this V1LoginRequest.  # noqa: E501
-
-
-        :return: The should_auto_verify of this V1LoginRequest.  # noqa: E501
-        :rtype: bool
-        """
-        return self._should_auto_verify
-
-    @should_auto_verify.setter
-    def should_auto_verify(self, should_auto_verify: 'bool'):
-        """Sets the should_auto_verify of this V1LoginRequest.
-
-
-        :param should_auto_verify: The should_auto_verify of this V1LoginRequest.  # noqa: E501
-        :type: bool
-        """
-
-        self._should_auto_verify = should_auto_verify
 
     @property
     def username(self) -> 'str':

@@ -77,6 +77,7 @@ class V1RuleResource(object):
     PIPELINE = "pipeline"
     CLOUDSPACEENVIRONMENTTEMPLATE = "cloudSpaceEnvironmentTemplate"
     ORGSTORAGE = "orgStorage"
+    KUBERNETESCLUSTER = "kubernetesCluster"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

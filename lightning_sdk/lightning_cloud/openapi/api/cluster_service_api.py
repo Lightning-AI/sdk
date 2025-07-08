@@ -2428,6 +2428,8 @@ class ClusterServiceApi(object):
         :param datetime start_time:
         :param datetime end_time:
         :param bool available_only:
+        :param bool from_aggregate:
+        :param str apparent_provider:
         :return: V1ListClusterCapacityReservationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2453,12 +2455,14 @@ class ClusterServiceApi(object):
         :param datetime start_time:
         :param datetime end_time:
         :param bool available_only:
+        :param bool from_aggregate:
+        :param str apparent_provider:
         :return: V1ListClusterCapacityReservationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'start_time', 'end_time', 'available_only']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'start_time', 'end_time', 'available_only', 'from_aggregate', 'apparent_provider']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2497,6 +2501,10 @@ class ClusterServiceApi(object):
             query_params.append(('endTime', params['end_time']))  # noqa: E501
         if 'available_only' in params:
             query_params.append(('availableOnly', params['available_only']))  # noqa: E501
+        if 'from_aggregate' in params:
+            query_params.append(('fromAggregate', params['from_aggregate']))  # noqa: E501
+        if 'apparent_provider' in params:
+            query_params.append(('apparentProvider', params['apparent_provider']))  # noqa: E501
 
         header_params = {}
 

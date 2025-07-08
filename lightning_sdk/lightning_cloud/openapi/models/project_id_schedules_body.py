@@ -41,6 +41,7 @@ class ProjectIdSchedulesBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'action_type': 'V1ScheduleActionType',
         'cron_expression': 'str',
         'display_name': 'str',
         'parent_resource_id': 'str',
@@ -49,6 +50,7 @@ class ProjectIdSchedulesBody(object):
     }
 
     attribute_map = {
+        'action_type': 'actionType',
         'cron_expression': 'cronExpression',
         'display_name': 'displayName',
         'parent_resource_id': 'parentResourceId',
@@ -56,14 +58,17 @@ class ProjectIdSchedulesBody(object):
         'resource_type': 'resourceType'
     }
 
-    def __init__(self, cron_expression: 'str' =None, display_name: 'str' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None):  # noqa: E501
+    def __init__(self, action_type: 'V1ScheduleActionType' =None, cron_expression: 'str' =None, display_name: 'str' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None):  # noqa: E501
         """ProjectIdSchedulesBody - a model defined in Swagger"""  # noqa: E501
+        self._action_type = None
         self._cron_expression = None
         self._display_name = None
         self._parent_resource_id = None
         self._resource_id = None
         self._resource_type = None
         self.discriminator = None
+        if action_type is not None:
+            self.action_type = action_type
         if cron_expression is not None:
             self.cron_expression = cron_expression
         if display_name is not None:
@@ -74,6 +79,27 @@ class ProjectIdSchedulesBody(object):
             self.resource_id = resource_id
         if resource_type is not None:
             self.resource_type = resource_type
+
+    @property
+    def action_type(self) -> 'V1ScheduleActionType':
+        """Gets the action_type of this ProjectIdSchedulesBody.  # noqa: E501
+
+
+        :return: The action_type of this ProjectIdSchedulesBody.  # noqa: E501
+        :rtype: V1ScheduleActionType
+        """
+        return self._action_type
+
+    @action_type.setter
+    def action_type(self, action_type: 'V1ScheduleActionType'):
+        """Sets the action_type of this ProjectIdSchedulesBody.
+
+
+        :param action_type: The action_type of this ProjectIdSchedulesBody.  # noqa: E501
+        :type: V1ScheduleActionType
+        """
+
+        self._action_type = action_type
 
     @property
     def cron_expression(self) -> 'str':

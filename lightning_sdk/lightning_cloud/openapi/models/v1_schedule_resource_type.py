@@ -39,6 +39,7 @@ class V1ScheduleResourceType(object):
     """
     UNSPECIFIED = "UNSPECIFIED"
     PIPELINE = "PIPELINE"
+    CLOUDSPACE_STUDIO = "CLOUDSPACE_STUDIO"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

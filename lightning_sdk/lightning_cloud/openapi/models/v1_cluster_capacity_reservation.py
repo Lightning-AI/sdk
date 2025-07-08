@@ -49,6 +49,7 @@ class V1ClusterCapacityReservation(object):
         'full_cloud_provider_reservation_string': 'str',
         'id': 'str',
         'in_use': 'str',
+        'in_use_aggregate': 'str',
         'instance_type': 'str',
         'match_pattern': 'str',
         'num_instances': 'str',
@@ -67,6 +68,7 @@ class V1ClusterCapacityReservation(object):
         'full_cloud_provider_reservation_string': 'fullCloudProviderReservationString',
         'id': 'id',
         'in_use': 'inUse',
+        'in_use_aggregate': 'inUseAggregate',
         'instance_type': 'instanceType',
         'match_pattern': 'matchPattern',
         'num_instances': 'numInstances',
@@ -76,7 +78,7 @@ class V1ClusterCapacityReservation(object):
         'zone': 'zone'
     }
 
-    def __init__(self, aggregate_availability: 'str' =None, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, in_use: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
+    def __init__(self, aggregate_availability: 'str' =None, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, in_use: 'str' =None, in_use_aggregate: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
         """V1ClusterCapacityReservation - a model defined in Swagger"""  # noqa: E501
         self._aggregate_availability = None
         self._capacity_reservation_type = None
@@ -86,6 +88,7 @@ class V1ClusterCapacityReservation(object):
         self._full_cloud_provider_reservation_string = None
         self._id = None
         self._in_use = None
+        self._in_use_aggregate = None
         self._instance_type = None
         self._match_pattern = None
         self._num_instances = None
@@ -110,6 +113,8 @@ class V1ClusterCapacityReservation(object):
             self.id = id
         if in_use is not None:
             self.in_use = in_use
+        if in_use_aggregate is not None:
+            self.in_use_aggregate = in_use_aggregate
         if instance_type is not None:
             self.instance_type = instance_type
         if match_pattern is not None:
@@ -292,6 +297,27 @@ class V1ClusterCapacityReservation(object):
         """
 
         self._in_use = in_use
+
+    @property
+    def in_use_aggregate(self) -> 'str':
+        """Gets the in_use_aggregate of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The in_use_aggregate of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: str
+        """
+        return self._in_use_aggregate
+
+    @in_use_aggregate.setter
+    def in_use_aggregate(self, in_use_aggregate: 'str'):
+        """Sets the in_use_aggregate of this V1ClusterCapacityReservation.
+
+
+        :param in_use_aggregate: The in_use_aggregate of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: str
+        """
+
+        self._in_use_aggregate = in_use_aggregate
 
     @property
     def instance_type(self) -> 'str':

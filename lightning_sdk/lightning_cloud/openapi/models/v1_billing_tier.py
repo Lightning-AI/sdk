@@ -42,6 +42,7 @@ class V1BillingTier(object):
     TEAMS = "Teams"
     ENTERPRISE = "Enterprise"
     DISCOUNTED_PRO = "Discounted_Pro"
+    ACADEMIC = "Academic"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

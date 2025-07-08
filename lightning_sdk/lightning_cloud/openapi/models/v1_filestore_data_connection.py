@@ -44,22 +44,25 @@ class V1FilestoreDataConnection(object):
         'capacity_gb': 'str',
         'mount_ip': 'str',
         'region': 'str',
-        'source': 'str'
+        'source': 'str',
+        'tier': 'V1DataConnectionTier'
     }
 
     attribute_map = {
         'capacity_gb': 'capacityGb',
         'mount_ip': 'mountIp',
         'region': 'region',
-        'source': 'source'
+        'source': 'source',
+        'tier': 'tier'
     }
 
-    def __init__(self, capacity_gb: 'str' =None, mount_ip: 'str' =None, region: 'str' =None, source: 'str' =None):  # noqa: E501
+    def __init__(self, capacity_gb: 'str' =None, mount_ip: 'str' =None, region: 'str' =None, source: 'str' =None, tier: 'V1DataConnectionTier' =None):  # noqa: E501
         """V1FilestoreDataConnection - a model defined in Swagger"""  # noqa: E501
         self._capacity_gb = None
         self._mount_ip = None
         self._region = None
         self._source = None
+        self._tier = None
         self.discriminator = None
         if capacity_gb is not None:
             self.capacity_gb = capacity_gb
@@ -69,6 +72,8 @@ class V1FilestoreDataConnection(object):
             self.region = region
         if source is not None:
             self.source = source
+        if tier is not None:
+            self.tier = tier
 
     @property
     def capacity_gb(self) -> 'str':
@@ -153,6 +158,27 @@ class V1FilestoreDataConnection(object):
         """
 
         self._source = source
+
+    @property
+    def tier(self) -> 'V1DataConnectionTier':
+        """Gets the tier of this V1FilestoreDataConnection.  # noqa: E501
+
+
+        :return: The tier of this V1FilestoreDataConnection.  # noqa: E501
+        :rtype: V1DataConnectionTier
+        """
+        return self._tier
+
+    @tier.setter
+    def tier(self, tier: 'V1DataConnectionTier'):
+        """Sets the tier of this V1FilestoreDataConnection.
+
+
+        :param tier: The tier of this V1FilestoreDataConnection.  # noqa: E501
+        :type: V1DataConnectionTier
+        """
+
+        self._tier = tier
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
