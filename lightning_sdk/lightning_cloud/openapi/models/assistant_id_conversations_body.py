@@ -53,6 +53,7 @@ class AssistantIdConversationsBody(object):
         'parent_conversation_id': 'str',
         'parent_message_id': 'str',
         'reasoning_effort': 'str',
+        'sent_at': 'datetime',
         'store': 'bool',
         'stream': 'bool',
         'system_prompt': 'str'
@@ -71,12 +72,13 @@ class AssistantIdConversationsBody(object):
         'parent_conversation_id': 'parentConversationId',
         'parent_message_id': 'parentMessageId',
         'reasoning_effort': 'reasoningEffort',
+        'sent_at': 'sentAt',
         'store': 'store',
         'stream': 'stream',
         'system_prompt': 'systemPrompt'
     }
 
-    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, sent_at: 'datetime' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._billing_project_id = None
@@ -90,6 +92,7 @@ class AssistantIdConversationsBody(object):
         self._parent_conversation_id = None
         self._parent_message_id = None
         self._reasoning_effort = None
+        self._sent_at = None
         self._store = None
         self._stream = None
         self._system_prompt = None
@@ -118,6 +121,8 @@ class AssistantIdConversationsBody(object):
             self.parent_message_id = parent_message_id
         if reasoning_effort is not None:
             self.reasoning_effort = reasoning_effort
+        if sent_at is not None:
+            self.sent_at = sent_at
         if store is not None:
             self.store = store
         if stream is not None:
@@ -376,6 +381,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._reasoning_effort = reasoning_effort
+
+    @property
+    def sent_at(self) -> 'datetime':
+        """Gets the sent_at of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The sent_at of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._sent_at
+
+    @sent_at.setter
+    def sent_at(self, sent_at: 'datetime'):
+        """Sets the sent_at of this AssistantIdConversationsBody.
+
+
+        :param sent_at: The sent_at of this AssistantIdConversationsBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._sent_at = sent_at
 
     @property
     def store(self) -> 'bool':

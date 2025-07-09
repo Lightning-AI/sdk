@@ -46,6 +46,7 @@ class V1ConversationResponseChunk(object):
         'executable': 'bool',
         'id': 'str',
         'object': 'str',
+        'stats': 'dict(str, str)',
         'throughput': 'float',
         'usage': 'V1TokenUsage'
     }
@@ -56,17 +57,19 @@ class V1ConversationResponseChunk(object):
         'executable': 'executable',
         'id': 'id',
         'object': 'object',
+        'stats': 'stats',
         'throughput': 'throughput',
         'usage': 'usage'
     }
 
-    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, executable: 'bool' =None, id: 'str' =None, object: 'str' =None, throughput: 'float' =None, usage: 'V1TokenUsage' =None):  # noqa: E501
+    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, executable: 'bool' =None, id: 'str' =None, object: 'str' =None, stats: 'dict(str, str)' =None, throughput: 'float' =None, usage: 'V1TokenUsage' =None):  # noqa: E501
         """V1ConversationResponseChunk - a model defined in Swagger"""  # noqa: E501
         self._choices = None
         self._conversation_id = None
         self._executable = None
         self._id = None
         self._object = None
+        self._stats = None
         self._throughput = None
         self._usage = None
         self.discriminator = None
@@ -80,6 +83,8 @@ class V1ConversationResponseChunk(object):
             self.id = id
         if object is not None:
             self.object = object
+        if stats is not None:
+            self.stats = stats
         if throughput is not None:
             self.throughput = throughput
         if usage is not None:
@@ -189,6 +194,27 @@ class V1ConversationResponseChunk(object):
         """
 
         self._object = object
+
+    @property
+    def stats(self) -> 'dict(str, str)':
+        """Gets the stats of this V1ConversationResponseChunk.  # noqa: E501
+
+
+        :return: The stats of this V1ConversationResponseChunk.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._stats
+
+    @stats.setter
+    def stats(self, stats: 'dict(str, str)'):
+        """Sets the stats of this V1ConversationResponseChunk.
+
+
+        :param stats: The stats of this V1ConversationResponseChunk.  # noqa: E501
+        :type: dict(str, str)
+        """
+
+        self._stats = stats
 
     @property
     def throughput(self) -> 'float':
