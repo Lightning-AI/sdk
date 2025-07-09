@@ -106,7 +106,7 @@ class TestCreatePipeline:
         mock_created_pipeline = V1Pipeline(id=PIPELINE_ID, name=PIPELINE_NAME)
         mock_lightning_client.pipelines_service_create_pipeline.return_value = mock_created_pipeline
 
-        pipeline_api._prepare_shared_filesytem = MagicMock(return_value=V1SharedFilesystem(enabled=True))
+        pipeline_api._prepare_shared_filesystem = MagicMock(return_value=V1SharedFilesystem(enabled=True))
 
         teamspace = MagicMock()
         teamspace.id = PROJECT_ID
@@ -147,7 +147,7 @@ class TestCreatePipeline:
         schedule2 = Schedule(cron_expression="0 0 * * 0", name="weekly")
         schedules = [schedule1, schedule2]
 
-        pipeline_api._prepare_shared_filesytem = MagicMock(return_value=V1SharedFilesystem(enabled=True))
+        pipeline_api._prepare_shared_filesystem = MagicMock(return_value=V1SharedFilesystem(enabled=True))
 
         teamspace = MagicMock()
         teamspace.id = PROJECT_ID
@@ -194,7 +194,7 @@ class TestCreatePipeline:
             schedules=[old_schedule1, old_schedule2]
         )
 
-        pipeline_api._prepare_shared_filesytem = MagicMock(return_value=V1SharedFilesystem(enabled=True))
+        pipeline_api._prepare_shared_filesystem = MagicMock(return_value=V1SharedFilesystem(enabled=True))
 
         teamspace = MagicMock()
         teamspace.id = PROJECT_ID

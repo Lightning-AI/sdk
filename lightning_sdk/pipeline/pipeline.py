@@ -1,9 +1,7 @@
 import os
 from typing import TYPE_CHECKING, List, Optional, Union
 
-from lightning_sdk.api import UserApi
 from lightning_sdk.api.pipeline_api import PipelineApi
-from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.organization import Organization
 from lightning_sdk.pipeline.printer import PipelinePrinter
 from lightning_sdk.pipeline.steps import DeploymentStep, JobStep, MMTStep, _get_studio
@@ -12,7 +10,7 @@ from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace, _resolve_user
+from lightning_sdk.utils.resolve import _resolve_teamspace
 
 if TYPE_CHECKING:
     from lightning_sdk.pipeline.schedule import Schedule
@@ -40,19 +38,7 @@ class Pipeline:
             shared_filesystem: Whether the pipeline should use a shared filesystem across all nodes.
                 Note: This forces the pipeline steps to be in the cloud_account and same region
         """
-        self._auth = Auth()
-        self._user = None
-
-        try:
-            self._auth.authenticate()
-            if user is None:
-                self._user = User(name=UserApi()._get_user_by_id(self._auth.user_id).username)
-        except ConnectionError as e:
-            raise e
-
         self._name = name
-        self._org = _resolve_org(org)
-        self._user = _resolve_user(self._user or user)
 
         self._teamspace = _resolve_teamspace(
             teamspace=teamspace,

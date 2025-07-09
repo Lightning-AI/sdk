@@ -48,3 +48,13 @@ def test_list_cluster_accelerators(mock_client, accelerator_response):
     cluster_api = ClusterApi()
     res = cluster_api.list_cluster_accelerators("test-cluster", "lightning-ai")
     assert res == accelerator_response
+
+
+@patch("lightning_sdk.api.cluster_api.LightningClient")
+def test_list_clusters(mock_client):
+    cluster_api = ClusterApi()
+    cluster_api.list_clusters("test-project")
+
+    mock_client.return_value.cluster_service_list_project_clusters.assert_called_once_with(
+        project_id="test-project",
+    )

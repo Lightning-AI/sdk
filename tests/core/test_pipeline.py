@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from lightning_sdk import studio as studio_module
-from lightning_sdk import teamspace, user
+from lightning_sdk import teamspace
 from lightning_sdk.api import pipeline_api
 from lightning_sdk.lightning_cloud.openapi.models import (
     ProjectIdJobsBody,
@@ -22,12 +22,6 @@ from lightning_sdk.utils.resolve import skip_studio_init
 
 
 def test_pipeline_run(monkeypatch):
-    mock_org = MagicMock()
-    mock_org.name = "org"
-    monkeypatch.setattr(pipeline_module, "_resolve_org", mock_org)
-    monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
-    monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
-    monkeypatch.setattr(user, "UserApi", MagicMock())
     monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
     monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
     pipeline_api_mock = MagicMock()
@@ -311,9 +305,6 @@ def test_mmt():
 
 
 def test_stop(monkeypatch):
-    monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
-    monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
-    monkeypatch.setattr(user, "UserApi", MagicMock())
     monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
     monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
     resolve_teamspace_mock = MagicMock()
@@ -333,9 +324,6 @@ def test_stop(monkeypatch):
 
 
 def test_delete(monkeypatch):
-    monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
-    monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
-    monkeypatch.setattr(user, "UserApi", MagicMock())
     monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
     monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
     resolve_teamspace_mock = MagicMock()
@@ -353,9 +341,6 @@ def test_delete(monkeypatch):
 
 
 def test_shared_filesystem(monkeypatch):
-    monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
-    monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
-    monkeypatch.setattr(user, "UserApi", MagicMock())
     monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
     monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
     pipeline_api_mock = MagicMock()
@@ -392,9 +377,6 @@ def test_shared_filesystem(monkeypatch):
 
 def test_pipeline_with_studio_job_step(monkeypatch):
     with skip_studio_init():
-        monkeypatch.setattr(pipeline_module, "Auth", MagicMock())
-        monkeypatch.setattr(pipeline_module, "UserApi", MagicMock())
-        monkeypatch.setattr(user, "UserApi", MagicMock())
         monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
         monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
         pipeline_api_mock = MagicMock()

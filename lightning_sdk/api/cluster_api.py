@@ -4,6 +4,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1Cluster,
     V1CloudProvider,
     V1ClusterType,
+    V1ExternalCluster,
     V1ListClusterAcceleratorsResponse,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -27,6 +28,20 @@ class ClusterApi:
         if not res:
             raise ValueError(f"Cluster {cluster_id} does not exist")
         return res
+
+    def list_clusters(self, project_id: str) -> List[V1ExternalCluster]:
+        """Lists the clusters for a given project.
+
+        Args:
+            project_id: The project to list clusters for
+
+        Returns:
+            A list of clusters
+        """
+        res = self._client.cluster_service_list_project_clusters(
+            project_id=project_id,
+        )
+        return res.clusters
 
     def list_cluster_accelerators(self, cluster_id: str, org_id: str) -> V1ListClusterAcceleratorsResponse:
         """Lists the accelerators for a given cluster.

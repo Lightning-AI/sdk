@@ -55,7 +55,7 @@ class PipelineApi:
         body = ProjectIdPipelinesBody(
             name=name,
             steps=steps,
-            shared_filesystem=self._prepare_shared_filesytem(shared_filesystem, steps, teamspace),
+            shared_filesystem=self._prepare_shared_filesystem(shared_filesystem, steps, teamspace),
             parent_pipeline_id=parent_pipeline_id or "",
         )
 
@@ -89,7 +89,7 @@ class PipelineApi:
     def delete(self, project_id: str, pipeline_id: str) -> V1DeletePipelineResponse:
         return self._client.pipelines_service_delete_pipeline(project_id, pipeline_id)
 
-    def _prepare_shared_filesytem(
+    def _prepare_shared_filesystem(
         self, shared_filesystem: Union[bool, V1SharedFilesystem], steps: List["V1PipelineStep"], teamspace: Teamspace
     ) -> V1SharedFilesystem:
         if not shared_filesystem:
@@ -97,14 +97,22 @@ class PipelineApi:
 
         from lightning_sdk.pipeline.utils import _get_cloud_account
 
-        cluster = self._cluster_api.get_cluster(
-            cluster_id=_get_cloud_account(steps), project_id=teamspace.id, org_id=teamspace.owner.id
-        )
+        clusters = self._cluster_api.list_clusters(project_id=teamspace.id)
 
-        if cluster.spec.aws_v1:
+        selected_cluster = None
+        selected_cluster_id = _get_cloud_account(steps)
+        for cluster in clusters:
+            if cluster.id == selected_cluster_id:
+                selected_cluster = cluster
+                break
+
+        if selected_cluster is None:
+            raise ValueError(f"Cloud Account {selected_cluster_id} not found")
+
+        if selected_cluster.spec.aws_v1:
             return V1SharedFilesystem(enabled=True, s3_folder=True)
 
-        if cluster.spec.google_cloud_v1:
+        if selected_cluster.spec.google_cloud_v1:
             return V1SharedFilesystem(enabled=True, gcs_folder=True)
 
         raise NotImplementedError("This cluster isn't support yet")
