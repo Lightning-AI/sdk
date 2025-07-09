@@ -5,7 +5,6 @@ from typing import Any, ClassVar, Optional, Tuple
 @dataclass(frozen=True)
 class Machine:
     # Default Machines
-    CPU_SMALL: ClassVar["Machine"]
     CPU: ClassVar["Machine"]
     DATA_PREP: ClassVar["Machine"]
     DATA_PREP_MAX: ClassVar["Machine"]
@@ -45,8 +44,7 @@ class Machine:
     def is_cpu(self) -> bool:
         """Whether the machine is a CPU."""
         return (
-            self == Machine.CPU_SMALL
-            or self == Machine.CPU
+            self == Machine.CPU
             or self == Machine.DATA_PREP
             or self == Machine.DATA_PREP_MAX
             or self == Machine.DATA_PREP_ULTRA
@@ -67,7 +65,6 @@ class Machine:
         return cls(machine, machine)
 
 
-Machine.CPU_SMALL = Machine(name="CPU_SMALL", instance_type="m3.medium")
 Machine.CPU = Machine(name="CPU", instance_type="cpu-4")
 Machine.DATA_PREP = Machine(name="DATA_PREP", instance_type="data-large")
 Machine.DATA_PREP_MAX = Machine(name="DATA_PREP_MAX", instance_type="data-max")

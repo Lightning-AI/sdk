@@ -133,7 +133,6 @@ def test_delete_studio(internal_studio_api_mocker_delete):
         ("st-efg", Machine.H200_X_8),
         ("st-hij", Machine.DATA_PREP_MAX),
         ("st-klm", Machine.DATA_PREP_ULTRA),
-        ("st-nop", Machine.CPU_SMALL),
         ("st-qrs", Machine.A10G_X_8),
         ("st-tuv", Machine.L40S),
         ("st-wxy", Machine.L40S_X_4),

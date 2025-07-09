@@ -100,7 +100,6 @@ def test_machines_output():
 │ A10G_X_4        │
 │ A10G_X_8        │
 │ CPU             │
-│ CPU_SMALL       │
 │ DATA_PREP       │
 │ DATA_PREP_MAX   │
 │ DATA_PREP_ULTRA │

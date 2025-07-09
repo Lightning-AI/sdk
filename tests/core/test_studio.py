@@ -164,7 +164,6 @@ def test_studio_delete(internal_studio_delete_mocker, internal_studio_status_moc
 @pytest.mark.parametrize(
     "target_machine",
     [
-        Machine.CPU_SMALL,
         Machine.CPU,
         Machine.DATA_PREP,
         Machine.DATA_PREP_MAX,
@@ -194,10 +193,7 @@ def test_studio_switch_machine(internal_studio_switch_mocker, internal_studio_in
     assert studio.machine == Machine.CPU
     studio.switch_machine(target_machine)
 
-    if target_machine == Machine.CPU_SMALL:
-        assert studio.machine == Machine.CPU
-    else:
-        assert studio.machine == target_machine
+    assert studio.machine == target_machine
 
 
 def test_run_command(internal_studio_init_mocker, internal_studio_run_mocker):

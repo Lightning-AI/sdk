@@ -2,7 +2,6 @@ import json
 import os
 import tempfile
 import time
-import warnings
 import zipfile
 from threading import Event, Thread
 from typing import Any, Dict, Generator, Mapping, Optional, Tuple, Union
@@ -172,14 +171,6 @@ class StudioApi:
         self, studio_id: str, teamspace_id: str, machine: Union[Machine, str], interruptible: False
     ) -> None:
         """Start an existing Studio."""
-        if _machine_to_compute_name(machine) == _machine_to_compute_name(Machine.CPU_SMALL):
-            warnings.warn(
-                f"{Machine.CPU_SMALL} is not a valid machine for starting a Studio. "
-                "It is reserved for running jobs only. "
-                "The Studio will be started with a CPU machine instead."
-            )
-            machine = Machine.CPU
-
         self._client.cloud_space_service_start_cloud_space_instance(
             IdStartBody(
                 compute_config=V1UserRequestedComputeConfig(name=_machine_to_compute_name(machine), spot=interruptible)
@@ -229,14 +220,6 @@ class StudioApi:
         self, studio_id: str, teamspace_id: str, machine: Union[Machine, str], interruptible: bool
     ) -> None:
         """Switches given Studio to a new machine type."""
-        if _machine_to_compute_name(machine) == _machine_to_compute_name(Machine.CPU_SMALL):
-            warnings.warn(
-                f"{Machine.CPU_SMALL} is not a valid machine for switching a Studio. "
-                "It is reserved for running jobs only. "
-                "The Studio will be switched to a CPU machine instead."
-            )
-            machine = Machine.CPU
-
         compute_name = _machine_to_compute_name(machine)
         # TODO: UI sends disk size here, maybe we need to also?
         body = IdCodeconfigBody(compute_config=V1UserRequestedComputeConfig(name=compute_name, spot=interruptible))

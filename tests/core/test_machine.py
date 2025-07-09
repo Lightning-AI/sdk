@@ -6,7 +6,6 @@ from lightning_sdk import Machine
 @pytest.mark.parametrize(
     ("machine_str", "expected_enum"),
     [
-        ("CPU_SMALL", Machine.CPU_SMALL),
         ("CPU", Machine.CPU),
         ("DATA_PREP", Machine.DATA_PREP),
         ("DATA_PREP_MAX", Machine.DATA_PREP_MAX),
@@ -35,8 +34,6 @@ def test_machine_equal(machine_str: str, expected_enum: Machine):
     ("machine_str", "expected_cls_value"),
     [
         # existing instance types
-        ("CPU_SMALL", Machine.CPU_SMALL),
-        ("m3.medium", Machine.CPU_SMALL),
         ("CPU", Machine.CPU),
         ("cpu-4", Machine.CPU),
         ("DATA_PREP", Machine.DATA_PREP),
