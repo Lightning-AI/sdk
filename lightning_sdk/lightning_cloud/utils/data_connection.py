@@ -1,10 +1,9 @@
 import os
 from time import sleep, time
 from lightning_sdk.lightning_cloud import rest_client
-from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection, V1S3FolderDataConnection, V1EfsConfig
+from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection, V1S3FolderDataConnection, V1EfsConfig, V1GcpDataConnection
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 import urllib3
-import os
 
 def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeout: int = 15) -> None:
     """Utility to add a data connection."""
@@ -217,6 +216,62 @@ def add_efs_connection(name: str, filesystem_id: str, region: str = "us-east-1",
 
     return
 
+def add_gcs_connection(connection_name: str, bucket_name: str, create_timeout: int = 15) -> None:
+    """
+    Utility function to add a GCS data connection.
+
+    Parameters:
+        1. connection_name (str): The name of the data connection.
+        2. bucket_name (str): The name of the bucket to attach.
+        3. create_timeout (int): The timeout for the data connectio creation.
+    Returns:
+        None
+    """
+
+    client = rest_client.LightningClient(retry=False)
+
+    project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
+    cluster_id = os.getenv("LIGHTNING_CLUSTER_ID")
+
+    # Get existing data connections and ensure there is no an existing one with the same name and type
+    data_connections = client.data_connection_service_list_data_connections(project_id).data_connections
+
+    for connection in data_connections:
+        existing_connection_name = getattr(connection, 'name', None)
+        isGCSConnection = getattr(connection, 'gcp', None) is not None
+
+        # Same name and type already exists
+        if existing_connection_name == connection_name and isGCSConnection:
+            return
+
+    body = Create(
+        name=connection_name,
+        create_index=True,
+        cluster_id=cluster_id,
+        access_cluster_ids=[cluster_id],
+        gcp=V1GcpDataConnection(
+            source=f"gs://{bucket_name}",
+        ))
+    try:
+        client.data_connection_service_create_data_connection(body, project_id)
+    except (ApiException, urllib3.exceptions.HTTPError) as ex:
+        # Note: This function can be called in a distributed way.
+        # There is a race condition where one machine might create the entry before another machine
+        # and this request would fail with duplicated key
+        # In this case, it is fine not to raise
+        if isinstance(ex, ApiException) and 'duplicate key value violates unique constraint' in str(ex.body):
+            pass
+        else:
+            raise ex
+
+    # Wait for the filesystem picks up the newly added GCS data connection
+    start = time()
+
+    while not os.path.isdir(f"/teamspace/gcs_connections/{bucket_name}") and (time() - start) < create_timeout:
+        sleep(1)
+
+    return
+
 def delete_data_connection(name: str):
     """Utility to delete a data connection
 
@@ -249,4 +304,3 @@ def delete_data_connection(name: str):
         #  for now it's best to actually stop the studio and all other things where the connection
         #  is mounted before trying to delete it
         raise e from None
-

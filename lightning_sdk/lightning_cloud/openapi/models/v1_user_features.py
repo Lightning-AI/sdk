@@ -58,7 +58,6 @@ class V1UserFeatures(object):
         'cloudy_vibe_code': 'bool',
         'code_tab': 'bool',
         'collab_screen_sharing': 'bool',
-        'concurrent_gpu_limit': 'bool',
         'control_center_monitoring': 'bool',
         'cost_attribution_settings': 'bool',
         'custom_app_domain': 'bool',
@@ -75,6 +74,7 @@ class V1UserFeatures(object):
         'gcs_fuse': 'bool',
         'instant_capacity_reservation': 'bool',
         'job_artifacts_v2': 'bool',
+        'kubernetes_cluster_ui': 'bool',
         'kubernetes_clusters': 'bool',
         'lambda_labs': 'bool',
         'lambda_labs_studios': 'bool',
@@ -151,7 +151,6 @@ class V1UserFeatures(object):
         'cloudy_vibe_code': 'cloudyVibeCode',
         'code_tab': 'codeTab',
         'collab_screen_sharing': 'collabScreenSharing',
-        'concurrent_gpu_limit': 'concurrentGpuLimit',
         'control_center_monitoring': 'controlCenterMonitoring',
         'cost_attribution_settings': 'costAttributionSettings',
         'custom_app_domain': 'customAppDomain',
@@ -168,6 +167,7 @@ class V1UserFeatures(object):
         'gcs_fuse': 'gcsFuse',
         'instant_capacity_reservation': 'instantCapacityReservation',
         'job_artifacts_v2': 'jobArtifactsV2',
+        'kubernetes_cluster_ui': 'kubernetesClusterUi',
         'kubernetes_clusters': 'kubernetesClusters',
         'lambda_labs': 'lambdaLabs',
         'lambda_labs_studios': 'lambdaLabsStudios',
@@ -226,7 +226,7 @@ class V1UserFeatures(object):
         'writable_s3_connections': 'writableS3Connections'
     }
 
-    def __init__(self, academic_tier: 'bool' =None, add_data_v2: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, concurrent_gpu_limit: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, gcs_fuse: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_clusters: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, model_api_dashboard_clickhouse: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, onboarding_v2: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, academic_tier: 'bool' =None, add_data_v2: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, gcs_fuse: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, lambda_labs: 'bool' =None, lambda_labs_studios: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, machine_selector_v2: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, model_api_dashboard_clickhouse: 'bool' =None, multicloud_folders: 'bool' =None, multicloud_saas: 'bool' =None, multiple_studio_versions: 'bool' =None, nebius: 'bool' =None, nebius_cpu_studios: 'bool' =None, nebius_gpu_studios: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, onboarding_v2: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, paygo_free_storage_limit_check: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, voltage_park: 'bool' =None, voltage_park_studios: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._academic_tier = None
         self._add_data_v2 = None
@@ -245,7 +245,6 @@ class V1UserFeatures(object):
         self._cloudy_vibe_code = None
         self._code_tab = None
         self._collab_screen_sharing = None
-        self._concurrent_gpu_limit = None
         self._control_center_monitoring = None
         self._cost_attribution_settings = None
         self._custom_app_domain = None
@@ -262,6 +261,7 @@ class V1UserFeatures(object):
         self._gcs_fuse = None
         self._instant_capacity_reservation = None
         self._job_artifacts_v2 = None
+        self._kubernetes_cluster_ui = None
         self._kubernetes_clusters = None
         self._lambda_labs = None
         self._lambda_labs_studios = None
@@ -353,8 +353,6 @@ class V1UserFeatures(object):
             self.code_tab = code_tab
         if collab_screen_sharing is not None:
             self.collab_screen_sharing = collab_screen_sharing
-        if concurrent_gpu_limit is not None:
-            self.concurrent_gpu_limit = concurrent_gpu_limit
         if control_center_monitoring is not None:
             self.control_center_monitoring = control_center_monitoring
         if cost_attribution_settings is not None:
@@ -387,6 +385,8 @@ class V1UserFeatures(object):
             self.instant_capacity_reservation = instant_capacity_reservation
         if job_artifacts_v2 is not None:
             self.job_artifacts_v2 = job_artifacts_v2
+        if kubernetes_cluster_ui is not None:
+            self.kubernetes_cluster_ui = kubernetes_cluster_ui
         if kubernetes_clusters is not None:
             self.kubernetes_clusters = kubernetes_clusters
         if lambda_labs is not None:
@@ -858,27 +858,6 @@ class V1UserFeatures(object):
         self._collab_screen_sharing = collab_screen_sharing
 
     @property
-    def concurrent_gpu_limit(self) -> 'bool':
-        """Gets the concurrent_gpu_limit of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The concurrent_gpu_limit of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._concurrent_gpu_limit
-
-    @concurrent_gpu_limit.setter
-    def concurrent_gpu_limit(self, concurrent_gpu_limit: 'bool'):
-        """Sets the concurrent_gpu_limit of this V1UserFeatures.
-
-
-        :param concurrent_gpu_limit: The concurrent_gpu_limit of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._concurrent_gpu_limit = concurrent_gpu_limit
-
-    @property
     def control_center_monitoring(self) -> 'bool':
         """Gets the control_center_monitoring of this V1UserFeatures.  # noqa: E501
 
@@ -1213,6 +1192,27 @@ class V1UserFeatures(object):
         """
 
         self._job_artifacts_v2 = job_artifacts_v2
+
+    @property
+    def kubernetes_cluster_ui(self) -> 'bool':
+        """Gets the kubernetes_cluster_ui of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The kubernetes_cluster_ui of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._kubernetes_cluster_ui
+
+    @kubernetes_cluster_ui.setter
+    def kubernetes_cluster_ui(self, kubernetes_cluster_ui: 'bool'):
+        """Sets the kubernetes_cluster_ui of this V1UserFeatures.
+
+
+        :param kubernetes_cluster_ui: The kubernetes_cluster_ui of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._kubernetes_cluster_ui = kubernetes_cluster_ui
 
     @property
     def kubernetes_clusters(self) -> 'bool':
