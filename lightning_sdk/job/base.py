@@ -296,6 +296,27 @@ class _BaseJob(ABC):
 
             time.sleep(interval)
 
+    async def async_wait(self, interval: float = 5.0, timeout: Optional[float] = None) -> None:
+        """Waits for the job to be either completed, manually stopped or failed.
+
+        Args:
+            interval: The number of seconds to spend in-between status checks.
+            timeout: The maximum number of seconds to wait before raising an error. If None, waits forever.
+        """
+        import asyncio
+
+        from lightning_sdk.status import Status
+
+        start = asyncio.get_event_loop().time()
+        while True:
+            if self.status in (Status.Completed, Status.Stopped, Status.Failed):
+                break
+
+            if timeout is not None and asyncio.get_event_loop().time() - start > timeout:
+                raise TimeoutError("Job didn't finish within the provided timeout.")
+
+            await asyncio.sleep(interval)
+
     @property
     @abstractmethod
     def status(self) -> "Status":
