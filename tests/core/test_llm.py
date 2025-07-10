@@ -334,6 +334,30 @@ def test_chat(monkeypatch, mock_public_model):
     assert kwargs_passed.get("parent_message_id") == "test-parent-msg-id"
 
 
+def test_chat_full_response(monkeypatch):
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
+
+    mock_api = MagicMock()
+    mock_api.get_assistant.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    # lower case model provider
+    llm = LLM("OpenAI/gpt-4o")
+    assert llm._model_provider == "openai"
+
+    mock_response = MagicMock()
+    mock_response.conversation_id = "conv_123"
+    mock_response.choices[0].delta.content = "I'm doing well, thank you!"
+    mock_api.start_conversation.return_value = mock_response
+
+    llm = LLM("openai/gpt-4o")
+    response = llm.chat("Hello, how are you?", full_response=True)
+
+    assert not isinstance(response, str)
+    assert response == mock_response
+
+
 def test_chat_backend(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()

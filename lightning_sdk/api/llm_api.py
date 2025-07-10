@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import datetime
 import json
 import os
 import threading
@@ -46,6 +47,8 @@ class LLMApi:
                 executable=result_data.get("executable"),
                 id=result_data.get("id"),
                 throughput=result_data.get("throughput"),
+                stats=result_data.get("stats"),
+                usage=result_data.get("usage"),
             )
         except json.JSONDecodeError:
             warnings.warn("Error decoding JSON:", decoded_line)
@@ -158,6 +161,7 @@ class LLMApi:
             "ephemeral": ephemeral,
             "parent_conversation_id": kwargs.get("parent_conversation_id", ""),
             "parent_message_id": kwargs.get("parent_message_id", ""),
+            "sent_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="microseconds"),
         }
         if images:
             for image in images:

@@ -169,21 +169,33 @@ class LLM:
                 self._conversations[conversation.name] = conversation.id
 
     def _stream_chat_response(
-        self, result: Generator[V1ConversationResponseChunk, None, None], conversation: Optional[str] = None
+        self,
+        result: Generator[V1ConversationResponseChunk, None, None],
+        conversation: Optional[str] = None,
+        full_response: bool = False,
     ) -> Generator[str, None, None]:
         first_line = next(result, None)
         if first_line:
             if conversation and first_line.conversation_id:
                 self._conversations[conversation] = first_line.conversation_id
-            yield first_line.choices[0].delta.content
+            if full_response:
+                yield first_line
+            else:
+                yield first_line.choices[0].delta.content
 
         for line in result:
-            yield line.choices[0].delta.content
+            if full_response:
+                yield line
+            else:
+                yield line.choices[0].delta.content
 
-    async def _async_stream_text(self, output: str) -> AsyncGenerator[str, None]:
+    async def _async_stream_text(self, output: str, full_response: bool = False) -> AsyncGenerator[str, None]:
         async for chunk in output:
             if chunk.choices and chunk.choices[0].delta:
-                yield chunk.choices[0].delta.content
+                if full_response:
+                    yield chunk
+                else:
+                    yield chunk.choices[0].delta.content
 
     async def _async_chat(
         self,
@@ -194,6 +206,7 @@ class LLM:
         conversation: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
+        full_response: bool = False,
         **kwargs: Any,
     ) -> Union[str, AsyncGenerator[str, None]]:
         conversation_id = self._conversations.get(conversation) if conversation else None
@@ -213,8 +226,10 @@ class LLM:
         if not stream:
             if conversation and not conversation_id:
                 self._conversations[conversation] = output.conversation_id
+            if full_response:
+                return output
             return output.choices[0].delta.content
-        return self._async_stream_text(output)
+        return self._async_stream_text(output, full_response)
 
     def chat(
         self,
@@ -225,8 +240,11 @@ class LLM:
         conversation: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
+        full_response: bool = False,
         **kwargs: Any,
-    ) -> Union[str, Generator[str, None, None]]:
+    ) -> Union[
+        V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None], str, Generator[str, None, None]
+    ]:
         if conversation and conversation not in self._conversations:
             self._get_conversations()
 
@@ -248,6 +266,7 @@ class LLM:
                 conversation,
                 metadata,
                 stream,
+                full_response,
                 **kwargs,
             )
 
@@ -267,8 +286,10 @@ class LLM:
         if not stream:
             if conversation and not conversation_id:
                 self._conversations[conversation] = output.conversation_id
+            if full_response:
+                return output
             return output.choices[0].delta.content
-        return self._stream_chat_response(output, conversation=conversation)
+        return self._stream_chat_response(output, conversation=conversation, full_response=full_response)
 
     def list_conversations(self) -> List[Dict]:
         self._get_conversations()
