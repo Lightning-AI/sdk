@@ -7,11 +7,12 @@ import threading
 import warnings
 from typing import Any, AsyncGenerator, Dict, Generator, List, Optional, Union
 
-from pip._vendor.urllib3 import HTTPResponse
-
-from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
-from lightning_sdk.lightning_cloud.openapi.models.v1_response_choice import V1ResponseChoice
-from lightning_sdk.lightning_cloud.openapi.models.v1_response_choice_delta import V1ResponseChoiceDelta
+from lightning_sdk.lightning_cloud.openapi.models import (
+    StreamResultOfV1ConversationResponseChunk,
+    V1ConversationResponseChunk,
+    V1ResponseChoice,
+    V1ResponseChoiceDelta,
+)
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
@@ -54,7 +55,9 @@ class LLMApi:
             warnings.warn("Error decoding JSON:", decoded_line)
             return None
 
-    def _stream_chat_response(self, result: HTTPResponse) -> Generator[V1ConversationResponseChunk, None, None]:
+    def _stream_chat_response(
+        self, result: StreamResultOfV1ConversationResponseChunk
+    ) -> Generator[V1ConversationResponseChunk, None, None]:
         for line in result.stream():
             decoded_lines = line.decode("utf-8").strip()
             for decoded_line in decoded_lines.splitlines():
