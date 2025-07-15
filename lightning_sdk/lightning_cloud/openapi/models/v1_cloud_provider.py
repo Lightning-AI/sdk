@@ -50,6 +50,7 @@ class V1CloudProvider(object):
     LIGHTNING = "LIGHTNING"
     LIGHTNING_AGGREGATE = "LIGHTNING_AGGREGATE"
     KUBERNETES = "KUBERNETES"
+    AI_POD = "AI_POD"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

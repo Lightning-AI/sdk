@@ -884,38 +884,38 @@ class UserServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def user_service_list_new_features_for_user(self, **kwargs) -> 'V1ListNewFeaturesForUserResponse':  # noqa: E501
+    def user_service_list_notification_dialogs(self, **kwargs) -> 'V1ListNotificationDialogsResponse':  # noqa: E501
         """we use this to show ne user unseen new features modal  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.user_service_list_new_features_for_user(async_req=True)
+        >>> thread = api.user_service_list_notification_dialogs(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param bool unseen:
-        :return: V1ListNewFeaturesForUserResponse
+        :return: V1ListNotificationDialogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.user_service_list_new_features_for_user_with_http_info(**kwargs)  # noqa: E501
+            return self.user_service_list_notification_dialogs_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.user_service_list_new_features_for_user_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.user_service_list_notification_dialogs_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def user_service_list_new_features_for_user_with_http_info(self, **kwargs) -> 'V1ListNewFeaturesForUserResponse':  # noqa: E501
+    def user_service_list_notification_dialogs_with_http_info(self, **kwargs) -> 'V1ListNotificationDialogsResponse':  # noqa: E501
         """we use this to show ne user unseen new features modal  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.user_service_list_new_features_for_user_with_http_info(async_req=True)
+        >>> thread = api.user_service_list_notification_dialogs_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param bool unseen:
-        :return: V1ListNewFeaturesForUserResponse
+        :return: V1ListNotificationDialogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -931,7 +931,7 @@ class UserServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method user_service_list_new_features_for_user" % key
+                    " to method user_service_list_notification_dialogs" % key
                 )
             params[key] = val
         del params['kwargs']
@@ -958,14 +958,14 @@ class UserServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/users/new-features', 'GET',
+            '/v1/users/notification-dialogs', 'GET',
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1ListNewFeaturesForUserResponse',  # noqa: E501
+            response_type='V1ListNotificationDialogsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

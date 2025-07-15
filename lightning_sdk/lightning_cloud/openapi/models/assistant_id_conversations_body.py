@@ -56,7 +56,8 @@ class AssistantIdConversationsBody(object):
         'sent_at': 'datetime',
         'store': 'bool',
         'stream': 'bool',
-        'system_prompt': 'str'
+        'system_prompt': 'str',
+        'tools': 'list[V1Tool]'
     }
 
     attribute_map = {
@@ -75,10 +76,11 @@ class AssistantIdConversationsBody(object):
         'sent_at': 'sentAt',
         'store': 'store',
         'stream': 'stream',
-        'system_prompt': 'systemPrompt'
+        'system_prompt': 'systemPrompt',
+        'tools': 'tools'
     }
 
-    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, sent_at: 'datetime' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, sent_at: 'datetime' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None, tools: 'list[V1Tool]' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._billing_project_id = None
@@ -96,6 +98,7 @@ class AssistantIdConversationsBody(object):
         self._store = None
         self._stream = None
         self._system_prompt = None
+        self._tools = None
         self.discriminator = None
         if auto_name is not None:
             self.auto_name = auto_name
@@ -129,6 +132,8 @@ class AssistantIdConversationsBody(object):
             self.stream = stream
         if system_prompt is not None:
             self.system_prompt = system_prompt
+        if tools is not None:
+            self.tools = tools
 
     @property
     def auto_name(self) -> 'bool':
@@ -465,6 +470,27 @@ class AssistantIdConversationsBody(object):
         """
 
         self._system_prompt = system_prompt
+
+    @property
+    def tools(self) -> 'list[V1Tool]':
+        """Gets the tools of this AssistantIdConversationsBody.  # noqa: E501
+
+
+        :return: The tools of this AssistantIdConversationsBody.  # noqa: E501
+        :rtype: list[V1Tool]
+        """
+        return self._tools
+
+    @tools.setter
+    def tools(self, tools: 'list[V1Tool]'):
+        """Sets the tools of this AssistantIdConversationsBody.
+
+
+        :param tools: The tools of this AssistantIdConversationsBody.  # noqa: E501
+        :type: list[V1Tool]
+        """
+
+        self._tools = tools
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

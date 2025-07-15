@@ -41,6 +41,7 @@ class V1ClusterType(object):
     GLOBAL = "CLUSTER_TYPE_GLOBAL"
     BYOC = "CLUSTER_TYPE_BYOC"
     SLURM = "CLUSTER_TYPE_SLURM"
+    AI_POD = "CLUSTER_TYPE_AI_POD"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

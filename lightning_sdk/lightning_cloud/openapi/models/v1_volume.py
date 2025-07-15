@@ -57,6 +57,7 @@ class V1Volume(object):
         'server_id': 'str',
         'size_gb': 'str',
         'state': 'V1VolumeState',
+        'subnet_id': 'str',
         'throughput': 'str',
         'type': 'str',
         'updated_at': 'datetime',
@@ -80,13 +81,14 @@ class V1Volume(object):
         'server_id': 'serverId',
         'size_gb': 'sizeGb',
         'state': 'state',
+        'subnet_id': 'subnetId',
         'throughput': 'throughput',
         'type': 'type',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, attached_at: 'datetime' =None, availability_zone: 'str' =None, detached_at: 'datetime' =None, encrypted: 'bool' =None, iops: 'str' =None, metadata: 'V1Metadata' =None, path: 'str' =None, provider: 'str' =None, provider_id: 'str' =None, region: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, retention_period: 'str' =None, server_id: 'str' =None, size_gb: 'str' =None, state: 'V1VolumeState' =None, throughput: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, attached_at: 'datetime' =None, availability_zone: 'str' =None, detached_at: 'datetime' =None, encrypted: 'bool' =None, iops: 'str' =None, metadata: 'V1Metadata' =None, path: 'str' =None, provider: 'str' =None, provider_id: 'str' =None, region: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, retention_period: 'str' =None, server_id: 'str' =None, size_gb: 'str' =None, state: 'V1VolumeState' =None, subnet_id: 'str' =None, throughput: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Volume - a model defined in Swagger"""  # noqa: E501
         self._attached_at = None
         self._availability_zone = None
@@ -104,6 +106,7 @@ class V1Volume(object):
         self._server_id = None
         self._size_gb = None
         self._state = None
+        self._subnet_id = None
         self._throughput = None
         self._type = None
         self._updated_at = None
@@ -141,6 +144,8 @@ class V1Volume(object):
             self.size_gb = size_gb
         if state is not None:
             self.state = state
+        if subnet_id is not None:
+            self.subnet_id = subnet_id
         if throughput is not None:
             self.throughput = throughput
         if type is not None:
@@ -485,6 +490,27 @@ class V1Volume(object):
         """
 
         self._state = state
+
+    @property
+    def subnet_id(self) -> 'str':
+        """Gets the subnet_id of this V1Volume.  # noqa: E501
+
+
+        :return: The subnet_id of this V1Volume.  # noqa: E501
+        :rtype: str
+        """
+        return self._subnet_id
+
+    @subnet_id.setter
+    def subnet_id(self, subnet_id: 'str'):
+        """Sets the subnet_id of this V1Volume.
+
+
+        :param subnet_id: The subnet_id of this V1Volume.  # noqa: E501
+        :type: str
+        """
+
+        self._subnet_id = subnet_id
 
     @property
     def throughput(self) -> 'str':

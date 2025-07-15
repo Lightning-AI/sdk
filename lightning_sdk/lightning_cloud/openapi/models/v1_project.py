@@ -58,6 +58,7 @@ class V1Project(object):
         'private': 'bool',
         'project_settings': 'V1ProjectSettings',
         'quotas': 'V1Quotas',
+        'requires_uploads_sync': 'bool',
         'total_size_uploads_bytes': 'str',
         'updated_at': 'datetime'
     }
@@ -80,11 +81,12 @@ class V1Project(object):
         'private': 'private',
         'project_settings': 'projectSettings',
         'quotas': 'quotas',
+        'requires_uploads_sync': 'requiresUploadsSync',
         'total_size_uploads_bytes': 'totalSizeUploadsBytes',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_storage_bytes: 'str' =None, id: 'str' =None, is_default: 'bool' =None, lock_out_uploads: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_storage_bytes: 'str' =None, id: 'str' =None, is_default: 'bool' =None, lock_out_uploads: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, requires_uploads_sync: 'bool' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Project - a model defined in Swagger"""  # noqa: E501
         self._abac_enabled = None
         self._created_at = None
@@ -103,6 +105,7 @@ class V1Project(object):
         self._private = None
         self._project_settings = None
         self._quotas = None
+        self._requires_uploads_sync = None
         self._total_size_uploads_bytes = None
         self._updated_at = None
         self.discriminator = None
@@ -140,6 +143,8 @@ class V1Project(object):
             self.project_settings = project_settings
         if quotas is not None:
             self.quotas = quotas
+        if requires_uploads_sync is not None:
+            self.requires_uploads_sync = requires_uploads_sync
         if total_size_uploads_bytes is not None:
             self.total_size_uploads_bytes = total_size_uploads_bytes
         if updated_at is not None:
@@ -501,6 +506,27 @@ class V1Project(object):
         """
 
         self._quotas = quotas
+
+    @property
+    def requires_uploads_sync(self) -> 'bool':
+        """Gets the requires_uploads_sync of this V1Project.  # noqa: E501
+
+
+        :return: The requires_uploads_sync of this V1Project.  # noqa: E501
+        :rtype: bool
+        """
+        return self._requires_uploads_sync
+
+    @requires_uploads_sync.setter
+    def requires_uploads_sync(self, requires_uploads_sync: 'bool'):
+        """Sets the requires_uploads_sync of this V1Project.
+
+
+        :param requires_uploads_sync: The requires_uploads_sync of this V1Project.  # noqa: E501
+        :type: bool
+        """
+
+        self._requires_uploads_sync = requires_uploads_sync
 
     @property
     def total_size_uploads_bytes(self) -> 'str':

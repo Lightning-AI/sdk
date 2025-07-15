@@ -41,55 +41,24 @@ class V1CompleteUpload(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'cluster_id': 'str',
         'etag': 'str',
-        'part_number': 'str',
-        'upload_id': 'str'
+        'part_number': 'str'
     }
 
     attribute_map = {
-        'cluster_id': 'clusterId',
         'etag': 'etag',
-        'part_number': 'partNumber',
-        'upload_id': 'uploadId'
+        'part_number': 'partNumber'
     }
 
-    def __init__(self, cluster_id: 'str' =None, etag: 'str' =None, part_number: 'str' =None, upload_id: 'str' =None):  # noqa: E501
+    def __init__(self, etag: 'str' =None, part_number: 'str' =None):  # noqa: E501
         """V1CompleteUpload - a model defined in Swagger"""  # noqa: E501
-        self._cluster_id = None
         self._etag = None
         self._part_number = None
-        self._upload_id = None
         self.discriminator = None
-        if cluster_id is not None:
-            self.cluster_id = cluster_id
         if etag is not None:
             self.etag = etag
         if part_number is not None:
             self.part_number = part_number
-        if upload_id is not None:
-            self.upload_id = upload_id
-
-    @property
-    def cluster_id(self) -> 'str':
-        """Gets the cluster_id of this V1CompleteUpload.  # noqa: E501
-
-
-        :return: The cluster_id of this V1CompleteUpload.  # noqa: E501
-        :rtype: str
-        """
-        return self._cluster_id
-
-    @cluster_id.setter
-    def cluster_id(self, cluster_id: 'str'):
-        """Sets the cluster_id of this V1CompleteUpload.
-
-
-        :param cluster_id: The cluster_id of this V1CompleteUpload.  # noqa: E501
-        :type: str
-        """
-
-        self._cluster_id = cluster_id
 
     @property
     def etag(self) -> 'str':
@@ -132,27 +101,6 @@ class V1CompleteUpload(object):
         """
 
         self._part_number = part_number
-
-    @property
-    def upload_id(self) -> 'str':
-        """Gets the upload_id of this V1CompleteUpload.  # noqa: E501
-
-
-        :return: The upload_id of this V1CompleteUpload.  # noqa: E501
-        :rtype: str
-        """
-        return self._upload_id
-
-    @upload_id.setter
-    def upload_id(self, upload_id: 'str'):
-        """Sets the upload_id of this V1CompleteUpload.
-
-
-        :param upload_id: The upload_id of this V1CompleteUpload.  # noqa: E501
-        :type: str
-        """
-
-        self._upload_id = upload_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

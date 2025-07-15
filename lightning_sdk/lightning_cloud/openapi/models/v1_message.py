@@ -41,6 +41,7 @@ class V1Message(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'account_id': 'str',
         'assistant_id': 'str',
         'author': 'V1MessageAuthor',
         'completion_tokens': 'str',
@@ -58,6 +59,7 @@ class V1Message(object):
     }
 
     attribute_map = {
+        'account_id': 'accountId',
         'assistant_id': 'assistantId',
         'author': 'author',
         'completion_tokens': 'completionTokens',
@@ -74,8 +76,9 @@ class V1Message(object):
         'throughput': 'throughput'
     }
 
-    def __init__(self, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
+        self._account_id = None
         self._assistant_id = None
         self._author = None
         self._completion_tokens = None
@@ -91,6 +94,8 @@ class V1Message(object):
         self._prompt_tokens = None
         self._throughput = None
         self.discriminator = None
+        if account_id is not None:
+            self.account_id = account_id
         if assistant_id is not None:
             self.assistant_id = assistant_id
         if author is not None:
@@ -119,6 +124,27 @@ class V1Message(object):
             self.prompt_tokens = prompt_tokens
         if throughput is not None:
             self.throughput = throughput
+
+    @property
+    def account_id(self) -> 'str':
+        """Gets the account_id of this V1Message.  # noqa: E501
+
+
+        :return: The account_id of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._account_id
+
+    @account_id.setter
+    def account_id(self, account_id: 'str'):
+        """Sets the account_id of this V1Message.
+
+
+        :param account_id: The account_id of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._account_id = account_id
 
     @property
     def assistant_id(self) -> 'str':

@@ -41,60 +41,29 @@ class UploadsUploadIdBody1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'allow_multicloud': 'bool',
         'cluster_id': 'str',
         'filename': 'str',
-        'parts': 'list[str]',
-        'uploads': 'list[V1ClusterUpload]'
+        'parts': 'list[str]'
     }
 
     attribute_map = {
-        'allow_multicloud': 'allowMulticloud',
         'cluster_id': 'clusterId',
         'filename': 'filename',
-        'parts': 'parts',
-        'uploads': 'uploads'
+        'parts': 'parts'
     }
 
-    def __init__(self, allow_multicloud: 'bool' =None, cluster_id: 'str' =None, filename: 'str' =None, parts: 'list[str]' =None, uploads: 'list[V1ClusterUpload]' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, filename: 'str' =None, parts: 'list[str]' =None):  # noqa: E501
         """UploadsUploadIdBody1 - a model defined in Swagger"""  # noqa: E501
-        self._allow_multicloud = None
         self._cluster_id = None
         self._filename = None
         self._parts = None
-        self._uploads = None
         self.discriminator = None
-        if allow_multicloud is not None:
-            self.allow_multicloud = allow_multicloud
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if filename is not None:
             self.filename = filename
         if parts is not None:
             self.parts = parts
-        if uploads is not None:
-            self.uploads = uploads
-
-    @property
-    def allow_multicloud(self) -> 'bool':
-        """Gets the allow_multicloud of this UploadsUploadIdBody1.  # noqa: E501
-
-
-        :return: The allow_multicloud of this UploadsUploadIdBody1.  # noqa: E501
-        :rtype: bool
-        """
-        return self._allow_multicloud
-
-    @allow_multicloud.setter
-    def allow_multicloud(self, allow_multicloud: 'bool'):
-        """Sets the allow_multicloud of this UploadsUploadIdBody1.
-
-
-        :param allow_multicloud: The allow_multicloud of this UploadsUploadIdBody1.  # noqa: E501
-        :type: bool
-        """
-
-        self._allow_multicloud = allow_multicloud
 
     @property
     def cluster_id(self) -> 'str':
@@ -158,27 +127,6 @@ class UploadsUploadIdBody1(object):
         """
 
         self._parts = parts
-
-    @property
-    def uploads(self) -> 'list[V1ClusterUpload]':
-        """Gets the uploads of this UploadsUploadIdBody1.  # noqa: E501
-
-
-        :return: The uploads of this UploadsUploadIdBody1.  # noqa: E501
-        :rtype: list[V1ClusterUpload]
-        """
-        return self._uploads
-
-    @uploads.setter
-    def uploads(self, uploads: 'list[V1ClusterUpload]'):
-        """Sets the uploads of this UploadsUploadIdBody1.
-
-
-        :param uploads: The uploads of this UploadsUploadIdBody1.  # noqa: E501
-        :type: list[V1ClusterUpload]
-        """
-
-        self._uploads = uploads
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -44,6 +44,7 @@ class V1Artifact(object):
         'filename': 'str',
         'last_modified': 'datetime',
         'md5_checksum': 'str',
+        'provider': 'V1CloudProvider',
         'size_bytes': 'str',
         'url': 'str'
     }
@@ -52,15 +53,17 @@ class V1Artifact(object):
         'filename': 'filename',
         'last_modified': 'lastModified',
         'md5_checksum': 'md5Checksum',
+        'provider': 'provider',
         'size_bytes': 'sizeBytes',
         'url': 'url'
     }
 
-    def __init__(self, filename: 'str' =None, last_modified: 'datetime' =None, md5_checksum: 'str' =None, size_bytes: 'str' =None, url: 'str' =None):  # noqa: E501
+    def __init__(self, filename: 'str' =None, last_modified: 'datetime' =None, md5_checksum: 'str' =None, provider: 'V1CloudProvider' =None, size_bytes: 'str' =None, url: 'str' =None):  # noqa: E501
         """V1Artifact - a model defined in Swagger"""  # noqa: E501
         self._filename = None
         self._last_modified = None
         self._md5_checksum = None
+        self._provider = None
         self._size_bytes = None
         self._url = None
         self.discriminator = None
@@ -70,6 +73,8 @@ class V1Artifact(object):
             self.last_modified = last_modified
         if md5_checksum is not None:
             self.md5_checksum = md5_checksum
+        if provider is not None:
+            self.provider = provider
         if size_bytes is not None:
             self.size_bytes = size_bytes
         if url is not None:
@@ -137,6 +142,27 @@ class V1Artifact(object):
         """
 
         self._md5_checksum = md5_checksum
+
+    @property
+    def provider(self) -> 'V1CloudProvider':
+        """Gets the provider of this V1Artifact.  # noqa: E501
+
+
+        :return: The provider of this V1Artifact.  # noqa: E501
+        :rtype: V1CloudProvider
+        """
+        return self._provider
+
+    @provider.setter
+    def provider(self, provider: 'V1CloudProvider'):
+        """Sets the provider of this V1Artifact.
+
+
+        :param provider: The provider of this V1Artifact.  # noqa: E501
+        :type: V1CloudProvider
+        """
+
+        self._provider = provider
 
     @property
     def size_bytes(self) -> 'str':
