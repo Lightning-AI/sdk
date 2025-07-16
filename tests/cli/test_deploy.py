@@ -71,10 +71,10 @@ Options:
                                   'classification-api', 'Llama-api')
   --non-interactive, --non_interactive
                                   Do not prompt for confirmation
-  --machine [CPU|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_8|H100_X_8|H200_X_8]
+  --machine [CPU|CPU_SMALL|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_2|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_2|A100_X_4|A100_X_8|B200_X_8|H100_X_8|H200_X_8]
                                   Machine type to deploy the API on. Defaults
                                   to CPU.  [default: CPU]
-  --devbox [CPU|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_8|H100_X_8|H200_X_8]
+  --devbox [CPU|CPU_SMALL|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_2|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_2|A100_X_4|A100_X_8|B200_X_8|H100_X_8|H200_X_8]
                                   Machine type to build the API on. Setting
                                   this argument will open the server in a
                                   Studio.

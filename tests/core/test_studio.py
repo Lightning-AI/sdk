@@ -182,6 +182,11 @@ def test_studio_delete(internal_studio_delete_mocker, internal_studio_status_moc
         Machine.A100_X_8,
         Machine.H100_X_8,
         Machine.H200_X_8,
+        Machine.CPU_SMALL,
+        Machine.L4_X_2,
+        Machine.A100_X_2,
+        Machine.A100_X_4,
+        Machine.B200_X_8,
     ],
 )
 def test_studio_switch_machine(internal_studio_switch_mocker, internal_studio_init_mocker, target_machine):

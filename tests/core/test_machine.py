@@ -24,6 +24,11 @@ from lightning_sdk import Machine
         ("A100_X_8", Machine.A100_X_8),
         ("H100_X_8", Machine.H100_X_8),
         ("H200_X_8", Machine.H200_X_8),
+        ("CPU_SMALL", Machine.CPU_SMALL),
+        ("L4_X_2", Machine.L4_X_2),
+        ("A100_X_2", Machine.A100_X_2),
+        ("A100_X_4", Machine.A100_X_4),
+        ("B200_X_8", Machine.B200_X_8),
     ],
 )
 def test_machine_equal(machine_str: str, expected_enum: Machine):
@@ -73,6 +78,16 @@ def test_machine_equal(machine_str: str, expected_enum: Machine):
         # instance types not available as predefined enums
         ("some-instance", Machine("some-instance", "some-instance")),
         ("i4i.8xlarge", Machine("i4i.8xlarge", "i4i.8xlarge")),
+        ("CPU_SMALL", Machine.CPU_SMALL),
+        ("n2d-standard-2", Machine.CPU_SMALL),  # GCP
+        ("L4_X_2", Machine.L4_X_2),
+        ("g2-standard-24", Machine.L4_X_2),  # GCP
+        ("A100_X_2", Machine.A100_X_2),
+        ("a2-ultragpu-2g", Machine.A100_X_2),  # GCP
+        ("A100_X_4", Machine.A100_X_4),
+        ("a2-ultragpu-4g", Machine.A100_X_4),  # GCP
+        ("B200_X_8", Machine.B200_X_8),
+        ("a4-highgpu-8g", Machine.B200_X_8),  # GCP
     ],
 )
 def test_machine_from_str(machine_str: str, expected_cls_value: Machine):

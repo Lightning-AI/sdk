@@ -95,11 +95,15 @@ def test_machines_output():
         == """┏━━━━━━━━━━━━━━━━━┓
 ┃ Name            ┃
 ┡━━━━━━━━━━━━━━━━━┩
+│ A100_X_2        │
+│ A100_X_4        │
 │ A100_X_8        │
 │ A10G            │
 │ A10G_X_4        │
 │ A10G_X_8        │
+│ B200_X_8        │
 │ CPU             │
+│ CPU_SMALL       │
 │ DATA_PREP       │
 │ DATA_PREP_MAX   │
 │ DATA_PREP_ULTRA │
@@ -109,6 +113,7 @@ def test_machines_output():
 │ L40S            │
 │ L40S_X_4        │
 │ L40S_X_8        │
+│ L4_X_2          │
 │ L4_X_4          │
 │ L4_X_8          │
 │ T4              │

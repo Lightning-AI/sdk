@@ -9,6 +9,8 @@ from lightning_sdk import Machine
 def test_aws_machine_type_api(machine_type, available_aws_instance_types):
     if machine_type.startswith(("cpu", "data-")):
         pytest.skip(f"'{machine_type}' is specific and omitted from testing")
+    elif machine_type in ("a2-ultragpu-2g", "a2-ultragpu-4g", "a4-highgpu-8g", "n2d-standard-2", "g2-standard-24"):
+        pytest.skip(f"'{machine_type}' is only with GCP and omitted from testing")
     assert available_aws_instance_types, "No available AWS instance types found"
     assert (
         machine_type in available_aws_instance_types

@@ -39,7 +39,7 @@ def test_job_help():
 Options:
   --name TEXT                     The name of the job. Needs to be unique
                                   within the teamspace.
-  --machine [CPU|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_8|H100_X_8|H200_X_8]
+  --machine [CPU|CPU_SMALL|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_2|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_2|A100_X_4|A100_X_8|B200_X_8|H100_X_8|H200_X_8]
                                   The machine type to run the job on.
                                   [default: CPU]
   --command TEXT                  The command to run inside your job. Required
@@ -125,7 +125,7 @@ Options:
   --num-machines, --num_machines INTEGER
                                   The number of Machines to run on.  [default:
                                   2]
-  --machine [CPU|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_8|H100_X_8|H200_X_8]
+  --machine [CPU|CPU_SMALL|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_2|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_2|A100_X_4|A100_X_8|B200_X_8|H100_X_8|H200_X_8]
                                   The machine type to run the job on.
                                   [default: CPU]
   --command TEXT                  The command to run inside your job. Required

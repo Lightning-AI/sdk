@@ -492,6 +492,16 @@ def internal_studio_api_mocker_get_machine(mocker):
             instance = "g6e.48xlarge"
         elif id == "st-cde":
             instance = "g6.48xlarge"
+        elif id == "st-fgh":
+            instance = "a2-ultragpu-2g"
+        elif id == "st-ijk":
+            instance = "a2-ultragpu-4g"
+        elif id == "st-lmn":
+            instance = "a4-highgpu-8g"
+        elif id == "st-opq":
+            instance = "n2d-standard-2"
+        elif id == "st-rst":
+            instance = "g2-standard-24"
 
         assert instance is not None
         return V1CloudSpaceInstanceConfig(compute_config=V1UserRequestedComputeConfig(name=instance))
