@@ -9,6 +9,7 @@ PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
     "openai": "OpenAI",
     "anthropic": "Anthropic",
     "google": "Google",
+    "lightning-ai": "lightning-ai",
 }
 
 

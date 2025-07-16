@@ -4,5 +4,7 @@
     "openai/o3-mini": "ast_01jz3t13fhnjhh11t1k8b5gyp1",
     "anthropic/claude-3-5-sonnet-20240620": "ast_01jd3923a6p98rqwh3dpj686pq",
     "google/gemini-2.5-pro": "ast_01jz3tdb1fhey798k95pv61v57",
-    "google/gemini-2.5-flash": "ast_01jz3thxskg4fcdk4xhkjkym5a"
+    "google/gemini-2.5-flash": "ast_01jz3thxskg4fcdk4xhkjkym5a",
+    "google/gemini-2.5-flash-lite-preview-06-17": "ast_01jz3thxskg4fcdk4xhkjkym5b",
+    "lightning-ai/llama4-maverick": "ast_01k073vsqs66tenpns02cf5jnq"
 }
