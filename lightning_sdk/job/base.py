@@ -275,12 +275,13 @@ class _BaseJob(ABC):
         Caution: This also deletes all artifacts and snapshots associated with the job.
         """
 
-    def wait(self, interval: float = 5.0, timeout: Optional[float] = None) -> None:
+    def wait(self, interval: float = 5.0, timeout: Optional[float] = None, stop_on_timeout: bool = False) -> None:
         """Waits for the job to be either completed, manually stopped or failed.
 
         Args:
             interval: The number of seconds to spend in-between status checks.
             timeout: The maximum number of seconds to wait before raising an error. If None, waits forever.
+            stop_on_timeout: Whether to stop the job if it didn't finish within the timeout.
         """
         import time
 
@@ -292,16 +293,21 @@ class _BaseJob(ABC):
                 break
 
             if timeout is not None and time.time() - start > timeout:
+                if stop_on_timeout:
+                    self.stop()  # ensure the job is stopped if it didn't finish
                 raise TimeoutError("Job didn't finish within the provided timeout.")
 
             time.sleep(interval)
 
-    async def async_wait(self, interval: float = 5.0, timeout: Optional[float] = None) -> None:
+    async def async_wait(
+        self, interval: float = 5.0, timeout: Optional[float] = None, stop_on_timeout: bool = False
+    ) -> None:
         """Waits for the job to be either completed, manually stopped or failed.
 
         Args:
             interval: The number of seconds to spend in-between status checks.
             timeout: The maximum number of seconds to wait before raising an error. If None, waits forever.
+            stop_on_timeout: Whether to stop the job if it didn't finish within the timeout.
         """
         import asyncio
 
@@ -313,6 +319,8 @@ class _BaseJob(ABC):
                 break
 
             if timeout is not None and asyncio.get_event_loop().time() - start > timeout:
+                if stop_on_timeout:
+                    self.stop()  # ensure the job is stopped if it didn't finish
                 raise TimeoutError("Job didn't finish within the provided timeout.")
 
             await asyncio.sleep(interval)
