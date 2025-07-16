@@ -93,4 +93,4 @@ Machine.A100_X_4 = Machine(name="A100_X_4", instance_type="a2-ultragpu-4g")  # G
 Machine.A100_X_8 = Machine(name="A100_X_8", instance_type="p4d.24xlarge")
 Machine.B200_X_8 = Machine(name="B200_X_8", instance_type="a4-highgpu-8g")  # GCP
 Machine.H100_X_8 = Machine(name="H100_X_8", instance_type="p5.48xlarge")
-Machine.H200_X_8 = Machine(name="H200_X_8", instance_type="p5e.48xlarge")
+Machine.H200_X_8 = Machine(name="H200_X_8", instance_type="p5en.48xlarge")

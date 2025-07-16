@@ -74,7 +74,7 @@ def test_machine_equal(machine_str: str, expected_enum: Machine):
         ("H100_X_8", Machine.H100_X_8),
         ("p5.48xlarge", Machine.H100_X_8),
         ("H200_X_8", Machine.H200_X_8),
-        ("p5e.48xlarge", Machine.H200_X_8),
+        ("p5en.48xlarge", Machine.H200_X_8),
         # instance types not available as predefined enums
         ("some-instance", Machine("some-instance", "some-instance")),
         ("i4i.8xlarge", Machine("i4i.8xlarge", "i4i.8xlarge")),

@@ -475,7 +475,7 @@ def internal_studio_api_mocker_get_machine(mocker):
         elif id == "st-bcd":
             instance = "p5.48xlarge"
         elif id == "st-efg":
-            instance = "p5e.48xlarge"
+            instance = "p5en.48xlarge"
         elif id == "st-hij":
             instance = "data-max"
         elif id == "st-klm":
