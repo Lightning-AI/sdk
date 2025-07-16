@@ -85,7 +85,6 @@ class V1Tool(object):
     def type(self) -> 'str':
         """Gets the type of this V1Tool.  # noqa: E501
 
-        The type of the tool. Currently, only `function` is supported.  # noqa: E501
 
         :return: The type of this V1Tool.  # noqa: E501
         :rtype: str
@@ -96,7 +95,6 @@ class V1Tool(object):
     def type(self, type: 'str'):
         """Sets the type of this V1Tool.
 
-        The type of the tool. Currently, only `function` is supported.  # noqa: E501
 
         :param type: The type of this V1Tool.  # noqa: E501
         :type: str
