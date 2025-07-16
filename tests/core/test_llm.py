@@ -53,6 +53,28 @@ def mock_user_model():
     return mock_model
 
 
+@pytest.fixture()
+def mock_tools():
+    return [
+        {
+            "type": "function",
+            "function": {
+                "name": "get_weather",
+                "description": "Get current temperature for a given location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {"type": "string", "description": "City and country e.g. Bogotá, Colombia"}
+                    },
+                    "required": ["location"],
+                    "additionalProperties": False,
+                },
+                "strict": True,
+            },
+        }
+    ]
+
+
 def test_get_model_id_uses_cache():
     # Reset shared class state to avoid side effects
     LLMCLIENT._llm_api_cache.clear()
@@ -144,6 +166,7 @@ def test_ephemeral(monkeypatch, mock_public_model):
         name="test",
         stream=False,
         metadata=None,
+        tools=None,
     )
 
 
@@ -183,6 +206,7 @@ def test_chat(monkeypatch, mock_public_model):
         name=None,
         stream=False,
         metadata={"user_api": "123456"},
+        tools=None,
     )
 
     # pass conversation and continue conversation
@@ -200,6 +224,7 @@ def test_chat(monkeypatch, mock_public_model):
         name="conv1",
         stream=False,
         metadata=None,
+        tools=None,
     )
     mock_api.start_conversation.reset_mock()
     continue_response = llm.chat("Hi again!", conversation="conv1")
@@ -215,6 +240,7 @@ def test_chat(monkeypatch, mock_public_model):
         name="conv1",
         stream=False,
         metadata=None,
+        tools=None,
     )
     # check list of conversations
     assert llm._conversations == {"conv1": "conv_123"}
@@ -260,6 +286,7 @@ def test_chat(monkeypatch, mock_public_model):
         name=None,
         stream=True,
         metadata=None,
+        tools=None,
     )
 
     # test image content type
@@ -281,6 +308,7 @@ def test_chat(monkeypatch, mock_public_model):
         name=None,
         stream=False,
         metadata=None,
+        tools=None,
     )
 
     # local images
@@ -300,6 +328,7 @@ def test_chat(monkeypatch, mock_public_model):
         name=None,
         stream=False,
         metadata=None,
+        tools=None,
     )
 
     # system prompt
@@ -317,6 +346,7 @@ def test_chat(monkeypatch, mock_public_model):
         name=None,
         stream=False,
         metadata={"user_api": "123456"},
+        tools=None,
     )
 
     # check kwargs
@@ -356,6 +386,32 @@ def test_chat_full_response(monkeypatch):
 
     assert not isinstance(response, str)
     assert response == mock_response
+
+
+def test_chat_with_tools(monkeypatch, mock_tools):
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
+
+    mock_api = MagicMock()
+    mock_api.get_assistant.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    llm = LLM("openai/gpt-4o")
+    _ = llm.chat("Hello, how are you?", tools=mock_tools)
+
+    mock_api.start_conversation.assert_called_with(
+        prompt="Hello, how are you?",
+        system_prompt=None,
+        max_completion_tokens=500,
+        assistant_id=llm._model_id,
+        images=None,
+        conversation_id=None,  # no conversation ID for ephemeral
+        billing_project_id="teamspace-123",
+        name=None,
+        stream=False,
+        metadata=None,
+        tools=mock_tools,
+    )
 
 
 def test_chat_backend(monkeypatch, mock_public_model):

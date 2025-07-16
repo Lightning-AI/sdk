@@ -83,6 +83,7 @@ class LLMApi:
         name: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
+        tools: Optional[List[Dict[str, Any]]] = None,
         **kwargs: Any,
     ) -> Union[V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None]]:
         is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
@@ -108,6 +109,7 @@ class LLMApi:
             "ephemeral": ephemeral,
             "parent_conversation_id": kwargs.get("parent_conversation_id", ""),
             "parent_message_id": kwargs.get("parent_message_id", ""),
+            "tools": tools,
         }
         if images:
             for image in images:

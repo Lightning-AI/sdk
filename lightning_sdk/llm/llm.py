@@ -241,6 +241,7 @@ class LLM:
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
         full_response: bool = False,
+        tools: Optional[List[Dict[str, Any]]] = None,
         **kwargs: Any,
     ) -> Union[
         V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None], str, Generator[str, None, None]
@@ -281,6 +282,7 @@ class LLM:
             metadata=metadata,
             name=conversation,
             stream=stream,
+            tools=tools,
             **kwargs,
         )
         if not stream:
