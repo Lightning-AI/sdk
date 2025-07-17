@@ -373,6 +373,7 @@ def _handle_cloud(
         f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}/{container_basename}"
     )
 
+    cloud_account = cloud_account or resolved_teamspace.default_cloud_account
     if from_onboarding:
         thread = Thread(
             target=ls_deployer.run_on_cloud,

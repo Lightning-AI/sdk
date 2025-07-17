@@ -398,6 +398,73 @@ def test_handle_cloud_deployment_api(
     assert "Deployment started, access at" in mock_console.print.call_args[0][0]
 
 
+@patch("lightning_sdk.cli.deploy.serve.LitContainerApi")
+@patch("lightning_sdk.cli.deploy.serve.select_teamspace")
+@patch("lightning_sdk.cli.deploy.serve._LitServeDeployer")
+@patch("lightning_sdk.cli.deploy.serve.Confirm.ask")
+@patch("lightning_sdk.cli.deploy.serve.authenticate")
+@patch("lightning_sdk.cli.deploy.serve.poll_verified_status")
+@patch("lightning_sdk.cli.deploy.serve._get_registry_url")
+@pytest.mark.parametrize("cloud_account", ["byoc-123", None])
+def test_handle_cloud_with_cloud_account(
+    mock_registry_url,
+    mock_poll_verified_status,
+    mock_authenticate,
+    mock_ask,
+    mock_deployer,
+    mock_teamspace,
+    ___,
+    temp_script,
+    cloud_account,
+):
+    mock_ask.return_value = True
+    mock_deployer.created = True
+    mock_console = MagicMock()
+    machine = Machine.from_str("CPU")
+    repository = "litserve-model"
+    resolved_teamspace = MagicMock(default_cloud_account="gcp-123")
+    mock_teamspace.return_value = resolved_teamspace  # Mock select_teamspace to return our teamspace
+    _handle_cloud(
+        temp_script,
+        mock_console,
+        teamspace="test-teamspace",  # Pass string, not Teamspace object
+        machine=machine,
+        cloud_account=cloud_account,
+        non_interactive=True,
+        interruptible=True,
+        repository=repository,
+    )
+    container_basename = repository.split("/")[-1]
+    registry_url = mock_registry_url.return_value
+    image = (
+        f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"
+        f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}/{container_basename}"
+    )
+
+    mock_poll_verified_status.asssert_called_once()
+    mock_deployer.return_value.dockerize_api.assert_called_once()
+    mock_authenticate.assert_called_once()
+    mock_console.print.assert_called()
+    selected_cloud_account = cloud_account or resolved_teamspace.default_cloud_account
+    mock_deployer.return_value.run_on_cloud.assert_called_once_with(
+        deployment_name="litserve-model",
+        teamspace=resolved_teamspace,
+        machine=machine,
+        cloud_account=selected_cloud_account,
+        port=8000,
+        min_replica=0,
+        max_replica=1,
+        replicas=1,
+        include_credentials=True,
+        spot=True,
+        cloudspace_id=None,
+        from_onboarding=False,
+        image=image,
+        metric=None,
+    )
+    assert "Deployment started, access at" in mock_console.print.call_args[0][0]
+
+
 @patch("lightning_sdk.cli.deploy._auth._AuthLitServe")
 def test_authenticate(mock_auth_class):
     authenticate(_AuthMode.DEPLOY)
