@@ -1642,6 +1642,7 @@ class ClusterServiceApi(object):
         :param str id: (required)
         :param str org_id:
         :param str project_id:
+        :param str auth_token:
         :return: Externalv1Cluster
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1665,12 +1666,13 @@ class ClusterServiceApi(object):
         :param str id: (required)
         :param str org_id:
         :param str project_id:
+        :param str auth_token:
         :return: Externalv1Cluster
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['id', 'org_id', 'project_id']  # noqa: E501
+        all_params = ['id', 'org_id', 'project_id', 'auth_token']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1701,6 +1703,8 @@ class ClusterServiceApi(object):
             query_params.append(('orgId', params['org_id']))  # noqa: E501
         if 'project_id' in params:
             query_params.append(('projectId', params['project_id']))  # noqa: E501
+        if 'auth_token' in params:
+            query_params.append(('authToken', params['auth_token']))  # noqa: E501
 
         header_params = {}
 

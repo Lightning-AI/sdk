@@ -41,14 +41,40 @@ class V1AiPodV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'organization_id': 'str'
     }
 
     attribute_map = {
+        'organization_id': 'organizationId'
     }
 
-    def __init__(self):  # noqa: E501
+    def __init__(self, organization_id: 'str' =None):  # noqa: E501
         """V1AiPodV1 - a model defined in Swagger"""  # noqa: E501
+        self._organization_id = None
         self.discriminator = None
+        if organization_id is not None:
+            self.organization_id = organization_id
+
+    @property
+    def organization_id(self) -> 'str':
+        """Gets the organization_id of this V1AiPodV1.  # noqa: E501
+
+
+        :return: The organization_id of this V1AiPodV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._organization_id
+
+    @organization_id.setter
+    def organization_id(self, organization_id: 'str'):
+        """Sets the organization_id of this V1AiPodV1.
+
+
+        :param organization_id: The organization_id of this V1AiPodV1.  # noqa: E501
+        :type: str
+        """
+
+        self._organization_id = organization_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
