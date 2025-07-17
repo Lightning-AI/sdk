@@ -101,6 +101,8 @@ Update [underline]{os.path.abspath("Dockerfile")}[/underline] to add any additio
 
 [bold]To push the container to a registry:[/bold]
 > [underline]docker push {tag}[/underline]
+
+Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link][/blue] for more details.
 """
             console.print(success_msg)
         return os.path.abspath("Dockerfile")
