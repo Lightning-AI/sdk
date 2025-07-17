@@ -2,7 +2,8 @@ import os
 import time
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional, TypedDict
+from typing import Any, List, Optional, TypedDict
+from urllib.parse import urlencode
 
 from rich.console import Console
 from rich.prompt import Confirm
@@ -10,6 +11,7 @@ from rich.prompt import Confirm
 from lightning_sdk import Teamspace
 from lightning_sdk.api import UserApi
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -22,6 +24,17 @@ _POLL_TIMEOUT = 120
 class _AuthMode(Enum):
     DEVBOX = "dev"
     DEPLOY = "deploy"
+
+
+class _AuthServer(AuthServer):
+    def __init__(self, mode: _AuthMode, *args: Any, **kwargs: Any) -> None:
+        self._mode = mode
+        super().__init__(*args, **kwargs)
+
+    def get_auth_url(self, port: int) -> str:
+        redirect_uri = f"http://localhost:{port}/login-complete"
+        params = urlencode({"redirectTo": redirect_uri, "mode": self._mode.value, "okbhrt": LITSERVE_CODE})
+        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
 
 class _AuthLitServe(Auth):
@@ -42,7 +55,7 @@ class _AuthLitServe(Auth):
         print("Opening browser for authentication...")
         print("Please come back to the terminal after logging in.")
         time.sleep(3)
-        AuthServer({"mode": self._mode, "okbhrt": LITSERVE_CODE}).login_with_browser(self)
+        _AuthServer(self._mode).login_with_browser(self)
 
 
 def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:

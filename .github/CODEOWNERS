@@ -6,3 +6,5 @@
 # @global-owner1 and @global-owner2 will be requested for
 # review when someone opens a pull request.
 * @gridai/platform @gridai/application
+
+lightning_sdk/cli/deploy @aniketmaurya

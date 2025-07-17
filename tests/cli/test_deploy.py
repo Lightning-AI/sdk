@@ -404,7 +404,7 @@ def test_authenticate(mock_auth_class):
     mock_auth_class.return_value.authenticate.assert_called_once()
 
 
-@patch("lightning_sdk.cli.deploy._auth.AuthServer")
+@patch("lightning_sdk.cli.deploy._auth._AuthServer")
 @patch("lightning_sdk.lightning_cloud.login.Auth.auth_header")
 def test_auth_run_server(_, mock_authserver):
     mock_authserver.return_value.login_with_browser = MagicMock()
@@ -418,7 +418,7 @@ def test_auth_run_server(_, mock_authserver):
     mock_authserver.return_value.login_with_browser.assert_called_once()
 
 
-@patch("lightning_sdk.cli.deploy._auth.AuthServer")
+@patch("lightning_sdk.cli.deploy._auth._AuthServer")
 @patch("lightning_sdk.lightning_cloud.login.Auth.auth_header")
 @patch("lightning_sdk.cli.deploy._auth.Confirm")
 def test_auth_run_server_confirm_browser_open(mock_auth_confirm, _, mock_authserver):
