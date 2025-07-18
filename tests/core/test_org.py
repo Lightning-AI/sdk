@@ -52,3 +52,13 @@ def test_repr(internal_get_org_api_mocker):
 def test_str(internal_get_org_api_mocker):
     org = Organization("my-org-name")
     assert str(org) == "Organization(name=my-org-name)"
+
+
+def test_org_default_cloud_account(internal_get_org_api_mocker):
+    org = Organization("my-org-name")
+    assert org.default_cloud_account == "my-preferred-cluster"
+
+    # simulate empty response
+    org._org.preferred_cluster = ""
+
+    assert org.default_cloud_account is None

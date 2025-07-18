@@ -163,7 +163,7 @@ def internal_get_org_api_mocker(mocker, internal_auth_mocker):
         if _name == "xyx" or _id == "xyz":
             return None
 
-        return V1Organization(display_name=_name, name=_name, id=_id)
+        return V1Organization(display_name=_name, name=_name, id=_id, preferred_cluster="my-preferred-cluster")
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",

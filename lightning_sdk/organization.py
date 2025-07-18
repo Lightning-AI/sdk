@@ -40,6 +40,10 @@ class Organization(Owner):
         """The organization's ID."""
         return self._org.id
 
+    @property
+    def default_cloud_account(self) -> Optional[str]:
+        return self._org.preferred_cluster or None
+
     def __repr__(self) -> str:
         """Returns reader friendly representation."""
         return f"Organization(name={self.name})"

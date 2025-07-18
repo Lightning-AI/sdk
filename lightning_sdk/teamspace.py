@@ -116,8 +116,8 @@ class Teamspace:
         return studios
 
     @property
-    def default_cloud_account(self) -> str:
-        return self._teamspace.project_settings.preferred_cluster
+    def default_cloud_account(self) -> Optional[str]:
+        return self._teamspace.project_settings.preferred_cluster or getattr(self.owner, "default_cloud_account", None)
 
     @property
     def start_studios_on_interruptible(self) -> bool:
