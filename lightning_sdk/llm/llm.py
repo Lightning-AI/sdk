@@ -139,6 +139,18 @@ class LLM:
                     "Please check the model name or provider."
                 ) from e
 
+        if self._model_provider == "lightning-ai":
+            # Try model provider model
+            try:
+                return self._llm_api.get_assistant(
+                    model_provider=self._model_provider,
+                    model_name=self._model_name,
+                    user_name="",
+                    org_name="",
+                )
+            except Exception:
+                pass
+
         # Try organization model
         try:
             return self._llm_api.get_assistant(
