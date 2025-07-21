@@ -46,7 +46,10 @@ class _AuthLitServe(Auth):
     def _run_server(self) -> None:
         if self._shall_confirm:
             proceed = Confirm.ask(
-                "Authenticating with Lightning AI. This will open a browser window. Continue?", default=True
+                "[bold yellow]LitServe needs to authenticate with Lightning AI to deploy your server.[/bold yellow]\n"
+                "This will open a browser window for login.\n"
+                "Do you want to continue?",
+                default=True,
             )
             if not proceed:
                 raise RuntimeError(

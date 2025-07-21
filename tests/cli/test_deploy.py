@@ -190,7 +190,7 @@ def test_cloud_deployment(
 
     # Verify user was prompted twice
     assert mock_confirm.call_count == 1
-    mock_confirm.assert_has_calls([call("Is the Dockerfile correct?", default=True)])
+    mock_confirm.assert_has_calls([call("Have you reviewed the Dockerfile and confirmed it's correct?", default=True)])
 
     # Capture and verify the output
     captured = capsys.readouterr()
@@ -499,7 +499,10 @@ def test_auth_run_server_confirm_browser_open(mock_auth_confirm, _, mock_authser
     auth.load.assert_called_once()
     mock_authserver.return_value.login_with_browser.assert_called_once()
     mock_auth_confirm.ask.assert_called_once_with(
-        "Authenticating with Lightning AI. This will open a browser window. Continue?", default=True
+        "[bold yellow]LitServe needs to authenticate with Lightning AI to deploy your server.[/bold yellow]\n"
+        "This will open a browser window for login.\n"
+        "Do you want to continue?",
+        default=True,
     )
 
 

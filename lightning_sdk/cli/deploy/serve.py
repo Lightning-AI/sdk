@@ -317,12 +317,20 @@ def _handle_cloud(
     ls_deployer = _LitServeDeployer(name=deployment_name, teamspace=None)
     path = ls_deployer.dockerize_api(script_path, port=port, gpu=not machine.is_cpu(), tag=tag, print_success=False)
 
-    console.print(f"\nPlease review the Dockerfile at [u]{path}[/u] and make sure it is correct.", style="bold")
-    correct_dockerfile = True if non_interactive else Confirm.ask("Is the Dockerfile correct?", default=True)
+    console.print(f"\n[bold]LitServe generated a Dockerfile at:[/bold]\n[u]{path}[/u]\n")
+    console.print("Please check that it matches your server setup.")
+    correct_dockerfile = (
+        True
+        if non_interactive
+        else Confirm.ask("Have you reviewed the Dockerfile and confirmed it's correct?", default=True)
+    )
     if not correct_dockerfile:
-        console.print("Please fix the Dockerfile and try again.", style="red")
+        console.print("[red]Dockerfile review canceled. Please update the Dockerfile and try again.[/red]")
         return
 
+    console.print(
+        "Building your container image now.\n[cyan bold]Make sure Docker is installed and running.[/cyan bold]\n"
+    )
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -340,7 +348,12 @@ def _handle_cloud(
             progress.remove_task(build_task)
 
         except Exception as e:
-            console.print(f"❌ Deployment failed: {e}", style="red")
+            console.print(
+                "❌ Failed to build a container for your server.\n"
+                "Make sure Docker is installed and running, then try again.",
+                f"\n\nError details: {e}",
+                style="red",
+            )
             return
 
     # Push the container to the registry
