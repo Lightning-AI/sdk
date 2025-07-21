@@ -55,8 +55,18 @@ class LLM:
         Raises:
             ValueError: If teamspace information cannot be resolved.
         """
-        # TODO support user input teamspace
-        self._get_auth_info()
+        teamspace_name = None
+        if teamspace:
+            try:
+                owner, teamspace_name = teamspace.split("/", maxsplit=1)
+            except ValueError as e:
+                raise ValueError(
+                    f"Invalid teamspace format: '{teamspace}'. "
+                    "Teamspace should be specified as '{teamspace_owner}/{teamspace_name}' "
+                    "(e.g., 'my-org/my-teamspace')."
+                ) from e
+
+        self._get_auth_info(teamspace_name)
 
         self._model_provider, self._model_name = self._parse_model_name(name)
         self._enable_async = enable_async
@@ -77,13 +87,15 @@ class LLM:
     def provider(self) -> str:
         return self._model_provider
 
-    def _get_auth_info(self) -> None:
+    def _get_auth_info(self, teamspace_name: Optional[str] = None) -> None:
+        # TODO: Validate user input teamspace name
         if not LLM._auth_info_cached:
-            teamspace_name = os.environ.get("LIGHTNING_TEAMSPACE", None)
+            if teamspace_name is None:
+                teamspace_name = os.environ.get("LIGHTNING_TEAMSPACE", None)
             if teamspace_name is None:
                 raise ValueError(
                     "Teamspace name must be provided either through "
-                    "the environment variable LIGHTNING_TEAMSPACE or as an argument."
+                    "the environment variable LIGHTNING_TEAMSPACE or as an argument - LLM(..., teamspace=...)"
                 )
             LLM._cached_auth_info = {
                 "teamspace_name": teamspace_name,

@@ -140,6 +140,17 @@ def test_user_model(monkeypatch, mock_user_model):
     assert llm.provider == "user-name"
 
 
+def test_get_auth_info(monkeypatch):
+    LLMCLIENT._llm_api_cache.clear()
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._cached_auth_info = {}
+    LLMCLIENT._llm_api_cache = {}
+    LLMCLIENT._public_assistants = {"openai/gpt-4o": "assistant-id-123"}
+
+    llm = LLM(name="openai/gpt-4o", teamspace="lightning-ai/teamspace-name")
+    assert llm._teamspace_name == "teamspace-name"
+
+
 def test_ephemeral(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
