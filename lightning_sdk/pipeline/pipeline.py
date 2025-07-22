@@ -1,9 +1,10 @@
 import os
-from typing import TYPE_CHECKING, List, Optional, Union
+from typing import List, Optional, Union
 
 from lightning_sdk.api.pipeline_api import PipelineApi
 from lightning_sdk.organization import Organization
 from lightning_sdk.pipeline.printer import PipelinePrinter
+from lightning_sdk.pipeline.schedule import _TIMEZONES, Schedule
 from lightning_sdk.pipeline.steps import DeploymentStep, JobStep, MMTStep, _get_studio
 from lightning_sdk.pipeline.utils import prepare_steps
 from lightning_sdk.services.utilities import _get_cluster
@@ -11,9 +12,6 @@ from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _resolve_teamspace
-
-if TYPE_CHECKING:
-    from lightning_sdk.pipeline.schedule import Schedule
 
 
 class Pipeline:
@@ -107,6 +105,11 @@ class Pipeline:
         for schedule_idx, schedule in enumerate(schedules):
             if schedule.name is None:
                 schedule.name = f"schedule-{schedule_idx}"
+
+            if schedule.timezone is not None and schedule.timezone not in _TIMEZONES:
+                raise ValueError(
+                    f"The schedule {schedule.name} timezone isn't supported. Available list is {_TIMEZONES}. Found {schedule.timezone}."  # noqa: E501
+                )
 
         parent_pipeline_id = None if self._pipeline is None else self._pipeline.id
 

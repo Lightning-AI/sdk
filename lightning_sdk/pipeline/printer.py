@@ -1,7 +1,7 @@
 import os
 from typing import Any, ClassVar, Dict, List
 
-from lightning_sdk.lightning_cloud.openapi.models import V1Pipeline, V1PipelineStepType
+from lightning_sdk.lightning_cloud.openapi.models import V1Pipeline, V1PipelineStepType, V1Schedule
 from lightning_sdk.pipeline.utils import _get_spec
 
 
@@ -21,7 +21,7 @@ class PipelinePrinter:
         pipeline: V1Pipeline,
         teamspace: Any,
         proto_steps: List[Any],
-        schedules: List[Any],
+        schedules: List[V1Schedule],
     ) -> None:
         self._name = name
         self._initial = initial
@@ -78,7 +78,9 @@ class PipelinePrinter:
             return
 
         for schedule in self._schedules:
-            self._print(f"  - '{schedule.name}' runs on cron schedule: `{schedule.cron_expression}`")
+            self._print(
+                f"  - '{schedule.name}' runs on cron schedule: `{schedule.cron_expression} in timezone {schedule.timezone or 'UTC'}`"  # noqa: E501
+            )
 
     def _print_footer(self) -> None:
         """Prints the final link and closing message."""
