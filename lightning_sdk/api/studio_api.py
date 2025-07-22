@@ -412,7 +412,7 @@ class StudioApi:
             body=body,
         )
 
-    def duplicate_studio(self, studio_id: str, teamspace_id: str, target_teamspace_id: str) -> Dict[str, str]:
+    def duplicate_studio(self, studio_id: str, teamspace_id: str, target_teamspace_id: str) -> Dict[str, Any]:
         """Duplicates the given Studio from a given Teamspace into a given target Teamspace."""
         target_teamspace = self._client.projects_service_get_project(target_teamspace_id)
         init_kwargs = {}

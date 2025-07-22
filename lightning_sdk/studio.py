@@ -81,15 +81,16 @@ class Studio:
         self._studio_api = StudioApi()
         self._cluster_api = ClusterApi()
 
-        self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        if _teamspace is None:
+            raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
+
+        self._teamspace = _teamspace
         self._cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
         self._setup_done = False
         self._disable_secrets = disable_secrets
 
         self._plugins = {}
-
-        if self._teamspace is None:
-            raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
 
         if provider is not None:
             if isinstance(provider, str) and provider in Provider.__members__:
@@ -253,9 +254,34 @@ class Studio:
         """Deletes the current Studio."""
         self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
 
-    def duplicate(self) -> "Studio":
-        """Duplicates the existing Studio to the same teamspace."""
-        kwargs = self._studio_api.duplicate_studio(self._studio.id, self._teamspace.id, self._teamspace.id)
+    def duplicate(self, target_teamspace: Optional[Union["Teamspace", str]] = None) -> "Studio":
+        """Duplicates the existing Studio.
+
+        Args:
+            target_teamspace: the teamspace to duplicate the studio to.
+                Must have the same owner as the source teamspace.
+                If not provided, defaults to current teamspace.
+        """
+        if target_teamspace is None:
+            target_teamspace_id = self._teamspace.id
+        else:
+            target_teamspace = _resolve_teamspace(
+                target_teamspace,
+                org=self._teamspace.owner if isinstance(self._teamspace.owner, Organization) else None,
+                user=self._teamspace.owner if isinstance(self._teamspace.owner, User) else None,
+            )
+
+            if target_teamspace is None:
+                raise ValueError(
+                    f"Could not resolve target teamspace {target_teamspace} "
+                    f"with owner {self.teamspace.owner} for duplication!"
+                )
+
+            target_teamspace_id = target_teamspace.id
+
+        kwargs = self._studio_api.duplicate_studio(
+            studio_id=self._studio.id, teamspace_id=self._teamspace.id, target_teamspace_id=target_teamspace_id
+        )
         return Studio(**kwargs)
 
     def switch_machine(self, machine: Union[Machine, str], interruptible: bool = False) -> None:

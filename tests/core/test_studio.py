@@ -296,7 +296,14 @@ def test_action_in_wrong_state(
 
 def test_duplicate(internal_studio_init_mocker, internal_studio_duplicate_mocker):
     studio = Studio("st-abc", "ts-abc", "org-abc")
-    studio.duplicate()
+    new_studio = studio.duplicate()
+    assert new_studio.teamspace.name == "ts-abc"
+
+
+def test_duplicate_other_teamspace(internal_studio_init_mocker, internal_studio_duplicate_mocker):
+    studio = Studio("st-abc", "ts-abc", "org-abc")
+    new_studio = studio.duplicate("ts-def")
+    assert new_studio.teamspace.name == "ts-def"
 
 
 def test_install_plugin(
