@@ -53,6 +53,7 @@ class V1Schedule(object):
         'resource_id': 'str',
         'resource_type': 'V1ScheduleResourceType',
         'state': 'str',
+        'timezone': 'str',
         'total': 'int',
         'updated_at': 'datetime',
         'user_id': 'str'
@@ -71,12 +72,13 @@ class V1Schedule(object):
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'state': 'state',
+        'timezone': 'timezone',
         'total': 'total',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, action_type: 'V1ScheduleActionType' =None, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, next: 'datetime' =None, parent_resource_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, action_type: 'V1ScheduleActionType' =None, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, next: 'datetime' =None, parent_resource_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, timezone: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Schedule - a model defined in Swagger"""  # noqa: E501
         self._action_type = None
         self._created_at = None
@@ -90,6 +92,7 @@ class V1Schedule(object):
         self._resource_id = None
         self._resource_type = None
         self._state = None
+        self._timezone = None
         self._total = None
         self._updated_at = None
         self._user_id = None
@@ -118,6 +121,8 @@ class V1Schedule(object):
             self.resource_type = resource_type
         if state is not None:
             self.state = state
+        if timezone is not None:
+            self.timezone = timezone
         if total is not None:
             self.total = total
         if updated_at is not None:
@@ -376,6 +381,27 @@ class V1Schedule(object):
         """
 
         self._state = state
+
+    @property
+    def timezone(self) -> 'str':
+        """Gets the timezone of this V1Schedule.  # noqa: E501
+
+
+        :return: The timezone of this V1Schedule.  # noqa: E501
+        :rtype: str
+        """
+        return self._timezone
+
+    @timezone.setter
+    def timezone(self, timezone: 'str'):
+        """Sets the timezone of this V1Schedule.
+
+
+        :param timezone: The timezone of this V1Schedule.  # noqa: E501
+        :type: str
+        """
+
+        self._timezone = timezone
 
     @property
     def total(self) -> 'int':

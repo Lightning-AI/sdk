@@ -51,6 +51,7 @@ class V1Message(object):
         'executable': 'bool',
         'id': 'str',
         'internal_message': 'bool',
+        'like': 'V1LikeStatus',
         'metadata': 'dict(str, str)',
         'model': 'str',
         'parent_message_id': 'str',
@@ -69,6 +70,7 @@ class V1Message(object):
         'executable': 'executable',
         'id': 'id',
         'internal_message': 'internalMessage',
+        'like': 'like',
         'metadata': 'metadata',
         'model': 'model',
         'parent_message_id': 'parentMessageId',
@@ -76,7 +78,7 @@ class V1Message(object):
         'throughput': 'throughput'
     }
 
-    def __init__(self, account_id: 'str' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, like: 'V1LikeStatus' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
         self._assistant_id = None
@@ -88,6 +90,7 @@ class V1Message(object):
         self._executable = None
         self._id = None
         self._internal_message = None
+        self._like = None
         self._metadata = None
         self._model = None
         self._parent_message_id = None
@@ -114,6 +117,8 @@ class V1Message(object):
             self.id = id
         if internal_message is not None:
             self.internal_message = internal_message
+        if like is not None:
+            self.like = like
         if metadata is not None:
             self.metadata = metadata
         if model is not None:
@@ -334,6 +339,27 @@ class V1Message(object):
         """
 
         self._internal_message = internal_message
+
+    @property
+    def like(self) -> 'V1LikeStatus':
+        """Gets the like of this V1Message.  # noqa: E501
+
+
+        :return: The like of this V1Message.  # noqa: E501
+        :rtype: V1LikeStatus
+        """
+        return self._like
+
+    @like.setter
+    def like(self, like: 'V1LikeStatus'):
+        """Sets the like of this V1Message.
+
+
+        :param like: The like of this V1Message.  # noqa: E501
+        :type: V1LikeStatus
+        """
+
+        self._like = like
 
     @property
     def metadata(self) -> 'dict(str, str)':

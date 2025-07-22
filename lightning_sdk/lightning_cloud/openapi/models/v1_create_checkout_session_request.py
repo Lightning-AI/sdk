@@ -43,6 +43,7 @@ class V1CreateCheckoutSessionRequest(object):
     swagger_types = {
         'amount': 'float',
         'capture_method': 'str',
+        'gclid': 'str',
         'org_id': 'str',
         'project_id': 'str',
         'redirect_url_cancelled': 'str',
@@ -54,6 +55,7 @@ class V1CreateCheckoutSessionRequest(object):
     attribute_map = {
         'amount': 'amount',
         'capture_method': 'captureMethod',
+        'gclid': 'gclid',
         'org_id': 'orgId',
         'project_id': 'projectId',
         'redirect_url_cancelled': 'redirectUrlCancelled',
@@ -62,10 +64,11 @@ class V1CreateCheckoutSessionRequest(object):
         'wallet_type': 'walletType'
     }
 
-    def __init__(self, amount: 'float' =None, capture_method: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, redirect_url_cancelled: 'str' =None, redirect_url_succeeded: 'str' =None, transaction_type: 'str' =None, wallet_type: 'CreateCheckoutSessionRequestWalletType' =None):  # noqa: E501
+    def __init__(self, amount: 'float' =None, capture_method: 'str' =None, gclid: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, redirect_url_cancelled: 'str' =None, redirect_url_succeeded: 'str' =None, transaction_type: 'str' =None, wallet_type: 'CreateCheckoutSessionRequestWalletType' =None):  # noqa: E501
         """V1CreateCheckoutSessionRequest - a model defined in Swagger"""  # noqa: E501
         self._amount = None
         self._capture_method = None
+        self._gclid = None
         self._org_id = None
         self._project_id = None
         self._redirect_url_cancelled = None
@@ -77,6 +80,8 @@ class V1CreateCheckoutSessionRequest(object):
             self.amount = amount
         if capture_method is not None:
             self.capture_method = capture_method
+        if gclid is not None:
+            self.gclid = gclid
         if org_id is not None:
             self.org_id = org_id
         if project_id is not None:
@@ -131,6 +136,27 @@ class V1CreateCheckoutSessionRequest(object):
         """
 
         self._capture_method = capture_method
+
+    @property
+    def gclid(self) -> 'str':
+        """Gets the gclid of this V1CreateCheckoutSessionRequest.  # noqa: E501
+
+
+        :return: The gclid of this V1CreateCheckoutSessionRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._gclid
+
+    @gclid.setter
+    def gclid(self, gclid: 'str'):
+        """Sets the gclid of this V1CreateCheckoutSessionRequest.
+
+
+        :param gclid: The gclid of this V1CreateCheckoutSessionRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._gclid = gclid
 
     @property
     def org_id(self) -> 'str':

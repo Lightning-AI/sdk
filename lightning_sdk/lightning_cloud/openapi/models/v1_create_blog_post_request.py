@@ -43,6 +43,8 @@ class V1CreateBlogPostRequest(object):
     swagger_types = {
         'author_id': 'str',
         'category': 'str',
+        'customer_logo_url': 'str',
+        'customer_name': 'str',
         'description': 'str',
         'image_url': 'str',
         'lit_page_id': 'str',
@@ -52,16 +54,20 @@ class V1CreateBlogPostRequest(object):
     attribute_map = {
         'author_id': 'authorId',
         'category': 'category',
+        'customer_logo_url': 'customerLogoUrl',
+        'customer_name': 'customerName',
         'description': 'description',
         'image_url': 'imageUrl',
         'lit_page_id': 'litPageId',
         'title': 'title'
     }
 
-    def __init__(self, author_id: 'str' =None, category: 'str' =None, description: 'str' =None, image_url: 'str' =None, lit_page_id: 'str' =None, title: 'str' =None):  # noqa: E501
+    def __init__(self, author_id: 'str' =None, category: 'str' =None, customer_logo_url: 'str' =None, customer_name: 'str' =None, description: 'str' =None, image_url: 'str' =None, lit_page_id: 'str' =None, title: 'str' =None):  # noqa: E501
         """V1CreateBlogPostRequest - a model defined in Swagger"""  # noqa: E501
         self._author_id = None
         self._category = None
+        self._customer_logo_url = None
+        self._customer_name = None
         self._description = None
         self._image_url = None
         self._lit_page_id = None
@@ -71,6 +77,10 @@ class V1CreateBlogPostRequest(object):
             self.author_id = author_id
         if category is not None:
             self.category = category
+        if customer_logo_url is not None:
+            self.customer_logo_url = customer_logo_url
+        if customer_name is not None:
+            self.customer_name = customer_name
         if description is not None:
             self.description = description
         if image_url is not None:
@@ -121,6 +131,48 @@ class V1CreateBlogPostRequest(object):
         """
 
         self._category = category
+
+    @property
+    def customer_logo_url(self) -> 'str':
+        """Gets the customer_logo_url of this V1CreateBlogPostRequest.  # noqa: E501
+
+
+        :return: The customer_logo_url of this V1CreateBlogPostRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._customer_logo_url
+
+    @customer_logo_url.setter
+    def customer_logo_url(self, customer_logo_url: 'str'):
+        """Sets the customer_logo_url of this V1CreateBlogPostRequest.
+
+
+        :param customer_logo_url: The customer_logo_url of this V1CreateBlogPostRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._customer_logo_url = customer_logo_url
+
+    @property
+    def customer_name(self) -> 'str':
+        """Gets the customer_name of this V1CreateBlogPostRequest.  # noqa: E501
+
+
+        :return: The customer_name of this V1CreateBlogPostRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._customer_name
+
+    @customer_name.setter
+    def customer_name(self, customer_name: 'str'):
+        """Sets the customer_name of this V1CreateBlogPostRequest.
+
+
+        :param customer_name: The customer_name of this V1CreateBlogPostRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._customer_name = customer_name
 
     @property
     def description(self) -> 'str':

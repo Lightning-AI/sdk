@@ -46,7 +46,8 @@ class ProjectIdSchedulesBody(object):
         'display_name': 'str',
         'parent_resource_id': 'str',
         'resource_id': 'str',
-        'resource_type': 'V1ScheduleResourceType'
+        'resource_type': 'V1ScheduleResourceType',
+        'timezone': 'str'
     }
 
     attribute_map = {
@@ -55,10 +56,11 @@ class ProjectIdSchedulesBody(object):
         'display_name': 'displayName',
         'parent_resource_id': 'parentResourceId',
         'resource_id': 'resourceId',
-        'resource_type': 'resourceType'
+        'resource_type': 'resourceType',
+        'timezone': 'timezone'
     }
 
-    def __init__(self, action_type: 'V1ScheduleActionType' =None, cron_expression: 'str' =None, display_name: 'str' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None):  # noqa: E501
+    def __init__(self, action_type: 'V1ScheduleActionType' =None, cron_expression: 'str' =None, display_name: 'str' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, timezone: 'str' =None):  # noqa: E501
         """ProjectIdSchedulesBody - a model defined in Swagger"""  # noqa: E501
         self._action_type = None
         self._cron_expression = None
@@ -66,6 +68,7 @@ class ProjectIdSchedulesBody(object):
         self._parent_resource_id = None
         self._resource_id = None
         self._resource_type = None
+        self._timezone = None
         self.discriminator = None
         if action_type is not None:
             self.action_type = action_type
@@ -79,6 +82,8 @@ class ProjectIdSchedulesBody(object):
             self.resource_id = resource_id
         if resource_type is not None:
             self.resource_type = resource_type
+        if timezone is not None:
+            self.timezone = timezone
 
     @property
     def action_type(self) -> 'V1ScheduleActionType':
@@ -205,6 +210,27 @@ class ProjectIdSchedulesBody(object):
         """
 
         self._resource_type = resource_type
+
+    @property
+    def timezone(self) -> 'str':
+        """Gets the timezone of this ProjectIdSchedulesBody.  # noqa: E501
+
+
+        :return: The timezone of this ProjectIdSchedulesBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._timezone
+
+    @timezone.setter
+    def timezone(self, timezone: 'str'):
+        """Sets the timezone of this ProjectIdSchedulesBody.
+
+
+        :param timezone: The timezone of this ProjectIdSchedulesBody.  # noqa: E501
+        :type: str
+        """
+
+        self._timezone = timezone
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

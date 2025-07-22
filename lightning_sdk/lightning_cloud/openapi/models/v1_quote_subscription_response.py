@@ -43,6 +43,7 @@ class V1QuoteSubscriptionResponse(object):
     swagger_types = {
         'annual_amount': 'int',
         'annual_tax': 'int',
+        'eligible': 'bool',
         'features': 'list[V1BillingFeature]',
         'monthly_amount': 'int',
         'monthly_tax': 'int',
@@ -54,6 +55,7 @@ class V1QuoteSubscriptionResponse(object):
     attribute_map = {
         'annual_amount': 'annualAmount',
         'annual_tax': 'annualTax',
+        'eligible': 'eligible',
         'features': 'features',
         'monthly_amount': 'monthlyAmount',
         'monthly_tax': 'monthlyTax',
@@ -62,10 +64,11 @@ class V1QuoteSubscriptionResponse(object):
         'trial_days': 'trialDays'
     }
 
-    def __init__(self, annual_amount: 'int' =None, annual_tax: 'int' =None, features: 'list[V1BillingFeature]' =None, monthly_amount: 'int' =None, monthly_tax: 'int' =None, prorated_amount: 'int' =None, prorated_tax: 'int' =None, trial_days: 'int' =None):  # noqa: E501
+    def __init__(self, annual_amount: 'int' =None, annual_tax: 'int' =None, eligible: 'bool' =None, features: 'list[V1BillingFeature]' =None, monthly_amount: 'int' =None, monthly_tax: 'int' =None, prorated_amount: 'int' =None, prorated_tax: 'int' =None, trial_days: 'int' =None):  # noqa: E501
         """V1QuoteSubscriptionResponse - a model defined in Swagger"""  # noqa: E501
         self._annual_amount = None
         self._annual_tax = None
+        self._eligible = None
         self._features = None
         self._monthly_amount = None
         self._monthly_tax = None
@@ -77,6 +80,8 @@ class V1QuoteSubscriptionResponse(object):
             self.annual_amount = annual_amount
         if annual_tax is not None:
             self.annual_tax = annual_tax
+        if eligible is not None:
+            self.eligible = eligible
         if features is not None:
             self.features = features
         if monthly_amount is not None:
@@ -131,6 +136,27 @@ class V1QuoteSubscriptionResponse(object):
         """
 
         self._annual_tax = annual_tax
+
+    @property
+    def eligible(self) -> 'bool':
+        """Gets the eligible of this V1QuoteSubscriptionResponse.  # noqa: E501
+
+
+        :return: The eligible of this V1QuoteSubscriptionResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._eligible
+
+    @eligible.setter
+    def eligible(self, eligible: 'bool'):
+        """Sets the eligible of this V1QuoteSubscriptionResponse.
+
+
+        :param eligible: The eligible of this V1QuoteSubscriptionResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._eligible = eligible
 
     @property
     def features(self) -> 'list[V1BillingFeature]':

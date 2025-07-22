@@ -44,6 +44,7 @@ class V1Conversation(object):
         'assistant_id': 'str',
         'created_at': 'datetime',
         'id': 'str',
+        'like': 'V1LikeStatus',
         'messages': 'list[V1Message]',
         'name': 'str',
         'project_id': 'str',
@@ -56,6 +57,7 @@ class V1Conversation(object):
         'assistant_id': 'assistantId',
         'created_at': 'createdAt',
         'id': 'id',
+        'like': 'like',
         'messages': 'messages',
         'name': 'name',
         'project_id': 'projectId',
@@ -64,11 +66,12 @@ class V1Conversation(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, assistant_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, messages: 'list[V1Message]' =None, name: 'str' =None, project_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, like: 'V1LikeStatus' =None, messages: 'list[V1Message]' =None, name: 'str' =None, project_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Conversation - a model defined in Swagger"""  # noqa: E501
         self._assistant_id = None
         self._created_at = None
         self._id = None
+        self._like = None
         self._messages = None
         self._name = None
         self._project_id = None
@@ -82,6 +85,8 @@ class V1Conversation(object):
             self.created_at = created_at
         if id is not None:
             self.id = id
+        if like is not None:
+            self.like = like
         if messages is not None:
             self.messages = messages
         if name is not None:
@@ -157,6 +162,27 @@ class V1Conversation(object):
         """
 
         self._id = id
+
+    @property
+    def like(self) -> 'V1LikeStatus':
+        """Gets the like of this V1Conversation.  # noqa: E501
+
+
+        :return: The like of this V1Conversation.  # noqa: E501
+        :rtype: V1LikeStatus
+        """
+        return self._like
+
+    @like.setter
+    def like(self, like: 'V1LikeStatus'):
+        """Sets the like of this V1Conversation.
+
+
+        :param like: The like of this V1Conversation.  # noqa: E501
+        :type: V1LikeStatus
+        """
+
+        self._like = like
 
     @property
     def messages(self) -> 'list[V1Message]':

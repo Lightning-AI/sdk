@@ -41,24 +41,102 @@ class V1KubernetesDirectV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'grafana_dashboard_url': 'str',
+        'grafana_service_name': 'str',
+        'grafana_service_port': 'str',
         'kubeconfig': 'str',
         'kubeconfig_elevated': 'str'
     }
 
     attribute_map = {
+        'grafana_dashboard_url': 'grafanaDashboardUrl',
+        'grafana_service_name': 'grafanaServiceName',
+        'grafana_service_port': 'grafanaServicePort',
         'kubeconfig': 'kubeconfig',
         'kubeconfig_elevated': 'kubeconfigElevated'
     }
 
-    def __init__(self, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None):  # noqa: E501
+    def __init__(self, grafana_dashboard_url: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
+        self._grafana_dashboard_url = None
+        self._grafana_service_name = None
+        self._grafana_service_port = None
         self._kubeconfig = None
         self._kubeconfig_elevated = None
         self.discriminator = None
+        if grafana_dashboard_url is not None:
+            self.grafana_dashboard_url = grafana_dashboard_url
+        if grafana_service_name is not None:
+            self.grafana_service_name = grafana_service_name
+        if grafana_service_port is not None:
+            self.grafana_service_port = grafana_service_port
         if kubeconfig is not None:
             self.kubeconfig = kubeconfig
         if kubeconfig_elevated is not None:
             self.kubeconfig_elevated = kubeconfig_elevated
+
+    @property
+    def grafana_dashboard_url(self) -> 'str':
+        """Gets the grafana_dashboard_url of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The grafana_dashboard_url of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._grafana_dashboard_url
+
+    @grafana_dashboard_url.setter
+    def grafana_dashboard_url(self, grafana_dashboard_url: 'str'):
+        """Sets the grafana_dashboard_url of this V1KubernetesDirectV1.
+
+
+        :param grafana_dashboard_url: The grafana_dashboard_url of this V1KubernetesDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._grafana_dashboard_url = grafana_dashboard_url
+
+    @property
+    def grafana_service_name(self) -> 'str':
+        """Gets the grafana_service_name of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The grafana_service_name of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._grafana_service_name
+
+    @grafana_service_name.setter
+    def grafana_service_name(self, grafana_service_name: 'str'):
+        """Sets the grafana_service_name of this V1KubernetesDirectV1.
+
+
+        :param grafana_service_name: The grafana_service_name of this V1KubernetesDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._grafana_service_name = grafana_service_name
+
+    @property
+    def grafana_service_port(self) -> 'str':
+        """Gets the grafana_service_port of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The grafana_service_port of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._grafana_service_port
+
+    @grafana_service_port.setter
+    def grafana_service_port(self, grafana_service_port: 'str'):
+        """Sets the grafana_service_port of this V1KubernetesDirectV1.
+
+
+        :param grafana_service_port: The grafana_service_port of this V1KubernetesDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._grafana_service_port = grafana_service_port
 
     @property
     def kubeconfig(self) -> 'str':

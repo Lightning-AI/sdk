@@ -45,6 +45,8 @@ class V1BlogPost(object):
         'author_id': 'str',
         'category': 'str',
         'created_at': 'datetime',
+        'customer_logo_url': 'str',
+        'customer_name': 'str',
         'description': 'str',
         'id': 'str',
         'image_url': 'str',
@@ -59,6 +61,8 @@ class V1BlogPost(object):
         'author_id': 'authorId',
         'category': 'category',
         'created_at': 'createdAt',
+        'customer_logo_url': 'customerLogoUrl',
+        'customer_name': 'customerName',
         'description': 'description',
         'id': 'id',
         'image_url': 'imageUrl',
@@ -68,12 +72,14 @@ class V1BlogPost(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, author: 'V1Author' =None, author_id: 'str' =None, category: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, id: 'str' =None, image_url: 'str' =None, lit_page: 'V1LitPage' =None, lit_page_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, author: 'V1Author' =None, author_id: 'str' =None, category: 'str' =None, created_at: 'datetime' =None, customer_logo_url: 'str' =None, customer_name: 'str' =None, description: 'str' =None, id: 'str' =None, image_url: 'str' =None, lit_page: 'V1LitPage' =None, lit_page_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1BlogPost - a model defined in Swagger"""  # noqa: E501
         self._author = None
         self._author_id = None
         self._category = None
         self._created_at = None
+        self._customer_logo_url = None
+        self._customer_name = None
         self._description = None
         self._id = None
         self._image_url = None
@@ -90,6 +96,10 @@ class V1BlogPost(object):
             self.category = category
         if created_at is not None:
             self.created_at = created_at
+        if customer_logo_url is not None:
+            self.customer_logo_url = customer_logo_url
+        if customer_name is not None:
+            self.customer_name = customer_name
         if description is not None:
             self.description = description
         if id is not None:
@@ -188,6 +198,48 @@ class V1BlogPost(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def customer_logo_url(self) -> 'str':
+        """Gets the customer_logo_url of this V1BlogPost.  # noqa: E501
+
+
+        :return: The customer_logo_url of this V1BlogPost.  # noqa: E501
+        :rtype: str
+        """
+        return self._customer_logo_url
+
+    @customer_logo_url.setter
+    def customer_logo_url(self, customer_logo_url: 'str'):
+        """Sets the customer_logo_url of this V1BlogPost.
+
+
+        :param customer_logo_url: The customer_logo_url of this V1BlogPost.  # noqa: E501
+        :type: str
+        """
+
+        self._customer_logo_url = customer_logo_url
+
+    @property
+    def customer_name(self) -> 'str':
+        """Gets the customer_name of this V1BlogPost.  # noqa: E501
+
+
+        :return: The customer_name of this V1BlogPost.  # noqa: E501
+        :rtype: str
+        """
+        return self._customer_name
+
+    @customer_name.setter
+    def customer_name(self, customer_name: 'str'):
+        """Sets the customer_name of this V1BlogPost.
+
+
+        :param customer_name: The customer_name of this V1BlogPost.  # noqa: E501
+        :type: str
+        """
+
+        self._customer_name = customer_name
 
     @property
     def description(self) -> 'str':
