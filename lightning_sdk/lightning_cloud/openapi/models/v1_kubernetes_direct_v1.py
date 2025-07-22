@@ -42,6 +42,7 @@ class V1KubernetesDirectV1(object):
     """
     swagger_types = {
         'grafana_dashboard_url': 'str',
+        'grafana_namespace': 'str',
         'grafana_service_name': 'str',
         'grafana_service_port': 'str',
         'kubeconfig': 'str',
@@ -50,15 +51,17 @@ class V1KubernetesDirectV1(object):
 
     attribute_map = {
         'grafana_dashboard_url': 'grafanaDashboardUrl',
+        'grafana_namespace': 'grafanaNamespace',
         'grafana_service_name': 'grafanaServiceName',
         'grafana_service_port': 'grafanaServicePort',
         'kubeconfig': 'kubeconfig',
         'kubeconfig_elevated': 'kubeconfigElevated'
     }
 
-    def __init__(self, grafana_dashboard_url: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None):  # noqa: E501
+    def __init__(self, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._grafana_dashboard_url = None
+        self._grafana_namespace = None
         self._grafana_service_name = None
         self._grafana_service_port = None
         self._kubeconfig = None
@@ -66,6 +69,8 @@ class V1KubernetesDirectV1(object):
         self.discriminator = None
         if grafana_dashboard_url is not None:
             self.grafana_dashboard_url = grafana_dashboard_url
+        if grafana_namespace is not None:
+            self.grafana_namespace = grafana_namespace
         if grafana_service_name is not None:
             self.grafana_service_name = grafana_service_name
         if grafana_service_port is not None:
@@ -95,6 +100,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._grafana_dashboard_url = grafana_dashboard_url
+
+    @property
+    def grafana_namespace(self) -> 'str':
+        """Gets the grafana_namespace of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The grafana_namespace of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._grafana_namespace
+
+    @grafana_namespace.setter
+    def grafana_namespace(self, grafana_namespace: 'str'):
+        """Sets the grafana_namespace of this V1KubernetesDirectV1.
+
+
+        :param grafana_namespace: The grafana_namespace of this V1KubernetesDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._grafana_namespace = grafana_namespace
 
     @property
     def grafana_service_name(self) -> 'str':
