@@ -107,8 +107,8 @@ class Teamspace:
         from lightning_sdk.studio import Studio
 
         studios = []
-        clusters = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
-        for cl in clusters:
+        cloud_accounts = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
+        for cl in cloud_accounts:
             _studios = self._teamspace_api.list_studios(teamspace_id=self.id, cloud_account=cl.cluster_id)
             for s in _studios:
                 studios.append(Studio(name=s.name, teamspace=self, cluster=cl.cluster_name, create_ok=False))
@@ -117,7 +117,10 @@ class Teamspace:
 
     @property
     def default_cloud_account(self) -> Optional[str]:
-        return self._teamspace.project_settings.preferred_cluster or getattr(self.owner, "default_cloud_account", None)
+        owner_preferred_cluster = (
+            getattr(self.owner, "default_cloud_account", None) if isinstance(self.owner, Organization) else None
+        )
+        return self._teamspace.project_settings.preferred_cluster or owner_preferred_cluster
 
     @property
     def start_studios_on_interruptible(self) -> bool:
@@ -126,8 +129,8 @@ class Teamspace:
     @property
     def cloud_accounts(self) -> List[str]:
         """All cloud accounts associated with that teamspace."""
-        clusters = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
-        return [cl.cluster_name for cl in clusters]
+        cloud_accounts = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
+        return [cl.cluster_name for cl in cloud_accounts]
 
     @property
     def cloud_account_objs(self) -> List[V1ProjectClusterBinding]:
@@ -196,7 +199,10 @@ class Teamspace:
         if cloud_account is None:
             cloud_account = os.getenv("LIGHTNING_CLUSTER_ID") or self.default_cloud_account
 
-        cluster_machines = self._teamspace_api.list_machines(self.id, cloud_account=cloud_account)
+        if cloud_account is None:
+            raise RuntimeError("Could not resolve cloud account")
+
+        cloud_machines = self._teamspace_api.list_machines(self.id, cloud_account=cloud_account)
         return [
             Machine(
                 cluster_machine.instance_id,
@@ -208,7 +214,7 @@ class Teamspace:
                 if cluster_machine.available_in_seconds_spot
                 else None,
             )
-            for cluster_machine in cluster_machines
+            for cluster_machine in cloud_machines
         ]
 
     def __eq__(self, other: "Teamspace") -> bool:

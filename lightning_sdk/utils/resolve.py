@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.api.utils import _get_cloud_url
-from lightning_sdk.machine import Machine
+from lightning_sdk.machine import CloudProvider, Machine
 
 if TYPE_CHECKING:
     from lightning_sdk.organization import Organization
@@ -46,6 +46,26 @@ def _resolve_deprecated_cloud_compute(machine: Machine, cloud_compute: Optional[
         )
 
     return machine
+
+
+def _resolve_deprecated_provider(
+    cloud_provider: Optional[Union[CloudProvider, str]], provider: Optional[Union[CloudProvider, str]]
+) -> Optional[Union[CloudProvider, str]]:
+    if provider is not None:
+        if cloud_provider is not None:
+            raise ValueError(
+                "Cannot use both 'provider' and 'cloud_provider' at the same time."
+                "Please don't set the 'provider' as it will be deprecated!"
+            )
+
+        warnings.warn(
+            "The 'provider' argument will be deprecated in the future! "
+            "Please consider using the 'cloud_provider' argument instead!",
+            DeprecationWarning,
+        )
+        return provider
+
+    return cloud_provider
 
 
 def _resolve_deprecated_cluster(cloud_account: Optional[str], cluster: Optional[str]) -> Optional[str]:

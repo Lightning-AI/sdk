@@ -2,11 +2,12 @@ import warnings
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Dict, Optional, TypedDict, Union
 
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace, in_studio
 
 if TYPE_CHECKING:
-    from lightning_sdk.machine import Machine
+    from lightning_sdk.machine import CloudProvider, Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.status import Status
     from lightning_sdk.studio import Studio
@@ -64,6 +65,7 @@ class _BaseJob(ABC):
             self._update_internal_job()
 
         self._prevent_refetch_latest = False
+        self._cloud_account_api = CloudAccountApi()
 
     @classmethod
     def run(
@@ -77,6 +79,7 @@ class _BaseJob(ABC):
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
@@ -102,7 +105,11 @@ class _BaseJob(ABC):
             user: The user owning the teamspace (if any). Defaults to the current user.
             cloud_account: The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
-                If not provided will fall back to the teamspaces default cloud account.
+                If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
+                will fall back to the teamspaces default cloud account.
+            cloud_account_provider: The provider to select the cloud-account from.
+                If set, must be in agreement with the provider from the cloud_account (if specified).
+                If not specified, falls backto the teamspace default cloud account.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             image_credentials: The credentials used to pull the image. Required if the image is private.
@@ -204,6 +211,7 @@ class _BaseJob(ABC):
         return inst._submit(
             machine=machine,
             cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
             command=command,
             studio=studio,
             image=image,
@@ -228,6 +236,7 @@ class _BaseJob(ABC):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
@@ -248,7 +257,11 @@ class _BaseJob(ABC):
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             cloud_account: The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
-                If not provided will fall back to the teamspaces default cloud account.
+                If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
+                will fall back to the teamspaces default cloud account.
+            cloud_account_provider: The provider to select the cloud-account from.
+                If set, must be in agreement with the provider from the cloud_account (if specified).
+                If not specified, falls backto the teamspace default cloud account.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.

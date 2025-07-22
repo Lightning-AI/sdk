@@ -7,12 +7,13 @@ import click
 from rich.console import Console
 
 from lightning_sdk import Machine, Studio
-from lightning_sdk.api.cluster_api import ClusterApi
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
-from lightning_sdk.studio import Provider
+from lightning_sdk.machine import CloudProvider
+from lightning_sdk.utils.resolve import _resolve_deprecated_provider
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
-_PROVIDER_VALUES = tuple([provider.value for provider in Provider])
+_PROVIDER_VALUES = tuple([provider.value for provider in CloudProvider])
 
 
 @click.group("create")
@@ -48,16 +49,26 @@ def create() -> None:
     ),
 )
 @click.option(
-    "--provider",
+    "--cloud-provider",
     default=None,
     type=click.Choice(_PROVIDER_VALUES),
     help="The provider to create the studio on. If --cloud-account is specified, this option is prioritized.",
+)
+@click.option(
+    "--provider",
+    default=None,
+    type=click.Choice(_PROVIDER_VALUES),
+    help=(
+        "Deprecated. Use --cloud-provider instead. The provider to create the studio on. "
+        "If --cloud-account is specified, this option is prioritized."
+    ),
 )
 def studio(
     name: str,
     teamspace: Optional[str] = None,
     start: Optional[str] = None,
     cloud_account: Optional[str] = None,
+    cloud_provider: Optional[str] = None,
     provider: Optional[str] = None,
 ) -> None:
     """Create a new studio on the Lightning AI platform.
@@ -70,12 +81,13 @@ def studio(
     menu = _TeamspacesMenu()
     teamspace_resolved = menu._resolve_teamspace(teamspace)
 
-    if provider is not None:
-        cluster_api = ClusterApi()
-        cloud_account = cluster_api.get_cluster_provider_mapping(
-            teamspace_resolved.id,
-            teamspace_resolved.owner.id,
-        )[provider]
+    cloud_provider = str(_resolve_deprecated_provider(cloud_provider, provider))
+
+    if cloud_provider is not None:
+        cloud_account_api = CloudAccountApi()
+        cloud_account = cloud_account_api.resolve_cloud_account(
+            teamspace_resolved.id, cloud_account, cloud_provider, teamspace_resolved.default_cloud_account
+        )
 
     # default cloud account to current studios cloud account if run from studio
     # else it will fall back to teamspace default in the backend

@@ -6,7 +6,7 @@ from lightning_sdk.status import Status
 
 if TYPE_CHECKING:
     from lightning_sdk.job.job import Job
-    from lightning_sdk.machine import Machine
+    from lightning_sdk.machine import CloudProvider, Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
@@ -49,6 +49,7 @@ class _MMTV2(_BaseMMT):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
@@ -70,7 +71,11 @@ class _MMTV2(_BaseMMT):
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             cloud_account: The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
-                If not provided will fall back to the teamspaces default cloud account.
+                If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
+                will fall back to the teamspaces default cloud account.
+            cloud_account_provider: The provider to select the cloud-account from.
+                If set, must be in agreement with the provider from the cloud_account (if specified).
+                If not specified, falls backto the teamspace default cloud account.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
@@ -109,6 +114,14 @@ class _MMTV2(_BaseMMT):
             studio_id = None
             if image is None:
                 raise ValueError("either image or studio must be provided")
+
+        cloud_account = self._cloud_account_api.resolve_cloud_account(
+            self._teamspace.id,
+            cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
+            default_cloud_account=self._teamspace.default_cloud_account,
+        )
+
         submitted = self._job_api.submit_job(
             name=self.name,
             num_machines=num_machines,

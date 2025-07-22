@@ -42,18 +42,18 @@ class TestClustersMenu:
         )
         assert result == mock_terminal_menu_class.return_value
 
-    @patch("lightning_sdk.cli.clusters_menu.ClusterApi")
+    @patch("lightning_sdk.cli.clusters_menu.CloudAccountApi")
     @patch("lightning_sdk.cli.clusters_menu.Console")
     @patch("sys.exit")
-    def test_resolve_cluster_success(self, mock_exit, mock_console_class, mock_cluster_api_class):
+    def test_resolve_cluster_success(self, mock_exit, mock_console_class, mock_cloud_account_api_class):
         mock_console = MagicMock()
         mock_console_class.return_value = mock_console
 
-        mock_cluster_api = MagicMock()
-        mock_cluster_api_class.return_value = mock_cluster_api
+        mock_cloud_account_api = MagicMock()
+        mock_cloud_account_api_class.return_value = mock_cloud_account_api
 
         expected_cluster = MagicMock(spec=Externalv1Cluster)
-        mock_cluster_api.get_cluster.return_value = expected_cluster
+        mock_cloud_account_api.get_cloud_account.return_value = expected_cluster
 
         self.clusters_menu._get_cluster_from_interactive_menu = MagicMock(return_value="cluster-2")
 
@@ -63,7 +63,7 @@ class TestClustersMenu:
         self.clusters_menu._get_cluster_from_interactive_menu.assert_called_once_with(
             possible_clusters=self.mock_teamspace.cloud_account_objs
         )
-        mock_cluster_api.get_cluster.assert_called_once_with(
+        mock_cloud_account_api.get_cloud_account.assert_called_once_with(
             cluster_id="cluster-2", org_id=self.mock_teamspace.owner.id, project_id=self.mock_teamspace.id
         )
         mock_exit.assert_not_called()

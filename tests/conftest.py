@@ -1630,7 +1630,9 @@ def internal_teamspace_api_list_mocker(mocker):
                     display_name=member.display_name,
                     owner_id=member.owner_id,
                     owner_type=member.owner_type,
+                    project_settings=V1ProjectSettings(preferred_cluster="cluster-abc"),
                 )
+
         return None
 
     mocker.patch(

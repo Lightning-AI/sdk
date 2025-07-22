@@ -5,7 +5,7 @@ from rich.console import Console
 from simple_term_menu import TerminalMenu
 
 from lightning_sdk import Teamspace
-from lightning_sdk.api.cluster_api import ClusterApi
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.lightning_cloud.openapi import Externalv1Cluster, V1ProjectClusterBinding
 
 
@@ -29,9 +29,9 @@ class _ClustersMenu:
             selected_cluster_id = self._get_cluster_from_interactive_menu(
                 possible_clusters=teamspace.cloud_account_objs
             )
-            cluster_api = ClusterApi()
+            cloud_account_api = CloudAccountApi()
 
-            return cluster_api.get_cluster(
+            return cloud_account_api.get_cloud_account(
                 cluster_id=selected_cluster_id, org_id=teamspace.owner.id, project_id=teamspace.id
             )
         except KeyboardInterrupt:

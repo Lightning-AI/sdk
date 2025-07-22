@@ -1,7 +1,9 @@
 import os
 from typing import List, Optional, Union
 
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.pipeline_api import PipelineApi
+from lightning_sdk.machine import CloudProvider
 from lightning_sdk.organization import Organization
 from lightning_sdk.pipeline.printer import PipelinePrinter
 from lightning_sdk.pipeline.schedule import _TIMEZONES, Schedule
@@ -22,6 +24,7 @@ class Pipeline:
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union[CloudProvider, str]] = None,
         shared_filesystem: Optional[bool] = None,
         studio: Optional[Union[Studio, str]] = None,
     ) -> None:
@@ -43,9 +46,14 @@ class Pipeline:
             org=org,
             user=user,
         )
+        if self._teamspace is None:
+            raise RuntimeError("Could not resolve teamspace")
 
         self._pipeline_api = PipelineApi()
-        self._cloud_account = cloud_account
+        self._cloud_account_api = CloudAccountApi()
+        self._cloud_account = self._cloud_account_api.resolve_cloud_account(
+            self._teamspace.id, cloud_account, cloud_provider, self._teamspace.default_cloud_account
+        )
         self._default_cluster = _get_cluster(
             client=self._pipeline_api._client, project_id=self._teamspace.id, cluster_id=cloud_account
         )

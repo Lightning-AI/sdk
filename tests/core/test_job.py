@@ -448,6 +448,7 @@ def test_submit_jobv2_studio_resolve(
     submit_mock.assert_called_once_with(
         command="echo hello",
         cloud_account="c-abc",
+        cloud_provider=None,
         env=None,
         image=None,
         interruptible=False,
@@ -512,6 +513,7 @@ def test_submit_jobv2_studio_path(
     submit_mock.assert_called_once_with(
         command="echo hello",
         cloud_account=None if image else "c-abc",
+        cloud_provider=None,
         env=None,
         image=image,
         interruptible=False,
@@ -564,6 +566,7 @@ def test_submit_job_v2_image_from_studio(
     submit_mock.assert_called_once_with(
         command="echo hello",
         cloud_account="c-abc",  # cloud account is inferred from studio we submit from
+        cloud_provider=None,
         env=None,
         image="ubuntu",
         interruptible=False,

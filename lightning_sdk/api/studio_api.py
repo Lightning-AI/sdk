@@ -121,7 +121,7 @@ class StudioApi:
         name: str,
         teamspace_id: str,
         cloud_account: Optional[str] = None,
-        source: Optional[V1CloudSpaceSourceType] = None,
+        source: Optional[Union[V1CloudSpaceSourceType, str]] = None,
         disable_secrets: bool = False,
         sandbox: bool = False,
         cloud_space_environment_template_id: Optional[str] = None,

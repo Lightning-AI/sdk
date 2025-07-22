@@ -476,22 +476,19 @@ def test_list_machines_env_cloud_account(mock_resolve_org, mock_resolve_user, mo
 
 
 @pytest.mark.parametrize(
-    ("teamspace_preferred_cluster", "org_default_cloud_account", "user_default_cloud_account", "expected_result"),
+    ("teamspace_preferred_cluster", "org_default_cloud_account", "expected_result"),
     [
-        # Teamspace has preferred cluster - should use it regardless of owner's default
-        ("teamspace-cluster", "org-cluster", None, "teamspace-cluster"),
-        ("teamspace-cluster", None, "user-cluster", "teamspace-cluster"),
-        ("teamspace-cluster", "org-cluster", "user-cluster", "teamspace-cluster"),
-        # Teamspace has no preferred cluster - should fall back to owner's default
-        (None, "org-cluster", None, "org-cluster"),
-        ("", "org-cluster", None, "org-cluster"),
-        (None, None, "user-cluster", "user-cluster"),
-        ("", None, "user-cluster", "user-cluster"),
-        # Neither teamspace nor owner has default - should return None
-        (None, None, None, None),
-        # Empty string cases - empty strings are falsy and should trigger fallback
-        ("", "", None, ""),  # Empty string from owner is still returned as empty string
-        ("", None, "", ""),  # Empty string from owner is still returned as empty string
+        # Preferred cluster takes precedence
+        ("teamspace-cluster", "org-cluster", "teamspace-cluster"),
+        ("teamspace-cluster", None, "teamspace-cluster"),
+        # Fallback to org default if no preferred cluster
+        (None, "org-cluster", "org-cluster"),
+        ("", "org-cluster", "org-cluster"),
+        # No preferred cluster and no org default
+        (None, None, None),
+        ("", None, None),
+        # Empty string from org is returned as-is if preferred_cluster is falsy
+        ("", "", ""),
     ],
 )
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
@@ -503,37 +500,19 @@ def test_teamspace_default_cloud_account_resolution(
     mock_teamspace_api,
     teamspace_preferred_cluster,
     org_default_cloud_account,
-    user_default_cloud_account,
     expected_result,
 ):
-    """Test that teamspace default cloud account resolves correctly based on teamspace and owner settings."""
+    """Test that Teamspace.default_cloud_account resolves correctly with teamspace preferred_cluster and org fallback"""
 
-    # Mock the teamspace API response
+    # Set up mock for preferred_cluster
     mock_teamspace_api().get_teamspace().project_settings.preferred_cluster = teamspace_preferred_cluster
 
-    # Mock organization with default cloud account
-    mock_org = mock.Mock()
+    # Set up org mock (only relevant fallback owner type)
+    mock_org = mock.Mock(spec=Organization)
     mock_org.default_cloud_account = org_default_cloud_account
     mock_resolve_org.return_value = mock_org if org_default_cloud_account is not None else None
 
-    # Mock user with default cloud account
-    mock_user = mock.Mock()
-    mock_user.default_cloud_account = user_default_cloud_account
-    mock_resolve_user.return_value = mock_user if user_default_cloud_account is not None else None
+    # Always pass org as owner since only org is relevant here
+    teamspace = Teamspace(name="teamspace-name", org="test-org")
 
-    # Test with organization owner
-    if org_default_cloud_account is not None:
-        teamspace = Teamspace(name="teamspace-name", org="test-org")
-        assert teamspace.default_cloud_account == expected_result
-
-    # Test with user owner
-    elif user_default_cloud_account is not None:
-        teamspace = Teamspace(name="teamspace-name", user="test-user")
-        assert teamspace.default_cloud_account == expected_result
-
-    # Test with no owner defaults
-    else:
-        # Need to mock at least one owner to avoid initialization error
-        mock_resolve_user.return_value = mock_user
-        teamspace = Teamspace(name="teamspace-name", user="test-user")
-        assert teamspace.default_cloud_account == expected_result
+    assert teamspace.default_cloud_account == expected_result

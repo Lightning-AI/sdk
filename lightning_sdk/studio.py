@@ -1,23 +1,26 @@
 import glob
 import os
 import warnings
-from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Tuple, Union
 
 from tqdm.auto import tqdm
 
-from lightning_sdk.api.cluster_api import ClusterApi
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.constants import _LIGHTNING_DEBUG
-from lightning_sdk.lightning_cloud.openapi import V1CloudSpaceSourceType
-from lightning_sdk.machine import Machine
+from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
 from lightning_sdk.status import Status
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace, _setup_logger
+from lightning_sdk.utils.resolve import (
+    _resolve_deprecated_cluster,
+    _resolve_deprecated_provider,
+    _resolve_teamspace,
+    _setup_logger,
+)
 
 if TYPE_CHECKING:
     from lightning_sdk.job import Job
@@ -25,19 +28,6 @@ if TYPE_CHECKING:
     from lightning_sdk.plugin import Plugin
 
 _logger = _setup_logger(__name__)
-
-
-class Provider(Enum):
-    # Machine providers based on v1CloudProvider
-    AWS = "AWS"
-    GCP = "GCP"
-    VULTR = "VULTR"
-    LAMBDA_LABS = "LAMBDA_LABS"
-    DGX = "DGX"
-    VOLTAGE_PARK = "VOLTAGE_PARK"
-    NEBIUS = "NEBIUS"
-    CLOUDFLARE = "CLOUDFLARE"
-    LIGHTNING = "LIGHTNING"
 
 
 class Studio:
@@ -53,6 +43,9 @@ class Studio:
         user: the name of the user owning the :param`teamspace` in case it is owned directly by a user instead of an org
         cloud_account: the name of the cloud account, the studio should be created on.
             Doesn't matter when the studio already exists.
+        cloud_account_provider: The provider to select the cloud-account from.
+            If set, must be in agreement with the provider from the cloud_account (if specified).
+            If not specified, falls backto the teamspace default cloud account.
         create_ok: whether the studio will be created if it does not yet exist. Defaults to True
         provider: the provider of the machine, the studio should be created on.
 
@@ -72,14 +65,15 @@ class Studio:
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union[CloudProvider, str]] = None,
         create_ok: bool = True,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
-        provider: Optional[str] = None,
-        source: Optional[V1CloudSpaceSourceType] = None,
+        source: Optional[str] = None,
         disable_secrets: bool = False,
+        provider: Optional[Union[CloudProvider, str]] = None,  # deprecated in favor of cloud_provider
     ) -> None:
         self._studio_api = StudioApi()
-        self._cluster_api = ClusterApi()
+        self._cloud_account_api = CloudAccountApi()
 
         _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         if _teamspace is None:
@@ -87,20 +81,21 @@ class Studio:
 
         self._teamspace = _teamspace
         self._cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+
         self._setup_done = False
         self._disable_secrets = disable_secrets
 
         self._plugins = {}
 
-        if provider is not None:
-            if isinstance(provider, str) and provider in Provider.__members__:
-                provider = Provider(provider)
-            else:
-                raise ValueError(f"Invalid provider: {provider}. Must be one of {Provider.__members__.keys()}.")
-            self._cloud_account = self._cluster_api.get_cluster_provider_mapping(
-                self._teamspace.id,
-                self._teamspace.owner.id,
-            )[provider.value]
+        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+        cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
+
+        self._cloud_account = self._cloud_account_api.resolve_cloud_account(
+            self._teamspace.id,
+            cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
+            default_cloud_account=self._teamspace.default_cloud_account,
+        )
 
         if name is None:
             studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
@@ -121,6 +116,8 @@ class Studio:
                     )
                 else:
                     raise ValueError(f"Studio {name} does not exist.") from e
+
+        self._cloud_account = self._studio.cluster_id
 
         if (
             not self._skip_init

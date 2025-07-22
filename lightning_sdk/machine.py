@@ -1,5 +1,17 @@
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, ClassVar, Optional, Tuple
+
+
+class CloudProvider(Enum):
+    AWS = "AWS"
+    GCP = "GCP"
+    VULTR = "VULTR"
+    LAMBDA_LABS = "LAMBDA_LABS"
+    DGX = "DGX"
+    VOLTAGE_PARK = "VOLTAGE_PARK"
+    NEBIUS = "NEBIUS"
+    LIGHTNING = "LIGHTNING"
 
 
 @dataclass(frozen=True)

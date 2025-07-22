@@ -25,11 +25,11 @@ from lightning_sdk.lightning_cloud.openapi.models import (
 from lightning_sdk.machine import Machine
 from lightning_sdk.mmt.v2 import MMTApiV2
 from lightning_sdk.pipeline.utils import DEFAULT, _get_studio, _to_wait_for, _validate_cloud_account
-from lightning_sdk.studio import Studio
+from lightning_sdk.studio import CloudAccountApi, Studio
 
 if TYPE_CHECKING:
     from lightning_sdk.organization import Organization
-    from lightning_sdk.teamspace import Teamspace
+    from lightning_sdk.teamspace import CloudProvider, Teamspace
     from lightning_sdk.user import User
 
 
@@ -147,6 +147,7 @@ class JobStep:
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
@@ -172,6 +173,7 @@ class JobStep:
         self.org = org
         self.user = user
         self.cloud_account = cloud_account or "" if self.studio is None else self.studio.cloud_account
+        self.cloud_provider = cloud_provider
         self.env = env
         self.interruptible = interruptible
         self.image_credentials = image_credentials
@@ -191,12 +193,16 @@ class JobStep:
             elif studio.cloud_account != self.cloud_account:
                 raise ValueError("The provided cloud account doesn't match the studio")
 
-        _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
+        resolved_cloud_account = CloudAccountApi().resolve_cloud_account(
+            teamspace.id, self.cloud_account, self.cloud_provider, teamspace.default_cloud_account
+        )
+
+        _validate_cloud_account(cloud_account, resolved_cloud_account, shared_filesystem)
 
         body = JobApiV2._create_job_body(
             name=self.name,
             command=self.command,
-            cloud_account=self.cloud_account or cloud_account,
+            cloud_account=resolved_cloud_account or cloud_account,
             studio_id=studio._studio.id if isinstance(studio, Studio) else None,
             image=self.image,
             machine=self.machine,

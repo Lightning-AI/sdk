@@ -4,7 +4,7 @@ from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noq
 from lightning_sdk.deployment import Deployment
 from lightning_sdk.helpers import _check_version_and_prompt_upgrade, _set_tqdm_envvars_noninteractive
 from lightning_sdk.job import Job
-from lightning_sdk.machine import Machine
+from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.mmt import MMT
 from lightning_sdk.organization import Organization
 from lightning_sdk.plugin import JobsPlugin, MultiMachineTrainingPlugin, Plugin, SlurmJobsPlugin
@@ -16,6 +16,7 @@ from lightning_sdk.user import User
 __all__ = [
     "AIHub",
     "Agent",
+    "CloudProvider",
     "Deployment",
     "Job",
     "JobsPlugin",

@@ -48,8 +48,15 @@ Options:
   --machine [CPU|CPU_SMALL|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4|T4_X_4|L4|L4_X_2|L4_X_4|L4_X_8|A10G|A10G_X_4|A10G_X_8|L40S|L40S_X_4|L40S_X_8|A100_X_2|A100_X_4|A100_X_8|B200_X_8|H100_X_8|H200_X_8]
                                   The machine type to start the studio on.
                                   [default: CPU]
-  --provider [AWS|GCP|VULTR|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|CLOUDFLARE|LIGHTNING]
-                                  The provider to start the studio on.
+  --cloud-provider [AWS|GCP|VULTR|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING]
+                                  The provider to create the studio on. If
+                                  --cloud-account is specified, this option is
+                                  prioritized.
+  --provider [AWS|GCP|VULTR|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING]
+                                  Deprecated. Use --cloud-provider instead.
+                                  The provider to create the studio on. If
+                                  --cloud-account is specified, this option is
+                                  prioritized.
   --help                          Show this message and exit.
 """  # noqa: E501
     )

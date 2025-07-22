@@ -7,7 +7,7 @@ from lightning_sdk.job.work import Work
 from lightning_sdk.status import Status
 
 if TYPE_CHECKING:
-    from lightning_sdk.machine import Machine
+    from lightning_sdk.machine import CloudProvider, Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
@@ -50,6 +50,7 @@ class _MMTV1(_BaseMMT):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",

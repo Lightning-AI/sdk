@@ -4,10 +4,10 @@ import click
 
 from lightning_sdk import Machine, Studio
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.studio import Provider
+from lightning_sdk.machine import CloudProvider
 
 _MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
-_PROVIDER_VALUES = tuple([provider.value for provider in Provider])
+_PROVIDER_VALUES = tuple([provider.value for provider in CloudProvider])
 
 
 @click.group("start")
@@ -36,13 +36,27 @@ def start() -> None:
     help="The machine type to start the studio on.",
 )
 @click.option(
+    "--cloud-provider",
+    default=None,
+    type=click.Choice(_PROVIDER_VALUES),
+    help=("The provider to create the studio on. If --cloud-account is specified, this option is prioritized."),
+)
+@click.option(
     "--provider",
     default=None,
-    show_default=True,
     type=click.Choice(_PROVIDER_VALUES),
-    help="The provider to start the studio on.",
+    help=(
+        "Deprecated. Use --cloud-provider instead. The provider to create the studio on. "
+        "If --cloud-account is specified, this option is prioritized."
+    ),
 )
-def studio(name: str, teamspace: Optional[str] = None, machine: str = "CPU", provider: Optional[str] = None) -> None:
+def studio(
+    name: str,
+    teamspace: Optional[str] = None,
+    machine: str = "CPU",
+    cloud_provider: Optional[str] = None,
+    provider: Optional[str] = None,
+) -> None:
     """Start a studio on a given machine.
 
     Example:
@@ -59,10 +73,26 @@ def studio(name: str, teamspace: Optional[str] = None, machine: str = "CPU", pro
         owner, teamspace = None, None
 
     try:
-        studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False, provider=provider)
+        studio = Studio(
+            name=name,
+            teamspace=teamspace,
+            org=owner,
+            user=None,
+            create_ok=False,
+            cloud_provider=cloud_provider,
+            provider=provider,
+        )
     except (RuntimeError, ValueError, ApiException) as first_error:
         try:
-            studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False, provider=provider)
+            studio = Studio(
+                name=name,
+                teamspace=teamspace,
+                org=None,
+                user=owner,
+                create_ok=False,
+                cloud_provider=cloud_provider,
+                provider=provider,
+            )
         except (RuntimeError, ValueError, ApiException) as second_error:
             raise first_error from second_error
 

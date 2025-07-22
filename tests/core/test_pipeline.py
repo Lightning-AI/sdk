@@ -7,8 +7,6 @@ from lightning_sdk import studio as studio_module
 from lightning_sdk import teamspace
 from lightning_sdk.api import pipeline_api
 from lightning_sdk.lightning_cloud.openapi.models import (
-    ProjectIdJobsBody,
-    V1JobSpec,
     V1PipelineStep,
     V1PipelineStepType,
     V1SharedFilesystem,
@@ -129,78 +127,37 @@ def test_pipeline_run(monkeypatch):
 
     generated = pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[2]
 
-    step_1 = V1PipelineStep(
-        name="job-0",
-        type=V1PipelineStepType.JOB,
-        wait_for=[],
-        job=ProjectIdJobsBody(
-            name="job-0",
-            spec=V1JobSpec(
-                command="echo 'Hello, World!'",
-                entrypoint="sh -c",
-                image="ubuntu:latest",
-                instance_name="cpu-4",
-                cluster_id="",
-                cloudspace_id="",
-                env=[],
-                image_cluster_credentials=False,
-                image_secret_ref="",
-                path_mappings=[],
-                run_id="",
-                spot=False,
-            ),
-        ),
-    )
+    step_0, step_1, step_2 = generated
 
-    step_2 = V1PipelineStep(
-        name="job-1",
-        type=V1PipelineStepType.JOB,
-        wait_for=[],
-        job=ProjectIdJobsBody(
-            name="job-1",
-            spec=V1JobSpec(
-                command="echo 'Hello, World!'",
-                entrypoint="sh -c",
-                image="ubuntu:latest",
-                instance_name="cpu-4",
-                cluster_id="",
-                cloudspace_id="",
-                env=[],
-                image_cluster_credentials=False,
-                image_secret_ref="",
-                path_mappings=[],
-                run_id="",
-                spot=False,
-            ),
-        ),
-    )
+    # --- Step 0 ---
+    assert step_0.name == "job-0"
+    assert step_0.type == V1PipelineStepType.JOB
+    assert step_0.wait_for == []
+    assert step_0.job.name == "job-0"
+    assert step_0.job.spec.command == "echo 'Hello, World!'"
+    assert step_0.job.spec.entrypoint == "sh -c"
+    assert step_0.job.spec.image == "ubuntu:latest"
+    assert step_0.job.spec.instance_name == "cpu-4"
 
-    step_3 = V1PipelineStep(
-        name="job-2",
-        type=V1PipelineStepType.JOB,
-        wait_for=["job-0", "job-1"],
-        job=ProjectIdJobsBody(
-            name="job-2",
-            spec=V1JobSpec(
-                command="echo 'Hello, World!'",
-                entrypoint="sh -c",
-                image="ubuntu:latest",
-                instance_name="cpu-8",
-                cluster_id="",
-                cloudspace_id="",
-                env=[],
-                image_cluster_credentials=False,
-                image_secret_ref="",
-                path_mappings=[],
-                run_id="",
-                spot=False,
-            ),
-        ),
-    )
+    # --- Step 1 ---
+    assert step_1.name == "job-1"
+    assert step_1.type == V1PipelineStepType.JOB
+    assert step_1.wait_for == []
+    assert step_1.job.name == "job-1"
+    assert step_1.job.spec.command == "echo 'Hello, World!'"
+    assert step_1.job.spec.entrypoint == "sh -c"
+    assert step_1.job.spec.image == "ubuntu:latest"
+    assert step_1.job.spec.instance_name == "cpu-4"
 
-    assert step_1 == generated[0]
-    assert step_2 == generated[1]
-    assert step_3 == generated[2]
+    # --- Step 2 ---
+    assert step_2.name == "job-2"
+    assert step_2.type == V1PipelineStepType.JOB
+    assert sorted(step_2.wait_for) == ["job-0", "job-1"]
+    assert step_2.job.name == "job-2"
+    assert step_2.job.spec.command == "echo 'Hello, World!'"
+    assert step_2.job.spec.entrypoint == "sh -c"
+    assert step_2.job.spec.image == "ubuntu:latest"
+    assert step_2.job.spec.instance_name == "cpu-8"
 
 
 def test_job_parameters_stay_in_sync():

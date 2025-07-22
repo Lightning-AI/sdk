@@ -5,7 +5,7 @@ from lightning_sdk.job.base import _BaseJob
 from lightning_sdk.status import Status
 
 if TYPE_CHECKING:
-    from lightning_sdk.machine import Machine
+    from lightning_sdk.machine import CloudProvider, Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
@@ -51,6 +51,7 @@ class _JobV1(_BaseJob):
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[str] = None,
         interruptible: bool = False,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "_BaseJob":
@@ -80,6 +81,7 @@ class _JobV1(_BaseJob):
             org=org,
             user=user,
             cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
             env=None,
             interruptible=interruptible,
             image_credentials=None,
@@ -98,6 +100,7 @@ class _JobV1(_BaseJob):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,

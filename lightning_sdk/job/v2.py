@@ -6,7 +6,7 @@ from lightning_sdk.job.base import _BaseJob
 from lightning_sdk.status import Status
 
 if TYPE_CHECKING:
-    from lightning_sdk.machine import Machine
+    from lightning_sdk.machine import CloudProvider, Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
@@ -44,6 +44,7 @@ class _JobV2(_BaseJob):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
@@ -102,6 +103,13 @@ class _JobV2(_BaseJob):
             studio_id = None
             if image is None:
                 raise ValueError("either image or studio must be provided")
+
+        cloud_account = self._cloud_account_api.resolve_cloud_account(
+            self._teamspace.id,
+            cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
+            default_cloud_account=self._teamspace.default_cloud_account,
+        )
 
         submitted = self._job_api.submit_job(
             name=self.name,

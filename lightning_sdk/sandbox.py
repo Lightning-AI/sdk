@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Type, Union
 
-from lightning_sdk.machine import Machine
+from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
@@ -31,6 +31,7 @@ class _Sandbox:
         org: The organization to use for the sandbox.
         user: The user to use for the sandbox.
         cloud_account: The cloud account to use for the sandbox.
+        cloud_provider: Selects the cloud account based on the available cloud accounts and the specified provider.
         disable_secrets: If true, user secrets such as LIGHTNING_API_KEY are not stored in the sandbox.
 
     Example:
@@ -48,6 +49,7 @@ class _Sandbox:
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union[CloudProvider, str]] = None,
         disable_secrets: bool = True,
     ) -> None:
         if name is None:
@@ -62,6 +64,7 @@ class _Sandbox:
             org=org,
             user=user,
             cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
             disable_secrets=disable_secrets,
         )
 

@@ -1,12 +1,13 @@
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.mmt.base import MMTMachine, _BaseMMT
 from lightning_sdk.mmt.v1 import _MMTV1
 from lightning_sdk.mmt.v2 import _MMTV2
 from lightning_sdk.utils.resolve import _setup_logger
 
 if TYPE_CHECKING:
-    from lightning_sdk.machine import Machine
+    from lightning_sdk.machine import CloudProvider, Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.status import Status
     from lightning_sdk.studio import Studio
@@ -75,6 +76,7 @@ class MMT(_BaseMMT):
             )
 
         self._internal_mmt = mmt
+        self._cloud_account_api = CloudAccountApi()
 
     @classmethod
     def run(
@@ -89,6 +91,7 @@ class MMT(_BaseMMT):
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
@@ -115,7 +118,11 @@ class MMT(_BaseMMT):
             user: The user owning the teamspace (if any). Defaults to the current user.
             cloud_account: The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
-                If not provided will fall back to the teamspaces default cloud account.
+                If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
+                will fall back to the teamspaces default cloud account.
+            cloud_account_provider: The provider to select the cloud-account from.
+                If set, must be in agreement with the provider from the cloud_account (if specified).
+                If not specified, falls backto the teamspace default cloud account.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             image_credentials: The credentials used to pull the image. Required if the image is private.
@@ -146,6 +153,7 @@ class MMT(_BaseMMT):
             org=org,
             user=user,
             cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
             env=env,
             interruptible=interruptible,
             image_credentials=image_credentials,
@@ -175,6 +183,7 @@ class MMT(_BaseMMT):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
@@ -196,7 +205,11 @@ class MMT(_BaseMMT):
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             cloud_account: The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
-                If not provided will fall back to the teamspaces default cloud account.
+                If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
+                will fall back to the teamspaces default cloud account.
+            cloud_account_provider: The provider to select the cloud-account from.
+                If set, must be in agreement with the provider from the cloud_account (if specified).
+                If not specified, falls backto the teamspace default cloud account.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
@@ -223,6 +236,7 @@ class MMT(_BaseMMT):
             num_machines=num_machines,
             machine=machine,
             cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
             command=command,
             studio=studio,
             image=image,

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, List, Optional, Union
 
-from lightning_sdk.api.cluster_api import ClusterApi
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.lightning_cloud.openapi.models import (
     ProjectIdPipelinesBody,
     ProjectIdSchedulesBody,
@@ -23,7 +23,7 @@ class PipelineApi:
 
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=0, retry=False)
-        self._cluster_api = ClusterApi()
+        self._cloud_account_api = CloudAccountApi()
 
     def get_pipeline_by_id(self, project_id: str, pipeline_id_or_name: str) -> Optional[V1Pipeline]:
         if pipeline_id_or_name.startswith("pip_"):
@@ -98,7 +98,7 @@ class PipelineApi:
 
         from lightning_sdk.pipeline.utils import _get_cloud_account
 
-        clusters = self._cluster_api.list_clusters(project_id=teamspace.id)
+        clusters = self._cloud_account_api.list_cloud_accounts(teamspace_id=teamspace.id)
 
         selected_cluster = None
         selected_cluster_id = _get_cloud_account(steps)
