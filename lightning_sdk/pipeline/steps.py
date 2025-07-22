@@ -57,6 +57,7 @@ class DeploymentStep:
         custom_domain: Optional[str] = None,
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
+        max_runtime: Optional[int] = None,
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
     ) -> None:
         self.name = name
@@ -96,6 +97,7 @@ class DeploymentStep:
         self.custom_domain = custom_domain
         self.quantity = quantity
         self.include_credentials = include_credentials or True
+        self.max_runtime = max_runtime
         self.wait_for = wait_for
 
     def to_proto(
@@ -124,6 +126,7 @@ class DeploymentStep:
                     quantity=self.quantity,
                     cloudspace_id=self.studio._studio.id if self.studio else None,
                     include_credentials=self.include_credentials,
+                    max_runtime=self.max_runtime,
                 ),
                 strategy=to_strategy(self.release_strategy),
             ),
@@ -150,6 +153,7 @@ class JobStep:
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
         wait_for: Union[str, List[str], None] = DEFAULT,
     ) -> None:
         self.name = name
@@ -174,6 +178,7 @@ class JobStep:
         self.cloud_account_auth = cloud_account_auth
         self.entrypoint = entrypoint
         self.path_mappings = path_mappings
+        self.max_runtime = max_runtime
         self.wait_for = wait_for
 
     def to_proto(
@@ -203,6 +208,7 @@ class JobStep:
             path_mappings=self.path_mappings,
             artifacts_local=None,
             artifacts_remote=None,
+            max_runtime=self.max_runtime,
         )
 
         return V1PipelineStep(
@@ -234,6 +240,7 @@ class MMTStep:
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
     ) -> None:
         self.machine = machine or Machine.CPU
@@ -258,6 +265,7 @@ class MMTStep:
         self.cloud_account_auth = cloud_account_auth
         self.entrypoint = entrypoint
         self.path_mappings = path_mappings
+        self.max_runtime = max_runtime
         self.wait_for = wait_for
 
     def to_proto(
@@ -288,6 +296,7 @@ class MMTStep:
             path_mappings=self.path_mappings,
             artifacts_local=None,  # deprecated in favor of path_mappings
             artifacts_remote=None,  # deprecated in favor of path_mappings
+            max_runtime=self.max_runtime,
         )
 
         return V1PipelineStep(

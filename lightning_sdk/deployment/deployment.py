@@ -130,6 +130,7 @@ class Deployment:
         include_credentials: Optional[bool] = None,
         from_onboarding: Optional[bool] = None,
         from_litserve: Optional[bool] = None,
+        max_runtime: Optional[int] = None,
     ) -> None:
         """The Lightning AI Deployment.
 
@@ -157,6 +158,10 @@ class Deployment:
             quantity: The number of machines per replica to deploy.
             include_credentials: Whether to include the environment variables for the SDK to authenticate
             from_onboarding: Whether the deployment is from onboarding.
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
 
         Note:
             Since a teamspace can either be owned by an org or by a user directly,
@@ -227,6 +232,7 @@ class Deployment:
                     quantity=quantity,
                     include_credentials=include_credentials if include_credentials is not None else True,
                     cloudspace_id=cloudspace_id,
+                    max_runtime=max_runtime,
                 ),
                 strategy=to_strategy(release_strategy),
             ),
@@ -262,6 +268,7 @@ class Deployment:
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
+        max_runtime: Optional[int] = None,
     ) -> None:
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
@@ -288,6 +295,7 @@ class Deployment:
             release_strategy=release_strategy,
             quantity=quantity,
             include_credentials=include_credentials,
+            max_runtime=max_runtime,
         )
 
     def stop(self) -> None:

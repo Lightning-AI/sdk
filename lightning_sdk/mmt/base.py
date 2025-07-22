@@ -70,6 +70,7 @@ class _BaseMMT(_BaseJob):
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
@@ -109,6 +110,10 @@ class _BaseMMT(_BaseJob):
                     }
                 If the path inside the connection is omitted it's assumed to be the root path of that connection.
                 Only applicable when submitting docker jobs.
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
         """
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
@@ -202,6 +207,7 @@ class _BaseMMT(_BaseJob):
             path_mappings=path_mappings,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            max_runtime=max_runtime,
         )
         return inst
 
@@ -222,6 +228,7 @@ class _BaseMMT(_BaseJob):
         path_mappings: Optional[Dict[str, str]] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
+        max_runtime: Optional[int] = None,
     ) -> None:
         """Submit a new multi-machine job to the Lightning AI platform.
 
@@ -253,6 +260,10 @@ class _BaseMMT(_BaseJob):
                     }
                 If the path inside the connection is omitted it's assumed to be the root path of that connection.
                 Only applicable when submitting docker jobs.
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
         """
 
     @property

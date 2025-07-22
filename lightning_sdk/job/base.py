@@ -85,6 +85,7 @@ class _BaseJob(ABC):
         artifacts_remote: Optional[str] = None,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> "_BaseJob":
         """Run async workloads using a docker image or a compute environment from your studio.
@@ -122,6 +123,10 @@ class _BaseJob(ABC):
                 just runs the provided command in a standard shell.
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
                 Only applicable when submitting docker jobs.
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
         """
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
@@ -210,6 +215,7 @@ class _BaseJob(ABC):
             artifacts_remote=artifacts_remote,
             entrypoint=entrypoint,
             path_mappings=path_mappings,
+            max_runtime=max_runtime,
         )
 
     @abstractmethod
@@ -228,6 +234,7 @@ class _BaseJob(ABC):
         artifacts_remote: Optional[str] = None,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
     ) -> "_BaseJob":
         """Submit a new job to the Lightning AI platform.
 
@@ -259,6 +266,10 @@ class _BaseJob(ABC):
             entrypoint: The entrypoint of your docker container. Defaults to sh -c.
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
                 Only applicable when submitting docker jobs.
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
         """
 
     @abstractmethod

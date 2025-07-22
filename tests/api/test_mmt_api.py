@@ -114,6 +114,7 @@ def test_mmt_v2_submit_job():
         artifacts_remote=None,
         entrypoint="sh -c",
         path_mappings=None,
+        max_runtime=None,
     )
 
     spec = V1JobSpec(
@@ -152,6 +153,7 @@ def test_mmt_v2_submit_job():
         artifacts_remote="efs:data:some-path",
         entrypoint="sh -c",
         path_mappings={"/output2": "data2:some-other-path"},
+        max_runtime=500,
     )
 
     spec = V1JobSpec(
@@ -170,6 +172,7 @@ def test_mmt_v2_submit_job():
             V1PathMapping(container_path="/output2", connection_name="data2", connection_path="some-other-path"),
             V1PathMapping(container_path="/output", connection_name="data", connection_path="some-path"),
         ],
+        requested_run_duration_seconds="500",
     )
     body = ProjectIdMultimachinejobsBody(name="test-job", spec=spec, cluster_id="c-abc", machines=2)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)

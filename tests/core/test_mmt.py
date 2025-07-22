@@ -57,6 +57,7 @@ def test_submit_mmt_v2_image(
         artifacts_remote=artifacts_remote,
         entrypoint="sh -c",
         path_mappings=None,
+        max_runtime=None,
     )
 
 
@@ -96,6 +97,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         artifacts_remote=None,
         entrypoint="sh -c",
         path_mappings=None,
+        max_runtime=None,
     )
 
 

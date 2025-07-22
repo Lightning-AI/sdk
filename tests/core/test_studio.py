@@ -692,6 +692,7 @@ def test_submit_job_v2_studio(
         artifacts_remote=None,
         entrypoint="sh -c",
         path_mappings=None,
+        max_runtime=None,
     )
 
 
@@ -737,4 +738,5 @@ def test_submit_mmt_v2_studio(
         artifacts_remote=None,
         entrypoint="sh -c",
         path_mappings=None,
+        max_runtime=None,
     )

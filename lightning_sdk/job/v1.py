@@ -86,6 +86,7 @@ class _JobV1(_BaseJob):
             cloud_account_auth=False,
             cluster=cluster,
             path_mappings=None,
+            max_runtime=None,
         )
 
     def _submit(
@@ -103,6 +104,7 @@ class _JobV1(_BaseJob):
         artifacts_remote: Optional[str] = None,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
     ) -> "_JobV1":
         """Submit a job to run on a machine.
 
@@ -121,6 +123,10 @@ class _JobV1(_BaseJob):
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
                 Only applicable when submitting docker jobs.
             path_mappings: The mappings from data connection inside your container (not supported)
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
 
         Returns:
             The submitted job.

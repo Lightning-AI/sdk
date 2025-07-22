@@ -54,6 +54,7 @@ class _MMTV1(_BaseMMT):
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
     ) -> "_MMTV1":
@@ -90,6 +91,10 @@ class _MMTV1(_BaseMMT):
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
                 Only applicable when submitting docker jobs.
             path_mappings: The mappings from data connection inside your container (not supported)
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
 
         """
         raise NotImplementedError("Cannot submit new mmts with MMTV1!")

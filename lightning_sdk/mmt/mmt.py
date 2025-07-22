@@ -95,6 +95,7 @@ class MMT(_BaseMMT):
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
@@ -154,6 +155,7 @@ class MMT(_BaseMMT):
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
             cluster=cluster,  # deprecated in favor of cloud_account
+            max_runtime=max_runtime,
         )
         # required for typing with "MMT"
         assert isinstance(ret_val, cls)
@@ -177,6 +179,7 @@ class MMT(_BaseMMT):
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
     ) -> "MMT":
@@ -211,6 +214,10 @@ class MMT(_BaseMMT):
                     }
                 If the path inside the connection is omitted it's assumed to be the root path of that connection.
                 Only applicable when submitting docker jobs.
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
         """
         self._job = self._internal_mmt._submit(
             num_machines=num_machines,
@@ -227,6 +234,7 @@ class MMT(_BaseMMT):
             path_mappings=path_mappings,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            max_runtime=max_runtime,
         )
         return self
 

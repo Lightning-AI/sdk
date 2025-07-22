@@ -48,6 +48,7 @@ class _JobV2(_BaseJob):
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
     ) -> "_JobV2":
@@ -80,6 +81,10 @@ class _JobV2(_BaseJob):
                     }
                 If the path inside the connection is omitted it's assumed to be the root path of that connection.
                 Only applicable when submitting docker jobs.
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
         """
         # Command is required if Studio is provided to know what to run
         # Image is mutually exclusive with Studio
@@ -114,6 +119,7 @@ class _JobV2(_BaseJob):
             artifacts_remote=artifacts_remote,
             entrypoint=entrypoint,
             path_mappings=path_mappings,
+            max_runtime=max_runtime,
         )
         self._job = submitted
         self._name = submitted.name

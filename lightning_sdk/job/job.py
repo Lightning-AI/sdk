@@ -92,6 +92,7 @@ class Job(_BaseJob):
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,  # deprecated in terms of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in terms of path_mappings
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
@@ -130,6 +131,10 @@ class Job(_BaseJob):
                 }
             If the path inside the connection is omitted it's assumed to be the root path of that connection.
             Only applicable when submitting docker jobs.
+        max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
         """
         ret_val = super().run(
             name=name,
@@ -149,6 +154,7 @@ class Job(_BaseJob):
             artifacts_remote=artifacts_remote,
             entrypoint=entrypoint,
             path_mappings=path_mappings,
+            max_runtime=max_runtime,
             cluster=cluster,
         )
         # required for typing with "Job"
@@ -172,6 +178,7 @@ class Job(_BaseJob):
         path_mappings: Optional[Dict[str, str]] = None,
         artifacts_local: Optional[str] = None,  # deprecated in terms of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in terms of path_mappings
+        max_runtime: Optional[int] = None,
     ) -> "Job":
         """Submit a new job to the Lightning AI platform.
 
@@ -202,6 +209,10 @@ class Job(_BaseJob):
                     }
                 If the path inside the connection is omitted it's assumed to be the root path of that connection.
                 Only applicable when submitting docker jobs.
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
         """
         self._job = self._internal_job._submit(
             machine=machine,
@@ -217,6 +228,7 @@ class Job(_BaseJob):
             path_mappings=path_mappings,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            max_runtime=max_runtime,
         )
         return self
 

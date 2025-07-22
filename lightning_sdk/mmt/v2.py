@@ -53,6 +53,7 @@ class _MMTV2(_BaseMMT):
         cloud_account_auth: bool = False,
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
+        max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
     ) -> "_MMTV2":
@@ -87,6 +88,10 @@ class _MMTV2(_BaseMMT):
                     }
                 If the path inside the connection is omitted it's assumed to be the root path of that connection.
                 Only applicable when submitting docker jobs.
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
         """
         # Command is required if Studio is provided to know what to run
         # Image is mutually exclusive with Studio
@@ -121,6 +126,7 @@ class _MMTV2(_BaseMMT):
             path_mappings=path_mappings,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            max_runtime=max_runtime,
         )
         self._job = submitted
         self._name = submitted.name

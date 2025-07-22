@@ -198,8 +198,23 @@ class Studio:
     def cloud_account(self) -> str:
         return self._studio.cluster_id
 
-    def start(self, machine: Union[Machine, str] = Machine.CPU, interruptible: Optional[bool] = None) -> None:
-        """Starts a Studio on the specified machine type (default: CPU-4)."""
+    def start(
+        self,
+        machine: Union[Machine, str] = Machine.CPU,
+        interruptible: Optional[bool] = None,
+        max_runtime: Optional[int] = None,
+    ) -> None:
+        """Starts a Studio on the specified machine type (default: CPU-4).
+
+        Args:
+            machine: the machine type to start the studio on. Defaults to CPU-4
+            interruptible: whether to use interruptible machines
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
+
+        """
         status = self.status
 
         if interruptible is None:
@@ -221,7 +236,9 @@ class Studio:
 
         if status != Status.Stopped:
             raise RuntimeError(f"Cannot start a studio that is not stopped. Studio {self.name} is {status}.")
-        self._studio_api.start_studio(self._studio.id, self._teamspace.id, machine, interruptible=interruptible)
+        self._studio_api.start_studio(
+            self._studio.id, self._teamspace.id, machine, interruptible=interruptible, max_runtime=max_runtime
+        )
 
         self._setup()
 
