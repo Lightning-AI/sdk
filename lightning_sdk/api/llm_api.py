@@ -98,7 +98,7 @@ class LLMApi:
                     {"contentType": "text", "parts": [prompt]},
                 ],
             },
-            "max_completion_tokens": max_completion_tokens,
+            "max_tokens": max_completion_tokens,
             "conversation_id": conversation_id,
             "billing_project_id": billing_project_id,
             "name": name,
