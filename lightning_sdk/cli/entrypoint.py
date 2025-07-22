@@ -21,7 +21,7 @@ from lightning_sdk.cli.deploy.serve import deploy
 from lightning_sdk.cli.docker_cli import dockerize
 from lightning_sdk.cli.download import download
 from lightning_sdk.cli.generate import generate
-from lightning_sdk.cli.inspect import inspect
+from lightning_sdk.cli.inspection import inspect
 from lightning_sdk.cli.list import list_cli
 from lightning_sdk.cli.open import open
 from lightning_sdk.cli.run import run

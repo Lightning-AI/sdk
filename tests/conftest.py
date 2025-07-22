@@ -160,6 +160,9 @@ def internal_get_org_api_mocker(mocker, internal_auth_mocker):
         assert _id
         assert _name
 
+        if _name == "user-name":
+            raise ApiException(status=404, reason="Not Found")
+
         if _name == "xyx" or _id == "xyz":
             return None
 

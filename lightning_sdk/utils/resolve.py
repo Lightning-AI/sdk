@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider, Machine
 
 if TYPE_CHECKING:
@@ -105,7 +106,13 @@ def _resolve_org(org: Optional[Union[str, "Organization"]]) -> Optional["Organiz
 
     from lightning_sdk.organization import Organization
 
-    return Organization(name=org)
+    try:
+        return Organization(name=org)
+    # Handle case where user name is mistakenly used as organization name
+    except ApiException as ae:
+        if ae.status == 404:
+            raise ValueError(f"Organization '{org}' does not exist or you are not a member of it.") from ae
+        raise RuntimeError(f"Failed to resolve organization '{org}': {ae}") from ae
 
 
 def _resolve_user_name(name: Optional[str]) -> Optional[str]:

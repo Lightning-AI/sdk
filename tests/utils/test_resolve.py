@@ -81,6 +81,13 @@ def test_resolve_org(internal_get_org_api_mocker, provided):
         assert result.name == provided
 
 
+@mock.patch.dict(os.environ, clear=True)
+def test_resolve_org_with_user(internal_get_org_api_mocker):
+    name = "user-name"
+    with pytest.raises(ValueError, match=f"Organization '{name}' does not exist or you are not a member of it."):
+        _resolve_org(name)
+
+
 @pytest.mark.parametrize("provided", [None, "abc"])
 @mock.patch.dict(os.environ, clear=True)
 def test_resolve_user_name_no_env_var(provided):
