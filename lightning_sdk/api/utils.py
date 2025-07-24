@@ -331,7 +331,9 @@ class _DummyResponse:
 
 def _machine_to_compute_name(machine: Union[Machine, str]) -> str:
     if isinstance(machine, Machine):
-        return machine.instance_type
+        if machine.instance_type is not None:
+            return machine.instance_type
+        return machine.slug
     return machine
 
 

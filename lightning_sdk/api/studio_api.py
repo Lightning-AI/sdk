@@ -4,7 +4,7 @@ import tempfile
 import time
 import zipfile
 from threading import Event, Thread
-from typing import Any, Dict, Generator, Mapping, Optional, Tuple, Union
+from typing import Any, Dict, Generator, List, Mapping, Optional, Tuple, Union
 
 import backoff
 import requests
@@ -37,6 +37,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpaceSeedFile,
     V1CloudSpaceSourceType,
     V1CloudSpaceState,
+    V1ClusterAccelerator,
     V1EndpointType,
     V1GetCloudSpaceInstanceStatusResponse,
     V1GetLongRunningCommandInCloudSpaceResponse,
@@ -267,12 +268,22 @@ class StudioApi:
                 break
             time.sleep(1)
 
-    def get_machine(self, studio_id: str, teamspace_id: str) -> Machine:
+    def get_machine(self, studio_id: str, teamspace_id: str, cloud_account_id: str) -> Machine:
         """Get the current machine type the given Studio is running on."""
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
             project_id=teamspace_id, id=studio_id
         )
-        return Machine(response.compute_config.name, response.compute_config.name)
+        accelerators = self._get_machines_for_cloud_account(cloud_account_id)
+
+        for accelerator in accelerators:
+            if response.compute_config.name in (
+                accelerator.slug,
+                accelerator.slug_multi_cloud,
+                accelerator.instance_id,
+            ):
+                return Machine.from_str(accelerator.slug_multi_cloud)
+
+        return Machine.from_str(response.compute_config.name)
 
     def get_interruptible(self, studio_id: str, teamspace_id: str) -> bool:
         """Get whether the Studio is running on a interruptible instance."""
@@ -281,6 +292,24 @@ class StudioApi:
         )
 
         return response.compute_config.spot
+
+    def _get_machines_for_cloud_account(self, cloud_account_id: str) -> List[V1ClusterAccelerator]:
+        from lightning_sdk.api.cloud_account_api import CloudAccountApi
+
+        cloud_account_api = CloudAccountApi()
+        accelerators = cloud_account_api.list_cloud_account_accelerators(cloud_account_id=cloud_account_id, org_id="")
+        if not accelerators:
+            return []
+
+        return list(filter(lambda acc: acc.enabled, accelerators.accelerator))
+
+    def get_machine_slug(self, instance_id: str, cloud_account_id: str) -> str:
+        """Retrieve the slug_multi_cloud for a given instance_id."""
+        accelerators = self._get_machines_for_cloud_account(cloud_account_id)
+        for accelerator in accelerators:
+            if accelerator.instance_id == instance_id:
+                return accelerator.slug_multi_cloud
+        raise ValueError(f"No matching slug found for instance_id: {instance_id}")
 
     def _get_detached_command_status(
         self, studio_id: str, teamspace_id: str, session_id: str

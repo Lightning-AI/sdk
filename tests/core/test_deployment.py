@@ -306,7 +306,7 @@ def test_deployment_start_first_time(monkeypatch):
         ),
         ports=[50],
         cloud_account="cluster_id",
-        machine=Machine.A10G,
+        machine=Machine.L4,
         image="ollama/ollama:latest",
         quantity=2,
         include_credentials=False,

@@ -245,7 +245,7 @@ def test_deployment_default():
     assert deployment.autoscale.target_metrics[0].name == "CPU"
     assert deployment.autoscale.target_metrics[0].target == 80
 
-    deployment = DeploymentStep(machine=Machine.A10G)
+    deployment = DeploymentStep(machine=Machine.L4)
     assert deployment.autoscale.target_metrics[0].name == "GPU"
 
 

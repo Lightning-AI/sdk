@@ -12,7 +12,9 @@ from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.machine import CloudProvider
 from lightning_sdk.utils.resolve import _resolve_deprecated_provider
 
-_MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
+_MACHINE_VALUES = tuple(
+    [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
+)
 _PROVIDER_VALUES = tuple([provider.value for provider in CloudProvider])
 
 

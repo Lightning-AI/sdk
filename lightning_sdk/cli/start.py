@@ -6,7 +6,9 @@ from lightning_sdk import Machine, Studio
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider
 
-_MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
+_MACHINE_VALUES = tuple(
+    [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
+)
 _PROVIDER_VALUES = tuple([provider.value for provider in CloudProvider])
 
 

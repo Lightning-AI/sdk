@@ -25,7 +25,9 @@ from lightning_sdk.cli.deploy._auth import (
 from lightning_sdk.cli.deploy.devbox import _handle_devbox
 from lightning_sdk.serve import _LitServeDeployer
 
-_MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
+_MACHINE_VALUES = tuple(
+    [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
+)
 
 
 class _ServeGroup(click.Group):

@@ -2,7 +2,7 @@ import json
 import time
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
-from lightning_sdk.api.job_api import JobApiV1
+from lightning_sdk.api.job_api import JobApiV1, V1ClusterAccelerator
 from lightning_sdk.api.utils import (
     _create_app,
     _machine_to_compute_name,
@@ -248,10 +248,30 @@ class MMTApiV2:
         return job.spec.command
 
     def _get_job_machine_from_spec(self, spec: V1JobSpec) -> "Machine":
-        instance_name = spec.instance_name
-        instance_type = spec.instance_type
+        accelerators = self._get_machines_for_cloud_account(spec.cluster_id)
 
-        return Machine.from_str(instance_name, instance_type or instance_name)
+        for accelerator in accelerators:
+            possible_identifiers = (
+                accelerator.slug,
+                accelerator.slug_multi_cloud,
+                accelerator.instance_id,
+            )
+            if (spec.instance_name and spec.instance_name in possible_identifiers) or (
+                spec.instance_type and spec.instance_type in possible_identifiers
+            ):
+                return Machine.from_str(accelerator.slug_multi_cloud)
+
+        return Machine.from_str(spec.instance_name or spec.instance_type)
+
+    def _get_machines_for_cloud_account(self, cloud_account_id: str) -> List[V1ClusterAccelerator]:
+        from lightning_sdk.api.cloud_account_api import CloudAccountApi
+
+        cloud_account_api = CloudAccountApi()
+        accelerators = cloud_account_api.list_cloud_account_accelerators(cloud_account_id=cloud_account_id, org_id="")
+        if not accelerators:
+            return []
+
+        return list(filter(lambda acc: acc.enabled, accelerators.accelerator))
 
     def get_total_cost(self, job: V1MultiMachineJob) -> float:
         return job.total_cost

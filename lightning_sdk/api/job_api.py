@@ -17,7 +17,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     JobsIdBody1,
     ProjectIdJobsBody,
     V1CloudSpace,
-    V1ComputeConfig,
+    V1ClusterAccelerator,
     V1DownloadJobLogsResponse,
     V1DownloadLightningappInstanceLogsResponse,
     V1EnvVar,
@@ -98,11 +98,34 @@ class JobApiV1:
         spec: V1LightningworkSpec = work.spec
         # prefer user-requested config if specified
         user_requested_compute_config: V1UserRequestedComputeConfig = spec.user_requested_compute_config
-        if user_requested_compute_config.name:
-            return Machine.from_str(user_requested_compute_config.name)
-        compute_config: V1ComputeConfig = spec.compute_config
+        accelerators = self._get_machines_for_cloud_account(spec.cluster_id)
 
-        return Machine.from_str(compute_config.instance_type)
+        identifier = None
+
+        if user_requested_compute_config and user_requested_compute_config.name:
+            identifier = user_requested_compute_config.name
+        else:
+            identifier = spec.compute_config.instance_type
+
+        for accelerator in accelerators:
+            if identifier in (
+                accelerator.slug,
+                accelerator.slug_multi_cloud,
+                accelerator.instance_id,
+            ):
+                return Machine.from_str(accelerator.slug_multi_cloud)
+
+        return Machine.from_str(identifier)
+
+    def _get_machines_for_cloud_account(self, cloud_account_id: str) -> List[V1ClusterAccelerator]:
+        from lightning_sdk.api.cloud_account_api import CloudAccountApi
+
+        cloud_account_api = CloudAccountApi()
+        accelerators = cloud_account_api.list_cloud_account_accelerators(cloud_account_id=cloud_account_id, org_id="")
+        if not accelerators:
+            return []
+
+        return list(filter(lambda acc: acc.enabled, accelerators.accelerator))
 
     def get_studio_name(self, job: Externalv1LightningappInstance) -> str:
         cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
@@ -215,7 +238,7 @@ class JobApiV2:
         path_mappings: Optional[Dict[str, str]],
         artifacts_local: Optional[str],  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str],  # deprecated in favor of path_mappings
-        max_runtime: Optional[str] = None,
+        max_runtime: Optional[int] = None,
     ) -> V1Job:
         body = self._create_job_body(
             name=name,
@@ -381,10 +404,30 @@ class JobApiV2:
         return Status.Pending
 
     def _get_job_machine_from_spec(self, spec: V1JobSpec) -> "Machine":
-        instance_name = spec.instance_name
-        instance_type = spec.instance_type
+        accelerators = self._get_machines_for_cloud_account(spec.cluster_id)
 
-        return Machine.from_str(instance_name, instance_type or instance_name)
+        for accelerator in accelerators:
+            possible_identifiers = (
+                accelerator.slug,
+                accelerator.slug_multi_cloud,
+                accelerator.instance_id,
+            )
+            if (spec.instance_name and spec.instance_name in possible_identifiers) or (
+                spec.instance_type and spec.instance_type in possible_identifiers
+            ):
+                return Machine.from_str(accelerator.slug_multi_cloud)
+
+        return Machine.from_str(spec.instance_name or spec.instance_type)
+
+    def _get_machines_for_cloud_account(self, cloud_account_id: str) -> List[V1ClusterAccelerator]:
+        from lightning_sdk.api.cloud_account_api import CloudAccountApi
+
+        cloud_account_api = CloudAccountApi()
+        accelerators = cloud_account_api.list_cloud_account_accelerators(cloud_account_id=cloud_account_id, org_id="")
+        if not accelerators:
+            return []
+
+        return list(filter(lambda acc: acc.enabled, accelerators.accelerator))
 
     def get_total_cost(self, job: V1Job) -> float:
         return job.total_cost

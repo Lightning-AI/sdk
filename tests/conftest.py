@@ -4,7 +4,6 @@ import time
 from unittest import mock
 
 import pytest
-from exceptiongroup import suppress
 
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
@@ -19,6 +18,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpaceInstanceConfig,
     V1CloudSpaceInstanceStartupStatus,
     V1CloudSpaceState,
+    V1ClusterAccelerator,
     V1ClusterSpec,
     V1ClusterState,
     V1ClusterStatus,
@@ -40,6 +40,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LightningworkState,
     V1LightningworkStatus,
     V1ListCloudSpacesResponse,
+    V1ListClusterAcceleratorsResponse,
     V1ListLightningworkResponse,
     V1ListMembershipsResponse,
     V1ListOrganizationsResponse,
@@ -469,10 +470,6 @@ def internal_studio_api_mocker_get_machine(mocker):
             instance = "g6.4xlarge"
         elif id == "st-pqr":
             instance = "g6.12xlarge"
-        elif id == "st-stu":
-            instance = "g5.8xlarge"
-        elif id == "st-vwx":
-            instance = "g5.12xlarge"
         elif id == "st-yza":
             instance = "p4d.24xlarge"
         elif id == "st-bcd":
@@ -485,8 +482,6 @@ def internal_studio_api_mocker_get_machine(mocker):
             instance = "data-ultra"
         elif id == "st-nop":
             instance = "m3.medium"
-        elif id == "st-qrs":
-            instance = "g5.48xlarge"
         elif id == "st-tuv":
             instance = "g6e.4xlarge"
         elif id == "st-wxy":
@@ -513,6 +508,38 @@ def internal_studio_api_mocker_get_machine(mocker):
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
         autospec=True,
         side_effect=_side_effect,
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_cluster_accelerators",
+        autospec=True,
+        return_value=V1ListClusterAcceleratorsResponse(
+            accelerator=[
+                V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
+                V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
+                V1ClusterAccelerator(instance_id="g4dn.2xlarge", slug_multi_cloud="lit-t4-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g4dn.12xlarge", slug_multi_cloud="lit-t4-4", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.4xlarge", slug_multi_cloud="lit-l4-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.12xlarge", slug_multi_cloud="lit-l4-4", enabled=True),
+                V1ClusterAccelerator(instance_id="p4d.24xlarge", slug_multi_cloud="lit-a100-8", enabled=True),
+                V1ClusterAccelerator(instance_id="p5.48xlarge", slug_multi_cloud="lit-h100-8", enabled=True),
+                V1ClusterAccelerator(instance_id="p5en.48xlarge", slug_multi_cloud="lit-h200x-8", enabled=True),
+                V1ClusterAccelerator(instance_id="data-max", slug_multi_cloud="data-prep-max-large", enabled=True),
+                V1ClusterAccelerator(
+                    instance_id="data-ultra", slug_multi_cloud="data-prep-ultra-extra-large", enabled=True
+                ),
+                V1ClusterAccelerator(instance_id="m3.medium", slug_multi_cloud="cpu-2", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.4xlarge", slug_multi_cloud="lit-l40s-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.12xlarge", slug_multi_cloud="lit-l40s-4", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.48xlarge", slug_multi_cloud="lit-l40s-8", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.48xlarge", slug_multi_cloud="lit-l4-8", enabled=True),
+                V1ClusterAccelerator(instance_id="a2-ultragpu-2g", slug_multi_cloud="lit-a100-2", enabled=True),
+                V1ClusterAccelerator(instance_id="a2-ultragpu-4g", slug_multi_cloud="lit-a100-4", enabled=True),
+                V1ClusterAccelerator(instance_id="a4-highgpu-8g", slug_multi_cloud="lit-b200x-8", enabled=True),
+                V1ClusterAccelerator(instance_id="n2d-standard-2", slug_multi_cloud="cpu-2", enabled=True),
+                V1ClusterAccelerator(instance_id="g2-standard-24", slug_multi_cloud="lit-l4-2", enabled=True),
+            ]
+        ),
     )
 
     yield [mocker]
@@ -775,6 +802,38 @@ def internal_studio_start_mocker(mocker):
         autospec=True,
     )
 
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_cluster_accelerators",
+        autospec=True,
+        return_value=V1ListClusterAcceleratorsResponse(
+            accelerator=[
+                V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
+                V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
+                V1ClusterAccelerator(instance_id="g4dn.2xlarge", slug_multi_cloud="lit-t4-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g4dn.12xlarge", slug_multi_cloud="lit-t4-4", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.4xlarge", slug_multi_cloud="lit-l4-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.12xlarge", slug_multi_cloud="lit-l4-4", enabled=True),
+                V1ClusterAccelerator(instance_id="p4d.24xlarge", slug_multi_cloud="lit-a100-8", enabled=True),
+                V1ClusterAccelerator(instance_id="p5.48xlarge", slug_multi_cloud="lit-h100-8", enabled=True),
+                V1ClusterAccelerator(instance_id="p5en.48xlarge", slug_multi_cloud="lit-h200x-8", enabled=True),
+                V1ClusterAccelerator(instance_id="data-max", slug_multi_cloud="data-prep-max-large", enabled=True),
+                V1ClusterAccelerator(
+                    instance_id="data-ultra", slug_multi_cloud="data-prep-ultra-extra-large", enabled=True
+                ),
+                V1ClusterAccelerator(instance_id="m3.medium", slug_multi_cloud="cpu-2", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.4xlarge", slug_multi_cloud="lit-l40s-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.12xlarge", slug_multi_cloud="lit-l40s-4", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.48xlarge", slug_multi_cloud="lit-l40s-8", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.48xlarge", slug_multi_cloud="lit-l4-8", enabled=True),
+                V1ClusterAccelerator(instance_id="a2-ultragpu-2g", slug_multi_cloud="lit-a100-2", enabled=True),
+                V1ClusterAccelerator(instance_id="a2-ultragpu-4g", slug_multi_cloud="lit-a100-4", enabled=True),
+                V1ClusterAccelerator(instance_id="a4-highgpu-8g", slug_multi_cloud="lit-b200x-8", enabled=True),
+                V1ClusterAccelerator(instance_id="n2d-standard-2", slug_multi_cloud="cpu-2", enabled=True),
+                V1ClusterAccelerator(instance_id="g2-standard-24", slug_multi_cloud="lit-l4-2", enabled=True),
+            ]
+        ),
+    )
+
     yield [mocker]
 
     mocker.resetall()
@@ -945,6 +1004,38 @@ def internal_studio_switch_mocker(mocker, internal_get_org_api_mocker, internal_
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
         side_effect=side_effect_start,
         autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_cluster_accelerators",
+        autospec=True,
+        return_value=V1ListClusterAcceleratorsResponse(
+            accelerator=[
+                V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
+                V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
+                V1ClusterAccelerator(instance_id="g4dn.2xlarge", slug_multi_cloud="lit-t4-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g4dn.12xlarge", slug_multi_cloud="lit-t4-4", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.4xlarge", slug_multi_cloud="lit-l4-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.12xlarge", slug_multi_cloud="lit-l4-4", enabled=True),
+                V1ClusterAccelerator(instance_id="p4d.24xlarge", slug_multi_cloud="lit-a100-8", enabled=True),
+                V1ClusterAccelerator(instance_id="p5.48xlarge", slug_multi_cloud="lit-h100-8", enabled=True),
+                V1ClusterAccelerator(instance_id="p5en.48xlarge", slug_multi_cloud="lit-h200x-8", enabled=True),
+                V1ClusterAccelerator(instance_id="data-max", slug_multi_cloud="data-prep-max-large", enabled=True),
+                V1ClusterAccelerator(
+                    instance_id="data-ultra", slug_multi_cloud="data-prep-ultra-extra-large", enabled=True
+                ),
+                V1ClusterAccelerator(instance_id="m3.medium", slug_multi_cloud="cpu-2", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.4xlarge", slug_multi_cloud="lit-l40s-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.12xlarge", slug_multi_cloud="lit-l40s-4", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.48xlarge", slug_multi_cloud="lit-l40s-8", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.48xlarge", slug_multi_cloud="lit-l4-8", enabled=True),
+                V1ClusterAccelerator(instance_id="a2-ultragpu-2g", slug_multi_cloud="lit-a100-2", enabled=True),
+                V1ClusterAccelerator(instance_id="a2-ultragpu-4g", slug_multi_cloud="lit-a100-4", enabled=True),
+                V1ClusterAccelerator(instance_id="a4-highgpu-8g", slug_multi_cloud="lit-b200x-8", enabled=True),
+                V1ClusterAccelerator(instance_id="n2d-standard-2", slug_multi_cloud="cpu-2", enabled=True),
+                V1ClusterAccelerator(instance_id="g2-standard-24", slug_multi_cloud="lit-l4-2", enabled=True),
+            ]
+        ),
     )
 
     yield [mocker]
@@ -1185,7 +1276,7 @@ def internal_studio_api_create_app_mocker(mocker):
             assert body.plugin_arguments == {
                 "entrypoint": "my-entry-point",
                 "name": "fancy-job-name",
-                "compute": "g5.8xlarge",
+                "compute": "lit-l4-1",
                 "spot": "false",
             }
         elif id == "distributed_plugin":
@@ -1193,14 +1284,14 @@ def internal_studio_api_create_app_mocker(mocker):
                 "entrypoint": "my-entry-point",
                 "name": "fancy-mmt-name",
                 "distributedArguments": json.dumps(
-                    {"cloud_compute": "g5.8xlarge", "num_instances": 4, "strategy": "parallel"}
+                    {"cloud_compute": "lit-l4-1", "num_instances": 4, "strategy": "parallel"}
                 ),
                 "spot": "false",
             }
 
         elif id == "inference_plugin":
             assert body.plugin_arguments == {
-                "compute": "g5.8xlarge",
+                "compute": "lit-l4-1",
                 "entrypoint": "my-entry-point",
                 "name": "fancy-inference-name",
                 "min_replicas": "1",
@@ -1469,7 +1560,7 @@ def internal_mmt_run_mocker(mocker):
         assert body.machines == 42
         assert body.spec.instance_name in [
             machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
-        ]
+        ] + [machine.slug for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
         assert body.spec.cloudspace_id != ""
 
         return V1MultiMachineJob(
@@ -1507,7 +1598,7 @@ def internal_inference_run_mocker(mocker):
         assert body.plugin_arguments["endpoint"] == "/fancy-predict"
         assert body.plugin_arguments["compute"] in [
             machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
-        ]
+        ] + [machine.slug for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
 
         return V1CreateCloudSpaceAppInstanceResponse(
             lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
@@ -1579,7 +1670,7 @@ def internal_data_prep_run_mocker(mocker):
         assert distributed_args["num_instances"] == 42
         assert distributed_args["cloud_compute"] in [
             machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
-        ]
+        ] + [machine.slug for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
 
         return V1CreateCloudSpaceAppInstanceResponse(
             lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
@@ -2056,7 +2147,8 @@ def internal_job_api_mocker_get_work(mocker):
                     id="w-abc",
                     project_id=project_id,
                     spec=V1LightningworkSpec(
-                        user_requested_compute_config=V1UserRequestedComputeConfig(name="g4dn.12xlarge")
+                        user_requested_compute_config=V1UserRequestedComputeConfig(name="g4dn.12xlarge"),
+                        cluster_id="cluster-abc",
                     ),
                 )
             ]
@@ -2082,6 +2174,38 @@ def internal_job_api_mocker_get_work(mocker):
         "lightning_sdk.lightning_cloud.openapi.api.lightningwork_service_api.LightningworkServiceApi.lightningwork_service_get_lightningwork",
         side_effect=get_work,
         autospec=True,
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_cluster_accelerators",
+        autospec=True,
+        return_value=V1ListClusterAcceleratorsResponse(
+            accelerator=[
+                V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
+                V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
+                V1ClusterAccelerator(instance_id="g4dn.2xlarge", slug_multi_cloud="lit-t4-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g4dn.12xlarge", slug_multi_cloud="lit-t4-4", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.4xlarge", slug_multi_cloud="lit-l4-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.12xlarge", slug_multi_cloud="lit-l4-4", enabled=True),
+                V1ClusterAccelerator(instance_id="p4d.24xlarge", slug_multi_cloud="lit-a100-8", enabled=True),
+                V1ClusterAccelerator(instance_id="p5.48xlarge", slug_multi_cloud="lit-h100-8", enabled=True),
+                V1ClusterAccelerator(instance_id="p5en.48xlarge", slug_multi_cloud="lit-h200x-8", enabled=True),
+                V1ClusterAccelerator(instance_id="data-max", slug_multi_cloud="data-prep-max-large", enabled=True),
+                V1ClusterAccelerator(
+                    instance_id="data-ultra", slug_multi_cloud="data-prep-ultra-extra-large", enabled=True
+                ),
+                V1ClusterAccelerator(instance_id="m3.medium", slug_multi_cloud="cpu-2", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.4xlarge", slug_multi_cloud="lit-l40s-1", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.12xlarge", slug_multi_cloud="lit-l40s-4", enabled=True),
+                V1ClusterAccelerator(instance_id="g6e.48xlarge", slug_multi_cloud="lit-l40s-8", enabled=True),
+                V1ClusterAccelerator(instance_id="g6.48xlarge", slug_multi_cloud="lit-l4-8", enabled=True),
+                V1ClusterAccelerator(instance_id="a2-ultragpu-2g", slug_multi_cloud="lit-a100-2", enabled=True),
+                V1ClusterAccelerator(instance_id="a2-ultragpu-4g", slug_multi_cloud="lit-a100-4", enabled=True),
+                V1ClusterAccelerator(instance_id="a4-highgpu-8g", slug_multi_cloud="lit-b200x-8", enabled=True),
+                V1ClusterAccelerator(instance_id="n2d-standard-2", slug_multi_cloud="cpu-2", enabled=True),
+                V1ClusterAccelerator(instance_id="g2-standard-24", slug_multi_cloud="lit-l4-2", enabled=True),
+            ]
+        ),
     )
 
     yield [mocker]
@@ -2225,26 +2349,6 @@ def internal_agent_api_create_assistant_mocker(mocker):
 
     yield [mocker]
     mocker.resetall()
-
-
-@pytest.fixture(scope="session")
-def available_aws_instance_types():
-    import boto3
-
-    # Initialize empty list to store instance types
-    instance_types = []
-    for region in ["us-east-1", "us-east-2", "us-west-1", "us-west-2"]:
-        # supress exceptions
-        with suppress(Exception):
-            # Create EC2 client
-            ec2_client = boto3.client("ec2", region_name=region)
-            # Paginator to handle large result sets
-            paginator = ec2_client.get_paginator("describe_instance_types")
-            # Iterate through each page of instance types
-            for page in paginator.paginate():
-                instance_types += [it["InstanceType"] for it in page["InstanceTypes"]]
-
-    return set(instance_types)
 
 
 @pytest.fixture()

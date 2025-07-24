@@ -205,8 +205,11 @@ class Teamspace:
         cloud_machines = self._teamspace_api.list_machines(self.id, cloud_account=cloud_account)
         return [
             Machine(
-                cluster_machine.instance_id,
-                cluster_machine.instance_id,
+                name=cluster_machine.instance_id,
+                slug=cluster_machine.slug_multi_cloud,
+                instance_type=cluster_machine.instance_id,
+                family=cluster_machine.family,
+                accelerator_count=cluster_machine.resources.gpu or cluster_machine.resources.cpu,
                 cost=cluster_machine.cost,
                 interruptible_cost=cluster_machine.spot_price,
                 wait_time=float(cluster_machine.available_in_seconds) if cluster_machine.available_in_seconds else None,

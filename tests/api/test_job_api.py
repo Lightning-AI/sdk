@@ -122,7 +122,7 @@ def test_job_v2_submit_job(mocker_auth):
         command="echo hello",
         env=[V1EnvVar(name="key", value="value")],
         image="",
-        instance_name="g4dn.12xlarge",
+        instance_name="lit-t4-4",
         run_id=mock.ANY,
         spot=False,
         image_cluster_credentials=True,
@@ -221,12 +221,15 @@ def test_translate_state(mocker_auth, internal_state, expected_state):
         ("", "unknown", Machine("unknown", "unknown")),
     ],
 )
-def test_machine_translate(mocker_auth, instance_name, instance_type, expected_machine):
+def test_machine_translate(
+    mocker_auth, internal_studio_api_mocker_get_machine, instance_name, instance_type, expected_machine
+):
     job_api = JobApiV2()
 
     spec = V1JobSpec(
         instance_name=instance_name,
         instance_type=instance_type,
+        cluster_id="cluster_abc",
     )
 
     assert job_api._get_job_machine_from_spec(spec) == expected_machine

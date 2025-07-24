@@ -7,7 +7,7 @@ s.start()
 print(s.machine)
 
 print("switching studio machine...")
-s.switch_machine(Machine.A10G)
+s.switch_machine(Machine.L4)
 print(s.machine)
 
 print(s.status)

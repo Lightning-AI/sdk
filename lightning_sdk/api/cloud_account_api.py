@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from lightning_sdk.lightning_cloud.openapi import (
@@ -54,6 +55,7 @@ class CloudAccountApi:
 
         return None
 
+    @lru_cache(maxsize=None)  # noqa: B019
     def list_cloud_account_accelerators(self, cloud_account_id: str, org_id: str) -> V1ListClusterAcceleratorsResponse:
         """Lists the accelerators for a given cloud account.
 
@@ -79,6 +81,10 @@ class CloudAccountApi:
         if not cloud_accounts:
             raise ValueError(f"Teamspace {teamspace_id} does not exist")
         filtered_cloud_accounts = filter(lambda x: x.spec.cluster_type == V1ClusterType.GLOBAL, cloud_accounts)
+        # TODO: remove aggregate filter once finished
+        filtered_cloud_accounts = filter(
+            lambda x: x.spec.driver != V1CloudProvider.LIGHTNING_AGGREGATE, filtered_cloud_accounts
+        )
         return list(filtered_cloud_accounts)
 
     def get_cloud_account_provider_mapping(self, teamspace_id: str) -> Dict["CloudProvider", str]:

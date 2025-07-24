@@ -28,11 +28,11 @@ s.start()
 # prints Machine.CPU-4
 print(s.machine)
 
-# or start directly on this machine with s.start(Machine.A10G)
+# or start directly on this machine with s.start(Machine.L4)
 print("switching Studio machine...")
-s.switch_machine(Machine.A10G)
+s.switch_machine(Machine.L4)
 
-# prints Machine.A10G
+# prints Machine.L4
 print(s.machine)
 
 # prints Status.Running
@@ -45,7 +45,7 @@ s.install_plugin("jobs")
 s.install_plugin("multi-machine-training")
 
 # run the resulting plugins to start 1 job and 1 multi-machine training
-s.installed_plugins["jobs"].run("python my_dummy_file", name="my_first_job", machine=Machine.A10G)
+s.installed_plugins["jobs"].run("python my_dummy_file", name="my_first_job", machine=Machine.L4)
 s.installed_plugins["multi-machine-training"].run("python my_dummy_file", name="my_first_mmt", machine=Machine.T4, num_instances=42)
 
 print("Stopping Studio")

@@ -43,7 +43,7 @@ def test_mmt_v1_submit_job():
         cluster_id="c-abc",
         plugin_arguments={
             "distributedArguments": '{"cloud_compute": '
-            '"g4dn.12xlarge", '
+            '"lit-t4-4", '
             '"num_instances": 5, "strategy": '
             '"parallel"}',
             "entrypoint": "echo hello",
@@ -124,7 +124,7 @@ def test_mmt_v2_submit_job():
         env=[V1EnvVar(name="key", value="value")],
         image="",
         entrypoint="sh -c",
-        instance_name="g4dn.12xlarge",
+        instance_name="lit-t4-4",
         run_id=mock.ANY,
         spot=False,
         image_cluster_credentials=True,
@@ -219,16 +219,19 @@ def test_translate_state(internal_state, expected_state):
         ("g4dn.12xlarge", None, Machine.T4_X_4),
         ("p4d.24xlarge", "p4d.24xlarge", Machine.A100_X_8),
         ("unknown", "p4d.24xlarge", Machine.A100_X_8),
-        ("unknown", "", Machine("unknown", "unknown")),
-        ("", "unknown", Machine("unknown", "unknown")),
+        ("unknown", "", Machine.from_str("unknown")),
+        ("", "unknown", Machine.from_str("unknown")),
     ],
 )
-def test_machine_translate(instance_name, instance_type, expected_machine):
+def test_machine_translate(
+    mocker_auth, internal_studio_api_mocker_get_machine, instance_name, instance_type, expected_machine
+):
     job_api = MMTApiV2()
 
     spec = V1JobSpec(
         instance_name=instance_name,
         instance_type=instance_type,
+        cluster_id="cluster_abc",
     )
 
     assert job_api._get_job_machine_from_spec(spec) == expected_machine

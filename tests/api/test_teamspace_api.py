@@ -15,6 +15,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ListProjectClusterAcceleratorsResponse,
     V1Project,
     V1ProjectClusterBinding,
+    V1Resources,
 )
 
 
@@ -207,7 +208,16 @@ def test_create_delete_model_version():
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
 def test_list_machines(mock_client):
     mock_client().cluster_service_list_project_cluster_accelerators.return_value = (
-        V1ListProjectClusterAcceleratorsResponse(accelerator=[V1ClusterAccelerator(instance_id="instance-id")])
+        V1ListProjectClusterAcceleratorsResponse(
+            accelerator=[
+                V1ClusterAccelerator(
+                    instance_id="instance-id",
+                    slug="t4-x-2",
+                    slug_multi_cloud="lit-t4-2",
+                    resources=V1Resources(cpu=4, gpu=2),
+                )
+            ]
+        )
     )
 
     teamspace_api = TeamspaceApi()

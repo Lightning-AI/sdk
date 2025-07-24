@@ -5,7 +5,9 @@ import click
 from lightning_sdk import Machine, Studio
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
-_MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
+_MACHINE_VALUES = tuple(
+    [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
+)
 
 
 @click.group("switch")

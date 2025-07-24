@@ -188,7 +188,7 @@ def test_submit_job_v2_image(
     )
 
 
-@pytest.mark.parametrize("machine", [Machine.A10G, Machine.DATA_PREP_MAX])
+@pytest.mark.parametrize("machine", [Machine.L4, Machine.DATA_PREP_MAX])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
 def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interruptible):
@@ -367,18 +367,27 @@ def test_jobv2_status(job_api_get_job_by_name_mocker, internal_studio_init_mocke
         ("g4dn.12xlarge", None, Machine.T4_X_4),
         ("p4d.24xlarge", "p4d.24xlarge", Machine.A100_X_8),
         ("unknown", "p4d.24xlarge", Machine.A100_X_8),
-        ("unknown", "", Machine("unknown", "unknown")),
-        ("", "unknown", Machine("", "unknown")),
+        ("unknown", "", Machine.from_str("unknown")),
+        ("", "unknown", Machine.from_str("unknown")),
     ],
 )
-def test_jobv2_machine(internal_studio_init_mocker, internal_instance_name, internal_instance_type, expected_machine):
+def test_jobv2_machine(
+    internal_studio_init_mocker,
+    internal_studio_api_mocker_get_machine,
+    internal_instance_name,
+    internal_instance_type,
+    expected_machine,
+):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
     job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
 
     get_job_mock = mock.MagicMock()
     get_job_mock.return_value = V1Job(
-        id="test-job-id", spec=V1JobSpec(instance_name=internal_instance_name, instance_type=internal_instance_type)
+        id="test-job-id",
+        spec=V1JobSpec(
+            instance_name=internal_instance_name, instance_type=internal_instance_type, cluster_id="cluster_abc"
+        ),
     )
     job._job_api.get_job_by_name = get_job_mock
 
@@ -613,7 +622,7 @@ def test_job_logs_v1(
     assert job.logs == "⚡  ~ echo Hello\nHello\n"
 
 
-def test_job_v2_dict_json(internal_studio_init_mocker):
+def test_job_v2_dict_json(internal_studio_init_mocker, internal_studio_api_mocker_get_machine):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
     internal_job = V1Job(

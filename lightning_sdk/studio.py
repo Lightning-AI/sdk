@@ -7,7 +7,6 @@ from tqdm.auto import tqdm
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.studio_api import StudioApi
-from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.organization import Organization
@@ -176,7 +175,7 @@ class Studio:
         """Returns the current machine type the Studio is running on."""
         if self.status != Status.Running:
             return None
-        return self._studio_api.get_machine(self._studio.id, self._teamspace.id)
+        return self._studio_api.get_machine(self._studio.id, self._teamspace.id, self.cloud_account)
 
     @property
     def interruptible(self) -> bool:
@@ -223,10 +222,12 @@ class Studio:
                 interruptible = self.teamspace.start_studios_on_interruptible
 
         if status == Status.Running:
-            curr_machine = _machine_to_compute_name(self.machine) if self.machine is not None else None
-            if curr_machine != _machine_to_compute_name(machine):
+            new_machine = machine
+            if not isinstance(machine, Machine):
+                new_machine = Machine.from_str(machine)
+            if new_machine != self.machine:
                 raise RuntimeError(
-                    f"Requested to start studio on {machine}, but studio is already running on {self.machine}."
+                    f"Requested to start studio on {new_machine}, but studio is already running on {self.machine}."
                     " Consider switching instead!"
                 )
             _logger.info(f"Studio {self.name} is already running")

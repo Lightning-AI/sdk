@@ -71,8 +71,6 @@ def test_get_studio_status(internal_studio_api_mocker_studio_status):
         Machine.T4_X_4,
         Machine.L4,
         Machine.L4_X_4,
-        Machine.A10G,
-        Machine.A10G_X_4,
         Machine.A100_X_8,
         Machine.H100_X_8,
         Machine.H200_X_8,
@@ -131,14 +129,11 @@ def test_delete_studio(internal_studio_api_mocker_delete):
         ("st-jkl", Machine.T4_X_4),
         ("st-mno", Machine.L4),
         ("st-pqr", Machine.L4_X_4),
-        ("st-stu", Machine.A10G),
-        ("st-vwx", Machine.A10G_X_4),
         ("st-yza", Machine.A100_X_8),
         ("st-bcd", Machine.H100_X_8),
         ("st-efg", Machine.H200_X_8),
         ("st-hij", Machine.DATA_PREP_MAX),
         ("st-klm", Machine.DATA_PREP_ULTRA),
-        ("st-qrs", Machine.A10G_X_8),
         ("st-tuv", Machine.L40S),
         ("st-wxy", Machine.L40S_X_4),
         ("st-zab", Machine.L40S_X_8),
@@ -153,7 +148,7 @@ def test_delete_studio(internal_studio_api_mocker_delete):
 def test_get_machine(internal_studio_api_mocker_get_machine, name, expected_machine):
     studio_api = StudioApi()
 
-    machine = studio_api.get_machine(name, "ts-abc")
+    machine = studio_api.get_machine(name, "ts-abc", "cluster-abc")
 
     assert isinstance(machine, Machine)
     assert expected_machine == machine
@@ -282,7 +277,7 @@ def test_create_job(internal_studio_api_create_app_mocker):
     studio_api = StudioApi()
 
     resp = studio_api.create_job(
-        "my-entry-point", "fancy-job-name", Machine.A10G, "st-abc", "ts-abc", "cluster-abc", False
+        "my-entry-point", "fancy-job-name", Machine.L4, "st-abc", "ts-abc", "cluster-abc", False
     )
     assert resp.name == "fancy-job-name"
 
@@ -294,7 +289,7 @@ def test_create_job_with_service_id(monkeypatch):
     monkeypatch.setattr(studio_api_module, "LightningClient", mock.MagicMock(return_value=mock_client))
     studio_api = StudioApi()
 
-    studio_api.create_job("my-entry-point", "fancy-job-name", Machine.A10G, "st-abc", "ts-abc", "cluster-abc", False)
+    studio_api.create_job("my-entry-point", "fancy-job-name", Machine.L4, "st-abc", "ts-abc", "cluster-abc", False)
     assert (
         mock_client.cloud_space_service_create_cloud_space_app_instance._mock_mock_calls[0].kwargs["body"].service_id
         == "service_id"
@@ -305,7 +300,7 @@ def test_create_mmt(internal_studio_api_create_app_mocker):
     studio_api = StudioApi()
 
     resp = studio_api.create_multi_machine_job(
-        "my-entry-point", "fancy-mmt-name", 4, Machine.A10G, "parallel", "st-abc", "ts-abc", "cluster-abc", False
+        "my-entry-point", "fancy-mmt-name", 4, Machine.L4, "parallel", "st-abc", "ts-abc", "cluster-abc", False
     )
     assert resp.name == "fancy-mmt-name"
 
@@ -316,7 +311,7 @@ def test_create_inference_run(internal_studio_api_create_app_mocker):
     resp = studio_api.create_inference_job(
         "my-entry-point",
         "fancy-inference-name",
-        Machine.A10G,
+        Machine.L4,
         min_replicas="1",
         max_replicas="5",
         max_batch_size="10",

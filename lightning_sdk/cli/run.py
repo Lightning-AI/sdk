@@ -8,7 +8,9 @@ from lightning_sdk.machine import Machine
 from lightning_sdk.mmt import MMT
 from lightning_sdk.teamspace import Teamspace
 
-_MACHINE_VALUES = tuple([machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine)])
+_MACHINE_VALUES = tuple(
+    [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
+)
 
 
 @click.group(name="run")

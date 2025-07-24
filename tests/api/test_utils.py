@@ -54,7 +54,7 @@ def test_file_uploader_path_exists(monkeypatch):
     ("machine", "compute_name"),
     [
         (Machine.CPU, "cpu-4"),
-        (Machine.L40S_X_8, "g6e.48xlarge"),
+        (Machine.L40S_X_8, "lit-l40s-8"),
         ("trn1.2xlarge", "trn1.2xlarge"),
     ],
 )

@@ -136,10 +136,10 @@ def test_studio_start_wrong_machine(
     # TODO: user-freindly names for machines
     with pytest.raises(
         RuntimeError,
-        match=f"Requested to start studio on {Machine.A10G}, but studio is already running on g4dn.2xlarge."
+        match=f"Requested to start studio on {Machine.L4}, but studio is already running on {Machine.T4}."
         " Consider switching instead!",
     ):
-        studio.start(Machine.A10G)
+        studio.start(Machine.L4)
 
 
 def test_studio_stop(internal_studio_stop_mocker, internal_studio_init_mocker):
@@ -173,9 +173,6 @@ def test_studio_delete(internal_studio_delete_mocker, internal_studio_status_moc
         Machine.L4,
         Machine.L4_X_4,
         Machine.L4_X_8,
-        Machine.A10G,
-        Machine.A10G_X_4,
-        Machine.A10G_X_8,
         Machine.L40S,
         Machine.L40S_X_4,
         Machine.L40S_X_8,
@@ -278,7 +275,7 @@ def test_action_in_wrong_state(
             RuntimeError,
             match=f"Cannot switch machine on a studio that is not running. Studio {name} is {expected_state}.",
         ):
-            studio.switch_machine(Machine.A10G)
+            studio.switch_machine(Machine.L4)
 
     if "run" in forbidden_actions:
         with pytest.raises(
@@ -655,7 +652,7 @@ def test_provider(get_cluster_provider_mapping_mocker, internal_studio_init_mock
     assert studio.cloud_account == "c-test"
 
 
-@pytest.mark.parametrize("machine", [Machine.A10G, Machine.DATA_PREP_MAX])
+@pytest.mark.parametrize("machine", [Machine.L4, Machine.DATA_PREP_MAX])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
 def test_submit_job_v2_studio(
@@ -699,7 +696,7 @@ def test_submit_job_v2_studio(
     )
 
 
-@pytest.mark.parametrize("machine", [Machine.A10G, Machine.DATA_PREP_MAX])
+@pytest.mark.parametrize("machine", [Machine.L4, Machine.DATA_PREP_MAX])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
 def test_submit_mmt_v2_studio(
