@@ -36,6 +36,10 @@ dependencies = [ # alphabetically sorted
 
 dynamic = ["version"]
 
+[project.urls]
+Homepage = "https://lightning.ai"
+Documentation = "https://lightning.ai/docs/overview/sdk-reference"
+
 [project.optional-dependencies]
 serve = ["litserve>=0.2.5"]
 

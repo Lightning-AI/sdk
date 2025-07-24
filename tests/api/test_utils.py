@@ -12,6 +12,7 @@ from lightning_sdk.api.utils import (
     _FileUploader,
     _machine_to_compute_name,
     _ModelFileUploader,
+    _sanitize_studio_remote_path,
     resolve_path_mappings,
 )
 from lightning_sdk.lightning_cloud.openapi import (
@@ -343,3 +344,18 @@ def test_resolve_path_mappings():
     assert path_mappings[2].container_path == "/output"
     assert path_mappings[2].connection_name == "some-connection"
     assert path_mappings[2].connection_path == "some-path"
+
+
+def test_sanitize_studio_remote_path():
+    path = "test-folder"
+    studio_id = "test-studio-id"
+    result = _sanitize_studio_remote_path(path, studio_id)
+    assert result == f"/cloudspaces/{studio_id}/code/content/{path}"
+
+    path = "test-folder/sub-folder"
+    result = _sanitize_studio_remote_path(path, studio_id)
+    assert result == f"/cloudspaces/{studio_id}/code/content/{path}"
+
+    path = ""
+    result = _sanitize_studio_remote_path(path, studio_id)
+    assert result == f"/cloudspaces/{studio_id}/code/content/"

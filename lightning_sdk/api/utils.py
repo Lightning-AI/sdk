@@ -352,7 +352,9 @@ def _get_registry_url() -> str:
 
 
 def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:
-    return f"/cloudspaces/{studio_id}/code/content/{path.replace('/teamspace/studios/this_studio/', '')}"
+    path = path.replace("/teamspace/studios/this_studio/", "")
+    root = f"/cloudspaces/{studio_id}/code/content/"
+    return os.path.join(root, path)
 
 
 def _resolve_teamspace_remote_path(path: str) -> str:
