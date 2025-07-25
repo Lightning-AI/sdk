@@ -17,6 +17,27 @@ from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
 
 
+def _expand_remote_path(path: str) -> str:
+    """Expand and normalize remote CLI paths.
+
+    - Strips leading `~/` or `~`
+    - Expands `~` to the user's home but returns relative to it
+    - Returns an empty string if path is empty or `~`
+    """
+    if not path:
+        return ""
+
+    local_home = os.path.expanduser("~")
+
+    # Expand to absolute path and remove the local home prefix if present
+    path = os.path.expanduser(path)
+    if path.startswith(local_home):
+        path = path[len(local_home) :]
+
+    # Remove any leading "/" or "~" remnants
+    return path.lstrip("/~")
+
+
 @click.group(name="download")
 def download() -> None:
     """Download resources from Lightning AI."""
@@ -86,17 +107,20 @@ def folder(
         raise ValueError("Either --studio or --teamspace must be provided, not both")
 
     if studio:
+        path = _expand_remote_path(path)
         resolved_downloader = _resolve_studio(studio)
     elif teamspace:
         menu = _TeamspacesMenu()
         resolved_downloader = menu._resolve_teamspace(teamspace)
+    else:
+        raise ValueError("Either --studio or --teamspace must be provided")
 
     if not path:
         local_path /= resolved_downloader.name
         path = ""
 
     try:
-        if not path:
+        if not path and teamspace:
             raise FileNotFoundError()
         resolved_downloader.download_folder(remote_path=path, target_path=str(local_path))
     except Exception as e:

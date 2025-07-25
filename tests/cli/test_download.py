@@ -1,4 +1,7 @@
+import os
 import subprocess
+
+from lightning_sdk.cli.download import _expand_remote_path
 
 
 def test_download_help():
@@ -183,3 +186,13 @@ Options:
   --help  Show this message and exit.
 """
     )
+
+
+def test_expand_path():
+    assert _expand_remote_path("~/test") == "test"
+    assert _expand_remote_path("~/test/test2") == "test/test2"
+    assert _expand_remote_path("~/") == ""
+    assert _expand_remote_path("~") == ""
+    assert _expand_remote_path("") == ""
+    assert _expand_remote_path("/") == ""
+    assert _expand_remote_path(os.path.expanduser("~")) == ""
