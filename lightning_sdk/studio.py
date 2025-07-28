@@ -173,9 +173,16 @@ class Studio:
     @property
     def machine(self) -> Optional[Machine]:
         """Returns the current machine type the Studio is running on."""
+        from lightning_sdk.organization import Organization
+
         if self.status != Status.Running:
             return None
-        return self._studio_api.get_machine(self._studio.id, self._teamspace.id, self.cloud_account)
+        return self._studio_api.get_machine(
+            self._studio.id,
+            self._teamspace.id,
+            self._teamspace.owner.id if isinstance(self._teamspace.owner, Organization) else "",
+            self.cloud_account,
+        )
 
     @property
     def interruptible(self) -> bool:

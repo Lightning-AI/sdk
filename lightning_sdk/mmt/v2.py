@@ -191,7 +191,13 @@ class _MMTV2(_BaseMMT):
     @property
     def machine(self) -> Union["Machine", str]:
         """Returns the machine type this job is running on."""
-        return self._job_api._get_job_machine_from_spec(self._guaranteed_job.spec)
+        from lightning_sdk.organization import Organization
+
+        return self._job_api._get_job_machine_from_spec(
+            self._guaranteed_job.spec,
+            self.teamspace.id,
+            self.teamspace.owner.id if isinstance(self.teamspace.owner, Organization) else "",
+        )
 
     def _update_internal_job(self) -> None:
         if getattr(self, "_job", None) is None:

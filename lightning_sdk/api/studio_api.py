@@ -268,12 +268,14 @@ class StudioApi:
                 break
             time.sleep(1)
 
-    def get_machine(self, studio_id: str, teamspace_id: str, cloud_account_id: str) -> Machine:
+    def get_machine(self, studio_id: str, teamspace_id: str, org_id: str, cloud_account_id: str) -> Machine:
         """Get the current machine type the given Studio is running on."""
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
             project_id=teamspace_id, id=studio_id
         )
-        accelerators = self._get_machines_for_cloud_account(cloud_account_id)
+        accelerators = self._get_machines_for_cloud_account(
+            teamspace_id=teamspace_id, org_id=org_id, cloud_account_id=cloud_account_id
+        )
 
         for accelerator in accelerators:
             if response.compute_config.name in (
@@ -293,23 +295,19 @@ class StudioApi:
 
         return response.compute_config.spot
 
-    def _get_machines_for_cloud_account(self, cloud_account_id: str) -> List[V1ClusterAccelerator]:
+    def _get_machines_for_cloud_account(
+        self, teamspace_id: str, org_id: str, cloud_account_id: str
+    ) -> List[V1ClusterAccelerator]:
         from lightning_sdk.api.cloud_account_api import CloudAccountApi
 
         cloud_account_api = CloudAccountApi()
-        accelerators = cloud_account_api.list_cloud_account_accelerators(cloud_account_id=cloud_account_id, org_id="")
+        accelerators = cloud_account_api.list_cloud_account_accelerators(
+            teamspace_id=teamspace_id, org_id=org_id, cloud_account_id=cloud_account_id
+        )
         if not accelerators:
             return []
 
         return list(filter(lambda acc: acc.enabled, accelerators.accelerator))
-
-    def get_machine_slug(self, instance_id: str, cloud_account_id: str) -> str:
-        """Retrieve the slug_multi_cloud for a given instance_id."""
-        accelerators = self._get_machines_for_cloud_account(cloud_account_id)
-        for accelerator in accelerators:
-            if accelerator.instance_id == instance_id:
-                return accelerator.slug_multi_cloud
-        raise ValueError(f"No matching slug found for instance_id: {instance_id}")
 
     def _get_detached_command_status(
         self, studio_id: str, teamspace_id: str, session_id: str

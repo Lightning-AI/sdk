@@ -165,7 +165,13 @@ class _JobV2(_BaseJob):
     def machine(self) -> Union["Machine", str]:
         """The machine type the job is running on."""
         # only fetch the job it it hasn't been fetched yet as machine cannot change over time
-        return self._job_api._get_job_machine_from_spec(self._guaranteed_job.spec)
+        from lightning_sdk.organization import Organization
+
+        return self._job_api._get_job_machine_from_spec(
+            self._guaranteed_job.spec,
+            self.teamspace.id,
+            self.teamspace.owner.id if isinstance(self.teamspace.owner, Organization) else "",
+        )
 
     @property
     def artifact_path(self) -> Optional[str]:

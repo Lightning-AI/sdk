@@ -13,6 +13,10 @@ class CloudProvider(Enum):
     NEBIUS = "NEBIUS"
     LIGHTNING = "LIGHTNING"
 
+    def __str__(self) -> str:
+        """Converts the CloudProvider to a str."""
+        return self.value
+
 
 @dataclass(frozen=True)
 class Machine:

@@ -247,8 +247,10 @@ class MMTApiV2:
     def get_command(self, job: V1MultiMachineJob) -> str:
         return job.spec.command
 
-    def _get_job_machine_from_spec(self, spec: V1JobSpec) -> "Machine":
-        accelerators = self._get_machines_for_cloud_account(spec.cluster_id)
+    def _get_job_machine_from_spec(self, spec: V1JobSpec, teamspace_id: str, org_id: str) -> "Machine":
+        accelerators = self._get_machines_for_cloud_account(
+            teamspace_id=teamspace_id, org_id=org_id, cloud_account_id=spec.cluster_id
+        )
 
         for accelerator in accelerators:
             possible_identifiers = (
@@ -263,11 +265,15 @@ class MMTApiV2:
 
         return Machine.from_str(spec.instance_name or spec.instance_type)
 
-    def _get_machines_for_cloud_account(self, cloud_account_id: str) -> List[V1ClusterAccelerator]:
+    def _get_machines_for_cloud_account(
+        self, teamspace_id: str, org_id: str, cloud_account_id: str
+    ) -> List[V1ClusterAccelerator]:
         from lightning_sdk.api.cloud_account_api import CloudAccountApi
 
         cloud_account_api = CloudAccountApi()
-        accelerators = cloud_account_api.list_cloud_account_accelerators(cloud_account_id=cloud_account_id, org_id="")
+        accelerators = cloud_account_api.list_cloud_account_accelerators(
+            teamspace_id=teamspace_id, org_id=org_id, cloud_account_id=cloud_account_id
+        )
         if not accelerators:
             return []
 

@@ -7,6 +7,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterType,
     V1ExternalCluster,
     V1ListClusterAcceleratorsResponse,
+    V1ListDefaultClusterAcceleratorsResponse,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
@@ -34,6 +35,7 @@ class CloudAccountApi:
             raise ValueError(f"CloudAccount {cloud_account_id} does not exist")
         return res
 
+    @lru_cache(maxsize=None)  # noqa: B019
     def list_cloud_accounts(self, teamspace_id: str) -> List[V1ExternalCluster]:
         """Lists the cloud accounts for a given teamspace.
 
@@ -43,10 +45,22 @@ class CloudAccountApi:
         Returns:
             A list of cloud accounts
         """
-        res = self._client.cluster_service_list_project_clusters(
+        res_project = self._client.cluster_service_list_project_clusters(
             project_id=teamspace_id,
         )
-        return res.clusters
+        res_global = self._client.cluster_service_list_clusters(
+            project_id=teamspace_id,
+        )
+
+        # can't use set here because the cloud_accounts are not hashable
+        cloud_accounts = []
+        cloud_account_ids = []
+        for cloud_account in res_project.clusters + res_global.clusters:
+            if cloud_account.id not in cloud_account_ids:
+                cloud_accounts.append(cloud_account)
+                cloud_account_ids.append(cloud_account.id)
+
+        return cloud_accounts
 
     def get_cloud_account_non_org(self, teamspace_id: str, cloud_account_id: str) -> Optional[V1ExternalCluster]:
         for cluster in self.list_cloud_accounts(teamspace_id=teamspace_id):
@@ -56,21 +70,47 @@ class CloudAccountApi:
         return None
 
     @lru_cache(maxsize=None)  # noqa: B019
-    def list_cloud_account_accelerators(self, cloud_account_id: str, org_id: str) -> V1ListClusterAcceleratorsResponse:
+    def list_cloud_account_accelerators(
+        self, teamspace_id: str, cloud_account_id: str, org_id: str
+    ) -> Union[V1ListClusterAcceleratorsResponse, V1ListDefaultClusterAcceleratorsResponse]:
         """Lists the accelerators for a given cloud account.
 
         Args:
             cloud_account_id: cluster ID to list accelerators for
             org_id: The owning org of this project
         """
-        res = self._client.cluster_service_list_cluster_accelerators(
-            id=cloud_account_id,
-            org_id=org_id,
-        )
+        if not org_id:
+            # map cloud_account to provider
+            cloud_provider = None
+            for cloud_account in self.list_cloud_accounts(teamspace_id=teamspace_id):
+                if cloud_account.id == cloud_account_id:
+                    cloud_provider = self._get_cloud_account_provider(cloud_account)
+                    break
+
+            if cloud_provider is None:
+                raise ValueError(
+                    f"Cloud Account {cloud_account_id} is not a default cloud account. "
+                    "Are you in the correct teamspace?"
+                )
+
+            res = self._list_default_cluster_accelerators(teamspace_id=teamspace_id, cloud_provider=cloud_provider)
+        else:
+            res = self._client.cluster_service_list_cluster_accelerators(
+                id=cloud_account_id,
+                org_id=org_id,
+            )
         if not res:
             raise ValueError(f"CloudAccount {cloud_account_id} does not exist")
         return res
 
+    def _list_default_cluster_accelerators(
+        self, teamspace_id: str, cloud_provider: Union[str, "CloudProvider"]
+    ) -> V1ListDefaultClusterAcceleratorsResponse:
+        return self._client.cluster_service_list_default_cluster_accelerators(
+            project_id=teamspace_id, cloud_provider=str(cloud_provider)
+        )
+
+    @lru_cache(maxsize=None)  # noqa: B019
     def list_global_cloud_accounts(self, teamspace_id: str) -> List[V1ExternalCluster]:
         """Lists the accelerators for a given teamspace.
 

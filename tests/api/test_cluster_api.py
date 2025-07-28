@@ -48,7 +48,7 @@ def accelerator_response():
 def test_list_cloud_account_accelerators(mock_client, accelerator_response):
     mock_client.return_value.cluster_service_list_cluster_accelerators.return_value = accelerator_response
     cloud_account_api = CloudAccountApi()
-    res = cloud_account_api.list_cloud_account_accelerators("test-cluster", "lightning-ai")
+    res = cloud_account_api.list_cloud_account_accelerators("test-teamspace", "lightning-ai", "test-cluster")
     assert res == accelerator_response
 
 

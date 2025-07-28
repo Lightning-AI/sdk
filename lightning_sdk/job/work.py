@@ -52,7 +52,12 @@ class Work:
 
     @property
     def machine(self) -> Union["Machine", str]:
-        return self._job_api.get_machine_from_work(self._guaranteed_work)
+        from lightning_sdk import Organization
+
+        return self._job_api.get_machine_from_work(
+            self._guaranteed_work,
+            org_id=self._teamspace.owner.id if isinstance(self._teamspace.owner, Organization) else "",
+        )
 
     @property
     def artifact_path(self) -> Optional[str]:
