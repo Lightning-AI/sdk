@@ -127,7 +127,7 @@ def download_model(
         return api.download_model_files(
             name=model_name,
             version=version,
-            download_dir=Path(download_dir),
+            download_dir=Path(download_dir).expanduser().resolve(),
             teamspace_name=teamspace_name,
             teamspace_owner_name=teamspace_owner_name,
             progress_bar=progress_bar,

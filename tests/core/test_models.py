@@ -146,7 +146,7 @@ def test_download_model_in_studio_with_org(
     mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
     mock_download_model_files.assert_called_once_with(
         client=mock.ANY,
-        download_dir=Path("."),
+        download_dir=Path(".").expanduser().resolve(),
         name="model_name",
         progress_bar=True,
         teamspace_name="ts-abc",
@@ -171,7 +171,7 @@ def test_download_model_in_studio_with_user(
     mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name")
     mock_download_model_files.assert_called_once_with(
         client=mock.ANY,
-        download_dir=Path("."),
+        download_dir=Path(".").expanduser().resolve(),
         name="model_name",
         progress_bar=True,
         teamspace_name="ts-abc",
@@ -347,3 +347,23 @@ def test_list_model_versions_in_studio_with_user(
     list_model_versions("model_name")
     mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name")
     mock_ts.list_model_versions.assert_called_once_with(name="model_name")
+
+
+@mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+def test_download_dir_home_path_shorthand(mock_download_model_files):
+    input_model = "lightning-ai/general/sdk-test-file"
+    file_name = "sdk-test-file"
+    teamspace = "general"
+    owner = "lightning-ai"
+    download_path = "~/test_dir"
+    expanded_path = Path(download_path).expanduser().resolve()
+    download_model(input_model, download_path)
+    mock_download_model_files.assert_called_once_with(
+        client=mock.ANY,
+        name=file_name,
+        version="default",
+        download_dir=expanded_path,
+        teamspace_name=teamspace,
+        teamspace_owner_name=owner,
+        progress_bar=True,
+    )
