@@ -42,21 +42,36 @@ class V1SlurmV1Status(object):
     """
     swagger_types = {
         'nodes': 'list[V1SlurmNode]',
+        'ssh_host': 'str',
+        'ssh_port': 'int',
+        'ssh_username': 'str',
         'version': 'str'
     }
 
     attribute_map = {
         'nodes': 'nodes',
+        'ssh_host': 'sshHost',
+        'ssh_port': 'sshPort',
+        'ssh_username': 'sshUsername',
         'version': 'version'
     }
 
-    def __init__(self, nodes: 'list[V1SlurmNode]' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, nodes: 'list[V1SlurmNode]' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1SlurmV1Status - a model defined in Swagger"""  # noqa: E501
         self._nodes = None
+        self._ssh_host = None
+        self._ssh_port = None
+        self._ssh_username = None
         self._version = None
         self.discriminator = None
         if nodes is not None:
             self.nodes = nodes
+        if ssh_host is not None:
+            self.ssh_host = ssh_host
+        if ssh_port is not None:
+            self.ssh_port = ssh_port
+        if ssh_username is not None:
+            self.ssh_username = ssh_username
         if version is not None:
             self.version = version
 
@@ -80,6 +95,69 @@ class V1SlurmV1Status(object):
         """
 
         self._nodes = nodes
+
+    @property
+    def ssh_host(self) -> 'str':
+        """Gets the ssh_host of this V1SlurmV1Status.  # noqa: E501
+
+
+        :return: The ssh_host of this V1SlurmV1Status.  # noqa: E501
+        :rtype: str
+        """
+        return self._ssh_host
+
+    @ssh_host.setter
+    def ssh_host(self, ssh_host: 'str'):
+        """Sets the ssh_host of this V1SlurmV1Status.
+
+
+        :param ssh_host: The ssh_host of this V1SlurmV1Status.  # noqa: E501
+        :type: str
+        """
+
+        self._ssh_host = ssh_host
+
+    @property
+    def ssh_port(self) -> 'int':
+        """Gets the ssh_port of this V1SlurmV1Status.  # noqa: E501
+
+
+        :return: The ssh_port of this V1SlurmV1Status.  # noqa: E501
+        :rtype: int
+        """
+        return self._ssh_port
+
+    @ssh_port.setter
+    def ssh_port(self, ssh_port: 'int'):
+        """Sets the ssh_port of this V1SlurmV1Status.
+
+
+        :param ssh_port: The ssh_port of this V1SlurmV1Status.  # noqa: E501
+        :type: int
+        """
+
+        self._ssh_port = ssh_port
+
+    @property
+    def ssh_username(self) -> 'str':
+        """Gets the ssh_username of this V1SlurmV1Status.  # noqa: E501
+
+
+        :return: The ssh_username of this V1SlurmV1Status.  # noqa: E501
+        :rtype: str
+        """
+        return self._ssh_username
+
+    @ssh_username.setter
+    def ssh_username(self, ssh_username: 'str'):
+        """Sets the ssh_username of this V1SlurmV1Status.
+
+
+        :param ssh_username: The ssh_username of this V1SlurmV1Status.  # noqa: E501
+        :type: str
+        """
+
+        self._ssh_username = ssh_username
 
     @property
     def version(self) -> 'str':

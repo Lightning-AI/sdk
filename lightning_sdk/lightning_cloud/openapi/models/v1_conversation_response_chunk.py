@@ -45,6 +45,7 @@ class V1ConversationResponseChunk(object):
         'conversation_id': 'str',
         'executable': 'bool',
         'id': 'str',
+        'message_id': 'str',
         'object': 'str',
         'stats': 'dict(str, str)',
         'throughput': 'float',
@@ -56,18 +57,20 @@ class V1ConversationResponseChunk(object):
         'conversation_id': 'conversationId',
         'executable': 'executable',
         'id': 'id',
+        'message_id': 'messageId',
         'object': 'object',
         'stats': 'stats',
         'throughput': 'throughput',
         'usage': 'usage'
     }
 
-    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, executable: 'bool' =None, id: 'str' =None, object: 'str' =None, stats: 'dict(str, str)' =None, throughput: 'float' =None, usage: 'V1TokenUsage' =None):  # noqa: E501
+    def __init__(self, choices: 'list[V1ResponseChoice]' =None, conversation_id: 'str' =None, executable: 'bool' =None, id: 'str' =None, message_id: 'str' =None, object: 'str' =None, stats: 'dict(str, str)' =None, throughput: 'float' =None, usage: 'V1TokenUsage' =None):  # noqa: E501
         """V1ConversationResponseChunk - a model defined in Swagger"""  # noqa: E501
         self._choices = None
         self._conversation_id = None
         self._executable = None
         self._id = None
+        self._message_id = None
         self._object = None
         self._stats = None
         self._throughput = None
@@ -81,6 +84,8 @@ class V1ConversationResponseChunk(object):
             self.executable = executable
         if id is not None:
             self.id = id
+        if message_id is not None:
+            self.message_id = message_id
         if object is not None:
             self.object = object
         if stats is not None:
@@ -173,6 +178,27 @@ class V1ConversationResponseChunk(object):
         """
 
         self._id = id
+
+    @property
+    def message_id(self) -> 'str':
+        """Gets the message_id of this V1ConversationResponseChunk.  # noqa: E501
+
+
+        :return: The message_id of this V1ConversationResponseChunk.  # noqa: E501
+        :rtype: str
+        """
+        return self._message_id
+
+    @message_id.setter
+    def message_id(self, message_id: 'str'):
+        """Sets the message_id of this V1ConversationResponseChunk.
+
+
+        :param message_id: The message_id of this V1ConversationResponseChunk.  # noqa: E501
+        :type: str
+        """
+
+        self._message_id = message_id
 
     @property
     def object(self) -> 'str':

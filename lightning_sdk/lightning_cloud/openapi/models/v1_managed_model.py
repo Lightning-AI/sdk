@@ -42,11 +42,12 @@ class V1ManagedModel(object):
     """
     swagger_types = {
         'abilities': 'V1ManagedModelAbilities',
+        'assistant_id': 'str',
         'completion_token_price': 'float',
         'context_length': 'str',
         'deployment_details': 'V1DeploymentDetails',
         'description': 'str',
-        'disabled': 'bool',
+        'display_name': 'str',
         'endpoint_id': 'str',
         'id': 'str',
         'max_completion_tokens': 'str',
@@ -54,16 +55,19 @@ class V1ManagedModel(object):
         'prompt_token_price': 'float',
         'status': 'V1AssistantModelStatus',
         'temperature': 'float',
+        'throughput': 'float',
+        'time_to_first_token': 'float',
         'top_k': 'str'
     }
 
     attribute_map = {
         'abilities': 'abilities',
+        'assistant_id': 'assistantId',
         'completion_token_price': 'completionTokenPrice',
         'context_length': 'contextLength',
         'deployment_details': 'deploymentDetails',
         'description': 'description',
-        'disabled': 'disabled',
+        'display_name': 'displayName',
         'endpoint_id': 'endpointId',
         'id': 'id',
         'max_completion_tokens': 'maxCompletionTokens',
@@ -71,17 +75,20 @@ class V1ManagedModel(object):
         'prompt_token_price': 'promptTokenPrice',
         'status': 'status',
         'temperature': 'temperature',
+        'throughput': 'throughput',
+        'time_to_first_token': 'timeToFirstToken',
         'top_k': 'topK'
     }
 
-    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, completion_token_price: 'float' =None, context_length: 'str' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, disabled: 'bool' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, top_k: 'str' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, assistant_id: 'str' =None, completion_token_price: 'float' =None, context_length: 'str' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, top_k: 'str' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._abilities = None
+        self._assistant_id = None
         self._completion_token_price = None
         self._context_length = None
         self._deployment_details = None
         self._description = None
-        self._disabled = None
+        self._display_name = None
         self._endpoint_id = None
         self._id = None
         self._max_completion_tokens = None
@@ -89,10 +96,14 @@ class V1ManagedModel(object):
         self._prompt_token_price = None
         self._status = None
         self._temperature = None
+        self._throughput = None
+        self._time_to_first_token = None
         self._top_k = None
         self.discriminator = None
         if abilities is not None:
             self.abilities = abilities
+        if assistant_id is not None:
+            self.assistant_id = assistant_id
         if completion_token_price is not None:
             self.completion_token_price = completion_token_price
         if context_length is not None:
@@ -101,8 +112,8 @@ class V1ManagedModel(object):
             self.deployment_details = deployment_details
         if description is not None:
             self.description = description
-        if disabled is not None:
-            self.disabled = disabled
+        if display_name is not None:
+            self.display_name = display_name
         if endpoint_id is not None:
             self.endpoint_id = endpoint_id
         if id is not None:
@@ -117,6 +128,10 @@ class V1ManagedModel(object):
             self.status = status
         if temperature is not None:
             self.temperature = temperature
+        if throughput is not None:
+            self.throughput = throughput
+        if time_to_first_token is not None:
+            self.time_to_first_token = time_to_first_token
         if top_k is not None:
             self.top_k = top_k
 
@@ -140,6 +155,27 @@ class V1ManagedModel(object):
         """
 
         self._abilities = abilities
+
+    @property
+    def assistant_id(self) -> 'str':
+        """Gets the assistant_id of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The assistant_id of this V1ManagedModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._assistant_id
+
+    @assistant_id.setter
+    def assistant_id(self, assistant_id: 'str'):
+        """Sets the assistant_id of this V1ManagedModel.
+
+
+        :param assistant_id: The assistant_id of this V1ManagedModel.  # noqa: E501
+        :type: str
+        """
+
+        self._assistant_id = assistant_id
 
     @property
     def completion_token_price(self) -> 'float':
@@ -226,25 +262,25 @@ class V1ManagedModel(object):
         self._description = description
 
     @property
-    def disabled(self) -> 'bool':
-        """Gets the disabled of this V1ManagedModel.  # noqa: E501
+    def display_name(self) -> 'str':
+        """Gets the display_name of this V1ManagedModel.  # noqa: E501
 
 
-        :return: The disabled of this V1ManagedModel.  # noqa: E501
-        :rtype: bool
+        :return: The display_name of this V1ManagedModel.  # noqa: E501
+        :rtype: str
         """
-        return self._disabled
+        return self._display_name
 
-    @disabled.setter
-    def disabled(self, disabled: 'bool'):
-        """Sets the disabled of this V1ManagedModel.
+    @display_name.setter
+    def display_name(self, display_name: 'str'):
+        """Sets the display_name of this V1ManagedModel.
 
 
-        :param disabled: The disabled of this V1ManagedModel.  # noqa: E501
-        :type: bool
+        :param display_name: The display_name of this V1ManagedModel.  # noqa: E501
+        :type: str
         """
 
-        self._disabled = disabled
+        self._display_name = display_name
 
     @property
     def endpoint_id(self) -> 'str':
@@ -392,6 +428,48 @@ class V1ManagedModel(object):
         """
 
         self._temperature = temperature
+
+    @property
+    def throughput(self) -> 'float':
+        """Gets the throughput of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The throughput of this V1ManagedModel.  # noqa: E501
+        :rtype: float
+        """
+        return self._throughput
+
+    @throughput.setter
+    def throughput(self, throughput: 'float'):
+        """Sets the throughput of this V1ManagedModel.
+
+
+        :param throughput: The throughput of this V1ManagedModel.  # noqa: E501
+        :type: float
+        """
+
+        self._throughput = throughput
+
+    @property
+    def time_to_first_token(self) -> 'float':
+        """Gets the time_to_first_token of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The time_to_first_token of this V1ManagedModel.  # noqa: E501
+        :rtype: float
+        """
+        return self._time_to_first_token
+
+    @time_to_first_token.setter
+    def time_to_first_token(self, time_to_first_token: 'float'):
+        """Sets the time_to_first_token of this V1ManagedModel.
+
+
+        :param time_to_first_token: The time_to_first_token of this V1ManagedModel.  # noqa: E501
+        :type: float
+        """
+
+        self._time_to_first_token = time_to_first_token
 
     @property
     def top_k(self) -> 'str':

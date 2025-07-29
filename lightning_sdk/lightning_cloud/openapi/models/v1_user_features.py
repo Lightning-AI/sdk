@@ -62,13 +62,14 @@ class V1UserFeatures(object):
         'control_center_monitoring': 'bool',
         'cost_attribution_settings': 'bool',
         'custom_app_domain': 'bool',
-        'data_connection_flushing_v2': 'bool',
         'datasets': 'bool',
         'default_one_cluster': 'bool',
         'deployment_persistent_disk': 'bool',
         'drive_v2': 'bool',
         'enterprise_compute_admin': 'bool',
         'f236': 'bool',
+        'f237': 'bool',
+        'f238': 'bool',
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'gcp_overprovisioning': 'bool',
@@ -149,13 +150,14 @@ class V1UserFeatures(object):
         'control_center_monitoring': 'controlCenterMonitoring',
         'cost_attribution_settings': 'costAttributionSettings',
         'custom_app_domain': 'customAppDomain',
-        'data_connection_flushing_v2': 'dataConnectionFlushingV2',
         'datasets': 'datasets',
         'default_one_cluster': 'defaultOneCluster',
         'deployment_persistent_disk': 'deploymentPersistentDisk',
         'drive_v2': 'driveV2',
         'enterprise_compute_admin': 'enterpriseComputeAdmin',
         'f236': 'f236',
+        'f237': 'f237',
+        'f238': 'f238',
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'gcp_overprovisioning': 'gcpOverprovisioning',
@@ -214,7 +216,7 @@ class V1UserFeatures(object):
         'writable_s3_connections': 'writableS3Connections'
     }
 
-    def __init__(self, academic_tier: 'bool' =None, add_data_v2: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, data_connection_flushing_v2: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, f236: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcp_overprovisioning: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, gcs_fuse: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, model_api_dashboard_clickhouse: 'bool' =None, multicloud_folders: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, onboarding_v2: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, r2_uploads: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, academic_tier: 'bool' =None, add_data_v2: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, cloudy_vibe_code: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, f236: 'bool' =None, f237: 'bool' =None, f238: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcp_overprovisioning: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, gcs_fuse: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, model_api_dashboard_clickhouse: 'bool' =None, multicloud_folders: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, onboarding_v2: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, r2_uploads: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._academic_tier = None
         self._add_data_v2 = None
@@ -237,13 +239,14 @@ class V1UserFeatures(object):
         self._control_center_monitoring = None
         self._cost_attribution_settings = None
         self._custom_app_domain = None
-        self._data_connection_flushing_v2 = None
         self._datasets = None
         self._default_one_cluster = None
         self._deployment_persistent_disk = None
         self._drive_v2 = None
         self._enterprise_compute_admin = None
         self._f236 = None
+        self._f237 = None
+        self._f238 = None
         self._fair_share = None
         self._featured_studios_admin = None
         self._gcp_overprovisioning = None
@@ -343,8 +346,6 @@ class V1UserFeatures(object):
             self.cost_attribution_settings = cost_attribution_settings
         if custom_app_domain is not None:
             self.custom_app_domain = custom_app_domain
-        if data_connection_flushing_v2 is not None:
-            self.data_connection_flushing_v2 = data_connection_flushing_v2
         if datasets is not None:
             self.datasets = datasets
         if default_one_cluster is not None:
@@ -357,6 +358,10 @@ class V1UserFeatures(object):
             self.enterprise_compute_admin = enterprise_compute_admin
         if f236 is not None:
             self.f236 = f236
+        if f237 is not None:
+            self.f237 = f237
+        if f238 is not None:
+            self.f238 = f238
         if fair_share is not None:
             self.fair_share = fair_share
         if featured_studios_admin is not None:
@@ -912,27 +917,6 @@ class V1UserFeatures(object):
         self._custom_app_domain = custom_app_domain
 
     @property
-    def data_connection_flushing_v2(self) -> 'bool':
-        """Gets the data_connection_flushing_v2 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The data_connection_flushing_v2 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._data_connection_flushing_v2
-
-    @data_connection_flushing_v2.setter
-    def data_connection_flushing_v2(self, data_connection_flushing_v2: 'bool'):
-        """Sets the data_connection_flushing_v2 of this V1UserFeatures.
-
-
-        :param data_connection_flushing_v2: The data_connection_flushing_v2 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._data_connection_flushing_v2 = data_connection_flushing_v2
-
-    @property
     def datasets(self) -> 'bool':
         """Gets the datasets of this V1UserFeatures.  # noqa: E501
 
@@ -1057,6 +1041,48 @@ class V1UserFeatures(object):
         """
 
         self._f236 = f236
+
+    @property
+    def f237(self) -> 'bool':
+        """Gets the f237 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f237 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f237
+
+    @f237.setter
+    def f237(self, f237: 'bool'):
+        """Sets the f237 of this V1UserFeatures.
+
+
+        :param f237: The f237 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f237 = f237
+
+    @property
+    def f238(self) -> 'bool':
+        """Gets the f238 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f238 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f238
+
+    @f238.setter
+    def f238(self, f238: 'bool'):
+        """Sets the f238 of this V1UserFeatures.
+
+
+        :param f238: The f238 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f238 = f238
 
     @property
     def fair_share(self) -> 'bool':

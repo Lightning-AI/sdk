@@ -47,6 +47,7 @@ class V1CreateSubscriptionCheckoutSessionRequest(object):
         'redirect_url_failed': 'str',
         'redirect_url_succeeded': 'str',
         'seats': 'int',
+        'tier': 'V1BillingTier',
         'upgrade_feature': 'str'
     }
 
@@ -57,10 +58,11 @@ class V1CreateSubscriptionCheckoutSessionRequest(object):
         'redirect_url_failed': 'redirectUrlFailed',
         'redirect_url_succeeded': 'redirectUrlSucceeded',
         'seats': 'seats',
+        'tier': 'tier',
         'upgrade_feature': 'upgradeFeature'
     }
 
-    def __init__(self, billing_period: 'V1BillingPeriod' =None, org_id: 'str' =None, product_id: 'str' =None, redirect_url_failed: 'str' =None, redirect_url_succeeded: 'str' =None, seats: 'int' =None, upgrade_feature: 'str' =None):  # noqa: E501
+    def __init__(self, billing_period: 'V1BillingPeriod' =None, org_id: 'str' =None, product_id: 'str' =None, redirect_url_failed: 'str' =None, redirect_url_succeeded: 'str' =None, seats: 'int' =None, tier: 'V1BillingTier' =None, upgrade_feature: 'str' =None):  # noqa: E501
         """V1CreateSubscriptionCheckoutSessionRequest - a model defined in Swagger"""  # noqa: E501
         self._billing_period = None
         self._org_id = None
@@ -68,6 +70,7 @@ class V1CreateSubscriptionCheckoutSessionRequest(object):
         self._redirect_url_failed = None
         self._redirect_url_succeeded = None
         self._seats = None
+        self._tier = None
         self._upgrade_feature = None
         self.discriminator = None
         if billing_period is not None:
@@ -82,6 +85,8 @@ class V1CreateSubscriptionCheckoutSessionRequest(object):
             self.redirect_url_succeeded = redirect_url_succeeded
         if seats is not None:
             self.seats = seats
+        if tier is not None:
+            self.tier = tier
         if upgrade_feature is not None:
             self.upgrade_feature = upgrade_feature
 
@@ -210,6 +215,27 @@ class V1CreateSubscriptionCheckoutSessionRequest(object):
         """
 
         self._seats = seats
+
+    @property
+    def tier(self) -> 'V1BillingTier':
+        """Gets the tier of this V1CreateSubscriptionCheckoutSessionRequest.  # noqa: E501
+
+
+        :return: The tier of this V1CreateSubscriptionCheckoutSessionRequest.  # noqa: E501
+        :rtype: V1BillingTier
+        """
+        return self._tier
+
+    @tier.setter
+    def tier(self, tier: 'V1BillingTier'):
+        """Sets the tier of this V1CreateSubscriptionCheckoutSessionRequest.
+
+
+        :param tier: The tier of this V1CreateSubscriptionCheckoutSessionRequest.  # noqa: E501
+        :type: V1BillingTier
+        """
+
+        self._tier = tier
 
     @property
     def upgrade_feature(self) -> 'str':

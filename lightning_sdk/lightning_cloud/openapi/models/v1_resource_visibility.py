@@ -43,25 +43,30 @@ class V1ResourceVisibility(object):
     swagger_types = {
         'all_org_users': 'bool',
         'all_users': 'bool',
+        'public': 'bool',
         'user_ids': 'list[str]'
     }
 
     attribute_map = {
         'all_org_users': 'allOrgUsers',
         'all_users': 'allUsers',
+        'public': 'public',
         'user_ids': 'userIds'
     }
 
-    def __init__(self, all_org_users: 'bool' =None, all_users: 'bool' =None, user_ids: 'list[str]' =None):  # noqa: E501
+    def __init__(self, all_org_users: 'bool' =None, all_users: 'bool' =None, public: 'bool' =None, user_ids: 'list[str]' =None):  # noqa: E501
         """V1ResourceVisibility - a model defined in Swagger"""  # noqa: E501
         self._all_org_users = None
         self._all_users = None
+        self._public = None
         self._user_ids = None
         self.discriminator = None
         if all_org_users is not None:
             self.all_org_users = all_org_users
         if all_users is not None:
             self.all_users = all_users
+        if public is not None:
+            self.public = public
         if user_ids is not None:
             self.user_ids = user_ids
 
@@ -106,6 +111,27 @@ class V1ResourceVisibility(object):
         """
 
         self._all_users = all_users
+
+    @property
+    def public(self) -> 'bool':
+        """Gets the public of this V1ResourceVisibility.  # noqa: E501
+
+
+        :return: The public of this V1ResourceVisibility.  # noqa: E501
+        :rtype: bool
+        """
+        return self._public
+
+    @public.setter
+    def public(self, public: 'bool'):
+        """Sets the public of this V1ResourceVisibility.
+
+
+        :param public: The public of this V1ResourceVisibility.  # noqa: E501
+        :type: bool
+        """
+
+        self._public = public
 
     @property
     def user_ids(self) -> 'list[str]':

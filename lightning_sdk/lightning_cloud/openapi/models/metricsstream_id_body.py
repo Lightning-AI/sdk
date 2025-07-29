@@ -41,29 +41,55 @@ class MetricsstreamIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'name': 'str',
         'persisted': 'bool',
         'phase': 'V1PhaseType',
         'trackers': 'dict(str, V1MetricsTracker)'
     }
 
     attribute_map = {
+        'name': 'name',
         'persisted': 'persisted',
         'phase': 'phase',
         'trackers': 'trackers'
     }
 
-    def __init__(self, persisted: 'bool' =None, phase: 'V1PhaseType' =None, trackers: 'dict(str, V1MetricsTracker)' =None):  # noqa: E501
+    def __init__(self, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, trackers: 'dict(str, V1MetricsTracker)' =None):  # noqa: E501
         """MetricsstreamIdBody - a model defined in Swagger"""  # noqa: E501
+        self._name = None
         self._persisted = None
         self._phase = None
         self._trackers = None
         self.discriminator = None
+        if name is not None:
+            self.name = name
         if persisted is not None:
             self.persisted = persisted
         if phase is not None:
             self.phase = phase
         if trackers is not None:
             self.trackers = trackers
+
+    @property
+    def name(self) -> 'str':
+        """Gets the name of this MetricsstreamIdBody.  # noqa: E501
+
+
+        :return: The name of this MetricsstreamIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._name
+
+    @name.setter
+    def name(self, name: 'str'):
+        """Sets the name of this MetricsstreamIdBody.
+
+
+        :param name: The name of this MetricsstreamIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._name = name
 
     @property
     def persisted(self) -> 'bool':

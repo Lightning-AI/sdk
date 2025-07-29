@@ -41,24 +41,50 @@ class V1ServiceHealth(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'is_fatal': 'bool',
         'name': 'str',
         'status': 'ServiceHealthServiceStatus'
     }
 
     attribute_map = {
+        'is_fatal': 'isFatal',
         'name': 'name',
         'status': 'status'
     }
 
-    def __init__(self, name: 'str' =None, status: 'ServiceHealthServiceStatus' =None):  # noqa: E501
+    def __init__(self, is_fatal: 'bool' =None, name: 'str' =None, status: 'ServiceHealthServiceStatus' =None):  # noqa: E501
         """V1ServiceHealth - a model defined in Swagger"""  # noqa: E501
+        self._is_fatal = None
         self._name = None
         self._status = None
         self.discriminator = None
+        if is_fatal is not None:
+            self.is_fatal = is_fatal
         if name is not None:
             self.name = name
         if status is not None:
             self.status = status
+
+    @property
+    def is_fatal(self) -> 'bool':
+        """Gets the is_fatal of this V1ServiceHealth.  # noqa: E501
+
+
+        :return: The is_fatal of this V1ServiceHealth.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_fatal
+
+    @is_fatal.setter
+    def is_fatal(self, is_fatal: 'bool'):
+        """Sets the is_fatal of this V1ServiceHealth.
+
+
+        :param is_fatal: The is_fatal of this V1ServiceHealth.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_fatal = is_fatal
 
     @property
     def name(self) -> 'str':

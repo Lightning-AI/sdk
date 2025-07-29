@@ -1166,6 +1166,99 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def assistants_service_get_published_managed_endpoint_by_model_id(self, id: 'str', **kwargs) -> 'V1ManagedEndpoint':  # noqa: E501
+        """GetPublishedManagedEndpointModel returns a managed endpoint with a single specific managed endpoint model included in modelsMetadata  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.assistants_service_get_published_managed_endpoint_by_model_id(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :return: V1ManagedEndpoint
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.assistants_service_get_published_managed_endpoint_by_model_id_with_http_info(id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.assistants_service_get_published_managed_endpoint_by_model_id_with_http_info(id, **kwargs)  # noqa: E501
+            return data
+
+    def assistants_service_get_published_managed_endpoint_by_model_id_with_http_info(self, id: 'str', **kwargs) -> 'V1ManagedEndpoint':  # noqa: E501
+        """GetPublishedManagedEndpointModel returns a managed endpoint with a single specific managed endpoint model included in modelsMetadata  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.assistants_service_get_published_managed_endpoint_by_model_id_with_http_info(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :return: V1ManagedEndpoint
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method assistants_service_get_published_managed_endpoint_by_model_id" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `assistants_service_get_published_managed_endpoint_by_model_id`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/agent-published-managed-model/{id}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ManagedEndpoint',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def assistants_service_list_assistant_managed_endpoints(self, **kwargs) -> 'V1ListManagedEndpointsResponse':  # noqa: E501
         """ListAssistantManagedEndpoints returns a list of managed endpoint that users can use when creating their own assistant. These are served and managed by Lightning or 3rd parties  # noqa: E501
 
@@ -1477,36 +1570,36 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_list_published_managed_endpoint_models(self, **kwargs) -> 'V1ListPublishedManagedEndpointModelsResponse':  # noqa: E501
-        """assistants_service_list_published_managed_endpoint_models  # noqa: E501
+    def assistants_service_list_published_managed_endpoints(self, **kwargs) -> 'V1ListPublishedManagedEndpointsResponse':  # noqa: E501
+        """ListPublishedManagedEndpoints returns a list of all available managed endpoints that are published as Models  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_list_published_managed_endpoint_models(async_req=True)
+        >>> thread = api.assistants_service_list_published_managed_endpoints(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :return: V1ListPublishedManagedEndpointModelsResponse
+        :return: V1ListPublishedManagedEndpointsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.assistants_service_list_published_managed_endpoint_models_with_http_info(**kwargs)  # noqa: E501
+            return self.assistants_service_list_published_managed_endpoints_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.assistants_service_list_published_managed_endpoint_models_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.assistants_service_list_published_managed_endpoints_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def assistants_service_list_published_managed_endpoint_models_with_http_info(self, **kwargs) -> 'V1ListPublishedManagedEndpointModelsResponse':  # noqa: E501
-        """assistants_service_list_published_managed_endpoint_models  # noqa: E501
+    def assistants_service_list_published_managed_endpoints_with_http_info(self, **kwargs) -> 'V1ListPublishedManagedEndpointsResponse':  # noqa: E501
+        """ListPublishedManagedEndpoints returns a list of all available managed endpoints that are published as Models  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_list_published_managed_endpoint_models_with_http_info(async_req=True)
+        >>> thread = api.assistants_service_list_published_managed_endpoints_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :return: V1ListPublishedManagedEndpointModelsResponse
+        :return: V1ListPublishedManagedEndpointsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -1522,7 +1615,7 @@ class AssistantsServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method assistants_service_list_published_managed_endpoint_models" % key
+                    " to method assistants_service_list_published_managed_endpoints" % key
                 )
             params[key] = val
         del params['kwargs']
@@ -1547,14 +1640,14 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/agents/published-managed-models', 'GET',
+            '/v1/agent-published-managed-endpoints', 'GET',
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1ListPublishedManagedEndpointModelsResponse',  # noqa: E501
+            response_type='V1ListPublishedManagedEndpointsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

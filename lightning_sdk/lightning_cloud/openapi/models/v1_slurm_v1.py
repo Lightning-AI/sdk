@@ -41,19 +41,97 @@ class V1SlurmV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'login_node_ip': 'str',
+        'ssh_port': 'int',
+        'ssh_user': 'str',
         'work_dir': 'str'
     }
 
     attribute_map = {
+        'login_node_ip': 'loginNodeIp',
+        'ssh_port': 'sshPort',
+        'ssh_user': 'sshUser',
         'work_dir': 'workDir'
     }
 
-    def __init__(self, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, login_node_ip: 'str' =None, ssh_port: 'int' =None, ssh_user: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1SlurmV1 - a model defined in Swagger"""  # noqa: E501
+        self._login_node_ip = None
+        self._ssh_port = None
+        self._ssh_user = None
         self._work_dir = None
         self.discriminator = None
+        if login_node_ip is not None:
+            self.login_node_ip = login_node_ip
+        if ssh_port is not None:
+            self.ssh_port = ssh_port
+        if ssh_user is not None:
+            self.ssh_user = ssh_user
         if work_dir is not None:
             self.work_dir = work_dir
+
+    @property
+    def login_node_ip(self) -> 'str':
+        """Gets the login_node_ip of this V1SlurmV1.  # noqa: E501
+
+
+        :return: The login_node_ip of this V1SlurmV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._login_node_ip
+
+    @login_node_ip.setter
+    def login_node_ip(self, login_node_ip: 'str'):
+        """Sets the login_node_ip of this V1SlurmV1.
+
+
+        :param login_node_ip: The login_node_ip of this V1SlurmV1.  # noqa: E501
+        :type: str
+        """
+
+        self._login_node_ip = login_node_ip
+
+    @property
+    def ssh_port(self) -> 'int':
+        """Gets the ssh_port of this V1SlurmV1.  # noqa: E501
+
+
+        :return: The ssh_port of this V1SlurmV1.  # noqa: E501
+        :rtype: int
+        """
+        return self._ssh_port
+
+    @ssh_port.setter
+    def ssh_port(self, ssh_port: 'int'):
+        """Sets the ssh_port of this V1SlurmV1.
+
+
+        :param ssh_port: The ssh_port of this V1SlurmV1.  # noqa: E501
+        :type: int
+        """
+
+        self._ssh_port = ssh_port
+
+    @property
+    def ssh_user(self) -> 'str':
+        """Gets the ssh_user of this V1SlurmV1.  # noqa: E501
+
+
+        :return: The ssh_user of this V1SlurmV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._ssh_user
+
+    @ssh_user.setter
+    def ssh_user(self, ssh_user: 'str'):
+        """Sets the ssh_user of this V1SlurmV1.
+
+
+        :param ssh_user: The ssh_user of this V1SlurmV1.  # noqa: E501
+        :type: str
+        """
+
+        self._ssh_user = ssh_user
 
     @property
     def work_dir(self) -> 'str':

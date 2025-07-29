@@ -77,6 +77,7 @@ class V1GetUserResponse(object):
         'status': 'Externalv1UserStatus',
         'storage_bytes': 'str',
         'storage_overuse_deletion_at': 'datetime',
+        'test_user': 'bool',
         'user_metadata': 'str',
         'username': 'str',
         'waitlisted': 'bool',
@@ -120,13 +121,14 @@ class V1GetUserResponse(object):
         'status': 'status',
         'storage_bytes': 'storageBytes',
         'storage_overuse_deletion_at': 'storageOveruseDeletionAt',
+        'test_user': 'testUser',
         'user_metadata': 'userMetadata',
         'username': 'username',
         'waitlisted': 'waitlisted',
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, country: 'str' =None, discounted_pro_plan: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, country: 'str' =None, discounted_pro_plan: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
@@ -164,6 +166,7 @@ class V1GetUserResponse(object):
         self._status = None
         self._storage_bytes = None
         self._storage_overuse_deletion_at = None
+        self._test_user = None
         self._user_metadata = None
         self._username = None
         self._waitlisted = None
@@ -241,6 +244,8 @@ class V1GetUserResponse(object):
             self.storage_bytes = storage_bytes
         if storage_overuse_deletion_at is not None:
             self.storage_overuse_deletion_at = storage_overuse_deletion_at
+        if test_user is not None:
+            self.test_user = test_user
         if user_metadata is not None:
             self.user_metadata = user_metadata
         if username is not None:
@@ -1005,6 +1010,27 @@ class V1GetUserResponse(object):
         """
 
         self._storage_overuse_deletion_at = storage_overuse_deletion_at
+
+    @property
+    def test_user(self) -> 'bool':
+        """Gets the test_user of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The test_user of this V1GetUserResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._test_user
+
+    @test_user.setter
+    def test_user(self, test_user: 'bool'):
+        """Sets the test_user of this V1GetUserResponse.
+
+
+        :param test_user: The test_user of this V1GetUserResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._test_user = test_user
 
     @property
     def user_metadata(self) -> 'str':

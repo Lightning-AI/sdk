@@ -49,6 +49,7 @@ class V1ManagedEndpoint(object):
         'name': 'str',
         'org_id': 'str',
         'project_id': 'str',
+        'provider_display_name': 'str',
         'publish_status': 'str',
         'user_id': 'str'
     }
@@ -62,11 +63,12 @@ class V1ManagedEndpoint(object):
         'name': 'name',
         'org_id': 'orgId',
         'project_id': 'projectId',
+        'provider_display_name': 'providerDisplayName',
         'publish_status': 'publishStatus',
         'user_id': 'userId'
     }
 
-    def __init__(self, api_key: 'str' =None, base_url: 'str' =None, description: 'str' =None, id: 'str' =None, models_metadata: 'list[V1ManagedModel]' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, publish_status: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, base_url: 'str' =None, description: 'str' =None, id: 'str' =None, models_metadata: 'list[V1ManagedModel]' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, provider_display_name: 'str' =None, publish_status: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1ManagedEndpoint - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._base_url = None
@@ -76,6 +78,7 @@ class V1ManagedEndpoint(object):
         self._name = None
         self._org_id = None
         self._project_id = None
+        self._provider_display_name = None
         self._publish_status = None
         self._user_id = None
         self.discriminator = None
@@ -95,6 +98,8 @@ class V1ManagedEndpoint(object):
             self.org_id = org_id
         if project_id is not None:
             self.project_id = project_id
+        if provider_display_name is not None:
+            self.provider_display_name = provider_display_name
         if publish_status is not None:
             self.publish_status = publish_status
         if user_id is not None:
@@ -267,6 +272,27 @@ class V1ManagedEndpoint(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def provider_display_name(self) -> 'str':
+        """Gets the provider_display_name of this V1ManagedEndpoint.  # noqa: E501
+
+
+        :return: The provider_display_name of this V1ManagedEndpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._provider_display_name
+
+    @provider_display_name.setter
+    def provider_display_name(self, provider_display_name: 'str'):
+        """Sets the provider_display_name of this V1ManagedEndpoint.
+
+
+        :param provider_display_name: The provider_display_name of this V1ManagedEndpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._provider_display_name = provider_display_name
 
     @property
     def publish_status(self) -> 'str':

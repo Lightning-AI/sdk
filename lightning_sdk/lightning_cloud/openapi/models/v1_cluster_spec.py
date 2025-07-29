@@ -73,6 +73,7 @@ class V1ClusterSpec(object):
         'slurm_v1': 'V1SlurmV1',
         'tagging_options': 'V1ClusterTaggingOptions',
         'user_id': 'str',
+        'vibe_coding_enabled': 'bool',
         'voltage_park_v1': 'V1VoltageParkDirectV1',
         'vultr_v1': 'V1VultrDirectV1'
     }
@@ -110,11 +111,12 @@ class V1ClusterSpec(object):
         'slurm_v1': 'slurmV1',
         'tagging_options': 'taggingOptions',
         'user_id': 'userId',
+        'vibe_coding_enabled': 'vibeCodingEnabled',
         'voltage_park_v1': 'voltageParkV1',
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, ai_pod_v1: 'V1AiPodV1' =None, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, ai_pod_v1: 'V1AiPodV1' =None, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._ai_pod_v1 = None
         self._auth_token = None
@@ -148,6 +150,7 @@ class V1ClusterSpec(object):
         self._slurm_v1 = None
         self._tagging_options = None
         self._user_id = None
+        self._vibe_coding_enabled = None
         self._voltage_park_v1 = None
         self._vultr_v1 = None
         self.discriminator = None
@@ -215,6 +218,8 @@ class V1ClusterSpec(object):
             self.tagging_options = tagging_options
         if user_id is not None:
             self.user_id = user_id
+        if vibe_coding_enabled is not None:
+            self.vibe_coding_enabled = vibe_coding_enabled
         if voltage_park_v1 is not None:
             self.voltage_park_v1 = voltage_park_v1
         if vultr_v1 is not None:
@@ -893,6 +898,27 @@ class V1ClusterSpec(object):
         """
 
         self._user_id = user_id
+
+    @property
+    def vibe_coding_enabled(self) -> 'bool':
+        """Gets the vibe_coding_enabled of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The vibe_coding_enabled of this V1ClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._vibe_coding_enabled
+
+    @vibe_coding_enabled.setter
+    def vibe_coding_enabled(self, vibe_coding_enabled: 'bool'):
+        """Sets the vibe_coding_enabled of this V1ClusterSpec.
+
+
+        :param vibe_coding_enabled: The vibe_coding_enabled of this V1ClusterSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._vibe_coding_enabled = vibe_coding_enabled
 
     @property
     def voltage_park_v1(self) -> 'V1VoltageParkDirectV1':

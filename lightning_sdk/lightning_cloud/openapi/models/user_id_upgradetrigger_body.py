@@ -43,20 +43,23 @@ class UserIdUpgradetriggerBody(object):
     swagger_types = {
         'feature_key': 'str',
         'metadata': 'str',
-        'org_id': 'str'
+        'org_id': 'str',
+        'project_id': 'str'
     }
 
     attribute_map = {
         'feature_key': 'featureKey',
         'metadata': 'metadata',
-        'org_id': 'orgId'
+        'org_id': 'orgId',
+        'project_id': 'projectId'
     }
 
-    def __init__(self, feature_key: 'str' =None, metadata: 'str' =None, org_id: 'str' =None):  # noqa: E501
+    def __init__(self, feature_key: 'str' =None, metadata: 'str' =None, org_id: 'str' =None, project_id: 'str' =None):  # noqa: E501
         """UserIdUpgradetriggerBody - a model defined in Swagger"""  # noqa: E501
         self._feature_key = None
         self._metadata = None
         self._org_id = None
+        self._project_id = None
         self.discriminator = None
         if feature_key is not None:
             self.feature_key = feature_key
@@ -64,6 +67,8 @@ class UserIdUpgradetriggerBody(object):
             self.metadata = metadata
         if org_id is not None:
             self.org_id = org_id
+        if project_id is not None:
+            self.project_id = project_id
 
     @property
     def feature_key(self) -> 'str':
@@ -127,6 +132,27 @@ class UserIdUpgradetriggerBody(object):
         """
 
         self._org_id = org_id
+
+    @property
+    def project_id(self) -> 'str':
+        """Gets the project_id of this UserIdUpgradetriggerBody.  # noqa: E501
+
+
+        :return: The project_id of this UserIdUpgradetriggerBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, project_id: 'str'):
+        """Sets the project_id of this UserIdUpgradetriggerBody.
+
+
+        :param project_id: The project_id of this UserIdUpgradetriggerBody.  # noqa: E501
+        :type: str
+        """
+
+        self._project_id = project_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
