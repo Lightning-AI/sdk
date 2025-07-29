@@ -50,7 +50,9 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
         renderables.append(Text("\n\nFull traceback:\n", style="bold yellow"))
         renderables.append(Syntax(tb_text, "python", theme="monokai", line_numbers=False, word_wrap=True))
     else:
-        renderables.append(Text("\n\nTo see the full traceback, set the LIGHTNING_DEBUG environment variable to 1."))
+        renderables.append(Text("\n\n🐞 To view the full traceback, set: LIGHTNING_DEBUG=1"))
+
+    renderables.append(Text("\n📘 Need help? Run: lightning <command> --help", style="cyan"))
 
     console.print(Panel(Group(*renderables), title="⚡ Lightning CLI Error", border_style="red"))
 
