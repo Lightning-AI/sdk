@@ -14,6 +14,7 @@ def mock_env(monkeypatch):
     monkeypatch.setenv("LIGHTNING_CLOUD_PROJECT_ID", "teamspace-123")
     monkeypatch.setenv("LIGHTNING_USERNAME", "user-name")
     monkeypatch.setenv("LIGHTNING_USER_ID", "user-123")
+    monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.ai")
     return monkeypatch
 
 
@@ -81,11 +82,12 @@ def test_get_model_id_uses_cache():
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._cached_auth_info = {}
     LLMCLIENT._llm_api_cache = {}
-    LLMCLIENT._public_assistants = {"openai/gpt-4o": "assistant-id-123"}
+    LLMCLIENT._public_assistants = {"openai/gpt-4o": {"id": "assistant-id-123", "context_length": 8192}}
 
     llm = LLM(name="openai/gpt-4o")
 
     assert llm._model_id == "assistant-id-123"
+    assert llm.context_length() == 8192
 
 
 def test_invalid_format(monkeypatch, mock_model_data):
@@ -145,7 +147,7 @@ def test_get_auth_info(monkeypatch):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._cached_auth_info = {}
     LLMCLIENT._llm_api_cache = {}
-    LLMCLIENT._public_assistants = {"openai/gpt-4o": "assistant-id-123"}
+    LLMCLIENT._public_assistants = {"openai/gpt-4o": {"id": "assistant-id-123", "context_length": 8192}}
 
     llm = LLM(name="openai/gpt-4o", teamspace="lightning-ai/teamspace-name")
     assert llm._teamspace_name == "teamspace-name"

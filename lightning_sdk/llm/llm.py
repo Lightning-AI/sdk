@@ -13,7 +13,7 @@ PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
 }
 
 
-def _load_public_assistants() -> Dict[str, str]:
+def _load_public_assistants() -> Dict[str, Dict[str, Any]]:
     """Load public assistants from a JSON file."""
     try:
         json_path = os.path.join(os.path.dirname(__file__), "public_assistants.json")
@@ -28,7 +28,7 @@ class LLM:
     _auth_info_cached: ClassVar[bool] = False
     _cached_auth_info: ClassVar[Dict[str, Optional[str]]] = {}
     _llm_api_cache: ClassVar[Dict[Optional[str], LLMApi]] = {}
-    _public_assistants: ClassVar[Optional[Dict[str, str]]] = None
+    _public_assistants: ClassVar[Optional[Dict[str, Dict[str, Any]]]] = None
 
     def __new__(cls, name: str, teamspace: Optional[str] = None, enable_async: Optional[bool] = False) -> "LLM":
         return super().__new__(cls)
@@ -76,6 +76,7 @@ class LLM:
             LLM._llm_api_cache[teamspace] = LLMApi()
         self._llm_api = LLM._llm_api_cache[teamspace]
 
+        self._context_length = None
         self._model_id = self._get_model_id()
         self._conversations = {}
 
@@ -86,6 +87,16 @@ class LLM:
     @property
     def provider(self) -> str:
         return self._model_provider
+
+    def context_length(self, model: Optional[str] = None) -> Optional[int]:
+        if model is None:
+            return self._context_length
+
+        context_info = self._public_assistants.get(model)
+        if context_info is None or "context_length" not in context_info:
+            raise ValueError(f"Cannot access context length of model '{model}'.")
+
+        return int(context_info["context_length"])
 
     def _get_auth_info(self, teamspace_name: Optional[str] = None) -> None:
         # TODO: Validate user input teamspace name
@@ -137,7 +148,10 @@ class LLM:
                 and LLM._public_assistants
                 and f"{self._model_provider}/{self._model_name}" in LLM._public_assistants
             ):
-                return LLM._public_assistants[f"{self._model_provider}/{self._model_name}"]
+                self._context_length = int(
+                    LLM._public_assistants[f"{self._model_provider}/{self._model_name}"]["context_length"]
+                )
+                return LLM._public_assistants[f"{self._model_provider}/{self._model_name}"]["id"]
             try:
                 return self._llm_api.get_assistant(
                     model_provider=PUBLIC_MODEL_PROVIDERS[self._model_provider],
