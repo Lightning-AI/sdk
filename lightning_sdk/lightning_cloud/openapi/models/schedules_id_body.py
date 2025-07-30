@@ -42,11 +42,13 @@ class SchedulesIdBody(object):
     """
     swagger_types = {
         'action_type': 'V1ScheduleActionType',
+        'command': 'str',
         'created_at': 'datetime',
         'cron_expression': 'str',
         'display_name': 'str',
         'name': 'str',
         'next': 'datetime',
+        'parallel_runs': 'bool',
         'parent_resource_id': 'str',
         'resource_id': 'str',
         'resource_type': 'V1ScheduleResourceType',
@@ -59,11 +61,13 @@ class SchedulesIdBody(object):
 
     attribute_map = {
         'action_type': 'actionType',
+        'command': 'command',
         'created_at': 'createdAt',
         'cron_expression': 'cronExpression',
         'display_name': 'displayName',
         'name': 'name',
         'next': 'next',
+        'parallel_runs': 'parallelRuns',
         'parent_resource_id': 'parentResourceId',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
@@ -74,14 +78,16 @@ class SchedulesIdBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, action_type: 'V1ScheduleActionType' =None, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, name: 'str' =None, next: 'datetime' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, timezone: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, action_type: 'V1ScheduleActionType' =None, command: 'str' =None, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, name: 'str' =None, next: 'datetime' =None, parallel_runs: 'bool' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, timezone: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """SchedulesIdBody - a model defined in Swagger"""  # noqa: E501
         self._action_type = None
+        self._command = None
         self._created_at = None
         self._cron_expression = None
         self._display_name = None
         self._name = None
         self._next = None
+        self._parallel_runs = None
         self._parent_resource_id = None
         self._resource_id = None
         self._resource_type = None
@@ -93,6 +99,8 @@ class SchedulesIdBody(object):
         self.discriminator = None
         if action_type is not None:
             self.action_type = action_type
+        if command is not None:
+            self.command = command
         if created_at is not None:
             self.created_at = created_at
         if cron_expression is not None:
@@ -103,6 +111,8 @@ class SchedulesIdBody(object):
             self.name = name
         if next is not None:
             self.next = next
+        if parallel_runs is not None:
+            self.parallel_runs = parallel_runs
         if parent_resource_id is not None:
             self.parent_resource_id = parent_resource_id
         if resource_id is not None:
@@ -140,6 +150,27 @@ class SchedulesIdBody(object):
         """
 
         self._action_type = action_type
+
+    @property
+    def command(self) -> 'str':
+        """Gets the command of this SchedulesIdBody.  # noqa: E501
+
+
+        :return: The command of this SchedulesIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._command
+
+    @command.setter
+    def command(self, command: 'str'):
+        """Sets the command of this SchedulesIdBody.
+
+
+        :param command: The command of this SchedulesIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._command = command
 
     @property
     def created_at(self) -> 'datetime':
@@ -245,6 +276,27 @@ class SchedulesIdBody(object):
         """
 
         self._next = next
+
+    @property
+    def parallel_runs(self) -> 'bool':
+        """Gets the parallel_runs of this SchedulesIdBody.  # noqa: E501
+
+
+        :return: The parallel_runs of this SchedulesIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._parallel_runs
+
+    @parallel_runs.setter
+    def parallel_runs(self, parallel_runs: 'bool'):
+        """Sets the parallel_runs of this SchedulesIdBody.
+
+
+        :param parallel_runs: The parallel_runs of this SchedulesIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._parallel_runs = parallel_runs
 
     @property
     def parent_resource_id(self) -> 'str':

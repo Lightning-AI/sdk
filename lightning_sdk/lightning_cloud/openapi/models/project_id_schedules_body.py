@@ -42,8 +42,10 @@ class ProjectIdSchedulesBody(object):
     """
     swagger_types = {
         'action_type': 'V1ScheduleActionType',
+        'command': 'str',
         'cron_expression': 'str',
         'display_name': 'str',
+        'parallel_runs': 'bool',
         'parent_resource_id': 'str',
         'resource_id': 'str',
         'resource_type': 'V1ScheduleResourceType',
@@ -52,19 +54,23 @@ class ProjectIdSchedulesBody(object):
 
     attribute_map = {
         'action_type': 'actionType',
+        'command': 'command',
         'cron_expression': 'cronExpression',
         'display_name': 'displayName',
+        'parallel_runs': 'parallelRuns',
         'parent_resource_id': 'parentResourceId',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'timezone': 'timezone'
     }
 
-    def __init__(self, action_type: 'V1ScheduleActionType' =None, cron_expression: 'str' =None, display_name: 'str' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, timezone: 'str' =None):  # noqa: E501
+    def __init__(self, action_type: 'V1ScheduleActionType' =None, command: 'str' =None, cron_expression: 'str' =None, display_name: 'str' =None, parallel_runs: 'bool' =None, parent_resource_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, timezone: 'str' =None):  # noqa: E501
         """ProjectIdSchedulesBody - a model defined in Swagger"""  # noqa: E501
         self._action_type = None
+        self._command = None
         self._cron_expression = None
         self._display_name = None
+        self._parallel_runs = None
         self._parent_resource_id = None
         self._resource_id = None
         self._resource_type = None
@@ -72,10 +78,14 @@ class ProjectIdSchedulesBody(object):
         self.discriminator = None
         if action_type is not None:
             self.action_type = action_type
+        if command is not None:
+            self.command = command
         if cron_expression is not None:
             self.cron_expression = cron_expression
         if display_name is not None:
             self.display_name = display_name
+        if parallel_runs is not None:
+            self.parallel_runs = parallel_runs
         if parent_resource_id is not None:
             self.parent_resource_id = parent_resource_id
         if resource_id is not None:
@@ -105,6 +115,27 @@ class ProjectIdSchedulesBody(object):
         """
 
         self._action_type = action_type
+
+    @property
+    def command(self) -> 'str':
+        """Gets the command of this ProjectIdSchedulesBody.  # noqa: E501
+
+
+        :return: The command of this ProjectIdSchedulesBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._command
+
+    @command.setter
+    def command(self, command: 'str'):
+        """Sets the command of this ProjectIdSchedulesBody.
+
+
+        :param command: The command of this ProjectIdSchedulesBody.  # noqa: E501
+        :type: str
+        """
+
+        self._command = command
 
     @property
     def cron_expression(self) -> 'str':
@@ -147,6 +178,27 @@ class ProjectIdSchedulesBody(object):
         """
 
         self._display_name = display_name
+
+    @property
+    def parallel_runs(self) -> 'bool':
+        """Gets the parallel_runs of this ProjectIdSchedulesBody.  # noqa: E501
+
+
+        :return: The parallel_runs of this ProjectIdSchedulesBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._parallel_runs
+
+    @parallel_runs.setter
+    def parallel_runs(self, parallel_runs: 'bool'):
+        """Sets the parallel_runs of this ProjectIdSchedulesBody.
+
+
+        :param parallel_runs: The parallel_runs of this ProjectIdSchedulesBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._parallel_runs = parallel_runs
 
     @property
     def parent_resource_id(self) -> 'str':

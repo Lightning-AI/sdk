@@ -42,6 +42,7 @@ class V1BillingSubscription(object):
     """
     swagger_types = {
         'amount': 'int',
+        'canceled_at': 'datetime',
         'card_last4': 'str',
         'card_type': 'str',
         'features': 'list[V1BillingFeature]',
@@ -55,6 +56,7 @@ class V1BillingSubscription(object):
 
     attribute_map = {
         'amount': 'amount',
+        'canceled_at': 'canceledAt',
         'card_last4': 'cardLast4',
         'card_type': 'cardType',
         'features': 'features',
@@ -66,9 +68,10 @@ class V1BillingSubscription(object):
         'stripe_managed': 'stripeManaged'
     }
 
-    def __init__(self, amount: 'int' =None, card_last4: 'str' =None, card_type: 'str' =None, features: 'list[V1BillingFeature]' =None, name: 'str' =None, period: 'str' =None, period_end: 'datetime' =None, seats: 'int' =None, status: 'str' =None, stripe_managed: 'bool' =None):  # noqa: E501
+    def __init__(self, amount: 'int' =None, canceled_at: 'datetime' =None, card_last4: 'str' =None, card_type: 'str' =None, features: 'list[V1BillingFeature]' =None, name: 'str' =None, period: 'str' =None, period_end: 'datetime' =None, seats: 'int' =None, status: 'str' =None, stripe_managed: 'bool' =None):  # noqa: E501
         """V1BillingSubscription - a model defined in Swagger"""  # noqa: E501
         self._amount = None
+        self._canceled_at = None
         self._card_last4 = None
         self._card_type = None
         self._features = None
@@ -81,6 +84,8 @@ class V1BillingSubscription(object):
         self.discriminator = None
         if amount is not None:
             self.amount = amount
+        if canceled_at is not None:
+            self.canceled_at = canceled_at
         if card_last4 is not None:
             self.card_last4 = card_last4
         if card_type is not None:
@@ -120,6 +125,27 @@ class V1BillingSubscription(object):
         """
 
         self._amount = amount
+
+    @property
+    def canceled_at(self) -> 'datetime':
+        """Gets the canceled_at of this V1BillingSubscription.  # noqa: E501
+
+
+        :return: The canceled_at of this V1BillingSubscription.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._canceled_at
+
+    @canceled_at.setter
+    def canceled_at(self, canceled_at: 'datetime'):
+        """Sets the canceled_at of this V1BillingSubscription.
+
+
+        :param canceled_at: The canceled_at of this V1BillingSubscription.  # noqa: E501
+        :type: datetime
+        """
+
+        self._canceled_at = canceled_at
 
     @property
     def card_last4(self) -> 'str':

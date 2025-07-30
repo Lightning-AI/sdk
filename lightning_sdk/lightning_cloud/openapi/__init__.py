@@ -243,6 +243,7 @@ from lightning_sdk.lightning_cloud.openapi.models.user_id_affiliatelinks_body im
 from lightning_sdk.lightning_cloud.openapi.models.user_id_membershiprolebindings_body import UserIdMembershiprolebindingsBody
 from lightning_sdk.lightning_cloud.openapi.models.user_id_membershiprolebindings_body1 import UserIdMembershiprolebindingsBody1
 from lightning_sdk.lightning_cloud.openapi.models.user_id_upgradetrigger_body import UserIdUpgradetriggerBody
+from lightning_sdk.lightning_cloud.openapi.models.user_user_id_body import UserUserIdBody
 from lightning_sdk.lightning_cloud.openapi.models.v1_aws_cluster_credentials import V1AWSClusterCredentials
 from lightning_sdk.lightning_cloud.openapi.models.v1_aws_direct_v1 import V1AWSDirectV1
 from lightning_sdk.lightning_cloud.openapi.models.v1_aws_direct_v1_status import V1AWSDirectV1Status
@@ -325,6 +326,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_cloud_space_version import 
 from lightning_sdk.lightning_cloud.openapi.models.v1_cloud_space_version_publication import V1CloudSpaceVersionPublication
 from lightning_sdk.lightning_cloud.openapi.models.v1_cloudflare_v1 import V1CloudflareV1
 from lightning_sdk.lightning_cloud.openapi.models.v1_cloudy_expert import V1CloudyExpert
+from lightning_sdk.lightning_cloud.openapi.models.v1_cloudy_settings import V1CloudySettings
 from lightning_sdk.lightning_cloud.openapi.models.v1_cluster_accelerator import V1ClusterAccelerator
 from lightning_sdk.lightning_cloud.openapi.models.v1_cluster_availability import V1ClusterAvailability
 from lightning_sdk.lightning_cloud.openapi.models.v1_cluster_capacity_reservation import V1ClusterCapacityReservation
@@ -533,6 +535,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_filesystem_work import V1Fi
 from lightning_sdk.lightning_cloud.openapi.models.v1_find_capacity_block_offering_response import V1FindCapacityBlockOfferingResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_flowserver import V1Flowserver
 from lightning_sdk.lightning_cloud.openapi.models.v1_folder_index_status import V1FolderIndexStatus
+from lightning_sdk.lightning_cloud.openapi.models.v1_function_call import V1FunctionCall
 from lightning_sdk.lightning_cloud.openapi.models.v1_function_tool import V1FunctionTool
 from lightning_sdk.lightning_cloud.openapi.models.v1_gcp_direct_vpc import V1GCPDirectVPC
 from lightning_sdk.lightning_cloud.openapi.models.v1_gcs_folder_data_connection import V1GCSFolderDataConnection
@@ -931,6 +934,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_telemetry import V1Telemetr
 from lightning_sdk.lightning_cloud.openapi.models.v1_timestamp_code_telemetry import V1TimestampCodeTelemetry
 from lightning_sdk.lightning_cloud.openapi.models.v1_token_usage import V1TokenUsage
 from lightning_sdk.lightning_cloud.openapi.models.v1_tool import V1Tool
+from lightning_sdk.lightning_cloud.openapi.models.v1_tool_call import V1ToolCall
 from lightning_sdk.lightning_cloud.openapi.models.v1_transaction import V1Transaction
 from lightning_sdk.lightning_cloud.openapi.models.v1_transfer_cloud_space_response import V1TransferCloudSpaceResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_transfer_org_balance_response import V1TransferOrgBalanceResponse

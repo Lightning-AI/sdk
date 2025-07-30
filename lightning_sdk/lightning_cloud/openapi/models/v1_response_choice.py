@@ -43,20 +43,23 @@ class V1ResponseChoice(object):
     swagger_types = {
         'delta': 'V1ResponseChoiceDelta',
         'finish_reason': 'str',
-        'index': 'int'
+        'index': 'int',
+        'tool_calls': 'list[V1ToolCall]'
     }
 
     attribute_map = {
         'delta': 'delta',
         'finish_reason': 'finishReason',
-        'index': 'index'
+        'index': 'index',
+        'tool_calls': 'toolCalls'
     }
 
-    def __init__(self, delta: 'V1ResponseChoiceDelta' =None, finish_reason: 'str' =None, index: 'int' =None):  # noqa: E501
+    def __init__(self, delta: 'V1ResponseChoiceDelta' =None, finish_reason: 'str' =None, index: 'int' =None, tool_calls: 'list[V1ToolCall]' =None):  # noqa: E501
         """V1ResponseChoice - a model defined in Swagger"""  # noqa: E501
         self._delta = None
         self._finish_reason = None
         self._index = None
+        self._tool_calls = None
         self.discriminator = None
         if delta is not None:
             self.delta = delta
@@ -64,6 +67,8 @@ class V1ResponseChoice(object):
             self.finish_reason = finish_reason
         if index is not None:
             self.index = index
+        if tool_calls is not None:
+            self.tool_calls = tool_calls
 
     @property
     def delta(self) -> 'V1ResponseChoiceDelta':
@@ -127,6 +132,27 @@ class V1ResponseChoice(object):
         """
 
         self._index = index
+
+    @property
+    def tool_calls(self) -> 'list[V1ToolCall]':
+        """Gets the tool_calls of this V1ResponseChoice.  # noqa: E501
+
+
+        :return: The tool_calls of this V1ResponseChoice.  # noqa: E501
+        :rtype: list[V1ToolCall]
+        """
+        return self._tool_calls
+
+    @tool_calls.setter
+    def tool_calls(self, tool_calls: 'list[V1ToolCall]'):
+        """Sets the tool_calls of this V1ResponseChoice.
+
+
+        :param tool_calls: The tool_calls of this V1ResponseChoice.  # noqa: E501
+        :type: list[V1ToolCall]
+        """
+
+        self._tool_calls = tool_calls
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
