@@ -15,6 +15,7 @@ from lightning_sdk.status import Status
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import (
+    _get_org_id,
     _resolve_deprecated_cluster,
     _resolve_deprecated_provider,
     _resolve_teamspace,
@@ -173,15 +174,13 @@ class Studio:
     @property
     def machine(self) -> Optional[Machine]:
         """Returns the current machine type the Studio is running on."""
-        from lightning_sdk.organization import Organization
-
         if self.status != Status.Running:
             return None
         return self._studio_api.get_machine(
             self._studio.id,
             self._teamspace.id,
-            self._teamspace.owner.id if isinstance(self._teamspace.owner, Organization) else "",
             self.cloud_account,
+            _get_org_id(self._teamspace),
         )
 
     @property

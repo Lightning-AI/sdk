@@ -71,34 +71,38 @@ class CloudAccountApi:
 
     @lru_cache(maxsize=None)  # noqa: B019
     def list_cloud_account_accelerators(
-        self, teamspace_id: str, cloud_account_id: str, org_id: str
+        self,
+        teamspace_id: str,
+        cloud_account_id: str,
+        org_id: str,
     ) -> Union[V1ListClusterAcceleratorsResponse, V1ListDefaultClusterAcceleratorsResponse]:
         """Lists the accelerators for a given cloud account.
 
         Args:
             cloud_account_id: cluster ID to list accelerators for
-            org_id: The owning org of this project
         """
-        if not org_id:
-            # map cloud_account to provider
-            cloud_provider = None
-            for cloud_account in self.list_cloud_accounts(teamspace_id=teamspace_id):
-                if cloud_account.id == cloud_account_id:
-                    cloud_provider = self._get_cloud_account_provider(cloud_account)
-                    break
+        # map cloud_account to provider
+        cloud_provider = None
+        is_default = True
+        for cloud_account in self.list_cloud_accounts(teamspace_id=teamspace_id):
+            if cloud_account.id == cloud_account_id:
+                is_default = cloud_account.spec.cluster_type == V1ClusterType.GLOBAL
+                cloud_provider = self._get_cloud_account_provider(cloud_account)
+                break
 
-            if cloud_provider is None:
-                raise ValueError(
-                    f"Cloud Account {cloud_account_id} is not a default cloud account. "
-                    "Are you in the correct teamspace?"
-                )
+        if cloud_provider is None:
+            raise ValueError(
+                f"Cloud Account {cloud_account_id} is not a default cloud account. Are you in the correct teamspace?"
+            )
 
+        if is_default:
             res = self._list_default_cluster_accelerators(teamspace_id=teamspace_id, cloud_provider=cloud_provider)
         else:
             res = self._client.cluster_service_list_cluster_accelerators(
                 id=cloud_account_id,
                 org_id=org_id,
             )
+
         if not res:
             raise ValueError(f"CloudAccount {cloud_account_id} does not exist")
         return res

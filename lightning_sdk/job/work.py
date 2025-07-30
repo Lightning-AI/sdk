@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, Optional, Protocol, Union
 
 from lightning_sdk.api.job_api import JobApiV1
+from lightning_sdk.utils.resolve import _get_org_id
 
 if TYPE_CHECKING:
     from lightning_sdk.job.base import MachineDict
@@ -52,11 +53,9 @@ class Work:
 
     @property
     def machine(self) -> Union["Machine", str]:
-        from lightning_sdk import Organization
-
         return self._job_api.get_machine_from_work(
             self._guaranteed_work,
-            org_id=self._teamspace.owner.id if isinstance(self._teamspace.owner, Organization) else "",
+            org_id=_get_org_id(self._teamspace),
         )
 
     @property

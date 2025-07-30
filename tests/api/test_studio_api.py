@@ -148,7 +148,7 @@ def test_delete_studio(internal_studio_api_mocker_delete):
 def test_get_machine(internal_studio_api_mocker_get_machine, name, expected_machine):
     studio_api = StudioApi()
 
-    machine = studio_api.get_machine(name, "ts-abc", "org-abc", "cluster-abc")
+    machine = studio_api.get_machine(name, "ts-abc", "cluster-abc", "test-org")
 
     assert isinstance(machine, Machine)
     assert expected_machine == machine

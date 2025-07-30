@@ -240,3 +240,11 @@ def _get_studio_url(studio: "Studio", turn_on: bool = False) -> str:
     if turn_on:
         return f"{base_url}?turnOn=true"
     return base_url
+
+
+def _get_org_id(teamspace: "Teamspace") -> str:
+    from lightning_sdk.organization import Organization
+
+    if isinstance(teamspace.owner, Organization):
+        return teamspace.owner.id
+    return ""

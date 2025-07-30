@@ -232,7 +232,7 @@ def test_machine_translate(
         cluster_id="cluster_abc",
     )
 
-    assert job_api._get_job_machine_from_spec(spec, teamspace_id="my-teamspace", org_id="abc") == expected_machine
+    assert job_api._get_job_machine_from_spec(spec, teamspace_id="my-teamspace", org_id="test-org") == expected_machine
 
 
 @pytest.mark.parametrize(

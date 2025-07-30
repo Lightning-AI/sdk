@@ -14,6 +14,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     ProjectIdCloudspacesBody,
     ProjectIdMultimachinejobsBody,
     V1Assistant,
+    V1CloudProvider,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
     V1CloudSpaceInstanceStartupStatus,
@@ -28,6 +29,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1DownloadLightningappInstanceLogsResponse,
     V1Endpoint,
     V1ExecuteCloudSpaceCommandResponse,
+    V1ExternalCluster,
+    V1ExternalClusterSpec,
     V1GetCloudSpaceInstanceStatusResponse,
     V1GetUserResponse,
     V1Job,
@@ -40,7 +43,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LightningworkState,
     V1LightningworkStatus,
     V1ListCloudSpacesResponse,
-    V1ListClusterAcceleratorsResponse,
     V1ListLightningworkResponse,
     V1ListMembershipsResponse,
     V1ListOrganizationsResponse,
@@ -455,54 +457,36 @@ def internal_studio_api_mocker_delete(mocker):
 
 @pytest.fixture()
 def internal_studio_api_mocker_get_machine(mocker):
+    # a clean mapping from studio ID to the machine instance_id string
+    studio_to_machine_map = {
+        "st-abc": "cpu-4",
+        "st-def": "data-large",
+        "st-ghi": "g4dn.2xlarge",
+        "st-jkl": "g4dn.12xlarge",
+        "st-mno": "g6.4xlarge",
+        "st-pqr": "g6.12xlarge",
+        "st-yza": "p4d.24xlarge",
+        "st-bcd": "p5.48xlarge",
+        "st-efg": "p5en.48xlarge",
+        "st-hij": "data-max",
+        "st-klm": "data-ultra",
+        "st-nop": "m3.medium",
+        "st-tuv": "g6e.4xlarge",
+        "st-wxy": "g6e.12xlarge",
+        "st-zab": "g6e.48xlarge",
+        "st-cde": "g6.48xlarge",
+        "st-fgh": "a2-ultragpu-2g",
+        "st-ijk": "a2-ultragpu-4g",
+        "st-lmn": "a4-highgpu-8g",
+        "st-opq": "n2d-standard-2",
+        "st-rst": "g2-standard-24",
+    }
+
     def _side_effect(self, project_id, id, **kwargs):
-        instance = None
-
-        if id == "st-abc":
-            instance = "cpu-4"
-        elif id == "st-def":
-            instance = "data-large"
-        elif id == "st-ghi":
-            instance = "g4dn.2xlarge"
-        elif id == "st-jkl":
-            instance = "g4dn.12xlarge"
-        elif id == "st-mno":
-            instance = "g6.4xlarge"
-        elif id == "st-pqr":
-            instance = "g6.12xlarge"
-        elif id == "st-yza":
-            instance = "p4d.24xlarge"
-        elif id == "st-bcd":
-            instance = "p5.48xlarge"
-        elif id == "st-efg":
-            instance = "p5en.48xlarge"
-        elif id == "st-hij":
-            instance = "data-max"
-        elif id == "st-klm":
-            instance = "data-ultra"
-        elif id == "st-nop":
-            instance = "m3.medium"
-        elif id == "st-tuv":
-            instance = "g6e.4xlarge"
-        elif id == "st-wxy":
-            instance = "g6e.12xlarge"
-        elif id == "st-zab":
-            instance = "g6e.48xlarge"
-        elif id == "st-cde":
-            instance = "g6.48xlarge"
-        elif id == "st-fgh":
-            instance = "a2-ultragpu-2g"
-        elif id == "st-ijk":
-            instance = "a2-ultragpu-4g"
-        elif id == "st-lmn":
-            instance = "a4-highgpu-8g"
-        elif id == "st-opq":
-            instance = "n2d-standard-2"
-        elif id == "st-rst":
-            instance = "g2-standard-24"
-
-        assert instance is not None
-        return V1CloudSpaceInstanceConfig(compute_config=V1UserRequestedComputeConfig(name=instance))
+        instance_type_str = studio_to_machine_map.get(id)
+        if instance_type_str is None:
+            raise ValueError(f"No machine found for studio ID: {id}")
+        return V1CloudSpaceInstanceConfig(compute_config=V1UserRequestedComputeConfig(name=instance_type_str))
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
@@ -510,10 +494,58 @@ def internal_studio_api_mocker_get_machine(mocker):
         side_effect=_side_effect,
     )
 
+    # Mock the new CloudAccountApi.list_cloud_account_accelerators method chain
+    from lightning_sdk.lightning_cloud.openapi import V1ClusterType
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_clusters_response import V1ListClustersResponse
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_default_cluster_accelerators_response import (
+        V1ListDefaultClusterAcceleratorsResponse,
+    )
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_project_clusters_response import (
+        V1ListProjectClustersResponse,
+    )
+
+    # Create test cloud accounts for different cluster_ids used in tests
+    test_cloud_accounts = [
+        V1ExternalCluster(
+            id="cluster_abc",  # This matches some cluster_id used in tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="c-abc",  # This matches most cluster_id used in tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="cluster-abc",  # This matches studio API tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="my-preferred-cluster",  # This matches organization preferred cluster tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id=None,  # Handle cases where cluster_id is None
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+    ]
+
+    # Mock list_cloud_accounts method calls
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_cluster_accelerators",
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_project_clusters",
         autospec=True,
-        return_value=V1ListClusterAcceleratorsResponse(
+        return_value=V1ListProjectClustersResponse(clusters=test_cloud_accounts),
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
+        autospec=True,
+        return_value=V1ListClustersResponse(clusters=[]),
+    )
+
+    # Mock the _list_default_cluster_accelerators method
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_default_cluster_accelerators",
+        autospec=True,
+        return_value=V1ListDefaultClusterAcceleratorsResponse(
             accelerator=[
                 V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
                 V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
@@ -802,10 +834,58 @@ def internal_studio_start_mocker(mocker):
         autospec=True,
     )
 
+    # Mock the new CloudAccountApi.list_cloud_account_accelerators method chain
+    from lightning_sdk.lightning_cloud.openapi import V1ClusterType
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_clusters_response import V1ListClustersResponse
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_default_cluster_accelerators_response import (
+        V1ListDefaultClusterAcceleratorsResponse,
+    )
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_project_clusters_response import (
+        V1ListProjectClustersResponse,
+    )
+
+    # Create test cloud accounts for different cluster_ids used in tests
+    test_cloud_accounts = [
+        V1ExternalCluster(
+            id="cluster_abc",  # This matches some cluster_id used in tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="c-abc",  # This matches most cluster_id used in tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="cluster-abc",  # This matches studio API tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="my-preferred-cluster",  # This matches organization preferred cluster tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id=None,  # Handle cases where cluster_id is None
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+    ]
+
+    # Mock list_cloud_accounts method calls
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_cluster_accelerators",
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_project_clusters",
         autospec=True,
-        return_value=V1ListClusterAcceleratorsResponse(
+        return_value=V1ListProjectClustersResponse(clusters=test_cloud_accounts),
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
+        autospec=True,
+        return_value=V1ListClustersResponse(clusters=[]),
+    )
+
+    # Mock the _list_default_cluster_accelerators method
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_default_cluster_accelerators",
+        autospec=True,
+        return_value=V1ListDefaultClusterAcceleratorsResponse(
             accelerator=[
                 V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
                 V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
@@ -1006,10 +1086,58 @@ def internal_studio_switch_mocker(mocker, internal_get_org_api_mocker, internal_
         autospec=True,
     )
 
+    # Mock the new CloudAccountApi.list_cloud_account_accelerators method chain
+    from lightning_sdk.lightning_cloud.openapi import V1ClusterType
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_clusters_response import V1ListClustersResponse
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_default_cluster_accelerators_response import (
+        V1ListDefaultClusterAcceleratorsResponse,
+    )
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_project_clusters_response import (
+        V1ListProjectClustersResponse,
+    )
+
+    # Create test cloud accounts for different cluster_ids used in tests
+    test_cloud_accounts = [
+        V1ExternalCluster(
+            id="cluster_abc",  # This matches some cluster_id used in tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="c-abc",  # This matches most cluster_id used in tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="cluster-abc",  # This matches studio API tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="my-preferred-cluster",  # This matches organization preferred cluster tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id=None,  # Handle cases where cluster_id is None
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+    ]
+
+    # Mock list_cloud_accounts method calls
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_cluster_accelerators",
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_project_clusters",
         autospec=True,
-        return_value=V1ListClusterAcceleratorsResponse(
+        return_value=V1ListProjectClustersResponse(clusters=test_cloud_accounts),
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
+        autospec=True,
+        return_value=V1ListClustersResponse(clusters=[]),
+    )
+
+    # Mock the _list_default_cluster_accelerators method
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_default_cluster_accelerators",
+        autospec=True,
+        return_value=V1ListDefaultClusterAcceleratorsResponse(
             accelerator=[
                 V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
                 V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
@@ -2176,10 +2304,58 @@ def internal_job_api_mocker_get_work(mocker):
         autospec=True,
     )
 
+    # Mock the new CloudAccountApi.list_cloud_account_accelerators method chain
+    from lightning_sdk.lightning_cloud.openapi import V1ClusterType
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_clusters_response import V1ListClustersResponse
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_default_cluster_accelerators_response import (
+        V1ListDefaultClusterAcceleratorsResponse,
+    )
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_project_clusters_response import (
+        V1ListProjectClustersResponse,
+    )
+
+    # Create test cloud accounts for different cluster_ids used in tests
+    test_cloud_accounts = [
+        V1ExternalCluster(
+            id="cluster_abc",  # This matches some cluster_id used in tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="c-abc",  # This matches most cluster_id used in tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="cluster-abc",  # This matches studio API tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="my-preferred-cluster",  # This matches organization preferred cluster tests
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id=None,  # Handle cases where cluster_id is None
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+    ]
+
+    # Mock list_cloud_accounts method calls
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_cluster_accelerators",
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_project_clusters",
         autospec=True,
-        return_value=V1ListClusterAcceleratorsResponse(
+        return_value=V1ListProjectClustersResponse(clusters=test_cloud_accounts),
+    )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
+        autospec=True,
+        return_value=V1ListClustersResponse(clusters=[]),
+    )
+
+    # Mock the _list_default_cluster_accelerators method
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_default_cluster_accelerators",
+        autospec=True,
+        return_value=V1ListDefaultClusterAcceleratorsResponse(
             accelerator=[
                 V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
                 V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),

@@ -100,8 +100,8 @@ class JobApiV1:
         user_requested_compute_config: V1UserRequestedComputeConfig = spec.user_requested_compute_config
         accelerators = self._get_machines_for_cloud_account(
             teamspace_id=work.project_id,
-            org_id=org_id,
             cloud_account_id=spec.cluster_id,
+            org_id=org_id,
         )
 
         identifier = None
@@ -122,13 +122,15 @@ class JobApiV1:
         return Machine.from_str(identifier)
 
     def _get_machines_for_cloud_account(
-        self, teamspace_id: str, org_id: str, cloud_account_id: str
+        self, teamspace_id: str, cloud_account_id: str, org_id: str
     ) -> List[V1ClusterAccelerator]:
         from lightning_sdk.api.cloud_account_api import CloudAccountApi
 
         cloud_account_api = CloudAccountApi()
         accelerators = cloud_account_api.list_cloud_account_accelerators(
-            teamspace_id=teamspace_id, org_id=org_id, cloud_account_id=cloud_account_id
+            teamspace_id=teamspace_id,
+            cloud_account_id=cloud_account_id,
+            org_id=org_id,
         )
         if not accelerators:
             return []
@@ -413,7 +415,9 @@ class JobApiV2:
 
     def _get_job_machine_from_spec(self, spec: V1JobSpec, teamspace_id: str, org_id: str) -> "Machine":
         accelerators = self._get_machines_for_cloud_account(
-            teamspace_id=teamspace_id, org_id=org_id, cloud_account_id=spec.cluster_id
+            teamspace_id=teamspace_id,
+            cloud_account_id=spec.cluster_id,
+            org_id=org_id,
         )
 
         for accelerator in accelerators:
@@ -430,13 +434,15 @@ class JobApiV2:
         return Machine.from_str(spec.instance_name or spec.instance_type)
 
     def _get_machines_for_cloud_account(
-        self, teamspace_id: str, org_id: str, cloud_account_id: str
+        self, teamspace_id: str, cloud_account_id: str, org_id: str
     ) -> List[V1ClusterAccelerator]:
         from lightning_sdk.api.cloud_account_api import CloudAccountApi
 
         cloud_account_api = CloudAccountApi()
         accelerators = cloud_account_api.list_cloud_account_accelerators(
-            teamspace_id=teamspace_id, org_id=org_id, cloud_account_id=cloud_account_id
+            teamspace_id=teamspace_id,
+            cloud_account_id=cloud_account_id,
+            org_id=org_id,
         )
         if not accelerators:
             return []

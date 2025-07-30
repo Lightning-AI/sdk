@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 from lightning_sdk.api.mmt_api import MMTApiV2
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.status import Status
+from lightning_sdk.utils.resolve import _get_org_id
 
 if TYPE_CHECKING:
     from lightning_sdk.job.job import Job
@@ -191,12 +192,10 @@ class _MMTV2(_BaseMMT):
     @property
     def machine(self) -> Union["Machine", str]:
         """Returns the machine type this job is running on."""
-        from lightning_sdk.organization import Organization
-
         return self._job_api._get_job_machine_from_spec(
             self._guaranteed_job.spec,
             self.teamspace.id,
-            self.teamspace.owner.id if isinstance(self.teamspace.owner, Organization) else "",
+            _get_org_id(self.teamspace),
         )
 
     def _update_internal_job(self) -> None:

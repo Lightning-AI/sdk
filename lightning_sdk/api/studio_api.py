@@ -268,13 +268,13 @@ class StudioApi:
                 break
             time.sleep(1)
 
-    def get_machine(self, studio_id: str, teamspace_id: str, org_id: str, cloud_account_id: str) -> Machine:
+    def get_machine(self, studio_id: str, teamspace_id: str, cloud_account_id: str, org_id: str) -> Machine:
         """Get the current machine type the given Studio is running on."""
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
             project_id=teamspace_id, id=studio_id
         )
         accelerators = self._get_machines_for_cloud_account(
-            teamspace_id=teamspace_id, org_id=org_id, cloud_account_id=cloud_account_id
+            teamspace_id=teamspace_id, cloud_account_id=cloud_account_id, org_id=org_id
         )
 
         for accelerator in accelerators:
@@ -296,13 +296,15 @@ class StudioApi:
         return response.compute_config.spot
 
     def _get_machines_for_cloud_account(
-        self, teamspace_id: str, org_id: str, cloud_account_id: str
+        self, teamspace_id: str, cloud_account_id: str, org_id: str
     ) -> List[V1ClusterAccelerator]:
         from lightning_sdk.api.cloud_account_api import CloudAccountApi
 
         cloud_account_api = CloudAccountApi()
         accelerators = cloud_account_api.list_cloud_account_accelerators(
-            teamspace_id=teamspace_id, org_id=org_id, cloud_account_id=cloud_account_id
+            teamspace_id=teamspace_id,
+            cloud_account_id=cloud_account_id,
+            org_id=org_id,
         )
         if not accelerators:
             return []

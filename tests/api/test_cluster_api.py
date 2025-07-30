@@ -3,10 +3,17 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
-from lightning_sdk.lightning_cloud.openapi import V1CloudProvider, V1ExternalCluster, V1ExternalClusterSpec
+from lightning_sdk.lightning_cloud.openapi import (
+    V1CloudProvider,
+    V1ClusterType,
+    V1ExternalCluster,
+    V1ExternalClusterSpec,
+)
 from lightning_sdk.lightning_cloud.openapi.models.v1_list_cluster_accelerators_response import (
     V1ListClusterAcceleratorsResponse,
 )
+from lightning_sdk.lightning_cloud.openapi.models.v1_list_clusters_response import V1ListClustersResponse
+from lightning_sdk.lightning_cloud.openapi.models.v1_list_project_clusters_response import V1ListProjectClustersResponse
 from lightning_sdk.machine import CloudProvider
 
 
@@ -46,9 +53,22 @@ def accelerator_response():
 
 @patch("lightning_sdk.api.cloud_account_api.LightningClient")
 def test_list_cloud_account_accelerators(mock_client, accelerator_response):
-    mock_client.return_value.cluster_service_list_cluster_accelerators.return_value = accelerator_response
+    # Create a mock cloud account that matches the test-cluster id
+    mock_cloud_account = V1ExternalCluster(
+        id="test-cluster", spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL)
+    )
+
+    # Mock the list_cloud_accounts method to return our test cloud account
+    mock_project_response = V1ListProjectClustersResponse(clusters=[mock_cloud_account])
+    mock_global_response = V1ListClustersResponse(clusters=[])
+    mock_client.return_value.cluster_service_list_project_clusters.return_value = mock_project_response
+    mock_client.return_value.cluster_service_list_clusters.return_value = mock_global_response
+
+    # Mock the _list_default_cluster_accelerators method to return the accelerator response
+    mock_client.return_value.cluster_service_list_default_cluster_accelerators.return_value = accelerator_response
+
     cloud_account_api = CloudAccountApi()
-    res = cloud_account_api.list_cloud_account_accelerators("test-teamspace", "lightning-ai", "test-cluster")
+    res = cloud_account_api.list_cloud_account_accelerators("test-teamspace", "test-cluster", "test-org")
     assert res == accelerator_response
 
 

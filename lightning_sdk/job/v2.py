@@ -4,6 +4,7 @@ from lightning_sdk.api.job_api import JobApiV2
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.job.base import _BaseJob
 from lightning_sdk.status import Status
+from lightning_sdk.utils.resolve import _get_org_id
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import CloudProvider, Machine
@@ -165,12 +166,11 @@ class _JobV2(_BaseJob):
     def machine(self) -> Union["Machine", str]:
         """The machine type the job is running on."""
         # only fetch the job it it hasn't been fetched yet as machine cannot change over time
-        from lightning_sdk.organization import Organization
 
         return self._job_api._get_job_machine_from_spec(
             self._guaranteed_job.spec,
             self.teamspace.id,
-            self.teamspace.owner.id if isinstance(self.teamspace.owner, Organization) else "",
+            _get_org_id(self.teamspace),
         )
 
     @property
