@@ -76,6 +76,40 @@ def mock_tools():
     ]
 
 
+def test_get_auth_info_missing_teamspace_raises(monkeypatch):
+    # Clear all shared state
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._cached_auth_info = {}
+    LLMCLIENT._llm_api_cache = {}
+    LLMCLIENT._public_assistants = {}
+
+    # Unset env vars to simulate a fresh user environment
+    monkeypatch.delenv("LIGHTNING_TEAMSPACE", raising=False)
+    monkeypatch.delenv("LIGHTNING_CLOUD_PROJECT_ID", raising=False)
+    monkeypatch.delenv("LIGHTNING_USERNAME", raising=False)
+    monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
+    monkeypatch.delenv("LIGHTNING_CLOUD_URL", raising=False)
+
+    # Patch TeamspaceApi and UserApi to simulate no access
+    teamspace_api_mock = MagicMock()
+    teamspace_api_mock.list_teamspaces.return_value = []
+    monkeypatch.setattr("lightning_sdk.llm.llm.TeamspaceApi", lambda: teamspace_api_mock)
+
+    user_api_mock = MagicMock()
+    user_api_mock._client.auth_service_get_user.return_value.id = "user-id"
+    monkeypatch.setattr("lightning_sdk.llm.llm.UserApi", lambda: user_api_mock)
+
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "Teamspace information is missing. "
+            "If this is your first time using LitAI, please log in at https://lightning.ai/sign-up "
+            "and re-run your script, or set the environment variable LIGHTNING_TEAMSPACE=<your-teamspace>."
+        ),
+    ):
+        LLM(name="openai/gpt-4o", teamspace=None)
+
+
 def test_get_model_id_uses_cache():
     # Reset shared class state to avoid side effects
     LLMCLIENT._llm_api_cache.clear()

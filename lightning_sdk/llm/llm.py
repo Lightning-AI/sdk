@@ -2,6 +2,7 @@ import json
 import os
 from typing import Any, AsyncGenerator, ClassVar, Dict, Generator, List, Optional, Tuple, Union
 
+from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.api.llm_api import LLMApi
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
 
@@ -102,12 +103,31 @@ class LLM:
         # TODO: Validate user input teamspace name
         if not LLM._auth_info_cached:
             if teamspace_name is None:
+                # studio users
                 teamspace_name = os.environ.get("LIGHTNING_TEAMSPACE", None)
+
             if teamspace_name is None:
-                raise ValueError(
-                    "Teamspace name must be provided either through "
-                    "the environment variable LIGHTNING_TEAMSPACE or as an argument - LLM(..., teamspace=...)"
-                )
+                # local users with no given teamspace
+                try:
+                    teamspace_api = TeamspaceApi()
+                    user_api = UserApi()
+                    authed_user = user_api._client.auth_service_get_user()
+                    default_teamspace = teamspace_api.list_teamspaces(owner_id=authed_user.id)[0]
+                    teamspace_name = default_teamspace.name
+                    teamspace_id = default_teamspace.id
+                    os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = teamspace_id
+                    os.environ["LIGHTNING_TEAMSPACE"] = teamspace_name
+                except Exception as err:
+                    # throw an appropriate error that guides users to login through the platform
+                    raise ValueError(
+                        "Teamspace information is missing. "
+                        "If this is your first time using LitAI, please log in at https://lightning.ai/sign-up "
+                        "and re-run your script, or set the environment variable LIGHTNING_TEAMSPACE=<your-teamspace>."
+                    ) from err
+
+            # TODO: when teamspace_name is given, we don't know the teamspace_id yet
+            # TODO: if LIGHTNING_CLOUD_PROJECT_ID does not exist, we have to get the id from the teamspace name
+
             LLM._cached_auth_info = {
                 "teamspace_name": teamspace_name,
                 "teamspace_id": os.environ.get("LIGHTNING_CLOUD_PROJECT_ID", None),
