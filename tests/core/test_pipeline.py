@@ -418,6 +418,7 @@ def test_print_summary_with_multiple_clusters():
     schedule1 = MagicMock(cron_expression="0 0 * * *")
     schedule1.name = "daily-run"
     schedule1.timezone = "Africa/Abidjan"
+    schedule1.parallel_runs = True
 
     # 2. Act: Run the method on the test class
     test_printer = TestPrinter(
@@ -433,7 +434,7 @@ def test_print_summary_with_multiple_clusters():
 
     assert (
         output
-        == "\n────────────────────────────────────────────────────────────\n✅ Pipeline 'my-multi-cluster-pipeline' created successfully!\n────────────────────────────────────────────────────────────\n\nWorkflow Steps:\n  ➡️ 1. Job 'data-prep' - (runs first)\n  ➡️ 2. Deployment 'training' -  waits for data-prep\n  ➡️ 3. Job 'eval' -  waits for training\n\n🗓️ Schedules:\n  - 'daily-run' runs on cron schedule: `0 0 * * * in timezone Africa/Abidjan`\n\nCloud accounts:\n  - cluster-A\n  - cluster-B\n\nShared filesystem: True\n\n────────────────────────────────────────────────────────────\n🔗 View your pipeline in the browser:\n   https://lightning.ai/test-user/test-team/pipelines/my-multi-cluster-pipeline?app_id=pipeline\n────────────────────────────────────────────────────────────\n"  # noqa: E501
+        == "\n────────────────────────────────────────────────────────────\n✅ Pipeline 'my-multi-cluster-pipeline' created successfully!\n────────────────────────────────────────────────────────────\n\nWorkflow Steps:\n  ➡️ 1. Job 'data-prep' - (runs first)\n  ➡️ 2. Deployment 'training' -  waits for data-prep\n  ➡️ 3. Job 'eval' -  waits for training\n\n🗓️ Schedules:\n  - 'daily-run' runs on cron schedule: `0 0 * * * in timezone Africa/Abidjan` with parallel_runs=True\n\nCloud accounts:\n  - cluster-A\n  - cluster-B\n\nShared filesystem: True\n\n────────────────────────────────────────────────────────────\n🔗 View your pipeline in the browser:\n   https://lightning.ai/test-user/test-team/pipelines/my-multi-cluster-pipeline?app_id=pipeline\n────────────────────────────────────────────────────────────\n"  # noqa: E501
     )
 
 

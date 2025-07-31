@@ -79,7 +79,7 @@ class PipelinePrinter:
 
         for schedule in self._schedules:
             self._print(
-                f"  - '{schedule.name}' runs on cron schedule: `{schedule.cron_expression} in timezone {schedule.timezone or 'UTC'}`"  # noqa: E501
+                f"  - '{schedule.name}' runs on cron schedule: `{schedule.cron_expression} in timezone {schedule.timezone or 'UTC'}` with parallel_runs={schedule.parallel_runs or False}"  # noqa: E501
             )
 
     def _print_footer(self) -> None:

@@ -76,6 +76,7 @@ class PipelineApi:
                     parent_resource_id=parent_pipeline_id or "",
                     resource_type=V1ScheduleResourceType.PIPELINE,
                     timezone=schedule.timezone,
+                    parallel_runs=schedule.parallel_runs or False,
                 )
 
                 self._client.schedules_service_create_schedule(body, teamspace.id)
