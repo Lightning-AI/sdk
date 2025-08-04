@@ -733,10 +733,10 @@ def test_compose_commands():
 
 def test_to_health_check_empty():
     health_check = deployment_api_module.to_health_check()
-    assert health_check.failure_threshold == 600
+    assert health_check.failure_threshold == 3600
     assert health_check.initial_delay_seconds == 0
     assert health_check.interval_seconds == 1
-    assert health_check.timeout_seconds == 600
+    assert health_check.timeout_seconds == 60
 
     health_check = deployment_api_module.to_health_check(None, False)
     assert health_check is None

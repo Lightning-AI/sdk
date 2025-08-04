@@ -103,7 +103,7 @@ class ExecHealthCheck(HealthCheck):
         self,
         command: str,
         initial_delay_seconds: int = 0,
-        failure_threshold: int = 600,
+        failure_threshold: int = 3600,
         interval_seconds: int = 1,
         timeout_seconds: int = 30,
     ) -> None:
@@ -132,7 +132,7 @@ class HttpHealthCheck(HealthCheck):
         path: str,
         port: float,
         initial_delay_seconds: int = 0,
-        failure_threshold: int = 600,
+        failure_threshold: int = 3600,
         interval_seconds: int = 1,
         timeout_seconds: int = 30,
     ) -> None:
@@ -538,10 +538,10 @@ def to_health_check(
     # Use Default health check if none is provided
     if not health_check:
         return V1JobHealthCheckConfig(
-            failure_threshold=600,
+            failure_threshold=3600,
             initial_delay_seconds=0,
             interval_seconds=1,
-            timeout_seconds=600,
+            timeout_seconds=60,
         )
 
     health_check_config = V1JobHealthCheckConfig(
