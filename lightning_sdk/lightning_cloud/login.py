@@ -43,14 +43,7 @@ class Auth:
         for key in Keys:
             setattr(self, key.suffix, os.environ.get(key.value, None))
 
-        # used by authenticate method
-        self._with_env_var = bool(self.user_id and self.api_key)
-        if self.api_key and not self.user_id:
-            raise ValueError(
-                f"{Keys.USER_ID.value} is missing from env variables. "
-                "To use env vars for authentication both "
-                f"{Keys.USER_ID.value} and {Keys.API_KEY.value} should be set."
-            )
+        self._with_env_var = bool(self.api_key)
 
     def load(self) -> bool:
         """Load credentials from disk and update properties with credentials.
