@@ -171,10 +171,14 @@ def test_job_parameters_stay_in_sync():
     job_type_keys = job_type_signature.parameters.keys()
 
     # ignore the depreceated parameters
-    job_keys = [key for key in job_keys if key not in ["artifacts_local", "artifacts_remote", "cluster"]]
-    job_type_keys = [key for key in job_type_keys if key not in ["wait_for", "self"]]
+    job_keys = [
+        key for key in job_keys if key not in ["artifacts_local", "artifacts_remote", "cluster", "cloud_provider"]
+    ]
+    job_type_keys = [
+        key for key in job_type_keys if key not in ["wait_for", "self", "cloud_provider", "machine_image_version"]
+    ]
 
-    assert sorted(job_keys) == sorted(job_type_keys)
+    assert sorted(job_keys) == sorted(job_type_keys), [sorted(job_keys), sorted(job_type_keys)]
 
 
 def test_prepare_steps():
@@ -488,7 +492,9 @@ def test_print_summary_updated():
 
 def test_deployment_release_step():
     teamspace = MagicMock()
-    step = DeploymentReleaseStep(deployment_name="prod", command="python server.py", ports=[8000], image="nginx")
+    step = DeploymentReleaseStep(
+        deployment_name="prod", command="python server.py", ports=[8000], image="nginx", cloud_account="test-8"
+    )
     step_proto = step.to_proto(teamspace, "test-8", True)
     assert step_proto.deployment.name == "prod"
     assert step_proto.deployment.spec.image == "nginx"

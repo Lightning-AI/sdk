@@ -574,6 +574,7 @@ def to_spec(
     include_credentials: Optional[bool] = None,
     cloudspace_id: Optional[None] = None,
     max_runtime: Optional[int] = None,
+    machine_image_version: Optional[int] = None,
 ) -> V1JobSpec:
     if cloud_account is None:
         raise ValueError("The cloud account should be defined.")
@@ -607,6 +608,7 @@ def to_spec(
         quantity=quantity,
         include_credentials=include_credentials,
         cloudspace_id=cloudspace_id,
+        machine_image_version=machine_image_version,
         **optional_spec_kwargs,
     )
 

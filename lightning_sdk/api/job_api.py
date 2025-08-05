@@ -288,6 +288,7 @@ class JobApiV2:
         artifacts_local: Optional[str],  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str],  # deprecated in favor of path_mappings)
         max_runtime: Optional[int] = None,
+        machine_image_version: Optional[str] = None,
     ) -> ProjectIdJobsBody:
         env_vars = []
         if env is not None:
@@ -322,6 +323,7 @@ class JobApiV2:
             image_cluster_credentials=cloud_account_auth,
             image_secret_ref=image_credentials or "",
             path_mappings=path_mappings_list,
+            machine_image_version=machine_image_version,
             **optional_spec_kwargs,
         )
         return ProjectIdJobsBody(name=name, spec=spec)

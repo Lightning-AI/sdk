@@ -131,6 +131,7 @@ class Deployment:
         from_onboarding: Optional[bool] = None,
         from_litserve: Optional[bool] = None,
         max_runtime: Optional[int] = None,
+        machine_image_version: Optional[int] = None,
     ) -> None:
         """The Lightning AI Deployment.
 
@@ -162,6 +163,7 @@ class Deployment:
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
+            machine_image_version: The machine version for the job
 
         Note:
             Since a teamspace can either be owned by an org or by a user directly,
@@ -174,11 +176,13 @@ class Deployment:
         if isinstance(studio, Studio):
             cloudspace_id = studio._studio.id
             cloud_account = studio._studio.cluster_id
+            machine_image_version = studio._studio.machine_image_version
 
         if isinstance(studio, str):
             studio = Studio(studio)
             cloudspace_id = studio._studio.id
             cloud_account = studio._studio.cluster_id
+            machine_image_version = studio._studio.machine_image_version
 
         if cloud_account is None:
             cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
@@ -233,6 +237,7 @@ class Deployment:
                     include_credentials=include_credentials if include_credentials is not None else True,
                     cloudspace_id=cloudspace_id,
                     max_runtime=max_runtime,
+                    machine_image_version=machine_image_version,
                 ),
                 strategy=to_strategy(release_strategy),
             ),
