@@ -59,7 +59,6 @@ class DeploymentStep:
         include_credentials: Optional[bool] = None,
         max_runtime: Optional[int] = None,
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
-        machine_image_version: Optional[str] = None,
         cloud_provider: Optional[Union["CloudProvider", str]] = None,
     ) -> None:
         self.name = name
@@ -101,15 +100,16 @@ class DeploymentStep:
         self.include_credentials = include_credentials or True
         self.max_runtime = max_runtime
         self.wait_for = wait_for
-        self.machine_image_version = machine_image_version
         self.cloud_provider = cloud_provider
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
     ) -> V1PipelineStep:
+        machine_image_version = None
+
         studio = _get_studio(self.studio)
         if isinstance(studio, Studio):
-            self.machine_image_version = studio._studio.machine_image_version
+            machine_image_version = studio._studio.machine_image_version
 
             if self.cloud_account is None:
                 self.cloud_account = studio.cloud_account
@@ -145,7 +145,7 @@ class DeploymentStep:
                     cloudspace_id=self.studio._studio.id if self.studio else None,
                     include_credentials=self.include_credentials,
                     max_runtime=self.max_runtime,
-                    machine_image_version=self.machine_image_version,
+                    machine_image_version=machine_image_version,
                 ),
                 strategy=to_strategy(self.release_strategy),
             ),
@@ -175,7 +175,6 @@ class JobStep:
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         wait_for: Union[str, List[str], None] = DEFAULT,
-        machine_image_version: Optional[str] = None,
     ) -> None:
         self.name = name
         self.machine = machine or Machine.CPU
@@ -202,14 +201,15 @@ class JobStep:
         self.path_mappings = path_mappings
         self.max_runtime = max_runtime
         self.wait_for = wait_for
-        self.machine_image_version = machine_image_version
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
     ) -> V1PipelineStep:
+        machine_image_version = None
+
         studio = _get_studio(self.studio)
         if isinstance(studio, Studio):
-            self.machine_image_version = studio._studio.machine_image_version
+            machine_image_version = studio._studio.machine_image_version
 
             if self.cloud_account is None:
                 self.cloud_account = studio.cloud_account
@@ -238,7 +238,7 @@ class JobStep:
             artifacts_local=None,
             artifacts_remote=None,
             max_runtime=self.max_runtime,
-            machine_image_version=self.machine_image_version,
+            machine_image_version=machine_image_version,
         )
 
         return V1PipelineStep(
@@ -272,7 +272,6 @@ class MMTStep:
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
-        machine_image_version: Optional[str] = None,
     ) -> None:
         self.machine = machine or Machine.CPU
         self.num_machines = num_machines
@@ -298,14 +297,15 @@ class MMTStep:
         self.path_mappings = path_mappings
         self.max_runtime = max_runtime
         self.wait_for = wait_for
-        self.machine_image_version = machine_image_version
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
     ) -> V1PipelineStep:
+        machine_image_version = None
+
         studio = _get_studio(self.studio)
         if isinstance(studio, Studio):
-            self.machine_image_version = studio._studio.machine_image_version
+            machine_image_version = studio._studio.machine_image_version
 
             if self.cloud_account is None:
                 self.cloud_account = studio.cloud_account
@@ -331,7 +331,7 @@ class MMTStep:
             artifacts_local=None,  # deprecated in favor of path_mappings
             artifacts_remote=None,  # deprecated in favor of path_mappings
             max_runtime=self.max_runtime,
-            machine_image_version=self.machine_image_version,
+            machine_image_version=machine_image_version,
         )
 
         return V1PipelineStep(

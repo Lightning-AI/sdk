@@ -131,7 +131,6 @@ class Deployment:
         from_onboarding: Optional[bool] = None,
         from_litserve: Optional[bool] = None,
         max_runtime: Optional[int] = None,
-        machine_image_version: Optional[int] = None,
     ) -> None:
         """The Lightning AI Deployment.
 
@@ -163,7 +162,6 @@ class Deployment:
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
-            machine_image_version: The machine version for the job
 
         Note:
             Since a teamspace can either be owned by an org or by a user directly,
@@ -172,6 +170,8 @@ class Deployment:
         """
         if self._is_created:
             raise RuntimeError("This deployment has already been started.")
+
+        machine_image_version = None
 
         if isinstance(studio, Studio):
             cloudspace_id = studio._studio.id
