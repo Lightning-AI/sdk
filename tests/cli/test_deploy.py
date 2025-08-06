@@ -148,11 +148,13 @@ def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
 @patch("lightning_sdk.cli.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
+@patch("lightning_sdk.cli.clusters_menu._ClustersMenu._resolve_cluster")
 @patch("lightning_sdk.cli.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.deploy.serve.poll_verified_status")
 def test_cloud_deployment(
     mock_poll_verified_status,
     mock_authenticate,
+    mock_cluster_resolver,
     mock_docker_build,
     _,
     mock_litcr,
@@ -169,6 +171,7 @@ def test_cloud_deployment(
     mock_client.ping.return_value = True
     mock_client.api.build.return_value = [{"stream": "Step 1/10"}]
     mock_client.api.push.return_value = [{"status": "Pushing"}]
+    mock_cluster_resolver.return_value = None
 
     # Mock user confirmations
     mock_confirm.side_effect = [
@@ -204,11 +207,13 @@ def test_cloud_deployment(
 @patch("lightning_sdk.cli.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
+@patch("lightning_sdk.cli.clusters_menu._ClustersMenu._resolve_cluster")
 @patch("lightning_sdk.cli.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.deploy.serve.poll_verified_status")
 def test_cloud_deployment_non_interactive(
     mock_poll_verified_status,
     mock_authenticate,
+    mock_cluster_resolver,
     mock_docker_build,
     _,
     mock_litcr,
@@ -225,6 +230,7 @@ def test_cloud_deployment_non_interactive(
     mock_client.ping.return_value = True
     mock_client.api.build.return_value = [{"stream": "Step 1/10"}]
     mock_client.api.push.return_value = [{"status": "Pushing"}]
+    mock_cluster_resolver.return_value = None
 
     repo = "test-repo/model"
     tag = "latest"
@@ -277,6 +283,7 @@ def test_handle_cloud_no_internet(mock_is_connected):
 
 @patch("lightning_sdk.cli.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.cli.deploy._auth._resolve_teamspace")
+@patch("lightning_sdk.cli.clusters_menu._ClustersMenu._resolve_cluster")
 @patch("lightning_sdk.cli.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.deploy.serve.Confirm.ask")
 @patch("lightning_sdk.cli.deploy.serve.authenticate")
@@ -290,6 +297,7 @@ def test_handle_cloud_from_onboarding(
     mock_authenticate,
     mock_ask,
     mock_ls_deployer,
+    mock_cluster_resolver,
     _,
     mock_litcr,
     temp_script,
@@ -297,6 +305,8 @@ def test_handle_cloud_from_onboarding(
     mock_ask.return_value = True
     mock_ls_deployer.return_value.run_on_cloud.return_value = {"url": "test-url"}
     mock_poll_verified_status.return_value = {"onboarded": False, "verified": True}
+    mock_cluster_resolver.return_value = None
+
     console = rich.console.Console()
     _handle_cloud(
         temp_script,
@@ -317,16 +327,27 @@ def test_handle_cloud_from_onboarding(
 
 @patch("lightning_sdk.cli.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.cli.deploy._auth._resolve_teamspace")
+@patch("lightning_sdk.cli.clusters_menu._ClustersMenu._resolve_cluster")
 @patch("lightning_sdk.cli.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.deploy.serve.Confirm.ask")
 @patch("lightning_sdk.cli.deploy.serve.webbrowser")
 @patch("lightning_sdk.cli.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.deploy.serve.poll_verified_status")
 def test_handle_cloud(
-    mock_poll_verified_status, mock_authenticate, mock_browser, mock_ask, mock_ls_deployer, _, mock_litcr, temp_script
+    mock_poll_verified_status,
+    mock_authenticate,
+    mock_browser,
+    mock_ask,
+    mock_ls_deployer,
+    mock_cluster_resolver,
+    _,
+    mock_litcr,
+    temp_script,
 ):
     mock_ask.return_value = True
     mock_ls_deployer.return_value.run_on_cloud.return_value = {"url": "test-url"}
+    mock_cluster_resolver.return_value = None
+
     console = rich.console.Console()
     _handle_cloud(
         temp_script,
@@ -374,16 +395,19 @@ def test_handle_byoc_cloud(
 
 @patch("lightning_sdk.cli.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.cli.deploy.serve.select_teamspace")
+@patch("lightning_sdk.cli.clusters_menu._ClustersMenu._resolve_cluster")
 @patch("lightning_sdk.cli.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.deploy.serve.Confirm.ask")
 @patch("lightning_sdk.cli.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.deploy.serve.poll_verified_status")
 def test_handle_cloud_deployment_api(
-    mock_poll_verified_status, mock_authenticate, mock_ask, mock_deployer, __, ___, temp_script
+    mock_poll_verified_status, mock_authenticate, mock_ask, mock_deployer, mock_cluster_resolver, __, ___, temp_script
 ):
     mock_ask.return_value = True
     mock_deployer.created = True
+    mock_cluster_resolver.return_value = None
     mock_console = MagicMock()
+
     _handle_cloud(
         temp_script,
         mock_console,
@@ -400,6 +424,7 @@ def test_handle_cloud_deployment_api(
 
 @patch("lightning_sdk.cli.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.cli.deploy.serve.select_teamspace")
+@patch("lightning_sdk.cli.clusters_menu._ClustersMenu._resolve_cluster")
 @patch("lightning_sdk.cli.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.deploy.serve.Confirm.ask")
 @patch("lightning_sdk.cli.deploy.serve.authenticate")
@@ -412,6 +437,7 @@ def test_handle_cloud_with_cloud_account(
     mock_authenticate,
     mock_ask,
     mock_deployer,
+    mock_cluster_resolver,
     mock_teamspace,
     ___,
     temp_script,
@@ -423,6 +449,10 @@ def test_handle_cloud_with_cloud_account(
     machine = Machine.from_str("CPU")
     repository = "litserve-model"
     resolved_teamspace = MagicMock(default_cloud_account="gcp-123")
+
+    if cloud_account is None:
+        mock_cluster_resolver.return_value = "gcp-123"
+
     mock_teamspace.return_value = resolved_teamspace  # Mock select_teamspace to return our teamspace
     _handle_cloud(
         temp_script,
@@ -436,8 +466,9 @@ def test_handle_cloud_with_cloud_account(
     )
     container_basename = repository.split("/")[-1]
     registry_url = mock_registry_url.return_value
+    suffix = cloud_account if cloud_account is not None else "gcp-123"
     image = (
-        f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"
+        f"{registry_url}/lit-container-{suffix}/"
         f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}/{container_basename}"
     )
 
@@ -445,7 +476,7 @@ def test_handle_cloud_with_cloud_account(
     mock_deployer.return_value.dockerize_api.assert_called_once()
     mock_authenticate.assert_called_once()
     mock_console.print.assert_called()
-    selected_cloud_account = cloud_account or resolved_teamspace.default_cloud_account
+    selected_cloud_account = cloud_account or "gcp-123"
     mock_deployer.return_value.run_on_cloud.assert_called_once_with(
         deployment_name="litserve-model",
         teamspace=resolved_teamspace,

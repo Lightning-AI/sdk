@@ -15,6 +15,7 @@ from rich.prompt import Confirm
 from lightning_sdk import Machine, Teamspace
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_registry_url
+from lightning_sdk.cli.clusters_menu import _ClustersMenu
 from lightning_sdk.cli.deploy._auth import (
     _AuthMode,
     _Onboarding,
@@ -377,18 +378,24 @@ def _handle_cloud(
     else:
         resolved_teamspace = select_teamspace(teamspace, org, user)
 
+    lightning_containers_cloud_account = cloud_account
+    if not cloud_account:
+        clusters_menu = _ClustersMenu()
+        lightning_containers_cloud_account = clusters_menu._resolve_cluster(resolved_teamspace)
+        cloud_account = resolved_teamspace.default_cloud_account
+
     # list containers to create the project if it doesn't exist
     lit_cr = LitContainerApi()
-    lit_cr.list_containers(resolved_teamspace.id, cloud_account=cloud_account)
+    lit_cr.list_containers(resolved_teamspace.id, cloud_account=lightning_containers_cloud_account)
 
     registry_url = _get_registry_url()
     container_basename = repository.split("/")[-1]
     image = (
-        f"{registry_url}/lit-container{f'-{cloud_account}' if cloud_account is not None else ''}/"
-        f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}/{container_basename}"
+        f"{registry_url}/lit-container"
+        + (f"-{lightning_containers_cloud_account}" if lightning_containers_cloud_account is not None else "")
+        + f"/{resolved_teamspace.owner.name}/{resolved_teamspace.name}/{container_basename}"
     )
 
-    cloud_account = cloud_account or resolved_teamspace.default_cloud_account
     if from_onboarding:
         thread = Thread(
             target=ls_deployer.run_on_cloud,
@@ -411,13 +418,17 @@ def _handle_cloud(
         )
         thread.start()
         console.print("🚀 Deployment started")
-        if not _upload_container(console, ls_deployer, repository, tag, resolved_teamspace, lit_cr, cloud_account):
+        if not _upload_container(
+            console, ls_deployer, repository, tag, resolved_teamspace, lit_cr, lightning_containers_cloud_account
+        ):
             thread.join()
             return
         thread.join()
         return
 
-    if not _upload_container(console, ls_deployer, repository, tag, resolved_teamspace, lit_cr, cloud_account):
+    if not _upload_container(
+        console, ls_deployer, repository, tag, resolved_teamspace, lit_cr, lightning_containers_cloud_account
+    ):
         return
 
     deployment_status = ls_deployer.run_on_cloud(

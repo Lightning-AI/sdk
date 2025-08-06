@@ -9,7 +9,7 @@ from typing_extensions import Literal
 from lightning_sdk import Job, Machine, Studio, Teamspace
 from lightning_sdk.cli.clusters_menu import _ClustersMenu
 from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
-from lightning_sdk.lightning_cloud.openapi import V1ClusterType, V1MultiMachineJob
+from lightning_sdk.lightning_cloud.openapi import V1MultiMachineJob
 from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.utils.resolve import _get_authed_user
 
@@ -247,8 +247,7 @@ def containers(teamspace: Optional[str] = None, cloud_account: Optional[str] = N
     resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
 
     if not cloud_account:
-        cloud_account_obj = clusters_menu._resolve_cluster(resolved_teamspace)
-        cloud_account = "" if cloud_account_obj.spec.cluster_type == V1ClusterType.GLOBAL else cloud_account_obj.id
+        cloud_account = clusters_menu._resolve_cluster(resolved_teamspace)
 
     result = api.list_containers(
         teamspace=resolved_teamspace.name, org=resolved_teamspace.owner.name, cloud_account=cloud_account

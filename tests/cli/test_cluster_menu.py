@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 from lightning_sdk.cli.clusters_menu import _ClustersMenu
-from lightning_sdk.lightning_cloud.openapi import Externalv1Cluster, V1ProjectClusterBinding
+from lightning_sdk.lightning_cloud.openapi import Externalv1Cluster, V1ClusterType, V1ProjectClusterBinding
 
 
 class TestClustersMenu:
@@ -15,6 +15,7 @@ class TestClustersMenu:
         ]
 
         self.mock_teamspace = MagicMock()
+        self.mock_teamspace.default_cloud_account = None
         self.mock_teamspace.cloud_account_objs = self.mock_cluster_bindings
         self.mock_teamspace.owner.id = "owner-id"
         self.mock_teamspace.id = "teamspace-id"
@@ -30,6 +31,58 @@ class TestClustersMenu:
         mock_terminal_menu.show.assert_called_once()
         self.clusters_menu._prepare_terminal_menu_teamspaces.assert_called_once_with(
             ["cluster-1", "cluster-2", "cluster-3"]
+        )
+
+    @patch("lightning_sdk.cli.clusters_menu.CloudAccountApi")
+    @patch("lightning_sdk.cli.clusters_menu.Console")
+    @patch("sys.exit")
+    def test_resolve_cluster_from_teamspace_byoc(self, mock_exit, mock_console_class, mock_cloud_account_api_class):
+        mock_console = MagicMock()
+        mock_console_class.return_value = mock_console
+
+        mock_cloud_account_api = MagicMock()
+        mock_cloud_account_api_class.return_value = mock_cloud_account_api
+
+        expected_cluster = MagicMock(spec=Externalv1Cluster)
+        expected_cluster.spec.cluster_type = V1ClusterType.BYOC
+        expected_cluster.id = "cluster-2"
+        mock_cloud_account_api.get_cloud_account.return_value = expected_cluster
+
+        self.mock_teamspace.default_cloud_account = "cluster-2"
+        result = self.clusters_menu._resolve_cluster(self.mock_teamspace)
+
+        assert result == "cluster-2"
+
+        mock_cloud_account_api.get_cloud_account.assert_called_once_with(
+            cloud_account_id="cluster-2", org_id=self.mock_teamspace.owner.id, teamspace_id=self.mock_teamspace.id
+        )
+
+    @patch("lightning_sdk.cli.clusters_menu.CloudAccountApi")
+    @patch("lightning_sdk.cli.clusters_menu.Console")
+    @patch("sys.exit")
+    def test_resolve_cluster_from_teamspace_lightning_saas(
+        self, mock_exit, mock_console_class, mock_cloud_account_api_class
+    ):
+        mock_console = MagicMock()
+        mock_console_class.return_value = mock_console
+
+        mock_cloud_account_api = MagicMock()
+        mock_cloud_account_api_class.return_value = mock_cloud_account_api
+
+        expected_cluster = MagicMock(spec=Externalv1Cluster)
+        expected_cluster.spec.cluster_type = V1ClusterType.GLOBAL
+        expected_cluster.id = "cluster-2"
+        mock_cloud_account_api.get_cloud_account.return_value = expected_cluster
+
+        self.mock_teamspace.default_cloud_account = "cluster-2"
+        result = self.clusters_menu._resolve_cluster(self.mock_teamspace)
+
+        # lightning saas is always None because there are multiple lightning saas global clusters but only one
+        # lightning saas storage backend.
+        assert result is None
+
+        mock_cloud_account_api.get_cloud_account.assert_called_once_with(
+            cloud_account_id="cluster-2", org_id=self.mock_teamspace.owner.id, teamspace_id=self.mock_teamspace.id
         )
 
     @patch("lightning_sdk.cli.clusters_menu.TerminalMenu")
@@ -57,14 +110,12 @@ class TestClustersMenu:
 
         self.clusters_menu._get_cluster_from_interactive_menu = MagicMock(return_value="cluster-2")
 
-        result = self.clusters_menu._resolve_cluster(self.mock_teamspace)
-
-        assert result == expected_cluster
+        self.clusters_menu._resolve_cluster(self.mock_teamspace)
         self.clusters_menu._get_cluster_from_interactive_menu.assert_called_once_with(
             possible_clusters=self.mock_teamspace.cloud_account_objs
         )
         mock_cloud_account_api.get_cloud_account.assert_called_once_with(
-            cluster_id="cluster-2", org_id=self.mock_teamspace.owner.id, project_id=self.mock_teamspace.id
+            cloud_account_id="cluster-2", org_id=self.mock_teamspace.owner.id, teamspace_id=self.mock_teamspace.id
         )
         mock_exit.assert_not_called()
 
