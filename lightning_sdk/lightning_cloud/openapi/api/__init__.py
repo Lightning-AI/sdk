@@ -21,6 +21,7 @@ from lightning_sdk.lightning_cloud.openapi.api.experiments_service_api import Ex
 from lightning_sdk.lightning_cloud.openapi.api.file_system_service_api import FileSystemServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.git_credentials_service_api import GitCredentialsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.jobs_service_api import JobsServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.k8_s_cluster_service_api import K8SClusterServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api import LightningappInstanceServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_v2_service_api import LightningappV2ServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningwork_service_api import LightningworkServiceApi

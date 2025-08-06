@@ -44,6 +44,7 @@ class V1ManagedModel(object):
         'abilities': 'V1ManagedModelAbilities',
         'assistant_id': 'str',
         'completion_token_price': 'float',
+        'completion_token_price_above_threshold': 'float',
         'context_length': 'str',
         'deployment_details': 'V1DeploymentDetails',
         'description': 'str',
@@ -53,10 +54,12 @@ class V1ManagedModel(object):
         'max_completion_tokens': 'str',
         'name': 'str',
         'prompt_token_price': 'float',
+        'prompt_token_price_above_threshold': 'float',
         'status': 'V1AssistantModelStatus',
         'temperature': 'float',
         'throughput': 'float',
         'time_to_first_token': 'float',
+        'token_threshold': 'str',
         'top_k': 'str'
     }
 
@@ -64,6 +67,7 @@ class V1ManagedModel(object):
         'abilities': 'abilities',
         'assistant_id': 'assistantId',
         'completion_token_price': 'completionTokenPrice',
+        'completion_token_price_above_threshold': 'completionTokenPriceAboveThreshold',
         'context_length': 'contextLength',
         'deployment_details': 'deploymentDetails',
         'description': 'description',
@@ -73,18 +77,21 @@ class V1ManagedModel(object):
         'max_completion_tokens': 'maxCompletionTokens',
         'name': 'name',
         'prompt_token_price': 'promptTokenPrice',
+        'prompt_token_price_above_threshold': 'promptTokenPriceAboveThreshold',
         'status': 'status',
         'temperature': 'temperature',
         'throughput': 'throughput',
         'time_to_first_token': 'timeToFirstToken',
+        'token_threshold': 'tokenThreshold',
         'top_k': 'topK'
     }
 
-    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, assistant_id: 'str' =None, completion_token_price: 'float' =None, context_length: 'str' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, top_k: 'str' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, assistant_id: 'str' =None, completion_token_price: 'float' =None, completion_token_price_above_threshold: 'float' =None, context_length: 'str' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, prompt_token_price_above_threshold: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, token_threshold: 'str' =None, top_k: 'str' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._abilities = None
         self._assistant_id = None
         self._completion_token_price = None
+        self._completion_token_price_above_threshold = None
         self._context_length = None
         self._deployment_details = None
         self._description = None
@@ -94,10 +101,12 @@ class V1ManagedModel(object):
         self._max_completion_tokens = None
         self._name = None
         self._prompt_token_price = None
+        self._prompt_token_price_above_threshold = None
         self._status = None
         self._temperature = None
         self._throughput = None
         self._time_to_first_token = None
+        self._token_threshold = None
         self._top_k = None
         self.discriminator = None
         if abilities is not None:
@@ -106,6 +115,8 @@ class V1ManagedModel(object):
             self.assistant_id = assistant_id
         if completion_token_price is not None:
             self.completion_token_price = completion_token_price
+        if completion_token_price_above_threshold is not None:
+            self.completion_token_price_above_threshold = completion_token_price_above_threshold
         if context_length is not None:
             self.context_length = context_length
         if deployment_details is not None:
@@ -124,6 +135,8 @@ class V1ManagedModel(object):
             self.name = name
         if prompt_token_price is not None:
             self.prompt_token_price = prompt_token_price
+        if prompt_token_price_above_threshold is not None:
+            self.prompt_token_price_above_threshold = prompt_token_price_above_threshold
         if status is not None:
             self.status = status
         if temperature is not None:
@@ -132,6 +145,8 @@ class V1ManagedModel(object):
             self.throughput = throughput
         if time_to_first_token is not None:
             self.time_to_first_token = time_to_first_token
+        if token_threshold is not None:
+            self.token_threshold = token_threshold
         if top_k is not None:
             self.top_k = top_k
 
@@ -197,6 +212,27 @@ class V1ManagedModel(object):
         """
 
         self._completion_token_price = completion_token_price
+
+    @property
+    def completion_token_price_above_threshold(self) -> 'float':
+        """Gets the completion_token_price_above_threshold of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The completion_token_price_above_threshold of this V1ManagedModel.  # noqa: E501
+        :rtype: float
+        """
+        return self._completion_token_price_above_threshold
+
+    @completion_token_price_above_threshold.setter
+    def completion_token_price_above_threshold(self, completion_token_price_above_threshold: 'float'):
+        """Sets the completion_token_price_above_threshold of this V1ManagedModel.
+
+
+        :param completion_token_price_above_threshold: The completion_token_price_above_threshold of this V1ManagedModel.  # noqa: E501
+        :type: float
+        """
+
+        self._completion_token_price_above_threshold = completion_token_price_above_threshold
 
     @property
     def context_length(self) -> 'str':
@@ -388,6 +424,27 @@ class V1ManagedModel(object):
         self._prompt_token_price = prompt_token_price
 
     @property
+    def prompt_token_price_above_threshold(self) -> 'float':
+        """Gets the prompt_token_price_above_threshold of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The prompt_token_price_above_threshold of this V1ManagedModel.  # noqa: E501
+        :rtype: float
+        """
+        return self._prompt_token_price_above_threshold
+
+    @prompt_token_price_above_threshold.setter
+    def prompt_token_price_above_threshold(self, prompt_token_price_above_threshold: 'float'):
+        """Sets the prompt_token_price_above_threshold of this V1ManagedModel.
+
+
+        :param prompt_token_price_above_threshold: The prompt_token_price_above_threshold of this V1ManagedModel.  # noqa: E501
+        :type: float
+        """
+
+        self._prompt_token_price_above_threshold = prompt_token_price_above_threshold
+
+    @property
     def status(self) -> 'V1AssistantModelStatus':
         """Gets the status of this V1ManagedModel.  # noqa: E501
 
@@ -470,6 +527,27 @@ class V1ManagedModel(object):
         """
 
         self._time_to_first_token = time_to_first_token
+
+    @property
+    def token_threshold(self) -> 'str':
+        """Gets the token_threshold of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The token_threshold of this V1ManagedModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._token_threshold
+
+    @token_threshold.setter
+    def token_threshold(self, token_threshold: 'str'):
+        """Sets the token_threshold of this V1ManagedModel.
+
+
+        :param token_threshold: The token_threshold of this V1ManagedModel.  # noqa: E501
+        :type: str
+        """
+
+        self._token_threshold = token_threshold
 
     @property
     def top_k(self) -> 'str':

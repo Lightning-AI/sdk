@@ -65,6 +65,8 @@ class V1Organization(object):
         'disallow_gcp_saas': 'bool',
         'disallow_lambda_saas': 'bool',
         'disallow_lightning_saas': 'bool',
+        'disallow_nebius_saas': 'bool',
+        'disallow_voltage_park_saas': 'bool',
         'disallow_vultr_saas': 'bool',
         'display_name': 'str',
         'domain': 'str',
@@ -116,6 +118,8 @@ class V1Organization(object):
         'disallow_gcp_saas': 'disallowGcpSaas',
         'disallow_lambda_saas': 'disallowLambdaSaas',
         'disallow_lightning_saas': 'disallowLightningSaas',
+        'disallow_nebius_saas': 'disallowNebiusSaas',
+        'disallow_voltage_park_saas': 'disallowVoltageParkSaas',
         'disallow_vultr_saas': 'disallowVultrSaas',
         'display_name': 'displayName',
         'domain': 'domain',
@@ -142,7 +146,7 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
@@ -168,6 +172,8 @@ class V1Organization(object):
         self._disallow_gcp_saas = None
         self._disallow_lambda_saas = None
         self._disallow_lightning_saas = None
+        self._disallow_nebius_saas = None
+        self._disallow_voltage_park_saas = None
         self._disallow_vultr_saas = None
         self._display_name = None
         self._domain = None
@@ -241,6 +247,10 @@ class V1Organization(object):
             self.disallow_lambda_saas = disallow_lambda_saas
         if disallow_lightning_saas is not None:
             self.disallow_lightning_saas = disallow_lightning_saas
+        if disallow_nebius_saas is not None:
+            self.disallow_nebius_saas = disallow_nebius_saas
+        if disallow_voltage_park_saas is not None:
+            self.disallow_voltage_park_saas = disallow_voltage_park_saas
         if disallow_vultr_saas is not None:
             self.disallow_vultr_saas = disallow_vultr_saas
         if display_name is not None:
@@ -795,6 +805,48 @@ class V1Organization(object):
         """
 
         self._disallow_lightning_saas = disallow_lightning_saas
+
+    @property
+    def disallow_nebius_saas(self) -> 'bool':
+        """Gets the disallow_nebius_saas of this V1Organization.  # noqa: E501
+
+
+        :return: The disallow_nebius_saas of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disallow_nebius_saas
+
+    @disallow_nebius_saas.setter
+    def disallow_nebius_saas(self, disallow_nebius_saas: 'bool'):
+        """Sets the disallow_nebius_saas of this V1Organization.
+
+
+        :param disallow_nebius_saas: The disallow_nebius_saas of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._disallow_nebius_saas = disallow_nebius_saas
+
+    @property
+    def disallow_voltage_park_saas(self) -> 'bool':
+        """Gets the disallow_voltage_park_saas of this V1Organization.  # noqa: E501
+
+
+        :return: The disallow_voltage_park_saas of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disallow_voltage_park_saas
+
+    @disallow_voltage_park_saas.setter
+    def disallow_voltage_park_saas(self, disallow_voltage_park_saas: 'bool'):
+        """Sets the disallow_voltage_park_saas of this V1Organization.
+
+
+        :param disallow_voltage_park_saas: The disallow_voltage_park_saas of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._disallow_voltage_park_saas = disallow_voltage_park_saas
 
     @property
     def disallow_vultr_saas(self) -> 'bool':

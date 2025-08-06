@@ -1,7 +1,7 @@
 import os
 from time import sleep, time
 from lightning_sdk.lightning_cloud import rest_client
-from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection, V1S3FolderDataConnection, V1EfsConfig, V1GcpDataConnection
+from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection, V1S3FolderDataConnection, V1EfsConfig, V1GcpDataConnection, V1FilestoreDataConnection, V1DataConnectionTier
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 import urllib3
 
@@ -271,6 +271,61 @@ def add_gcs_connection(connection_name: str, bucket_name: str, create_timeout: i
         sleep(1)
 
     return
+
+def create_filestore_folder(folder_name: str, region: str, capacity_gb: int = 1024, tier: V1DataConnectionTier = V1DataConnectionTier.HDD, create_timeout: int = 600) -> None:
+    """
+    Utility function to create a Filestore folder.
+
+    Args:
+        folder_name: The name of the folder to create.
+        region: the region to create the folder in, e.g. "us-central1".
+        capacity_gb: capacity of the Filestore folder.
+        tier: Filestore folder tier, SSD or HDD.
+        create_timeout (int): The timeout for the folder creation.
+    """
+    client = rest_client.LightningClient(retry=False)
+
+    project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
+    cluster_id = os.getenv("LIGHTNING_CLUSTER_ID")
+
+    # Get existing data connections
+    data_connections = client.data_connection_service_list_data_connections(project_id).data_connections
+
+    for connection in data_connections:
+        existing_folder_name = getattr(connection, 'name', None)
+        isFilestore = getattr(connection, 'filestore', None) is not None
+
+        if existing_folder_name == folder_name and isFilestore:
+            return
+
+    # If we get here, no matching folder was found, proceed with creation
+    body = Create(
+        name=folder_name,
+        create_resources=True,
+        cluster_id=cluster_id,
+        access_cluster_ids=[cluster_id],
+        filestore=V1FilestoreDataConnection(region=region, capacity_gb=capacity_gb, tier=tier, source=folder_name),
+    )
+    try:
+        connection = client.data_connection_service_create_data_connection(body, project_id)
+    except ApiException as e:
+        # Note: This function can be called in a distributed way.
+        # There is a race condition where one machine might create the entry before another machine
+        # and this request would fail with duplicated key
+        # In this case, it is fine not to raise
+        if'duplicate key value violates unique constraint' in str(e.body):
+            return
+        raise e from None
+
+    except urllib3.exceptions.HTTPError as e:
+        raise e from None
+
+    # Wait for the filesystem picks up the newly added Filestore folder
+    start = time()
+
+    while not os.path.isdir(f"/teamspace/filestore_folders/{folder_name}") and (time() - start) < create_timeout:
+        sleep(1)
+
 
 def delete_data_connection(name: str):
     """Utility to delete a data connection

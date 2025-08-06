@@ -48,6 +48,8 @@ class ProjectsIdBody(object):
         'allow_gcp_saas': 'bool',
         'allow_lambda_saas': 'bool',
         'allow_lightning_saas': 'bool',
+        'allow_nebius_saas': 'bool',
+        'allow_voltage_park_saas': 'bool',
         'allow_vultr_saas': 'bool',
         'auto_replenish_amount': 'float',
         'auto_replenish_threshold': 'float',
@@ -73,6 +75,8 @@ class ProjectsIdBody(object):
         'allow_gcp_saas': 'allowGcpSaas',
         'allow_lambda_saas': 'allowLambdaSaas',
         'allow_lightning_saas': 'allowLightningSaas',
+        'allow_nebius_saas': 'allowNebiusSaas',
+        'allow_voltage_park_saas': 'allowVoltageParkSaas',
         'allow_vultr_saas': 'allowVultrSaas',
         'auto_replenish_amount': 'autoReplenishAmount',
         'auto_replenish_threshold': 'autoReplenishThreshold',
@@ -90,7 +94,7 @@ class ProjectsIdBody(object):
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
         """ProjectsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_credits_auto_replenish = None
@@ -99,6 +103,8 @@ class ProjectsIdBody(object):
         self._allow_gcp_saas = None
         self._allow_lambda_saas = None
         self._allow_lightning_saas = None
+        self._allow_nebius_saas = None
+        self._allow_voltage_park_saas = None
         self._allow_vultr_saas = None
         self._auto_replenish_amount = None
         self._auto_replenish_threshold = None
@@ -129,6 +135,10 @@ class ProjectsIdBody(object):
             self.allow_lambda_saas = allow_lambda_saas
         if allow_lightning_saas is not None:
             self.allow_lightning_saas = allow_lightning_saas
+        if allow_nebius_saas is not None:
+            self.allow_nebius_saas = allow_nebius_saas
+        if allow_voltage_park_saas is not None:
+            self.allow_voltage_park_saas = allow_voltage_park_saas
         if allow_vultr_saas is not None:
             self.allow_vultr_saas = allow_vultr_saas
         if auto_replenish_amount is not None:
@@ -306,6 +316,48 @@ class ProjectsIdBody(object):
         """
 
         self._allow_lightning_saas = allow_lightning_saas
+
+    @property
+    def allow_nebius_saas(self) -> 'bool':
+        """Gets the allow_nebius_saas of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The allow_nebius_saas of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_nebius_saas
+
+    @allow_nebius_saas.setter
+    def allow_nebius_saas(self, allow_nebius_saas: 'bool'):
+        """Sets the allow_nebius_saas of this ProjectsIdBody.
+
+
+        :param allow_nebius_saas: The allow_nebius_saas of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_nebius_saas = allow_nebius_saas
+
+    @property
+    def allow_voltage_park_saas(self) -> 'bool':
+        """Gets the allow_voltage_park_saas of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The allow_voltage_park_saas of this ProjectsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_voltage_park_saas
+
+    @allow_voltage_park_saas.setter
+    def allow_voltage_park_saas(self, allow_voltage_park_saas: 'bool'):
+        """Sets the allow_voltage_park_saas of this ProjectsIdBody.
+
+
+        :param allow_voltage_park_saas: The allow_voltage_park_saas of this ProjectsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_voltage_park_saas = allow_voltage_park_saas
 
     @property
     def allow_vultr_saas(self) -> 'bool':

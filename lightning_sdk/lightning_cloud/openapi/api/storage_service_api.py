@@ -257,6 +257,7 @@ class StorageServiceApi(object):
         :param str project_id: (required)
         :param str cluster_id:
         :param str filename:
+        :param str data_connection_id:
         :return: V1DeleteProjectArtifactResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -280,12 +281,13 @@ class StorageServiceApi(object):
         :param str project_id: (required)
         :param str cluster_id:
         :param str filename:
+        :param str data_connection_id:
         :return: V1DeleteProjectArtifactResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'filename']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'filename', 'data_connection_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -316,6 +318,8 @@ class StorageServiceApi(object):
             query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
         if 'filename' in params:
             query_params.append(('filename', params['filename']))  # noqa: E501
+        if 'data_connection_id' in params:
+            query_params.append(('dataConnectionId', params['data_connection_id']))  # noqa: E501
 
         header_params = {}
 

@@ -45,7 +45,8 @@ class V1CloudflareV1(object):
         'api_token_secret_id': 'str',
         'api_token_value': 'str',
         'bucket_credentials_secret_id': 'str',
-        'bucket_name': 'str'
+        'bucket_name': 'str',
+        'is_data_connection_billing_enabled': 'bool'
     }
 
     attribute_map = {
@@ -53,16 +54,18 @@ class V1CloudflareV1(object):
         'api_token_secret_id': 'apiTokenSecretId',
         'api_token_value': 'apiTokenValue',
         'bucket_credentials_secret_id': 'bucketCredentialsSecretId',
-        'bucket_name': 'bucketName'
+        'bucket_name': 'bucketName',
+        'is_data_connection_billing_enabled': 'isDataConnectionBillingEnabled'
     }
 
-    def __init__(self, account_id: 'str' =None, api_token_secret_id: 'str' =None, api_token_value: 'str' =None, bucket_credentials_secret_id: 'str' =None, bucket_name: 'str' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, api_token_secret_id: 'str' =None, api_token_value: 'str' =None, bucket_credentials_secret_id: 'str' =None, bucket_name: 'str' =None, is_data_connection_billing_enabled: 'bool' =None):  # noqa: E501
         """V1CloudflareV1 - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
         self._api_token_secret_id = None
         self._api_token_value = None
         self._bucket_credentials_secret_id = None
         self._bucket_name = None
+        self._is_data_connection_billing_enabled = None
         self.discriminator = None
         if account_id is not None:
             self.account_id = account_id
@@ -74,6 +77,8 @@ class V1CloudflareV1(object):
             self.bucket_credentials_secret_id = bucket_credentials_secret_id
         if bucket_name is not None:
             self.bucket_name = bucket_name
+        if is_data_connection_billing_enabled is not None:
+            self.is_data_connection_billing_enabled = is_data_connection_billing_enabled
 
     @property
     def account_id(self) -> 'str':
@@ -179,6 +184,27 @@ class V1CloudflareV1(object):
         """
 
         self._bucket_name = bucket_name
+
+    @property
+    def is_data_connection_billing_enabled(self) -> 'bool':
+        """Gets the is_data_connection_billing_enabled of this V1CloudflareV1.  # noqa: E501
+
+
+        :return: The is_data_connection_billing_enabled of this V1CloudflareV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_data_connection_billing_enabled
+
+    @is_data_connection_billing_enabled.setter
+    def is_data_connection_billing_enabled(self, is_data_connection_billing_enabled: 'bool'):
+        """Sets the is_data_connection_billing_enabled of this V1CloudflareV1.
+
+
+        :param is_data_connection_billing_enabled: The is_data_connection_billing_enabled of this V1CloudflareV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_data_connection_billing_enabled = is_data_connection_billing_enabled
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

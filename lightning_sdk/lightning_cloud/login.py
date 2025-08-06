@@ -43,6 +43,7 @@ class Auth:
         for key in Keys:
             setattr(self, key.suffix, os.environ.get(key.value, None))
 
+        # used by authenticate method
         self._with_env_var = bool(self.api_key)
 
     def load(self) -> bool:

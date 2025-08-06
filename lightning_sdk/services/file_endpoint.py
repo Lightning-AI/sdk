@@ -8,7 +8,6 @@ import urllib3
 
 from lightning_sdk.api.utils import _FileUploader
 from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.lightning_cloud.openapi import CommandArgumentCommandArgumentType
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.services.utilities import _get_cluster, _get_project, _get_service_url
 from lightning_sdk.utils.resolve import _resolve_deprecated_cluster
@@ -162,7 +161,7 @@ class Client:
 class Argument:
     """A holder for the service argument."""
 
-    def __init__(self, name: str, type: CommandArgumentCommandArgumentType, **kwargs: Any) -> None:  # noqa: A002
+    def __init__(self, name: str, type: str, **kwargs: Any) -> None:  # noqa: A002
         self._name = name
         self._type = type
         self._value = None
@@ -171,12 +170,12 @@ class Argument:
     @property
     def is_text(self) -> bool:
         """Whether this argument is of type Text."""
-        return self._type == CommandArgumentCommandArgumentType.TEXT
+        return self._type == "Text"
 
     @property
     def is_file(self) -> bool:
         """Whether this argument is of type File."""
-        return self._type == CommandArgumentCommandArgumentType.FILE
+        return self._type == "File"
 
     @property
     def value(self) -> Any:

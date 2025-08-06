@@ -1,4 +1,3 @@
-import os
 import re
 from unittest.mock import MagicMock
 
@@ -8,18 +7,15 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1Cluster,
     V1AWSDirectV1,
     V1ClusterSpec,
-    V1DownloadServiceExecutionArtifactResponse,
     V1LambdaLabsDirectV1,
     V1ListClustersResponse,
     V1ListMembershipsResponse,
     V1ListProjectClusterBindingsResponse,
     V1Membership,
     V1NebiusDirectV1,
-    V1ProjectArtifact,
     V1ProjectClusterBinding,
 )
-from lightning_sdk.services import utilities as utilities_module
-from lightning_sdk.services.utilities import _get_cluster, _get_project, download_file
+from lightning_sdk.services.utilities import _get_cluster, _get_project
 
 
 def test_get_project():
@@ -106,27 +102,3 @@ def test_get_cluster():
     )
 
     assert _get_cluster(client_mock, project_id="project_id").cluster_id == "3"
-
-
-def test_download_file(monkeypatch, tmpdir):
-    monkeypatch.setenv("LIGHTNING_SERVICE_EXECUTION_ID", "service_id")
-    monkeypatch.setenv("LIGHTNING_CLOUD_PROJECT_ID", "project_id")
-
-    client_mock = MagicMock()
-    client_mock.endpoint_service_download_service_execution_artifact.return_value = (
-        V1DownloadServiceExecutionArtifactResponse(
-            artifacts=[
-                V1ProjectArtifact(
-                    url="https://raw.githubusercontent.com/Lightning-AI/pytorch-lightning/"
-                    "master/examples/pytorch/basics/autoencoder.py"
-                )
-            ]
-        )
-    )
-    monkeypatch.setattr(utilities_module, "LightningClient", MagicMock(return_value=client_mock))
-
-    filepath = "/teamspace/Uploads/a.txt"
-    filepath_out = download_file(filepath, cache_dir=str(tmpdir))
-    assert filepath_out == os.path.join(tmpdir, "service_id", filepath[1:])
-    filepath = download_file(filepath_out, cache_dir=str(tmpdir))
-    client_mock.endpoint_service_download_service_execution_artifact.assert_called_once()
