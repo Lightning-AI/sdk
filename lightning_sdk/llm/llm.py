@@ -1,10 +1,10 @@
-import json
 import os
 from typing import Any, AsyncGenerator, ClassVar, Dict, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.api.llm_api import LLMApi
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
+from lightning_sdk.llm.public_assistants import PUBLIC_MODELS
 
 PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
     "openai": "OpenAI",
@@ -12,17 +12,6 @@ PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
     "google": "Google",
     "lightning-ai": "lightning-ai",
 }
-
-
-def _load_public_assistants() -> Dict[str, Dict[str, Any]]:
-    """Load public assistants from a JSON file."""
-    try:
-        json_path = os.path.join(os.path.dirname(__file__), "public_assistants.json")
-        with open(json_path) as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"[warning] Failed to load public_assistants.json: {e}")
-        return {}
 
 
 class LLM:
@@ -138,7 +127,7 @@ class LLM:
             }
             LLM._auth_info_cached = True
             if LLM._public_assistants is None:
-                LLM._public_assistants = _load_public_assistants()
+                LLM._public_assistants = PUBLIC_MODELS
         # Always assign to the current instance
         self._teamspace_name = LLM._cached_auth_info["teamspace_name"]
         self._teamspace_id = LLM._cached_auth_info["teamspace_id"]
