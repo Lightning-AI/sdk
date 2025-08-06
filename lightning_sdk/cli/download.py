@@ -136,7 +136,7 @@ def folder(
     "--studio",
     default=None,
     help=(
-        "The name of the studio to upload to. "
+        "The name of the studio to download from. "
         "Will show a menu with user's owned studios for selection if not specified. "
         "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names are case-sensitive. "
         "The teamspace and studio names can be regular expressions to match, "
@@ -256,7 +256,7 @@ def _resolve_studio(studio: Optional[str]) -> Studio:
     # give user friendlier error message
     except Exception as e:
         raise StudioCliError(
-            f"Could not find the given Studio {studio} to upload files to. "
+            f"Could not find the given Studio {studio} to download files from. "
             "Please contact Lightning AI directly to resolve this issue."
         ) from e
 

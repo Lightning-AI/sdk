@@ -71,9 +71,9 @@ def test_file_help():
   file you want to download.
 
 Options:
-  --studio TEXT                   The name of the studio to upload to. Will
-                                  show a menu with user's owned studios for
-                                  selection if not specified. If provided,
+  --studio TEXT                   The name of the studio to download from.
+                                  Will show a menu with user's owned studios
+                                  for selection if not specified. If provided,
                                   should be in the form of <TEAMSPACE-
                                   NAME>/<STUDIO-NAME> where the names are
                                   case-sensitive. The teamspace and studio
