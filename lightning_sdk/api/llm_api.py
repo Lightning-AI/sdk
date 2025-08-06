@@ -4,9 +4,15 @@ import datetime
 import json
 import os
 import threading
+import time
 import warnings
 from typing import Any, AsyncGenerator, Dict, Generator, List, Optional, Union
+from urllib.parse import urlencode
 
+from rich.prompt import Confirm
+
+from lightning_sdk.lightning_cloud import env
+from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi.models import (
     StreamResultOfV1ConversationResponseChunk,
     V1ConversationResponseChunk,
@@ -14,6 +20,48 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1ResponseChoiceDelta,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
+
+LITAI_CODE = os.environ.get("LITAI_CODE", "x334uv8t7v")
+
+
+class _AuthServer(AuthServer):
+    def __init__(self, model: str, *args: Any, **kwargs: Any) -> None:
+        self._model = model
+        super().__init__(*args, **kwargs)
+
+    def get_auth_url(self, port: int) -> str:
+        redirect_uri = f"http://localhost:{port}/login-complete"
+        params = urlencode({"redirectTo": redirect_uri, "okbhrt": LITAI_CODE, "litaimodel": self._model})
+        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
+
+
+class _AuthLitAI(Auth):
+    def __init__(self, model: str, shall_confirm: bool = False) -> None:
+        super().__init__()
+        self._model = model
+        self._shall_confirm = shall_confirm
+
+    def _run_server(self) -> None:
+        if self._shall_confirm:
+            proceed = Confirm.ask(
+                "[bold yellow]LitAI needs to authenticate with Lightning AI.[/bold yellow]\n"
+                "This will open a browser window for login.\n"
+                "Do you want to continue?",
+                default=True,
+            )
+            if not proceed:
+                raise RuntimeError(
+                    "Login cancelled. Please login at https://lightning.ai/sign-up. Or run `lightning login` to login."
+                )
+        print("Opening browser for authentication...")
+        print("Please come back to the terminal after logging in.")
+        time.sleep(1)
+        _AuthServer(self._model).login_with_browser(self)
+
+
+def authenticate(model: str, shall_confirm: bool = True) -> None:
+    auth = _AuthLitAI(model, shall_confirm)
+    auth.authenticate()
 
 
 class LLMApi:

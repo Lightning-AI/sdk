@@ -2,7 +2,7 @@ import os
 from typing import Any, AsyncGenerator, ClassVar, Dict, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
-from lightning_sdk.api.llm_api import LLMApi
+from lightning_sdk.api.llm_api import LLMApi, authenticate
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
 from lightning_sdk.llm.public_assistants import PUBLIC_MODELS
 
@@ -56,9 +56,9 @@ class LLM:
                     "(e.g., 'my-org/my-teamspace')."
                 ) from e
 
+        self._model_provider, self._model_name = self._parse_model_name(name)
         self._get_auth_info(teamspace_name)
 
-        self._model_provider, self._model_name = self._parse_model_name(name)
         self._enable_async = enable_async
 
         # Reuse LLMApi per teamspace (as billing is based on teamspace)
@@ -98,6 +98,7 @@ class LLM:
             if teamspace_name is None:
                 # local users with no given teamspace
                 try:
+                    authenticate(model=f"{self.provider}/{self.name}")
                     teamspace_api = TeamspaceApi()
                     user_api = UserApi()
                     authed_user = user_api._client.auth_service_get_user()
