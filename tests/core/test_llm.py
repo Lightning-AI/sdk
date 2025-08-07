@@ -48,6 +48,15 @@ def mock_org_model():
 
 
 @pytest.fixture()
+def mock_org_model2():
+    org_model_meta = MagicMock()
+    org_model_meta.model = "my-model/v1/new-model"
+    org_model_meta.id = "ast_567"
+    org_model_meta.org_id = "org-1"
+    return [org_model_meta]
+
+
+@pytest.fixture()
 def mock_user_model():
     mock_model = MagicMock()
     mock_model.name = "user-model1"
@@ -125,6 +134,17 @@ def test_get_model_id_uses_cache():
     assert llm.context_length() == 8192
 
 
+def test_different_model_names(monkeypatch, mock_org_model2):
+    LLMCLIENT._llm_api_cache.clear()
+    mock_api = MagicMock()
+    mock_api.get_assistant.return_value = mock_org_model2
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    llm = LLM("org-1/my-model/v1/new-model")
+    assert llm._model_provider == "org-1"
+    assert llm._model_name == "my-model/v1/new-model"
+
+
 def test_invalid_format(monkeypatch, mock_model_data):
     mock_api = MagicMock()
     mock_api.list_models.return_value = mock_model_data
@@ -132,9 +152,12 @@ def test_invalid_format(monkeypatch, mock_model_data):
 
     with pytest.raises(
         ValueError,
-        match="Model name must be in the format `organization/model_name` or `model_name`, but got 'openai/gpt-4o/v1'",
+        match=re.escape(
+            "Invalid model name format: 'gpt-4o'. "
+            "Model name must be in the format `provider/model_name`.(e.g., 'lightning-ai/gpt-oss-20b')"
+        ),
     ):
-        LLM("openai/gpt-4o/v1")
+        LLM("gpt-4o")
 
 
 def test_org_model(monkeypatch, mock_org_model):
@@ -495,7 +518,7 @@ async def test_async_chat(monkeypatch, mock_public_model):
     mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
-    llm = LLM(name="gpt-4o", enable_async=True)
+    llm = LLM(name="openai/gpt-4o", enable_async=True)
 
     llm._model_id = "model-id"
     llm._teamspace = MagicMock()
@@ -527,7 +550,7 @@ async def test_async_stream_chat(monkeypatch):
     mock_api = MagicMock()
     mock_api.get_assistant.return_value = mock_public_model
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
-    llm = LLM(name="gpt-4o", enable_async=True)
+    llm = LLM(name="openai/gpt-4o", enable_async=True)
 
     llm._model_id = "model-id"
     llm._teamspace = MagicMock()

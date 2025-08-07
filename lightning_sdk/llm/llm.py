@@ -138,16 +138,21 @@ class LLM:
         self._cloud_url = LLM._cached_auth_info["cloud_url"]
         self._org = None
 
-    def _parse_model_name(self, name: str) -> Tuple[str, str]:
-        parts = name.split("/")
-        if len(parts) == 1:
-            # a user model or a org model
-            return None, parts[0]
-        if len(parts) == 2:
-            return parts[0].lower(), parts[1]
-        raise ValueError(
-            f"Model name must be in the format `organization/model_name` or `model_name`, but got '{name}'."
-        )
+    @staticmethod
+    def _parse_model_name(name: str) -> Tuple[str, str]:
+        """Parses the model name into provider and model name.
+
+        >>> LLM._parse_model_name("openai/v1/gpt-3.5-turbo")
+        ('openai', 'v1/gpt-3.5-turbo')
+        """
+        if "/" not in name:
+            raise ValueError(
+                f"Invalid model name format: '{name}'. "
+                "Model name must be in the format `provider/model_name`."
+                "(e.g., 'lightning-ai/gpt-oss-20b')"
+            )
+        provider, model_name = name.split("/", maxsplit=1)
+        return provider.lower(), model_name
 
     # returns the assistant ID
     def _get_model_id(self) -> str:
