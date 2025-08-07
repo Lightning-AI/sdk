@@ -44,6 +44,8 @@ class V1NodeMetrics(object):
         'cpu_capacity_cores': 'float',
         'cpu_util': 'float',
         'filesystem': 'dict(str, V1FilesystemMetrics)',
+        'mem_total': 'float',
+        'mem_util': 'float',
         'node_name': 'str',
         'per_gpu_mem_free': 'dict(str, float)',
         'per_gpu_mem_used': 'dict(str, float)',
@@ -57,6 +59,8 @@ class V1NodeMetrics(object):
         'cpu_capacity_cores': 'cpuCapacityCores',
         'cpu_util': 'cpuUtil',
         'filesystem': 'filesystem',
+        'mem_total': 'memTotal',
+        'mem_util': 'memUtil',
         'node_name': 'nodeName',
         'per_gpu_mem_free': 'perGpuMemFree',
         'per_gpu_mem_used': 'perGpuMemUsed',
@@ -66,11 +70,13 @@ class V1NodeMetrics(object):
         'timestamp': 'timestamp'
     }
 
-    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, node_name: 'str' =None, per_gpu_mem_free: 'dict(str, float)' =None, per_gpu_mem_used: 'dict(str, float)' =None, per_gpu_power_usage_watts: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None):  # noqa: E501
+    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, mem_total: 'float' =None, mem_util: 'float' =None, node_name: 'str' =None, per_gpu_mem_free: 'dict(str, float)' =None, per_gpu_mem_used: 'dict(str, float)' =None, per_gpu_power_usage_watts: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None):  # noqa: E501
         """V1NodeMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_capacity_cores = None
         self._cpu_util = None
         self._filesystem = None
+        self._mem_total = None
+        self._mem_util = None
         self._node_name = None
         self._per_gpu_mem_free = None
         self._per_gpu_mem_used = None
@@ -85,6 +91,10 @@ class V1NodeMetrics(object):
             self.cpu_util = cpu_util
         if filesystem is not None:
             self.filesystem = filesystem
+        if mem_total is not None:
+            self.mem_total = mem_total
+        if mem_util is not None:
+            self.mem_util = mem_util
         if node_name is not None:
             self.node_name = node_name
         if per_gpu_mem_free is not None:
@@ -162,6 +172,48 @@ class V1NodeMetrics(object):
         """
 
         self._filesystem = filesystem
+
+    @property
+    def mem_total(self) -> 'float':
+        """Gets the mem_total of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The mem_total of this V1NodeMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._mem_total
+
+    @mem_total.setter
+    def mem_total(self, mem_total: 'float'):
+        """Sets the mem_total of this V1NodeMetrics.
+
+
+        :param mem_total: The mem_total of this V1NodeMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._mem_total = mem_total
+
+    @property
+    def mem_util(self) -> 'float':
+        """Gets the mem_util of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The mem_util of this V1NodeMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._mem_util
+
+    @mem_util.setter
+    def mem_util(self, mem_util: 'float'):
+        """Sets the mem_util of this V1NodeMetrics.
+
+
+        :param mem_util: The mem_util of this V1NodeMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._mem_util = mem_util
 
     @property
     def node_name(self) -> 'str':
