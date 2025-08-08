@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, TypedDict, Union
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.utils import _get_cloud_url
-from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace, in_studio
+from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace, in_studio, skip_studio_setup
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import CloudProvider, Machine
@@ -145,9 +145,15 @@ class _BaseJob(ABC):
 
         if image is None:
             if not isinstance(studio, Studio):
-                studio = Studio(
-                    name=studio, teamspace=teamspace, org=org, user=user, cloud_account=cloud_account, create_ok=False
-                )
+                with skip_studio_setup():
+                    studio = Studio(
+                        name=studio,
+                        teamspace=teamspace,
+                        org=org,
+                        user=user,
+                        cloud_account=cloud_account,
+                        create_ok=False,
+                    )
 
             # studio is a Studio instance at this point
             if teamspace is None:
@@ -192,7 +198,8 @@ class _BaseJob(ABC):
                 )
             if cloud_account is None and in_studio():
                 try:
-                    resolve_studio = Studio(teamspace=teamspace, user=user, org=org)
+                    with skip_studio_setup():
+                        resolve_studio = Studio(teamspace=teamspace, user=user, org=org)
                     cloud_account = resolve_studio.cloud_account
                 except (ValueError, ApiException):
                     warnings.warn("Could not infer cloud account from studio. Using teamspace default.")

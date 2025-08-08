@@ -1958,7 +1958,7 @@ def keep_alive_mocker(mocker):
     mocker.patch("lightning_sdk.api.studio_api.StudioApi._send_keepalives", side_effect=side_effect, autospec=True)
     mocker.patch("threading.Thread", autospec=True)
 
-    yield [mocker]
+    yield mocker
 
     mocker.resetall()
 

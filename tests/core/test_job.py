@@ -555,11 +555,14 @@ def test_submit_job_v2_image_from_studio(
     internal_job_get_cloudspace_mocker,
     job_api_get_job_by_name_mocker,
 ):
+    from lightning_sdk.api.studio_api import StudioApi
     from lightning_sdk.job.job import Job
     from lightning_sdk.job.v2 import _JobV2
 
     submit_mock = mock.MagicMock()
     _JobV2._submit = submit_mock
+    keeping_alive_mock = mock.MagicMock()
+    StudioApi.start_keeping_alive = keeping_alive_mock
 
     with mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-abc", "LIGHTNING_INTERACTIVE": "true"}):
         Job.run(
@@ -589,6 +592,7 @@ def test_submit_job_v2_image_from_studio(
         path_mappings=None,
         max_runtime=None,
     )
+    assert keeping_alive_mock.call_count == 0
 
 
 def test_job_logs_v2(
@@ -829,3 +833,31 @@ async def test_jobv2_wait_async_timeout(job_api_get_job_by_name_mocker, internal
 
     with pytest.raises(TimeoutError):
         await job.async_wait(interval=0.1, timeout=0.1)
+
+
+@mock.patch("lightning_sdk.studio._internal_status_to_external_status", return_value=Status.Running)
+def test_submit_job_from_running_studio(
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_studio_init_mocker,
+    internal_job_get_cloudspace_mocker,
+    job_api_get_job_by_name_mocker,
+):
+    from lightning_sdk.api.studio_api import StudioApi
+    from lightning_sdk.job.job import Job
+    from lightning_sdk.job.v2 import _JobV2
+
+    submit_mock = mock.MagicMock()
+    _JobV2._submit = submit_mock
+    keeping_alive_mock = mock.MagicMock()
+    StudioApi.start_keeping_alive = keeping_alive_mock
+
+    with mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-abc", "LIGHTNING_INTERACTIVE": "true"}):
+        Job.run(
+            "test-job",
+            machine=Machine.CPU,
+            command="echo hello",
+            teamspace="ts-abc",
+            org="org-abc",
+        )
+    assert keeping_alive_mock.call_count == 0

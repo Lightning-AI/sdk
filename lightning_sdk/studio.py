@@ -57,6 +57,7 @@ class Studio:
 
     # skips init of studio, only set when using this as a shell for names, ids etc.
     _skip_init = False
+    _skip_setup = False
 
     def __init__(
         self,
@@ -82,7 +83,7 @@ class Studio:
         self._teamspace = _teamspace
         self._cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
-        self._setup_done = False
+        self._setup_done = self._skip_setup
         self._disable_secrets = disable_secrets
 
         self._plugins = {}

@@ -184,6 +184,7 @@ markers = [
 ]
 filterwarnings = [
     "error::FutureWarning",
+    "error::pytest.PytestUnhandledThreadExceptionWarning"
 ]
 xfail_strict = true
 junit_duration_report = "call"
