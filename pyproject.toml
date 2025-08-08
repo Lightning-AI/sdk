@@ -131,6 +131,7 @@ exclude = [
     "dist",
     "docs",
     "examples",
+    "lightning_sdk/llm/public_assistants.py",
 ]
 ignore-init-module-imports = true
 unfixable = ["F401"]
