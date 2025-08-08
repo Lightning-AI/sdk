@@ -114,7 +114,7 @@ def test_get_auth_info_missing_teamspace_raises(monkeypatch):
         match=re.escape(
             "Teamspace information is missing. "
             "If this is your first time using LitAI, please log in at https://lightning.ai/sign-up "
-            "and re-run your script, or set the environment variable LIGHTNING_TEAMSPACE=<your-teamspace>."
+            "and re-run your script, or set environment variable LIGHTNING_TEAMSPACE=<your-teamspace>."
         ),
     ):
         LLM(name="openai/gpt-4o", teamspace=None)
@@ -207,8 +207,13 @@ def test_get_auth_info(monkeypatch):
     LLMCLIENT._llm_api_cache = {}
     LLMCLIENT._public_assistants = {"openai/gpt-4o": {"id": "assistant-id-123", "context_length": 8192}}
 
-    llm = LLM(name="openai/gpt-4o", teamspace="lightning-ai/teamspace-name")
+    mock_resolve = MagicMock()
+    mock_resolve.return_value = "mock-object"
+    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", mock_resolve)
+
+    llm = LLM(name="openai/gpt-4o", teamspace="my-user/teamspace-name")
     assert llm._teamspace_name == "teamspace-name"
+    mock_resolve.assert_called_with(teamspace="teamspace-name", org=None, user="my-user")
 
 
 def test_ephemeral(monkeypatch, mock_public_model):

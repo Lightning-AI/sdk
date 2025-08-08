@@ -5,6 +5,7 @@ from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.api.llm_api import LLMApi, authenticate
 from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk import V1ConversationResponseChunk
 from lightning_sdk.llm.public_assistants import PUBLIC_MODELS
+from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace
 
 PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
     "openai": "OpenAI",
@@ -31,33 +32,33 @@ class LLM:
     ) -> None:
         """Initializes the LLM instance with teamspace information, which is required for billing purposes.
 
-        Teamspace information is resolved through the following methods:
-        1. `.lightning/credentials.json` - Attempts to retrieve the teamspace from the local credentials file.
-        2. Environment Variables - Checks for `LIGHTNING_*` environment variables.
-        3. User Authentication - Redirects the user to the login page if teamspace information is not found.
-
         Args:
             name (str): The name of the model or resource.
-            teamspace (Optional[str]): The specified teamspace for billing. If not provided, it will be resolved
-                                       through the above methods.
+            teamspace (Optional[str]): The specified teamspace for billing. If not provided, it will
+                                        use the available default teamspace.
             enable_async (Optional[bool]): Enable async requests
 
         Raises:
             ValueError: If teamspace information cannot be resolved.
         """
         teamspace_name = None
+        teamspace_owner = None
         if teamspace:
-            try:
-                owner, teamspace_name = teamspace.split("/", maxsplit=1)
-            except ValueError as e:
-                raise ValueError(
-                    f"Invalid teamspace format: '{teamspace}'. "
-                    "Teamspace should be specified as '{teamspace_owner}/{teamspace_name}' "
-                    "(e.g., 'my-org/my-teamspace')."
-                ) from e
+            if "/" in teamspace:
+                try:
+                    teamspace_owner, teamspace_name = teamspace.split("/", maxsplit=1)
+                except ValueError as e:
+                    raise ValueError(
+                        f"Invalid teamspace format: '{teamspace}'. "
+                        "Teamspace should be specified as '{org}/{teamspace_name}' or '{org}'"
+                        "(e.g., 'my-org/my-teamspace', 'my-org')."
+                    ) from e
+            else:
+                # org is given
+                teamspace_name = teamspace
 
         self._model_provider, self._model_name = self._parse_model_name(name)
-        self._get_auth_info(teamspace_name)
+        self._get_auth_info(teamspace_owner, teamspace_name)
 
         self._enable_async = enable_async
 
@@ -88,34 +89,63 @@ class LLM:
 
         return int(context_info["context_length"])
 
-    def _get_auth_info(self, teamspace_name: Optional[str] = None) -> None:
-        # TODO: Validate user input teamspace name
+    def _get_auth_info(self, teamspace_owner: Optional[str] = None, teamspace_name: Optional[str] = None) -> None:
         if not LLM._auth_info_cached:
-            if teamspace_name is None:
-                # studio users
-                teamspace_name = os.environ.get("LIGHTNING_TEAMSPACE", None)
-
-            if teamspace_name is None:
-                # local users with no given teamspace
+            if teamspace_owner and teamspace_name:
+                # org with specific teamspace
                 try:
-                    authenticate(model=f"{self.provider}/{self.name}")
-                    teamspace_api = TeamspaceApi()
-                    user_api = UserApi()
-                    authed_user = user_api._client.auth_service_get_user()
-                    default_teamspace = teamspace_api.list_teamspaces(owner_id=authed_user.id)[0]
-                    teamspace_name = default_teamspace.name
-                    teamspace_id = default_teamspace.id
-                    os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = teamspace_id
-                    os.environ["LIGHTNING_TEAMSPACE"] = teamspace_name
-                except Exception as err:
-                    # throw an appropriate error that guides users to login through the platform
-                    raise ValueError(
-                        "Teamspace information is missing. "
-                        "If this is your first time using LitAI, please log in at https://lightning.ai/sign-up "
-                        "and re-run your script, or set the environment variable LIGHTNING_TEAMSPACE=<your-teamspace>."
-                    ) from err
+                    t = _resolve_teamspace(teamspace=teamspace_name, org=None, user=teamspace_owner)
+                except Exception:
+                    try:
+                        t = _resolve_teamspace(teamspace=teamspace_name, org=teamspace_owner, user=None)
+                    except Exception as err:
+                        raise ValueError(
+                            f"Teamspace {teamspace_owner}/{teamspace_name} not found."
+                            "Please verify owner name (username or organization) and the teamspace name are correct."
+                        ) from err
 
-            # TODO: when teamspace_name is given, we don't know the teamspace_id yet
+                    os.environ["LIGHTNING_TEAMSPACE"] = t.name
+                    os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = t.id
+
+            elif teamspace_name and teamspace_owner is None:
+                # if only org name is given, use the default teamspace
+                try:
+                    org = _resolve_org(teamspace_name)
+                    teamspace_api = TeamspaceApi()
+                    teamspace = teamspace_api.list_teamspaces(org.id)[0]
+
+                except Exception as err:
+                    raise ValueError(
+                        f"Organization {teamspace_name} not found. Please verify the organization name."
+                    ) from err
+                os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = teamspace.id
+                os.environ["LIGHTNING_TEAMSPACE"] = teamspace.name
+
+            else:
+                if teamspace_name is None:
+                    # studio users
+                    teamspace_name = os.environ.get("LIGHTNING_TEAMSPACE", None)
+
+                if teamspace_name is None:
+                    # local users with no given teamspace
+                    try:
+                        authenticate(model=f"{self.provider}/{self.name}")
+                        teamspace_api = TeamspaceApi()
+                        user_api = UserApi()
+                        authed_user = user_api._client.auth_service_get_user()
+                        default_teamspace = teamspace_api.list_teamspaces(owner_id=authed_user.id)[0]
+                        teamspace_name = default_teamspace.name
+                        teamspace_id = default_teamspace.id
+                        os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = teamspace_id
+                        os.environ["LIGHTNING_TEAMSPACE"] = teamspace_name
+                    except Exception as err:
+                        # throw an appropriate error that guides users to login through the platform
+                        raise ValueError(
+                            "Teamspace information is missing. "
+                            "If this is your first time using LitAI, please log in at https://lightning.ai/sign-up "
+                            "and re-run your script, or set environment variable LIGHTNING_TEAMSPACE=<your-teamspace>."
+                        ) from err
+
             # TODO: if LIGHTNING_CLOUD_PROJECT_ID does not exist, we have to get the id from the teamspace name
 
             LLM._cached_auth_info = {
