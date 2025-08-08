@@ -35,15 +35,15 @@ PUBLIC_MODELS = {
         "id": "ast_01k1z7ajxbz7wq62xj5bc0mrcs",
         "context_length": 128000,
     },
-    "openai/gpt-5-2025-08-07": {
+    "openai/gpt-5": {
         "id": "ast_01jdjds71fs8gt47jexzed4cza",
         "context_length": 400000
     },
-    "openai/gpt-5-mini-2025-08-07": {
+    "openai/gpt-5-mini": {
         "id": "ast_01jdjds71fs8gt47jexzed4czb",
         "context_length": 400000
     },
-    "openai/gpt-5-nano-2025-08-07": {
+    "openai/gpt-5-nano": {
         "id": "ast_01jdjds71fs8gt47jexzed4czc",
         "context_length": 400000
     },
