@@ -41,28 +41,28 @@ class V1CloudSpaceTransferMetadata(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'initial_transfer_completed_at': 'datetime',
+        'initial_transfer_started_at': 'datetime',
         'requested_code_config': 'V1UpdateCloudSpaceInstanceConfigRequest',
         'source_cluster_id': 'str',
         'target_cluster_id': 'str'
     }
 
     attribute_map = {
-        'initial_transfer_completed_at': 'initialTransferCompletedAt',
+        'initial_transfer_started_at': 'initialTransferStartedAt',
         'requested_code_config': 'requestedCodeConfig',
         'source_cluster_id': 'sourceClusterId',
         'target_cluster_id': 'targetClusterId'
     }
 
-    def __init__(self, initial_transfer_completed_at: 'datetime' =None, requested_code_config: 'V1UpdateCloudSpaceInstanceConfigRequest' =None, source_cluster_id: 'str' =None, target_cluster_id: 'str' =None):  # noqa: E501
+    def __init__(self, initial_transfer_started_at: 'datetime' =None, requested_code_config: 'V1UpdateCloudSpaceInstanceConfigRequest' =None, source_cluster_id: 'str' =None, target_cluster_id: 'str' =None):  # noqa: E501
         """V1CloudSpaceTransferMetadata - a model defined in Swagger"""  # noqa: E501
-        self._initial_transfer_completed_at = None
+        self._initial_transfer_started_at = None
         self._requested_code_config = None
         self._source_cluster_id = None
         self._target_cluster_id = None
         self.discriminator = None
-        if initial_transfer_completed_at is not None:
-            self.initial_transfer_completed_at = initial_transfer_completed_at
+        if initial_transfer_started_at is not None:
+            self.initial_transfer_started_at = initial_transfer_started_at
         if requested_code_config is not None:
             self.requested_code_config = requested_code_config
         if source_cluster_id is not None:
@@ -71,25 +71,25 @@ class V1CloudSpaceTransferMetadata(object):
             self.target_cluster_id = target_cluster_id
 
     @property
-    def initial_transfer_completed_at(self) -> 'datetime':
-        """Gets the initial_transfer_completed_at of this V1CloudSpaceTransferMetadata.  # noqa: E501
+    def initial_transfer_started_at(self) -> 'datetime':
+        """Gets the initial_transfer_started_at of this V1CloudSpaceTransferMetadata.  # noqa: E501
 
 
-        :return: The initial_transfer_completed_at of this V1CloudSpaceTransferMetadata.  # noqa: E501
+        :return: The initial_transfer_started_at of this V1CloudSpaceTransferMetadata.  # noqa: E501
         :rtype: datetime
         """
-        return self._initial_transfer_completed_at
+        return self._initial_transfer_started_at
 
-    @initial_transfer_completed_at.setter
-    def initial_transfer_completed_at(self, initial_transfer_completed_at: 'datetime'):
-        """Sets the initial_transfer_completed_at of this V1CloudSpaceTransferMetadata.
+    @initial_transfer_started_at.setter
+    def initial_transfer_started_at(self, initial_transfer_started_at: 'datetime'):
+        """Sets the initial_transfer_started_at of this V1CloudSpaceTransferMetadata.
 
 
-        :param initial_transfer_completed_at: The initial_transfer_completed_at of this V1CloudSpaceTransferMetadata.  # noqa: E501
+        :param initial_transfer_started_at: The initial_transfer_started_at of this V1CloudSpaceTransferMetadata.  # noqa: E501
         :type: datetime
         """
 
-        self._initial_transfer_completed_at = initial_transfer_completed_at
+        self._initial_transfer_started_at = initial_transfer_started_at
 
     @property
     def requested_code_config(self) -> 'V1UpdateCloudSpaceInstanceConfigRequest':
