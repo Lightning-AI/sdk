@@ -41,29 +41,55 @@ class ClusterIdMetricsBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cluster_metrics': 'V1ClusterMetrics',
         'container_metrics': 'list[V1ContainerMetrics]',
         'node_metrics': 'list[V1NodeMetrics]',
         'pod_metrics': 'list[V1PodMetrics]'
     }
 
     attribute_map = {
+        'cluster_metrics': 'clusterMetrics',
         'container_metrics': 'containerMetrics',
         'node_metrics': 'nodeMetrics',
         'pod_metrics': 'podMetrics'
     }
 
-    def __init__(self, container_metrics: 'list[V1ContainerMetrics]' =None, node_metrics: 'list[V1NodeMetrics]' =None, pod_metrics: 'list[V1PodMetrics]' =None):  # noqa: E501
+    def __init__(self, cluster_metrics: 'V1ClusterMetrics' =None, container_metrics: 'list[V1ContainerMetrics]' =None, node_metrics: 'list[V1NodeMetrics]' =None, pod_metrics: 'list[V1PodMetrics]' =None):  # noqa: E501
         """ClusterIdMetricsBody - a model defined in Swagger"""  # noqa: E501
+        self._cluster_metrics = None
         self._container_metrics = None
         self._node_metrics = None
         self._pod_metrics = None
         self.discriminator = None
+        if cluster_metrics is not None:
+            self.cluster_metrics = cluster_metrics
         if container_metrics is not None:
             self.container_metrics = container_metrics
         if node_metrics is not None:
             self.node_metrics = node_metrics
         if pod_metrics is not None:
             self.pod_metrics = pod_metrics
+
+    @property
+    def cluster_metrics(self) -> 'V1ClusterMetrics':
+        """Gets the cluster_metrics of this ClusterIdMetricsBody.  # noqa: E501
+
+
+        :return: The cluster_metrics of this ClusterIdMetricsBody.  # noqa: E501
+        :rtype: V1ClusterMetrics
+        """
+        return self._cluster_metrics
+
+    @cluster_metrics.setter
+    def cluster_metrics(self, cluster_metrics: 'V1ClusterMetrics'):
+        """Sets the cluster_metrics of this ClusterIdMetricsBody.
+
+
+        :param cluster_metrics: The cluster_metrics of this ClusterIdMetricsBody.  # noqa: E501
+        :type: V1ClusterMetrics
+        """
+
+        self._cluster_metrics = cluster_metrics
 
     @property
     def container_metrics(self) -> 'list[V1ContainerMetrics]':

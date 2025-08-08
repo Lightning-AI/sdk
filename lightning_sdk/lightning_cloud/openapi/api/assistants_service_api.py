@@ -965,6 +965,7 @@ class AssistantsServiceApi(object):
         :param str user_name:
         :param str org_name:
         :param str model_provider:
+        :param str model_display_name:
         :return: V1Assistant
                  If the method is called asynchronously,
                  returns the request thread.
@@ -989,12 +990,13 @@ class AssistantsServiceApi(object):
         :param str user_name:
         :param str org_name:
         :param str model_provider:
+        :param str model_display_name:
         :return: V1Assistant
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['model_name', 'user_name', 'org_name', 'model_provider']  # noqa: E501
+        all_params = ['model_name', 'user_name', 'org_name', 'model_provider', 'model_display_name']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1027,6 +1029,8 @@ class AssistantsServiceApi(object):
             query_params.append(('orgName', params['org_name']))  # noqa: E501
         if 'model_provider' in params:
             query_params.append(('modelProvider', params['model_provider']))  # noqa: E501
+        if 'model_display_name' in params:
+            query_params.append(('modelDisplayName', params['model_display_name']))  # noqa: E501
 
         header_params = {}
 
@@ -1043,6 +1047,111 @@ class AssistantsServiceApi(object):
 
         return self.api_client.call_api(
             '/v1/agents/managed-model/{modelName}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1Assistant',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def assistants_service_get_managed_model_assistant2(self, **kwargs) -> 'V1Assistant':  # noqa: E501
+        """Each managed model has a dedicated assistant for direct interaction. By using user_name, org_name, or model_provider as query parameters,  this endpoint retrieves that specific assistant only—excluding any other assistants that may use the same model.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.assistants_service_get_managed_model_assistant2(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str user_name:
+        :param str org_name:
+        :param str model_provider:
+        :param str model_name:
+        :param str model_display_name:
+        :return: V1Assistant
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.assistants_service_get_managed_model_assistant2_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.assistants_service_get_managed_model_assistant2_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def assistants_service_get_managed_model_assistant2_with_http_info(self, **kwargs) -> 'V1Assistant':  # noqa: E501
+        """Each managed model has a dedicated assistant for direct interaction. By using user_name, org_name, or model_provider as query parameters,  this endpoint retrieves that specific assistant only—excluding any other assistants that may use the same model.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.assistants_service_get_managed_model_assistant2_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str user_name:
+        :param str org_name:
+        :param str model_provider:
+        :param str model_name:
+        :param str model_display_name:
+        :return: V1Assistant
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['user_name', 'org_name', 'model_provider', 'model_name', 'model_display_name']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method assistants_service_get_managed_model_assistant2" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'user_name' in params:
+            query_params.append(('userName', params['user_name']))  # noqa: E501
+        if 'org_name' in params:
+            query_params.append(('orgName', params['org_name']))  # noqa: E501
+        if 'model_provider' in params:
+            query_params.append(('modelProvider', params['model_provider']))  # noqa: E501
+        if 'model_name' in params:
+            query_params.append(('modelName', params['model_name']))  # noqa: E501
+        if 'model_display_name' in params:
+            query_params.append(('modelDisplayName', params['model_display_name']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/agents/managed-model', 'GET',
             path_params,
             query_params,
             header_params,
