@@ -44,6 +44,7 @@ class V1ClusterMetrics(object):
         'cpus_util': 'float',
         'filesystem_inode_util': 'float',
         'filesystem_read_rate': 'float',
+        'filesystem_total': 'float',
         'filesystem_util': 'float',
         'filesystem_write_rate': 'float',
         'gpus_energy_avg': 'float',
@@ -52,6 +53,7 @@ class V1ClusterMetrics(object):
         'gpus_util': 'float',
         'num_cpus': 'int',
         'num_gpus': 'int',
+        'num_gpus_allocable': 'int',
         'num_limit_cpus': 'int',
         'num_limit_gpus': 'int',
         'num_namespaces': 'int',
@@ -77,6 +79,7 @@ class V1ClusterMetrics(object):
         'cpus_util': 'cpusUtil',
         'filesystem_inode_util': 'filesystemInodeUtil',
         'filesystem_read_rate': 'filesystemReadRate',
+        'filesystem_total': 'filesystemTotal',
         'filesystem_util': 'filesystemUtil',
         'filesystem_write_rate': 'filesystemWriteRate',
         'gpus_energy_avg': 'gpusEnergyAvg',
@@ -85,6 +88,7 @@ class V1ClusterMetrics(object):
         'gpus_util': 'gpusUtil',
         'num_cpus': 'numCpus',
         'num_gpus': 'numGpus',
+        'num_gpus_allocable': 'numGpusAllocable',
         'num_limit_cpus': 'numLimitCpus',
         'num_limit_gpus': 'numLimitGpus',
         'num_namespaces': 'numNamespaces',
@@ -106,11 +110,12 @@ class V1ClusterMetrics(object):
         'vram_util': 'vramUtil'
     }
 
-    def __init__(self, cpus_util: 'float' =None, filesystem_inode_util: 'float' =None, filesystem_read_rate: 'float' =None, filesystem_util: 'float' =None, filesystem_write_rate: 'float' =None, gpus_energy_avg: 'float' =None, gpus_energy_total: 'float' =None, gpus_temp_avg: 'float' =None, gpus_util: 'float' =None, num_cpus: 'int' =None, num_gpus: 'int' =None, num_limit_cpus: 'int' =None, num_limit_gpus: 'int' =None, num_namespaces: 'int' =None, num_nodes: 'int' =None, num_pods: 'int' =None, num_requested_cpus: 'int' =None, num_requested_gpus: 'int' =None, ram_limit: 'str' =None, ram_requested: 'str' =None, ram_total: 'str' =None, ram_util: 'float' =None, timestamp: 'datetime' =None, vram_limit: 'float' =None, vram_read_write_util: 'float' =None, vram_requested: 'float' =None, vram_total: 'str' =None, vram_used_avg: 'float' =None, vram_used_total: 'float' =None, vram_util: 'float' =None):  # noqa: E501
+    def __init__(self, cpus_util: 'float' =None, filesystem_inode_util: 'float' =None, filesystem_read_rate: 'float' =None, filesystem_total: 'float' =None, filesystem_util: 'float' =None, filesystem_write_rate: 'float' =None, gpus_energy_avg: 'float' =None, gpus_energy_total: 'float' =None, gpus_temp_avg: 'float' =None, gpus_util: 'float' =None, num_cpus: 'int' =None, num_gpus: 'int' =None, num_gpus_allocable: 'int' =None, num_limit_cpus: 'int' =None, num_limit_gpus: 'int' =None, num_namespaces: 'int' =None, num_nodes: 'int' =None, num_pods: 'int' =None, num_requested_cpus: 'int' =None, num_requested_gpus: 'int' =None, ram_limit: 'str' =None, ram_requested: 'str' =None, ram_total: 'str' =None, ram_util: 'float' =None, timestamp: 'datetime' =None, vram_limit: 'float' =None, vram_read_write_util: 'float' =None, vram_requested: 'float' =None, vram_total: 'str' =None, vram_used_avg: 'float' =None, vram_used_total: 'float' =None, vram_util: 'float' =None):  # noqa: E501
         """V1ClusterMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpus_util = None
         self._filesystem_inode_util = None
         self._filesystem_read_rate = None
+        self._filesystem_total = None
         self._filesystem_util = None
         self._filesystem_write_rate = None
         self._gpus_energy_avg = None
@@ -119,6 +124,7 @@ class V1ClusterMetrics(object):
         self._gpus_util = None
         self._num_cpus = None
         self._num_gpus = None
+        self._num_gpus_allocable = None
         self._num_limit_cpus = None
         self._num_limit_gpus = None
         self._num_namespaces = None
@@ -145,6 +151,8 @@ class V1ClusterMetrics(object):
             self.filesystem_inode_util = filesystem_inode_util
         if filesystem_read_rate is not None:
             self.filesystem_read_rate = filesystem_read_rate
+        if filesystem_total is not None:
+            self.filesystem_total = filesystem_total
         if filesystem_util is not None:
             self.filesystem_util = filesystem_util
         if filesystem_write_rate is not None:
@@ -161,6 +169,8 @@ class V1ClusterMetrics(object):
             self.num_cpus = num_cpus
         if num_gpus is not None:
             self.num_gpus = num_gpus
+        if num_gpus_allocable is not None:
+            self.num_gpus_allocable = num_gpus_allocable
         if num_limit_cpus is not None:
             self.num_limit_cpus = num_limit_cpus
         if num_limit_gpus is not None:
@@ -262,6 +272,27 @@ class V1ClusterMetrics(object):
         """
 
         self._filesystem_read_rate = filesystem_read_rate
+
+    @property
+    def filesystem_total(self) -> 'float':
+        """Gets the filesystem_total of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The filesystem_total of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._filesystem_total
+
+    @filesystem_total.setter
+    def filesystem_total(self, filesystem_total: 'float'):
+        """Sets the filesystem_total of this V1ClusterMetrics.
+
+
+        :param filesystem_total: The filesystem_total of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._filesystem_total = filesystem_total
 
     @property
     def filesystem_util(self) -> 'float':
@@ -430,6 +461,27 @@ class V1ClusterMetrics(object):
         """
 
         self._num_gpus = num_gpus
+
+    @property
+    def num_gpus_allocable(self) -> 'int':
+        """Gets the num_gpus_allocable of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_gpus_allocable of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_gpus_allocable
+
+    @num_gpus_allocable.setter
+    def num_gpus_allocable(self, num_gpus_allocable: 'int'):
+        """Sets the num_gpus_allocable of this V1ClusterMetrics.
+
+
+        :param num_gpus_allocable: The num_gpus_allocable of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_gpus_allocable = num_gpus_allocable
 
     @property
     def num_limit_cpus(self) -> 'int':

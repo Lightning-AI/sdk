@@ -44,6 +44,7 @@ class V1CloudSpaceTransferMetadata(object):
         'initial_transfer_started_at': 'datetime',
         'requested_code_config': 'V1UpdateCloudSpaceInstanceConfigRequest',
         'source_cluster_id': 'str',
+        'target_cloud_provider': 'str',
         'target_cluster_id': 'str'
     }
 
@@ -51,14 +52,16 @@ class V1CloudSpaceTransferMetadata(object):
         'initial_transfer_started_at': 'initialTransferStartedAt',
         'requested_code_config': 'requestedCodeConfig',
         'source_cluster_id': 'sourceClusterId',
+        'target_cloud_provider': 'targetCloudProvider',
         'target_cluster_id': 'targetClusterId'
     }
 
-    def __init__(self, initial_transfer_started_at: 'datetime' =None, requested_code_config: 'V1UpdateCloudSpaceInstanceConfigRequest' =None, source_cluster_id: 'str' =None, target_cluster_id: 'str' =None):  # noqa: E501
+    def __init__(self, initial_transfer_started_at: 'datetime' =None, requested_code_config: 'V1UpdateCloudSpaceInstanceConfigRequest' =None, source_cluster_id: 'str' =None, target_cloud_provider: 'str' =None, target_cluster_id: 'str' =None):  # noqa: E501
         """V1CloudSpaceTransferMetadata - a model defined in Swagger"""  # noqa: E501
         self._initial_transfer_started_at = None
         self._requested_code_config = None
         self._source_cluster_id = None
+        self._target_cloud_provider = None
         self._target_cluster_id = None
         self.discriminator = None
         if initial_transfer_started_at is not None:
@@ -67,6 +70,8 @@ class V1CloudSpaceTransferMetadata(object):
             self.requested_code_config = requested_code_config
         if source_cluster_id is not None:
             self.source_cluster_id = source_cluster_id
+        if target_cloud_provider is not None:
+            self.target_cloud_provider = target_cloud_provider
         if target_cluster_id is not None:
             self.target_cluster_id = target_cluster_id
 
@@ -132,6 +137,27 @@ class V1CloudSpaceTransferMetadata(object):
         """
 
         self._source_cluster_id = source_cluster_id
+
+    @property
+    def target_cloud_provider(self) -> 'str':
+        """Gets the target_cloud_provider of this V1CloudSpaceTransferMetadata.  # noqa: E501
+
+
+        :return: The target_cloud_provider of this V1CloudSpaceTransferMetadata.  # noqa: E501
+        :rtype: str
+        """
+        return self._target_cloud_provider
+
+    @target_cloud_provider.setter
+    def target_cloud_provider(self, target_cloud_provider: 'str'):
+        """Sets the target_cloud_provider of this V1CloudSpaceTransferMetadata.
+
+
+        :param target_cloud_provider: The target_cloud_provider of this V1CloudSpaceTransferMetadata.  # noqa: E501
+        :type: str
+        """
+
+        self._target_cloud_provider = target_cloud_provider
 
     @property
     def target_cluster_id(self) -> 'str':

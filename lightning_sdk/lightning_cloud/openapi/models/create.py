@@ -52,6 +52,7 @@ class Create(object):
         'gcp': 'V1GcpDataConnection',
         'gcs_folder': 'V1GCSFolderDataConnection',
         'id': 'str',
+        'lustre': 'V1LustreDataConnection',
         'name': 'str',
         'r2': 'V1R2DataConnection',
         'run_cmds': 'list[str]',
@@ -73,6 +74,7 @@ class Create(object):
         'gcp': 'gcp',
         'gcs_folder': 'gcsFolder',
         'id': 'id',
+        'lustre': 'lustre',
         'name': 'name',
         'r2': 'r2',
         'run_cmds': 'runCmds',
@@ -82,7 +84,7 @@ class Create(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, name: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, lustre: 'V1LustreDataConnection' =None, name: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Create - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._aws = None
@@ -95,6 +97,7 @@ class Create(object):
         self._gcp = None
         self._gcs_folder = None
         self._id = None
+        self._lustre = None
         self._name = None
         self._r2 = None
         self._run_cmds = None
@@ -125,6 +128,8 @@ class Create(object):
             self.gcs_folder = gcs_folder
         if id is not None:
             self.id = id
+        if lustre is not None:
+            self.lustre = lustre
         if name is not None:
             self.name = name
         if r2 is not None:
@@ -370,6 +375,27 @@ class Create(object):
         """
 
         self._id = id
+
+    @property
+    def lustre(self) -> 'V1LustreDataConnection':
+        """Gets the lustre of this Create.  # noqa: E501
+
+
+        :return: The lustre of this Create.  # noqa: E501
+        :rtype: V1LustreDataConnection
+        """
+        return self._lustre
+
+    @lustre.setter
+    def lustre(self, lustre: 'V1LustreDataConnection'):
+        """Sets the lustre of this Create.
+
+
+        :param lustre: The lustre of this Create.  # noqa: E501
+        :type: V1LustreDataConnection
+        """
+
+        self._lustre = lustre
 
     @property
     def name(self) -> 'str':

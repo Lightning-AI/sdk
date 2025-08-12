@@ -57,6 +57,7 @@ class V1DataConnection(object):
         'is_cache': 'bool',
         'is_managed': 'bool',
         'lock_out': 'bool',
+        'lustre': 'V1LustreDataConnection',
         'name': 'str',
         'number_of_files': 'str',
         'project_id': 'str',
@@ -91,6 +92,7 @@ class V1DataConnection(object):
         'is_cache': 'isCache',
         'is_managed': 'isManaged',
         'lock_out': 'lockOut',
+        'lustre': 'lustre',
         'name': 'name',
         'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
@@ -108,7 +110,7 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, lustre: 'V1LustreDataConnection' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
@@ -126,6 +128,7 @@ class V1DataConnection(object):
         self._is_cache = None
         self._is_managed = None
         self._lock_out = None
+        self._lustre = None
         self._name = None
         self._number_of_files = None
         self._project_id = None
@@ -174,6 +177,8 @@ class V1DataConnection(object):
             self.is_managed = is_managed
         if lock_out is not None:
             self.lock_out = lock_out
+        if lustre is not None:
+            self.lustre = lustre
         if name is not None:
             self.name = name
         if number_of_files is not None:
@@ -540,6 +545,27 @@ class V1DataConnection(object):
         """
 
         self._lock_out = lock_out
+
+    @property
+    def lustre(self) -> 'V1LustreDataConnection':
+        """Gets the lustre of this V1DataConnection.  # noqa: E501
+
+
+        :return: The lustre of this V1DataConnection.  # noqa: E501
+        :rtype: V1LustreDataConnection
+        """
+        return self._lustre
+
+    @lustre.setter
+    def lustre(self, lustre: 'V1LustreDataConnection'):
+        """Sets the lustre of this V1DataConnection.
+
+
+        :param lustre: The lustre of this V1DataConnection.  # noqa: E501
+        :type: V1LustreDataConnection
+        """
+
+        self._lustre = lustre
 
     @property
     def name(self) -> 'str':

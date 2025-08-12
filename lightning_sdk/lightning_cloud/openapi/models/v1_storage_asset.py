@@ -46,6 +46,7 @@ class V1StorageAsset(object):
         'id': 'str',
         'name': 'str',
         'storage_bytes': 'str',
+        'storage_cost_daily': 'float',
         'sub_type': 'str',
         'type': 'V1StorageAssetType'
     }
@@ -56,17 +57,19 @@ class V1StorageAsset(object):
         'id': 'id',
         'name': 'name',
         'storage_bytes': 'storageBytes',
+        'storage_cost_daily': 'storageCostDaily',
         'sub_type': 'subType',
         'type': 'type'
     }
 
-    def __init__(self, created_at: 'datetime' =None, created_by: 'str' =None, id: 'str' =None, name: 'str' =None, storage_bytes: 'str' =None, sub_type: 'str' =None, type: 'V1StorageAssetType' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, created_by: 'str' =None, id: 'str' =None, name: 'str' =None, storage_bytes: 'str' =None, storage_cost_daily: 'float' =None, sub_type: 'str' =None, type: 'V1StorageAssetType' =None):  # noqa: E501
         """V1StorageAsset - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._created_by = None
         self._id = None
         self._name = None
         self._storage_bytes = None
+        self._storage_cost_daily = None
         self._sub_type = None
         self._type = None
         self.discriminator = None
@@ -80,6 +83,8 @@ class V1StorageAsset(object):
             self.name = name
         if storage_bytes is not None:
             self.storage_bytes = storage_bytes
+        if storage_cost_daily is not None:
+            self.storage_cost_daily = storage_cost_daily
         if sub_type is not None:
             self.sub_type = sub_type
         if type is not None:
@@ -189,6 +194,27 @@ class V1StorageAsset(object):
         """
 
         self._storage_bytes = storage_bytes
+
+    @property
+    def storage_cost_daily(self) -> 'float':
+        """Gets the storage_cost_daily of this V1StorageAsset.  # noqa: E501
+
+
+        :return: The storage_cost_daily of this V1StorageAsset.  # noqa: E501
+        :rtype: float
+        """
+        return self._storage_cost_daily
+
+    @storage_cost_daily.setter
+    def storage_cost_daily(self, storage_cost_daily: 'float'):
+        """Sets the storage_cost_daily of this V1StorageAsset.
+
+
+        :param storage_cost_daily: The storage_cost_daily of this V1StorageAsset.  # noqa: E501
+        :type: float
+        """
+
+        self._storage_cost_daily = storage_cost_daily
 
     @property
     def sub_type(self) -> 'str':

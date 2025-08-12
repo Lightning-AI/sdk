@@ -70,6 +70,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'switched_at': 'datetime',
         'sync_last_updated': 'datetime',
         'termination_time': 'datetime',
+        'transfer_metadata': 'V1CloudSpaceTransferMetadata',
         'vscode_url': 'str'
     }
 
@@ -103,10 +104,11 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'switched_at': 'switchedAt',
         'sync_last_updated': 'syncLastUpdated',
         'termination_time': 'terminationTime',
+        'transfer_metadata': 'transferMetadata',
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, transfer_metadata: 'V1CloudSpaceTransferMetadata' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._alerts = None
         self._app_url = None
@@ -137,6 +139,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self._switched_at = None
         self._sync_last_updated = None
         self._termination_time = None
+        self._transfer_metadata = None
         self._vscode_url = None
         self.discriminator = None
         if alerts is not None:
@@ -197,6 +200,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.sync_last_updated = sync_last_updated
         if termination_time is not None:
             self.termination_time = termination_time
+        if transfer_metadata is not None:
+            self.transfer_metadata = transfer_metadata
         if vscode_url is not None:
             self.vscode_url = vscode_url
 
@@ -810,6 +815,27 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._termination_time = termination_time
+
+    @property
+    def transfer_metadata(self) -> 'V1CloudSpaceTransferMetadata':
+        """Gets the transfer_metadata of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The transfer_metadata of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: V1CloudSpaceTransferMetadata
+        """
+        return self._transfer_metadata
+
+    @transfer_metadata.setter
+    def transfer_metadata(self, transfer_metadata: 'V1CloudSpaceTransferMetadata'):
+        """Sets the transfer_metadata of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param transfer_metadata: The transfer_metadata of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: V1CloudSpaceTransferMetadata
+        """
+
+        self._transfer_metadata = transfer_metadata
 
     @property
     def vscode_url(self) -> 'str':
