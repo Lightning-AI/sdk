@@ -441,7 +441,9 @@ class StudioApi:
             body=body,
         )
 
-    def duplicate_studio(self, studio_id: str, teamspace_id: str, target_teamspace_id: str) -> Dict[str, Any]:
+    def duplicate_studio(
+        self, studio_id: str, teamspace_id: str, target_teamspace_id: str, machine: Machine = Machine.CPU
+    ) -> Dict[str, Any]:
         """Duplicates the given Studio from a given Teamspace into a given target Teamspace."""
         target_teamspace = self._client.projects_service_get_project(target_teamspace_id)
         init_kwargs = {}
@@ -464,7 +466,7 @@ class StudioApi:
         init_kwargs["name"] = new_cloudspace.name
         init_kwargs["teamspace"] = target_teamspace.name
 
-        self.start_studio(new_cloudspace.id, target_teamspace_id, Machine.CPU, False, None)
+        self.start_studio(new_cloudspace.id, target_teamspace_id, machine, False, None)
         return init_kwargs
 
     def delete_studio(self, studio_id: str, teamspace_id: str) -> None:

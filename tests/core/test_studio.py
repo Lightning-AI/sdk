@@ -741,3 +741,26 @@ def test_submit_mmt_v2_studio(
         path_mappings=None,
         max_runtime=None,
     )
+
+
+def test_studio_duplicate_machine(internal_studio_init_mocker, internal_studio_status_mocker):
+    studio = Studio(
+        name="st-abc",
+        teamspace="ts-abc",
+        org="org-abc",
+    )
+
+    studio._studio_api = mock.MagicMock()
+    studio._studio_api.duplicate_studio.return_value = {
+        "name": "st-abc",
+        "teamspace": "ts-abc",
+        "org": "org-abc",
+    }
+
+    studio.duplicate(machine=Machine.A100)
+    studio._studio_api.duplicate_studio.assert_called_once_with(
+        studio_id="st-abc",
+        teamspace_id="ts-abc001",
+        target_teamspace_id="ts-abc001",
+        machine=Machine.A100,
+    )

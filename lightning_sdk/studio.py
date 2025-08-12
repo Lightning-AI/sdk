@@ -259,13 +259,17 @@ class Studio:
         """Deletes the current Studio."""
         self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
 
-    def duplicate(self, target_teamspace: Optional[Union["Teamspace", str]] = None) -> "Studio":
+    def duplicate(
+        self, target_teamspace: Optional[Union["Teamspace", str]] = None, machine: Machine = Machine.CPU
+    ) -> "Studio":
         """Duplicates the existing Studio.
 
         Args:
             target_teamspace: the teamspace to duplicate the studio to.
                 Must have the same owner as the source teamspace.
                 If not provided, defaults to current teamspace.
+            machine: the machine to start the duplicated studio on.
+                Defaults to CPU
         """
         if target_teamspace is None:
             target_teamspace_id = self._teamspace.id
@@ -285,7 +289,10 @@ class Studio:
             target_teamspace_id = target_teamspace.id
 
         kwargs = self._studio_api.duplicate_studio(
-            studio_id=self._studio.id, teamspace_id=self._teamspace.id, target_teamspace_id=target_teamspace_id
+            studio_id=self._studio.id,
+            teamspace_id=self._teamspace.id,
+            target_teamspace_id=target_teamspace_id,
+            machine=machine,
         )
         return Studio(**kwargs)
 
