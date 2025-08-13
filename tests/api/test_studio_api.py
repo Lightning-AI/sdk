@@ -9,8 +9,10 @@ from lightning_sdk.api import studio_api as studio_api_module
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
+    Externalv1CloudSpaceInstanceStatus,
     ProjectIdCloudspacesBody,
     V1CloudSpace,
+    V1CloudSpaceInstanceStartupStatus,
     V1CloudSpaceSeedFile,
     V1GetCloudSpaceInstanceStatusResponse,
 )
@@ -85,6 +87,69 @@ def test_get_studio_status(internal_studio_api_mocker_studio_status):
 def test_switch_studio_machine(internal_studio_api_mocker_switch_machine, machine):
     studio_api = StudioApi()
     studio_api.switch_studio_machine("st-abc", "ts-abc", machine, False)
+
+
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_instance_config",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_switch_cloud_space_instance",
+    autospec=True,
+)
+def test_switch_machine_no_requested(_, __, status_mock):
+    return_vals = [
+        V1GetCloudSpaceInstanceStatusResponse(
+            requested=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=False,
+                    top_up_restore_finished=False,  # not yet restored anything
+                )
+            ),
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                )
+            ),
+        ),
+        V1GetCloudSpaceInstanceStatusResponse(
+            # doesn't return the requested instance -- possibly because it's not a requested instance anymore
+            requested=None,
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                )
+            ),
+        ),
+        V1GetCloudSpaceInstanceStatusResponse(
+            requested=None,  # doesn't return the requested instance -- we switched already
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=True, top_up_restore_finished=True
+                )
+            ),
+        ),
+    ]
+
+    def side_effect(self, *args, **kwargs):
+        if not return_vals:
+            return V1GetCloudSpaceInstanceStatusResponse(
+                requested=None,  # doesn't return the requested instance -- we switched already
+                in_use=Externalv1CloudSpaceInstanceStatus(
+                    startup_status=V1CloudSpaceInstanceStartupStatus(
+                        initial_restore_finished=True, top_up_restore_finished=True
+                    )
+                ),
+            )
+        return return_vals.pop(0)
+
+    status_mock.side_effect = side_effect
+    studio_api = StudioApi()
+    studio_api.switch_studio_machine("st-abc", "ts-abc", Machine.A100_X_8, False)
 
 
 def test_start_studio(internal_studio_api_mocker_start_studio):

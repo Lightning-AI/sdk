@@ -253,8 +253,25 @@ class StudioApi:
         )
 
         # Wait until it's time to switch
+        requested_was_found = False
+        startup_status = None
         while True:
-            startup_status = self.get_studio_status(studio_id, teamspace_id).requested.startup_status
+            status = self.get_studio_status(studio_id, teamspace_id)
+            requested_machine = status.requested
+
+            if requested_machine is not None:
+                requested_was_found = True
+                startup_status = requested_machine.startup_status
+
+            # if the requested machine was found in the past, use the in_use status instead.
+            # it might be that it either was cancelled or it actually is ready.
+            # Either way, since we're actually blocking below for the in use startup status
+            # it's safe to switch at this point
+            elif requested_was_found:
+                in_use_machine = status.in_use
+                if in_use_machine is not None:
+                    startup_status = in_use_machine.startup_status
+
             if startup_status and startup_status.initial_restore_finished:
                 break
             time.sleep(1)
@@ -263,7 +280,10 @@ class StudioApi:
 
         # Wait until the new machine is ready to use
         while True:
-            startup_status = self.get_studio_status(studio_id, teamspace_id).in_use.startup_status
+            in_use = self.get_studio_status(studio_id, teamspace_id).in_use
+            if in_use is None:
+                continue
+            startup_status = in_use.startup_status
             if startup_status and startup_status.top_up_restore_finished:
                 break
             time.sleep(1)
