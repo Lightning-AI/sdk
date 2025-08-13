@@ -43,6 +43,7 @@ class ClusterIdMetricsBody(object):
     swagger_types = {
         'cluster_metrics': 'V1ClusterMetrics',
         'container_metrics': 'list[V1ContainerMetrics]',
+        'namespace_metrics': 'list[V1NamespaceMetrics]',
         'node_metrics': 'list[V1NodeMetrics]',
         'pod_metrics': 'list[V1PodMetrics]'
     }
@@ -50,14 +51,16 @@ class ClusterIdMetricsBody(object):
     attribute_map = {
         'cluster_metrics': 'clusterMetrics',
         'container_metrics': 'containerMetrics',
+        'namespace_metrics': 'namespaceMetrics',
         'node_metrics': 'nodeMetrics',
         'pod_metrics': 'podMetrics'
     }
 
-    def __init__(self, cluster_metrics: 'V1ClusterMetrics' =None, container_metrics: 'list[V1ContainerMetrics]' =None, node_metrics: 'list[V1NodeMetrics]' =None, pod_metrics: 'list[V1PodMetrics]' =None):  # noqa: E501
+    def __init__(self, cluster_metrics: 'V1ClusterMetrics' =None, container_metrics: 'list[V1ContainerMetrics]' =None, namespace_metrics: 'list[V1NamespaceMetrics]' =None, node_metrics: 'list[V1NodeMetrics]' =None, pod_metrics: 'list[V1PodMetrics]' =None):  # noqa: E501
         """ClusterIdMetricsBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_metrics = None
         self._container_metrics = None
+        self._namespace_metrics = None
         self._node_metrics = None
         self._pod_metrics = None
         self.discriminator = None
@@ -65,6 +68,8 @@ class ClusterIdMetricsBody(object):
             self.cluster_metrics = cluster_metrics
         if container_metrics is not None:
             self.container_metrics = container_metrics
+        if namespace_metrics is not None:
+            self.namespace_metrics = namespace_metrics
         if node_metrics is not None:
             self.node_metrics = node_metrics
         if pod_metrics is not None:
@@ -111,6 +116,27 @@ class ClusterIdMetricsBody(object):
         """
 
         self._container_metrics = container_metrics
+
+    @property
+    def namespace_metrics(self) -> 'list[V1NamespaceMetrics]':
+        """Gets the namespace_metrics of this ClusterIdMetricsBody.  # noqa: E501
+
+
+        :return: The namespace_metrics of this ClusterIdMetricsBody.  # noqa: E501
+        :rtype: list[V1NamespaceMetrics]
+        """
+        return self._namespace_metrics
+
+    @namespace_metrics.setter
+    def namespace_metrics(self, namespace_metrics: 'list[V1NamespaceMetrics]'):
+        """Sets the namespace_metrics of this ClusterIdMetricsBody.
+
+
+        :param namespace_metrics: The namespace_metrics of this ClusterIdMetricsBody.  # noqa: E501
+        :type: list[V1NamespaceMetrics]
+        """
+
+        self._namespace_metrics = namespace_metrics
 
     @property
     def node_metrics(self) -> 'list[V1NodeMetrics]':

@@ -51,9 +51,11 @@ class V1PodMetrics(object):
         'num_gpus': 'float',
         'per_gpu_mem_used': 'dict(str, float)',
         'per_gpu_util': 'dict(str, float)',
+        'phase': 'str',
         'pod_id': 'str',
         'pod_name': 'str',
-        'timestamp': 'datetime'
+        'timestamp': 'datetime',
+        'user_id': 'str'
     }
 
     attribute_map = {
@@ -67,12 +69,14 @@ class V1PodMetrics(object):
         'num_gpus': 'numGpus',
         'per_gpu_mem_used': 'perGpuMemUsed',
         'per_gpu_util': 'perGpuUtil',
+        'phase': 'phase',
         'pod_id': 'podId',
         'pod_name': 'podName',
-        'timestamp': 'timestamp'
+        'timestamp': 'timestamp',
+        'user_id': 'userId'
     }
 
-    def __init__(self, cpu_usage: 'float' =None, labels: 'dict(str, str)' =None, mem_usage: 'float' =None, namespace: 'str' =None, node_name: 'str' =None, num_cpus_limit: 'float' =None, num_cpus_request: 'float' =None, num_gpus: 'float' =None, per_gpu_mem_used: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, pod_id: 'str' =None, pod_name: 'str' =None, timestamp: 'datetime' =None):  # noqa: E501
+    def __init__(self, cpu_usage: 'float' =None, labels: 'dict(str, str)' =None, mem_usage: 'float' =None, namespace: 'str' =None, node_name: 'str' =None, num_cpus_limit: 'float' =None, num_cpus_request: 'float' =None, num_gpus: 'float' =None, per_gpu_mem_used: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, phase: 'str' =None, pod_id: 'str' =None, pod_name: 'str' =None, timestamp: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1PodMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_usage = None
         self._labels = None
@@ -84,9 +88,11 @@ class V1PodMetrics(object):
         self._num_gpus = None
         self._per_gpu_mem_used = None
         self._per_gpu_util = None
+        self._phase = None
         self._pod_id = None
         self._pod_name = None
         self._timestamp = None
+        self._user_id = None
         self.discriminator = None
         if cpu_usage is not None:
             self.cpu_usage = cpu_usage
@@ -108,12 +114,16 @@ class V1PodMetrics(object):
             self.per_gpu_mem_used = per_gpu_mem_used
         if per_gpu_util is not None:
             self.per_gpu_util = per_gpu_util
+        if phase is not None:
+            self.phase = phase
         if pod_id is not None:
             self.pod_id = pod_id
         if pod_name is not None:
             self.pod_name = pod_name
         if timestamp is not None:
             self.timestamp = timestamp
+        if user_id is not None:
+            self.user_id = user_id
 
     @property
     def cpu_usage(self) -> 'float':
@@ -326,6 +336,27 @@ class V1PodMetrics(object):
         self._per_gpu_util = per_gpu_util
 
     @property
+    def phase(self) -> 'str':
+        """Gets the phase of this V1PodMetrics.  # noqa: E501
+
+
+        :return: The phase of this V1PodMetrics.  # noqa: E501
+        :rtype: str
+        """
+        return self._phase
+
+    @phase.setter
+    def phase(self, phase: 'str'):
+        """Sets the phase of this V1PodMetrics.
+
+
+        :param phase: The phase of this V1PodMetrics.  # noqa: E501
+        :type: str
+        """
+
+        self._phase = phase
+
+    @property
     def pod_id(self) -> 'str':
         """Gets the pod_id of this V1PodMetrics.  # noqa: E501
 
@@ -387,6 +418,27 @@ class V1PodMetrics(object):
         """
 
         self._timestamp = timestamp
+
+    @property
+    def user_id(self) -> 'str':
+        """Gets the user_id of this V1PodMetrics.  # noqa: E501
+
+
+        :return: The user_id of this V1PodMetrics.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id: 'str'):
+        """Sets the user_id of this V1PodMetrics.
+
+
+        :param user_id: The user_id of this V1PodMetrics.  # noqa: E501
+        :type: str
+        """
+
+        self._user_id = user_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

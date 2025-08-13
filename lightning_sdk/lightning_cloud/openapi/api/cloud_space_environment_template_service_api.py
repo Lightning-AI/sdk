@@ -248,6 +248,7 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         :param async_req bool
         :param str id: (required)
         :param str org_id:
+        :param str project_id:
         :return: V1CloudSpaceEnvironmentTemplate
                  If the method is called asynchronously,
                  returns the request thread.
@@ -270,12 +271,13 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         :param async_req bool
         :param str id: (required)
         :param str org_id:
+        :param str project_id:
         :return: V1CloudSpaceEnvironmentTemplate
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['id', 'org_id']  # noqa: E501
+        all_params = ['id', 'org_id', 'project_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -304,6 +306,8 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         query_params = []
         if 'org_id' in params:
             query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
 
         header_params = {}
 

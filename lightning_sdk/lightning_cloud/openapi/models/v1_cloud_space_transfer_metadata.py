@@ -45,7 +45,8 @@ class V1CloudSpaceTransferMetadata(object):
         'requested_code_config': 'V1UpdateCloudSpaceInstanceConfigRequest',
         'source_cluster_id': 'str',
         'target_cloud_provider': 'str',
-        'target_cluster_id': 'str'
+        'target_cluster_id': 'str',
+        'top_up_transfer_started_at': 'datetime'
     }
 
     attribute_map = {
@@ -53,16 +54,18 @@ class V1CloudSpaceTransferMetadata(object):
         'requested_code_config': 'requestedCodeConfig',
         'source_cluster_id': 'sourceClusterId',
         'target_cloud_provider': 'targetCloudProvider',
-        'target_cluster_id': 'targetClusterId'
+        'target_cluster_id': 'targetClusterId',
+        'top_up_transfer_started_at': 'topUpTransferStartedAt'
     }
 
-    def __init__(self, initial_transfer_started_at: 'datetime' =None, requested_code_config: 'V1UpdateCloudSpaceInstanceConfigRequest' =None, source_cluster_id: 'str' =None, target_cloud_provider: 'str' =None, target_cluster_id: 'str' =None):  # noqa: E501
+    def __init__(self, initial_transfer_started_at: 'datetime' =None, requested_code_config: 'V1UpdateCloudSpaceInstanceConfigRequest' =None, source_cluster_id: 'str' =None, target_cloud_provider: 'str' =None, target_cluster_id: 'str' =None, top_up_transfer_started_at: 'datetime' =None):  # noqa: E501
         """V1CloudSpaceTransferMetadata - a model defined in Swagger"""  # noqa: E501
         self._initial_transfer_started_at = None
         self._requested_code_config = None
         self._source_cluster_id = None
         self._target_cloud_provider = None
         self._target_cluster_id = None
+        self._top_up_transfer_started_at = None
         self.discriminator = None
         if initial_transfer_started_at is not None:
             self.initial_transfer_started_at = initial_transfer_started_at
@@ -74,6 +77,8 @@ class V1CloudSpaceTransferMetadata(object):
             self.target_cloud_provider = target_cloud_provider
         if target_cluster_id is not None:
             self.target_cluster_id = target_cluster_id
+        if top_up_transfer_started_at is not None:
+            self.top_up_transfer_started_at = top_up_transfer_started_at
 
     @property
     def initial_transfer_started_at(self) -> 'datetime':
@@ -179,6 +184,27 @@ class V1CloudSpaceTransferMetadata(object):
         """
 
         self._target_cluster_id = target_cluster_id
+
+    @property
+    def top_up_transfer_started_at(self) -> 'datetime':
+        """Gets the top_up_transfer_started_at of this V1CloudSpaceTransferMetadata.  # noqa: E501
+
+
+        :return: The top_up_transfer_started_at of this V1CloudSpaceTransferMetadata.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._top_up_transfer_started_at
+
+    @top_up_transfer_started_at.setter
+    def top_up_transfer_started_at(self, top_up_transfer_started_at: 'datetime'):
+        """Sets the top_up_transfer_started_at of this V1CloudSpaceTransferMetadata.
+
+
+        :param top_up_transfer_started_at: The top_up_transfer_started_at of this V1CloudSpaceTransferMetadata.  # noqa: E501
+        :type: datetime
+        """
+
+        self._top_up_transfer_started_at = top_up_transfer_started_at
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

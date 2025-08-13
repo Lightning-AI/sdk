@@ -77,6 +77,7 @@ class V1UserFeatures(object):
         'f242': 'bool',
         'f243': 'bool',
         'f244': 'bool',
+        'f245': 'bool',
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'gcp_overprovisioning': 'bool',
@@ -92,7 +93,6 @@ class V1UserFeatures(object):
         'mmt_fault_tolerance': 'bool',
         'mmt_strategy_selector': 'bool',
         'model_api_dashboard': 'bool',
-        'model_api_dashboard_clickhouse': 'bool',
         'multiple_studio_versions': 'bool',
         'nerf_fs_nonpaying': 'bool',
         'onboarding_v2': 'bool',
@@ -104,7 +104,6 @@ class V1UserFeatures(object):
         'plugin_label_studio': 'bool',
         'plugin_langflow': 'bool',
         'plugin_python_profiler': 'bool',
-        'plugin_service': 'bool',
         'plugin_sweeps': 'bool',
         'pricing_updates': 'bool',
         'product_generator': 'bool',
@@ -169,6 +168,7 @@ class V1UserFeatures(object):
         'f242': 'f242',
         'f243': 'f243',
         'f244': 'f244',
+        'f245': 'f245',
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'gcp_overprovisioning': 'gcpOverprovisioning',
@@ -184,7 +184,6 @@ class V1UserFeatures(object):
         'mmt_fault_tolerance': 'mmtFaultTolerance',
         'mmt_strategy_selector': 'mmtStrategySelector',
         'model_api_dashboard': 'modelApiDashboard',
-        'model_api_dashboard_clickhouse': 'modelApiDashboardClickhouse',
         'multiple_studio_versions': 'multipleStudioVersions',
         'nerf_fs_nonpaying': 'nerfFsNonpaying',
         'onboarding_v2': 'onboardingV2',
@@ -196,7 +195,6 @@ class V1UserFeatures(object):
         'plugin_label_studio': 'pluginLabelStudio',
         'plugin_langflow': 'pluginLangflow',
         'plugin_python_profiler': 'pluginPythonProfiler',
-        'plugin_service': 'pluginService',
         'plugin_sweeps': 'pluginSweeps',
         'pricing_updates': 'pricingUpdates',
         'product_generator': 'productGenerator',
@@ -224,7 +222,7 @@ class V1UserFeatures(object):
         'writable_s3_connections': 'writableS3Connections'
     }
 
-    def __init__(self, academic_tier: 'bool' =None, add_data_v2: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, f227: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f237: 'bool' =None, f238: 'bool' =None, f239: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f242: 'bool' =None, f243: 'bool' =None, f244: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcp_overprovisioning: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, model_api_dashboard_clickhouse: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, onboarding_v2: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_service: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, academic_tier: 'bool' =None, add_data_v2: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, f227: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f237: 'bool' =None, f238: 'bool' =None, f239: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f242: 'bool' =None, f243: 'bool' =None, f244: 'bool' =None, f245: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcp_overprovisioning: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, onboarding_v2: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._academic_tier = None
         self._add_data_v2 = None
@@ -262,6 +260,7 @@ class V1UserFeatures(object):
         self._f242 = None
         self._f243 = None
         self._f244 = None
+        self._f245 = None
         self._fair_share = None
         self._featured_studios_admin = None
         self._gcp_overprovisioning = None
@@ -277,7 +276,6 @@ class V1UserFeatures(object):
         self._mmt_fault_tolerance = None
         self._mmt_strategy_selector = None
         self._model_api_dashboard = None
-        self._model_api_dashboard_clickhouse = None
         self._multiple_studio_versions = None
         self._nerf_fs_nonpaying = None
         self._onboarding_v2 = None
@@ -289,7 +287,6 @@ class V1UserFeatures(object):
         self._plugin_label_studio = None
         self._plugin_langflow = None
         self._plugin_python_profiler = None
-        self._plugin_service = None
         self._plugin_sweeps = None
         self._pricing_updates = None
         self._product_generator = None
@@ -388,6 +385,8 @@ class V1UserFeatures(object):
             self.f243 = f243
         if f244 is not None:
             self.f244 = f244
+        if f245 is not None:
+            self.f245 = f245
         if fair_share is not None:
             self.fair_share = fair_share
         if featured_studios_admin is not None:
@@ -418,8 +417,6 @@ class V1UserFeatures(object):
             self.mmt_strategy_selector = mmt_strategy_selector
         if model_api_dashboard is not None:
             self.model_api_dashboard = model_api_dashboard
-        if model_api_dashboard_clickhouse is not None:
-            self.model_api_dashboard_clickhouse = model_api_dashboard_clickhouse
         if multiple_studio_versions is not None:
             self.multiple_studio_versions = multiple_studio_versions
         if nerf_fs_nonpaying is not None:
@@ -442,8 +439,6 @@ class V1UserFeatures(object):
             self.plugin_langflow = plugin_langflow
         if plugin_python_profiler is not None:
             self.plugin_python_profiler = plugin_python_profiler
-        if plugin_service is not None:
-            self.plugin_service = plugin_service
         if plugin_sweeps is not None:
             self.plugin_sweeps = plugin_sweeps
         if pricing_updates is not None:
@@ -1252,6 +1247,27 @@ class V1UserFeatures(object):
         self._f244 = f244
 
     @property
+    def f245(self) -> 'bool':
+        """Gets the f245 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f245 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f245
+
+    @f245.setter
+    def f245(self, f245: 'bool'):
+        """Sets the f245 of this V1UserFeatures.
+
+
+        :param f245: The f245 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f245 = f245
+
+    @property
     def fair_share(self) -> 'bool':
         """Gets the fair_share of this V1UserFeatures.  # noqa: E501
 
@@ -1567,27 +1583,6 @@ class V1UserFeatures(object):
         self._model_api_dashboard = model_api_dashboard
 
     @property
-    def model_api_dashboard_clickhouse(self) -> 'bool':
-        """Gets the model_api_dashboard_clickhouse of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The model_api_dashboard_clickhouse of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._model_api_dashboard_clickhouse
-
-    @model_api_dashboard_clickhouse.setter
-    def model_api_dashboard_clickhouse(self, model_api_dashboard_clickhouse: 'bool'):
-        """Sets the model_api_dashboard_clickhouse of this V1UserFeatures.
-
-
-        :param model_api_dashboard_clickhouse: The model_api_dashboard_clickhouse of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._model_api_dashboard_clickhouse = model_api_dashboard_clickhouse
-
-    @property
     def multiple_studio_versions(self) -> 'bool':
         """Gets the multiple_studio_versions of this V1UserFeatures.  # noqa: E501
 
@@ -1817,27 +1812,6 @@ class V1UserFeatures(object):
         """
 
         self._plugin_python_profiler = plugin_python_profiler
-
-    @property
-    def plugin_service(self) -> 'bool':
-        """Gets the plugin_service of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The plugin_service of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._plugin_service
-
-    @plugin_service.setter
-    def plugin_service(self, plugin_service: 'bool'):
-        """Sets the plugin_service of this V1UserFeatures.
-
-
-        :param plugin_service: The plugin_service of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._plugin_service = plugin_service
 
     @property
     def plugin_sweeps(self) -> 'bool':

@@ -46,7 +46,8 @@ class V1KubernetesDirectV1(object):
         'grafana_service_name': 'str',
         'grafana_service_port': 'str',
         'kubeconfig': 'str',
-        'kubeconfig_elevated': 'str'
+        'kubeconfig_elevated': 'str',
+        'skip_user_label_injection': 'bool'
     }
 
     attribute_map = {
@@ -55,10 +56,11 @@ class V1KubernetesDirectV1(object):
         'grafana_service_name': 'grafanaServiceName',
         'grafana_service_port': 'grafanaServicePort',
         'kubeconfig': 'kubeconfig',
-        'kubeconfig_elevated': 'kubeconfigElevated'
+        'kubeconfig_elevated': 'kubeconfigElevated',
+        'skip_user_label_injection': 'skipUserLabelInjection'
     }
 
-    def __init__(self, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None):  # noqa: E501
+    def __init__(self, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._grafana_dashboard_url = None
         self._grafana_namespace = None
@@ -66,6 +68,7 @@ class V1KubernetesDirectV1(object):
         self._grafana_service_port = None
         self._kubeconfig = None
         self._kubeconfig_elevated = None
+        self._skip_user_label_injection = None
         self.discriminator = None
         if grafana_dashboard_url is not None:
             self.grafana_dashboard_url = grafana_dashboard_url
@@ -79,6 +82,8 @@ class V1KubernetesDirectV1(object):
             self.kubeconfig = kubeconfig
         if kubeconfig_elevated is not None:
             self.kubeconfig_elevated = kubeconfig_elevated
+        if skip_user_label_injection is not None:
+            self.skip_user_label_injection = skip_user_label_injection
 
     @property
     def grafana_dashboard_url(self) -> 'str':
@@ -205,6 +210,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._kubeconfig_elevated = kubeconfig_elevated
+
+    @property
+    def skip_user_label_injection(self) -> 'bool':
+        """Gets the skip_user_label_injection of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The skip_user_label_injection of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._skip_user_label_injection
+
+    @skip_user_label_injection.setter
+    def skip_user_label_injection(self, skip_user_label_injection: 'bool'):
+        """Sets the skip_user_label_injection of this V1KubernetesDirectV1.
+
+
+        :param skip_user_label_injection: The skip_user_label_injection of this V1KubernetesDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._skip_user_label_injection = skip_user_label_injection
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
