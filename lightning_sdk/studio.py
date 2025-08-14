@@ -529,7 +529,7 @@ class Studio:
     def auto_sleep(self, value: bool) -> None:
         if not value and self.machine == Machine.CPU:
             warnings.warn("Disabling auto-sleep will convert the Studio from free to paid!")
-        self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, enabled=value, studio=self._studio)
+        self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, enabled=value)
         self._update_studio_reference()
 
     @property
@@ -540,9 +540,7 @@ class Studio:
     @auto_sleep_time.setter
     def auto_sleep_time(self, value: int) -> None:
         warnings.warn("Setting auto-sleep time will convert the Studio from free to paid!")
-        self._studio_api.update_autoshutdown(
-            self._studio.id, self._teamspace.id, idle_shutdown_seconds=value, studio=self._studio
-        )
+        self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, idle_shutdown_seconds=value)
         self._update_studio_reference()
 
     @property

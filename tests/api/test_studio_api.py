@@ -12,11 +12,47 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
     ProjectIdCloudspacesBody,
     V1CloudSpace,
+    V1CloudSpaceInstanceConfig,
     V1CloudSpaceInstanceStartupStatus,
     V1CloudSpaceSeedFile,
     V1GetCloudSpaceInstanceStatusResponse,
 )
 from lightning_sdk.machine import Machine
+
+
+@pytest.fixture()
+def internal_studio_api_mocker_update_autoshutdown(mocker):
+    def response(self, id, project_id, body):
+        if id == "st-abc":
+            if (
+                body.disable_auto_shutdown is not None
+                and body.idle_shutdown_seconds is not None
+                and body.idle_shutdown_seconds > 0
+            ):
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=body.disable_auto_shutdown, idle_shutdown_seconds=body.idle_shutdown_seconds
+                )
+
+            if body.idle_shutdown_seconds is not None and body.idle_shutdown_seconds > 0:
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=False, idle_shutdown_seconds=body.idle_shutdown_seconds
+                )
+
+            if body.disable_auto_shutdown is not None:
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=body.disable_auto_shutdown, idle_shutdown_seconds=600
+                )
+        return V1CloudSpaceInstanceConfig(disable_auto_shutdown=None, idle_shutdown_seconds=600)
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_sleep_config",
+        side_effect=response,
+        autospec=True,
+    )
+
+    yield [mocker]
+
+    mocker.resetall()
 
 
 def test_get_studio(internal_studio_api_mocker_get_studio):
@@ -439,3 +475,27 @@ def test_start_new_port(internal_studio_api_start_new_port_mocker):
     url = studio_api.start_new_port("st-abc", "ts-abc", "test", 8000)
 
     assert url == "http://localhost:8000", "endpoint_service_create_endpoint returns [localhost:8000] for urls"
+
+
+def test_update_autoshutdown_auto_sleep_on(internal_studio_api_mocker_update_autoshutdown):
+    studio_api = StudioApi()
+
+    config = studio_api.update_autoshutdown(studio_id="st-abc", teamspace_id="ts-abc", enabled=True)
+    assert config.disable_auto_shutdown is False
+    assert config.idle_shutdown_seconds == 600
+
+
+def test_update_autoshutdown_auto_sleep_off(internal_studio_api_mocker_update_autoshutdown):
+    studio_api = StudioApi()
+
+    config = studio_api.update_autoshutdown(studio_id="st-abc", teamspace_id="ts-abc", enabled=False)
+    assert config.disable_auto_shutdown is True
+    assert config.idle_shutdown_seconds == 600
+
+
+def test_update_autoshutdown_idle_shutdown(internal_studio_api_mocker_update_autoshutdown):
+    studio_api = StudioApi()
+
+    config = studio_api.update_autoshutdown(studio_id="st-abc", teamspace_id="ts-abc", idle_shutdown_seconds=900)
+    assert config.disable_auto_shutdown is False
+    assert config.idle_shutdown_seconds == 900

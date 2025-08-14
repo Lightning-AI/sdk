@@ -29,6 +29,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     IdCodeconfigBody,
     IdExecuteBody1,
     IdForkBody1,
+    IdSleepconfigBody,
     IdStartBody,
     ProjectIdCloudspacesBody,
     V1Assistant,
@@ -443,19 +444,15 @@ class StudioApi:
         self,
         studio_id: str,
         teamspace_id: str,
-        studio: V1CloudSpace,
         enabled: Optional[bool] = None,
-        idle_shutdown_seconds: int = 0,
-    ) -> None:
-        """Update the autoshutdown time of the given Studio."""
-        if enabled is None:
-            enabled = not studio.code_config.disable_auto_shutdown
-        body = IdCodeconfigBody(
-            disable_auto_shutdown=not enabled,
+        idle_shutdown_seconds: Optional[int] = None,
+    ) -> V1CloudSpaceInstanceConfig:
+        """Update the autoshutdown time and behaviour of the given Studio."""
+        body = IdSleepconfigBody(
+            disable_auto_shutdown=not enabled if enabled is not None else None,
             idle_shutdown_seconds=idle_shutdown_seconds,
-            compute_config=studio.code_config.compute_config,
         )
-        self._client.cloud_space_service_update_cloud_space_instance_config(
+        return self._client.cloud_space_service_update_cloud_space_sleep_config(
             id=studio_id,
             project_id=teamspace_id,
             body=body,
