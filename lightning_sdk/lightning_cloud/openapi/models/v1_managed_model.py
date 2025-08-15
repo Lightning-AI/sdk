@@ -60,7 +60,8 @@ class V1ManagedModel(object):
         'throughput': 'float',
         'time_to_first_token': 'float',
         'token_threshold': 'str',
-        'top_k': 'str'
+        'top_k': 'str',
+        'user_id': 'str'
     }
 
     attribute_map = {
@@ -83,10 +84,11 @@ class V1ManagedModel(object):
         'throughput': 'throughput',
         'time_to_first_token': 'timeToFirstToken',
         'token_threshold': 'tokenThreshold',
-        'top_k': 'topK'
+        'top_k': 'topK',
+        'user_id': 'userId'
     }
 
-    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, assistant_id: 'str' =None, completion_token_price: 'float' =None, completion_token_price_above_threshold: 'float' =None, context_length: 'str' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, prompt_token_price_above_threshold: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, token_threshold: 'str' =None, top_k: 'str' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, assistant_id: 'str' =None, completion_token_price: 'float' =None, completion_token_price_above_threshold: 'float' =None, context_length: 'str' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, prompt_token_price_above_threshold: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, token_threshold: 'str' =None, top_k: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._abilities = None
         self._assistant_id = None
@@ -108,6 +110,7 @@ class V1ManagedModel(object):
         self._time_to_first_token = None
         self._token_threshold = None
         self._top_k = None
+        self._user_id = None
         self.discriminator = None
         if abilities is not None:
             self.abilities = abilities
@@ -149,6 +152,8 @@ class V1ManagedModel(object):
             self.token_threshold = token_threshold
         if top_k is not None:
             self.top_k = top_k
+        if user_id is not None:
+            self.user_id = user_id
 
     @property
     def abilities(self) -> 'V1ManagedModelAbilities':
@@ -569,6 +574,27 @@ class V1ManagedModel(object):
         """
 
         self._top_k = top_k
+
+    @property
+    def user_id(self) -> 'str':
+        """Gets the user_id of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The user_id of this V1ManagedModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id: 'str'):
+        """Sets the user_id of this V1ManagedModel.
+
+
+        :param user_id: The user_id of this V1ManagedModel.  # noqa: E501
+        :type: str
+        """
+
+        self._user_id = user_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

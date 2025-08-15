@@ -41,6 +41,7 @@ class V1NotificationType(object):
     LOW_FUNDS = "NOTIFICATION_TYPE_LOW_FUNDS"
     LONG_WORKLOADS = "NOTIFICATION_TYPE_LONG_WORKLOADS"
     DEPLOYMENT_ERROR = "NOTIFICATION_TYPE_DEPLOYMENT_ERROR"
+    REQUESTED_ACCESS = "NOTIFICATION_TYPE_REQUESTED_ACCESS"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

@@ -1,7 +1,7 @@
 import os
 from time import sleep, time
 from lightning_sdk.lightning_cloud import rest_client
-from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection, V1S3FolderDataConnection, V1EfsConfig, V1GcpDataConnection, V1FilestoreDataConnection, V1DataConnectionTier
+from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection, V1S3FolderDataConnection, V1EfsConfig, V1GcpDataConnection, V1FilestoreDataConnection, V1DataConnectionTier, V1R2DataConnection
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 import urllib3
 
@@ -324,6 +324,56 @@ def create_filestore_folder(folder_name: str, region: str, capacity_gb: int = 10
     start = time()
 
     while not os.path.isdir(f"/teamspace/filestore_folders/{folder_name}") and (time() - start) < create_timeout:
+        sleep(1)
+
+
+def create_cloud_agnostic_folder(folder_name: str, create_timeout: int = 30) -> None:
+    """
+    Utility function to create a Cloud-Agnostic (R2) folder.
+
+    Args:
+        folder_name: The name of the folder to create.
+        create_timeout (int): The timeout for the folder creation.
+    """
+    client = rest_client.LightningClient(retry=False)
+
+    project_id = os.getenv("LIGHTNING_CLOUD_PROJECT_ID")
+    cluster_id = os.getenv("LIGHTNING_CLUSTER_ID")
+
+    # Get existing data connections
+    data_connections = client.data_connection_service_list_data_connections(project_id).data_connections
+
+    for connection in data_connections:
+        existing_folder_name = getattr(connection, 'name', None)
+        isCloudAgnostic = getattr(connection, 'r2_folder', None) is not None
+
+        if existing_folder_name == folder_name and isCloudAgnostic:
+            return
+
+    # If we get here, no matching folder was found, proceed with creation
+    body = Create(
+        name=folder_name,
+        create_resources=True,
+        r2=V1R2DataConnection(name=folder_name),
+    )
+    try:
+        connection = client.data_connection_service_create_data_connection(body, project_id)
+    except ApiException as e:
+        # Note: This function can be called in a distributed way.
+        # There is a race condition where one machine might create the entry before another machine
+        # and this request would fail with duplicated key
+        # In this case, it is fine not to raise
+        if'duplicate key value violates unique constraint' in str(e.body):
+            return
+        raise e from None
+
+    except urllib3.exceptions.HTTPError as e:
+        raise e from None
+
+    # Wait for the filesystem picks up the newly added Cloud-Agnostic folder
+    start = time()
+
+    while not os.path.isdir(f"/teamspace/lightning_storage/{folder_name}") and (time() - start) < create_timeout:
         sleep(1)
 
 
