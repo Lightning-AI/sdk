@@ -142,6 +142,7 @@ unfixable = ["F401"]
 "tests/**" = [
     "ANN",
     "D",
+    "A001",  # Variable `id` is shadowing a Python builtin
     "A002",  # FixMe: Argument `id` is shadowing a Python builtin
     "PT019", # ToDo: Fixture `_` without value is injected as parameter, use `@pytest.mark.usefixtures` instead
 ]

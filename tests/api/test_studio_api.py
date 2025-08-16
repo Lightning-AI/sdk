@@ -1,4 +1,5 @@
 import contextlib
+import json
 import os
 import subprocess
 from unittest import mock
@@ -10,58 +11,74 @@ from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
+    Externalv1LightningappInstance,
     ProjectIdCloudspacesBody,
+    V1CloudProvider,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
     V1CloudSpaceInstanceStartupStatus,
     V1CloudSpaceSeedFile,
+    V1CloudSpaceState,
+    V1ClusterAccelerator,
+    V1ClusterType,
+    V1CreateCloudSpaceAppInstanceResponse,
+    V1DeleteCloudSpaceResponse,
+    V1Endpoint,
+    V1ExecuteCloudSpaceCommandResponse,
+    V1ExternalCluster,
+    V1ExternalClusterSpec,
     V1GetCloudSpaceInstanceStatusResponse,
+    V1GetUserResponse,
+    V1LightningRun,
+    V1ListCloudSpacesResponse,
+    V1ListClustersResponse,
+    V1ListDefaultClusterAcceleratorsResponse,
+    V1ListProjectClustersResponse,
+    V1LoginResponse,
+    V1Organization,
+    V1Plugin,
+    V1PluginsListResponse,
+    V1Project,
+    V1SearchUser,
+    V1SearchUsersResponse,
+    V1UserRequestedComputeConfig,
 )
 from lightning_sdk.machine import Machine
 
 
-@pytest.fixture()
-def internal_studio_api_mocker_update_autoshutdown(mocker):
-    def response(self, id, project_id, body):
-        if id == "st-abc":
-            if (
-                body.disable_auto_shutdown is not None
-                and body.idle_shutdown_seconds is not None
-                and body.idle_shutdown_seconds > 0
-            ):
-                return V1CloudSpaceInstanceConfig(
-                    disable_auto_shutdown=body.disable_auto_shutdown, idle_shutdown_seconds=body.idle_shutdown_seconds
-                )
-
-            if body.idle_shutdown_seconds is not None and body.idle_shutdown_seconds > 0:
-                return V1CloudSpaceInstanceConfig(
-                    disable_auto_shutdown=False, idle_shutdown_seconds=body.idle_shutdown_seconds
-                )
-
-            if body.disable_auto_shutdown is not None:
-                return V1CloudSpaceInstanceConfig(
-                    disable_auto_shutdown=body.disable_auto_shutdown, idle_shutdown_seconds=600
-                )
-        return V1CloudSpaceInstanceConfig(disable_auto_shutdown=None, idle_shutdown_seconds=600)
-
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_sleep_config",
-        side_effect=response,
-        autospec=True,
-    )
-
-    yield [mocker]
-
-    mocker.resetall()
+class _DummyResponse:
+    data: bytes
 
 
-def test_get_studio(internal_studio_api_mocker_get_studio):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+    autospec=True,
+)
+def test_get_studio(mock_list_cloudspaces):
+    def list_cloudspaces_side_effect(self, project_id, name):
+        if name in ["st-abc", "st-def"]:
+            return V1ListCloudSpacesResponse([V1CloudSpace(name=name, display_name=name)])
+        return V1ListCloudSpacesResponse([])
+
+    mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect
+
     studio_api = StudioApi()
     studio = studio_api.get_studio("st-abc", "ts-abc")
     assert isinstance(studio, V1CloudSpace)
 
 
-def test_get_studio_error(internal_studio_api_mocker_get_studio):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+    autospec=True,
+)
+def test_get_studio_error(mock_list_cloudspaces):
+    def list_cloudspaces_side_effect(self, project_id, name):
+        if name in ["st-abc", "st-def"]:
+            return V1ListCloudSpacesResponse([V1CloudSpace(name=name, display_name=name)])
+        return V1ListCloudSpacesResponse([])
+
+    mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect
+
     studio_api = StudioApi()
     with pytest.raises(ValueError, match="Studio xyz does not exist"):
         studio_api.get_studio("xyz", "ts-abc")
@@ -70,8 +87,33 @@ def test_get_studio_error(internal_studio_api_mocker_get_studio):
 @pytest.mark.parametrize("cloud_account", [None, "c-abc"])
 @pytest.mark.parametrize("sandbox", [True, False])
 @pytest.mark.parametrize("disable_secrets", [True, False])
-def test_create_studio(internal_studio_api_mocker_create_studio, cloud_account, sandbox, disable_secrets):
-    mock_create_cloud_space, _ = internal_studio_api_mocker_create_studio
+@mock.patch("requests.put", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
+    autospec=True,
+)
+def test_create_studio(mock_create_cloud_space, mock_create_lightning_run, _, cloud_account, sandbox, disable_secrets):
+    def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
+        assert isinstance(body, ProjectIdCloudspacesBody)
+        return V1CloudSpace(
+            name=body.name,
+            display_name=body.display_name,
+            cluster_id=body.cluster_id,
+            project_id=project_id,
+            id=body.name,
+        )
+
+    def _create_lightning_run_side_effect(self, body, project_id, cloudspace_id, **kwargs):
+        return V1LightningRun(
+            cluster_id=body.cluster_id, cloudspace_id=cloudspace_id, project_id=project_id, id=cloudspace_id + "_run"
+        )
+
+    mock_create_cloud_space.side_effect = _create_cloudspace_side_effect
+    mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
 
     studio_api = StudioApi()
     studio = studio_api.create_studio(
@@ -94,7 +136,17 @@ def test_create_studio(internal_studio_api_mocker_create_studio, cloud_account, 
     )
 
 
-def test_get_studio_status(internal_studio_api_mocker_studio_status):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+def test_get_studio_status(mock_get_status):
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        requested=Externalv1CloudSpaceInstanceStatus(
+            startup_status=V1CloudSpaceInstanceStartupStatus(initial_restore_finished=False)
+        )
+    )
+
     studio_api = StudioApi()
     status = studio_api.get_studio_status("st-abc", "ts-abc")
     assert isinstance(status, V1GetCloudSpaceInstanceStatusResponse)
@@ -120,7 +172,32 @@ def test_get_studio_status(internal_studio_api_mocker_studio_status):
         Machine.B200_X_8,
     ],
 )
-def test_switch_studio_machine(internal_studio_api_mocker_switch_machine, machine):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_switch_cloud_space_instance",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_instance_config",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+def test_switch_studio_machine(mock_get_status, mock_update_config, mock_switch_instance, machine):
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        requested=Externalv1CloudSpaceInstanceStatus(
+            startup_status=V1CloudSpaceInstanceStartupStatus(
+                initial_restore_finished=True, top_up_restore_finished=True
+            )
+        ),
+        in_use=Externalv1CloudSpaceInstanceStatus(
+            startup_status=V1CloudSpaceInstanceStartupStatus(
+                initial_restore_finished=True, top_up_restore_finished=True
+            )
+        ),
+    )
+
     studio_api = StudioApi()
     studio_api.switch_studio_machine("st-abc", "ts-abc", machine, False)
 
@@ -137,32 +214,33 @@ def test_switch_studio_machine(internal_studio_api_mocker_switch_machine, machin
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_switch_cloud_space_instance",
     autospec=True,
 )
-def test_switch_machine_no_requested(_, __, status_mock):
+def test_switch_machine_no_requested(switch_mock, update_mock, status_mock):
     return_vals = [
+        # First call: there is a requested machine (we just made the request)
         V1GetCloudSpaceInstanceStatusResponse(
             requested=Externalv1CloudSpaceInstanceStatus(
                 startup_status=V1CloudSpaceInstanceStartupStatus(
-                    initial_restore_finished=False,
-                    top_up_restore_finished=False,  # not yet restored anything
+                    initial_restore_finished=True, top_up_restore_finished=True
                 )
             ),
+            in_use=Externalv1CloudSpaceInstanceStatus(
+                startup_status=V1CloudSpaceInstanceStartupStatus(
+                    initial_restore_finished=False, top_up_restore_finished=False
+                )
+            ),
+        ),
+        # Second call: requested is now None (processed), but in_use is ready for switch
+        V1GetCloudSpaceInstanceStatusResponse(
+            requested=None,  # Request was processed, no longer pending
             in_use=Externalv1CloudSpaceInstanceStatus(
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
                 )
             ),
         ),
+        # Third call: after switch, new machine is ready
         V1GetCloudSpaceInstanceStatusResponse(
-            # doesn't return the requested instance -- possibly because it's not a requested instance anymore
             requested=None,
-            in_use=Externalv1CloudSpaceInstanceStatus(
-                startup_status=V1CloudSpaceInstanceStartupStatus(
-                    initial_restore_finished=True, top_up_restore_finished=True
-                )
-            ),
-        ),
-        V1GetCloudSpaceInstanceStatusResponse(
-            requested=None,  # doesn't return the requested instance -- we switched already
             in_use=Externalv1CloudSpaceInstanceStatus(
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
@@ -171,10 +249,10 @@ def test_switch_machine_no_requested(_, __, status_mock):
         ),
     ]
 
-    def side_effect(self, *args, **kwargs):
+    def side_effect(*args, **kwargs):
         if not return_vals:
             return V1GetCloudSpaceInstanceStatusResponse(
-                requested=None,  # doesn't return the requested instance -- we switched already
+                requested=None,
                 in_use=Externalv1CloudSpaceInstanceStatus(
                     startup_status=V1CloudSpaceInstanceStartupStatus(
                         initial_restore_finished=True, top_up_restore_finished=True
@@ -188,17 +266,71 @@ def test_switch_machine_no_requested(_, __, status_mock):
     studio_api.switch_studio_machine("st-abc", "ts-abc", Machine.A100_X_8, False)
 
 
-def test_start_studio(internal_studio_api_mocker_start_studio):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+    autospec=True,
+)
+def test_start_studio(mock_start_instance, mock_get_status):
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        requested=Externalv1CloudSpaceInstanceStatus(
+            startup_status=V1CloudSpaceInstanceStartupStatus(
+                initial_restore_finished=True, top_up_restore_finished=True
+            )
+        ),
+        in_use=Externalv1CloudSpaceInstanceStatus(
+            startup_status=V1CloudSpaceInstanceStartupStatus(
+                initial_restore_finished=True, top_up_restore_finished=True
+            )
+        ),
+    )
+
     studio_api = StudioApi()
     studio_api.start_studio("st-abc", "ts-abc", Machine.CPU, False)
 
 
-def test_stop_studio(internal_studio_api_mocker_stop_studio, internal_studio_api_mocker_studio_status):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_stop_cloud_space_instance",
+    autospec=True,
+)
+def test_stop_studio(mock_stop_instance, mock_get_status):
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        requested=Externalv1CloudSpaceInstanceStatus(
+            startup_status=V1CloudSpaceInstanceStartupStatus(initial_restore_finished=False)
+        )
+    )
+
     studio_api = StudioApi()
     studio_api.stop_studio("st-abc", "ts-abc")
 
 
-def test_run_command(internal_studio_api_mocker_run_command):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space_stream",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
+    autospec=True,
+)
+def test_run_command(mock_execute_command, mock_get_stream):
+    mock_execute_command.return_value = V1ExecuteCloudSpaceCommandResponse(
+        exit_code=0, output="Command Started Successfully", session_name="session-name"
+    )
+
+    resp = _DummyResponse()
+    resp.data = (
+        b'{"result":{"output":" foo-res","exitCode":0}}\n{"result":{"output":"ponse ba","exitCode":0}}\n'
+        b'{"result":{"output":"r-respon","exitCode":0}}\n{"result":{"output":"se ","exitCode":0}}\n'
+    )
+    mock_get_stream.return_value = resp
+
     studio_api = StudioApi()
 
     outputs, exit_code = studio_api.run_studio_commands("st-abc", "ts-abc", "foo", "bar")
@@ -206,18 +338,18 @@ def test_run_command(internal_studio_api_mocker_run_command):
     assert outputs == " foo-response bar-response "
     assert exit_code == 0
 
-    from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import CloudSpaceServiceApi
-
     expected = {"project_id": "ts-abc", "id": "st-abc", "session": "session-name", "_preload_content": False}
-    assert (
-        CloudSpaceServiceApi.cloud_space_service_get_long_running_command_in_cloud_space_stream.mock_calls[0].kwargs
-        == expected
-    )
+    assert mock_get_stream.mock_calls[0].kwargs == expected
 
 
-def test_delete_studio(internal_studio_api_mocker_delete):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_delete_cloud_space",
+    autospec=True,
+)
+def test_delete_studio(mock_delete_cloud_space):
+    mock_delete_cloud_space.return_value = V1DeleteCloudSpaceResponse()
+
     studio_api = StudioApi()
-
     studio_api.delete_studio("st-abc", "ts-abc")
 
 
@@ -246,7 +378,112 @@ def test_delete_studio(internal_studio_api_mocker_delete):
         ("st-rst", Machine.L4_X_2),
     ],
 )
-def test_get_machine(internal_studio_api_mocker_get_machine, name, expected_machine):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_config",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_default_cluster_accelerators",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_project_clusters",
+    autospec=True,
+)
+def test_get_machine(
+    mock_list_project_clusters, mock_list_clusters, mock_list_accelerators, mock_get_config, name, expected_machine
+):
+    # Setup machine config mocker side effect
+    studio_to_machine_map = {
+        "st-abc": "cpu-4",
+        "st-def": "data-large",
+        "st-ghi": "g4dn.2xlarge",
+        "st-jkl": "g4dn.12xlarge",
+        "st-mno": "g6.4xlarge",
+        "st-pqr": "g6.12xlarge",
+        "st-yza": "p4d.24xlarge",
+        "st-bcd": "p5.48xlarge",
+        "st-efg": "p5en.48xlarge",
+        "st-hij": "data-max",
+        "st-klm": "data-ultra",
+        "st-nop": "m3.medium",
+        "st-tuv": "g6e.4xlarge",
+        "st-wxy": "g6e.12xlarge",
+        "st-zab": "g6e.48xlarge",
+        "st-cde": "g6.48xlarge",
+        "st-fgh": "a2-ultragpu-2g",
+        "st-ijk": "a2-ultragpu-4g",
+        "st-lmn": "a4-highgpu-8g",
+        "st-opq": "n2d-standard-2",
+        "st-rst": "g2-standard-24",
+    }
+
+    def _side_effect(self, project_id, id, **kwargs):
+        instance_type_str = studio_to_machine_map.get(id)
+        if instance_type_str is None:
+            raise ValueError(f"No machine found for studio ID: {id}")
+        return V1CloudSpaceInstanceConfig(compute_config=V1UserRequestedComputeConfig(name=instance_type_str))
+
+    mock_get_config.side_effect = _side_effect
+
+    # Create test cloud accounts for different cluster_ids used in tests
+    test_cloud_accounts = [
+        V1ExternalCluster(
+            id="cluster_abc",
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="c-abc",
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="cluster-abc",
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id="my-preferred-cluster",
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+        V1ExternalCluster(
+            id=None,
+            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+        ),
+    ]
+
+    mock_list_project_clusters.return_value = V1ListProjectClustersResponse(clusters=test_cloud_accounts)
+    mock_list_clusters.return_value = V1ListClustersResponse(clusters=[])
+    mock_list_accelerators.return_value = V1ListDefaultClusterAcceleratorsResponse(
+        accelerator=[
+            V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
+            V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
+            V1ClusterAccelerator(instance_id="g4dn.2xlarge", slug_multi_cloud="lit-t4-1", enabled=True),
+            V1ClusterAccelerator(instance_id="g4dn.12xlarge", slug_multi_cloud="lit-t4-4", enabled=True),
+            V1ClusterAccelerator(instance_id="g6.4xlarge", slug_multi_cloud="lit-l4-1", enabled=True),
+            V1ClusterAccelerator(instance_id="g6.12xlarge", slug_multi_cloud="lit-l4-4", enabled=True),
+            V1ClusterAccelerator(instance_id="p4d.24xlarge", slug_multi_cloud="lit-a100-8", enabled=True),
+            V1ClusterAccelerator(instance_id="p5.48xlarge", slug_multi_cloud="lit-h100-8", enabled=True),
+            V1ClusterAccelerator(instance_id="p5en.48xlarge", slug_multi_cloud="lit-h200x-8", enabled=True),
+            V1ClusterAccelerator(instance_id="data-max", slug_multi_cloud="data-prep-max-large", enabled=True),
+            V1ClusterAccelerator(
+                instance_id="data-ultra", slug_multi_cloud="data-prep-ultra-extra-large", enabled=True
+            ),
+            V1ClusterAccelerator(instance_id="m3.medium", slug_multi_cloud="cpu-2", enabled=True),
+            V1ClusterAccelerator(instance_id="g6e.4xlarge", slug_multi_cloud="lit-l40s-1", enabled=True),
+            V1ClusterAccelerator(instance_id="g6e.12xlarge", slug_multi_cloud="lit-l40s-4", enabled=True),
+            V1ClusterAccelerator(instance_id="g6e.48xlarge", slug_multi_cloud="lit-l40s-8", enabled=True),
+            V1ClusterAccelerator(instance_id="g6.48xlarge", slug_multi_cloud="lit-l4-8", enabled=True),
+            V1ClusterAccelerator(instance_id="a2-ultragpu-2g", slug_multi_cloud="lit-a100-2", enabled=True),
+            V1ClusterAccelerator(instance_id="a2-ultragpu-4g", slug_multi_cloud="lit-a100-4", enabled=True),
+            V1ClusterAccelerator(instance_id="a4-highgpu-8g", slug_multi_cloud="lit-b200x-8", enabled=True),
+            V1ClusterAccelerator(instance_id="n2d-standard-2", slug_multi_cloud="cpu-2", enabled=True),
+            V1ClusterAccelerator(instance_id="g2-standard-24", slug_multi_cloud="lit-l4-2", enabled=True),
+        ]
+    )
+
     studio_api = StudioApi()
 
     machine = studio_api.get_machine(name, "ts-abc", "cluster-abc", "test-org")
@@ -255,14 +492,120 @@ def test_get_machine(internal_studio_api_mocker_get_machine, name, expected_mach
     assert expected_machine == machine
 
 
-def test_duplicate_user(internal_studio_api_mocker_duplicate_user):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user", autospec=True
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users", autospec=True
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+    autospec=True,
+)
+def test_duplicate_user(
+    mock_get_project,
+    mock_search_users,
+    mock_get_user,
+    mock_get_status,
+    mock_start_instance,
+    mock_get_cloudspace,
+    mock_fork_cloudspace,
+):
+    mock_get_project.return_value = V1Project(
+        id="ts-abc", name="teamspace-abc", display_name="Teamspace ABC", owner_id="user-abc", owner_type="user"
+    )
+    mock_search_users.return_value = V1SearchUsersResponse(users=[V1SearchUser(id="user-abc", username="user-abc")])
+    mock_get_user.return_value = V1GetUserResponse(id="user-abc", username="user-abc")
+    mock_fork_cloudspace.return_value = V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de")
+    mock_get_cloudspace.return_value = V1CloudSpace(
+        name="st-abc-de", display_name="st-abc-de", id="st-abc-de", state=V1CloudSpaceState.READY
+    )
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        in_use=Externalv1CloudSpaceInstanceStatus(
+            startup_status=V1CloudSpaceInstanceStartupStatus(
+                initial_restore_finished=True, top_up_restore_finished=True
+            ),
+        )
+    )
+
     studio_api = StudioApi()
     kwargs = studio_api.duplicate_studio("st-abc", "ts-abc", "ts-abc")
 
     assert kwargs == {"name": "st-abc-de", "teamspace": "teamspace-abc", "user": "user-abc"}
 
 
-def test_duplicate_org(internal_studio_api_mocker_duplicate_org):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+    autospec=True,
+)
+def test_duplicate_org(
+    mock_get_project,
+    mock_get_org,
+    mock_get_status,
+    mock_start_instance,
+    mock_get_cloudspace,
+    mock_fork_cloudspace,
+):
+    mock_get_project.return_value = V1Project(
+        id="ts-abc",
+        name="teamspace-abc",
+        display_name="Teamspace ABC",
+        owner_id="org-abc",
+        owner_type="organization",
+    )
+    mock_get_org.return_value = V1Organization(name="org-abc", display_name="org-abc", id="org-abc")
+    mock_fork_cloudspace.return_value = V1CloudSpace(name="st-abc-de", display_name="st-abc-de", id="st-abc-de")
+    mock_get_cloudspace.return_value = V1CloudSpace(
+        name="st-abc-de",
+        display_name="st-abc-de",
+        id="st-abc-de",
+        state=V1CloudSpaceState.READY,
+        cluster_id="c-abc",
+    )
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        in_use=Externalv1CloudSpaceInstanceStatus(
+            startup_status=V1CloudSpaceInstanceStartupStatus(
+                initial_restore_finished=True, top_up_restore_finished=True
+            ),
+        )
+    )
+
     studio_api = StudioApi()
     kwargs = studio_api.duplicate_studio("st-abc", "ts-abc", "ts-abc")
 
@@ -279,7 +622,27 @@ def test_duplicate_org(internal_studio_api_mocker_duplicate_org):
         ("st-mno", False, "", "my-info"),
     ],
 )
-def test_install_plugin(internal_studio_api_install_plugin_mocker, studio_id, expect_error, error_message, expect_info):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_install_plugin",
+    autospec=True,
+)
+def test_install_plugin(mock_install_plugin, studio_id, expect_error, error_message, expect_info):
+    def _plugin_install_side_effect(self, project_id, id, plugin_id):
+        assert plugin_id == "my-fancy-plugin"
+        if id == "st-abc":
+            return V1Plugin(state="installation_success", error="")
+        if id == "st-def":
+            return V1Plugin(state="installation_success", error="abc")
+        if id == "st-ghi":
+            return V1Plugin(state="installation_error", error="")
+        if id == "st-jkl":
+            return V1Plugin(state="installation_error", error="jkl")
+        if id == "st-mno":
+            return V1Plugin(state="installation_success", error="", additional_info=" my-info \n")
+        return None
+
+    mock_install_plugin.side_effect = _plugin_install_side_effect
+
     studio_api = StudioApi()
 
     if expect_error:
@@ -303,7 +666,25 @@ def test_install_plugin(internal_studio_api_install_plugin_mocker, studio_id, ex
         ("st-jkl", True, "jkl"),
     ],
 )
-def test_uninstall_plugin(internal_studio_api_uninstall_plugin_mocker, studio_id, expect_error, error_message):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_uninstall_plugin",
+    autospec=True,
+)
+def test_uninstall_plugin(mock_uninstall_plugin, studio_id, expect_error, error_message):
+    def _plugin_uninstall_side_effect(self, project_id, id, plugin_id):
+        assert plugin_id == "my-fancy-plugin"
+        if id == "st-abc":
+            return V1Plugin(state="uninstallation_success", error="")
+        if id == "st-def":
+            return V1Plugin(state="uninstallation_success", error="abc")
+        if id == "st-ghi":
+            return V1Plugin(state="uninstallation_error", error="")
+        if id == "st-jkl":
+            return V1Plugin(state="uninstallation_error", error="jkl")
+        return None
+
+    mock_uninstall_plugin.side_effect = _plugin_uninstall_side_effect
+
     studio_api = StudioApi()
 
     if expect_error:
@@ -326,9 +707,29 @@ def test_uninstall_plugin(internal_studio_api_uninstall_plugin_mocker, studio_id
         ("st-pqr", True, "pqr", None),
     ],
 )
-def test_execute_plugin(
-    internal_studio_api_execute_plugin_mocker, studio_id, expect_error, error_message, expected_port
-):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_plugin",
+    autospec=True,
+)
+def test_execute_plugin(mock_execute_plugin, studio_id, expect_error, error_message, expected_port):
+    def _plugin_execute_side_effect(self, project_id, id, plugin_id):
+        assert plugin_id == "my-fancy-plugin"
+        if id == "st-abc":
+            return V1Plugin(state="execution_success", error="", additional_info='{"port": 0}')
+        if id == "st-def":
+            return V1Plugin(state="execution_success", error="", additional_info='{"port": 1}')
+        if id == "st-ghi":
+            return V1Plugin(state="execution_success", error="", additional_info='{"port": -1}')
+        if id == "st-jkl":
+            return V1Plugin(state="execution_success", error="jkl")
+        if id == "st-mno":
+            return V1Plugin(state="execution_error", error="")
+        if id == "st-pqr":
+            return V1Plugin(state="execution_error", error="pqr")
+        return None
+
+    mock_execute_plugin.side_effect = _plugin_execute_side_effect
+
     studio_api = StudioApi()
 
     if expect_error:
@@ -355,7 +756,15 @@ def test_execute_plugin(
             assert output_str == "This plugin can only be used on the browser interface of a Studio!"
 
 
-def test_list_available_plugins(internal_studio_api_list_available_plugins_mocker):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
+    autospec=True,
+)
+def test_list_available_plugins(mock_list_available_plugins):
+    mock_list_available_plugins.return_value = V1PluginsListResponse(
+        plugins={"plugin1": "description1", "plugin2": "description2", "plugin3": "description3"}
+    )
+
     studio_api = StudioApi()
 
     plugins = studio_api.list_available_plugins("st-abc", "teamspace-abc")
@@ -363,7 +772,18 @@ def test_list_available_plugins(internal_studio_api_list_available_plugins_mocke
     assert plugins == {"plugin1": "description1", "plugin2": "description2", "plugin3": "description3"}
 
 
-def test_list_installed_plugins(internal_studio_api_list_installed_plugins_mocker):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
+    autospec=True,
+)
+def test_list_installed_plugins(mock_list_installed_plugins):
+    mock_list_installed_plugins.return_value = V1PluginsListResponse(
+        plugins={
+            "plugin1": "description1",
+            "plugin2": "description2",
+        }
+    )
+
     studio_api = StudioApi()
 
     plugins = studio_api.list_installed_plugins("st-abc", "teamspace-abc")
@@ -374,13 +794,62 @@ def test_list_installed_plugins(internal_studio_api_list_installed_plugins_mocke
     }
 
 
-def test_create_job(internal_studio_api_create_app_mocker):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
+    autospec=True,
+)
+def test_create_job(mock_create_app):
+    def side_effect(self, body, project_id, cloudspace_id, id):
+        if id == "job":
+            assert body.plugin_arguments == {
+                "entrypoint": "my-entry-point",
+                "name": "fancy-job-name",
+                "compute": "lit-l4-1",
+                "spot": "false",
+            }
+
+        return V1CreateCloudSpaceAppInstanceResponse(
+            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
+        )
+
+    mock_create_app.side_effect = side_effect
+
     studio_api = StudioApi()
 
     resp = studio_api.create_job(
         "my-entry-point", "fancy-job-name", Machine.L4, "st-abc", "ts-abc", "cluster-abc", False
     )
     assert resp.name == "fancy-job-name"
+
+
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
+    autospec=True,
+)
+def test_create_mmt(mock_create_app):
+    def side_effect(self, body, project_id, cloudspace_id, id):
+        if id == "distributed_plugin":
+            assert body.plugin_arguments == {
+                "entrypoint": "my-entry-point",
+                "name": "fancy-mmt-name",
+                "distributedArguments": json.dumps(
+                    {"cloud_compute": "lit-l4-1", "num_instances": 4, "strategy": "parallel"}
+                ),
+                "spot": "false",
+            }
+
+        return V1CreateCloudSpaceAppInstanceResponse(
+            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
+        )
+
+    mock_create_app.side_effect = side_effect
+
+    studio_api = StudioApi()
+
+    resp = studio_api.create_multi_machine_job(
+        "my-entry-point", "fancy-mmt-name", 4, Machine.L4, "parallel", "st-abc", "ts-abc", "cluster-abc", False
+    )
+    assert resp.name == "fancy-mmt-name"
 
 
 def test_create_job_with_service_id(monkeypatch):
@@ -397,16 +866,33 @@ def test_create_job_with_service_id(monkeypatch):
     )
 
 
-def test_create_mmt(internal_studio_api_create_app_mocker):
-    studio_api = StudioApi()
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
+    autospec=True,
+)
+def test_create_inference_run(mock_create_app):
+    def side_effect(self, body, project_id, cloudspace_id, id):
+        if id == "inference_plugin":
+            assert body.plugin_arguments == {
+                "compute": "lit-l4-1",
+                "entrypoint": "my-entry-point",
+                "name": "fancy-inference-name",
+                "min_replicas": "1",
+                "max_replicas": "5",
+                "max_batch_size": "10",
+                "timeout_batching": "0.3",
+                "scale_in_interval": "11",
+                "scale_out_interval": "12",
+                "endpoint": "/fancy-predict",
+                "spot": "false",
+            }
 
-    resp = studio_api.create_multi_machine_job(
-        "my-entry-point", "fancy-mmt-name", 4, Machine.L4, "parallel", "st-abc", "ts-abc", "cluster-abc", False
-    )
-    assert resp.name == "fancy-mmt-name"
+        return V1CreateCloudSpaceAppInstanceResponse(
+            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
+        )
 
+    mock_create_app.side_effect = side_effect
 
-def test_create_inference_run(internal_studio_api_create_app_mocker):
     studio_api = StudioApi()
 
     resp = studio_api.create_inference_job(
@@ -429,7 +915,7 @@ def test_create_inference_run(internal_studio_api_create_app_mocker):
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
-@mock.patch("lightning_sdk.api.studio_api._FileUploader")
+@mock.patch("lightning_sdk.api.studio_api._FileUploader", autospec=True)
 def test_upload_file(
     uploader_mock,
     tmpdir,
@@ -451,25 +937,47 @@ def test_upload_file(
         teamspace_id="ts-abc",
         progress_bar=progress_bar,
     )
-    uploader_mock().assert_called_with()  # .__call__()
+    uploader_mock.return_value.assert_called_with()  # .__call__()
 
 
-def test_download_file(tmpdir, internal_studio_api_login, internal_studio_api_requests_get_mocker):
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
+)
+def test_download_file(mock_login, mock_requests_get, tmpdir):
+    mock_login.return_value = V1LoginResponse(token="token")
+
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")
     studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
 
 
-@mock.patch("lightning_sdk.api.studio_api.zipfile")
-def test_download_folder(_, tmpdir, internal_studio_api_login, internal_studio_api_requests_get_mocker):
+@mock.patch("lightning_sdk.api.studio_api.zipfile", autospec=True)
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
+)
+def test_download_folder(mock_login, mock_requests_get, mock_zipfile, tmpdir):
+    mock_login.return_value = V1LoginResponse(token="token")
+
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")
     studio_api.download_folder("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
 
 
-def test_start_new_port(internal_studio_api_start_new_port_mocker):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_create_endpoint",
+    autospec=True,
+)
+def test_start_new_port(mock_create_endpoint):
+    mock_create_endpoint.return_value = V1Endpoint(
+        id="endpoint-id",
+        name="endpoint-name",
+        urls=["http://localhost:8000"],
+    )
+
     studio_api = StudioApi()
 
     url = studio_api.start_new_port("st-abc", "ts-abc", "test", 8000)
@@ -477,7 +985,35 @@ def test_start_new_port(internal_studio_api_start_new_port_mocker):
     assert url == "http://localhost:8000", "endpoint_service_create_endpoint returns [localhost:8000] for urls"
 
 
-def test_update_autoshutdown_auto_sleep_on(internal_studio_api_mocker_update_autoshutdown):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_sleep_config",
+    autospec=True,
+)
+def test_update_autoshutdown_auto_sleep_on(mock_update_sleep_config):
+    def response(self, id, project_id, body):
+        if id == "st-abc":
+            if (
+                body.disable_auto_shutdown is not None
+                and body.idle_shutdown_seconds is not None
+                and body.idle_shutdown_seconds > 0
+            ):
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=body.disable_auto_shutdown, idle_shutdown_seconds=body.idle_shutdown_seconds
+                )
+
+            if body.idle_shutdown_seconds is not None and body.idle_shutdown_seconds > 0:
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=False, idle_shutdown_seconds=body.idle_shutdown_seconds
+                )
+
+            if body.disable_auto_shutdown is not None:
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=body.disable_auto_shutdown, idle_shutdown_seconds=600
+                )
+        return V1CloudSpaceInstanceConfig(disable_auto_shutdown=None, idle_shutdown_seconds=600)
+
+    mock_update_sleep_config.side_effect = response
+
     studio_api = StudioApi()
 
     config = studio_api.update_autoshutdown(studio_id="st-abc", teamspace_id="ts-abc", enabled=True)
@@ -485,7 +1021,35 @@ def test_update_autoshutdown_auto_sleep_on(internal_studio_api_mocker_update_aut
     assert config.idle_shutdown_seconds == 600
 
 
-def test_update_autoshutdown_auto_sleep_off(internal_studio_api_mocker_update_autoshutdown):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_sleep_config",
+    autospec=True,
+)
+def test_update_autoshutdown_auto_sleep_off(mock_update_sleep_config):
+    def response(self, id, project_id, body):
+        if id == "st-abc":
+            if (
+                body.disable_auto_shutdown is not None
+                and body.idle_shutdown_seconds is not None
+                and body.idle_shutdown_seconds > 0
+            ):
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=body.disable_auto_shutdown, idle_shutdown_seconds=body.idle_shutdown_seconds
+                )
+
+            if body.idle_shutdown_seconds is not None and body.idle_shutdown_seconds > 0:
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=False, idle_shutdown_seconds=body.idle_shutdown_seconds
+                )
+
+            if body.disable_auto_shutdown is not None:
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=body.disable_auto_shutdown, idle_shutdown_seconds=600
+                )
+        return V1CloudSpaceInstanceConfig(disable_auto_shutdown=None, idle_shutdown_seconds=600)
+
+    mock_update_sleep_config.side_effect = response
+
     studio_api = StudioApi()
 
     config = studio_api.update_autoshutdown(studio_id="st-abc", teamspace_id="ts-abc", enabled=False)
@@ -493,7 +1057,35 @@ def test_update_autoshutdown_auto_sleep_off(internal_studio_api_mocker_update_au
     assert config.idle_shutdown_seconds == 600
 
 
-def test_update_autoshutdown_idle_shutdown(internal_studio_api_mocker_update_autoshutdown):
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_sleep_config",
+    autospec=True,
+)
+def test_update_autoshutdown_idle_shutdown(mock_update_sleep_config):
+    def response(self, id, project_id, body):
+        if id == "st-abc":
+            if (
+                body.disable_auto_shutdown is not None
+                and body.idle_shutdown_seconds is not None
+                and body.idle_shutdown_seconds > 0
+            ):
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=body.disable_auto_shutdown, idle_shutdown_seconds=body.idle_shutdown_seconds
+                )
+
+            if body.idle_shutdown_seconds is not None and body.idle_shutdown_seconds > 0:
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=False, idle_shutdown_seconds=body.idle_shutdown_seconds
+                )
+
+            if body.disable_auto_shutdown is not None:
+                return V1CloudSpaceInstanceConfig(
+                    disable_auto_shutdown=body.disable_auto_shutdown, idle_shutdown_seconds=600
+                )
+        return V1CloudSpaceInstanceConfig(disable_auto_shutdown=None, idle_shutdown_seconds=600)
+
+    mock_update_sleep_config.side_effect = response
+
     studio_api = StudioApi()
 
     config = studio_api.update_autoshutdown(studio_id="st-abc", teamspace_id="ts-abc", idle_shutdown_seconds=900)
