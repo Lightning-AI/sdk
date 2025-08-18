@@ -1,9 +1,10 @@
 import click
 
+from lightning_sdk.cli.utils.resolve import resolve_teamspace_owner_name_format
 from lightning_sdk.organization import Organization
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.config import Config, DefaultConfigKeys
-from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace, _resolve_user
+from lightning_sdk.utils.resolve import _resolve_org, _resolve_user
 
 
 @click.group("set")
@@ -59,22 +60,7 @@ def set_teamspace(teamspace_name: str) -> None:
     """Set the default teamspace name in the config."""
     config = Config()
 
-    splits = teamspace_name.split("/")
-    teamspace_resolved = None
-    if len(splits) == 1:
-        try:
-            teamspace_resolved = _resolve_teamspace(teamspace_name, None, None)
-        except Exception:
-            teamspace_resolved = None
-
-    elif len(splits) == 2:
-        try:
-            try:
-                teamspace_resolved = _resolve_teamspace(splits[1], splits[0], None)
-            except Exception:
-                teamspace_resolved = _resolve_teamspace(splits[1], None, splits[0])
-        except Exception:
-            teamspace_resolved = None
+    teamspace_resolved = resolve_teamspace_owner_name_format(teamspace_name)
 
     if teamspace_resolved is None:
         # TODO: make this a generic CLI error
