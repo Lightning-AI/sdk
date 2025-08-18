@@ -1,0 +1,41 @@
+"""Studio start command."""
+
+from typing import Optional
+
+import click
+
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+from lightning_sdk.machine import CloudProvider
+from lightning_sdk.studio import Studio
+
+
+@click.command("create")
+@click.argument("studio_name", required=False)
+@click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
+@click.option(
+    "--cloud-provider",
+    help="The cloud provider to start the studio on. Defaults to teamspace default.",
+    type=click.Choice(m.name for m in list(CloudProvider)),
+)
+def create_studio(
+    studio_name: Optional[str] = None,
+    teamspace: Optional[str] = None,
+    cloud_provider: Optional[str] = None,
+) -> None:
+    """Create a new Studio.
+
+    Example:
+        lightning studio create [STUDIO_NAME]
+
+    STUDIO_NAME: the name of the studio to create.
+
+    If STUDIO_NAME is not provided, will try to infer from environment or use the default value from the config.
+    """
+    try:
+        studio = Studio(studio_name, teamspace=teamspace, create_ok=True, cloud_provider=cloud_provider)
+    except (RuntimeError, ValueError, ApiException):
+        if studio_name:
+            raise ValueError(f"Could not create Studio: '{studio_name}'. Does the Studio exist?") from None
+        raise ValueError(f"Could not create Studio: '{studio_name}'. Please provide a Studio name") from None
+
+    click.echo(f"Studio '{studio.name}' created successfully")
