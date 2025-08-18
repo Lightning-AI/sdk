@@ -98,12 +98,25 @@ class Studio:
             default_cloud_account=self._teamspace.default_cloud_account,
         )
 
+        # Resolve studio name if not provided: explicit → env (LIGHTNING_CLOUD_SPACE_ID) → config defaults
         if name is None:
             studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
-            if studio_id is None:
-                raise ValueError("Cannot autodetect Studio. Either use the SDK from within a Studio or pass a name!")
-            self._studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
-        else:
+            if studio_id is not None:
+                # We're inside a studio, get it by ID
+                self._studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
+            else:
+                # Try config defaults
+                from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+                config = Config()
+                name = config.get_value(DefaultConfigKeys.studio)
+                if name is None:
+                    raise ValueError(
+                        "Cannot autodetect Studio. Either use the SDK from within a Studio or pass a name!"
+                    )
+
+        # If we have a name (explicit or from config), get studio by name
+        if name is not None:
             try:
                 self._studio = self._studio_api.get_studio(name, self._teamspace.id)
             except ValueError as e:

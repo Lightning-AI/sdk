@@ -1,4 +1,5 @@
 import os
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Sequence
 
@@ -7,11 +8,12 @@ import yaml
 _DEFAULT_CONFIG_FILE_PATH = "~/.lightning/config.yaml"
 
 
-@dataclass
+@dataclass(frozen=True)
 class DefaultConfigKeys:
     """Default configuration keys for the Lightning SDK."""
 
     organization: str = "organization.name"
+    user: str = "user.name"
 
     teamspace_name: str = "teamspace.name"
     teamspace_owner: str = "teamspace.owner"
@@ -73,6 +75,7 @@ class Config:
 
     def _save_config(self, config: Dict[str, Any]) -> None:
         os.makedirs(os.path.dirname(self._config_file), exist_ok=True)
+        config = _unflatten_dict(config)
         with open(self._config_file, "w") as f:
             yaml.safe_dump(config, f, default_flow_style=False, sort_keys=True)
 
@@ -85,6 +88,27 @@ class Config:
             curr = curr[k]
         curr[keys[-1]] = value
         self._save_config(config)
+
+    def get_value(self, key_path: str) -> Optional[str]:
+        """Gets a value from the config using dot notation.
+
+        Args:
+            key_path: the dot-separated path to the config value (e.g. "teamspace.name")
+
+        Returns:
+            The config value if found, None otherwise
+        """
+        config = self._load_config()
+        if not isinstance(config, Mapping):
+            return None
+
+        keys = key_path.split(".")
+        curr = config
+        for k in keys:
+            if not isinstance(curr, dict) or k not in curr:
+                return None
+            curr = curr[k]
+        return curr if isinstance(curr, str) else None
 
     def __getattr__(self, name: str) -> ConfigProxy:
         """Returns a proxy to the actual values to allow for nested access.
@@ -104,3 +128,28 @@ class Config:
         else:
             # Assign a value at the root level
             self._set_nested([name], value)
+
+    def __repr__(self) -> str:
+        """Returns a string representation of the config."""
+        return str(self)
+
+    def __str__(self) -> str:
+        """Returns a string representation of the config."""
+        return yaml.dump(
+            {"Config": {"config_file": self._config_file, **self._load_config()}},
+            indent=4,
+            sort_keys=True,
+        )
+
+
+def _unflatten_dict(flat_dict: Dict[str, Any]) -> Dict[str, Any]:
+    unflattened_dict = {}
+    for key, value in flat_dict.items():
+        keys = key.split(".")
+        curr = unflattened_dict
+        for k in keys[:-1]:
+            if k not in curr:
+                curr[k] = {}
+            curr = curr[k]
+        curr[keys[-1]] = value
+    return unflattened_dict

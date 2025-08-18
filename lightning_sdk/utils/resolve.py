@@ -90,6 +90,11 @@ def _resolve_deprecated_cluster(cloud_account: Optional[str], cluster: Optional[
 def _resolve_org_name(name: Optional[str]) -> Optional[str]:
     if name is None:
         name = os.environ.get("LIGHTNING_ORG", "") or None
+    if name is None:
+        from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+        config = Config()
+        name = config.get_value(DefaultConfigKeys.organization)
     return name
 
 
@@ -118,6 +123,11 @@ def _resolve_org(org: Optional[Union[str, "Organization"]]) -> Optional["Organiz
 def _resolve_user_name(name: Optional[str]) -> Optional[str]:
     if name is None:
         name = os.environ.get("LIGHTNING_USERNAME", "") or None
+    if name is None:
+        from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+        config = Config()
+        name = config.get_value(DefaultConfigKeys.user)
     return name
 
 
@@ -137,6 +147,11 @@ def _resolve_user(user: Optional[Union[str, "User"]]) -> Optional["User"]:
 def _resolve_teamspace_name(name: Optional[str]) -> Optional[str]:
     if name is None:
         name = os.environ.get("LIGHTNING_TEAMSPACE", "") or None
+    if name is None:
+        from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+        config = Config()
+        name = config.get_value(DefaultConfigKeys.teamspace_name)
     return name
 
 
@@ -165,10 +180,29 @@ def _resolve_teamspace(
         return Teamspace(name=teamspace, org=org)
 
     user = _resolve_user(user)
-    if user is None:
-        raise RuntimeError("Neither user nor org provided, but one of them needs to be provided")
 
-    return Teamspace(name=teamspace, user=user)
+    # If still no user or org resolved, try config defaults
+    if user is None and org is None:
+        from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+        config = Config()
+        owner_type = config.get_value(DefaultConfigKeys.teamspace_owner_type)
+        owner_name = config.get_value(DefaultConfigKeys.teamspace_owner)
+
+        if owner_type and owner_name:
+            if owner_type.lower() == "organization":
+                org = _resolve_org(owner_name)
+            elif owner_type.lower() == "user":
+                user = _resolve_user(owner_name)
+
+    # Final resolution check
+    if org is not None:
+        return Teamspace(name=teamspace, org=org)
+
+    if user is not None:
+        return Teamspace(name=teamspace, user=user)
+
+    raise RuntimeError("Neither user nor org provided, but one of them needs to be provided")
 
 
 def _get_organizations_for_authed_user() -> List["Organization"]:

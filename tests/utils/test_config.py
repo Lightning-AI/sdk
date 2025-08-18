@@ -605,3 +605,66 @@ def test_config_set_nested_with_list_values():
         result = config._load_config()
         expected = {"servers": {"hosts": ["host1", "host2", "host3"], "ports": [8080, 8081, 8082]}}
         assert result == expected
+
+
+def test_config_get_value_existing_key():
+    """Test Config.get_value with existing key."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config_path = os.path.join(tmpdir, "config.yaml")
+        config_data = {
+            "organization": {"name": "test-org"},
+            "teamspace": {"name": "test-teamspace", "owner": "test-owner", "owner_type": "organization"},
+            "studio": {"name": "test-studio"},
+        }
+
+        with open(config_path, "w") as f:
+            yaml.safe_dump(config_data, f)
+
+        config = Config(config_path)
+
+        assert config.get_value("organization.name") == "test-org"
+        assert config.get_value("teamspace.name") == "test-teamspace"
+        assert config.get_value("teamspace.owner") == "test-owner"
+        assert config.get_value("teamspace.owner_type") == "organization"
+        assert config.get_value("studio.name") == "test-studio"
+
+
+def test_config_get_value_nonexistent_key():
+    """Test Config.get_value with nonexistent key."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config_path = os.path.join(tmpdir, "config.yaml")
+        config = Config(config_path)
+
+        assert config.get_value("nonexistent.key") is None
+        assert config.get_value("organization.name") is None
+
+
+def test_config_get_value_partial_path():
+    """Test Config.get_value with partial existing path."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config_path = os.path.join(tmpdir, "config.yaml")
+        config_data = {"organization": {"display_name": "Test Org"}}
+
+        with open(config_path, "w") as f:
+            yaml.safe_dump(config_data, f)
+
+        config = Config(config_path)
+
+        assert config.get_value("organization.name") is None
+        assert config.get_value("organization.display_name") == "Test Org"
+
+
+def test_config_get_value_non_string_value():
+    """Test Config.get_value with non-string values."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config_path = os.path.join(tmpdir, "config.yaml")
+        config_data = {"settings": {"count": 42, "enabled": True, "items": ["a", "b"]}}
+
+        with open(config_path, "w") as f:
+            yaml.safe_dump(config_data, f)
+
+        config = Config(config_path)
+
+        assert config.get_value("settings.count") is None  # Should return None for non-string
+        assert config.get_value("settings.enabled") is None
+        assert config.get_value("settings.items") is None

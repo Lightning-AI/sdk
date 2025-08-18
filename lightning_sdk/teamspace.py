@@ -70,6 +70,20 @@ class Teamspace:
             self._user = _resolve_user(user)
             self._org = _resolve_org(org)
 
+        # If still no user or org resolved, try config defaults
+        if self._user is None and self._org is None:
+            from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+            config = Config()
+            owner_type = config.get_value(DefaultConfigKeys.teamspace_owner_type)
+            owner_name = config.get_value(DefaultConfigKeys.teamspace_owner)
+
+            if owner_type and owner_name:
+                if owner_type.lower() == "organization":
+                    self._org = _resolve_org(owner_name)
+                elif owner_type.lower() == "user":
+                    self._user = _resolve_user(owner_name)
+
         self._owner: Owner
         if self._user is None and self._org is None:
             raise RuntimeError(
