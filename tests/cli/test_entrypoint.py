@@ -17,6 +17,7 @@ Options:
 
 Commands:
   aihub      Interact with Lightning Studio - AI Hub.
+  config     Manage Lightning SDK and CLIconfiguration.
   configure  Configure access to resources on the Lightning AI platform.
   connect    Connect to lightning products.
   create     Create new resources on the Lightning AI platform.
@@ -33,6 +34,7 @@ Commands:
   run        Run async workloads on the Lightning AI platform.
   start      Start resources on the Lightning AI platform.
   stop       Stop resources on the Lightning AI platform.
+  studio     Manage Lightning AI Studios.
   switch     Switch machines for resources on the Lightning AI platform.
   upload     Upload assets to Lightning AI.
 """

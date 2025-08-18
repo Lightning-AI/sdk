@@ -18,8 +18,8 @@ from lightning_sdk.api.studio_api import _cloud_url
 # Import legacy groups directly from groups.py
 from lightning_sdk.cli.groups import (
     config,
-    job,
-    mmt,
+    # job,
+    # mmt,
     studio,
 )
 from lightning_sdk.cli.utils import CustomHelpFormatter, rich_to_str
@@ -78,13 +78,12 @@ def logout() -> None:
     auth.clear()
 
 
-if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI", None) == "1":
-    # Add new command groups
-    main_cli.add_command(config)
-    main_cli.add_command(job)
-    main_cli.add_command(mmt)
-    main_cli.add_command(studio)
-else:
+# Add new command groups
+main_cli.add_command(config)
+# main_cli.add_command(job)
+# main_cli.add_command(mmt)
+main_cli.add_command(studio)
+if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
     #### LEGACY COMMANDS ####
     # these commands are currently supported for backwards compatibility, but will potentially be removed in the future.
     # they've grown pretty wild and provide a very inconsistent UX.
