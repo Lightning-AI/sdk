@@ -23,6 +23,7 @@ dependencies = [ # alphabetically sorted
     "fastapi", # for lightning-cloud
     "packaging", # for version checks
     "pyjwt", # for lightning-cloud
+    "pyyaml", # for config handling
     "requests", # for downloading files via urls
     "rich", # for nice printing
     "simple-term-menu", # for CLI
