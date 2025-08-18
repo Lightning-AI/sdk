@@ -7,7 +7,7 @@ from types import TracebackType
 from typing import Type
 
 import click
-from rich.console import Console, Group
+from rich.console import Group
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.text import Text
@@ -22,14 +22,13 @@ from lightning_sdk.cli.groups import (
     mmt,
     studio,
 )
+from lightning_sdk.cli.utils import CustomHelpFormatter, rich_to_str
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.login import Auth
 
 
 def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:
     """CLI won't show tracebacks, just print the exception message."""
-    console = Console()
-
     message = str(value.args[0]) if value.args else str(value) or "An unknown error occurred"
 
     error_text = Text()
@@ -47,13 +46,17 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
 
     renderables.append(Text("\n📘 Need help? Run: lightning <command> --help", style="cyan"))
 
-    console.print(Panel(Group(*renderables), title="⚡ Lightning CLI Error", border_style="red"))
+    text = rich_to_str(Panel(Group(*renderables), title="⚡ Lightning CLI Error", border_style="red"))
+    click.echo(text, color=True)
 
 
 @click.group(name="lightning", help="Command line interface (CLI) to interact with/manage Lightning AI Studios.")
 @click.version_option(__version__, message="Lightning CLI version %(version)s")
 def main_cli() -> None:
     sys.excepthook = _notify_exception
+
+
+main_cli.context_class.formatter_class = CustomHelpFormatter
 
 
 @main_cli.command
