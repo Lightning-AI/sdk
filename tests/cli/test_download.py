@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from lightning_sdk.cli.download import _expand_remote_path
+from lightning_sdk.cli.legacy.download import _expand_remote_path
 
 
 def test_download_help():

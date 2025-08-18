@@ -8,7 +8,7 @@ from rich.console import Console
 
 from lightning_sdk import Machine, Studio
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
-from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.machine import CloudProvider
 from lightning_sdk.utils.resolve import _resolve_deprecated_provider
 

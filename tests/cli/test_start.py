@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from lightning_sdk.cli import start as start_cli
+from lightning_sdk.cli.legacy import start as start_cli
 
 
 def test_start_help():
@@ -62,7 +62,7 @@ Options:
     )
 
 
-@patch("lightning_sdk.cli.start.Studio")
+@patch("lightning_sdk.cli.legacy.start.Studio")
 def test_start_cli(mock_studio_class):
     mock_studio_instance = mock_studio_class.return_value
     mock_studio_instance.start.side_effect = Exception("Studio not found")

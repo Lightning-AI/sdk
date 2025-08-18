@@ -1,8 +1,8 @@
 from typing import Optional
 
-from lightning_sdk.cli.jobs_menu import _JobsMenu
-from lightning_sdk.cli.mmts_menu import _MMTsMenu
-from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.legacy.jobs_menu import _JobsMenu
+from lightning_sdk.cli.legacy.mmts_menu import _MMTsMenu
+from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.job import Job
 from lightning_sdk.mmt import MMT
 

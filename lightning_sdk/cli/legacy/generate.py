@@ -3,7 +3,7 @@ from typing import Optional
 import click
 from rich.console import Console
 
-from lightning_sdk.cli.studios_menu import _StudiosMenu
+from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
 
 
 @click.group(name="generate")

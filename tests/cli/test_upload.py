@@ -2,8 +2,8 @@ import subprocess
 
 import pytest
 
-from lightning_sdk.cli.exceptions import StudioCliError
-from lightning_sdk.cli.upload import _file, _folder
+from lightning_sdk.cli.legacy.exceptions import StudioCliError
+from lightning_sdk.cli.legacy.upload import _file, _folder
 
 
 def test_upload_help():

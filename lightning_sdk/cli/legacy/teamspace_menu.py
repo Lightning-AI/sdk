@@ -4,7 +4,7 @@ from rich.console import Console
 from simple_term_menu import TerminalMenu
 
 from lightning_sdk.api import OrgApi
-from lightning_sdk.cli.exceptions import StudioCliError
+from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.resolve import _get_authed_user

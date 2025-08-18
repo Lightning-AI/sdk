@@ -7,8 +7,8 @@ from rich.table import Table
 from typing_extensions import Literal
 
 from lightning_sdk import Job, Machine, Studio, Teamspace
-from lightning_sdk.cli.clusters_menu import _ClustersMenu
-from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.legacy.clusters_menu import _ClustersMenu
+from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi import V1MultiMachineJob
 from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.utils.resolve import _get_authed_user

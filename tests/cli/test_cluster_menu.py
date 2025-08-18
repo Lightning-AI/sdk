@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 
-from lightning_sdk.cli.clusters_menu import _ClustersMenu
+from lightning_sdk.cli.legacy.clusters_menu import _ClustersMenu
 from lightning_sdk.lightning_cloud.openapi import Externalv1Cluster, V1ClusterType, V1ProjectClusterBinding
 
 
@@ -33,8 +33,8 @@ class TestClustersMenu:
             ["cluster-1", "cluster-2", "cluster-3"]
         )
 
-    @patch("lightning_sdk.cli.clusters_menu.CloudAccountApi")
-    @patch("lightning_sdk.cli.clusters_menu.Console")
+    @patch("lightning_sdk.cli.legacy.clusters_menu.CloudAccountApi")
+    @patch("lightning_sdk.cli.legacy.clusters_menu.Console")
     @patch("sys.exit")
     def test_resolve_cluster_from_teamspace_byoc(self, mock_exit, mock_console_class, mock_cloud_account_api_class):
         mock_console = MagicMock()
@@ -57,8 +57,8 @@ class TestClustersMenu:
             cloud_account_id="cluster-2", org_id=self.mock_teamspace.owner.id, teamspace_id=self.mock_teamspace.id
         )
 
-    @patch("lightning_sdk.cli.clusters_menu.CloudAccountApi")
-    @patch("lightning_sdk.cli.clusters_menu.Console")
+    @patch("lightning_sdk.cli.legacy.clusters_menu.CloudAccountApi")
+    @patch("lightning_sdk.cli.legacy.clusters_menu.Console")
     @patch("sys.exit")
     def test_resolve_cluster_from_teamspace_lightning_saas(
         self, mock_exit, mock_console_class, mock_cloud_account_api_class
@@ -85,7 +85,7 @@ class TestClustersMenu:
             cloud_account_id="cluster-2", org_id=self.mock_teamspace.owner.id, teamspace_id=self.mock_teamspace.id
         )
 
-    @patch("lightning_sdk.cli.clusters_menu.TerminalMenu")
+    @patch("lightning_sdk.cli.legacy.clusters_menu.TerminalMenu")
     def test_prepare_terminal_menu_teamspaces(self, mock_terminal_menu_class):
         cluster_ids = ["cluster-a", "cluster-b", "cluster-c"]
         result = self.clusters_menu._prepare_terminal_menu_teamspaces(cluster_ids)
@@ -95,8 +95,8 @@ class TestClustersMenu:
         )
         assert result == mock_terminal_menu_class.return_value
 
-    @patch("lightning_sdk.cli.clusters_menu.CloudAccountApi")
-    @patch("lightning_sdk.cli.clusters_menu.Console")
+    @patch("lightning_sdk.cli.legacy.clusters_menu.CloudAccountApi")
+    @patch("lightning_sdk.cli.legacy.clusters_menu.Console")
     @patch("sys.exit")
     def test_resolve_cluster_success(self, mock_exit, mock_console_class, mock_cloud_account_api_class):
         mock_console = MagicMock()
@@ -119,7 +119,7 @@ class TestClustersMenu:
         )
         mock_exit.assert_not_called()
 
-    @patch("lightning_sdk.cli.clusters_menu.Console")
+    @patch("lightning_sdk.cli.legacy.clusters_menu.Console")
     @patch("sys.exit")
     def test_resolve_cluster_keyboard_interrupt(self, mock_exit, mock_console_class):
         mock_console = MagicMock()
@@ -132,7 +132,7 @@ class TestClustersMenu:
         mock_console.print.assert_called_once_with("Operation cancelled by user")
         mock_exit.assert_called_once_with(0)
 
-    @patch("lightning_sdk.cli.clusters_menu.Console")
+    @patch("lightning_sdk.cli.legacy.clusters_menu.Console")
     @patch("sys.exit")
     def test_resolve_cluster_exception(self, mock_exit, mock_console_class):
         mock_console = MagicMock()

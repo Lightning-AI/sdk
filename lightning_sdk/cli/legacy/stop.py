@@ -3,7 +3,7 @@ from typing import Optional
 import click
 from rich.console import Console
 
-from lightning_sdk.cli.job_and_mmt_action import _JobAndMMTAction
+from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.studio import Studio
 

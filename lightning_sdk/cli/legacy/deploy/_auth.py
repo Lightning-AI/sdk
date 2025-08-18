@@ -10,7 +10,7 @@ from rich.prompt import Confirm
 
 from lightning_sdk import Teamspace
 from lightning_sdk.api import UserApi
-from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace

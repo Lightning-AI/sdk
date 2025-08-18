@@ -6,8 +6,8 @@ from typing import Optional
 import click
 from rich.console import Console
 
-from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
-from lightning_sdk.cli.upload import _upload_folder
+from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.legacy.upload import _upload_folder
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils.resolve import _get_studio_url

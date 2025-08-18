@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from lightning_utilities.core.imports import package_available
 
-from lightning_sdk.cli.docker_cli import _api as docker_api
+from lightning_sdk.cli.legacy.docker_cli import _api as docker_api
 
 _LLITSERVE_AVAILABLE = package_available("litserve")
 

@@ -14,9 +14,9 @@ from tqdm import tqdm
 
 from lightning_sdk.api.lit_container_api import DockerNotRunningError, LCRAuthFailedError, LitContainerApi
 from lightning_sdk.api.utils import _get_cloud_url
-from lightning_sdk.cli.exceptions import StudioCliError
-from lightning_sdk.cli.studios_menu import _StudiosMenu
-from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.legacy.exceptions import StudioCliError
+from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
+from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.models import upload_model as _upload_model
 from lightning_sdk.studio import Studio

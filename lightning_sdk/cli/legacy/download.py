@@ -9,9 +9,9 @@ from rich.console import Console
 
 from lightning_sdk.api.license_api import LicenseApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
-from lightning_sdk.cli.exceptions import StudioCliError
-from lightning_sdk.cli.studios_menu import _StudiosMenu
-from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.legacy.exceptions import StudioCliError
+from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
+from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.models import download_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init

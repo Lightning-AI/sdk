@@ -4,14 +4,14 @@ from unittest import mock
 
 from click.testing import CliRunner
 
-from lightning_sdk.cli.open import open
+from lightning_sdk.cli.legacy.open import open
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
-@mock.patch("lightning_sdk.cli.open.webbrowser")
-@mock.patch("lightning_sdk.cli.open.Studio")
-@mock.patch("lightning_sdk.cli.open.Teamspace")
-@mock.patch("lightning_sdk.cli.open._upload_folder")
+@mock.patch("lightning_sdk.cli.legacy.open.webbrowser")
+@mock.patch("lightning_sdk.cli.legacy.open.Studio")
+@mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
+@mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
 def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"
@@ -34,10 +34,10 @@ def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, mock_webbr
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
-@mock.patch("lightning_sdk.cli.open.webbrowser")
-@mock.patch("lightning_sdk.cli.open.Studio")
-@mock.patch("lightning_sdk.cli.open.Teamspace")
-@mock.patch("lightning_sdk.cli.open._upload_folder")
+@mock.patch("lightning_sdk.cli.legacy.open.webbrowser")
+@mock.patch("lightning_sdk.cli.legacy.open.Studio")
+@mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
+@mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
 def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"
@@ -60,10 +60,10 @@ def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrow
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
-@mock.patch("lightning_sdk.cli.open.webbrowser")
-@mock.patch("lightning_sdk.cli.open.Studio")
-@mock.patch("lightning_sdk.cli.open.Teamspace")
-@mock.patch("lightning_sdk.cli.open._upload_folder")
+@mock.patch("lightning_sdk.cli.legacy.open.webbrowser")
+@mock.patch("lightning_sdk.cli.legacy.open.Studio")
+@mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
+@mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
 def test_open_file_without_cloud_account(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"

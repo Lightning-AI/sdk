@@ -3,9 +3,9 @@ from typing import Optional
 import click
 from rich.console import Console
 
-from lightning_sdk.cli.exceptions import StudioCliError
-from lightning_sdk.cli.job_and_mmt_action import _JobAndMMTAction
-from lightning_sdk.cli.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.legacy.exceptions import StudioCliError
+from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
+from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.studio import Studio

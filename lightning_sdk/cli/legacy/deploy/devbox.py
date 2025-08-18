@@ -12,8 +12,14 @@ from rich.prompt import Confirm
 from rich.syntax import Syntax
 
 from lightning_sdk import Machine
-from lightning_sdk.cli.deploy._auth import _AuthMode, _Onboarding, authenticate, poll_verified_status, select_teamspace
-from lightning_sdk.cli.upload import (
+from lightning_sdk.cli.legacy.deploy._auth import (
+    _AuthMode,
+    _Onboarding,
+    authenticate,
+    poll_verified_status,
+    select_teamspace,
+)
+from lightning_sdk.cli.legacy.upload import (
     _dump_current_upload_state,
     _resolve_previous_upload_state,
     _single_file_upload,

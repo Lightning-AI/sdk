@@ -4,8 +4,8 @@ from typing import Optional
 
 import click
 
-from lightning_sdk.cli.configure import _configure_ssh_internal
-from lightning_sdk.cli.studios_menu import _StudiosMenu
+from lightning_sdk.cli.legacy.configure import _configure_ssh_internal
+from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
 
 
 @click.group(name="connect")

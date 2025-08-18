@@ -3,7 +3,7 @@ from typing import Dict
 
 import pytest
 
-from lightning_sdk.cli.run import _resolve_envs, _resolve_path_mapping
+from lightning_sdk.cli.legacy.run import _resolve_envs, _resolve_path_mapping
 
 
 def test_run_help():

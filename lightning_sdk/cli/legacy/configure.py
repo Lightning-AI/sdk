@@ -7,8 +7,8 @@ from typing import Optional, Union
 import click
 from rich.console import Console
 
-from lightning_sdk.cli.generate import _generate_ssh_config
-from lightning_sdk.cli.studios_menu import _StudiosMenu
+from lightning_sdk.cli.legacy.generate import _generate_ssh_config
+from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
 from lightning_sdk.lightning_cloud.login import Auth
 
 

@@ -15,15 +15,15 @@ from rich.prompt import Confirm
 from lightning_sdk import Machine, Teamspace
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_registry_url
-from lightning_sdk.cli.clusters_menu import _ClustersMenu
-from lightning_sdk.cli.deploy._auth import (
+from lightning_sdk.cli.legacy.clusters_menu import _ClustersMenu
+from lightning_sdk.cli.legacy.deploy._auth import (
     _AuthMode,
     _Onboarding,
     authenticate,
     poll_verified_status,
     select_teamspace,
 )
-from lightning_sdk.cli.deploy.devbox import _handle_devbox
+from lightning_sdk.cli.legacy.deploy.devbox import _handle_devbox
 from lightning_sdk.serve import _LitServeDeployer
 
 _MACHINE_VALUES = tuple(
