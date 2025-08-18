@@ -4,7 +4,9 @@ from typing import Optional
 
 import click
 
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider, Machine
+from lightning_sdk.studio import Studio
 
 
 @click.command("start")
@@ -13,13 +15,13 @@ from lightning_sdk.machine import CloudProvider, Machine
 @click.option("--create", is_flag=True, help="Create the studio if it doesn't exist")
 @click.option(
     "--machine",
-    help="The machine type to start the studio on.",
-    type=click.Choice(m.name for m in Machine.__dict__.values() if isinstance(m, Machine)),
+    help="The machine type to start the studio on. Defaults to CPU-4",
+    type=click.Choice(m.name for m in Machine.__dict__.values() if isinstance(m, Machine) and m._include_in_cli),
 )
 @click.option("--interruptible", is_flag=True, help="Start the studio on an interruptible instance.")
 @click.option(
     "--cloud-provider",
-    help="The cloud provider to start the studio on.",
+    help="The cloud provider to start the studio on. Defaults to teamspace default.",
     type=click.Choice(m.name for m in list(CloudProvider)),
 )
 def start_studio(
@@ -30,5 +32,21 @@ def start_studio(
     interruptible: bool = False,
     cloud_provider: Optional[str] = None,
 ) -> None:
-    """Start a Studio."""
-    raise NotImplementedError("Not implemented")
+    """Start a Studio.
+
+    Example:
+        lightning studio start [STUDIO_NAME]
+
+    STUDIO_NAME: the name of the studio to start.
+
+    If STUDIO_NAME is not provided, will try to infer from environment or use the default value from the config.
+    """
+    try:
+        studio = Studio(studio_name, teamspace=teamspace, create_ok=create, cloud_provider=cloud_provider)
+    except (RuntimeError, ValueError, ApiException):
+        if studio_name:
+            raise ValueError(f"Could not start Studio: '{studio_name}'. Does the Studio exist?") from None
+        raise ValueError(f"Could not start Studio: '{studio_name}'. Please provide a Studio name") from None
+
+    studio.start(machine, interruptible=interruptible)
+    click.echo(f"Studio '{studio.name}' started successfully")
