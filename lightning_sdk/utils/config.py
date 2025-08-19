@@ -23,6 +23,9 @@ class DefaultConfigKeys:
 
     studio: str = "studio.name"
 
+    cloud_account: str = "cloud_account.name"
+    cloud_provider: str = "cloud_provider.name"
+
 
 class ConfigProxy:
     def __init__(self, root: "Config", *path: str) -> None:

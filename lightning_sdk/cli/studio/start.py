@@ -22,8 +22,16 @@ from lightning_sdk.studio import Studio
 @click.option("--interruptible", is_flag=True, help="Start the studio on an interruptible instance.")
 @click.option(
     "--cloud-provider",
-    help="The cloud provider to start the studio on. Defaults to teamspace default.",
+    help=(
+        "The cloud provider to start the studio on. Defaults to teamspace default. "
+        "Only used if --create is specified."
+    ),
     type=click.Choice(m.name for m in list(CloudProvider)),
+)
+@click.option(
+    "--cloud-account",
+    help="The cloud account to start the studio on. Defaults to teamspace default. Only used if --create is specified.",
+    type=click.STRING,
 )
 def start_studio(
     studio_name: Optional[str] = None,
@@ -32,6 +40,7 @@ def start_studio(
     machine: Optional[str] = None,
     interruptible: bool = False,
     cloud_provider: Optional[str] = None,
+    cloud_account: Optional[str] = None,
 ) -> None:
     """Start a Studio.
 
@@ -52,8 +61,17 @@ def start_studio(
     else:
         resolved_teamspace = None
 
+    if cloud_provider is not None:
+        cloud_provider = CloudProvider(cloud_provider)
+
     try:
-        studio = Studio(studio_name, teamspace=resolved_teamspace, create_ok=create, cloud_provider=cloud_provider)
+        studio = Studio(
+            studio_name,
+            teamspace=resolved_teamspace,
+            create_ok=create,
+            cloud_provider=cloud_provider,
+            cloud_account=cloud_account,
+        )
     except (RuntimeError, ValueError, ApiException):
         if studio_name:
             raise ValueError(f"Could not start Studio: '{studio_name}'. Does the Studio exist?") from None

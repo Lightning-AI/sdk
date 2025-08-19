@@ -39,3 +39,19 @@ def get_studio() -> None:
     config = Config()
     studio = config.get_value(DefaultConfigKeys.studio)
     click.echo(studio)
+
+
+@get.command("cloud-account")
+def get_cloud_account() -> None:
+    """Get the default cloud account name from the config."""
+    config = Config()
+    cloud_account = config.get_value(DefaultConfigKeys.cloud_account)
+    click.echo(cloud_account)
+
+
+@get.command("cloud-provider")
+def get_cloud_provider() -> None:
+    """Get the default cloud provider name from the config."""
+    config = Config()
+    cloud_provider = config.get_value(DefaultConfigKeys.cloud_provider)
+    click.echo(cloud_provider)

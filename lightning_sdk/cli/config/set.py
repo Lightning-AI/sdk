@@ -1,6 +1,7 @@
 import click
 
 from lightning_sdk.cli.utils.resolve import resolve_teamspace_owner_name_format
+from lightning_sdk.machine import CloudProvider
 from lightning_sdk.organization import Organization
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.config import Config, DefaultConfigKeys
@@ -75,3 +76,29 @@ def set_teamspace(teamspace_name: str) -> None:
         setattr(config, DefaultConfigKeys.teamspace_owner_type, "organization")
     else:
         setattr(config, DefaultConfigKeys.teamspace_owner_type, "user")
+
+
+@set_value.command("cloud-account")
+@click.argument("cloud_account_name")
+def set_cloud_account(cloud_account_name: str) -> None:
+    """Set the default cloud account name in the config."""
+    config = Config()
+    setattr(config, DefaultConfigKeys.cloud_account, cloud_account_name)
+
+
+@set_value.command("cloud-provider")
+@click.argument("cloud_provider_name")
+def set_cloud_provider(cloud_provider_name: str) -> None:
+    """Set the default cloud provider name in the config."""
+    config = Config()
+
+    try:
+        cloud_provider = CloudProvider(cloud_provider_name)
+    except ValueError:
+        # TODO: make this a generic CLI error
+        raise ValueError(
+            f"Could not resolve cloud provider: '{cloud_provider_name}'. "
+            f"Supported values are: {', '.join(m.name for m in list(CloudProvider))}"
+        ) from None
+
+    setattr(config, DefaultConfigKeys.cloud_provider, cloud_provider.name)

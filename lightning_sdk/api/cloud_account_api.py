@@ -195,6 +195,8 @@ class CloudAccountApi:
 
         if cloud_provider:
             cloud_account_mapping = self.get_cloud_account_provider_mapping(teamspace_id=teamspace_id)
+            print(type(cloud_provider))
+            print(cloud_account_mapping)
             if cloud_provider and cloud_provider in cloud_account_mapping:
                 return cloud_account_mapping[cloud_provider]
 

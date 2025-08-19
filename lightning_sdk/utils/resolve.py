@@ -66,6 +66,12 @@ def _resolve_deprecated_provider(
         )
         return provider
 
+    if cloud_provider is None:
+        from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+        config = Config()
+        cloud_provider = config.get_value(DefaultConfigKeys.cloud_provider)
+
     return cloud_provider
 
 
@@ -83,6 +89,12 @@ def _resolve_deprecated_cluster(cloud_account: Optional[str], cluster: Optional[
             DeprecationWarning,
         )
         return cluster
+
+    if cloud_account is None:
+        from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+        config = Config()
+        cloud_account = config.get_value(DefaultConfigKeys.cloud_account)
 
     return cloud_account
 

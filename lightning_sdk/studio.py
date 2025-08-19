@@ -81,7 +81,6 @@ class Studio:
             raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
 
         self._teamspace = _teamspace
-        self._cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
         self._setup_done = self._skip_setup
         self._disable_secrets = disable_secrets

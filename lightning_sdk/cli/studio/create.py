@@ -18,10 +18,16 @@ from lightning_sdk.studio import Studio
     help="The cloud provider to start the studio on. Defaults to teamspace default.",
     type=click.Choice(m.name for m in list(CloudProvider)),
 )
+@click.option(
+    "--cloud-account",
+    help="The cloud account to create the studio on. Defaults to teamspace default.",
+    type=click.STRING,
+)
 def create_studio(
     studio_name: Optional[str] = None,
     teamspace: Optional[str] = None,
     cloud_provider: Optional[str] = None,
+    cloud_account: Optional[str] = None,
 ) -> None:
     """Create a new Studio.
 
@@ -42,8 +48,17 @@ def create_studio(
     else:
         resolved_teamspace = None
 
+    if cloud_provider is not None:
+        cloud_provider = CloudProvider(cloud_provider)
+
     try:
-        studio = Studio(studio_name, teamspace=resolved_teamspace, create_ok=True, cloud_provider=cloud_provider)
+        studio = Studio(
+            studio_name,
+            teamspace=resolved_teamspace,
+            create_ok=True,
+            cloud_provider=cloud_provider,
+            cloud_account=cloud_account,
+        )
     except (RuntimeError, ValueError, ApiException) as e:
         print(e)
         if studio_name:
