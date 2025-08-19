@@ -1,8 +1,7 @@
 import json
 import os
-import tempfile
 import time
-import zipfile
+from pathlib import Path
 from threading import Event, Thread
 from typing import Any, Dict, Generator, List, Mapping, Optional, Tuple, Union
 
@@ -12,6 +11,7 @@ from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
     _create_app,
+    _download_studio_files,
     _DummyBody,
     _DummyResponse,
     _FileUploader,
@@ -569,45 +569,23 @@ class StudioApi:
         progress_bar: bool = True,
     ) -> None:
         """Downloads a given folder from a Studio to a target location."""
-        # TODO: Update this endpoint to permit basic auth
+        # TODO: implement resumable downloads
         auth = Auth()
         auth.authenticate()
-        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
 
-        query_params = {
-            "clusterId": cloud_account,
-            "prefix": _sanitize_studio_remote_path(path, studio_id),
-            "token": token,
-        }
+        prefix = _sanitize_studio_remote_path(path, studio_id)
+        # ensure we only download as a directory and not the entire prefix
+        if prefix.endswith("/") is False:
+            prefix = prefix + "/"
 
-        r = requests.get(
-            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
-            params=query_params,
-            stream=True,
+        _download_studio_files(
+            client=self._client,
+            teamspace_id=teamspace_id,
+            cluster_id=cloud_account,
+            prefix=prefix,
+            download_dir=Path(target_path),
+            progress_bar=progress_bar,
         )
-
-        if progress_bar:
-            pbar = tqdm(
-                desc=f"Downloading {os.path.split(path)[1]}",
-                unit="B",
-                unit_scale=True,
-                unit_divisor=1000,
-            )
-
-            pbar_update = pbar.update
-        else:
-            pbar_update = lambda x: None
-
-        if target_path:
-            os.makedirs(target_path, exist_ok=True)
-
-        with tempfile.TemporaryFile() as f:
-            for chunk in r.iter_content(chunk_size=4096 * 8):
-                f.write(chunk)
-                pbar_update(len(chunk))
-
-            with zipfile.ZipFile(f) as z:
-                z.extractall(target_path)
 
     def install_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> str:
         """Installs the given plugin."""

@@ -6,7 +6,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union
 
 import backoff
 import requests
@@ -19,6 +19,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreApi,
     ProjectIdStorageBody,
     StorageCompleteBody,
+    StorageServiceApi,
     UploadIdCompleteBody,
     UploadIdPartsBody,
     V1CompletedPart,
@@ -367,38 +368,40 @@ _DOWNLOAD_REQUEST_CHUNK_SIZE = 10 * _BYTES_PER_MB
 _DOWNLOAD_MIN_CHUNK_SIZE = 100 * _BYTES_PER_KB
 
 
+class _RefreshResponse(TypedDict):
+    url: str
+    size: int
+
+
 class _FileDownloader:
     def __init__(
         self,
-        client: LightningClient,
-        model_id: str,
-        version: str,
         teamspace_id: str,
         remote_path: str,
         file_path: str,
         executor: ThreadPoolExecutor,
         num_workers: int = 20,
         progress_bar: Optional[tqdm] = None,
+        url: Optional[str] = None,
+        size: Optional[int] = None,
+        refresh_fn: Optional[Callable[[], _RefreshResponse]] = None,
     ) -> None:
-        self.api = ModelsStoreApi(client.api_client)
-        self.model_id = model_id
-        self.version = version
         self.teamspace_id = teamspace_id
         self.local_path = file_path
         self.remote_path = remote_path
         self.progress_bar = progress_bar
         self.num_workers = num_workers
-        self._url = ""
-        self._size = 0
+        self._url = url
+        self._size = size
         self.executor = executor
+        self.refresh_fn = refresh_fn
 
     @backoff.on_exception(backoff.expo, ApiException, max_tries=10)
     def refresh(self) -> None:
-        response = self.api.models_store_get_model_file_url(
-            project_id=self.teamspace_id, model_id=self.model_id, version=self.version, filepath=self.remote_path
-        )
-        self._url = response.url
-        self._size = int(response.size)
+        if self.refresh_fn is not None:
+            response = self.refresh_fn()
+            self._url = response["url"]
+            self._size = response["size"]
 
     @property
     def url(self) -> str:
@@ -412,6 +415,11 @@ class _FileDownloader:
         if self.progress_bar is None:
             return
         self.progress_bar.update(n)
+
+    def update_filename(self, desc: str) -> None:
+        if self.progress_bar is None:
+            return
+        self.progress_bar.set_description(f"{(desc[:72] + '...') if len(desc) > 75 else desc:<75.75}")
 
     @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
     def _download_chunk(self, filename: str, start_end: Tuple[int]) -> None:
@@ -447,6 +455,8 @@ class _FileDownloader:
                     f.write(b"\x00" * remaining_size)
 
     def _multipart_download(self, filename: str, num_workers: int) -> None:
+        self.update_filename(f"Downloading {self.remote_path}")
+
         num_chunks = num_workers
         chunk_size = math.ceil(self.size / num_chunks)
 
@@ -464,7 +474,8 @@ class _FileDownloader:
         concurrent.futures.wait(futures)
 
     def download(self) -> None:
-        self.refresh()
+        if self.url is None:
+            self.refresh()
 
         tmp_filename = f"{self.local_path}.download"
 
@@ -539,25 +550,32 @@ def _download_model_files(
             mininterval=1,
         )
 
+    def refresh_fn(filename: str) -> _RefreshResponse:
+        resp = api.models_store_get_model_file_url(
+            project_id=response.project_id,
+            model_id=response.model_id,
+            version=response.version,
+            filepath=filename,
+        )
+        return {"url": resp.url, "size": int(resp.size)}
+
     with ThreadPoolExecutor(max_workers=min(num_workers, len(response.filepaths))) as file_executor, ThreadPoolExecutor(
         max_workers=num_workers
     ) as part_executor:
         futures = []
 
-        for filepath in response.filepaths:
-            local_file = download_dir / filepath
+        for file in response.files:
+            local_file = download_dir / file.filepath
             local_file.parent.mkdir(parents=True, exist_ok=True)
 
             file_downloader = _FileDownloader(
-                client=client,
-                model_id=response.model_id,
-                version=response.version,
                 teamspace_id=response.project_id,
-                remote_path=filepath,
+                remote_path=file.filepath,
                 file_path=str(local_file),
                 num_workers=num_workers,
                 progress_bar=pbar,
                 executor=part_executor,
+                refresh_fn=lambda f=file: refresh_fn(f.filename),
             )
 
             futures.append(file_executor.submit(file_downloader.download))
@@ -566,6 +584,78 @@ def _download_model_files(
         concurrent.futures.wait(futures)
 
         return response.filepaths
+
+
+def _download_studio_files(
+    client: LightningClient,
+    teamspace_id: str,
+    cluster_id: str,
+    prefix: str,
+    download_dir: Path,
+    progress_bar: bool,
+    num_workers: int = os.cpu_count() * 4,
+) -> None:
+    api = StorageServiceApi(client.api_client)
+    response = None
+
+    pbar = None
+    if progress_bar:
+        pbar = tqdm(
+            desc="Downloading files",
+            unit="B",
+            unit_scale=True,
+            unit_divisor=1000,
+            position=-1,
+            mininterval=1,
+        )
+
+    def refresh_fn(filename: str) -> _RefreshResponse:
+        resp = api.storage_service_list_project_artifacts(
+            project_id=teamspace_id,
+            cluster_id=cluster_id,
+            page_token="",
+            include_download_url=True,
+            prefix=prefix + filename,
+            page_size=1,
+        )
+        return {"url": resp.artifacts[0].url, "size": int(resp.artifacts[0].size_bytes)}
+
+    with ThreadPoolExecutor(max_workers=num_workers) as file_executor, ThreadPoolExecutor(
+        max_workers=num_workers
+    ) as part_executor:
+        while response is None or (response is not None and response.next_page_token != ""):
+            response = api.storage_service_list_project_artifacts(
+                project_id=teamspace_id,
+                cluster_id=cluster_id,
+                page_token=response.next_page_token if response is not None else "",
+                include_download_url=True,
+                prefix=prefix,
+                page_size=1000,
+            )
+
+            page_futures = []
+            for file in response.artifacts:
+                local_file = download_dir / file.filename
+                local_file.parent.mkdir(parents=True, exist_ok=True)
+
+                file_downloader = _FileDownloader(
+                    teamspace_id=teamspace_id,
+                    remote_path=file.filename,
+                    file_path=str(local_file),
+                    num_workers=num_workers,
+                    progress_bar=pbar,
+                    executor=part_executor,
+                    url=file.url,
+                    size=int(file.size_bytes),
+                    refresh_fn=lambda f=file: refresh_fn(f.filename),
+                )
+
+                page_futures.append(file_executor.submit(file_downloader.download))
+
+            if page_futures:
+                concurrent.futures.wait(page_futures)
+
+            pbar.set_description("Download complete")
 
 
 def _create_app(

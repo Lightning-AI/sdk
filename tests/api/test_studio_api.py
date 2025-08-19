@@ -953,18 +953,13 @@ def test_download_file(mock_login, mock_requests_get, tmpdir):
     studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
 
 
-@mock.patch("lightning_sdk.api.studio_api.zipfile", autospec=True)
-@mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
-def test_download_folder(mock_login, mock_requests_get, mock_zipfile, tmpdir):
-    mock_login.return_value = V1LoginResponse(token="token")
-
+@mock.patch("lightning_sdk.api.studio_api._download_studio_files", autospec=True)
+def test_download_folder(mock_download, tmpdir):
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")
     studio_api.download_folder("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
+    mock_download.assert_called_once()
 
 
 @mock.patch(
