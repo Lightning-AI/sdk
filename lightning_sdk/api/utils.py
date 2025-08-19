@@ -564,18 +564,18 @@ def _download_model_files(
     ) as part_executor:
         futures = []
 
-        for file in response.files:
-            local_file = download_dir / file.filepath
+        for filepath in response.filepaths:
+            local_file = download_dir / filepath
             local_file.parent.mkdir(parents=True, exist_ok=True)
 
             file_downloader = _FileDownloader(
                 teamspace_id=response.project_id,
-                remote_path=file.filepath,
+                remote_path=filepath,
                 file_path=str(local_file),
                 num_workers=num_workers,
                 progress_bar=pbar,
                 executor=part_executor,
-                refresh_fn=lambda f=file: refresh_fn(f.filename),
+                refresh_fn=lambda f=filepath: refresh_fn(f),
             )
 
             futures.append(file_executor.submit(file_downloader.download))
