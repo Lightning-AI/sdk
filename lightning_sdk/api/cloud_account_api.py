@@ -181,6 +181,11 @@ class CloudAccountApi:
         cloud_provider: Optional[Union["CloudProvider", str]],
         default_cloud_account: Optional[str],
     ) -> Optional[str]:
+        from lightning_sdk.machine import CloudProvider
+
+        if cloud_provider and not isinstance(cloud_provider, CloudProvider):
+            cloud_provider = CloudProvider(cloud_provider)
+
         if cloud_account:
             if cloud_provider:
                 cloud_account_resp = self.get_cloud_account_non_org(teamspace_id, cloud_account)
@@ -195,8 +200,6 @@ class CloudAccountApi:
 
         if cloud_provider:
             cloud_account_mapping = self.get_cloud_account_provider_mapping(teamspace_id=teamspace_id)
-            print(type(cloud_provider))
-            print(cloud_account_mapping)
             if cloud_provider and cloud_provider in cloud_account_mapping:
                 return cloud_account_mapping[cloud_provider]
 
