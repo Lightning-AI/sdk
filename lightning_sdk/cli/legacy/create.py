@@ -7,10 +7,8 @@ import click
 from rich.console import Console
 
 from lightning_sdk import Machine, Studio
-from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.machine import CloudProvider
-from lightning_sdk.utils.resolve import _resolve_deprecated_provider
 
 _MACHINE_VALUES = tuple(
     [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
@@ -83,14 +81,6 @@ def studio(
     menu = _TeamspacesMenu()
     teamspace_resolved = menu._resolve_teamspace(teamspace)
 
-    cloud_provider = str(_resolve_deprecated_provider(cloud_provider, provider))
-
-    if cloud_provider is not None:
-        cloud_account_api = CloudAccountApi()
-        cloud_account = cloud_account_api.resolve_cloud_account(
-            teamspace_resolved.id, cloud_account, cloud_provider, teamspace_resolved.default_cloud_account
-        )
-
     # default cloud account to current studios cloud account if run from studio
     # else it will fall back to teamspace default in the backend
     if cloud_account is None:
@@ -107,7 +97,14 @@ def studio(
         console.print(f"Studio with name {name} already exists. Using {new_name} instead.")
         name = new_name
 
-    studio = Studio(name=name, teamspace=teamspace_resolved, cloud_account=cloud_account, create_ok=True)
+    studio = Studio(
+        name=name,
+        teamspace=teamspace_resolved,
+        cloud_account=cloud_account,
+        create_ok=True,
+        cloud_provider=cloud_provider,
+        provider=provider,
+    )
 
     console.print(f"Created Studio {studio.name}.")
 
