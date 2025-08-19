@@ -42,6 +42,7 @@ class StorageCompleteBody(object):
     """
     swagger_types = {
         'cluster_id': 'str',
+        'data_connection_id': 'str',
         'filename': 'str',
         'parts': 'list[V1CompleteUpload]',
         'suppress_reindex': 'bool',
@@ -50,15 +51,17 @@ class StorageCompleteBody(object):
 
     attribute_map = {
         'cluster_id': 'clusterId',
+        'data_connection_id': 'dataConnectionId',
         'filename': 'filename',
         'parts': 'parts',
         'suppress_reindex': 'suppressReindex',
         'upload_id': 'uploadId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, filename: 'str' =None, parts: 'list[V1CompleteUpload]' =None, suppress_reindex: 'bool' =None, upload_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, data_connection_id: 'str' =None, filename: 'str' =None, parts: 'list[V1CompleteUpload]' =None, suppress_reindex: 'bool' =None, upload_id: 'str' =None):  # noqa: E501
         """StorageCompleteBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
+        self._data_connection_id = None
         self._filename = None
         self._parts = None
         self._suppress_reindex = None
@@ -66,6 +69,8 @@ class StorageCompleteBody(object):
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if data_connection_id is not None:
+            self.data_connection_id = data_connection_id
         if filename is not None:
             self.filename = filename
         if parts is not None:
@@ -95,6 +100,27 @@ class StorageCompleteBody(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def data_connection_id(self) -> 'str':
+        """Gets the data_connection_id of this StorageCompleteBody.  # noqa: E501
+
+
+        :return: The data_connection_id of this StorageCompleteBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._data_connection_id
+
+    @data_connection_id.setter
+    def data_connection_id(self, data_connection_id: 'str'):
+        """Sets the data_connection_id of this StorageCompleteBody.
+
+
+        :param data_connection_id: The data_connection_id of this StorageCompleteBody.  # noqa: E501
+        :type: str
+        """
+
+        self._data_connection_id = data_connection_id
 
     @property
     def filename(self) -> 'str':

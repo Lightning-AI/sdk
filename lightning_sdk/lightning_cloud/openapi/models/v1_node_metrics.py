@@ -44,12 +44,15 @@ class V1NodeMetrics(object):
         'cpu_capacity_cores': 'float',
         'cpu_util': 'float',
         'filesystem': 'dict(str, V1FilesystemMetrics)',
+        'max_power_per_gpu': 'float',
         'mem_total': 'float',
         'mem_util': 'float',
         'node_name': 'str',
         'per_gpu_mem_free': 'dict(str, float)',
         'per_gpu_mem_used': 'dict(str, float)',
         'per_gpu_power_usage_watts': 'dict(str, float)',
+        'per_gpu_sm_active': 'dict(str, float)',
+        'per_gpu_sm_occupancy': 'dict(str, float)',
         'per_gpu_temperature_c': 'dict(str, float)',
         'per_gpu_util': 'dict(str, float)',
         'timestamp': 'datetime'
@@ -59,28 +62,34 @@ class V1NodeMetrics(object):
         'cpu_capacity_cores': 'cpuCapacityCores',
         'cpu_util': 'cpuUtil',
         'filesystem': 'filesystem',
+        'max_power_per_gpu': 'maxPowerPerGpu',
         'mem_total': 'memTotal',
         'mem_util': 'memUtil',
         'node_name': 'nodeName',
         'per_gpu_mem_free': 'perGpuMemFree',
         'per_gpu_mem_used': 'perGpuMemUsed',
         'per_gpu_power_usage_watts': 'perGpuPowerUsageWatts',
+        'per_gpu_sm_active': 'perGpuSmActive',
+        'per_gpu_sm_occupancy': 'perGpuSmOccupancy',
         'per_gpu_temperature_c': 'perGpuTemperatureC',
         'per_gpu_util': 'perGpuUtil',
         'timestamp': 'timestamp'
     }
 
-    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, mem_total: 'float' =None, mem_util: 'float' =None, node_name: 'str' =None, per_gpu_mem_free: 'dict(str, float)' =None, per_gpu_mem_used: 'dict(str, float)' =None, per_gpu_power_usage_watts: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None):  # noqa: E501
+    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, max_power_per_gpu: 'float' =None, mem_total: 'float' =None, mem_util: 'float' =None, node_name: 'str' =None, per_gpu_mem_free: 'dict(str, float)' =None, per_gpu_mem_used: 'dict(str, float)' =None, per_gpu_power_usage_watts: 'dict(str, float)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None):  # noqa: E501
         """V1NodeMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_capacity_cores = None
         self._cpu_util = None
         self._filesystem = None
+        self._max_power_per_gpu = None
         self._mem_total = None
         self._mem_util = None
         self._node_name = None
         self._per_gpu_mem_free = None
         self._per_gpu_mem_used = None
         self._per_gpu_power_usage_watts = None
+        self._per_gpu_sm_active = None
+        self._per_gpu_sm_occupancy = None
         self._per_gpu_temperature_c = None
         self._per_gpu_util = None
         self._timestamp = None
@@ -91,6 +100,8 @@ class V1NodeMetrics(object):
             self.cpu_util = cpu_util
         if filesystem is not None:
             self.filesystem = filesystem
+        if max_power_per_gpu is not None:
+            self.max_power_per_gpu = max_power_per_gpu
         if mem_total is not None:
             self.mem_total = mem_total
         if mem_util is not None:
@@ -103,6 +114,10 @@ class V1NodeMetrics(object):
             self.per_gpu_mem_used = per_gpu_mem_used
         if per_gpu_power_usage_watts is not None:
             self.per_gpu_power_usage_watts = per_gpu_power_usage_watts
+        if per_gpu_sm_active is not None:
+            self.per_gpu_sm_active = per_gpu_sm_active
+        if per_gpu_sm_occupancy is not None:
+            self.per_gpu_sm_occupancy = per_gpu_sm_occupancy
         if per_gpu_temperature_c is not None:
             self.per_gpu_temperature_c = per_gpu_temperature_c
         if per_gpu_util is not None:
@@ -172,6 +187,27 @@ class V1NodeMetrics(object):
         """
 
         self._filesystem = filesystem
+
+    @property
+    def max_power_per_gpu(self) -> 'float':
+        """Gets the max_power_per_gpu of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The max_power_per_gpu of this V1NodeMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._max_power_per_gpu
+
+    @max_power_per_gpu.setter
+    def max_power_per_gpu(self, max_power_per_gpu: 'float'):
+        """Sets the max_power_per_gpu of this V1NodeMetrics.
+
+
+        :param max_power_per_gpu: The max_power_per_gpu of this V1NodeMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._max_power_per_gpu = max_power_per_gpu
 
     @property
     def mem_total(self) -> 'float':
@@ -298,6 +334,48 @@ class V1NodeMetrics(object):
         """
 
         self._per_gpu_power_usage_watts = per_gpu_power_usage_watts
+
+    @property
+    def per_gpu_sm_active(self) -> 'dict(str, float)':
+        """Gets the per_gpu_sm_active of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The per_gpu_sm_active of this V1NodeMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._per_gpu_sm_active
+
+    @per_gpu_sm_active.setter
+    def per_gpu_sm_active(self, per_gpu_sm_active: 'dict(str, float)'):
+        """Sets the per_gpu_sm_active of this V1NodeMetrics.
+
+
+        :param per_gpu_sm_active: The per_gpu_sm_active of this V1NodeMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._per_gpu_sm_active = per_gpu_sm_active
+
+    @property
+    def per_gpu_sm_occupancy(self) -> 'dict(str, float)':
+        """Gets the per_gpu_sm_occupancy of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The per_gpu_sm_occupancy of this V1NodeMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._per_gpu_sm_occupancy
+
+    @per_gpu_sm_occupancy.setter
+    def per_gpu_sm_occupancy(self, per_gpu_sm_occupancy: 'dict(str, float)'):
+        """Sets the per_gpu_sm_occupancy of this V1NodeMetrics.
+
+
+        :param per_gpu_sm_occupancy: The per_gpu_sm_occupancy of this V1NodeMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._per_gpu_sm_occupancy = per_gpu_sm_occupancy
 
     @property
     def per_gpu_temperature_c(self) -> 'dict(str, float)':

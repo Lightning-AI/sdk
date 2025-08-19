@@ -41,7 +41,6 @@ class V1UserFeatures(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'add_data_v2': 'bool',
         'affiliate_links': 'bool',
         'agents_v2': 'bool',
         'ai_hub_monetization': 'bool',
@@ -75,7 +74,6 @@ class V1UserFeatures(object):
         'f241': 'bool',
         'f242': 'bool',
         'f243': 'bool',
-        'f244': 'bool',
         'f245': 'bool',
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
@@ -109,7 +107,6 @@ class V1UserFeatures(object):
         'product_license': 'bool',
         'project_selector': 'bool',
         'publish_pipelines': 'bool',
-        'r2_data_connections': 'bool',
         'reserved_machines_tab': 'bool',
         'restartable_jobs': 'bool',
         'runnable_public_studio_page': 'bool',
@@ -123,7 +120,6 @@ class V1UserFeatures(object):
         'studio_sharing_v2': 'bool',
         'studio_version_visibility': 'bool',
         'trainium2': 'bool',
-        'use_internal_data_connection_mounts': 'bool',
         'use_rclone_mounts_only': 'bool',
         'vultr': 'bool',
         'weka': 'bool',
@@ -131,7 +127,6 @@ class V1UserFeatures(object):
     }
 
     attribute_map = {
-        'add_data_v2': 'addDataV2',
         'affiliate_links': 'affiliateLinks',
         'agents_v2': 'agentsV2',
         'ai_hub_monetization': 'aiHubMonetization',
@@ -165,7 +160,6 @@ class V1UserFeatures(object):
         'f241': 'f241',
         'f242': 'f242',
         'f243': 'f243',
-        'f244': 'f244',
         'f245': 'f245',
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
@@ -199,7 +193,6 @@ class V1UserFeatures(object):
         'product_license': 'productLicense',
         'project_selector': 'projectSelector',
         'publish_pipelines': 'publishPipelines',
-        'r2_data_connections': 'r2DataConnections',
         'reserved_machines_tab': 'reservedMachinesTab',
         'restartable_jobs': 'restartableJobs',
         'runnable_public_studio_page': 'runnablePublicStudioPage',
@@ -213,16 +206,14 @@ class V1UserFeatures(object):
         'studio_sharing_v2': 'studioSharingV2',
         'studio_version_visibility': 'studioVersionVisibility',
         'trainium2': 'trainium2',
-        'use_internal_data_connection_mounts': 'useInternalDataConnectionMounts',
         'use_rclone_mounts_only': 'useRcloneMountsOnly',
         'vultr': 'vultr',
         'weka': 'weka',
         'writable_s3_connections': 'writableS3Connections'
     }
 
-    def __init__(self, add_data_v2: 'bool' =None, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, f227: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f237: 'bool' =None, f238: 'bool' =None, f239: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f242: 'bool' =None, f243: 'bool' =None, f244: 'bool' =None, f245: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcp_overprovisioning: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, onboarding_v2: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, r2_data_connections: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_internal_data_connection_mounts: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, f227: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f237: 'bool' =None, f238: 'bool' =None, f239: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f242: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcp_overprovisioning: 'bool' =None, gcs_connections_optimized: 'bool' =None, gcs_folders: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, onboarding_v2: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, single_wallet: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, use_rclone_mounts_only: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
-        self._add_data_v2 = None
         self._affiliate_links = None
         self._agents_v2 = None
         self._ai_hub_monetization = None
@@ -256,7 +247,6 @@ class V1UserFeatures(object):
         self._f241 = None
         self._f242 = None
         self._f243 = None
-        self._f244 = None
         self._f245 = None
         self._fair_share = None
         self._featured_studios_admin = None
@@ -290,7 +280,6 @@ class V1UserFeatures(object):
         self._product_license = None
         self._project_selector = None
         self._publish_pipelines = None
-        self._r2_data_connections = None
         self._reserved_machines_tab = None
         self._restartable_jobs = None
         self._runnable_public_studio_page = None
@@ -304,14 +293,11 @@ class V1UserFeatures(object):
         self._studio_sharing_v2 = None
         self._studio_version_visibility = None
         self._trainium2 = None
-        self._use_internal_data_connection_mounts = None
         self._use_rclone_mounts_only = None
         self._vultr = None
         self._weka = None
         self._writable_s3_connections = None
         self.discriminator = None
-        if add_data_v2 is not None:
-            self.add_data_v2 = add_data_v2
         if affiliate_links is not None:
             self.affiliate_links = affiliate_links
         if agents_v2 is not None:
@@ -378,8 +364,6 @@ class V1UserFeatures(object):
             self.f242 = f242
         if f243 is not None:
             self.f243 = f243
-        if f244 is not None:
-            self.f244 = f244
         if f245 is not None:
             self.f245 = f245
         if fair_share is not None:
@@ -446,8 +430,6 @@ class V1UserFeatures(object):
             self.project_selector = project_selector
         if publish_pipelines is not None:
             self.publish_pipelines = publish_pipelines
-        if r2_data_connections is not None:
-            self.r2_data_connections = r2_data_connections
         if reserved_machines_tab is not None:
             self.reserved_machines_tab = reserved_machines_tab
         if restartable_jobs is not None:
@@ -474,8 +456,6 @@ class V1UserFeatures(object):
             self.studio_version_visibility = studio_version_visibility
         if trainium2 is not None:
             self.trainium2 = trainium2
-        if use_internal_data_connection_mounts is not None:
-            self.use_internal_data_connection_mounts = use_internal_data_connection_mounts
         if use_rclone_mounts_only is not None:
             self.use_rclone_mounts_only = use_rclone_mounts_only
         if vultr is not None:
@@ -484,27 +464,6 @@ class V1UserFeatures(object):
             self.weka = weka
         if writable_s3_connections is not None:
             self.writable_s3_connections = writable_s3_connections
-
-    @property
-    def add_data_v2(self) -> 'bool':
-        """Gets the add_data_v2 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The add_data_v2 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._add_data_v2
-
-    @add_data_v2.setter
-    def add_data_v2(self, add_data_v2: 'bool'):
-        """Sets the add_data_v2 of this V1UserFeatures.
-
-
-        :param add_data_v2: The add_data_v2 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._add_data_v2 = add_data_v2
 
     @property
     def affiliate_links(self) -> 'bool':
@@ -1200,27 +1159,6 @@ class V1UserFeatures(object):
         self._f243 = f243
 
     @property
-    def f244(self) -> 'bool':
-        """Gets the f244 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The f244 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._f244
-
-    @f244.setter
-    def f244(self, f244: 'bool'):
-        """Sets the f244 of this V1UserFeatures.
-
-
-        :param f244: The f244 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._f244 = f244
-
-    @property
     def f245(self) -> 'bool':
         """Gets the f245 of this V1UserFeatures.  # noqa: E501
 
@@ -1914,27 +1852,6 @@ class V1UserFeatures(object):
         self._publish_pipelines = publish_pipelines
 
     @property
-    def r2_data_connections(self) -> 'bool':
-        """Gets the r2_data_connections of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The r2_data_connections of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._r2_data_connections
-
-    @r2_data_connections.setter
-    def r2_data_connections(self, r2_data_connections: 'bool'):
-        """Sets the r2_data_connections of this V1UserFeatures.
-
-
-        :param r2_data_connections: The r2_data_connections of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._r2_data_connections = r2_data_connections
-
-    @property
     def reserved_machines_tab(self) -> 'bool':
         """Gets the reserved_machines_tab of this V1UserFeatures.  # noqa: E501
 
@@ -2206,27 +2123,6 @@ class V1UserFeatures(object):
         """
 
         self._trainium2 = trainium2
-
-    @property
-    def use_internal_data_connection_mounts(self) -> 'bool':
-        """Gets the use_internal_data_connection_mounts of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The use_internal_data_connection_mounts of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._use_internal_data_connection_mounts
-
-    @use_internal_data_connection_mounts.setter
-    def use_internal_data_connection_mounts(self, use_internal_data_connection_mounts: 'bool'):
-        """Sets the use_internal_data_connection_mounts of this V1UserFeatures.
-
-
-        :param use_internal_data_connection_mounts: The use_internal_data_connection_mounts of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._use_internal_data_connection_mounts = use_internal_data_connection_mounts
 
     @property
     def use_rclone_mounts_only(self) -> 'bool':

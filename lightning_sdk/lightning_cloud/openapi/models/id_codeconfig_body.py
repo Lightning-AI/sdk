@@ -43,47 +43,32 @@ class IdCodeconfigBody(object):
     swagger_types = {
         'compute_config': 'V1UserRequestedComputeConfig',
         'data_connection_mounts': 'list[V1DataConnectionMount]',
-        'disable_auto_shutdown': 'bool',
         'ide': 'str',
-        'idle_shutdown_seconds': 'int',
-        'port_plugin_port': 'str',
-        'switch_to_default_machine_on_idle': 'bool'
+        'port_plugin_port': 'str'
     }
 
     attribute_map = {
         'compute_config': 'computeConfig',
         'data_connection_mounts': 'dataConnectionMounts',
-        'disable_auto_shutdown': 'disableAutoShutdown',
         'ide': 'ide',
-        'idle_shutdown_seconds': 'idleShutdownSeconds',
-        'port_plugin_port': 'portPluginPort',
-        'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle'
+        'port_plugin_port': 'portPluginPort'
     }
 
-    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, ide: 'str' =None, idle_shutdown_seconds: 'int' =None, port_plugin_port: 'str' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
+    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, ide: 'str' =None, port_plugin_port: 'str' =None):  # noqa: E501
         """IdCodeconfigBody - a model defined in Swagger"""  # noqa: E501
         self._compute_config = None
         self._data_connection_mounts = None
-        self._disable_auto_shutdown = None
         self._ide = None
-        self._idle_shutdown_seconds = None
         self._port_plugin_port = None
-        self._switch_to_default_machine_on_idle = None
         self.discriminator = None
         if compute_config is not None:
             self.compute_config = compute_config
         if data_connection_mounts is not None:
             self.data_connection_mounts = data_connection_mounts
-        if disable_auto_shutdown is not None:
-            self.disable_auto_shutdown = disable_auto_shutdown
         if ide is not None:
             self.ide = ide
-        if idle_shutdown_seconds is not None:
-            self.idle_shutdown_seconds = idle_shutdown_seconds
         if port_plugin_port is not None:
             self.port_plugin_port = port_plugin_port
-        if switch_to_default_machine_on_idle is not None:
-            self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     @property
     def compute_config(self) -> 'V1UserRequestedComputeConfig':
@@ -128,27 +113,6 @@ class IdCodeconfigBody(object):
         self._data_connection_mounts = data_connection_mounts
 
     @property
-    def disable_auto_shutdown(self) -> 'bool':
-        """Gets the disable_auto_shutdown of this IdCodeconfigBody.  # noqa: E501
-
-
-        :return: The disable_auto_shutdown of this IdCodeconfigBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._disable_auto_shutdown
-
-    @disable_auto_shutdown.setter
-    def disable_auto_shutdown(self, disable_auto_shutdown: 'bool'):
-        """Sets the disable_auto_shutdown of this IdCodeconfigBody.
-
-
-        :param disable_auto_shutdown: The disable_auto_shutdown of this IdCodeconfigBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._disable_auto_shutdown = disable_auto_shutdown
-
-    @property
     def ide(self) -> 'str':
         """Gets the ide of this IdCodeconfigBody.  # noqa: E501
 
@@ -170,27 +134,6 @@ class IdCodeconfigBody(object):
         self._ide = ide
 
     @property
-    def idle_shutdown_seconds(self) -> 'int':
-        """Gets the idle_shutdown_seconds of this IdCodeconfigBody.  # noqa: E501
-
-
-        :return: The idle_shutdown_seconds of this IdCodeconfigBody.  # noqa: E501
-        :rtype: int
-        """
-        return self._idle_shutdown_seconds
-
-    @idle_shutdown_seconds.setter
-    def idle_shutdown_seconds(self, idle_shutdown_seconds: 'int'):
-        """Sets the idle_shutdown_seconds of this IdCodeconfigBody.
-
-
-        :param idle_shutdown_seconds: The idle_shutdown_seconds of this IdCodeconfigBody.  # noqa: E501
-        :type: int
-        """
-
-        self._idle_shutdown_seconds = idle_shutdown_seconds
-
-    @property
     def port_plugin_port(self) -> 'str':
         """Gets the port_plugin_port of this IdCodeconfigBody.  # noqa: E501
 
@@ -210,27 +153,6 @@ class IdCodeconfigBody(object):
         """
 
         self._port_plugin_port = port_plugin_port
-
-    @property
-    def switch_to_default_machine_on_idle(self) -> 'bool':
-        """Gets the switch_to_default_machine_on_idle of this IdCodeconfigBody.  # noqa: E501
-
-
-        :return: The switch_to_default_machine_on_idle of this IdCodeconfigBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._switch_to_default_machine_on_idle
-
-    @switch_to_default_machine_on_idle.setter
-    def switch_to_default_machine_on_idle(self, switch_to_default_machine_on_idle: 'bool'):
-        """Sets the switch_to_default_machine_on_idle of this IdCodeconfigBody.
-
-
-        :param switch_to_default_machine_on_idle: The switch_to_default_machine_on_idle of this IdCodeconfigBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

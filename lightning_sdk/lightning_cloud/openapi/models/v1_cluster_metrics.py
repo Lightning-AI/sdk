@@ -51,6 +51,9 @@ class V1ClusterMetrics(object):
         'gpus_energy_total': 'float',
         'gpus_temp_avg': 'float',
         'gpus_util': 'float',
+        'gpus_util_over_allocable': 'float',
+        'gpus_util_over_requested': 'float',
+        'max_power_per_gpu': 'float',
         'num_cpus': 'int',
         'num_gpus': 'int',
         'num_gpus_allocable': 'int',
@@ -86,6 +89,9 @@ class V1ClusterMetrics(object):
         'gpus_energy_total': 'gpusEnergyTotal',
         'gpus_temp_avg': 'gpusTempAvg',
         'gpus_util': 'gpusUtil',
+        'gpus_util_over_allocable': 'gpusUtilOverAllocable',
+        'gpus_util_over_requested': 'gpusUtilOverRequested',
+        'max_power_per_gpu': 'maxPowerPerGpu',
         'num_cpus': 'numCpus',
         'num_gpus': 'numGpus',
         'num_gpus_allocable': 'numGpusAllocable',
@@ -110,7 +116,7 @@ class V1ClusterMetrics(object):
         'vram_util': 'vramUtil'
     }
 
-    def __init__(self, cpus_util: 'float' =None, filesystem_inode_util: 'float' =None, filesystem_read_rate: 'float' =None, filesystem_total: 'float' =None, filesystem_util: 'float' =None, filesystem_write_rate: 'float' =None, gpus_energy_avg: 'float' =None, gpus_energy_total: 'float' =None, gpus_temp_avg: 'float' =None, gpus_util: 'float' =None, num_cpus: 'int' =None, num_gpus: 'int' =None, num_gpus_allocable: 'int' =None, num_limit_cpus: 'int' =None, num_limit_gpus: 'int' =None, num_namespaces: 'int' =None, num_nodes: 'int' =None, num_pods: 'int' =None, num_requested_cpus: 'int' =None, num_requested_gpus: 'int' =None, ram_limit: 'str' =None, ram_requested: 'str' =None, ram_total: 'str' =None, ram_util: 'float' =None, timestamp: 'datetime' =None, vram_limit: 'float' =None, vram_read_write_util: 'float' =None, vram_requested: 'float' =None, vram_total: 'str' =None, vram_used_avg: 'float' =None, vram_used_total: 'float' =None, vram_util: 'float' =None):  # noqa: E501
+    def __init__(self, cpus_util: 'float' =None, filesystem_inode_util: 'float' =None, filesystem_read_rate: 'float' =None, filesystem_total: 'float' =None, filesystem_util: 'float' =None, filesystem_write_rate: 'float' =None, gpus_energy_avg: 'float' =None, gpus_energy_total: 'float' =None, gpus_temp_avg: 'float' =None, gpus_util: 'float' =None, gpus_util_over_allocable: 'float' =None, gpus_util_over_requested: 'float' =None, max_power_per_gpu: 'float' =None, num_cpus: 'int' =None, num_gpus: 'int' =None, num_gpus_allocable: 'int' =None, num_limit_cpus: 'int' =None, num_limit_gpus: 'int' =None, num_namespaces: 'int' =None, num_nodes: 'int' =None, num_pods: 'int' =None, num_requested_cpus: 'int' =None, num_requested_gpus: 'int' =None, ram_limit: 'str' =None, ram_requested: 'str' =None, ram_total: 'str' =None, ram_util: 'float' =None, timestamp: 'datetime' =None, vram_limit: 'float' =None, vram_read_write_util: 'float' =None, vram_requested: 'float' =None, vram_total: 'str' =None, vram_used_avg: 'float' =None, vram_used_total: 'float' =None, vram_util: 'float' =None):  # noqa: E501
         """V1ClusterMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpus_util = None
         self._filesystem_inode_util = None
@@ -122,6 +128,9 @@ class V1ClusterMetrics(object):
         self._gpus_energy_total = None
         self._gpus_temp_avg = None
         self._gpus_util = None
+        self._gpus_util_over_allocable = None
+        self._gpus_util_over_requested = None
+        self._max_power_per_gpu = None
         self._num_cpus = None
         self._num_gpus = None
         self._num_gpus_allocable = None
@@ -165,6 +174,12 @@ class V1ClusterMetrics(object):
             self.gpus_temp_avg = gpus_temp_avg
         if gpus_util is not None:
             self.gpus_util = gpus_util
+        if gpus_util_over_allocable is not None:
+            self.gpus_util_over_allocable = gpus_util_over_allocable
+        if gpus_util_over_requested is not None:
+            self.gpus_util_over_requested = gpus_util_over_requested
+        if max_power_per_gpu is not None:
+            self.max_power_per_gpu = max_power_per_gpu
         if num_cpus is not None:
             self.num_cpus = num_cpus
         if num_gpus is not None:
@@ -419,6 +434,69 @@ class V1ClusterMetrics(object):
         """
 
         self._gpus_util = gpus_util
+
+    @property
+    def gpus_util_over_allocable(self) -> 'float':
+        """Gets the gpus_util_over_allocable of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The gpus_util_over_allocable of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._gpus_util_over_allocable
+
+    @gpus_util_over_allocable.setter
+    def gpus_util_over_allocable(self, gpus_util_over_allocable: 'float'):
+        """Sets the gpus_util_over_allocable of this V1ClusterMetrics.
+
+
+        :param gpus_util_over_allocable: The gpus_util_over_allocable of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._gpus_util_over_allocable = gpus_util_over_allocable
+
+    @property
+    def gpus_util_over_requested(self) -> 'float':
+        """Gets the gpus_util_over_requested of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The gpus_util_over_requested of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._gpus_util_over_requested
+
+    @gpus_util_over_requested.setter
+    def gpus_util_over_requested(self, gpus_util_over_requested: 'float'):
+        """Sets the gpus_util_over_requested of this V1ClusterMetrics.
+
+
+        :param gpus_util_over_requested: The gpus_util_over_requested of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._gpus_util_over_requested = gpus_util_over_requested
+
+    @property
+    def max_power_per_gpu(self) -> 'float':
+        """Gets the max_power_per_gpu of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The max_power_per_gpu of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._max_power_per_gpu
+
+    @max_power_per_gpu.setter
+    def max_power_per_gpu(self, max_power_per_gpu: 'float'):
+        """Sets the max_power_per_gpu of this V1ClusterMetrics.
+
+
+        :param max_power_per_gpu: The max_power_per_gpu of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._max_power_per_gpu = max_power_per_gpu
 
     @property
     def num_cpus(self) -> 'int':
