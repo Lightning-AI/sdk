@@ -27,7 +27,6 @@ def list_studios(teamspace: Optional[str] = None, sort_by: Optional[str] = None)
 
     """
     teamspace_resolved = resolve_teamspace_owner_name_format(teamspace)
-    print(teamspace_resolved)
 
     if teamspace_resolved is None:
         # TODO: make this a generic CLI error
@@ -50,7 +49,7 @@ def list_studios(teamspace: Optional[str] = None, sort_by: Optional[str] = None)
             f"{studio.teamspace.owner.name}/{studio.teamspace.name}",
             str(studio.status),
             str(studio.machine) if studio.machine is not None else None,  # when None the cell is empty
-            str(studio.cloud_account),  # TODO: map internal cloud account name to a user-friendly name
+            str(cloud_account_to_display_name(studio.cloud_account, studio.teamspace.id)),
         )
 
     click.echo(rich_to_str(table), color=True)
