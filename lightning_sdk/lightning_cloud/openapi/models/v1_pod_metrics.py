@@ -43,6 +43,8 @@ class V1PodMetrics(object):
     swagger_types = {
         'cpu_usage': 'float',
         'labels': 'dict(str, str)',
+        'max_gpu_temp_recorded': 'float',
+        'max_power_per_gpu': 'float',
         'mem_usage': 'float',
         'namespace': 'str',
         'node_name': 'str',
@@ -50,6 +52,10 @@ class V1PodMetrics(object):
         'num_cpus_request': 'float',
         'num_gpus': 'float',
         'per_gpu_mem_used': 'dict(str, float)',
+        'per_gpu_power_usage_watts': 'dict(str, float)',
+        'per_gpu_sm_active': 'dict(str, float)',
+        'per_gpu_sm_occupancy': 'dict(str, float)',
+        'per_gpu_temperature_c': 'dict(str, float)',
         'per_gpu_util': 'dict(str, float)',
         'phase': 'str',
         'pod_id': 'str',
@@ -61,6 +67,8 @@ class V1PodMetrics(object):
     attribute_map = {
         'cpu_usage': 'cpuUsage',
         'labels': 'labels',
+        'max_gpu_temp_recorded': 'maxGpuTempRecorded',
+        'max_power_per_gpu': 'maxPowerPerGpu',
         'mem_usage': 'memUsage',
         'namespace': 'namespace',
         'node_name': 'nodeName',
@@ -68,6 +76,10 @@ class V1PodMetrics(object):
         'num_cpus_request': 'numCpusRequest',
         'num_gpus': 'numGpus',
         'per_gpu_mem_used': 'perGpuMemUsed',
+        'per_gpu_power_usage_watts': 'perGpuPowerUsageWatts',
+        'per_gpu_sm_active': 'perGpuSmActive',
+        'per_gpu_sm_occupancy': 'perGpuSmOccupancy',
+        'per_gpu_temperature_c': 'perGpuTemperatureC',
         'per_gpu_util': 'perGpuUtil',
         'phase': 'phase',
         'pod_id': 'podId',
@@ -76,10 +88,12 @@ class V1PodMetrics(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cpu_usage: 'float' =None, labels: 'dict(str, str)' =None, mem_usage: 'float' =None, namespace: 'str' =None, node_name: 'str' =None, num_cpus_limit: 'float' =None, num_cpus_request: 'float' =None, num_gpus: 'float' =None, per_gpu_mem_used: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, phase: 'str' =None, pod_id: 'str' =None, pod_name: 'str' =None, timestamp: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cpu_usage: 'float' =None, labels: 'dict(str, str)' =None, max_gpu_temp_recorded: 'float' =None, max_power_per_gpu: 'float' =None, mem_usage: 'float' =None, namespace: 'str' =None, node_name: 'str' =None, num_cpus_limit: 'float' =None, num_cpus_request: 'float' =None, num_gpus: 'float' =None, per_gpu_mem_used: 'dict(str, float)' =None, per_gpu_power_usage_watts: 'dict(str, float)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, phase: 'str' =None, pod_id: 'str' =None, pod_name: 'str' =None, timestamp: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1PodMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_usage = None
         self._labels = None
+        self._max_gpu_temp_recorded = None
+        self._max_power_per_gpu = None
         self._mem_usage = None
         self._namespace = None
         self._node_name = None
@@ -87,6 +101,10 @@ class V1PodMetrics(object):
         self._num_cpus_request = None
         self._num_gpus = None
         self._per_gpu_mem_used = None
+        self._per_gpu_power_usage_watts = None
+        self._per_gpu_sm_active = None
+        self._per_gpu_sm_occupancy = None
+        self._per_gpu_temperature_c = None
         self._per_gpu_util = None
         self._phase = None
         self._pod_id = None
@@ -98,6 +116,10 @@ class V1PodMetrics(object):
             self.cpu_usage = cpu_usage
         if labels is not None:
             self.labels = labels
+        if max_gpu_temp_recorded is not None:
+            self.max_gpu_temp_recorded = max_gpu_temp_recorded
+        if max_power_per_gpu is not None:
+            self.max_power_per_gpu = max_power_per_gpu
         if mem_usage is not None:
             self.mem_usage = mem_usage
         if namespace is not None:
@@ -112,6 +134,14 @@ class V1PodMetrics(object):
             self.num_gpus = num_gpus
         if per_gpu_mem_used is not None:
             self.per_gpu_mem_used = per_gpu_mem_used
+        if per_gpu_power_usage_watts is not None:
+            self.per_gpu_power_usage_watts = per_gpu_power_usage_watts
+        if per_gpu_sm_active is not None:
+            self.per_gpu_sm_active = per_gpu_sm_active
+        if per_gpu_sm_occupancy is not None:
+            self.per_gpu_sm_occupancy = per_gpu_sm_occupancy
+        if per_gpu_temperature_c is not None:
+            self.per_gpu_temperature_c = per_gpu_temperature_c
         if per_gpu_util is not None:
             self.per_gpu_util = per_gpu_util
         if phase is not None:
@@ -166,6 +196,48 @@ class V1PodMetrics(object):
         """
 
         self._labels = labels
+
+    @property
+    def max_gpu_temp_recorded(self) -> 'float':
+        """Gets the max_gpu_temp_recorded of this V1PodMetrics.  # noqa: E501
+
+
+        :return: The max_gpu_temp_recorded of this V1PodMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._max_gpu_temp_recorded
+
+    @max_gpu_temp_recorded.setter
+    def max_gpu_temp_recorded(self, max_gpu_temp_recorded: 'float'):
+        """Sets the max_gpu_temp_recorded of this V1PodMetrics.
+
+
+        :param max_gpu_temp_recorded: The max_gpu_temp_recorded of this V1PodMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._max_gpu_temp_recorded = max_gpu_temp_recorded
+
+    @property
+    def max_power_per_gpu(self) -> 'float':
+        """Gets the max_power_per_gpu of this V1PodMetrics.  # noqa: E501
+
+
+        :return: The max_power_per_gpu of this V1PodMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._max_power_per_gpu
+
+    @max_power_per_gpu.setter
+    def max_power_per_gpu(self, max_power_per_gpu: 'float'):
+        """Sets the max_power_per_gpu of this V1PodMetrics.
+
+
+        :param max_power_per_gpu: The max_power_per_gpu of this V1PodMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._max_power_per_gpu = max_power_per_gpu
 
     @property
     def mem_usage(self) -> 'float':
@@ -313,6 +385,90 @@ class V1PodMetrics(object):
         """
 
         self._per_gpu_mem_used = per_gpu_mem_used
+
+    @property
+    def per_gpu_power_usage_watts(self) -> 'dict(str, float)':
+        """Gets the per_gpu_power_usage_watts of this V1PodMetrics.  # noqa: E501
+
+
+        :return: The per_gpu_power_usage_watts of this V1PodMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._per_gpu_power_usage_watts
+
+    @per_gpu_power_usage_watts.setter
+    def per_gpu_power_usage_watts(self, per_gpu_power_usage_watts: 'dict(str, float)'):
+        """Sets the per_gpu_power_usage_watts of this V1PodMetrics.
+
+
+        :param per_gpu_power_usage_watts: The per_gpu_power_usage_watts of this V1PodMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._per_gpu_power_usage_watts = per_gpu_power_usage_watts
+
+    @property
+    def per_gpu_sm_active(self) -> 'dict(str, float)':
+        """Gets the per_gpu_sm_active of this V1PodMetrics.  # noqa: E501
+
+
+        :return: The per_gpu_sm_active of this V1PodMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._per_gpu_sm_active
+
+    @per_gpu_sm_active.setter
+    def per_gpu_sm_active(self, per_gpu_sm_active: 'dict(str, float)'):
+        """Sets the per_gpu_sm_active of this V1PodMetrics.
+
+
+        :param per_gpu_sm_active: The per_gpu_sm_active of this V1PodMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._per_gpu_sm_active = per_gpu_sm_active
+
+    @property
+    def per_gpu_sm_occupancy(self) -> 'dict(str, float)':
+        """Gets the per_gpu_sm_occupancy of this V1PodMetrics.  # noqa: E501
+
+
+        :return: The per_gpu_sm_occupancy of this V1PodMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._per_gpu_sm_occupancy
+
+    @per_gpu_sm_occupancy.setter
+    def per_gpu_sm_occupancy(self, per_gpu_sm_occupancy: 'dict(str, float)'):
+        """Sets the per_gpu_sm_occupancy of this V1PodMetrics.
+
+
+        :param per_gpu_sm_occupancy: The per_gpu_sm_occupancy of this V1PodMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._per_gpu_sm_occupancy = per_gpu_sm_occupancy
+
+    @property
+    def per_gpu_temperature_c(self) -> 'dict(str, float)':
+        """Gets the per_gpu_temperature_c of this V1PodMetrics.  # noqa: E501
+
+
+        :return: The per_gpu_temperature_c of this V1PodMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._per_gpu_temperature_c
+
+    @per_gpu_temperature_c.setter
+    def per_gpu_temperature_c(self, per_gpu_temperature_c: 'dict(str, float)'):
+        """Sets the per_gpu_temperature_c of this V1PodMetrics.
+
+
+        :param per_gpu_temperature_c: The per_gpu_temperature_c of this V1PodMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._per_gpu_temperature_c = per_gpu_temperature_c
 
     @property
     def per_gpu_util(self) -> 'dict(str, float)':
