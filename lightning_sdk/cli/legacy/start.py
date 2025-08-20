@@ -103,4 +103,5 @@ def studio(
     except KeyError:
         resolved_machine = machine
 
+    Studio.show_progress = True
     studio.start(resolved_machine)

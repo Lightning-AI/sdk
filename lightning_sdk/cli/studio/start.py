@@ -77,5 +77,6 @@ def start_studio(
             raise ValueError(f"Could not start Studio: '{studio_name}'. Does the Studio exist?") from None
         raise ValueError(f"Could not start Studio: '{studio_name}'. Please provide a Studio name") from None
 
+    Studio.show_progress = True
     studio.start(machine, interruptible=interruptible)
     click.echo(f"Studio '{studio.name}' started successfully")

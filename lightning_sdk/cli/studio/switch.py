@@ -47,6 +47,7 @@ def switch_studio(
         raise ValueError(f"Could not switch Studio: '{studio_name}'. Please provide a Studio name") from None
 
     resolved_machine = Machine.from_str(machine)
+    Studio.show_progress = True
     studio.switch_machine(resolved_machine, interruptible=interruptible)
 
     click.echo(f"Studio '{studio.name}' switched to machine '{resolved_machine}' successfully")

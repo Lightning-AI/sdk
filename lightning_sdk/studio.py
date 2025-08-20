@@ -59,6 +59,9 @@ class Studio:
     _skip_init = False
     _skip_setup = False
 
+    # whether to show progress bars during operations
+    show_progress = False
+
     def __init__(
         self,
         name: Optional[str] = None,
@@ -254,9 +257,26 @@ class Studio:
 
         if status != Status.Stopped:
             raise RuntimeError(f"Cannot start a studio that is not stopped. Studio {self.name} is {status}.")
-        self._studio_api.start_studio(
-            self._studio.id, self._teamspace.id, machine, interruptible=interruptible, max_runtime=max_runtime
-        )
+
+        # Show progress bar during startup
+        if self.show_progress:
+            from lightning_sdk.utils.progress import StudioProgressTracker
+
+            with StudioProgressTracker("start", show_progress=True) as progress:
+                # Start the studio without blocking
+                self._studio_api.start_studio_async(
+                    self._studio.id, self._teamspace.id, machine, interruptible=interruptible, max_runtime=max_runtime
+                )
+
+                # Track progress through completion
+                progress.track_startup_phases(
+                    lambda: self._studio_api.get_studio_status(self._studio.id, self._teamspace.id)
+                )
+        else:
+            # Use the blocking version if no progress is needed
+            self._studio_api.start_studio(
+                self._studio.id, self._teamspace.id, machine, interruptible=interruptible, max_runtime=max_runtime
+            )
 
         self._setup()
 
@@ -324,9 +344,22 @@ class Studio:
             raise RuntimeError(
                 f"Cannot switch machine on a studio that is not running. Studio {self.name} is {status}."
             )
-        self._studio_api.switch_studio_machine(
-            self._studio.id, self._teamspace.id, machine, interruptible=interruptible
-        )
+
+        if self.show_progress:
+            from lightning_sdk.utils.progress import StudioProgressTracker
+
+            with StudioProgressTracker("switch", show_progress=True) as progress:
+                # Update progress before starting the switch
+                progress.update_progress(5, "Initiating machine switch...")
+
+                # Start the switch operation with progress tracking
+                self._studio_api.switch_studio_machine_with_progress(
+                    self._studio.id, self._teamspace.id, machine, interruptible=interruptible, progress=progress
+                )
+        else:
+            self._studio_api.switch_studio_machine(
+                self._studio.id, self._teamspace.id, machine, interruptible=interruptible
+            )
 
     def run_and_detach(self, *commands: str, timeout: float = 10, check_interval: float = 1) -> str:
         """Runs given commands on the Studio and returns immediately.

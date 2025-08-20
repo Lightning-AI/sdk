@@ -59,4 +59,5 @@ def studio(name: str, teamspace: Optional[str] = None, machine: str = "CPU") -> 
     except KeyError:
         resolved_machine = machine
 
+    Studio.show_progress = True
     studio.switch_machine(resolved_machine)

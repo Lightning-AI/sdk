@@ -179,14 +179,14 @@ def test_studio_init(
     assert studio.name == name
 
 
-@mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
-@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
-@mock.patch("requests.put", autospec=True)
-@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_teamspaces", autospec=True)
-def test_studio_init_no_teamspace(mock_list_teamspaces, mock_get_teamspace, mock_get_org, mock_requests_put):
-    # Set up mocks to return no teamspaces
-    mock_list_teamspaces.return_value = []
-    mock_get_teamspace.side_effect = ValueError("Teamspace does not exist")
+@mock.patch.dict(os.environ, {"LIGHTNING_TEAMSPACE": ""}, clear=False)
+@mock.patch("lightning_sdk.utils.config.Config.get_value")
+@mock.patch("lightning_sdk.studio._resolve_teamspace")
+def test_studio_init_no_teamspace(mock_resolve_teamspace, mock_config_get_value):
+    # Mock config to return None for teamspace_name
+    mock_config_get_value.return_value = None
+    # Mock _resolve_teamspace to return None, which should trigger the ValueError
+    mock_resolve_teamspace.return_value = None
 
     with pytest.raises(ValueError, match="Couldn't resolve teamspace from the provided name, org, or user"):
         Studio(

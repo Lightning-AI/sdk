@@ -110,5 +110,6 @@ def studio(
 
     if start is not None:
         start_machine = getattr(Machine, start, start)
+        Studio.show_progress = True
         studio.start(start_machine)
         console.print(f"Started Studio {studio.name} on machine {start}")
