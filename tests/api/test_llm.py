@@ -48,7 +48,7 @@ def test_start_conversation_basic(llm_api, mock_client, sample_response):
     assert body["message"]["author"]["role"] == "user"
     assert body["message"]["content"][0]["contentType"] == "text"
     assert body["message"]["content"][0]["parts"] == ["Hello, how are you?"]
-    assert body["max_tokens"] == 5
+    assert body["max_completion_tokens"] == 5
     assert body["conversation_id"] is None
     assert body["billing_project_id"] is None
     assert body["name"] is None

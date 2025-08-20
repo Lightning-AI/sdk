@@ -234,7 +234,7 @@ def test_ephemeral(monkeypatch, mock_public_model):
     mock_api.start_conversation.assert_called_with(
         prompt="Hello, how are you?",
         system_prompt=None,
-        max_completion_tokens=500,
+        max_completion_tokens=None,
         assistant_id=llm._model_id,
         images=None,
         conversation_id=None,  # no conversation ID for ephemeral
@@ -292,7 +292,7 @@ def test_chat(monkeypatch, mock_public_model):
     mock_api.start_conversation.assert_called_with(
         prompt="Hello, how are you?",
         system_prompt=None,
-        max_completion_tokens=500,
+        max_completion_tokens=None,
         assistant_id=llm._model_id,
         images=None,
         conversation_id=None,
@@ -308,7 +308,7 @@ def test_chat(monkeypatch, mock_public_model):
     mock_api.start_conversation.assert_called_with(
         prompt="Hi again!",
         system_prompt=None,
-        max_completion_tokens=500,
+        max_completion_tokens=None,
         assistant_id=llm._model_id,
         images=None,
         conversation_id="conv_123",
@@ -354,7 +354,7 @@ def test_chat(monkeypatch, mock_public_model):
     mock_api.start_conversation.assert_called_with(
         prompt="Hello, how are you?",
         system_prompt=None,
-        max_completion_tokens=500,
+        max_completion_tokens=None,
         assistant_id=llm._model_id,
         images=None,
         conversation_id=None,
@@ -374,7 +374,7 @@ def test_chat(monkeypatch, mock_public_model):
     mock_api.start_conversation.assert_called_with(
         prompt="Describe the image",
         system_prompt=None,
-        max_completion_tokens=500,
+        max_completion_tokens=None,
         assistant_id=llm._model_id,
         images=[
             "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
@@ -396,7 +396,7 @@ def test_chat(monkeypatch, mock_public_model):
     mock_api.start_conversation.assert_called_with(
         prompt="Describe the image",
         system_prompt=None,
-        max_completion_tokens=500,
+        max_completion_tokens=None,
         assistant_id=llm._model_id,
         images=["/home/user/image.jpg", "/home/user/image2.png", "/home/user/image3.jpeg"],
         conversation_id=None,
@@ -478,7 +478,7 @@ def test_chat_with_tools(monkeypatch, mock_tools):
     mock_api.start_conversation.assert_called_with(
         prompt="Hello, how are you?",
         system_prompt=None,
-        max_completion_tokens=500,
+        max_completion_tokens=None,
         assistant_id=llm._model_id,
         images=None,
         conversation_id=None,  # no conversation ID for ephemeral

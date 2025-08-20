@@ -146,7 +146,6 @@ class LLMApi:
                     {"contentType": "text", "parts": [prompt]},
                 ],
             },
-            "max_tokens": max_completion_tokens,
             "conversation_id": conversation_id,
             "billing_project_id": billing_project_id,
             "name": name,
@@ -159,6 +158,9 @@ class LLMApi:
             "parent_message_id": kwargs.get("parent_message_id", ""),
             "tools": tools,
         }
+        if max_completion_tokens is not None:
+            body["max_completion_tokens"] = max_completion_tokens
+
         if images:
             for image in images:
                 url = image
@@ -203,7 +205,6 @@ class LLMApi:
                     {"contentType": "text", "parts": [prompt]},
                 ],
             },
-            "max_completion_tokens": max_completion_tokens,
             "conversation_id": conversation_id,
             "billing_project_id": billing_project_id,
             "name": name,
@@ -216,6 +217,9 @@ class LLMApi:
             "parent_message_id": kwargs.get("parent_message_id", ""),
             "sent_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="microseconds"),
         }
+        if max_completion_tokens is not None:
+            body["max_completion_tokens"] = max_completion_tokens
+
         if images:
             for image in images:
                 url = image
