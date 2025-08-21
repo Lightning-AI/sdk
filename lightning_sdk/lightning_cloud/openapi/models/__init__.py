@@ -805,6 +805,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_quest import V1Quest
 from lightning_sdk.lightning_cloud.openapi.models.v1_quest_status import V1QuestStatus
 from lightning_sdk.lightning_cloud.openapi.models.v1_queue_server_type import V1QueueServerType
 from lightning_sdk.lightning_cloud.openapi.models.v1_quotas import V1Quotas
+from lightning_sdk.lightning_cloud.openapi.models.v1_quote_annual_upsell_response import V1QuoteAnnualUpsellResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_quote_subscription_response import V1QuoteSubscriptionResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_r2_data_connection import V1R2DataConnection
 from lightning_sdk.lightning_cloud.openapi.models.v1_refresh_index_response import V1RefreshIndexResponse

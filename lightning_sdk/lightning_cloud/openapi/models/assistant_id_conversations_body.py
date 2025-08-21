@@ -46,7 +46,7 @@ class AssistantIdConversationsBody(object):
         'conversation_id': 'str',
         'ephemeral': 'bool',
         'internal_conversation': 'bool',
-        'max_tokens': 'str',
+        'max_completion_tokens': 'str',
         'message': 'V1Message',
         'metadata': 'dict(str, str)',
         'name': 'str',
@@ -66,7 +66,7 @@ class AssistantIdConversationsBody(object):
         'conversation_id': 'conversationId',
         'ephemeral': 'ephemeral',
         'internal_conversation': 'internalConversation',
-        'max_tokens': 'maxTokens',
+        'max_completion_tokens': 'maxCompletionTokens',
         'message': 'message',
         'metadata': 'metadata',
         'name': 'name',
@@ -80,14 +80,14 @@ class AssistantIdConversationsBody(object):
         'tools': 'tools'
     }
 
-    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, sent_at: 'datetime' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None, tools: 'list[V1Tool]' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_completion_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, sent_at: 'datetime' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None, tools: 'list[V1Tool]' =None):  # noqa: E501
         """AssistantIdConversationsBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
         self._billing_project_id = None
         self._conversation_id = None
         self._ephemeral = None
         self._internal_conversation = None
-        self._max_tokens = None
+        self._max_completion_tokens = None
         self._message = None
         self._metadata = None
         self._name = None
@@ -110,8 +110,8 @@ class AssistantIdConversationsBody(object):
             self.ephemeral = ephemeral
         if internal_conversation is not None:
             self.internal_conversation = internal_conversation
-        if max_tokens is not None:
-            self.max_tokens = max_tokens
+        if max_completion_tokens is not None:
+            self.max_completion_tokens = max_completion_tokens
         if message is not None:
             self.message = message
         if metadata is not None:
@@ -241,25 +241,25 @@ class AssistantIdConversationsBody(object):
         self._internal_conversation = internal_conversation
 
     @property
-    def max_tokens(self) -> 'str':
-        """Gets the max_tokens of this AssistantIdConversationsBody.  # noqa: E501
+    def max_completion_tokens(self) -> 'str':
+        """Gets the max_completion_tokens of this AssistantIdConversationsBody.  # noqa: E501
 
 
-        :return: The max_tokens of this AssistantIdConversationsBody.  # noqa: E501
+        :return: The max_completion_tokens of this AssistantIdConversationsBody.  # noqa: E501
         :rtype: str
         """
-        return self._max_tokens
+        return self._max_completion_tokens
 
-    @max_tokens.setter
-    def max_tokens(self, max_tokens: 'str'):
-        """Sets the max_tokens of this AssistantIdConversationsBody.
+    @max_completion_tokens.setter
+    def max_completion_tokens(self, max_completion_tokens: 'str'):
+        """Sets the max_completion_tokens of this AssistantIdConversationsBody.
 
 
-        :param max_tokens: The max_tokens of this AssistantIdConversationsBody.  # noqa: E501
+        :param max_completion_tokens: The max_completion_tokens of this AssistantIdConversationsBody.  # noqa: E501
         :type: str
         """
 
-        self._max_tokens = max_tokens
+        self._max_completion_tokens = max_completion_tokens
 
     @property
     def message(self) -> 'V1Message':
