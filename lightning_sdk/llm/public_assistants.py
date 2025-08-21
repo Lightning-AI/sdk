@@ -27,6 +27,10 @@ PUBLIC_MODELS = {
         "id": "ast_01jz3thxskg4fcdk4xhkjkym5b",
         "context_length": 8000
     },
+    "lightning-ai/DeepSeek-V3.1": {
+        "id": "ast_01k378z15k0msktaxjpfrfwqqh",
+        "context_length": 163840
+    },
     "lightning-ai/gpt-oss-20b": {
         "id": "ast_01k1y2ywfh9zzexjzrva6y96ms",
         "context_length": 128000,
