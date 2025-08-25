@@ -12,7 +12,7 @@ from lightning_sdk.studio import Studio
 
 
 @click.command("create")
-@click.argument("studio_name")
+@click.option("--name", help="The name of the studio to create. If not provided, a random name will be generated.")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 @click.option(
     "--cloud-provider",
@@ -25,7 +25,7 @@ from lightning_sdk.studio import Studio
     type=click.STRING,
 )
 def create_studio(
-    studio_name: str,
+    name: Optional[str] = None,
     teamspace: Optional[str] = None,
     cloud_provider: Optional[str] = None,
     cloud_account: Optional[str] = None,
@@ -33,11 +33,7 @@ def create_studio(
     """Create a new Studio.
 
     Example:
-        lightning studio create [STUDIO_NAME]
-
-    STUDIO_NAME: the name of the studio to create.
-
-    If STUDIO_NAME is not provided, will try to infer from environment or use the default value from the config.
+        lightning studio create
     """
     menu = TeamspacesMenu()
 
@@ -49,15 +45,15 @@ def create_studio(
 
     try:
         studio = Studio(
-            studio_name,
+            name=name,
             teamspace=resolved_teamspace,
             create_ok=True,
             cloud_provider=cloud_provider,
             cloud_account=cloud_account,
         )
     except (RuntimeError, ValueError, ApiException):
-        if studio_name:
-            raise ValueError(f"Could not create Studio: '{studio_name}'. Does the Studio exist?") from None
-        raise ValueError(f"Could not create Studio: '{studio_name}'. Please provide a Studio name") from None
+        if name:
+            raise ValueError(f"Could not create Studio: '{name}'. Does the Studio exist?") from None
+        raise ValueError(f"Could not create Studio: '{name}'. Please provide a Studio name") from None
 
     click.echo(f"Studio '{studio.name}' created successfully")

@@ -14,6 +14,7 @@ from lightning_sdk.owner import Owner
 from lightning_sdk.status import Status
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
+from lightning_sdk.utils.names import random_unique_name
 from lightning_sdk.utils.resolve import (
     _get_org_id,
     _resolve_deprecated_cluster,
@@ -89,6 +90,7 @@ class Studio:
         self._disable_secrets = disable_secrets
 
         self._plugins = {}
+        self._studio = None
 
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
         cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
@@ -106,23 +108,31 @@ class Studio:
             if studio_id is not None:
                 # We're inside a studio, get it by ID
                 self._studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
+                name = self._studio.name
             else:
                 # Try config defaults
                 from lightning_sdk.utils.config import Config, DefaultConfigKeys
 
                 config = Config()
                 name = config.get_value(DefaultConfigKeys.studio)
-                if name is None:
+                if name is None and not create_ok:
                     raise ValueError(
                         "Cannot autodetect Studio. Either use the SDK from within a Studio or pass a name!"
                     )
 
-        # If we have a name (explicit or from config), get studio by name
-        if name is not None:
+        if self._studio is None:
+            # If we have a name (explicit or from config), get studio by name
             try:
+                if name is None:
+                    # if we don't have a name, raise an error to get
+                    # to the exception path and optionally create a studio
+                    raise ValueError(
+                        "Cannot autodetect Studio. Either use the SDK from within a Studio or pass a name!"
+                    )
                 self._studio = self._studio_api.get_studio(name, self._teamspace.id)
             except ValueError as e:
                 if create_ok:
+                    name = name or random_unique_name()
                     self._studio = self._studio_api.create_studio(
                         name,
                         self._teamspace.id,
@@ -131,7 +141,7 @@ class Studio:
                         disable_secrets=self._disable_secrets,
                     )
                 else:
-                    raise ValueError(f"Studio {name} does not exist.") from e
+                    raise e
 
         self._cloud_account = self._studio.cluster_id
 
