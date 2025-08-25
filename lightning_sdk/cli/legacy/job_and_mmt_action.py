@@ -2,12 +2,12 @@ from typing import Optional
 
 from lightning_sdk.cli.legacy.jobs_menu import _JobsMenu
 from lightning_sdk.cli.legacy.mmts_menu import _MMTsMenu
-from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.job import Job
 from lightning_sdk.mmt import MMT
 
 
-class _JobAndMMTAction(_TeamspacesMenu, _JobsMenu, _MMTsMenu):
+class _JobAndMMTAction(TeamspacesMenu, _JobsMenu, _MMTsMenu):
     """Inspect resources of the Lightning AI platform to get additional details as JSON."""
 
     def job(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> Job:
@@ -20,7 +20,7 @@ class _JobAndMMTAction(_TeamspacesMenu, _JobsMenu, _MMTsMenu):
                 If not specified can be selected interactively.
 
         """
-        resolved_teamspace = self._resolve_teamspace(teamspace)
+        resolved_teamspace = self(teamspace)
         return self._resolve_job(name, teamspace=resolved_teamspace)
 
     def mmt(self, name: Optional[str] = None, teamspace: Optional[str] = None) -> MMT:
@@ -33,5 +33,5 @@ class _JobAndMMTAction(_TeamspacesMenu, _JobsMenu, _MMTsMenu):
                 If not specified can be selected interactively.
 
         """
-        resolved_teamspace = self._resolve_teamspace(teamspace)
+        resolved_teamspace = self(teamspace)
         return self._resolve_mmt(name, teamspace=resolved_teamspace)

@@ -1,8 +1,8 @@
 import click
 
-from lightning_sdk.cli.utils.resolve import resolve_teamspace_owner_name_format
+from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.machine import CloudProvider
-from lightning_sdk.organization import Organization
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.config import Config, DefaultConfigKeys
 from lightning_sdk.utils.resolve import _resolve_org, _resolve_user
@@ -59,23 +59,11 @@ def set_studio(studio_name: str) -> None:
 @click.argument("teamspace_name")
 def set_teamspace(teamspace_name: str) -> None:
     """Set the default teamspace name in the config."""
-    config = Config()
+    menu = TeamspacesMenu()
+    teamspace_resolved = menu(teamspace=teamspace_name)
 
-    teamspace_resolved = resolve_teamspace_owner_name_format(teamspace_name)
-
-    if teamspace_resolved is None:
-        # TODO: make this a generic CLI error
-        raise ValueError(
-            f"Could not resolve teamspace: '{teamspace_name}'. "
-            "Teamspace should be specified as 'owner/name'. Does the teamspace exist?"
-        )
-
-    setattr(config, DefaultConfigKeys.teamspace_name, teamspace_resolved.name)
-    setattr(config, DefaultConfigKeys.teamspace_owner, teamspace_resolved.owner.name)
-    if isinstance(teamspace_resolved.owner, Organization):
-        setattr(config, DefaultConfigKeys.teamspace_owner_type, "organization")
-    else:
-        setattr(config, DefaultConfigKeys.teamspace_owner_type, "user")
+    # explicit user action, so overwrite the config
+    save_teamspace_to_config(teamspace_resolved, overwrite=True)
 
 
 @set_value.command("cloud-account")

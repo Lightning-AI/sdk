@@ -539,7 +539,7 @@ def test_auth_run_server_confirm_browser_open(mock_auth_confirm, _, mock_authser
 
 @patch("lightning_sdk.cli.legacy.deploy._auth.Teamspace")
 @patch("lightning_sdk.cli.legacy.deploy._auth._get_authed_user")
-@patch("lightning_sdk.cli.legacy.deploy._auth._TeamspacesMenu")
+@patch("lightning_sdk.cli.legacy.deploy._auth.TeamspacesMenu")
 def test_select_teamspace_when_only_one_available(mock_ts_menu, mock_get_authed_user, mock_teamspace_cls):
     mock_ts_menu.return_value._get_possible_teamspaces.return_value = {"id": {"name": "test-teamspace"}}
     mock_get_authed_user.return_value = "user"
@@ -582,7 +582,7 @@ def mock_onboarding():
 
 
 @patch("lightning_sdk.cli.legacy.deploy._auth.Teamspace")
-@patch("lightning_sdk.cli.legacy.deploy._auth._TeamspacesMenu")
+@patch("lightning_sdk.cli.legacy.deploy._auth.TeamspacesMenu")
 def test_onboarding_select_teamspace_without_org(mock_ts_menu, mock_ts, mock_onboarding):
     (
         onboarding,
@@ -616,7 +616,7 @@ def test_onboarding_select_teamspace_without_org(mock_ts_menu, mock_ts, mock_onb
 
 
 @patch("lightning_sdk.cli.legacy.deploy._auth.Teamspace")
-@patch("lightning_sdk.cli.legacy.deploy._auth._TeamspacesMenu")
+@patch("lightning_sdk.cli.legacy.deploy._auth.TeamspacesMenu")
 def test_onboarding_select_teamspace_with_org(mock_ts_menu, mock_ts, mock_onboarding):
     (
         onboarding,

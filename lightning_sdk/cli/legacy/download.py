@@ -11,7 +11,7 @@ from lightning_sdk.api.license_api import LicenseApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
-from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.models import download_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
@@ -110,8 +110,8 @@ def folder(
         path = _expand_remote_path(path)
         resolved_downloader = _resolve_studio(studio)
     elif teamspace:
-        menu = _TeamspacesMenu()
-        resolved_downloader = menu._resolve_teamspace(teamspace)
+        menu = TeamspacesMenu()
+        resolved_downloader = menu(teamspace)
     else:
         raise ValueError("Either --studio or --teamspace must be provided")
 
@@ -173,8 +173,8 @@ def file(path: str = "", studio: Optional[str] = None, teamspace: Optional[str] 
     if studio:
         resolved_downloader = _resolve_studio(studio)
     elif teamspace:
-        menu = _TeamspacesMenu()
-        resolved_downloader = menu._resolve_teamspace(teamspace)
+        menu = TeamspacesMenu()
+        resolved_downloader = menu(teamspace)
     else:
         raise ValueError("Either --studio or --teamspace must be provided")
 
@@ -214,8 +214,8 @@ def download_container(
     CONTAINER: The name of the container to download.
     """
     console = Console()
-    menu = _TeamspacesMenu()
-    resolved_teamspace = menu._resolve_teamspace(teamspace)
+    menu = TeamspacesMenu()
+    resolved_teamspace = menu(teamspace)
     with console.status("Downloading container..."):
         api = LitContainerApi()
         api.download_container(container, resolved_teamspace, tag, cloud_account)

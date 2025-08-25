@@ -6,8 +6,8 @@ from typing import Optional
 import click
 from rich.console import Console
 
-from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
 from lightning_sdk.cli.legacy.upload import _upload_folder
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils.resolve import _get_studio_url
@@ -49,8 +49,8 @@ def open(path: str = ".", teamspace: Optional[str] = None, cloud_account: Option
     try:
         resolved_teamspace = Teamspace()
     except ValueError:
-        menu = _TeamspacesMenu()
-        resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
+        menu = TeamspacesMenu()
+        resolved_teamspace = menu(teamspace=teamspace)
 
     # default cloud account to current studios cloud account if run from studio
     # else it will fall back to teamspace default in the backend

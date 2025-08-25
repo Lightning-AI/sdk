@@ -144,6 +144,12 @@ class Config:
             sort_keys=True,
         )
 
+    def get(self, key: str) -> Optional[str]:
+        return self.get_value(key)
+
+    def set(self, key: str, value: str) -> None:
+        self._set_nested([key], value)
+
 
 def _unflatten_dict(flat_dict: Dict[str, Any]) -> Dict[str, Any]:
     unflattened_dict = {}

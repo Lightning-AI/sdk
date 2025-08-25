@@ -8,7 +8,7 @@ from typing_extensions import Literal
 
 from lightning_sdk import Job, Machine, Studio, Teamspace
 from lightning_sdk.cli.legacy.clusters_menu import _ClustersMenu
-from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi import V1MultiMachineJob
 from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.utils.resolve import _get_authed_user
@@ -48,7 +48,7 @@ def studios(
 ) -> None:
     """List studios for a given teamspace."""
     studios = []
-    menu = _TeamspacesMenu()
+    menu = TeamspacesMenu()
     if all and not teamspace:
         user = _get_authed_user()
         possible_teamspaces = menu._get_possible_teamspaces(user)
@@ -56,7 +56,7 @@ def studios(
             teamspace = Teamspace(**ts)
             studios.extend(teamspace.studios)
     else:
-        resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
+        resolved_teamspace = menu(teamspace=teamspace)
         studios = resolved_teamspace.studios
 
     table = Table(
@@ -111,7 +111,7 @@ def jobs(
 ) -> None:
     """List jobs for a given teamspace."""
     jobs = []
-    menu = _TeamspacesMenu()
+    menu = TeamspacesMenu()
     if all and not teamspace:
         user = _get_authed_user()
         possible_teamspaces = menu._get_possible_teamspaces(user)
@@ -119,7 +119,7 @@ def jobs(
             teamspace = Teamspace(**ts)
             jobs.extend(teamspace.jobs)
     else:
-        resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
+        resolved_teamspace = menu(teamspace=teamspace)
         jobs = resolved_teamspace.jobs
 
     table = Table(pad_edge=True)
@@ -182,7 +182,7 @@ def mmts(
 ) -> None:
     """List multi-machine jobs for a given teamspace."""
     jobs = []
-    menu = _TeamspacesMenu()
+    menu = TeamspacesMenu()
     if all and not teamspace:
         user = _get_authed_user()
         possible_teamspaces = menu._get_possible_teamspaces(user)
@@ -190,7 +190,7 @@ def mmts(
             teamspace = Teamspace(**ts)
             jobs.extend(teamspace.multi_machine_jobs)
     else:
-        resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
+        resolved_teamspace = menu(teamspace=teamspace)
         jobs = resolved_teamspace.multi_machine_jobs
 
     table = Table(pad_edge=True)
@@ -242,9 +242,9 @@ def mmts(
 def containers(teamspace: Optional[str] = None, cloud_account: Optional[str] = None) -> None:
     """Display the list of available containers."""
     api = LitContainer()
-    menu = _TeamspacesMenu()
+    menu = TeamspacesMenu()
     clusters_menu = _ClustersMenu()
-    resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
+    resolved_teamspace = menu(teamspace=teamspace)
 
     if not cloud_account:
         cloud_account = clusters_menu._resolve_cluster(resolved_teamspace)

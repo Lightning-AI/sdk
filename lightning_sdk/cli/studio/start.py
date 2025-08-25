@@ -4,7 +4,8 @@ from typing import Optional
 
 import click
 
-from lightning_sdk.cli.utils.resolve import resolve_teamspace_owner_name_format
+from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.studio import Studio
@@ -51,15 +52,9 @@ def start_studio(
 
     If STUDIO_NAME is not provided, will try to infer from environment or use the default value from the config.
     """
-    if teamspace is not None:
-        resolved_teamspace = resolve_teamspace_owner_name_format(teamspace)
-        if resolved_teamspace is None:
-            raise ValueError(
-                f"Could not resolve teamspace: '{teamspace}'. Teamspace should be specified as 'owner/name'. "
-                "Does the teamspace exist?"
-            )
-    else:
-        resolved_teamspace = None
+    menu = TeamspacesMenu()
+    resolved_teamspace = menu(teamspace=teamspace)
+    save_teamspace_to_config(resolved_teamspace, overwrite=False)
 
     if cloud_provider is not None:
         cloud_provider = CloudProvider(cloud_provider)

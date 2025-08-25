@@ -6,8 +6,9 @@ import click
 from rich.table import Table
 
 from lightning_sdk.cli.utils.cloud_account_map import cloud_account_to_display_name
-from lightning_sdk.cli.utils.resolve import resolve_teamspace_owner_name_format
 from lightning_sdk.cli.utils.richt_print import rich_to_str
+from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.studio import Studio
 
 
@@ -26,11 +27,9 @@ def list_studios(teamspace: Optional[str] = None, sort_by: Optional[str] = None)
         lightning studio list --teamspace owner/teamspace
 
     """
-    teamspace_resolved = resolve_teamspace_owner_name_format(teamspace)
-
-    if teamspace_resolved is None:
-        # TODO: make this a generic CLI error
-        raise ValueError(f"Could not resolve teamspace: {teamspace}")
+    menu = TeamspacesMenu()
+    teamspace_resolved = menu(teamspace=teamspace)
+    save_teamspace_to_config(teamspace_resolved, overwrite=False)
 
     studios = teamspace_resolved.studios
 

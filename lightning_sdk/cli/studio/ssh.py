@@ -9,7 +9,8 @@ from typing import List, Optional
 
 import click
 
-from lightning_sdk.cli.utils.resolve import resolve_teamspace_owner_name_format
+from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH
@@ -41,15 +42,9 @@ def ssh_studio(
     auth.authenticate()
     ssh_private_key_path = _download_ssh_keys(auth.api_key, force_download=False)
 
-    if teamspace is not None:
-        resolved_teamspace = resolve_teamspace_owner_name_format(teamspace)
-        if resolved_teamspace is None:
-            raise ValueError(
-                f"Could not resolve teamspace: '{teamspace}'. Teamspace should be specified as 'owner/name'. "
-                "Does the teamspace exist?"
-            )
-    else:
-        resolved_teamspace = None
+    menu = TeamspacesMenu()
+    resolved_teamspace = menu(teamspace=teamspace)
+    save_teamspace_to_config(resolved_teamspace, overwrite=False)
 
     studio = Studio(studio_name, teamspace=resolved_teamspace)
 

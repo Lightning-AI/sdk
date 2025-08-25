@@ -10,7 +10,7 @@ from rich.prompt import Confirm
 
 from lightning_sdk import Teamspace
 from lightning_sdk.api import UserApi
-from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
@@ -74,13 +74,13 @@ def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
 def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
     if teamspace is None:
         user = _get_authed_user()
-        menu = _TeamspacesMenu()
+        menu = TeamspacesMenu()
         possible_teamspaces = menu._get_possible_teamspaces(user)
         if len(possible_teamspaces) == 1:
             name = next(iter(possible_teamspaces.values()))["name"]
             return Teamspace(name=name, org=org, user=user)
 
-        return menu._resolve_teamspace(teamspace)
+        return menu(teamspace)
 
     return _resolve_teamspace(teamspace=teamspace, org=org, user=user)
 
@@ -180,7 +180,7 @@ class _Onboarding:
             return select_teamspace(teamspace, org, user)
 
         # Run only when user hasn't completed onboarding yet.
-        menu = _TeamspacesMenu()
+        menu = TeamspacesMenu()
         self._wait_user_onboarding()
         # Onboarding has been completed - user already selected organization if they could
         possible_teamspaces = menu._get_possible_teamspaces(self.user)

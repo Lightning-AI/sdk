@@ -7,7 +7,7 @@ import click
 from rich.console import Console
 
 from lightning_sdk import Machine, Studio
-from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.machine import CloudProvider
 
 _MACHINE_VALUES = tuple(
@@ -78,8 +78,8 @@ def studio(
 
     NAME: the name of the studio to create. If already present within teamspace, will add a random suffix.
     """
-    menu = _TeamspacesMenu()
-    teamspace_resolved = menu._resolve_teamspace(teamspace)
+    menu = TeamspacesMenu()
+    teamspace_resolved = menu(teamspace)
 
     # default cloud account to current studios cloud account if run from studio
     # else it will fall back to teamspace default in the backend

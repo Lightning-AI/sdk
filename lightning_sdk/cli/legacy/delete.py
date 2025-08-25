@@ -5,7 +5,7 @@ from rich.console import Console
 
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
-from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.studio import Studio
@@ -30,8 +30,8 @@ def delete() -> None:
 def container(name: str, teamspace: Optional[str] = None) -> None:
     """Delete the docker container NAME."""
     api = LitContainer()
-    menu = _TeamspacesMenu()
-    resolved_teamspace = menu._resolve_teamspace(teamspace=teamspace)
+    menu = TeamspacesMenu()
+    resolved_teamspace = menu(teamspace=teamspace)
     try:
         api.delete_container(name, resolved_teamspace.name, resolved_teamspace.owner.name)
         Console().print(f"Container {name} deleted successfully.")

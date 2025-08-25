@@ -16,7 +16,7 @@ from lightning_sdk.api.lit_container_api import DockerNotRunningError, LCRAuthFa
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
-from lightning_sdk.cli.legacy.teamspace_menu import _TeamspacesMenu
+from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.models import upload_model as _upload_model
 from lightning_sdk.studio import Studio
@@ -137,8 +137,8 @@ def upload_container(
     platform: Optional[str] = "linux/amd64",
 ) -> None:
     """Upload a container to Lightning AI's container registry."""
-    menu = _TeamspacesMenu()
-    teamspace = menu._resolve_teamspace(teamspace)
+    menu = TeamspacesMenu()
+    teamspace = menu(teamspace)
     console = Console()
     with Progress(
         SpinnerColumn(),
