@@ -1,5 +1,6 @@
 import glob
 import os
+import threading
 import warnings
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Tuple, Union
 
@@ -57,8 +58,8 @@ class Studio:
     """
 
     # skips init of studio, only set when using this as a shell for names, ids etc.
-    _skip_init = False
-    _skip_setup = False
+    _skip_init = threading.local()
+    _skip_setup = threading.local()
 
     # whether to show progress bars during operations
     show_progress = False
@@ -80,13 +81,17 @@ class Studio:
         self._studio_api = StudioApi()
         self._cloud_account_api = CloudAccountApi()
 
-        _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
-        if _teamspace is None:
-            raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
+        self._teamspace = None
 
-        self._teamspace = _teamspace
+        # don't resolve anything if we're skipping init
+        if not getattr(self._skip_init, "value", False):
+            _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+            if _teamspace is None:
+                raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
 
-        self._setup_done = self._skip_setup
+            self._teamspace = _teamspace
+
+        self._setup_done = getattr(self._skip_setup, "value", False)
         self._disable_secrets = disable_secrets
 
         self._plugins = {}
@@ -95,15 +100,17 @@ class Studio:
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
         cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
 
-        self._cloud_account = self._cloud_account_api.resolve_cloud_account(
-            self._teamspace.id,
-            cloud_account=cloud_account,
-            cloud_provider=cloud_provider,
-            default_cloud_account=self._teamspace.default_cloud_account,
-        )
+        # if we're skipping init, we don't need to resolve the cloud account as then we're not creating a studio
+        if self._teamspace is not None:
+            _cloud_account = self._cloud_account_api.resolve_cloud_account(
+                self._teamspace.id,
+                cloud_account=cloud_account,
+                cloud_provider=cloud_provider,
+                default_cloud_account=self._teamspace.default_cloud_account,
+            )
 
         # Resolve studio name if not provided: explicit → env (LIGHTNING_CLOUD_SPACE_ID) → config defaults
-        if name is None:
+        if name is None and not getattr(self._skip_init, "value", False):
             studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
             if studio_id is not None:
                 # We're inside a studio, get it by ID
@@ -120,7 +127,7 @@ class Studio:
                         "Cannot autodetect Studio. Either use the SDK from within a Studio or pass a name!"
                     )
 
-        if self._studio is None:
+        if self._studio is None and not getattr(self._skip_init, "value", False):
             # If we have a name (explicit or from config), get studio by name
             try:
                 if name is None:
@@ -136,17 +143,15 @@ class Studio:
                     self._studio = self._studio_api.create_studio(
                         name,
                         self._teamspace.id,
-                        cloud_account=self._cloud_account,
+                        cloud_account=_cloud_account,
                         source=source,
                         disable_secrets=self._disable_secrets,
                     )
                 else:
                     raise e
 
-        self._cloud_account = self._studio.cluster_id
-
         if (
-            not self._skip_init
+            not getattr(self._skip_init, "value", False)
             and _internal_status_to_external_status(
                 self._studio_api._get_studio_instance_status_from_object(self._studio)
             )

@@ -19,6 +19,7 @@ from lightning_sdk.utils.resolve import (
     _resolve_teamspace_name,
     _resolve_user,
     _resolve_user_name,
+    skip_studio_init,
 )
 
 
@@ -411,3 +412,60 @@ def test_get_studio_url_turn_on(internal_studio_init_mocker):
     url = _get_studio_url(studio, turn_on=True)
 
     assert url == "lightning.ai/org-abc/ts-abc/studios/st-abc/code?turnOn=true"
+
+
+def test_skip_studio_init_context_manager():
+    """Test that skip_studio_init context manager doesn't
+    try to resolve anything and properly sets Studio._skip_init."""
+
+    # Ensure we start with _skip_init as False
+    Studio._skip_init.value = False
+    assert getattr(Studio._skip_init, "value", False) is False
+
+    # Test context manager sets _skip_init to True
+    with skip_studio_init():
+        assert getattr(Studio._skip_init, "value", False) is True
+
+    # Test context manager restores original state
+    assert getattr(Studio._skip_init, "value", False) is False
+
+    # Test it preserves True state if that was the original
+    Studio._skip_init.value = True
+    with skip_studio_init():
+        assert getattr(Studio._skip_init, "value", False) is True
+    assert getattr(Studio._skip_init, "value", False) is True
+
+
+def test_skip_studio_init_prevents_resolution():
+    """Test that skip_studio_init actually prevents teamspace resolution and studio API calls."""
+
+    # Test with skip_studio_init context manager
+    with mock.patch("lightning_sdk.studio.StudioApi") as mock_studio_api_class, mock.patch(
+        "lightning_sdk.studio.CloudAccountApi"
+    ) as mock_cloud_api_class, mock.patch("lightning_sdk.utils.resolve._resolve_teamspace") as mock_resolve_teamspace:
+        mock_studio_api = mock_studio_api_class.return_value
+
+        with skip_studio_init():
+            # Create a studio instance - this should NOT trigger teamspace or studio resolution
+            studio = Studio("test-studio", "ts-abc")
+
+            # Verify the studio object was created with skip_init behavior
+            assert studio is not None
+            assert getattr(studio._skip_init, "value", False) is True
+            assert studio._studio is None  # Should not have been resolved
+            assert studio._teamspace is None  # Should not have been resolved due to skip_init
+
+            # Verify that teamspace resolution was NOT called when _skip_init is True
+            assert not mock_resolve_teamspace.called, "_resolve_teamspace should not be called when _skip_init is True"
+
+            # Verify that critical Studio API methods were NOT called when _skip_init is True
+            assert not mock_studio_api.get_studio.called, "get_studio should not be called when _skip_init is True"
+            assert (
+                not mock_studio_api.get_studio_by_id.called
+            ), "get_studio_by_id should not be called when _skip_init is True"
+            assert (
+                not mock_studio_api.create_studio.called
+            ), "create_studio should not be called when _skip_init is True"
+            assert (
+                not mock_cloud_api_class.resolve_cloud_account.called
+            ), "resolve_cloud_account should not be called when _skip_init is True"

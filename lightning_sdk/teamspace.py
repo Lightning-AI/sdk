@@ -21,6 +21,7 @@ from lightning_sdk.utils.resolve import (
     _resolve_org,
     _resolve_teamspace_name,
     _resolve_user,
+    skip_studio_init,
 )
 
 if TYPE_CHECKING:
@@ -125,7 +126,11 @@ class Teamspace:
         for cl in cloud_accounts:
             _studios = self._teamspace_api.list_studios(teamspace_id=self.id, cloud_account=cl.cluster_id)
             for s in _studios:
-                studios.append(Studio(name=s.name, teamspace=self, cluster=cl.cluster_name, create_ok=False))
+                with skip_studio_init():
+                    studio = Studio(name=s.name, teamspace=self, cluster=cl.cluster_name, create_ok=False)
+                    studio._studio = s
+                    studio._teamspace = self
+                    studios.append(studio)
 
         return studios
 

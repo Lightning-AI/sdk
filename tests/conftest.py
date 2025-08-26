@@ -69,6 +69,27 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_create_managed_endpoint_res
 from lightning_sdk.lightning_cloud.openapi.models.v1_managed_endpoint import V1ManagedEndpoint
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
+
+@pytest.fixture(autouse=True)
+def _clean_studio_thread_local_state():
+    """Automatically ensure clean Studio thread-local state for every test."""
+    from lightning_sdk.studio import Studio
+
+    # Store original states
+    original_skip_init = getattr(Studio._skip_init, "value", False)
+    original_skip_setup = getattr(Studio._skip_setup, "value", False)
+
+    # Ensure clean state at test start
+    Studio._skip_init.value = False
+    Studio._skip_setup.value = False
+
+    yield
+
+    # Restore original states after test
+    Studio._skip_init.value = original_skip_init
+    Studio._skip_setup.value = original_skip_setup
+
+
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
 _END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
 

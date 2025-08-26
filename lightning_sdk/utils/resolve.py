@@ -244,12 +244,12 @@ def skip_studio_init() -> Generator[None, None, None]:
     """Skip studio init based on current runtime."""
     from lightning_sdk.studio import Studio
 
-    prev_studio_init_state = Studio._skip_init
-    Studio._skip_init = True
+    prev_studio_init_state = getattr(Studio._skip_init, "value", False)
+    Studio._skip_init.value = True
 
     yield
 
-    Studio._skip_init = prev_studio_init_state
+    Studio._skip_init.value = prev_studio_init_state
 
 
 @contextmanager
@@ -257,12 +257,12 @@ def skip_studio_setup() -> Generator[None, None, None]:
     """Skip studio setup based on current runtime."""
     from lightning_sdk.studio import Studio
 
-    prev_studio_init_state = Studio._skip_setup
-    Studio._skip_setup = True
+    prev_studio_setup_state = getattr(Studio._skip_setup, "value", False)
+    Studio._skip_setup.value = True
 
     yield
 
-    Studio._skip_setup = prev_studio_init_state
+    Studio._skip_setup.value = prev_studio_setup_state
 
 
 def _parse_model_and_version(name: str) -> Tuple[str, Optional[str]]:

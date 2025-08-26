@@ -16,7 +16,7 @@ from lightning_sdk.pipeline import DeploymentReleaseStep, DeploymentStep, JobSte
 from lightning_sdk.pipeline import pipeline as pipeline_module
 from lightning_sdk.pipeline.printer import PipelinePrinter
 from lightning_sdk.pipeline.utils import DEFAULT, prepare_steps
-from lightning_sdk.utils.resolve import skip_studio_init
+from lightning_sdk.utils.resolve import skip_studio_setup
 
 
 def test_pipeline_run(monkeypatch):
@@ -337,7 +337,7 @@ def test_shared_filesystem(monkeypatch):
 
 
 def test_pipeline_with_studio_job_step(monkeypatch):
-    with skip_studio_init():
+    with skip_studio_setup():
         monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
         monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
         pipeline_api_mock = MagicMock()
@@ -345,7 +345,12 @@ def test_pipeline_with_studio_job_step(monkeypatch):
         resolve_teamspace_mock = MagicMock()
         monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
         monkeypatch.setattr(studio_module, "_resolve_teamspace", resolve_teamspace_mock)
-        monkeypatch.setattr(studio_module, "StudioApi", MagicMock())
+        studio_api_mock = MagicMock()
+        # Mock the status method to return a valid status string
+        studio_api_mock.return_value._get_studio_instance_status_from_object.return_value = (
+            "CLOUD_SPACE_INSTANCE_STATE_STOPPED"
+        )
+        monkeypatch.setattr(studio_module, "StudioApi", studio_api_mock)
 
         pipeline = Pipeline(name="first-pipeline")
         cloud_account_mock = MagicMock()
