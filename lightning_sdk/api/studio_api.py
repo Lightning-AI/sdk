@@ -25,6 +25,7 @@ from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     CloudspaceIdRunsBody,
+    CloudspacesIdBody,
     Externalv1LightningappInstance,
     IdCodeconfigBody,
     IdExecuteBody1,
@@ -40,6 +41,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpaceState,
     V1ClusterAccelerator,
     V1EndpointType,
+    V1EnvVar,
     V1GetCloudSpaceInstanceStatusResponse,
     V1GetLongRunningCommandInCloudSpaceResponse,
     V1LoginRequest,
@@ -940,3 +942,68 @@ class StudioApi:
             plugin_type=plugin_type,
             **other_arguments,
         )
+
+    def _update_cloudspace(self, studio: V1CloudSpace, teamspace_id: str, key: str, value: Any) -> None:
+        body = CloudspacesIdBody(
+            code_url=studio.code_url,
+            data_connection_mounts=studio.data_connection_mounts,
+            description=studio.description,
+            display_name=studio.display_name,
+            env=studio.env,
+            featured=studio.featured,
+            hide_files=studio.hide_files,
+            is_cloudspace_private=studio.is_cloudspace_private,
+            is_code_private=studio.is_code_private,
+            is_favorite=studio.is_favorite,
+            is_published=studio.is_published,
+            license=studio.license,
+            license_url=studio.license_url,
+            message=studio.message,
+            multi_user_edit=studio.multi_user_edit,
+            operating_cost=studio.operating_cost,
+            paper_authors=studio.paper_authors,
+            paper_org=studio.paper_org,
+            paper_org_avatar_url=studio.paper_org_avatar_url,
+            paper_url=studio.paper_url,
+            switch_to_default_machine_on_idle=studio.switch_to_default_machine_on_idle,
+            tags=studio.tags,
+            thumbnail_file_type=studio.thumbnail_file_type,
+            user_metadata=studio.user_metadata,
+        )
+
+        setattr(body, key, value)
+
+        self._client.cloud_space_service_update_cloud_space(
+            id=studio.id,
+            project_id=teamspace_id,
+            body=body,
+        )
+
+    def set_env(
+        self,
+        studio: V1CloudSpace,
+        teamspace_id: str,
+        new_env: Dict[str, str],
+        partial: bool = True,
+    ) -> None:
+        """Set the environment variables for the Studio.
+
+        Args:
+            new_env: The new environment variables to set.
+            partial: Whether to only set the environment variables that are provided.
+                If False, existing environment variables that are not in new_env will be removed.
+                If True, existing environment variables that are not in new_env will be kept.
+        """
+        updated_env_dict = {}
+        if partial:
+            updated_env_dict = {env.name: env.value for env in studio.env}
+            updated_env_dict.update(new_env)
+        else:
+            updated_env_dict = new_env
+
+        updated_env = [V1EnvVar(name=key, value=value) for key, value in updated_env_dict.items()]
+
+        self._update_cloudspace(studio, teamspace_id, "env", updated_env)
+
+    def get_env(self, studio: V1CloudSpace) -> Dict[str, str]:
+        return {env.name: env.value for env in studio.env}

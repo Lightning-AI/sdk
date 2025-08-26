@@ -1086,3 +1086,143 @@ def test_update_autoshutdown_idle_shutdown(mock_update_sleep_config):
     config = studio_api.update_autoshutdown(studio_id="st-abc", teamspace_id="ts-abc", idle_shutdown_seconds=900)
     assert config.disable_auto_shutdown is False
     assert config.idle_shutdown_seconds == 900
+
+
+def test_get_env():
+    from lightning_sdk.lightning_cloud.openapi import V1EnvVar
+
+    studio_api = StudioApi()
+
+    # Create mock studio with environment variables
+    mock_studio = V1CloudSpace(
+        id="st-abc",
+        name="st-abc",
+        env=[
+            V1EnvVar(name="TEST_VAR", value="test_value"),
+            V1EnvVar(name="ANOTHER_VAR", value="another_value"),
+            V1EnvVar(name="EMPTY_VAR", value=""),
+        ],
+    )
+
+    result = studio_api.get_env(mock_studio)
+
+    expected = {"TEST_VAR": "test_value", "ANOTHER_VAR": "another_value", "EMPTY_VAR": ""}
+
+    assert result == expected
+
+
+def test_get_env_empty():
+    studio_api = StudioApi()
+
+    # Create mock studio with no environment variables
+    mock_studio = V1CloudSpace(id="st-abc", name="st-abc", env=[])
+
+    result = studio_api.get_env(mock_studio)
+
+    assert result == {}
+
+
+@mock.patch("lightning_sdk.api.studio_api.StudioApi._update_cloudspace")
+def test_set_env_partial_true(mock_update_cloudspace):
+    from lightning_sdk.lightning_cloud.openapi import V1EnvVar
+
+    studio_api = StudioApi()
+
+    # Create mock studio with existing environment variables
+    mock_studio = V1CloudSpace(
+        id="st-abc",
+        name="st-abc",
+        env=[V1EnvVar(name="EXISTING_VAR", value="existing_value"), V1EnvVar(name="TO_UPDATE", value="old_value")],
+    )
+
+    new_env = {"TO_UPDATE": "new_value", "NEW_VAR": "new_value"}
+
+    studio_api.set_env(mock_studio, "ts-abc", new_env, partial=True)
+
+    # Verify _update_cloudspace was called with correct parameters
+    mock_update_cloudspace.assert_called_once()
+    call_args = mock_update_cloudspace.call_args
+
+    # Check the arguments: studio, teamspace_id, key, value
+    assert call_args[0][0] == mock_studio  # studio
+    assert call_args[0][1] == "ts-abc"  # teamspace_id
+    assert call_args[0][2] == "env"  # key
+
+    # Check that the env list contains merged environment variables
+    env_vars = call_args[0][3]  # value (list of V1EnvVar)
+    env_dict = {env.name: env.value for env in env_vars}
+
+    expected_env = {
+        "EXISTING_VAR": "existing_value",  # kept from original
+        "TO_UPDATE": "new_value",  # updated
+        "NEW_VAR": "new_value",  # added
+    }
+
+    assert env_dict == expected_env
+
+
+@mock.patch("lightning_sdk.api.studio_api.StudioApi._update_cloudspace")
+def test_set_env_partial_false(mock_update_cloudspace):
+    from lightning_sdk.lightning_cloud.openapi import V1EnvVar
+
+    studio_api = StudioApi()
+
+    # Create mock studio with existing environment variables
+    mock_studio = V1CloudSpace(
+        id="st-abc",
+        name="st-abc",
+        env=[V1EnvVar(name="EXISTING_VAR", value="existing_value"), V1EnvVar(name="TO_REMOVE", value="remove_me")],
+    )
+
+    new_env = {"ONLY_NEW_VAR": "only_new_value"}
+
+    studio_api.set_env(mock_studio, "ts-abc", new_env, partial=False)
+
+    # Verify _update_cloudspace was called with correct parameters
+    mock_update_cloudspace.assert_called_once()
+    call_args = mock_update_cloudspace.call_args
+
+    # Check the arguments: studio, teamspace_id, key, value
+    assert call_args[0][0] == mock_studio  # studio
+    assert call_args[0][1] == "ts-abc"  # teamspace_id
+    assert call_args[0][2] == "env"  # key
+
+    # Check that the env list contains only the new environment variables
+    env_vars = call_args[0][3]  # value (list of V1EnvVar)
+    env_dict = {env.name: env.value for env in env_vars}
+
+    expected_env = {"ONLY_NEW_VAR": "only_new_value"}
+
+    assert env_dict == expected_env
+
+
+@mock.patch("lightning_sdk.api.studio_api.StudioApi._update_cloudspace")
+def test_set_env_empty_new_env(mock_update_cloudspace):
+    from lightning_sdk.lightning_cloud.openapi import V1EnvVar
+
+    studio_api = StudioApi()
+
+    # Create mock studio with existing environment variables
+    mock_studio = V1CloudSpace(id="st-abc", name="st-abc", env=[V1EnvVar(name="EXISTING_VAR", value="existing_value")])
+
+    new_env = {}
+
+    # Test partial=True with empty new_env (should keep existing)
+    studio_api.set_env(mock_studio, "ts-abc", new_env, partial=True)
+
+    call_args = mock_update_cloudspace.call_args
+    env_vars = call_args[0][3]  # value (list of V1EnvVar)
+    env_dict = {env.name: env.value for env in env_vars}
+
+    assert env_dict == {"EXISTING_VAR": "existing_value"}
+
+    # Reset mock for second test
+    mock_update_cloudspace.reset_mock()
+
+    # Test partial=False with empty new_env (should clear all)
+    studio_api.set_env(mock_studio, "ts-abc", new_env, partial=False)
+
+    call_args = mock_update_cloudspace.call_args
+    env_vars = call_args[0][3]  # value (list of V1EnvVar)
+
+    assert env_vars == []

@@ -624,6 +624,22 @@ class Studio:
         self.auto_sleep_time = value
 
     @property
+    def env(self) -> Dict[str, str]:
+        self._update_studio_reference()
+        return self._studio_api.get_env(self._studio)
+
+    def set_env(self, new_env: Dict[str, str], partial: bool = True) -> None:
+        """Set the environment variables for the Studio.
+
+        Args:
+            new_env: The new environment variables to set.
+            partial: Whether to only set the environment variables that are provided.
+                If False, existing environment variables that are not in new_env will be removed.
+                If True, existing environment variables that are not in new_env will be kept.
+        """
+        self._studio_api.set_env(self._studio, self._teamspace.id, new_env, partial=partial)
+
+    @property
     def available_plugins(self) -> Mapping[str, str]:
         """All available plugins to install in the current Studio."""
         return self._studio_api.list_available_plugins(self._studio.id, self._teamspace.id)
