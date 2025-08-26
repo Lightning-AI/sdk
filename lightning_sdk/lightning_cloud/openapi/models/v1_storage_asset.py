@@ -45,10 +45,14 @@ class V1StorageAsset(object):
         'created_by': 'str',
         'id': 'str',
         'name': 'str',
+        'read_cost_daily': 'float',
         'storage_bytes': 'str',
         'storage_cost_daily': 'float',
         'sub_type': 'str',
-        'type': 'V1StorageAssetType'
+        'total_daily_read_bytes': 'str',
+        'total_daily_write_bytes': 'str',
+        'type': 'V1StorageAssetType',
+        'write_cost_daily': 'float'
     }
 
     attribute_map = {
@@ -56,22 +60,30 @@ class V1StorageAsset(object):
         'created_by': 'createdBy',
         'id': 'id',
         'name': 'name',
+        'read_cost_daily': 'readCostDaily',
         'storage_bytes': 'storageBytes',
         'storage_cost_daily': 'storageCostDaily',
         'sub_type': 'subType',
-        'type': 'type'
+        'total_daily_read_bytes': 'totalDailyReadBytes',
+        'total_daily_write_bytes': 'totalDailyWriteBytes',
+        'type': 'type',
+        'write_cost_daily': 'writeCostDaily'
     }
 
-    def __init__(self, created_at: 'datetime' =None, created_by: 'str' =None, id: 'str' =None, name: 'str' =None, storage_bytes: 'str' =None, storage_cost_daily: 'float' =None, sub_type: 'str' =None, type: 'V1StorageAssetType' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, created_by: 'str' =None, id: 'str' =None, name: 'str' =None, read_cost_daily: 'float' =None, storage_bytes: 'str' =None, storage_cost_daily: 'float' =None, sub_type: 'str' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, type: 'V1StorageAssetType' =None, write_cost_daily: 'float' =None):  # noqa: E501
         """V1StorageAsset - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._created_by = None
         self._id = None
         self._name = None
+        self._read_cost_daily = None
         self._storage_bytes = None
         self._storage_cost_daily = None
         self._sub_type = None
+        self._total_daily_read_bytes = None
+        self._total_daily_write_bytes = None
         self._type = None
+        self._write_cost_daily = None
         self.discriminator = None
         if created_at is not None:
             self.created_at = created_at
@@ -81,14 +93,22 @@ class V1StorageAsset(object):
             self.id = id
         if name is not None:
             self.name = name
+        if read_cost_daily is not None:
+            self.read_cost_daily = read_cost_daily
         if storage_bytes is not None:
             self.storage_bytes = storage_bytes
         if storage_cost_daily is not None:
             self.storage_cost_daily = storage_cost_daily
         if sub_type is not None:
             self.sub_type = sub_type
+        if total_daily_read_bytes is not None:
+            self.total_daily_read_bytes = total_daily_read_bytes
+        if total_daily_write_bytes is not None:
+            self.total_daily_write_bytes = total_daily_write_bytes
         if type is not None:
             self.type = type
+        if write_cost_daily is not None:
+            self.write_cost_daily = write_cost_daily
 
     @property
     def created_at(self) -> 'datetime':
@@ -175,6 +195,27 @@ class V1StorageAsset(object):
         self._name = name
 
     @property
+    def read_cost_daily(self) -> 'float':
+        """Gets the read_cost_daily of this V1StorageAsset.  # noqa: E501
+
+
+        :return: The read_cost_daily of this V1StorageAsset.  # noqa: E501
+        :rtype: float
+        """
+        return self._read_cost_daily
+
+    @read_cost_daily.setter
+    def read_cost_daily(self, read_cost_daily: 'float'):
+        """Sets the read_cost_daily of this V1StorageAsset.
+
+
+        :param read_cost_daily: The read_cost_daily of this V1StorageAsset.  # noqa: E501
+        :type: float
+        """
+
+        self._read_cost_daily = read_cost_daily
+
+    @property
     def storage_bytes(self) -> 'str':
         """Gets the storage_bytes of this V1StorageAsset.  # noqa: E501
 
@@ -238,6 +279,48 @@ class V1StorageAsset(object):
         self._sub_type = sub_type
 
     @property
+    def total_daily_read_bytes(self) -> 'str':
+        """Gets the total_daily_read_bytes of this V1StorageAsset.  # noqa: E501
+
+
+        :return: The total_daily_read_bytes of this V1StorageAsset.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_daily_read_bytes
+
+    @total_daily_read_bytes.setter
+    def total_daily_read_bytes(self, total_daily_read_bytes: 'str'):
+        """Sets the total_daily_read_bytes of this V1StorageAsset.
+
+
+        :param total_daily_read_bytes: The total_daily_read_bytes of this V1StorageAsset.  # noqa: E501
+        :type: str
+        """
+
+        self._total_daily_read_bytes = total_daily_read_bytes
+
+    @property
+    def total_daily_write_bytes(self) -> 'str':
+        """Gets the total_daily_write_bytes of this V1StorageAsset.  # noqa: E501
+
+
+        :return: The total_daily_write_bytes of this V1StorageAsset.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_daily_write_bytes
+
+    @total_daily_write_bytes.setter
+    def total_daily_write_bytes(self, total_daily_write_bytes: 'str'):
+        """Sets the total_daily_write_bytes of this V1StorageAsset.
+
+
+        :param total_daily_write_bytes: The total_daily_write_bytes of this V1StorageAsset.  # noqa: E501
+        :type: str
+        """
+
+        self._total_daily_write_bytes = total_daily_write_bytes
+
+    @property
     def type(self) -> 'V1StorageAssetType':
         """Gets the type of this V1StorageAsset.  # noqa: E501
 
@@ -257,6 +340,27 @@ class V1StorageAsset(object):
         """
 
         self._type = type
+
+    @property
+    def write_cost_daily(self) -> 'float':
+        """Gets the write_cost_daily of this V1StorageAsset.  # noqa: E501
+
+
+        :return: The write_cost_daily of this V1StorageAsset.  # noqa: E501
+        :rtype: float
+        """
+        return self._write_cost_daily
+
+    @write_cost_daily.setter
+    def write_cost_daily(self, write_cost_daily: 'float'):
+        """Sets the write_cost_daily of this V1StorageAsset.
+
+
+        :param write_cost_daily: The write_cost_daily of this V1StorageAsset.  # noqa: E501
+        :type: float
+        """
+
+        self._write_cost_daily = write_cost_daily
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

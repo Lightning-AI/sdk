@@ -55,9 +55,9 @@ class V1NamespaceMetrics(object):
         'num_unknown_pods': 'int',
         'ram_util_over_cluster': 'float',
         'ram_util_over_requested': 'float',
-        'rams_requested': 'float',
+        'rams_requested': 'str',
         'timestamp': 'datetime',
-        'vram_requested': 'float',
+        'vram_requested': 'int',
         'vram_util_over_cluster': 'float',
         'vram_util_over_requested': 'float'
     }
@@ -84,7 +84,7 @@ class V1NamespaceMetrics(object):
         'vram_util_over_requested': 'vramUtilOverRequested'
     }
 
-    def __init__(self, cpu_util_over_cluster: 'float' =None, cpu_util_over_requested: 'float' =None, cpus_requested: 'float' =None, gpu_util_over_cluster: 'float' =None, gpu_util_over_requested: 'float' =None, gpus_requested: 'float' =None, name: 'str' =None, num_failed_pods: 'int' =None, num_pending_pods: 'int' =None, num_running_pods: 'int' =None, num_succeeded_pods: 'int' =None, num_unknown_pods: 'int' =None, ram_util_over_cluster: 'float' =None, ram_util_over_requested: 'float' =None, rams_requested: 'float' =None, timestamp: 'datetime' =None, vram_requested: 'float' =None, vram_util_over_cluster: 'float' =None, vram_util_over_requested: 'float' =None):  # noqa: E501
+    def __init__(self, cpu_util_over_cluster: 'float' =None, cpu_util_over_requested: 'float' =None, cpus_requested: 'float' =None, gpu_util_over_cluster: 'float' =None, gpu_util_over_requested: 'float' =None, gpus_requested: 'float' =None, name: 'str' =None, num_failed_pods: 'int' =None, num_pending_pods: 'int' =None, num_running_pods: 'int' =None, num_succeeded_pods: 'int' =None, num_unknown_pods: 'int' =None, ram_util_over_cluster: 'float' =None, ram_util_over_requested: 'float' =None, rams_requested: 'str' =None, timestamp: 'datetime' =None, vram_requested: 'int' =None, vram_util_over_cluster: 'float' =None, vram_util_over_requested: 'float' =None):  # noqa: E501
         """V1NamespaceMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_util_over_cluster = None
         self._cpu_util_over_requested = None
@@ -440,22 +440,22 @@ class V1NamespaceMetrics(object):
         self._ram_util_over_requested = ram_util_over_requested
 
     @property
-    def rams_requested(self) -> 'float':
+    def rams_requested(self) -> 'str':
         """Gets the rams_requested of this V1NamespaceMetrics.  # noqa: E501
 
 
         :return: The rams_requested of this V1NamespaceMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: str
         """
         return self._rams_requested
 
     @rams_requested.setter
-    def rams_requested(self, rams_requested: 'float'):
+    def rams_requested(self, rams_requested: 'str'):
         """Sets the rams_requested of this V1NamespaceMetrics.
 
 
         :param rams_requested: The rams_requested of this V1NamespaceMetrics.  # noqa: E501
-        :type: float
+        :type: str
         """
 
         self._rams_requested = rams_requested
@@ -482,22 +482,22 @@ class V1NamespaceMetrics(object):
         self._timestamp = timestamp
 
     @property
-    def vram_requested(self) -> 'float':
+    def vram_requested(self) -> 'int':
         """Gets the vram_requested of this V1NamespaceMetrics.  # noqa: E501
 
 
         :return: The vram_requested of this V1NamespaceMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._vram_requested
 
     @vram_requested.setter
-    def vram_requested(self, vram_requested: 'float'):
+    def vram_requested(self, vram_requested: 'int'):
         """Sets the vram_requested of this V1NamespaceMetrics.
 
 
         :param vram_requested: The vram_requested of this V1NamespaceMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._vram_requested = vram_requested

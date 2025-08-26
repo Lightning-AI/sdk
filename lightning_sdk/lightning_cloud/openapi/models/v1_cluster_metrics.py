@@ -44,16 +44,21 @@ class V1ClusterMetrics(object):
         'cpus_util': 'float',
         'filesystem_inode_util': 'float',
         'filesystem_read_rate': 'float',
-        'filesystem_total': 'float',
+        'filesystem_total': 'str',
         'filesystem_util': 'float',
         'filesystem_write_rate': 'float',
+        'gpu_sm_active': 'float',
+        'gpu_sm_occupancy': 'float',
         'gpus_energy_avg': 'float',
+        'gpus_energy_avg_running': 'float',
         'gpus_energy_total': 'float',
         'gpus_temp_avg': 'float',
+        'gpus_temp_avg_running': 'float',
         'gpus_util': 'float',
         'gpus_util_over_allocable': 'float',
         'gpus_util_over_requested': 'float',
-        'max_power_per_gpu': 'float',
+        'max_gpu_temp_recorded': 'int',
+        'max_power_per_gpu': 'int',
         'num_cpus': 'int',
         'num_gpus': 'int',
         'num_gpus_allocable': 'int',
@@ -64,17 +69,21 @@ class V1ClusterMetrics(object):
         'num_pods': 'int',
         'num_requested_cpus': 'int',
         'num_requested_gpus': 'int',
+        'nvlink_rx_gib_avg': 'float',
+        'nvlink_tx_gib_avg': 'float',
+        'pcie_rx_gib_avg': 'float',
+        'pcie_tx_gib_avg': 'float',
         'ram_limit': 'str',
         'ram_requested': 'str',
         'ram_total': 'str',
         'ram_util': 'float',
         'timestamp': 'datetime',
-        'vram_limit': 'float',
+        'vram_limit': 'int',
         'vram_read_write_util': 'float',
-        'vram_requested': 'float',
-        'vram_total': 'str',
-        'vram_used_avg': 'float',
-        'vram_used_total': 'float',
+        'vram_requested': 'int',
+        'vram_total': 'int',
+        'vram_used_avg': 'int',
+        'vram_used_total': 'int',
         'vram_util': 'float'
     }
 
@@ -85,12 +94,17 @@ class V1ClusterMetrics(object):
         'filesystem_total': 'filesystemTotal',
         'filesystem_util': 'filesystemUtil',
         'filesystem_write_rate': 'filesystemWriteRate',
+        'gpu_sm_active': 'gpuSmActive',
+        'gpu_sm_occupancy': 'gpuSmOccupancy',
         'gpus_energy_avg': 'gpusEnergyAvg',
+        'gpus_energy_avg_running': 'gpusEnergyAvgRunning',
         'gpus_energy_total': 'gpusEnergyTotal',
         'gpus_temp_avg': 'gpusTempAvg',
+        'gpus_temp_avg_running': 'gpusTempAvgRunning',
         'gpus_util': 'gpusUtil',
         'gpus_util_over_allocable': 'gpusUtilOverAllocable',
         'gpus_util_over_requested': 'gpusUtilOverRequested',
+        'max_gpu_temp_recorded': 'maxGpuTempRecorded',
         'max_power_per_gpu': 'maxPowerPerGpu',
         'num_cpus': 'numCpus',
         'num_gpus': 'numGpus',
@@ -102,6 +116,10 @@ class V1ClusterMetrics(object):
         'num_pods': 'numPods',
         'num_requested_cpus': 'numRequestedCpus',
         'num_requested_gpus': 'numRequestedGpus',
+        'nvlink_rx_gib_avg': 'nvlinkRxGibAvg',
+        'nvlink_tx_gib_avg': 'nvlinkTxGibAvg',
+        'pcie_rx_gib_avg': 'pcieRxGibAvg',
+        'pcie_tx_gib_avg': 'pcieTxGibAvg',
         'ram_limit': 'ramLimit',
         'ram_requested': 'ramRequested',
         'ram_total': 'ramTotal',
@@ -116,7 +134,7 @@ class V1ClusterMetrics(object):
         'vram_util': 'vramUtil'
     }
 
-    def __init__(self, cpus_util: 'float' =None, filesystem_inode_util: 'float' =None, filesystem_read_rate: 'float' =None, filesystem_total: 'float' =None, filesystem_util: 'float' =None, filesystem_write_rate: 'float' =None, gpus_energy_avg: 'float' =None, gpus_energy_total: 'float' =None, gpus_temp_avg: 'float' =None, gpus_util: 'float' =None, gpus_util_over_allocable: 'float' =None, gpus_util_over_requested: 'float' =None, max_power_per_gpu: 'float' =None, num_cpus: 'int' =None, num_gpus: 'int' =None, num_gpus_allocable: 'int' =None, num_limit_cpus: 'int' =None, num_limit_gpus: 'int' =None, num_namespaces: 'int' =None, num_nodes: 'int' =None, num_pods: 'int' =None, num_requested_cpus: 'int' =None, num_requested_gpus: 'int' =None, ram_limit: 'str' =None, ram_requested: 'str' =None, ram_total: 'str' =None, ram_util: 'float' =None, timestamp: 'datetime' =None, vram_limit: 'float' =None, vram_read_write_util: 'float' =None, vram_requested: 'float' =None, vram_total: 'str' =None, vram_used_avg: 'float' =None, vram_used_total: 'float' =None, vram_util: 'float' =None):  # noqa: E501
+    def __init__(self, cpus_util: 'float' =None, filesystem_inode_util: 'float' =None, filesystem_read_rate: 'float' =None, filesystem_total: 'str' =None, filesystem_util: 'float' =None, filesystem_write_rate: 'float' =None, gpu_sm_active: 'float' =None, gpu_sm_occupancy: 'float' =None, gpus_energy_avg: 'float' =None, gpus_energy_avg_running: 'float' =None, gpus_energy_total: 'float' =None, gpus_temp_avg: 'float' =None, gpus_temp_avg_running: 'float' =None, gpus_util: 'float' =None, gpus_util_over_allocable: 'float' =None, gpus_util_over_requested: 'float' =None, max_gpu_temp_recorded: 'int' =None, max_power_per_gpu: 'int' =None, num_cpus: 'int' =None, num_gpus: 'int' =None, num_gpus_allocable: 'int' =None, num_limit_cpus: 'int' =None, num_limit_gpus: 'int' =None, num_namespaces: 'int' =None, num_nodes: 'int' =None, num_pods: 'int' =None, num_requested_cpus: 'int' =None, num_requested_gpus: 'int' =None, nvlink_rx_gib_avg: 'float' =None, nvlink_tx_gib_avg: 'float' =None, pcie_rx_gib_avg: 'float' =None, pcie_tx_gib_avg: 'float' =None, ram_limit: 'str' =None, ram_requested: 'str' =None, ram_total: 'str' =None, ram_util: 'float' =None, timestamp: 'datetime' =None, vram_limit: 'int' =None, vram_read_write_util: 'float' =None, vram_requested: 'int' =None, vram_total: 'int' =None, vram_used_avg: 'int' =None, vram_used_total: 'int' =None, vram_util: 'float' =None):  # noqa: E501
         """V1ClusterMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpus_util = None
         self._filesystem_inode_util = None
@@ -124,12 +142,17 @@ class V1ClusterMetrics(object):
         self._filesystem_total = None
         self._filesystem_util = None
         self._filesystem_write_rate = None
+        self._gpu_sm_active = None
+        self._gpu_sm_occupancy = None
         self._gpus_energy_avg = None
+        self._gpus_energy_avg_running = None
         self._gpus_energy_total = None
         self._gpus_temp_avg = None
+        self._gpus_temp_avg_running = None
         self._gpus_util = None
         self._gpus_util_over_allocable = None
         self._gpus_util_over_requested = None
+        self._max_gpu_temp_recorded = None
         self._max_power_per_gpu = None
         self._num_cpus = None
         self._num_gpus = None
@@ -141,6 +164,10 @@ class V1ClusterMetrics(object):
         self._num_pods = None
         self._num_requested_cpus = None
         self._num_requested_gpus = None
+        self._nvlink_rx_gib_avg = None
+        self._nvlink_tx_gib_avg = None
+        self._pcie_rx_gib_avg = None
+        self._pcie_tx_gib_avg = None
         self._ram_limit = None
         self._ram_requested = None
         self._ram_total = None
@@ -166,18 +193,28 @@ class V1ClusterMetrics(object):
             self.filesystem_util = filesystem_util
         if filesystem_write_rate is not None:
             self.filesystem_write_rate = filesystem_write_rate
+        if gpu_sm_active is not None:
+            self.gpu_sm_active = gpu_sm_active
+        if gpu_sm_occupancy is not None:
+            self.gpu_sm_occupancy = gpu_sm_occupancy
         if gpus_energy_avg is not None:
             self.gpus_energy_avg = gpus_energy_avg
+        if gpus_energy_avg_running is not None:
+            self.gpus_energy_avg_running = gpus_energy_avg_running
         if gpus_energy_total is not None:
             self.gpus_energy_total = gpus_energy_total
         if gpus_temp_avg is not None:
             self.gpus_temp_avg = gpus_temp_avg
+        if gpus_temp_avg_running is not None:
+            self.gpus_temp_avg_running = gpus_temp_avg_running
         if gpus_util is not None:
             self.gpus_util = gpus_util
         if gpus_util_over_allocable is not None:
             self.gpus_util_over_allocable = gpus_util_over_allocable
         if gpus_util_over_requested is not None:
             self.gpus_util_over_requested = gpus_util_over_requested
+        if max_gpu_temp_recorded is not None:
+            self.max_gpu_temp_recorded = max_gpu_temp_recorded
         if max_power_per_gpu is not None:
             self.max_power_per_gpu = max_power_per_gpu
         if num_cpus is not None:
@@ -200,6 +237,14 @@ class V1ClusterMetrics(object):
             self.num_requested_cpus = num_requested_cpus
         if num_requested_gpus is not None:
             self.num_requested_gpus = num_requested_gpus
+        if nvlink_rx_gib_avg is not None:
+            self.nvlink_rx_gib_avg = nvlink_rx_gib_avg
+        if nvlink_tx_gib_avg is not None:
+            self.nvlink_tx_gib_avg = nvlink_tx_gib_avg
+        if pcie_rx_gib_avg is not None:
+            self.pcie_rx_gib_avg = pcie_rx_gib_avg
+        if pcie_tx_gib_avg is not None:
+            self.pcie_tx_gib_avg = pcie_tx_gib_avg
         if ram_limit is not None:
             self.ram_limit = ram_limit
         if ram_requested is not None:
@@ -289,22 +334,22 @@ class V1ClusterMetrics(object):
         self._filesystem_read_rate = filesystem_read_rate
 
     @property
-    def filesystem_total(self) -> 'float':
+    def filesystem_total(self) -> 'str':
         """Gets the filesystem_total of this V1ClusterMetrics.  # noqa: E501
 
 
         :return: The filesystem_total of this V1ClusterMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: str
         """
         return self._filesystem_total
 
     @filesystem_total.setter
-    def filesystem_total(self, filesystem_total: 'float'):
+    def filesystem_total(self, filesystem_total: 'str'):
         """Sets the filesystem_total of this V1ClusterMetrics.
 
 
         :param filesystem_total: The filesystem_total of this V1ClusterMetrics.  # noqa: E501
-        :type: float
+        :type: str
         """
 
         self._filesystem_total = filesystem_total
@@ -352,6 +397,48 @@ class V1ClusterMetrics(object):
         self._filesystem_write_rate = filesystem_write_rate
 
     @property
+    def gpu_sm_active(self) -> 'float':
+        """Gets the gpu_sm_active of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The gpu_sm_active of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._gpu_sm_active
+
+    @gpu_sm_active.setter
+    def gpu_sm_active(self, gpu_sm_active: 'float'):
+        """Sets the gpu_sm_active of this V1ClusterMetrics.
+
+
+        :param gpu_sm_active: The gpu_sm_active of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._gpu_sm_active = gpu_sm_active
+
+    @property
+    def gpu_sm_occupancy(self) -> 'float':
+        """Gets the gpu_sm_occupancy of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The gpu_sm_occupancy of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._gpu_sm_occupancy
+
+    @gpu_sm_occupancy.setter
+    def gpu_sm_occupancy(self, gpu_sm_occupancy: 'float'):
+        """Sets the gpu_sm_occupancy of this V1ClusterMetrics.
+
+
+        :param gpu_sm_occupancy: The gpu_sm_occupancy of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._gpu_sm_occupancy = gpu_sm_occupancy
+
+    @property
     def gpus_energy_avg(self) -> 'float':
         """Gets the gpus_energy_avg of this V1ClusterMetrics.  # noqa: E501
 
@@ -371,6 +458,27 @@ class V1ClusterMetrics(object):
         """
 
         self._gpus_energy_avg = gpus_energy_avg
+
+    @property
+    def gpus_energy_avg_running(self) -> 'float':
+        """Gets the gpus_energy_avg_running of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The gpus_energy_avg_running of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._gpus_energy_avg_running
+
+    @gpus_energy_avg_running.setter
+    def gpus_energy_avg_running(self, gpus_energy_avg_running: 'float'):
+        """Sets the gpus_energy_avg_running of this V1ClusterMetrics.
+
+
+        :param gpus_energy_avg_running: The gpus_energy_avg_running of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._gpus_energy_avg_running = gpus_energy_avg_running
 
     @property
     def gpus_energy_total(self) -> 'float':
@@ -413,6 +521,27 @@ class V1ClusterMetrics(object):
         """
 
         self._gpus_temp_avg = gpus_temp_avg
+
+    @property
+    def gpus_temp_avg_running(self) -> 'float':
+        """Gets the gpus_temp_avg_running of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The gpus_temp_avg_running of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._gpus_temp_avg_running
+
+    @gpus_temp_avg_running.setter
+    def gpus_temp_avg_running(self, gpus_temp_avg_running: 'float'):
+        """Sets the gpus_temp_avg_running of this V1ClusterMetrics.
+
+
+        :param gpus_temp_avg_running: The gpus_temp_avg_running of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._gpus_temp_avg_running = gpus_temp_avg_running
 
     @property
     def gpus_util(self) -> 'float':
@@ -478,22 +607,43 @@ class V1ClusterMetrics(object):
         self._gpus_util_over_requested = gpus_util_over_requested
 
     @property
-    def max_power_per_gpu(self) -> 'float':
+    def max_gpu_temp_recorded(self) -> 'int':
+        """Gets the max_gpu_temp_recorded of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The max_gpu_temp_recorded of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._max_gpu_temp_recorded
+
+    @max_gpu_temp_recorded.setter
+    def max_gpu_temp_recorded(self, max_gpu_temp_recorded: 'int'):
+        """Sets the max_gpu_temp_recorded of this V1ClusterMetrics.
+
+
+        :param max_gpu_temp_recorded: The max_gpu_temp_recorded of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._max_gpu_temp_recorded = max_gpu_temp_recorded
+
+    @property
+    def max_power_per_gpu(self) -> 'int':
         """Gets the max_power_per_gpu of this V1ClusterMetrics.  # noqa: E501
 
 
         :return: The max_power_per_gpu of this V1ClusterMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._max_power_per_gpu
 
     @max_power_per_gpu.setter
-    def max_power_per_gpu(self, max_power_per_gpu: 'float'):
+    def max_power_per_gpu(self, max_power_per_gpu: 'int'):
         """Sets the max_power_per_gpu of this V1ClusterMetrics.
 
 
         :param max_power_per_gpu: The max_power_per_gpu of this V1ClusterMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._max_power_per_gpu = max_power_per_gpu
@@ -709,6 +859,90 @@ class V1ClusterMetrics(object):
         self._num_requested_gpus = num_requested_gpus
 
     @property
+    def nvlink_rx_gib_avg(self) -> 'float':
+        """Gets the nvlink_rx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The nvlink_rx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._nvlink_rx_gib_avg
+
+    @nvlink_rx_gib_avg.setter
+    def nvlink_rx_gib_avg(self, nvlink_rx_gib_avg: 'float'):
+        """Sets the nvlink_rx_gib_avg of this V1ClusterMetrics.
+
+
+        :param nvlink_rx_gib_avg: The nvlink_rx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._nvlink_rx_gib_avg = nvlink_rx_gib_avg
+
+    @property
+    def nvlink_tx_gib_avg(self) -> 'float':
+        """Gets the nvlink_tx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The nvlink_tx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._nvlink_tx_gib_avg
+
+    @nvlink_tx_gib_avg.setter
+    def nvlink_tx_gib_avg(self, nvlink_tx_gib_avg: 'float'):
+        """Sets the nvlink_tx_gib_avg of this V1ClusterMetrics.
+
+
+        :param nvlink_tx_gib_avg: The nvlink_tx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._nvlink_tx_gib_avg = nvlink_tx_gib_avg
+
+    @property
+    def pcie_rx_gib_avg(self) -> 'float':
+        """Gets the pcie_rx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The pcie_rx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._pcie_rx_gib_avg
+
+    @pcie_rx_gib_avg.setter
+    def pcie_rx_gib_avg(self, pcie_rx_gib_avg: 'float'):
+        """Sets the pcie_rx_gib_avg of this V1ClusterMetrics.
+
+
+        :param pcie_rx_gib_avg: The pcie_rx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._pcie_rx_gib_avg = pcie_rx_gib_avg
+
+    @property
+    def pcie_tx_gib_avg(self) -> 'float':
+        """Gets the pcie_tx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The pcie_tx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._pcie_tx_gib_avg
+
+    @pcie_tx_gib_avg.setter
+    def pcie_tx_gib_avg(self, pcie_tx_gib_avg: 'float'):
+        """Sets the pcie_tx_gib_avg of this V1ClusterMetrics.
+
+
+        :param pcie_tx_gib_avg: The pcie_tx_gib_avg of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._pcie_tx_gib_avg = pcie_tx_gib_avg
+
+    @property
     def ram_limit(self) -> 'str':
         """Gets the ram_limit of this V1ClusterMetrics.  # noqa: E501
 
@@ -814,22 +1048,22 @@ class V1ClusterMetrics(object):
         self._timestamp = timestamp
 
     @property
-    def vram_limit(self) -> 'float':
+    def vram_limit(self) -> 'int':
         """Gets the vram_limit of this V1ClusterMetrics.  # noqa: E501
 
 
         :return: The vram_limit of this V1ClusterMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._vram_limit
 
     @vram_limit.setter
-    def vram_limit(self, vram_limit: 'float'):
+    def vram_limit(self, vram_limit: 'int'):
         """Sets the vram_limit of this V1ClusterMetrics.
 
 
         :param vram_limit: The vram_limit of this V1ClusterMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._vram_limit = vram_limit
@@ -856,85 +1090,85 @@ class V1ClusterMetrics(object):
         self._vram_read_write_util = vram_read_write_util
 
     @property
-    def vram_requested(self) -> 'float':
+    def vram_requested(self) -> 'int':
         """Gets the vram_requested of this V1ClusterMetrics.  # noqa: E501
 
 
         :return: The vram_requested of this V1ClusterMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._vram_requested
 
     @vram_requested.setter
-    def vram_requested(self, vram_requested: 'float'):
+    def vram_requested(self, vram_requested: 'int'):
         """Sets the vram_requested of this V1ClusterMetrics.
 
 
         :param vram_requested: The vram_requested of this V1ClusterMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._vram_requested = vram_requested
 
     @property
-    def vram_total(self) -> 'str':
+    def vram_total(self) -> 'int':
         """Gets the vram_total of this V1ClusterMetrics.  # noqa: E501
 
 
         :return: The vram_total of this V1ClusterMetrics.  # noqa: E501
-        :rtype: str
+        :rtype: int
         """
         return self._vram_total
 
     @vram_total.setter
-    def vram_total(self, vram_total: 'str'):
+    def vram_total(self, vram_total: 'int'):
         """Sets the vram_total of this V1ClusterMetrics.
 
 
         :param vram_total: The vram_total of this V1ClusterMetrics.  # noqa: E501
-        :type: str
+        :type: int
         """
 
         self._vram_total = vram_total
 
     @property
-    def vram_used_avg(self) -> 'float':
+    def vram_used_avg(self) -> 'int':
         """Gets the vram_used_avg of this V1ClusterMetrics.  # noqa: E501
 
 
         :return: The vram_used_avg of this V1ClusterMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._vram_used_avg
 
     @vram_used_avg.setter
-    def vram_used_avg(self, vram_used_avg: 'float'):
+    def vram_used_avg(self, vram_used_avg: 'int'):
         """Sets the vram_used_avg of this V1ClusterMetrics.
 
 
         :param vram_used_avg: The vram_used_avg of this V1ClusterMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._vram_used_avg = vram_used_avg
 
     @property
-    def vram_used_total(self) -> 'float':
+    def vram_used_total(self) -> 'int':
         """Gets the vram_used_total of this V1ClusterMetrics.  # noqa: E501
 
 
         :return: The vram_used_total of this V1ClusterMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._vram_used_total
 
     @vram_used_total.setter
-    def vram_used_total(self, vram_used_total: 'float'):
+    def vram_used_total(self, vram_used_total: 'int'):
         """Sets the vram_used_total of this V1ClusterMetrics.
 
 
         :param vram_used_total: The vram_used_total of this V1ClusterMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._vram_used_total = vram_used_total

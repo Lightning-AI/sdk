@@ -47,10 +47,10 @@ class V1ContainerMetrics(object):
         'mem_usage': 'float',
         'namespace': 'str',
         'node_name': 'str',
-        'num_cpus_limit': 'float',
-        'num_cpus_request': 'float',
-        'num_gpus': 'float',
-        'per_gpu_mem_used': 'dict(str, float)',
+        'num_cpus_limit': 'int',
+        'num_cpus_request': 'int',
+        'num_gpus': 'int',
+        'per_gpu_mem_used': 'dict(str, int)',
         'per_gpu_util': 'dict(str, float)',
         'pod_id': 'str',
         'pod_name': 'str',
@@ -74,7 +74,7 @@ class V1ContainerMetrics(object):
         'timestamp': 'timestamp'
     }
 
-    def __init__(self, container_id: 'str' =None, container_name: 'str' =None, cpu_usage: 'float' =None, mem_usage: 'float' =None, namespace: 'str' =None, node_name: 'str' =None, num_cpus_limit: 'float' =None, num_cpus_request: 'float' =None, num_gpus: 'float' =None, per_gpu_mem_used: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, pod_id: 'str' =None, pod_name: 'str' =None, timestamp: 'datetime' =None):  # noqa: E501
+    def __init__(self, container_id: 'str' =None, container_name: 'str' =None, cpu_usage: 'float' =None, mem_usage: 'float' =None, namespace: 'str' =None, node_name: 'str' =None, num_cpus_limit: 'int' =None, num_cpus_request: 'int' =None, num_gpus: 'int' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, pod_id: 'str' =None, pod_name: 'str' =None, timestamp: 'datetime' =None):  # noqa: E501
         """V1ContainerMetrics - a model defined in Swagger"""  # noqa: E501
         self._container_id = None
         self._container_name = None
@@ -247,85 +247,85 @@ class V1ContainerMetrics(object):
         self._node_name = node_name
 
     @property
-    def num_cpus_limit(self) -> 'float':
+    def num_cpus_limit(self) -> 'int':
         """Gets the num_cpus_limit of this V1ContainerMetrics.  # noqa: E501
 
 
         :return: The num_cpus_limit of this V1ContainerMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._num_cpus_limit
 
     @num_cpus_limit.setter
-    def num_cpus_limit(self, num_cpus_limit: 'float'):
+    def num_cpus_limit(self, num_cpus_limit: 'int'):
         """Sets the num_cpus_limit of this V1ContainerMetrics.
 
 
         :param num_cpus_limit: The num_cpus_limit of this V1ContainerMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._num_cpus_limit = num_cpus_limit
 
     @property
-    def num_cpus_request(self) -> 'float':
+    def num_cpus_request(self) -> 'int':
         """Gets the num_cpus_request of this V1ContainerMetrics.  # noqa: E501
 
 
         :return: The num_cpus_request of this V1ContainerMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._num_cpus_request
 
     @num_cpus_request.setter
-    def num_cpus_request(self, num_cpus_request: 'float'):
+    def num_cpus_request(self, num_cpus_request: 'int'):
         """Sets the num_cpus_request of this V1ContainerMetrics.
 
 
         :param num_cpus_request: The num_cpus_request of this V1ContainerMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._num_cpus_request = num_cpus_request
 
     @property
-    def num_gpus(self) -> 'float':
+    def num_gpus(self) -> 'int':
         """Gets the num_gpus of this V1ContainerMetrics.  # noqa: E501
 
 
         :return: The num_gpus of this V1ContainerMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._num_gpus
 
     @num_gpus.setter
-    def num_gpus(self, num_gpus: 'float'):
+    def num_gpus(self, num_gpus: 'int'):
         """Sets the num_gpus of this V1ContainerMetrics.
 
 
         :param num_gpus: The num_gpus of this V1ContainerMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._num_gpus = num_gpus
 
     @property
-    def per_gpu_mem_used(self) -> 'dict(str, float)':
+    def per_gpu_mem_used(self) -> 'dict(str, int)':
         """Gets the per_gpu_mem_used of this V1ContainerMetrics.  # noqa: E501
 
 
         :return: The per_gpu_mem_used of this V1ContainerMetrics.  # noqa: E501
-        :rtype: dict(str, float)
+        :rtype: dict(str, int)
         """
         return self._per_gpu_mem_used
 
     @per_gpu_mem_used.setter
-    def per_gpu_mem_used(self, per_gpu_mem_used: 'dict(str, float)'):
+    def per_gpu_mem_used(self, per_gpu_mem_used: 'dict(str, int)'):
         """Sets the per_gpu_mem_used of this V1ContainerMetrics.
 
 
         :param per_gpu_mem_used: The per_gpu_mem_used of this V1ContainerMetrics.  # noqa: E501
-        :type: dict(str, float)
+        :type: dict(str, int)
         """
 
         self._per_gpu_mem_used = per_gpu_mem_used

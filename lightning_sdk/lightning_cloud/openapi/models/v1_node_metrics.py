@@ -44,16 +44,21 @@ class V1NodeMetrics(object):
         'cpu_capacity_cores': 'float',
         'cpu_util': 'float',
         'filesystem': 'dict(str, V1FilesystemMetrics)',
+        'max_gpu_temp_recorded': 'float',
         'max_power_per_gpu': 'float',
-        'mem_total': 'float',
+        'mem_total': 'str',
         'mem_util': 'float',
         'node_name': 'str',
-        'per_gpu_mem_free': 'dict(str, float)',
-        'per_gpu_mem_used': 'dict(str, float)',
-        'per_gpu_power_usage_watts': 'dict(str, float)',
+        'nvlink_rx_gib': 'dict(str, float)',
+        'nvlink_tx_gib': 'dict(str, float)',
+        'pcie_rx_gib': 'dict(str, float)',
+        'pcie_tx_gib': 'dict(str, float)',
+        'per_gpu_mem_free': 'dict(str, int)',
+        'per_gpu_mem_used': 'dict(str, int)',
+        'per_gpu_power_usage_watts': 'dict(str, int)',
         'per_gpu_sm_active': 'dict(str, float)',
         'per_gpu_sm_occupancy': 'dict(str, float)',
-        'per_gpu_temperature_c': 'dict(str, float)',
+        'per_gpu_temperature_c': 'dict(str, int)',
         'per_gpu_util': 'dict(str, float)',
         'timestamp': 'datetime'
     }
@@ -62,10 +67,15 @@ class V1NodeMetrics(object):
         'cpu_capacity_cores': 'cpuCapacityCores',
         'cpu_util': 'cpuUtil',
         'filesystem': 'filesystem',
+        'max_gpu_temp_recorded': 'maxGpuTempRecorded',
         'max_power_per_gpu': 'maxPowerPerGpu',
         'mem_total': 'memTotal',
         'mem_util': 'memUtil',
         'node_name': 'nodeName',
+        'nvlink_rx_gib': 'nvlinkRxGib',
+        'nvlink_tx_gib': 'nvlinkTxGib',
+        'pcie_rx_gib': 'pcieRxGib',
+        'pcie_tx_gib': 'pcieTxGib',
         'per_gpu_mem_free': 'perGpuMemFree',
         'per_gpu_mem_used': 'perGpuMemUsed',
         'per_gpu_power_usage_watts': 'perGpuPowerUsageWatts',
@@ -76,15 +86,20 @@ class V1NodeMetrics(object):
         'timestamp': 'timestamp'
     }
 
-    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, max_power_per_gpu: 'float' =None, mem_total: 'float' =None, mem_util: 'float' =None, node_name: 'str' =None, per_gpu_mem_free: 'dict(str, float)' =None, per_gpu_mem_used: 'dict(str, float)' =None, per_gpu_power_usage_watts: 'dict(str, float)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None):  # noqa: E501
+    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, max_gpu_temp_recorded: 'float' =None, max_power_per_gpu: 'float' =None, mem_total: 'str' =None, mem_util: 'float' =None, node_name: 'str' =None, nvlink_rx_gib: 'dict(str, float)' =None, nvlink_tx_gib: 'dict(str, float)' =None, pcie_rx_gib: 'dict(str, float)' =None, pcie_tx_gib: 'dict(str, float)' =None, per_gpu_mem_free: 'dict(str, int)' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_power_usage_watts: 'dict(str, int)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None):  # noqa: E501
         """V1NodeMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_capacity_cores = None
         self._cpu_util = None
         self._filesystem = None
+        self._max_gpu_temp_recorded = None
         self._max_power_per_gpu = None
         self._mem_total = None
         self._mem_util = None
         self._node_name = None
+        self._nvlink_rx_gib = None
+        self._nvlink_tx_gib = None
+        self._pcie_rx_gib = None
+        self._pcie_tx_gib = None
         self._per_gpu_mem_free = None
         self._per_gpu_mem_used = None
         self._per_gpu_power_usage_watts = None
@@ -100,6 +115,8 @@ class V1NodeMetrics(object):
             self.cpu_util = cpu_util
         if filesystem is not None:
             self.filesystem = filesystem
+        if max_gpu_temp_recorded is not None:
+            self.max_gpu_temp_recorded = max_gpu_temp_recorded
         if max_power_per_gpu is not None:
             self.max_power_per_gpu = max_power_per_gpu
         if mem_total is not None:
@@ -108,6 +125,14 @@ class V1NodeMetrics(object):
             self.mem_util = mem_util
         if node_name is not None:
             self.node_name = node_name
+        if nvlink_rx_gib is not None:
+            self.nvlink_rx_gib = nvlink_rx_gib
+        if nvlink_tx_gib is not None:
+            self.nvlink_tx_gib = nvlink_tx_gib
+        if pcie_rx_gib is not None:
+            self.pcie_rx_gib = pcie_rx_gib
+        if pcie_tx_gib is not None:
+            self.pcie_tx_gib = pcie_tx_gib
         if per_gpu_mem_free is not None:
             self.per_gpu_mem_free = per_gpu_mem_free
         if per_gpu_mem_used is not None:
@@ -189,6 +214,27 @@ class V1NodeMetrics(object):
         self._filesystem = filesystem
 
     @property
+    def max_gpu_temp_recorded(self) -> 'float':
+        """Gets the max_gpu_temp_recorded of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The max_gpu_temp_recorded of this V1NodeMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._max_gpu_temp_recorded
+
+    @max_gpu_temp_recorded.setter
+    def max_gpu_temp_recorded(self, max_gpu_temp_recorded: 'float'):
+        """Sets the max_gpu_temp_recorded of this V1NodeMetrics.
+
+
+        :param max_gpu_temp_recorded: The max_gpu_temp_recorded of this V1NodeMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._max_gpu_temp_recorded = max_gpu_temp_recorded
+
+    @property
     def max_power_per_gpu(self) -> 'float':
         """Gets the max_power_per_gpu of this V1NodeMetrics.  # noqa: E501
 
@@ -210,22 +256,22 @@ class V1NodeMetrics(object):
         self._max_power_per_gpu = max_power_per_gpu
 
     @property
-    def mem_total(self) -> 'float':
+    def mem_total(self) -> 'str':
         """Gets the mem_total of this V1NodeMetrics.  # noqa: E501
 
 
         :return: The mem_total of this V1NodeMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: str
         """
         return self._mem_total
 
     @mem_total.setter
-    def mem_total(self, mem_total: 'float'):
+    def mem_total(self, mem_total: 'str'):
         """Sets the mem_total of this V1NodeMetrics.
 
 
         :param mem_total: The mem_total of this V1NodeMetrics.  # noqa: E501
-        :type: float
+        :type: str
         """
 
         self._mem_total = mem_total
@@ -273,64 +319,148 @@ class V1NodeMetrics(object):
         self._node_name = node_name
 
     @property
-    def per_gpu_mem_free(self) -> 'dict(str, float)':
+    def nvlink_rx_gib(self) -> 'dict(str, float)':
+        """Gets the nvlink_rx_gib of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The nvlink_rx_gib of this V1NodeMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._nvlink_rx_gib
+
+    @nvlink_rx_gib.setter
+    def nvlink_rx_gib(self, nvlink_rx_gib: 'dict(str, float)'):
+        """Sets the nvlink_rx_gib of this V1NodeMetrics.
+
+
+        :param nvlink_rx_gib: The nvlink_rx_gib of this V1NodeMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._nvlink_rx_gib = nvlink_rx_gib
+
+    @property
+    def nvlink_tx_gib(self) -> 'dict(str, float)':
+        """Gets the nvlink_tx_gib of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The nvlink_tx_gib of this V1NodeMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._nvlink_tx_gib
+
+    @nvlink_tx_gib.setter
+    def nvlink_tx_gib(self, nvlink_tx_gib: 'dict(str, float)'):
+        """Sets the nvlink_tx_gib of this V1NodeMetrics.
+
+
+        :param nvlink_tx_gib: The nvlink_tx_gib of this V1NodeMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._nvlink_tx_gib = nvlink_tx_gib
+
+    @property
+    def pcie_rx_gib(self) -> 'dict(str, float)':
+        """Gets the pcie_rx_gib of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The pcie_rx_gib of this V1NodeMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._pcie_rx_gib
+
+    @pcie_rx_gib.setter
+    def pcie_rx_gib(self, pcie_rx_gib: 'dict(str, float)'):
+        """Sets the pcie_rx_gib of this V1NodeMetrics.
+
+
+        :param pcie_rx_gib: The pcie_rx_gib of this V1NodeMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._pcie_rx_gib = pcie_rx_gib
+
+    @property
+    def pcie_tx_gib(self) -> 'dict(str, float)':
+        """Gets the pcie_tx_gib of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The pcie_tx_gib of this V1NodeMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._pcie_tx_gib
+
+    @pcie_tx_gib.setter
+    def pcie_tx_gib(self, pcie_tx_gib: 'dict(str, float)'):
+        """Sets the pcie_tx_gib of this V1NodeMetrics.
+
+
+        :param pcie_tx_gib: The pcie_tx_gib of this V1NodeMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._pcie_tx_gib = pcie_tx_gib
+
+    @property
+    def per_gpu_mem_free(self) -> 'dict(str, int)':
         """Gets the per_gpu_mem_free of this V1NodeMetrics.  # noqa: E501
 
 
         :return: The per_gpu_mem_free of this V1NodeMetrics.  # noqa: E501
-        :rtype: dict(str, float)
+        :rtype: dict(str, int)
         """
         return self._per_gpu_mem_free
 
     @per_gpu_mem_free.setter
-    def per_gpu_mem_free(self, per_gpu_mem_free: 'dict(str, float)'):
+    def per_gpu_mem_free(self, per_gpu_mem_free: 'dict(str, int)'):
         """Sets the per_gpu_mem_free of this V1NodeMetrics.
 
 
         :param per_gpu_mem_free: The per_gpu_mem_free of this V1NodeMetrics.  # noqa: E501
-        :type: dict(str, float)
+        :type: dict(str, int)
         """
 
         self._per_gpu_mem_free = per_gpu_mem_free
 
     @property
-    def per_gpu_mem_used(self) -> 'dict(str, float)':
+    def per_gpu_mem_used(self) -> 'dict(str, int)':
         """Gets the per_gpu_mem_used of this V1NodeMetrics.  # noqa: E501
 
 
         :return: The per_gpu_mem_used of this V1NodeMetrics.  # noqa: E501
-        :rtype: dict(str, float)
+        :rtype: dict(str, int)
         """
         return self._per_gpu_mem_used
 
     @per_gpu_mem_used.setter
-    def per_gpu_mem_used(self, per_gpu_mem_used: 'dict(str, float)'):
+    def per_gpu_mem_used(self, per_gpu_mem_used: 'dict(str, int)'):
         """Sets the per_gpu_mem_used of this V1NodeMetrics.
 
 
         :param per_gpu_mem_used: The per_gpu_mem_used of this V1NodeMetrics.  # noqa: E501
-        :type: dict(str, float)
+        :type: dict(str, int)
         """
 
         self._per_gpu_mem_used = per_gpu_mem_used
 
     @property
-    def per_gpu_power_usage_watts(self) -> 'dict(str, float)':
+    def per_gpu_power_usage_watts(self) -> 'dict(str, int)':
         """Gets the per_gpu_power_usage_watts of this V1NodeMetrics.  # noqa: E501
 
 
         :return: The per_gpu_power_usage_watts of this V1NodeMetrics.  # noqa: E501
-        :rtype: dict(str, float)
+        :rtype: dict(str, int)
         """
         return self._per_gpu_power_usage_watts
 
     @per_gpu_power_usage_watts.setter
-    def per_gpu_power_usage_watts(self, per_gpu_power_usage_watts: 'dict(str, float)'):
+    def per_gpu_power_usage_watts(self, per_gpu_power_usage_watts: 'dict(str, int)'):
         """Sets the per_gpu_power_usage_watts of this V1NodeMetrics.
 
 
         :param per_gpu_power_usage_watts: The per_gpu_power_usage_watts of this V1NodeMetrics.  # noqa: E501
-        :type: dict(str, float)
+        :type: dict(str, int)
         """
 
         self._per_gpu_power_usage_watts = per_gpu_power_usage_watts
@@ -378,22 +508,22 @@ class V1NodeMetrics(object):
         self._per_gpu_sm_occupancy = per_gpu_sm_occupancy
 
     @property
-    def per_gpu_temperature_c(self) -> 'dict(str, float)':
+    def per_gpu_temperature_c(self) -> 'dict(str, int)':
         """Gets the per_gpu_temperature_c of this V1NodeMetrics.  # noqa: E501
 
 
         :return: The per_gpu_temperature_c of this V1NodeMetrics.  # noqa: E501
-        :rtype: dict(str, float)
+        :rtype: dict(str, int)
         """
         return self._per_gpu_temperature_c
 
     @per_gpu_temperature_c.setter
-    def per_gpu_temperature_c(self, per_gpu_temperature_c: 'dict(str, float)'):
+    def per_gpu_temperature_c(self, per_gpu_temperature_c: 'dict(str, int)'):
         """Sets the per_gpu_temperature_c of this V1NodeMetrics.
 
 
         :param per_gpu_temperature_c: The per_gpu_temperature_c of this V1NodeMetrics.  # noqa: E501
-        :type: dict(str, float)
+        :type: dict(str, int)
         """
 
         self._per_gpu_temperature_c = per_gpu_temperature_c

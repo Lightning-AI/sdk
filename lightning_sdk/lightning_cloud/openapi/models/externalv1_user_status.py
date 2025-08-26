@@ -42,6 +42,7 @@ class Externalv1UserStatus(object):
     """
     swagger_types = {
         'acked_storage_violation': 'bool',
+        'auth_provider': 'str',
         'auto_verify_reason': 'str',
         'auto_verify_response': 'bool',
         'completed_project_onboarding': 'bool',
@@ -54,6 +55,7 @@ class Externalv1UserStatus(object):
 
     attribute_map = {
         'acked_storage_violation': 'ackedStorageViolation',
+        'auth_provider': 'authProvider',
         'auto_verify_reason': 'autoVerifyReason',
         'auto_verify_response': 'autoVerifyResponse',
         'completed_project_onboarding': 'completedProjectOnboarding',
@@ -64,9 +66,10 @@ class Externalv1UserStatus(object):
         'verified_at': 'verifiedAt'
     }
 
-    def __init__(self, acked_storage_violation: 'bool' =None, auto_verify_reason: 'str' =None, auto_verify_response: 'bool' =None, completed_project_onboarding: 'bool' =None, completed_signup: 'bool' =None, has_received_free_months: 'bool' =None, installed_grid: 'bool' =None, verified: 'bool' =None, verified_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, acked_storage_violation: 'bool' =None, auth_provider: 'str' =None, auto_verify_reason: 'str' =None, auto_verify_response: 'bool' =None, completed_project_onboarding: 'bool' =None, completed_signup: 'bool' =None, has_received_free_months: 'bool' =None, installed_grid: 'bool' =None, verified: 'bool' =None, verified_at: 'datetime' =None):  # noqa: E501
         """Externalv1UserStatus - a model defined in Swagger"""  # noqa: E501
         self._acked_storage_violation = None
+        self._auth_provider = None
         self._auto_verify_reason = None
         self._auto_verify_response = None
         self._completed_project_onboarding = None
@@ -78,6 +81,8 @@ class Externalv1UserStatus(object):
         self.discriminator = None
         if acked_storage_violation is not None:
             self.acked_storage_violation = acked_storage_violation
+        if auth_provider is not None:
+            self.auth_provider = auth_provider
         if auto_verify_reason is not None:
             self.auto_verify_reason = auto_verify_reason
         if auto_verify_response is not None:
@@ -115,6 +120,27 @@ class Externalv1UserStatus(object):
         """
 
         self._acked_storage_violation = acked_storage_violation
+
+    @property
+    def auth_provider(self) -> 'str':
+        """Gets the auth_provider of this Externalv1UserStatus.  # noqa: E501
+
+
+        :return: The auth_provider of this Externalv1UserStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._auth_provider
+
+    @auth_provider.setter
+    def auth_provider(self, auth_provider: 'str'):
+        """Sets the auth_provider of this Externalv1UserStatus.
+
+
+        :param auth_provider: The auth_provider of this Externalv1UserStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._auth_provider = auth_provider
 
     @property
     def auto_verify_reason(self) -> 'str':

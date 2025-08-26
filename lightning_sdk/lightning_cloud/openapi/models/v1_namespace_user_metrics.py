@@ -44,16 +44,16 @@ class V1NamespaceUserMetrics(object):
         'cpu_utilisation': 'float',
         'failed_pods': 'int',
         'gpu_utilisation': 'float',
-        'num_cpus': 'float',
+        'num_cpus': 'int',
         'num_gpus': 'int',
         'pending_pods': 'int',
-        'ram_used': 'float',
+        'ram_used': 'int',
         'running_pods': 'int',
         'succeeded_pods': 'int',
         'timestamp': 'datetime',
         'total_pods': 'int',
         'unknown_pods': 'int',
-        'vram_used': 'float'
+        'vram_used': 'int'
     }
 
     attribute_map = {
@@ -72,7 +72,7 @@ class V1NamespaceUserMetrics(object):
         'vram_used': 'vramUsed'
     }
 
-    def __init__(self, cpu_utilisation: 'float' =None, failed_pods: 'int' =None, gpu_utilisation: 'float' =None, num_cpus: 'float' =None, num_gpus: 'int' =None, pending_pods: 'int' =None, ram_used: 'float' =None, running_pods: 'int' =None, succeeded_pods: 'int' =None, timestamp: 'datetime' =None, total_pods: 'int' =None, unknown_pods: 'int' =None, vram_used: 'float' =None):  # noqa: E501
+    def __init__(self, cpu_utilisation: 'float' =None, failed_pods: 'int' =None, gpu_utilisation: 'float' =None, num_cpus: 'int' =None, num_gpus: 'int' =None, pending_pods: 'int' =None, ram_used: 'int' =None, running_pods: 'int' =None, succeeded_pods: 'int' =None, timestamp: 'datetime' =None, total_pods: 'int' =None, unknown_pods: 'int' =None, vram_used: 'int' =None):  # noqa: E501
         """V1NamespaceUserMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_utilisation = None
         self._failed_pods = None
@@ -179,22 +179,22 @@ class V1NamespaceUserMetrics(object):
         self._gpu_utilisation = gpu_utilisation
 
     @property
-    def num_cpus(self) -> 'float':
+    def num_cpus(self) -> 'int':
         """Gets the num_cpus of this V1NamespaceUserMetrics.  # noqa: E501
 
 
         :return: The num_cpus of this V1NamespaceUserMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._num_cpus
 
     @num_cpus.setter
-    def num_cpus(self, num_cpus: 'float'):
+    def num_cpus(self, num_cpus: 'int'):
         """Sets the num_cpus of this V1NamespaceUserMetrics.
 
 
         :param num_cpus: The num_cpus of this V1NamespaceUserMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._num_cpus = num_cpus
@@ -242,22 +242,22 @@ class V1NamespaceUserMetrics(object):
         self._pending_pods = pending_pods
 
     @property
-    def ram_used(self) -> 'float':
+    def ram_used(self) -> 'int':
         """Gets the ram_used of this V1NamespaceUserMetrics.  # noqa: E501
 
 
         :return: The ram_used of this V1NamespaceUserMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._ram_used
 
     @ram_used.setter
-    def ram_used(self, ram_used: 'float'):
+    def ram_used(self, ram_used: 'int'):
         """Sets the ram_used of this V1NamespaceUserMetrics.
 
 
         :param ram_used: The ram_used of this V1NamespaceUserMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._ram_used = ram_used
@@ -368,22 +368,22 @@ class V1NamespaceUserMetrics(object):
         self._unknown_pods = unknown_pods
 
     @property
-    def vram_used(self) -> 'float':
+    def vram_used(self) -> 'int':
         """Gets the vram_used of this V1NamespaceUserMetrics.  # noqa: E501
 
 
         :return: The vram_used of this V1NamespaceUserMetrics.  # noqa: E501
-        :rtype: float
+        :rtype: int
         """
         return self._vram_used
 
     @vram_used.setter
-    def vram_used(self, vram_used: 'float'):
+    def vram_used(self, vram_used: 'int'):
         """Sets the vram_used of this V1NamespaceUserMetrics.
 
 
         :param vram_used: The vram_used of this V1NamespaceUserMetrics.  # noqa: E501
-        :type: float
+        :type: int
         """
 
         self._vram_used = vram_used
