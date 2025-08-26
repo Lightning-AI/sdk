@@ -532,3 +532,43 @@ def test_teamspace_default_cloud_account_resolution(
     teamspace = Teamspace(name="teamspace-name", org="test-org")
 
     assert teamspace.default_cloud_account == expected_result
+
+
+def test_teamspace_secrets_property(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    mock_secrets = {"API_KEY": "***REDACTED***", "DATABASE_URL": "***REDACTED***"}
+
+    with mock.patch.object(ts._teamspace_api, "get_secrets", return_value=mock_secrets) as mock_get:
+        secrets = ts.secrets
+
+    assert secrets == mock_secrets
+    mock_get.assert_called_once_with("ts-abc002")
+
+
+def test_teamspace_set_secret(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    with mock.patch.object(ts._teamspace_api, "set_secret") as mock_set:
+        ts.set_secret("NEW_SECRET", "secret_value")
+
+    mock_set.assert_called_once_with("ts-abc002", "NEW_SECRET", "secret_value")
+
+
+def test_teamspace_set_secret_invalid_name(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    with pytest.raises(
+        ValueError,
+        match="Secret keys must only contain alphanumeric characters and underscores and not begin with a number.",
+    ):
+        ts.set_secret("123_INVALID", "secret_value")

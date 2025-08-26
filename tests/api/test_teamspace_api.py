@@ -16,6 +16,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Project,
     V1ProjectClusterBinding,
     V1Resources,
+    V1Secret,
+    V1SecretType,
 )
 
 
@@ -291,3 +293,119 @@ def test_download_folder(mock_download, tmpdir):
 
     teamspace_api.download_folder("folder", tmpdir, "ts-abc", "cluster-abc")
     mock_download.assert_called_once()
+
+
+def test_get_secrets():
+    teamspace_api = TeamspaceApi()
+
+    mock_secrets = [
+        V1Secret(id="secret-1", name="API_KEY", type=V1SecretType.UNSPECIFIED),
+        V1Secret(id="secret-2", name="DATABASE_URL", type=V1SecretType.UNSPECIFIED),
+    ]
+
+    with mock.patch.object(teamspace_api, "_get_secrets", return_value=mock_secrets):
+        secrets = teamspace_api.get_secrets("ts-abc")
+
+    assert len(secrets) == 2
+    assert secrets["API_KEY"] == "***REDACTED***"
+    assert secrets["DATABASE_URL"] == "***REDACTED***"
+
+
+def test_set_secret_create_new():
+    teamspace_api = TeamspaceApi()
+
+    existing_secrets = [
+        V1Secret(id="secret-1", name="API_KEY"),
+    ]
+
+    with mock.patch.object(teamspace_api, "_get_secrets", return_value=existing_secrets), mock.patch.object(
+        teamspace_api, "_create_secret"
+    ) as mock_create:
+        teamspace_api.set_secret("ts-abc", "NEW_SECRET", "secret_value")
+
+        mock_create.assert_called_once_with("ts-abc", "NEW_SECRET", "secret_value")
+
+
+def test_set_secret_update_existing():
+    teamspace_api = TeamspaceApi()
+
+    existing_secrets = [
+        V1Secret(id="secret-1", name="API_KEY"),
+        V1Secret(id="secret-2", name="DATABASE_URL"),
+    ]
+
+    with mock.patch.object(teamspace_api, "_get_secrets", return_value=existing_secrets), mock.patch.object(
+        teamspace_api, "_update_secret"
+    ) as mock_update:
+        teamspace_api.set_secret("ts-abc", "API_KEY", "new_secret_value")
+
+        mock_update.assert_called_once_with("ts-abc", "secret-1", "new_secret_value")
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+def test_get_secrets_api_call(mock_client):
+    mock_client().secret_service_list_secrets.return_value.secrets = [
+        V1Secret(id="secret-1", name="API_KEY"),
+    ]
+
+    teamspace_api = TeamspaceApi()
+    result = teamspace_api._get_secrets("ts-abc")
+
+    mock_client().secret_service_list_secrets.assert_called_once_with(project_id="ts-abc")
+    assert len(result) == 1
+    assert result[0].name == "API_KEY"
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+def test_create_secret_api_call(mock_client):
+    teamspace_api = TeamspaceApi()
+
+    teamspace_api._create_secret("ts-abc", "NEW_SECRET", "secret_value")
+
+    mock_client().secret_service_create_secret.assert_called_once()
+    call_args = mock_client().secret_service_create_secret.call_args
+    assert call_args[1]["project_id"] == "ts-abc"
+    assert call_args[1]["body"].name == "NEW_SECRET"
+    assert call_args[1]["body"].value == "secret_value"
+    assert call_args[1]["body"].type == V1SecretType.UNSPECIFIED
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+def test_update_secret_api_call(mock_client):
+    teamspace_api = TeamspaceApi()
+
+    teamspace_api._update_secret("ts-abc", "secret-1", "new_value")
+
+    mock_client().secret_service_update_secret.assert_called_once()
+    call_args = mock_client().secret_service_update_secret.call_args
+    assert call_args[1]["project_id"] == "ts-abc"
+    assert call_args[1]["id"] == "secret-1"
+    assert call_args[1]["body"].value == "new_value"
+
+
+@pytest.mark.parametrize(
+    ("secret_name", "expected"),
+    [
+        ("VALID_SECRET", True),
+        ("valid_secret", True),
+        ("_VALID_SECRET", True),
+        ("_valid_secret", True),
+        ("SECRET_123", True),
+        ("secret123", True),
+        ("a", True),
+        ("_", True),
+        ("A_B_C_123", True),
+        ("123_INVALID", False),  # starts with number
+        ("INVALID-SECRET", False),  # contains hyphen
+        ("INVALID SECRET", False),  # contains space
+        ("INVALID.SECRET", False),  # contains dot
+        ("", False),  # empty string
+        ("INVALID@SECRET", False),  # contains special character
+        ("INVALID#SECRET", False),  # contains hash
+        ("INVALID$SECRET", False),  # contains dollar sign
+    ],
+)
+def test_verify_secret_name(secret_name, expected):
+    teamspace_api = TeamspaceApi()
+    result = teamspace_api.verify_secret_name(secret_name)
+    assert result == expected

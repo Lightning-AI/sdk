@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -21,6 +22,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreApi,
     ProjectIdAgentsBody,
     ProjectIdModelsBody,
+    ProjectIdSecretsBody,
+    SecretsIdBody,
     V1Assistant,
     V1CloudSpace,
     V1ClusterAccelerator,
@@ -33,6 +36,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Project,
     V1ProjectClusterBinding,
     V1PromptSuggestion,
+    V1Secret,
+    V1SecretType,
     V1UpstreamOpenAI,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -435,3 +440,50 @@ class TeamspaceApi:
             download_dir=Path(target_path),
             progress_bar=progress_bar,
         )
+
+    def get_secrets(self, teamspace_id: str) -> Dict[str, str]:
+        """Get all secrets for a teamspace."""
+        secrets = self._get_secrets(teamspace_id)
+        # this returns encrypted values for security. It doesn't make sense to show them,
+        # so we just return a placeholder
+        # not a security issue to replace in the client as we get the encrypted values from the server.
+        return {secret.name: "***REDACTED***" for secret in secrets if secret.type == V1SecretType.UNSPECIFIED}
+
+    def set_secret(self, teamspace_id: str, key: str, value: str) -> None:
+        """Set a secret for a teamspace.
+
+        This will replace the existing secret if it exists and create a new one if it doesn't.
+        """
+        secrets = self._get_secrets(teamspace_id)
+        for secret in secrets:
+            if secret.name == key:
+                return self._update_secret(teamspace_id, secret.id, value)
+        return self._create_secret(teamspace_id, key, value)
+
+    def _get_secrets(self, teamspace_id: str) -> List[V1Secret]:
+        return self._client.secret_service_list_secrets(project_id=teamspace_id).secrets
+
+    def _update_secret(self, teamspace_id: str, secret_id: str, value: str) -> None:
+        self._client.secret_service_update_secret(
+            body=SecretsIdBody(value=value),
+            project_id=teamspace_id,
+            id=secret_id,
+        )
+
+    def _create_secret(
+        self,
+        teamspace_id: str,
+        key: str,
+        value: str,
+    ) -> None:
+        self._client.secret_service_create_secret(
+            body=ProjectIdSecretsBody(name=key, value=value, type=V1SecretType.UNSPECIFIED), project_id=teamspace_id
+        )
+
+    def verify_secret_name(self, name: str) -> bool:
+        """Verify if a secret name is valid.
+
+        A valid secret name starts with a letter or underscore, followed by letters, digits, or underscores.
+        """
+        pattern = r"^[A-Za-z_][A-Za-z0-9_]*$"
+        return re.match(pattern, name) is not None

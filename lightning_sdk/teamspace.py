@@ -2,7 +2,7 @@ import glob
 import os
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 
 from tqdm.auto import tqdm
 
@@ -213,6 +213,24 @@ class Teamspace:
             mmts.append(mmt)
 
         return tuple(mmts)
+
+    @property
+    def secrets(self) -> Dict[str, str]:
+        """All (encrypted) secrets for the teamspace.
+
+        Note:
+            Once created, the secret values are encrypted and cannot be viewed here anymore.
+        """
+        return self._teamspace_api.get_secrets(self.id)
+
+    def set_secret(self, key: str, value: str) -> None:
+        """Set the (encrypted) secrets for the teamspace."""
+        if not self._teamspace_api.verify_secret_name(key):
+            raise ValueError(
+                "Secret keys must only contain alphanumeric characters and underscores and not begin with a number."
+            )
+
+        self._teamspace_api.set_secret(self.id, key, value)
 
     def list_machines(self, cloud_account: Optional[str] = None) -> List[Machine]:
         if cloud_account is None:
