@@ -1,15 +1,20 @@
-from typing import List, Union
+import re
+from typing import Dict, List, Union
 
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
+    SecretsIdBody1,
     V1CloudSpace,
+    V1CreateUserSecretRequest,
     V1GetUserResponse,
     V1ListCloudSpacesResponse,
     V1Membership,
     V1Organization,
     V1SearchUser,
+    V1Secret,
     V1UserFeatures,
 )
+from lightning_sdk.lightning_cloud.openapi.models.v1_secret_type import V1SecretType
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
@@ -69,3 +74,46 @@ class UserApi:
     def _get_feature_flags(self) -> V1UserFeatures:
         resp: V1GetUserResponse = self._client.auth_service_get_user()
         return resp.features
+
+    def get_secrets(self) -> Dict[str, str]:
+        """Get all secrets for the current user."""
+        secrets = self._get_secrets()
+        # this returns encrypted values for security. It doesn't make sense to show them,
+        # so we just return a placeholder
+        # not a security issue to replace in the client as we get the encrypted values from the server.
+        return {secret.name: "***REDACTED***" for secret in secrets if secret.type == V1SecretType.UNSPECIFIED}
+
+    def set_secret(self, key: str, value: str) -> None:
+        """Set a secret for the current user.
+
+        This will replace the existing secret if it exists and create a new one if it doesn't.
+        """
+        secrets = self._get_secrets()
+        for secret in secrets:
+            if secret.name == key:
+                return self._update_secret(secret.id, value)
+        return self._create_secret(key, value)
+
+    def _get_secrets(self) -> List[V1Secret]:
+        return self._client.secret_service_list_user_secrets().secrets
+
+    def _update_secret(self, secret_id: str, value: str) -> None:
+        self._client.secret_service_update_user_secret(
+            body=SecretsIdBody1(value=value),
+            id=secret_id,
+        )
+
+    def _create_secret(
+        self,
+        key: str,
+        value: str,
+    ) -> None:
+        self._client.secret_service_create_user_secret(body=V1CreateUserSecretRequest(name=key, value=value))
+
+    def verify_secret_name(self, name: str) -> bool:
+        """Verify if a secret name is valid.
+
+        A valid secret name starts with a letter or underscore, followed by letters, digits, or underscores.
+        """
+        pattern = r"^[A-Za-z_][A-Za-z0-9_]*$"
+        return re.match(pattern, name) is not None
