@@ -285,9 +285,9 @@ def test_download_file(tmpdir, internal_teamspace_api_mocker, internal_studio_ap
     teamspace_api.download_file("file1", filepath, "ts-abc", "cluster-abc")
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.zipfile")
-def test_download_folder(_, tmpdir, internal_teamspace_api_mocker, internal_studio_api_login):
+@mock.patch("lightning_sdk.api.teamspace_api._download_teamspace_files", autospec=True)
+def test_download_folder(mock_download, tmpdir):
     teamspace_api = TeamspaceApi()
 
-    filepath = os.path.join(tmpdir, "file1")
-    teamspace_api.download_folder("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
+    teamspace_api.download_folder("folder", tmpdir, "ts-abc", "cluster-abc")
+    mock_download.assert_called_once()

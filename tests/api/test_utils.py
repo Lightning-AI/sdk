@@ -9,7 +9,7 @@ import lightning_sdk.api.utils
 from lightning_sdk.api import utils
 from lightning_sdk.api.utils import (
     _download_model_files,
-    _download_studio_files,
+    _download_teamspace_files,
     _FileDownloader,
     _FileUploader,
     _machine_to_compute_name,
@@ -212,7 +212,7 @@ def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, ap
 @mock.patch("lightning_sdk.api.utils._FileDownloader")
 @mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
-def test_download_studio_files(wait_mock, executor_mock, file_downloader_mock, api_mock, tmp_path, monkeypatch):
+def test_download_teamspace_files(wait_mock, executor_mock, file_downloader_mock, api_mock, tmp_path, monkeypatch):
     tqdm_mock = MagicMock()
     monkeypatch.setattr(utils, "tqdm", tqdm_mock)
 
@@ -224,7 +224,7 @@ def test_download_studio_files(wait_mock, executor_mock, file_downloader_mock, a
         next_page_token="",
     )
 
-    _download_studio_files(
+    _download_teamspace_files(
         client=Mock(),
         teamspace_id="test-project-id",
         cluster_id="test-cluster-id",

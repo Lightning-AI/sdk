@@ -1,6 +1,4 @@
 import os
-import tempfile
-import zipfile
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -9,6 +7,7 @@ from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import (
     _download_model_files,
+    _download_teamspace_files,
     _DummyBody,
     _FileUploader,
     _get_model_version,
@@ -421,39 +420,18 @@ class TeamspaceApi:
         # TODO: Update this endpoint to permit basic auth
         auth = Auth()
         auth.authenticate()
-        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
 
-        query_params = {
-            "clusterId": cloud_account,
-            "prefix": _resolve_teamspace_remote_path(path),
-            "token": token,
-        }
+        prefix = _resolve_teamspace_remote_path(path)
 
-        r = requests.get(
-            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
-            params=query_params,
-            stream=True,
+        # ensure we only download as a directory and not the entire prefix
+        if prefix.endswith("/") is False:
+            prefix = prefix + "/"
+
+        _download_teamspace_files(
+            client=self._client,
+            teamspace_id=teamspace_id,
+            cluster_id=cloud_account,
+            prefix=prefix,
+            download_dir=Path(target_path),
+            progress_bar=progress_bar,
         )
-
-        if progress_bar:
-            pbar = tqdm(
-                desc=f"Downloading {os.path.split(path)[1]}",
-                unit="B",
-                unit_scale=True,
-                unit_divisor=1000,
-            )
-
-            pbar_update = pbar.update
-        else:
-            pbar_update = lambda x: None
-
-        if target_path:
-            os.makedirs(target_path, exist_ok=True)
-
-        with tempfile.TemporaryFile() as f:
-            for chunk in r.iter_content(chunk_size=4096 * 8):
-                f.write(chunk)
-                pbar_update(len(chunk))
-
-            with zipfile.ZipFile(f) as z:
-                z.extractall(target_path)

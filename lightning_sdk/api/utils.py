@@ -586,7 +586,7 @@ def _download_model_files(
         return response.filepaths
 
 
-def _download_studio_files(
+def _download_teamspace_files(
     client: LightningClient,
     teamspace_id: str,
     cluster_id: str,

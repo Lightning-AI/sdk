@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
     _create_app,
-    _download_studio_files,
+    _download_teamspace_files,
     _DummyBody,
     _DummyResponse,
     _FileUploader,
@@ -677,7 +677,7 @@ class StudioApi:
         if prefix.endswith("/") is False:
             prefix = prefix + "/"
 
-        _download_studio_files(
+        _download_teamspace_files(
             client=self._client,
             teamspace_id=teamspace_id,
             cluster_id=cloud_account,
