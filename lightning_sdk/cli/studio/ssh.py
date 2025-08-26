@@ -9,15 +9,22 @@ from typing import List, Optional
 
 import click
 
-from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
+from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
+from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.studio import Studio
 from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH
 
 
 @click.command("ssh")
-@click.argument("studio_name", required=False)
+@click.option(
+    "--name",
+    help=(
+        "The name of the studio to start. "
+        "If not provided, will try to infer from environment, "
+        "use the default value from the config or prompt for interactive selection."
+    ),
+)
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)", type=click.STRING)
 @click.option(
     "--option",
@@ -26,17 +33,11 @@ from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH
     multiple=True,
     type=click.STRING,
 )
-def ssh_studio(
-    studio_name: Optional[str] = None, teamspace: Optional[str] = None, option: Optional[List[str]] = None
-) -> None:
+def ssh_studio(name: Optional[str] = None, teamspace: Optional[str] = None, option: Optional[List[str]] = None) -> None:
     """SSH into a Studio.
 
     Example:
-        lightning studio ssh [STUDIO_NAME]
-
-    STUDIO_NAME: the name of the studio to SSH into.
-
-    If STUDIO_NAME is not provided, will try to infer from environment or use the default value from the config.
+        lightning studio ssh --name my-studio
     """
     auth = Auth()
     auth.authenticate()
@@ -44,9 +45,10 @@ def ssh_studio(
 
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace=teamspace)
-    save_teamspace_to_config(resolved_teamspace, overwrite=False)
 
-    studio = Studio(studio_name, teamspace=resolved_teamspace)
+    menu = StudiosMenu(resolved_teamspace)
+    studio = menu(studio=name)
+    save_studio_to_config(studio)
 
     ssh_options = " -o " + " -o ".join(option) if option else ""
     ssh_command = f"ssh -i {ssh_private_key_path}{ssh_options} s_{studio._studio.id}@ssh.lightning.ai"

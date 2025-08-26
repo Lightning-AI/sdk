@@ -37,9 +37,9 @@ def get_switching_progress_message(percentage: int, is_base_studio: bool, is_new
         else:
             message = "Restoring Studio..."
     elif percentage > 60:
-        message = "Setting up machine from the cloud provider"
+        message = "Setting up machine from cloud provider"
     else:
-        message = "Allocating machine from the cloud provider"
+        message = "Allocating machine from cloud provider"
 
     return f"({percentage}%) {message}"
 

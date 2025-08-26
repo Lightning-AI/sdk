@@ -46,27 +46,27 @@ class TestGetSwitchingProgressMessage:
     def test_setting_up_machine_phase(self):
         """Test message when progress is 60-80%."""
         result = get_switching_progress_message(65, False, False)
-        assert result == "(65%) Setting up machine from the cloud provider"
+        assert result == "(65%) Setting up machine from cloud provider"
 
         result = get_switching_progress_message(79, True, True)
-        assert result == "(79%) Setting up machine from the cloud provider"
+        assert result == "(79%) Setting up machine from cloud provider"
 
     def test_allocating_machine_phase(self):
         """Test message when progress is 0-60%."""
         result = get_switching_progress_message(0, False, False)
-        assert result == "(0%) Allocating machine from the cloud provider"
+        assert result == "(0%) Allocating machine from cloud provider"
 
         result = get_switching_progress_message(30, False, False)
-        assert result == "(30%) Allocating machine from the cloud provider"
+        assert result == "(30%) Allocating machine from cloud provider"
 
         result = get_switching_progress_message(59, True, True)
-        assert result == "(59%) Allocating machine from the cloud provider"
+        assert result == "(59%) Allocating machine from cloud provider"
 
     def test_percentage_bounds(self):
         """Test that percentage is properly bounded."""
         # Test negative percentage
         result = get_switching_progress_message(-10, False, False)
-        assert result == "(0%) Allocating machine from the cloud provider"
+        assert result == "(0%) Allocating machine from cloud provider"
 
         # Test percentage over 100
         result = get_switching_progress_message(150, False, False)
@@ -84,15 +84,15 @@ class TestGetSwitchingProgressMessage:
         """Test exact boundary values."""
         # Test exactly at 60%
         result = get_switching_progress_message(60, False, False)
-        assert result == "(60%) Allocating machine from the cloud provider"
+        assert result == "(60%) Allocating machine from cloud provider"
 
         # Test exactly at 61%
         result = get_switching_progress_message(61, False, False)
-        assert result == "(61%) Setting up machine from the cloud provider"
+        assert result == "(61%) Setting up machine from cloud provider"
 
         # Test exactly at 80%
         result = get_switching_progress_message(80, False, False)
-        assert result == "(80%) Setting up machine from the cloud provider"
+        assert result == "(80%) Setting up machine from cloud provider"
 
         # Test exactly at 81%
         result = get_switching_progress_message(81, False, False)

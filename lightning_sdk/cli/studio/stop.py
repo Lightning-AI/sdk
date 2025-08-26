@@ -4,36 +4,37 @@ from typing import Optional
 
 import click
 
-from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
+from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
+from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
-from lightning_sdk.studio import Studio
 
 
 @click.command("stop")
-@click.argument("studio_name", required=False)
+@click.option(
+    "--name",
+    help=(
+        "The name of the studio to start. "
+        "If not provided, will try to infer from environment, "
+        "use the default value from the config or prompt for interactive selection."
+    ),
+)
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
-def stop_studio(studio_name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
+def stop_studio(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     """Stop a Studio.
 
     Example:
-        lightning studio stop [STUDIO_NAME]
+        lightning studio stop --name my-studio
 
-    STUDIO_NAME: the name of the studio to stop.
-
-    If STUDIO_NAME is not provided, will try to infer from environment or use the default value from the config.
     """
     # missing studio_name and teamspace are handled by the studio class
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace=teamspace)
-    save_teamspace_to_config(resolved_teamspace, overwrite=False)
 
-    try:
-        studio = Studio(studio_name, teamspace=resolved_teamspace)
-        studio.stop()
-    except Exception:
-        # TODO: make this a generic CLI error
-        if studio_name:
-            raise ValueError(f"Could not stop studio: '{studio_name}'. Does the studio exist?") from None
-        raise ValueError("No studio name provided. Use 'lightning studio stop <name>' to stop a studio.") from None
+    menu = StudiosMenu(resolved_teamspace)
+    studio = menu(studio=name)
+
+    studio.stop()
+
+    save_studio_to_config(studio)
 
     click.echo(f"Studio '{studio.name}' stopped successfully")

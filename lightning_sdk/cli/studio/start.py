@@ -4,15 +4,22 @@ from typing import Optional
 
 import click
 
-from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
+from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
+from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
-from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.studio import Studio
 
 
 @click.command("start")
-@click.argument("studio_name", required=False)
+@click.option(
+    "--name",
+    help=(
+        "The name of the studio to start. "
+        "If not provided, will try to infer from environment, "
+        "use the default value from the config or prompt for interactive selection."
+    ),
+)
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 @click.option("--create", is_flag=True, help="Create the studio if it doesn't exist")
 @click.option(
@@ -35,7 +42,7 @@ from lightning_sdk.studio import Studio
     type=click.STRING,
 )
 def start_studio(
-    studio_name: Optional[str] = None,
+    name: Optional[str] = None,
     teamspace: Optional[str] = None,
     create: bool = False,
     machine: Optional[str] = None,
@@ -46,31 +53,28 @@ def start_studio(
     """Start a Studio.
 
     Example:
-        lightning studio start [STUDIO_NAME]
+        lightning studio start --name my-studio
 
-    STUDIO_NAME: the name of the studio to start.
-
-    If STUDIO_NAME is not provided, will try to infer from environment or use the default value from the config.
     """
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace=teamspace)
-    save_teamspace_to_config(resolved_teamspace, overwrite=False)
 
     if cloud_provider is not None:
         cloud_provider = CloudProvider(cloud_provider)
 
-    try:
+    if not create:
+        menu = StudiosMenu(resolved_teamspace)
+        studio = menu(studio=name)
+    else:
         studio = Studio(
-            studio_name,
+            name=name,
             teamspace=resolved_teamspace,
             create_ok=create,
             cloud_provider=cloud_provider,
             cloud_account=cloud_account,
         )
-    except (RuntimeError, ValueError, ApiException):
-        if studio_name:
-            raise ValueError(f"Could not start Studio: '{studio_name}'. Does the Studio exist?") from None
-        raise ValueError(f"Could not start Studio: '{studio_name}'. Please provide a Studio name") from None
+
+    save_studio_to_config(studio)
 
     Studio.show_progress = True
     studio.start(machine, interruptible=interruptible)
