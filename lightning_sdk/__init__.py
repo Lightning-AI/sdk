@@ -32,6 +32,6 @@ __all__ = [
     "User",
 ]
 
-__version__ = "2025.08.21"
+__version__ = "2025.08.26"
 _check_version_and_prompt_upgrade(__version__)
 _set_tqdm_envvars_noninteractive()
