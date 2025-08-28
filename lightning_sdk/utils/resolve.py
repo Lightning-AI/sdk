@@ -265,6 +265,17 @@ def skip_studio_setup() -> Generator[None, None, None]:
     Studio._skip_setup.value = prev_studio_setup_state
 
 
+@contextmanager
+def prevent_refetch_studio(studio: "Studio") -> Generator[None, None, None]:
+    """Prevent refetching the studio based on current runtime."""
+    prev_prevent_refetch_state = getattr(studio, "_prevent_refetch", False)
+    studio._prevent_refetch = True
+
+    yield
+
+    studio._prevent_refetch = prev_prevent_refetch_state
+
+
 def _parse_model_and_version(name: str) -> Tuple[str, Optional[str]]:
     """Parse the model name and version from the given string.
 

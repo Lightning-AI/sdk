@@ -4,6 +4,7 @@ from typing import Optional
 
 import click
 
+from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -56,4 +57,4 @@ def create_studio(
             raise ValueError(f"Could not create Studio: '{name}'. Does the Studio exist?") from None
         raise ValueError(f"Could not create Studio: '{name}'. Please provide a Studio name") from None
 
-    click.echo(f"Studio '{studio.name}' created successfully")
+    click.echo(f"Studio {studio_name_link(studio)} created successfully")

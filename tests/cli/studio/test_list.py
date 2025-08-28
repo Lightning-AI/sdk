@@ -16,6 +16,8 @@ def test_list_studio():
 Options:
   --teamspace TEXT                Override default teamspace (format:
                                   owner/teamspace)
+  --all                           List all studios, not just the ones
+                                  belonging to the authed user
   --sort-by [name|teamspace|status|machine|cloud-account]
                                   the attribute to sort the studios by.
   --help                          Show this message and exit.

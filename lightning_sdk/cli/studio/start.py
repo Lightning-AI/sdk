@@ -4,6 +4,7 @@ from typing import Optional
 
 import click
 
+from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
@@ -45,7 +46,7 @@ def start_studio(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     create: bool = False,
-    machine: Optional[str] = None,
+    machine: str = "CPU",
     interruptible: bool = False,
     cloud_provider: Optional[str] = None,
     cloud_account: Optional[str] = None,
@@ -78,4 +79,4 @@ def start_studio(
 
     Studio.show_progress = True
     studio.start(machine, interruptible=interruptible)
-    click.echo(f"Studio '{studio.name}' started successfully")
+    click.echo(f"Studio {studio_name_link(studio)} started successfully")

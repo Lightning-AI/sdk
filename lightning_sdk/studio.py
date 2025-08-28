@@ -81,6 +81,7 @@ class Studio:
         self._studio_api = StudioApi()
         self._cloud_account_api = CloudAccountApi()
 
+        self._prevent_refetch = False
         self._teamspace = None
 
         # don't resolve anything if we're skipping init

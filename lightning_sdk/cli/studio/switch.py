@@ -4,6 +4,7 @@ from typing import Optional
 
 import click
 
+from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
@@ -46,4 +47,4 @@ def switch_studio(
 
     save_studio_to_config(studio)
 
-    click.echo(f"Studio '{studio.name}' switched to machine '{resolved_machine}' successfully")
+    click.echo(f"Studio {studio_name_link(studio)} switched to machine '{resolved_machine}' successfully")
