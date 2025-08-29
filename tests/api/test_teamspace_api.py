@@ -287,6 +287,22 @@ def test_download_file(tmpdir, internal_teamspace_api_mocker, internal_studio_ap
     teamspace_api.download_file("file1", filepath, "ts-abc", "cluster-abc")
 
 
+@mock.patch("lightning_sdk.api.teamspace_api.requests")
+def test_download_file_error(mock_requests, tmpdir, internal_teamspace_api_mocker, internal_studio_api_login):
+    teamspace_api = TeamspaceApi()
+    remote_path = "file_dne"
+    filepath = os.path.join(tmpdir, "file")
+
+    mock_response = mock.Mock()
+    mock_response.status_code = 404
+    mock_response.headers = {"content-length": "0"}
+    mock_response.iter_content.return_value = []
+    mock_requests.get.return_value = mock_response
+
+    with pytest.raises(FileNotFoundError, match=f"File {remote_path} not found"):
+        teamspace_api.download_file(remote_path, filepath, "ts-abc", "cluster-abc")
+
+
 @mock.patch("lightning_sdk.api.teamspace_api._download_teamspace_files", autospec=True)
 def test_download_folder(mock_download, tmpdir):
     teamspace_api = TeamspaceApi()

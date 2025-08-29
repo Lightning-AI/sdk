@@ -390,6 +390,8 @@ class TeamspaceApi:
             params=query_params,
             stream=True,
         )
+        if r.status_code == 404:
+            raise FileNotFoundError(f"File {path} not found")
         total_length = int(r.headers.get("content-length"))
 
         if progress_bar:
