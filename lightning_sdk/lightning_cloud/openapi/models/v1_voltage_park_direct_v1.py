@@ -44,22 +44,25 @@ class V1VoltageParkDirectV1(object):
         'credentials_secret_id': 'str',
         'primary_region': 'str',
         'regions': 'list[str]',
-        'reserved_instance_ids': 'list[str]'
+        'reserved_instance_ids': 'list[str]',
+        'subnet_cidr_ranges': 'list[str]'
     }
 
     attribute_map = {
         'credentials_secret_id': 'credentialsSecretId',
         'primary_region': 'primaryRegion',
         'regions': 'regions',
-        'reserved_instance_ids': 'reservedInstanceIds'
+        'reserved_instance_ids': 'reservedInstanceIds',
+        'subnet_cidr_ranges': 'subnetCidrRanges'
     }
 
-    def __init__(self, credentials_secret_id: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, reserved_instance_ids: 'list[str]' =None):  # noqa: E501
+    def __init__(self, credentials_secret_id: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, reserved_instance_ids: 'list[str]' =None, subnet_cidr_ranges: 'list[str]' =None):  # noqa: E501
         """V1VoltageParkDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._credentials_secret_id = None
         self._primary_region = None
         self._regions = None
         self._reserved_instance_ids = None
+        self._subnet_cidr_ranges = None
         self.discriminator = None
         if credentials_secret_id is not None:
             self.credentials_secret_id = credentials_secret_id
@@ -69,6 +72,8 @@ class V1VoltageParkDirectV1(object):
             self.regions = regions
         if reserved_instance_ids is not None:
             self.reserved_instance_ids = reserved_instance_ids
+        if subnet_cidr_ranges is not None:
+            self.subnet_cidr_ranges = subnet_cidr_ranges
 
     @property
     def credentials_secret_id(self) -> 'str':
@@ -155,6 +160,27 @@ class V1VoltageParkDirectV1(object):
         """
 
         self._reserved_instance_ids = reserved_instance_ids
+
+    @property
+    def subnet_cidr_ranges(self) -> 'list[str]':
+        """Gets the subnet_cidr_ranges of this V1VoltageParkDirectV1.  # noqa: E501
+
+
+        :return: The subnet_cidr_ranges of this V1VoltageParkDirectV1.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._subnet_cidr_ranges
+
+    @subnet_cidr_ranges.setter
+    def subnet_cidr_ranges(self, subnet_cidr_ranges: 'list[str]'):
+        """Sets the subnet_cidr_ranges of this V1VoltageParkDirectV1.
+
+
+        :param subnet_cidr_ranges: The subnet_cidr_ranges of this V1VoltageParkDirectV1.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._subnet_cidr_ranges = subnet_cidr_ranges
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

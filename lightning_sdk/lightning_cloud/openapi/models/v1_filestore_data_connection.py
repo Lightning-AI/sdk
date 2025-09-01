@@ -41,6 +41,7 @@ class V1FilestoreDataConnection(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'auto_increase_enabled': 'bool',
         'capacity_gb': 'str',
         'mount_ip': 'str',
         'region': 'str',
@@ -49,6 +50,7 @@ class V1FilestoreDataConnection(object):
     }
 
     attribute_map = {
+        'auto_increase_enabled': 'autoIncreaseEnabled',
         'capacity_gb': 'capacityGb',
         'mount_ip': 'mountIp',
         'region': 'region',
@@ -56,14 +58,17 @@ class V1FilestoreDataConnection(object):
         'tier': 'tier'
     }
 
-    def __init__(self, capacity_gb: 'str' =None, mount_ip: 'str' =None, region: 'str' =None, source: 'str' =None, tier: 'V1DataConnectionTier' =None):  # noqa: E501
+    def __init__(self, auto_increase_enabled: 'bool' =None, capacity_gb: 'str' =None, mount_ip: 'str' =None, region: 'str' =None, source: 'str' =None, tier: 'V1DataConnectionTier' =None):  # noqa: E501
         """V1FilestoreDataConnection - a model defined in Swagger"""  # noqa: E501
+        self._auto_increase_enabled = None
         self._capacity_gb = None
         self._mount_ip = None
         self._region = None
         self._source = None
         self._tier = None
         self.discriminator = None
+        if auto_increase_enabled is not None:
+            self.auto_increase_enabled = auto_increase_enabled
         if capacity_gb is not None:
             self.capacity_gb = capacity_gb
         if mount_ip is not None:
@@ -74,6 +79,27 @@ class V1FilestoreDataConnection(object):
             self.source = source
         if tier is not None:
             self.tier = tier
+
+    @property
+    def auto_increase_enabled(self) -> 'bool':
+        """Gets the auto_increase_enabled of this V1FilestoreDataConnection.  # noqa: E501
+
+
+        :return: The auto_increase_enabled of this V1FilestoreDataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_increase_enabled
+
+    @auto_increase_enabled.setter
+    def auto_increase_enabled(self, auto_increase_enabled: 'bool'):
+        """Sets the auto_increase_enabled of this V1FilestoreDataConnection.
+
+
+        :param auto_increase_enabled: The auto_increase_enabled of this V1FilestoreDataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_increase_enabled = auto_increase_enabled
 
     @property
     def capacity_gb(self) -> 'str':

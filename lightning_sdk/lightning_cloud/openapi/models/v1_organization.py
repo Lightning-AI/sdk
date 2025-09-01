@@ -43,6 +43,7 @@ class V1Organization(object):
     swagger_types = {
         'alerts_config': 'V1AlertsConfig',
         'allow_budgeting': 'bool',
+        'allow_cloud_space_publish': 'bool',
         'allow_credits_auto_replenish': 'bool',
         'allow_external_project_duplication': 'bool',
         'allow_guest': 'bool',
@@ -97,6 +98,7 @@ class V1Organization(object):
     attribute_map = {
         'alerts_config': 'alertsConfig',
         'allow_budgeting': 'allowBudgeting',
+        'allow_cloud_space_publish': 'allowCloudSpacePublish',
         'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
         'allow_external_project_duplication': 'allowExternalProjectDuplication',
         'allow_guest': 'allowGuest',
@@ -148,10 +150,11 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
+        self._allow_cloud_space_publish = None
         self._allow_credits_auto_replenish = None
         self._allow_external_project_duplication = None
         self._allow_guest = None
@@ -206,6 +209,8 @@ class V1Organization(object):
             self.alerts_config = alerts_config
         if allow_budgeting is not None:
             self.allow_budgeting = allow_budgeting
+        if allow_cloud_space_publish is not None:
+            self.allow_cloud_space_publish = allow_cloud_space_publish
         if allow_credits_auto_replenish is not None:
             self.allow_credits_auto_replenish = allow_credits_auto_replenish
         if allow_external_project_duplication is not None:
@@ -346,6 +351,27 @@ class V1Organization(object):
         """
 
         self._allow_budgeting = allow_budgeting
+
+    @property
+    def allow_cloud_space_publish(self) -> 'bool':
+        """Gets the allow_cloud_space_publish of this V1Organization.  # noqa: E501
+
+
+        :return: The allow_cloud_space_publish of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_cloud_space_publish
+
+    @allow_cloud_space_publish.setter
+    def allow_cloud_space_publish(self, allow_cloud_space_publish: 'bool'):
+        """Sets the allow_cloud_space_publish of this V1Organization.
+
+
+        :param allow_cloud_space_publish: The allow_cloud_space_publish of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_cloud_space_publish = allow_cloud_space_publish
 
     @property
     def allow_credits_auto_replenish(self) -> 'bool':
