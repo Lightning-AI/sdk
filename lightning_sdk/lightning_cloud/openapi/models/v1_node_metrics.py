@@ -49,10 +49,12 @@ class V1NodeMetrics(object):
         'mem_total': 'str',
         'mem_util': 'float',
         'node_name': 'str',
+        'num_unschedulable_gpus': 'int',
         'nvlink_rx_gib': 'dict(str, float)',
         'nvlink_tx_gib': 'dict(str, float)',
         'pcie_rx_gib': 'dict(str, float)',
         'pcie_tx_gib': 'dict(str, float)',
+        'per_gpu_errors': 'dict(str, int)',
         'per_gpu_mem_free': 'dict(str, int)',
         'per_gpu_mem_used': 'dict(str, int)',
         'per_gpu_power_usage_watts': 'dict(str, int)',
@@ -60,7 +62,8 @@ class V1NodeMetrics(object):
         'per_gpu_sm_occupancy': 'dict(str, float)',
         'per_gpu_temperature_c': 'dict(str, int)',
         'per_gpu_util': 'dict(str, float)',
-        'timestamp': 'datetime'
+        'timestamp': 'datetime',
+        'unschedulable': 'bool'
     }
 
     attribute_map = {
@@ -72,10 +75,12 @@ class V1NodeMetrics(object):
         'mem_total': 'memTotal',
         'mem_util': 'memUtil',
         'node_name': 'nodeName',
+        'num_unschedulable_gpus': 'numUnschedulableGpus',
         'nvlink_rx_gib': 'nvlinkRxGib',
         'nvlink_tx_gib': 'nvlinkTxGib',
         'pcie_rx_gib': 'pcieRxGib',
         'pcie_tx_gib': 'pcieTxGib',
+        'per_gpu_errors': 'perGpuErrors',
         'per_gpu_mem_free': 'perGpuMemFree',
         'per_gpu_mem_used': 'perGpuMemUsed',
         'per_gpu_power_usage_watts': 'perGpuPowerUsageWatts',
@@ -83,10 +88,11 @@ class V1NodeMetrics(object):
         'per_gpu_sm_occupancy': 'perGpuSmOccupancy',
         'per_gpu_temperature_c': 'perGpuTemperatureC',
         'per_gpu_util': 'perGpuUtil',
-        'timestamp': 'timestamp'
+        'timestamp': 'timestamp',
+        'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, max_gpu_temp_recorded: 'float' =None, max_power_per_gpu: 'float' =None, mem_total: 'str' =None, mem_util: 'float' =None, node_name: 'str' =None, nvlink_rx_gib: 'dict(str, float)' =None, nvlink_tx_gib: 'dict(str, float)' =None, pcie_rx_gib: 'dict(str, float)' =None, pcie_tx_gib: 'dict(str, float)' =None, per_gpu_mem_free: 'dict(str, int)' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_power_usage_watts: 'dict(str, int)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None):  # noqa: E501
+    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, max_gpu_temp_recorded: 'float' =None, max_power_per_gpu: 'float' =None, mem_total: 'str' =None, mem_util: 'float' =None, node_name: 'str' =None, num_unschedulable_gpus: 'int' =None, nvlink_rx_gib: 'dict(str, float)' =None, nvlink_tx_gib: 'dict(str, float)' =None, pcie_rx_gib: 'dict(str, float)' =None, pcie_tx_gib: 'dict(str, float)' =None, per_gpu_errors: 'dict(str, int)' =None, per_gpu_mem_free: 'dict(str, int)' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_power_usage_watts: 'dict(str, int)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None, unschedulable: 'bool' =None):  # noqa: E501
         """V1NodeMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_capacity_cores = None
         self._cpu_util = None
@@ -96,10 +102,12 @@ class V1NodeMetrics(object):
         self._mem_total = None
         self._mem_util = None
         self._node_name = None
+        self._num_unschedulable_gpus = None
         self._nvlink_rx_gib = None
         self._nvlink_tx_gib = None
         self._pcie_rx_gib = None
         self._pcie_tx_gib = None
+        self._per_gpu_errors = None
         self._per_gpu_mem_free = None
         self._per_gpu_mem_used = None
         self._per_gpu_power_usage_watts = None
@@ -108,6 +116,7 @@ class V1NodeMetrics(object):
         self._per_gpu_temperature_c = None
         self._per_gpu_util = None
         self._timestamp = None
+        self._unschedulable = None
         self.discriminator = None
         if cpu_capacity_cores is not None:
             self.cpu_capacity_cores = cpu_capacity_cores
@@ -125,6 +134,8 @@ class V1NodeMetrics(object):
             self.mem_util = mem_util
         if node_name is not None:
             self.node_name = node_name
+        if num_unschedulable_gpus is not None:
+            self.num_unschedulable_gpus = num_unschedulable_gpus
         if nvlink_rx_gib is not None:
             self.nvlink_rx_gib = nvlink_rx_gib
         if nvlink_tx_gib is not None:
@@ -133,6 +144,8 @@ class V1NodeMetrics(object):
             self.pcie_rx_gib = pcie_rx_gib
         if pcie_tx_gib is not None:
             self.pcie_tx_gib = pcie_tx_gib
+        if per_gpu_errors is not None:
+            self.per_gpu_errors = per_gpu_errors
         if per_gpu_mem_free is not None:
             self.per_gpu_mem_free = per_gpu_mem_free
         if per_gpu_mem_used is not None:
@@ -149,6 +162,8 @@ class V1NodeMetrics(object):
             self.per_gpu_util = per_gpu_util
         if timestamp is not None:
             self.timestamp = timestamp
+        if unschedulable is not None:
+            self.unschedulable = unschedulable
 
     @property
     def cpu_capacity_cores(self) -> 'float':
@@ -319,6 +334,27 @@ class V1NodeMetrics(object):
         self._node_name = node_name
 
     @property
+    def num_unschedulable_gpus(self) -> 'int':
+        """Gets the num_unschedulable_gpus of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The num_unschedulable_gpus of this V1NodeMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_unschedulable_gpus
+
+    @num_unschedulable_gpus.setter
+    def num_unschedulable_gpus(self, num_unschedulable_gpus: 'int'):
+        """Sets the num_unschedulable_gpus of this V1NodeMetrics.
+
+
+        :param num_unschedulable_gpus: The num_unschedulable_gpus of this V1NodeMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_unschedulable_gpus = num_unschedulable_gpus
+
+    @property
     def nvlink_rx_gib(self) -> 'dict(str, float)':
         """Gets the nvlink_rx_gib of this V1NodeMetrics.  # noqa: E501
 
@@ -401,6 +437,27 @@ class V1NodeMetrics(object):
         """
 
         self._pcie_tx_gib = pcie_tx_gib
+
+    @property
+    def per_gpu_errors(self) -> 'dict(str, int)':
+        """Gets the per_gpu_errors of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The per_gpu_errors of this V1NodeMetrics.  # noqa: E501
+        :rtype: dict(str, int)
+        """
+        return self._per_gpu_errors
+
+    @per_gpu_errors.setter
+    def per_gpu_errors(self, per_gpu_errors: 'dict(str, int)'):
+        """Sets the per_gpu_errors of this V1NodeMetrics.
+
+
+        :param per_gpu_errors: The per_gpu_errors of this V1NodeMetrics.  # noqa: E501
+        :type: dict(str, int)
+        """
+
+        self._per_gpu_errors = per_gpu_errors
 
     @property
     def per_gpu_mem_free(self) -> 'dict(str, int)':
@@ -569,6 +626,27 @@ class V1NodeMetrics(object):
         """
 
         self._timestamp = timestamp
+
+    @property
+    def unschedulable(self) -> 'bool':
+        """Gets the unschedulable of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The unschedulable of this V1NodeMetrics.  # noqa: E501
+        :rtype: bool
+        """
+        return self._unschedulable
+
+    @unschedulable.setter
+    def unschedulable(self, unschedulable: 'bool'):
+        """Sets the unschedulable of this V1NodeMetrics.
+
+
+        :param unschedulable: The unschedulable of this V1NodeMetrics.  # noqa: E501
+        :type: bool
+        """
+
+        self._unschedulable = unschedulable
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

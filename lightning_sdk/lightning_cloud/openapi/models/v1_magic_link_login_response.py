@@ -42,6 +42,7 @@ class V1MagicLinkLoginResponse(object):
     """
     swagger_types = {
         'auth_start_url': 'str',
+        'internal': 'bool',
         'sso_enabled': 'bool',
         'verified': 'bool',
         'waitlisted': 'bool'
@@ -49,20 +50,24 @@ class V1MagicLinkLoginResponse(object):
 
     attribute_map = {
         'auth_start_url': 'authStartUrl',
+        'internal': 'internal',
         'sso_enabled': 'ssoEnabled',
         'verified': 'verified',
         'waitlisted': 'waitlisted'
     }
 
-    def __init__(self, auth_start_url: 'str' =None, sso_enabled: 'bool' =None, verified: 'bool' =None, waitlisted: 'bool' =None):  # noqa: E501
+    def __init__(self, auth_start_url: 'str' =None, internal: 'bool' =None, sso_enabled: 'bool' =None, verified: 'bool' =None, waitlisted: 'bool' =None):  # noqa: E501
         """V1MagicLinkLoginResponse - a model defined in Swagger"""  # noqa: E501
         self._auth_start_url = None
+        self._internal = None
         self._sso_enabled = None
         self._verified = None
         self._waitlisted = None
         self.discriminator = None
         if auth_start_url is not None:
             self.auth_start_url = auth_start_url
+        if internal is not None:
+            self.internal = internal
         if sso_enabled is not None:
             self.sso_enabled = sso_enabled
         if verified is not None:
@@ -90,6 +95,27 @@ class V1MagicLinkLoginResponse(object):
         """
 
         self._auth_start_url = auth_start_url
+
+    @property
+    def internal(self) -> 'bool':
+        """Gets the internal of this V1MagicLinkLoginResponse.  # noqa: E501
+
+
+        :return: The internal of this V1MagicLinkLoginResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._internal
+
+    @internal.setter
+    def internal(self, internal: 'bool'):
+        """Sets the internal of this V1MagicLinkLoginResponse.
+
+
+        :param internal: The internal of this V1MagicLinkLoginResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._internal = internal
 
     @property
     def sso_enabled(self) -> 'bool':

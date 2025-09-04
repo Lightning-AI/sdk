@@ -1948,7 +1948,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_update_model(self, body: 'ModelsModelIdBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
+    def models_store_update_model(self, body: 'ModelsModelIdBody1', project_id: 'str', model_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
         """UpdateModel updates the model, in particular the model's name.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1957,7 +1957,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelsModelIdBody body: (required)
+        :param ModelsModelIdBody1 body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :return: V1Model
@@ -1971,7 +1971,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_update_model_with_http_info(body, project_id, model_id, **kwargs)  # noqa: E501
             return data
 
-    def models_store_update_model_with_http_info(self, body: 'ModelsModelIdBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
+    def models_store_update_model_with_http_info(self, body: 'ModelsModelIdBody1', project_id: 'str', model_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
         """UpdateModel updates the model, in particular the model's name.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1980,7 +1980,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelsModelIdBody body: (required)
+        :param ModelsModelIdBody1 body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :return: V1Model

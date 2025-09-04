@@ -41,66 +41,144 @@ class ModelsModelIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'metadata': 'dict(str, str)',
-        'name': 'str'
+        'managed_endpoint_id': 'str',
+        'metrics': 'V1ModelMetrics',
+        'model_display_name': 'str',
+        'model_name': 'str',
+        'org_id': 'str'
     }
 
     attribute_map = {
-        'metadata': 'metadata',
-        'name': 'name'
+        'managed_endpoint_id': 'managedEndpointId',
+        'metrics': 'metrics',
+        'model_display_name': 'modelDisplayName',
+        'model_name': 'modelName',
+        'org_id': 'orgId'
     }
 
-    def __init__(self, metadata: 'dict(str, str)' =None, name: 'str' =None):  # noqa: E501
+    def __init__(self, managed_endpoint_id: 'str' =None, metrics: 'V1ModelMetrics' =None, model_display_name: 'str' =None, model_name: 'str' =None, org_id: 'str' =None):  # noqa: E501
         """ModelsModelIdBody - a model defined in Swagger"""  # noqa: E501
-        self._metadata = None
-        self._name = None
+        self._managed_endpoint_id = None
+        self._metrics = None
+        self._model_display_name = None
+        self._model_name = None
+        self._org_id = None
         self.discriminator = None
-        if metadata is not None:
-            self.metadata = metadata
-        if name is not None:
-            self.name = name
+        if managed_endpoint_id is not None:
+            self.managed_endpoint_id = managed_endpoint_id
+        if metrics is not None:
+            self.metrics = metrics
+        if model_display_name is not None:
+            self.model_display_name = model_display_name
+        if model_name is not None:
+            self.model_name = model_name
+        if org_id is not None:
+            self.org_id = org_id
 
     @property
-    def metadata(self) -> 'dict(str, str)':
-        """Gets the metadata of this ModelsModelIdBody.  # noqa: E501
+    def managed_endpoint_id(self) -> 'str':
+        """Gets the managed_endpoint_id of this ModelsModelIdBody.  # noqa: E501
 
 
-        :return: The metadata of this ModelsModelIdBody.  # noqa: E501
-        :rtype: dict(str, str)
-        """
-        return self._metadata
-
-    @metadata.setter
-    def metadata(self, metadata: 'dict(str, str)'):
-        """Sets the metadata of this ModelsModelIdBody.
-
-
-        :param metadata: The metadata of this ModelsModelIdBody.  # noqa: E501
-        :type: dict(str, str)
-        """
-
-        self._metadata = metadata
-
-    @property
-    def name(self) -> 'str':
-        """Gets the name of this ModelsModelIdBody.  # noqa: E501
-
-
-        :return: The name of this ModelsModelIdBody.  # noqa: E501
+        :return: The managed_endpoint_id of this ModelsModelIdBody.  # noqa: E501
         :rtype: str
         """
-        return self._name
+        return self._managed_endpoint_id
 
-    @name.setter
-    def name(self, name: 'str'):
-        """Sets the name of this ModelsModelIdBody.
+    @managed_endpoint_id.setter
+    def managed_endpoint_id(self, managed_endpoint_id: 'str'):
+        """Sets the managed_endpoint_id of this ModelsModelIdBody.
 
 
-        :param name: The name of this ModelsModelIdBody.  # noqa: E501
+        :param managed_endpoint_id: The managed_endpoint_id of this ModelsModelIdBody.  # noqa: E501
         :type: str
         """
 
-        self._name = name
+        self._managed_endpoint_id = managed_endpoint_id
+
+    @property
+    def metrics(self) -> 'V1ModelMetrics':
+        """Gets the metrics of this ModelsModelIdBody.  # noqa: E501
+
+
+        :return: The metrics of this ModelsModelIdBody.  # noqa: E501
+        :rtype: V1ModelMetrics
+        """
+        return self._metrics
+
+    @metrics.setter
+    def metrics(self, metrics: 'V1ModelMetrics'):
+        """Sets the metrics of this ModelsModelIdBody.
+
+
+        :param metrics: The metrics of this ModelsModelIdBody.  # noqa: E501
+        :type: V1ModelMetrics
+        """
+
+        self._metrics = metrics
+
+    @property
+    def model_display_name(self) -> 'str':
+        """Gets the model_display_name of this ModelsModelIdBody.  # noqa: E501
+
+
+        :return: The model_display_name of this ModelsModelIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._model_display_name
+
+    @model_display_name.setter
+    def model_display_name(self, model_display_name: 'str'):
+        """Sets the model_display_name of this ModelsModelIdBody.
+
+
+        :param model_display_name: The model_display_name of this ModelsModelIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._model_display_name = model_display_name
+
+    @property
+    def model_name(self) -> 'str':
+        """Gets the model_name of this ModelsModelIdBody.  # noqa: E501
+
+
+        :return: The model_name of this ModelsModelIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._model_name
+
+    @model_name.setter
+    def model_name(self, model_name: 'str'):
+        """Sets the model_name of this ModelsModelIdBody.
+
+
+        :param model_name: The model_name of this ModelsModelIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._model_name = model_name
+
+    @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this ModelsModelIdBody.  # noqa: E501
+
+
+        :return: The org_id of this ModelsModelIdBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this ModelsModelIdBody.
+
+
+        :param org_id: The org_id of this ModelsModelIdBody.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
