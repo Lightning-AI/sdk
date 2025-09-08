@@ -21,11 +21,11 @@ PUBLIC_MODELS = {
     },
     "google/gemini-2.5-flash": {
         "id": "ast_01jz3thxskg4fcdk4xhkjkym5a",
-        "context_length": 8000
+        "context_length": 1048576
     },
     "google/gemini-2.5-flash-lite-preview-06-17": {
         "id": "ast_01jz3thxskg4fcdk4xhkjkym5b",
-        "context_length": 8000
+        "context_length": 1048576
     },
     "lightning-ai/DeepSeek-V3.1": {
         "id": "ast_01k378z15k0msktaxjpfrfwqqh",
