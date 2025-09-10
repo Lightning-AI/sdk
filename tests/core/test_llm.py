@@ -243,6 +243,7 @@ def test_ephemeral(monkeypatch, mock_public_model):
         stream=False,
         metadata=None,
         tools=None,
+        reasoning_effort=None,
     )
 
 
@@ -283,6 +284,7 @@ def test_chat(monkeypatch, mock_public_model):
         stream=False,
         metadata={"user_api": "123456"},
         tools=None,
+        reasoning_effort=None,
     )
 
     # pass conversation and continue conversation
@@ -301,6 +303,7 @@ def test_chat(monkeypatch, mock_public_model):
         stream=False,
         metadata=None,
         tools=None,
+        reasoning_effort=None,
     )
     mock_api.start_conversation.reset_mock()
     continue_response = llm.chat("Hi again!", conversation="conv1")
@@ -317,6 +320,7 @@ def test_chat(monkeypatch, mock_public_model):
         stream=False,
         metadata=None,
         tools=None,
+        reasoning_effort=None,
     )
     # check list of conversations
     assert llm._conversations == {"conv1": "conv_123"}
@@ -363,6 +367,7 @@ def test_chat(monkeypatch, mock_public_model):
         stream=True,
         metadata=None,
         tools=None,
+        reasoning_effort=None,
     )
 
     # test image content type
@@ -385,6 +390,7 @@ def test_chat(monkeypatch, mock_public_model):
         stream=False,
         metadata=None,
         tools=None,
+        reasoning_effort=None,
     )
 
     # local images
@@ -405,6 +411,7 @@ def test_chat(monkeypatch, mock_public_model):
         stream=False,
         metadata=None,
         tools=None,
+        reasoning_effort=None,
     )
 
     # system prompt
@@ -423,6 +430,7 @@ def test_chat(monkeypatch, mock_public_model):
         stream=False,
         metadata={"user_api": "123456"},
         tools=None,
+        reasoning_effort=None,
     )
 
     # check kwargs
@@ -438,6 +446,19 @@ def test_chat(monkeypatch, mock_public_model):
     kwargs_passed = mock_api.start_conversation.call_args.kwargs
     assert kwargs_passed.get("parent_conversation_id") == "test-parent-conv-id"
     assert kwargs_passed.get("parent_message_id") == "test-parent-msg-id"
+
+
+def test_reasoning_effort(monkeypatch, mock_public_model):
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
+
+    mock_api = MagicMock()
+    mock_api.get_assistant.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    llm = LLM("openai/gpt-4o")
+    with pytest.raises(ValueError, match="reasoning_effort must be 'low', 'medium', 'high', or None"):
+        llm.chat("Hello, how are you?", reasoning_effort="somewhat high")
 
 
 def test_chat_full_response(monkeypatch):
@@ -487,6 +508,7 @@ def test_chat_with_tools(monkeypatch, mock_tools):
         stream=False,
         metadata=None,
         tools=mock_tools,
+        reasoning_effort=None,
     )
 
 

@@ -143,6 +143,7 @@ class LLMApi:
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
         tools: Optional[List[Dict[str, Any]]] = None,
+        reasoning_effort: Optional[str] = None,
         **kwargs: Any,
     ) -> Union[V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None]]:
         is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
@@ -171,6 +172,9 @@ class LLMApi:
         }
         if max_completion_tokens is not None:
             body["max_completion_tokens"] = max_completion_tokens
+
+        if reasoning_effort:
+            body["reasoning_effort"] = reasoning_effort
 
         if images:
             for image in images:
@@ -202,6 +206,7 @@ class LLMApi:
         name: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
+        reasoning_effort: Optional[str] = None,
         **kwargs: Any,
     ) -> Union[V1ConversationResponseChunk, AsyncGenerator[V1ConversationResponseChunk, None]]:
         is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
@@ -230,6 +235,9 @@ class LLMApi:
         }
         if max_completion_tokens is not None:
             body["max_completion_tokens"] = max_completion_tokens
+
+        if reasoning_effort:
+            body["reasoning_effort"] = reasoning_effort
 
         if images:
             for image in images:

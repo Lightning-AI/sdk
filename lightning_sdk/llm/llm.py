@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass
-from typing import Any, AsyncGenerator, ClassVar, Dict, Generator, List, Optional, Tuple, Union
+from typing import Any, AsyncGenerator, ClassVar, Dict, Generator, List, Literal, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.api.llm_api import LLMApi, authenticate
@@ -359,6 +359,7 @@ class LLM:
         metadata: Optional[Dict[str, str]] = None,
         stream: bool = False,
         full_response: bool = False,
+        reasoning_effort: Optional[Literal["low", "medium", "highc"]] = None,
         **kwargs: Any,
     ) -> Union[str, AsyncGenerator[str, None]]:
         conversation_id = self._conversations.get(conversation) if conversation else None
@@ -394,10 +395,14 @@ class LLM:
         stream: bool = False,
         full_response: bool = False,
         tools: Optional[List[Dict[str, Any]]] = None,
+        reasoning_effort: Optional[Literal["low", "medium", "high"]] = None,
         **kwargs: Any,
     ) -> Union[
         V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None], str, Generator[str, None, None]
     ]:
+        if reasoning_effort is not None and reasoning_effort not in ["low", "medium", "high"]:
+            raise ValueError("reasoning_effort must be 'low', 'medium', 'high', or None")
+
         if conversation and conversation not in self._conversations:
             self._get_conversations()
 
@@ -420,6 +425,7 @@ class LLM:
                 metadata,
                 stream,
                 full_response,
+                reasoning_effort,
                 **kwargs,
             )
 
@@ -435,6 +441,7 @@ class LLM:
             name=conversation,
             stream=stream,
             tools=tools,
+            reasoning_effort=reasoning_effort,
             **kwargs,
         )
         if not stream:
