@@ -16,6 +16,7 @@ from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi.models import (
     StreamResultOfV1ConversationResponseChunk,
     V1ConversationResponseChunk,
+    V1ManagedModel,
     V1ResponseChoice,
     V1ResponseChoiceDelta,
 )
@@ -67,12 +68,22 @@ def authenticate(model: str, shall_confirm: bool = True) -> None:
 class LLMApi:
     def __init__(self) -> None:
         self._client = LightningClient(retry=False, max_tries=0)
+        self._assistant = None
+        self._model = None
 
     def get_assistant(self, model_provider: str, model_name: str, user_name: str, org_name: str) -> str:
         result = self._client.assistants_service_get_managed_model_assistant(
             model_provider=model_provider, model_name=model_name, user_name=user_name, org_name=org_name
         )
+        self._assistant = result
         return result.id
+
+    def get_model_metadata(self, teamspace_id: str, model_name: str) -> V1ManagedModel:
+        if self._assistant and not self._model:
+            self._model = self._client.assistants_service_get_managed_model_by_name(
+                teamspace_id, self._assistant.managed_endpoint_id, model_name
+            )
+        return self._model
 
     def _parse_stream_line(self, decoded_line: str) -> Optional[V1ConversationResponseChunk]:
         try:

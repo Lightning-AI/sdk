@@ -1,4 +1,5 @@
 import os
+from dataclasses import dataclass
 from typing import Any, AsyncGenerator, ClassVar, Dict, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
@@ -13,6 +14,38 @@ PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
     "google": "Google",
     "lightning-ai": "lightning-ai",
 }
+
+
+@dataclass
+class ModelMetadata:
+    name: str
+    provider: str
+    status: str
+    context_length: int
+    max_completion_tokens: Optional[int]
+    prompt_price: float
+    completion_price: float
+    capabilities: Dict[str, bool]
+    throughput: float
+    time_to_first_token: float
+
+    def __str__(self) -> str:
+        """Return a user-friendly string representation of the model metadata.
+
+        Returns:
+            str: A formatted multi-line string containing model information including
+                 name, provider, status, context length, pricing, performance metrics,
+                 and key capabilities (images and files support).
+        """
+        return f"""
+Model: {self.name}
+Provider: {self.provider}
+Status: {self.status}
+Context Length: {self.context_length:,} tokens
+Pricing: ${self.prompt_price:.2e}/prompt token, ${self.completion_price:.2e}/completion token
+Performance: {self.throughput:.1f} tokens/sec, {self.time_to_first_token:.1f}ms TTFT
+Capabilities: Images={self.capabilities.get('images', False)}, Files={self.capabilities.get('files', False)}
+        """.strip()
 
 
 class LLM:
@@ -70,6 +103,7 @@ class LLM:
         self._context_length = None
         self._model_id = self._get_model_id()
         self._conversations = {}
+        self._metadata = None
 
     @property
     def name(self) -> str:
@@ -78,6 +112,28 @@ class LLM:
     @property
     def provider(self) -> str:
         return self._model_provider
+
+    @property
+    def metadata(self) -> ModelMetadata:
+        if self._metadata is None:
+            model = self._llm_api.get_model_metadata(self._teamspace_id, self._model_name)
+            self._metadata = ModelMetadata(
+                name=self._model_name,
+                provider=self._model_provider,
+                status=model.status,
+                context_length=int(model.context_length),
+                max_completion_tokens=int(model.max_completion_tokens) if model.max_completion_tokens != "0" else None,
+                prompt_price=model.prompt_token_price,
+                completion_price=model.completion_token_price,
+                capabilities={
+                    "images": model.abilities.can_receive_images,
+                    "files": model.abilities.can_receive_files,
+                    "hub_deployment": model.abilities.can_call_hub_deployment,
+                },
+                throughput=model.throughput,
+                time_to_first_token=model.time_to_first_token,
+            )
+        return self._metadata
 
     def context_length(self, model: Optional[str] = None) -> Optional[int]:
         if model is None:

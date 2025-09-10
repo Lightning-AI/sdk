@@ -490,6 +490,47 @@ def test_chat_with_tools(monkeypatch, mock_tools):
     )
 
 
+def test_metadata(monkeypatch, mock_public_model):
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._llm_api_cache.clear()
+
+    mock_api = MagicMock()
+    mock_api.get_assistant.return_value = mock_public_model
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+
+    mock_metadata = MagicMock()
+    mock_metadata.endpoint_id = "openai"
+    mock_metadata.status = "ONLINE"
+    mock_metadata.context_length = "128000"
+    mock_metadata.max_completion_tokens = "4096"
+    mock_metadata.prompt_token_price = 1e-05
+    mock_metadata.completion_token_price = 3e-05
+    mock_metadata.throughput = 850.5
+    mock_metadata.time_to_first_token = 125.3
+    mock_metadata.temperature = 0.7
+
+    mock_api.get_model_metadata.return_value = mock_metadata
+
+    llm = LLM("openai/gpt-4o")
+
+    metadata = llm.metadata
+
+    mock_api.get_model_metadata.assert_called_once()
+
+    assert metadata.name == "gpt-4o"
+    assert metadata.provider == "openai"
+    assert metadata.status == "ONLINE"
+    assert metadata.context_length == 128000
+    assert metadata.prompt_price == 1e-05
+    assert metadata.completion_price == 3e-05
+    assert metadata.throughput == 850.5
+    assert metadata.time_to_first_token == 125.3
+
+    metadata2 = llm.metadata
+    mock_api.get_model_metadata.assert_called_once()  # still called once
+    assert metadata == metadata2  # should return the same object
+
+
 def test_chat_backend(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
