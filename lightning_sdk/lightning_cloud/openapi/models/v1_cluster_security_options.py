@@ -51,6 +51,7 @@ class V1ClusterSecurityOptions(object):
         'encrypt_instance_volumes': 'bool',
         'exposed_ports': 'list[str]',
         'extra_firewall_cidr_ranges': 'list[str]',
+        'extra_firewall_rules': 'list[V1FirewallRule]',
         'extra_policy': 'str',
         'extra_sa_scopes': 'list[str]',
         'kms_key_id': 'str',
@@ -71,6 +72,7 @@ class V1ClusterSecurityOptions(object):
         'encrypt_instance_volumes': 'encryptInstanceVolumes',
         'exposed_ports': 'exposedPorts',
         'extra_firewall_cidr_ranges': 'extraFirewallCidrRanges',
+        'extra_firewall_rules': 'extraFirewallRules',
         'extra_policy': 'extraPolicy',
         'extra_sa_scopes': 'extraSaScopes',
         'kms_key_id': 'kmsKeyId',
@@ -80,7 +82,7 @@ class V1ClusterSecurityOptions(object):
         'ssh_disabled': 'sshDisabled'
     }
 
-    def __init__(self, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, exposed_ports: 'list[str]' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_policy: 'str' =None, extra_sa_scopes: 'list[str]' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
+    def __init__(self, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, exposed_ports: 'list[str]' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_firewall_rules: 'list[V1FirewallRule]' =None, extra_policy: 'str' =None, extra_sa_scopes: 'list[str]' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
         self._bucket_kms_key = None
         self._cloud_init_boot_cmds = None
@@ -92,6 +94,7 @@ class V1ClusterSecurityOptions(object):
         self._encrypt_instance_volumes = None
         self._exposed_ports = None
         self._extra_firewall_cidr_ranges = None
+        self._extra_firewall_rules = None
         self._extra_policy = None
         self._extra_sa_scopes = None
         self._kms_key_id = None
@@ -120,6 +123,8 @@ class V1ClusterSecurityOptions(object):
             self.exposed_ports = exposed_ports
         if extra_firewall_cidr_ranges is not None:
             self.extra_firewall_cidr_ranges = extra_firewall_cidr_ranges
+        if extra_firewall_rules is not None:
+            self.extra_firewall_rules = extra_firewall_rules
         if extra_policy is not None:
             self.extra_policy = extra_policy
         if extra_sa_scopes is not None:
@@ -344,6 +349,27 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._extra_firewall_cidr_ranges = extra_firewall_cidr_ranges
+
+    @property
+    def extra_firewall_rules(self) -> 'list[V1FirewallRule]':
+        """Gets the extra_firewall_rules of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The extra_firewall_rules of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: list[V1FirewallRule]
+        """
+        return self._extra_firewall_rules
+
+    @extra_firewall_rules.setter
+    def extra_firewall_rules(self, extra_firewall_rules: 'list[V1FirewallRule]'):
+        """Sets the extra_firewall_rules of this V1ClusterSecurityOptions.
+
+
+        :param extra_firewall_rules: The extra_firewall_rules of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: list[V1FirewallRule]
+        """
+
+        self._extra_firewall_rules = extra_firewall_rules
 
     @property
     def extra_policy(self) -> 'str':

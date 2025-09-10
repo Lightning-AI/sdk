@@ -44,22 +44,25 @@ class V1QuoteAnnualUpsellResponse(object):
         'academic': 'bool',
         'additional_months': 'int',
         'annual_amount': 'int',
-        'discounted_amount': 'int'
+        'discounted_amount': 'int',
+        'included_credits': 'int'
     }
 
     attribute_map = {
         'academic': 'academic',
         'additional_months': 'additionalMonths',
         'annual_amount': 'annualAmount',
-        'discounted_amount': 'discountedAmount'
+        'discounted_amount': 'discountedAmount',
+        'included_credits': 'includedCredits'
     }
 
-    def __init__(self, academic: 'bool' =None, additional_months: 'int' =None, annual_amount: 'int' =None, discounted_amount: 'int' =None):  # noqa: E501
+    def __init__(self, academic: 'bool' =None, additional_months: 'int' =None, annual_amount: 'int' =None, discounted_amount: 'int' =None, included_credits: 'int' =None):  # noqa: E501
         """V1QuoteAnnualUpsellResponse - a model defined in Swagger"""  # noqa: E501
         self._academic = None
         self._additional_months = None
         self._annual_amount = None
         self._discounted_amount = None
+        self._included_credits = None
         self.discriminator = None
         if academic is not None:
             self.academic = academic
@@ -69,6 +72,8 @@ class V1QuoteAnnualUpsellResponse(object):
             self.annual_amount = annual_amount
         if discounted_amount is not None:
             self.discounted_amount = discounted_amount
+        if included_credits is not None:
+            self.included_credits = included_credits
 
     @property
     def academic(self) -> 'bool':
@@ -153,6 +158,27 @@ class V1QuoteAnnualUpsellResponse(object):
         """
 
         self._discounted_amount = discounted_amount
+
+    @property
+    def included_credits(self) -> 'int':
+        """Gets the included_credits of this V1QuoteAnnualUpsellResponse.  # noqa: E501
+
+
+        :return: The included_credits of this V1QuoteAnnualUpsellResponse.  # noqa: E501
+        :rtype: int
+        """
+        return self._included_credits
+
+    @included_credits.setter
+    def included_credits(self, included_credits: 'int'):
+        """Sets the included_credits of this V1QuoteAnnualUpsellResponse.
+
+
+        :param included_credits: The included_credits of this V1QuoteAnnualUpsellResponse.  # noqa: E501
+        :type: int
+        """
+
+        self._included_credits = included_credits
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
