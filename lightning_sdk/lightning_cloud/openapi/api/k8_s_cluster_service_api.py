@@ -1145,40 +1145,40 @@ class K8SClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def k8_s_cluster_service_list_indicent_events(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListIndicentEventsResponse':  # noqa: E501
-        """k8_s_cluster_service_list_indicent_events  # noqa: E501
+    def k8_s_cluster_service_list_incident_events(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListIncidentEventsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_incident_events  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.k8_s_cluster_service_list_indicent_events(project_id, cluster_id, async_req=True)
+        >>> thread = api.k8_s_cluster_service_list_incident_events(project_id, cluster_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id: (required)
-        :return: V1ListIndicentEventsResponse
+        :return: V1ListIncidentEventsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.k8_s_cluster_service_list_indicent_events_with_http_info(project_id, cluster_id, **kwargs)  # noqa: E501
+            return self.k8_s_cluster_service_list_incident_events_with_http_info(project_id, cluster_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.k8_s_cluster_service_list_indicent_events_with_http_info(project_id, cluster_id, **kwargs)  # noqa: E501
+            (data) = self.k8_s_cluster_service_list_incident_events_with_http_info(project_id, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def k8_s_cluster_service_list_indicent_events_with_http_info(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListIndicentEventsResponse':  # noqa: E501
-        """k8_s_cluster_service_list_indicent_events  # noqa: E501
+    def k8_s_cluster_service_list_incident_events_with_http_info(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListIncidentEventsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_incident_events  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.k8_s_cluster_service_list_indicent_events_with_http_info(project_id, cluster_id, async_req=True)
+        >>> thread = api.k8_s_cluster_service_list_incident_events_with_http_info(project_id, cluster_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id: (required)
-        :return: V1ListIndicentEventsResponse
+        :return: V1ListIncidentEventsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -1194,18 +1194,18 @@ class K8SClusterServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method k8_s_cluster_service_list_indicent_events" % key
+                    " to method k8_s_cluster_service_list_incident_events" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'project_id' is set
         if ('project_id' not in params or
                 params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_list_indicent_events`")  # noqa: E501
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_list_incident_events`")  # noqa: E501
         # verify the required parameter 'cluster_id' is set
         if ('cluster_id' not in params or
                 params['cluster_id'] is None):
-            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_list_indicent_events`")  # noqa: E501
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_list_incident_events`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1238,7 +1238,7 @@ class K8SClusterServiceApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1ListIndicentEventsResponse',  # noqa: E501
+            response_type='V1ListIncidentEventsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

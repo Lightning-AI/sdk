@@ -43,6 +43,7 @@ class V1KubernetesTemplate(object):
     swagger_types = {
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'description': 'str',
         'id': 'str',
         'name': 'str',
         'project_id': 'str',
@@ -56,6 +57,7 @@ class V1KubernetesTemplate(object):
     attribute_map = {
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'description': 'description',
         'id': 'id',
         'name': 'name',
         'project_id': 'projectId',
@@ -66,10 +68,11 @@ class V1KubernetesTemplate(object):
         'version': 'version'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, properties: 'list[V1KubernetesTemplateProperty]' =None, spec: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, properties: 'list[V1KubernetesTemplateProperty]' =None, spec: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1KubernetesTemplate - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
+        self._description = None
         self._id = None
         self._name = None
         self._project_id = None
@@ -83,6 +86,8 @@ class V1KubernetesTemplate(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if description is not None:
+            self.description = description
         if id is not None:
             self.id = id
         if name is not None:
@@ -141,6 +146,27 @@ class V1KubernetesTemplate(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def description(self) -> 'str':
+        """Gets the description of this V1KubernetesTemplate.  # noqa: E501
+
+
+        :return: The description of this V1KubernetesTemplate.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description: 'str'):
+        """Sets the description of this V1KubernetesTemplate.
+
+
+        :param description: The description of this V1KubernetesTemplate.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
 
     @property
     def id(self) -> 'str':
