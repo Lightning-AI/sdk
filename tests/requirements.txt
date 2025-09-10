@@ -7,3 +7,4 @@ coverage
 mock
 exceptiongroup #necessary for >= 3.11
 lightning_utilities  # used for if package is not installed
+uv # required for testing of uvx lightning-sdk

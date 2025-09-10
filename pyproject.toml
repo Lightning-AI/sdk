@@ -13,8 +13,8 @@ readme = "README.md"
 requires-python = ">=3.8"
 keywords = ["deep learning", "machine learning", "pytorch", "AI"]
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
 ]
 dependencies = [ # alphabetically sorted
     "backoff", # for api retries
@@ -26,12 +26,12 @@ dependencies = [ # alphabetically sorted
     "pyyaml", # for config handling
     "requests", # for downloading files via urls
     "rich", # for nice printing
-    "simple-term-menu", # for CLI
+  "simple-term-menu", # for CLI
     "six", # for lightning_cloud
     "tqdm", # for progressbars
     "urllib3", # for downloading files via urls
     "uvicorn", # for login
-    "websocket-client", # for lightning-cloud logs
+  "websocket-client", # for lightning-cloud logs
     "wget", # for CLI
 ]
 
@@ -46,6 +46,8 @@ serve = ["litserve>=0.2.5"]
 
 [project.scripts]
 lightning = "lightning_sdk.cli.entrypoint:main_cli"
+# same as lightning, enables use with uvx lightning_sdk@latest
+lightning-sdk = "lightning_sdk.cli.entrypoint:main_cli"
 
 [tool.setuptools.dynamic]
 version = {attr = "lightning_sdk.__version__"}
@@ -76,13 +78,13 @@ line-length = 120
 target-version = "py38"
 # Enable Pyflakes `E` and `F` codes by default.
 select = [
-    "E",
+  "E",
     "W", # see: https://pypi.org/project/pycodestyle
     "F", # see: https://pypi.org/project/pyflakes
     "I", #see: https://pypi.org/project/isort/
     "D", # see: https://pypi.org/project/pydocstyle
     "N", # see: https://pypi.org/project/pep8-naming
-    "UP", # see: pyupgrade
+  "UP", # see: pyupgrade
 ]
 extend-select = [
     "A",    # see: https://pypi.org/project/flake8-builtins
@@ -103,36 +105,36 @@ extend-select = [
     "PYI",  # see: https://pypi.org/project/flake8-pyi/
 ]
 ignore = [
-    "D101",   # Missing docstring in public function
-    "D102",   # Missing docstring in public function
-    "D103",   # Missing docstring in public function
-    "A003",   # Class attribute shadowing python builtin -> false positive
-    "E731",   # Do not assign a lambda expression, use a def
-    "D100",   # todo: Missing docstring in public module
-    "D104",   # todo: Missing docstring in public package
-    "D107",   # Missing docstring in `__init__`
-    "D417",   # Missing argument in docstring. Ignored since we don't necesarily want to document deprecated args
-    "ANN101", # Missing type annotation for `self` in method
-    "ANN102", # Missing type annotation for `cls` in classmethod
-    "S301",   # todo: `pickle` and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue  # todo
-    "S310",   # todo: Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.  # todo
-    "B905",   # todo: `zip()` without an explicit `strict=` parameter
-    "B028",   # no explicit stacklevel keyword argument found
-    "RET506", # Unnecessary elif after raise -> sometimes false positives
+  "D101",   # Missing docstring in public function
+  "D102",   # Missing docstring in public function
+  "D103",   # Missing docstring in public function
+  "A003",   # Class attribute shadowing python builtin -> false positive
+  "E731",   # Do not assign a lambda expression, use a def
+  "D100",   # todo: Missing docstring in public module
+  "D104",   # todo: Missing docstring in public package
+  "D107",   # Missing docstring in `__init__`
+  "D417",   # Missing argument in docstring. Ignored since we don't necesarily want to document deprecated args
+  "ANN101", # Missing type annotation for `self` in method
+  "ANN102", # Missing type annotation for `cls` in classmethod
+  "S301",   # todo: `pickle` and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue  # todo
+  "S310",   # todo: Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.  # todo
+  "B905",   # todo: `zip()` without an explicit `strict=` parameter
+  "B028",   # no explicit stacklevel keyword argument found
+  "RET506", # Unnecessary elif after raise -> sometimes false positives
 ]
 # Exclude a variety of commonly ignored directories.
 exclude = [
-    ".eggs",
-    ".git",
-    ".mypy_cache",
-    ".ruff_cache",
-    "__pypackages__",
-    "_build",
-    "build",
-    "dist",
-    "docs",
-    "examples",
-    "lightning_sdk/llm/public_assistants.py",
+  ".eggs",
+  ".git",
+  ".mypy_cache",
+  ".ruff_cache",
+  "__pypackages__",
+  "_build",
+  "build",
+  "dist",
+  "docs",
+  "examples",
+  "lightning_sdk/llm/public_assistants.py",
 ]
 ignore-init-module-imports = true
 unfixable = ["F401"]
@@ -141,11 +143,11 @@ unfixable = ["F401"]
 "setup.py" = ["ANN202", "ANN401"]
 "lightning_sdk/**" = ["ANN401"]
 "tests/**" = [
-    "ANN",
-    "D",
-    "A001",  # Variable `id` is shadowing a Python builtin
-    "A002",  # FixMe: Argument `id` is shadowing a Python builtin
-    "PT019", # ToDo: Fixture `_` without value is injected as parameter, use `@pytest.mark.usefixtures` instead
+  "ANN",
+  "D",
+  "A001",  # Variable `id` is shadowing a Python builtin
+  "A002",  # FixMe: Argument `id` is shadowing a Python builtin
+  "PT019", # ToDo: Fixture `_` without value is injected as parameter, use `@pytest.mark.usefixtures` instead
 ]
 "tests/cli/test_help.py" = [
     "E501",  # Line too long (122 > 120 characters)
@@ -175,17 +177,17 @@ norecursedirs = [
     "docs",
 ]
 addopts = [
-    "--strict-markers",
-    "--doctest-modules",
-    "--color=yes",
-    "--disable-pytest-warnings",
-    "--ignore=legacy/checkpoints",
+  "--strict-markers",
+  "--doctest-modules",
+  "--color=yes",
+  "--disable-pytest-warnings",
+  "--ignore=legacy/checkpoints",
 ]
 markers = [
     "cloud:Run the cloud tests for example",
 ]
 filterwarnings = [
-    "error::FutureWarning",
+  "error::FutureWarning",
     "error::pytest.PytestUnhandledThreadExceptionWarning"
 ]
 xfail_strict = true
@@ -199,8 +201,8 @@ omit = [
 
 [tool.coverage.report]
 exclude_lines = [
-    "pragma: no cover",
-    "raise NotImplementedError",
-    "pass",
-    "typing.overload",
+  "pragma: no cover",
+  "raise NotImplementedError",
+  "pass",
+  "typing.overload",
 ]
