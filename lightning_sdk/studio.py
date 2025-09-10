@@ -9,6 +9,7 @@ from tqdm.auto import tqdm
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.constants import _LIGHTNING_DEBUG
+from lightning_sdk.lightning_cloud.openapi import V1ClusterType
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
@@ -344,12 +345,15 @@ class Studio:
         )
         return Studio(**kwargs)
 
-    def switch_machine(self, machine: Union[Machine, str], interruptible: bool = False) -> None:
+    def switch_machine(
+        self, machine: Union[Machine, str], interruptible: bool = False, cloud_provider: Optional[CloudProvider] = None
+    ) -> None:
         """Switches machine to the provided machine type/.
 
         Args:
             machine: the new machine type to switch to
             interruptible: determines whether to switch to an interruptible instance
+            cloud_provider: the cloud provider to switch to, has no effect if the Studio is not on Lightning Cloud
 
         Note:
             this call is blocking until the new machine is provisioned
@@ -361,6 +365,20 @@ class Studio:
                 f"Cannot switch machine on a studio that is not running. Studio {self.name} is {status}."
             )
 
+        current_cloud = self._cloud_account_api.get_cloud_account_non_org(
+            self._teamspace.id,
+            self._studio.cluster_id,
+        )
+
+        cloud_account = ""
+        if cloud_provider is not None and current_cloud.spec.cluster_type == V1ClusterType.GLOBAL:
+            cloud_account = self._cloud_account_api.resolve_cloud_account(
+                self._teamspace.id,
+                cloud_account=None,
+                cloud_provider=cloud_provider,
+                default_cloud_account=None,
+            )
+
         if self.show_progress:
             from lightning_sdk.utils.progress import StudioProgressTracker
 
@@ -370,12 +388,21 @@ class Studio:
 
                 # Start the switch operation with progress tracking
                 self._studio_api.switch_studio_machine_with_progress(
-                    self._studio.id, self._teamspace.id, machine, interruptible=interruptible, progress=progress
+                    self._studio.id,
+                    self._teamspace.id,
+                    machine,
+                    interruptible=interruptible,
+                    progress=progress,
+                    cloud_account=cloud_account,
                 )
         else:
             self._studio_api.switch_studio_machine(
-                self._studio.id, self._teamspace.id, machine, interruptible=interruptible
+                self._studio.id, self._teamspace.id, machine, interruptible=interruptible, cloud_account=cloud_account
             )
+
+        if self._studio and cloud_account:
+            # TODO: get this from the API
+            self._studio.cluster_id = cloud_account
 
     def run_and_detach(self, *commands: str, timeout: float = 10, check_interval: float = 1) -> str:
         """Runs given commands on the Studio and returns immediately.

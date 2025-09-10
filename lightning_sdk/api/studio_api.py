@@ -261,12 +261,19 @@ class StudioApi:
         return getattr(getattr(studio.code_status, "in_use", None), "phase", None)
 
     def _request_switch(
-        self, studio_id: str, teamspace_id: str, machine: Union[Machine, str], interruptible: bool
+        self,
+        studio_id: str,
+        teamspace_id: str,
+        machine: Union[Machine, str],
+        interruptible: bool,
+        cloud_account: Optional[str],
     ) -> None:
         """Switches given Studio to a new machine type."""
         compute_name = _machine_to_compute_name(machine)
         # TODO: UI sends disk size here, maybe we need to also?
         body = IdCodeconfigBody(compute_config=V1UserRequestedComputeConfig(name=compute_name, spot=interruptible))
+        if cloud_account:
+            body.compute_config.cluster_override = cloud_account
         self._client.cloud_space_service_update_cloud_space_instance_config(
             id=studio_id,
             project_id=teamspace_id,
@@ -274,11 +281,20 @@ class StudioApi:
         )
 
     def switch_studio_machine(
-        self, studio_id: str, teamspace_id: str, machine: Union[Machine, str], interruptible: bool
+        self,
+        studio_id: str,
+        teamspace_id: str,
+        machine: Union[Machine, str],
+        interruptible: bool,
+        cloud_account: Optional[str],
     ) -> None:
         """Switches given Studio to a new machine type."""
         self._request_switch(
-            studio_id=studio_id, teamspace_id=teamspace_id, machine=machine, interruptible=interruptible
+            studio_id=studio_id,
+            teamspace_id=teamspace_id,
+            machine=machine,
+            interruptible=interruptible,
+            cloud_account=cloud_account,
         )
 
         # Wait until it's time to switch
@@ -324,12 +340,17 @@ class StudioApi:
         machine: Union[Machine, str],
         interruptible: bool,
         progress: Any,  # StudioProgressTracker - avoid circular import
+        cloud_account: Optional[str],
     ) -> None:
         """Switches given Studio to a new machine type with progress tracking."""
         progress.update_progress(10, "Requesting machine switch...")
 
         self._request_switch(
-            studio_id=studio_id, teamspace_id=teamspace_id, machine=machine, interruptible=interruptible
+            studio_id=studio_id,
+            teamspace_id=teamspace_id,
+            machine=machine,
+            interruptible=interruptible,
+            cloud_account=cloud_account,
         )
 
         progress.update_progress(20, "Waiting for machine allocation...")

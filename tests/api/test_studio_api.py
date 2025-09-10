@@ -199,7 +199,7 @@ def test_switch_studio_machine(mock_get_status, mock_update_config, mock_switch_
     )
 
     studio_api = StudioApi()
-    studio_api.switch_studio_machine("st-abc", "ts-abc", machine, False)
+    studio_api.switch_studio_machine("st-abc", "ts-abc", machine, False, None)
 
 
 @mock.patch(
@@ -263,7 +263,7 @@ def test_switch_machine_no_requested(switch_mock, update_mock, status_mock):
 
     status_mock.side_effect = side_effect
     studio_api = StudioApi()
-    studio_api.switch_studio_machine("st-abc", "ts-abc", Machine.A100_X_8, False)
+    studio_api.switch_studio_machine("st-abc", "ts-abc", Machine.A100_X_8, False, None)
 
 
 @mock.patch(
