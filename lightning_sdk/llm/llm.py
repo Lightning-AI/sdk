@@ -135,15 +135,27 @@ class LLM:
             )
         return self._metadata
 
-    def context_length(self, model: Optional[str] = None) -> Optional[int]:
-        if model is None:
-            return self._context_length
+    @property
+    def context_length(self) -> Optional[int]:
+        """Context length for the current model."""
+        if self._context_length is None:
+            try:
+                self._context_length = self.metadata.context_length
+            except Exception as e:
+                raise ValueError(f"Cannot access context length: {e}") from e
+        return self._context_length
 
+    def get_context_length(self, model: Optional[str] = None) -> Optional[int]:
+        """Get context length for the given model."""
         context_info = self._public_assistants.get(model)
-        if context_info is None or "context_length" not in context_info:
-            raise ValueError(f"Cannot access context length of model '{model}'.")
+        if context_info and "context_length" in context_info:
+            return int(context_info["context_length"])
 
-        return int(context_info["context_length"])
+        try:
+            temp_metadata = self._llm_api.get_model_metadata(self._teamspace_id, model)
+            return int(temp_metadata.context_length)
+        except Exception as e:
+            raise ValueError(f"Cannot access context length of model '{model}': {e}") from e
 
     def _get_auth_info(self, teamspace_owner: Optional[str] = None, teamspace_name: Optional[str] = None) -> None:
         if not LLM._auth_info_cached:

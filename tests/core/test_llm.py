@@ -131,7 +131,7 @@ def test_get_model_id_uses_cache():
     llm = LLM(name="openai/gpt-4o")
 
     assert llm._model_id == "assistant-id-123"
-    assert llm.context_length() == 8192
+    assert llm.context_length == 8192
 
 
 def test_different_model_names(monkeypatch, mock_org_model2):
