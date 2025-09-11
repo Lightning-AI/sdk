@@ -50,6 +50,7 @@ class V1Project(object):
         'free_storage_bytes': 'str',
         'id': 'str',
         'is_default': 'bool',
+        'layout_config': 'list[V1ProjectTab]',
         'lock_out_uploads': 'bool',
         'name': 'str',
         'number_of_files_uploads': 'str',
@@ -73,6 +74,7 @@ class V1Project(object):
         'free_storage_bytes': 'freeStorageBytes',
         'id': 'id',
         'is_default': 'isDefault',
+        'layout_config': 'layoutConfig',
         'lock_out_uploads': 'lockOutUploads',
         'name': 'name',
         'number_of_files_uploads': 'numberOfFilesUploads',
@@ -86,7 +88,7 @@ class V1Project(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_storage_bytes: 'str' =None, id: 'str' =None, is_default: 'bool' =None, lock_out_uploads: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, requires_uploads_sync: 'bool' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, abac_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, description: 'str' =None, display_name: 'str' =None, free_storage_bytes: 'str' =None, id: 'str' =None, is_default: 'bool' =None, layout_config: 'list[V1ProjectTab]' =None, lock_out_uploads: 'bool' =None, name: 'str' =None, number_of_files_uploads: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, private: 'bool' =None, project_settings: 'V1ProjectSettings' =None, quotas: 'V1Quotas' =None, requires_uploads_sync: 'bool' =None, total_size_uploads_bytes: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Project - a model defined in Swagger"""  # noqa: E501
         self._abac_enabled = None
         self._created_at = None
@@ -97,6 +99,7 @@ class V1Project(object):
         self._free_storage_bytes = None
         self._id = None
         self._is_default = None
+        self._layout_config = None
         self._lock_out_uploads = None
         self._name = None
         self._number_of_files_uploads = None
@@ -127,6 +130,8 @@ class V1Project(object):
             self.id = id
         if is_default is not None:
             self.is_default = is_default
+        if layout_config is not None:
+            self.layout_config = layout_config
         if lock_out_uploads is not None:
             self.lock_out_uploads = lock_out_uploads
         if name is not None:
@@ -338,6 +343,27 @@ class V1Project(object):
         """
 
         self._is_default = is_default
+
+    @property
+    def layout_config(self) -> 'list[V1ProjectTab]':
+        """Gets the layout_config of this V1Project.  # noqa: E501
+
+
+        :return: The layout_config of this V1Project.  # noqa: E501
+        :rtype: list[V1ProjectTab]
+        """
+        return self._layout_config
+
+    @layout_config.setter
+    def layout_config(self, layout_config: 'list[V1ProjectTab]'):
+        """Sets the layout_config of this V1Project.
+
+
+        :param layout_config: The layout_config of this V1Project.  # noqa: E501
+        :type: list[V1ProjectTab]
+        """
+
+        self._layout_config = layout_config
 
     @property
     def lock_out_uploads(self) -> 'bool':

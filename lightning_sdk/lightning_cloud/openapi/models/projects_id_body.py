@@ -57,6 +57,7 @@ class ProjectsIdBody(object):
         'default_machine_type': 'str',
         'description': 'str',
         'display_name': 'str',
+        'layout_config': 'list[V1ProjectTab]',
         'name': 'str',
         'preferred_cluster': 'str',
         'preferred_deployment_provider': 'str',
@@ -84,6 +85,7 @@ class ProjectsIdBody(object):
         'default_machine_type': 'defaultMachineType',
         'description': 'description',
         'display_name': 'displayName',
+        'layout_config': 'layoutConfig',
         'name': 'name',
         'preferred_cluster': 'preferredCluster',
         'preferred_deployment_provider': 'preferredDeploymentProvider',
@@ -94,7 +96,7 @@ class ProjectsIdBody(object):
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, layout_config: 'list[V1ProjectTab]' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
         """ProjectsIdBody - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_credits_auto_replenish = None
@@ -112,6 +114,7 @@ class ProjectsIdBody(object):
         self._default_machine_type = None
         self._description = None
         self._display_name = None
+        self._layout_config = None
         self._name = None
         self._preferred_cluster = None
         self._preferred_deployment_provider = None
@@ -153,6 +156,8 @@ class ProjectsIdBody(object):
             self.description = description
         if display_name is not None:
             self.display_name = display_name
+        if layout_config is not None:
+            self.layout_config = layout_config
         if name is not None:
             self.name = name
         if preferred_cluster is not None:
@@ -505,6 +510,27 @@ class ProjectsIdBody(object):
         """
 
         self._display_name = display_name
+
+    @property
+    def layout_config(self) -> 'list[V1ProjectTab]':
+        """Gets the layout_config of this ProjectsIdBody.  # noqa: E501
+
+
+        :return: The layout_config of this ProjectsIdBody.  # noqa: E501
+        :rtype: list[V1ProjectTab]
+        """
+        return self._layout_config
+
+    @layout_config.setter
+    def layout_config(self, layout_config: 'list[V1ProjectTab]'):
+        """Sets the layout_config of this ProjectsIdBody.
+
+
+        :param layout_config: The layout_config of this ProjectsIdBody.  # noqa: E501
+        :type: list[V1ProjectTab]
+        """
+
+        self._layout_config = layout_config
 
     @property
     def name(self) -> 'str':

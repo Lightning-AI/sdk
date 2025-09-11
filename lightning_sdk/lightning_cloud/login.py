@@ -17,6 +17,11 @@ from starlette.background import BackgroundTask
 from starlette.responses import RedirectResponse
 
 from lightning_sdk.lightning_cloud import env
+from lightning_sdk.lightning_cloud.openapi import ApiClient, Configuration
+from lightning_sdk.lightning_cloud.openapi.api import \
+    AuthServiceApi
+from lightning_sdk.lightning_cloud.openapi.models.v1_guest_login_request import \
+    V1GuestLoginRequest
 
 logger = logging.getLogger(__name__)
 
@@ -131,6 +136,61 @@ class Auth:
         raise ValueError(
             "We couldn't find any credentials linked to your account. Please try logging in using the CLI command `lightning login`"
         )
+
+    def guest_login(self) -> Optional[str]:
+        """Performs guest user authentication.
+        This method sends a request to the guest login endpoint to get temporary
+        credentials, saves them, and returns the authorization header.
+        Useful to log experiments as a non signed in user, using a guest account
+        in the background.
+        Returns
+        -------
+        Optional[str]
+            The authorization header to use for subsequent requests.
+        Raises
+        ------
+        RuntimeError
+            If the guest login request fails.
+        ValueError
+            If the response from the server is invalid.
+        """
+
+        config = Configuration()
+        config.host = env.LIGHTNING_CLOUD_URL
+        api_client = ApiClient(configuration=config)
+        auth_api = AuthServiceApi(api_client)
+
+        logger.debug(f"Attempting guest login to {config.host}")
+
+        try:
+            # The body is an empty object for a guest login.
+            body = V1GuestLoginRequest()
+            credentials = auth_api.auth_service_guest_login(body)
+
+        except requests.RequestException as e:
+            logger.error(f"Guest login request failed: {e}")
+            raise RuntimeError(
+                "Failed to connect to the guest login endpoint. "
+                "Please check your network connection and the server status."
+            ) from e
+
+        # attributes based on the `V1GuestLoginResponse` model.
+        user = getattr(credentials, "user", None)
+        user_id = getattr(user, "id", None) if user else None
+        api_key = getattr(user, "api_key", None) if user else None
+
+        if not all([user_id, api_key]):
+            logger.error(
+                f"Incomplete credentials received from guest login: {credentials}"
+            )
+            raise ValueError(
+                "The guest login response did not contain the required 'user_id' and 'api_key' fields."
+            )
+
+        self.save(user_id=user_id, api_key=api_key)
+        logger.info("Successfully authenticated as a guest user.")
+
+        return self.auth_header
 
 
 class AuthServer:
