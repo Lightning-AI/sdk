@@ -530,6 +530,7 @@ def test_metadata(monkeypatch, mock_public_model):
     mock_metadata.throughput = 850.5
     mock_metadata.time_to_first_token = 125.3
     mock_metadata.temperature = 0.7
+    mock_metadata.abilities = None
 
     mock_api.get_model_metadata.return_value = mock_metadata
 
@@ -547,6 +548,7 @@ def test_metadata(monkeypatch, mock_public_model):
     assert metadata.completion_price == 3e-05
     assert metadata.throughput == 850.5
     assert metadata.time_to_first_token == 125.3
+    assert metadata.capabilities["images"] is False
 
     metadata2 = llm.metadata
     mock_api.get_model_metadata.assert_called_once()  # still called once

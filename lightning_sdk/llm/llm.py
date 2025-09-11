@@ -117,6 +117,15 @@ class LLM:
     def metadata(self) -> ModelMetadata:
         if self._metadata is None:
             model = self._llm_api.get_model_metadata(self._teamspace_id, self._model_name)
+            abilities = (
+                model.abilities
+                or type(
+                    "obj",
+                    (object,),
+                    {"can_receive_images": False, "can_receive_files": False, "can_call_hub_deployment": False},
+                )()
+            )
+
             self._metadata = ModelMetadata(
                 name=self._model_name,
                 provider=self._model_provider,
@@ -126,9 +135,9 @@ class LLM:
                 prompt_price=model.prompt_token_price,
                 completion_price=model.completion_token_price,
                 capabilities={
-                    "images": model.abilities.can_receive_images,
-                    "files": model.abilities.can_receive_files,
-                    "hub_deployment": model.abilities.can_call_hub_deployment,
+                    "images": abilities.can_receive_images,
+                    "files": abilities.can_receive_files,
+                    "hub_deployment": abilities.can_call_hub_deployment,
                 },
                 throughput=model.throughput,
                 time_to_first_token=model.time_to_first_token,
