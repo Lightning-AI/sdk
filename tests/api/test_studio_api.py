@@ -13,6 +13,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
     Externalv1LightningappInstance,
     ProjectIdCloudspacesBody,
+    V1AWSDirectV1,
     V1CloudProvider,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
@@ -434,23 +435,33 @@ def test_get_machine(
     test_cloud_accounts = [
         V1ExternalCluster(
             id="cluster_abc",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="c-abc",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="cluster-abc",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="my-preferred-cluster",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id=None,
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
     ]
 

@@ -131,13 +131,20 @@ class CloudAccountApi:
         )
         return list(filtered_cloud_accounts)
 
-    def get_cloud_account_provider_mapping(self, teamspace_id: str) -> Dict["CloudProvider", str]:
+    def get_cloud_account_provider_mapping(self, teamspace_id: str) -> Dict["CloudProvider", V1ExternalCluster]:
         """Gets the cloud account <-> provider mapping."""
         res = self.list_global_cloud_accounts(teamspace_id=teamspace_id)
-        return {self._get_cloud_account_provider(cloud_account): cloud_account.id for cloud_account in res}
+        cloud_accounts = {cloud_account.id: cloud_account for cloud_account in res}
+        providers = {cloud_account.id: self._get_cloud_account_provider(cloud_account) for cloud_account in res}
+
+        mapping = {}
+        for cloud_account_id, provider in providers.items():
+            if provider is not None:
+                mapping[provider] = cloud_accounts[cloud_account_id]
+        return mapping
 
     @staticmethod
-    def _get_cloud_account_provider(cloud_account: Optional[V1ExternalCluster]) -> "CloudProvider":
+    def _get_cloud_account_provider(cloud_account: Optional[V1ExternalCluster]) -> Optional["CloudProvider"]:
         """Determines the cloud provider based on the cloud_account configuration.
 
         Args:
@@ -172,7 +179,7 @@ class CloudAccountApi:
             if cloud_account.spec.nebius_v1:
                 return CloudProvider.NEBIUS
 
-        return CloudProvider.AWS
+        return None
 
     def resolve_cloud_account(
         self,
@@ -201,7 +208,7 @@ class CloudAccountApi:
         if cloud_provider:
             cloud_account_mapping = self.get_cloud_account_provider_mapping(teamspace_id=teamspace_id)
             if cloud_provider and cloud_provider in cloud_account_mapping:
-                return cloud_account_mapping[cloud_provider]
+                return cloud_account_mapping[cloud_provider].id
 
         if default_cloud_account:
             return default_cloud_account

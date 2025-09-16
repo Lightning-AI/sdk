@@ -14,6 +14,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     ProjectIdCloudspacesBody,
     ProjectIdMultimachinejobsBody,
     V1Assistant,
+    V1AWSDirectV1,
     V1CloudProvider,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
@@ -476,23 +477,33 @@ def internal_studio_api_mocker_get_machine(mocker):
     test_cloud_accounts = [
         V1ExternalCluster(
             id="cluster_abc",  # This matches some cluster_id used in tests
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="c-abc",  # This matches most cluster_id used in tests
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="cluster-abc",  # This matches studio API tests
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="my-preferred-cluster",  # This matches organization preferred cluster tests
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id=None,  # Handle cases where cluster_id is None
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
     ]
 
@@ -2286,23 +2297,33 @@ def internal_job_api_mocker_get_work(mocker):
     test_cloud_accounts = [
         V1ExternalCluster(
             id="cluster_abc",  # This matches some cluster_id used in tests
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="c-abc",  # This matches most cluster_id used in tests
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="cluster-abc",  # This matches studio API tests
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="my-preferred-cluster",  # This matches organization preferred cluster tests
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id=None,  # Handle cases where cluster_id is None
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
     ]
 

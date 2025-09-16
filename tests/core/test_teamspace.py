@@ -8,12 +8,26 @@ import pytest
 import lightning_sdk
 from lightning_sdk.job import Job
 from lightning_sdk.lightning_cloud.openapi import (
+    Create,
     Externalv1LightningappInstance,
+    V1AWSDirectV1,
+    V1CloudProvider,
     V1ClusterAccelerator,
+    V1ClusterType,
+    V1ExternalCluster,
+    V1ExternalClusterSpec,
     V1Job,
+    V1ListClustersResponse,
+    V1ListMembershipsResponse,
+    V1ListProjectClustersResponse,
+    V1Membership,
     V1ModelVersionArchive,
     V1MultiMachineJob,
+    V1Project,
+    V1ProjectSettings,
+    V1R2DataConnection,
     V1Resources,
+    V1S3FolderDataConnection,
 )
 from lightning_sdk.mmt import MMT
 from lightning_sdk.organization import Organization
@@ -444,10 +458,13 @@ def test_list_machines(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
 
 
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.teamspace.CloudAccountApi")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
-def test_list_machines_default_cloud_account(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+def test_list_machines_default_cloud_account(
+    mock_resolve_org, mock_resolve_user, mock_teamspace_api, mock_cloud_account_api
+):
     mock_teamspace_api().list_machines.return_value = [
         V1ClusterAccelerator(
             instance_id="instance-id", slug="t4-x-2", slug_multi_cloud="lit-t4-2", resources=V1Resources(cpu=4, gpu=2)
@@ -572,3 +589,125 @@ def test_teamspace_set_secret_invalid_name(
         match="Secret keys must only contain alphanumeric characters and underscores and not begin with a number.",
     ):
         ts.set_secret("123_INVALID", "secret_value")
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+@mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+def test_new_folder_agnostic(
+    mock_cloud_account_client,
+    mock_teamspace_client,
+    internal_user_api_mocker,
+):
+    mock_teamspace_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
+        [
+            V1Membership(
+                name="ts-abc", display_name="ts-abc", project_id="ts-abc002", owner_id="user-abc", owner_type="user"
+            ),
+        ],
+    )
+
+    mock_teamspace_client().projects_service_get_project.return_value = V1Project(
+        id="ts-abc002",
+        name="ts-abc",
+        project_settings=V1ProjectSettings(preferred_cluster="aws-cluster"),
+        owner_id="user-abc",
+        owner_type="user",
+    )
+
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    mock_project_response = V1ListProjectClustersResponse(
+        clusters=[
+            V1ExternalCluster(
+                id="aws-cluster",
+                spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            ),
+            V1ExternalCluster(
+                id="gcp-cluster",
+                spec=V1ExternalClusterSpec(driver=V1CloudProvider.GCP, cluster_type=V1ClusterType.GLOBAL),
+            ),
+        ]
+    )
+    mock_global_response = V1ListClustersResponse(clusters=[])
+    mock_cloud_account_client.return_value.cluster_service_list_project_clusters.return_value = mock_project_response
+    mock_cloud_account_client.return_value.cluster_service_list_clusters.return_value = mock_global_response
+
+    mock_teamspace_client.return_value.data_connection_service_create_data_connection = mock.MagicMock()
+
+    ts.new_folder("test-folder")
+
+    mock_teamspace_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
+        Create(
+            name="test-folder",
+            create_resources=True,
+            force=True,
+            writable=True,
+            r2=V1R2DataConnection(name="test-folder"),
+        ),
+        ts.id,
+    )
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+@mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+def test_new_folder_byoc(
+    mock_cloud_account_client,
+    mock_teamspace_client,
+    internal_user_api_mocker,
+):
+    mock_teamspace_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
+        [
+            V1Membership(
+                name="ts-abc", display_name="ts-abc", project_id="ts-abc002", owner_id="user-abc", owner_type="user"
+            ),
+        ],
+    )
+
+    mock_teamspace_client().projects_service_get_project.return_value = V1Project(
+        id="ts-abc002",
+        name="ts-abc",
+        project_settings=V1ProjectSettings(preferred_cluster="aws-cluster"),
+        owner_id="user-abc",
+        owner_type="user",
+    )
+
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    mock_project_response = V1ListProjectClustersResponse(
+        clusters=[
+            V1ExternalCluster(
+                id="aws-cluster",
+                spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            ),
+            V1ExternalCluster(
+                id="gcp-cluster",
+                spec=V1ExternalClusterSpec(driver=V1CloudProvider.GCP, cluster_type=V1ClusterType.GLOBAL),
+            ),
+            V1ExternalCluster(
+                id="byoc-cluster",
+                spec=V1ExternalClusterSpec(
+                    driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.BYOC, aws_v1=V1AWSDirectV1()
+                ),
+            ),
+        ]
+    )
+    mock_global_response = V1ListClustersResponse(clusters=[])
+    mock_cloud_account_client.return_value.cluster_service_list_project_clusters.return_value = mock_project_response
+    mock_cloud_account_client.return_value.cluster_service_list_clusters.return_value = mock_global_response
+
+    mock_teamspace_client.return_value.data_connection_service_create_data_connection = mock.MagicMock()
+
+    ts.new_folder("test-folder", cloud_account="byoc-cluster")
+
+    mock_teamspace_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
+        Create(
+            name="test-folder",
+            create_resources=True,
+            force=True,
+            writable=True,
+            s3_folder=V1S3FolderDataConnection(),
+            cluster_id="byoc-cluster",
+            access_cluster_ids=["byoc-cluster"],
+        ),
+        ts.id,
+    )

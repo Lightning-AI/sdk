@@ -4,6 +4,7 @@ import pytest
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.lightning_cloud.openapi import (
+    V1AWSDirectV1,
     V1CloudProvider,
     V1ClusterType,
     V1ExternalCluster,
@@ -55,7 +56,10 @@ def accelerator_response():
 def test_list_cloud_account_accelerators(mock_client, accelerator_response):
     # Create a mock cloud account that matches the test-cluster id
     mock_cloud_account = V1ExternalCluster(
-        id="test-cluster", spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL)
+        id="test-cluster",
+        spec=V1ExternalClusterSpec(
+            driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+        ),
     )
 
     # Mock the list_cloud_accounts method to return our test cloud account
@@ -122,7 +126,9 @@ def test_raises_if_mismatching_provider(api):
 
 
 def test_returns_mapped_account_if_only_provider_given(api):
-    api.get_cloud_account_provider_mapping = MagicMock(return_value={CloudProvider.GCP: "acc-gcp"})
+    api.get_cloud_account_provider_mapping = MagicMock(
+        return_value={CloudProvider.GCP: V1ExternalCluster(id="acc-gcp")}
+    )
 
     result = api.resolve_cloud_account(
         teamspace_id="ts", cloud_account=None, cloud_provider=CloudProvider.GCP, default_cloud_account=None

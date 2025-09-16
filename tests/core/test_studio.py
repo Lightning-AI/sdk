@@ -455,11 +455,15 @@ def test_studio_start(
     test_cloud_accounts = [
         V1ExternalCluster(
             id="c-abc",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="my-preferred-cluster",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
     ]
 
@@ -636,11 +640,15 @@ def test_studio_start_on_demand_machine(
     test_cloud_accounts = [
         V1ExternalCluster(
             id="c-abc",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="my-preferred-cluster",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
     ]
 
@@ -818,11 +826,15 @@ def test_studio_start_interruptible_override(
     test_cloud_accounts = [
         V1ExternalCluster(
             id="c-abc",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="my-preferred-cluster",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
     ]
 
@@ -999,11 +1011,15 @@ def test_studio_start_different_machine(
     test_cloud_accounts = [
         V1ExternalCluster(
             id="c-abc",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
         V1ExternalCluster(
             id="my-preferred-cluster",
-            spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            spec=V1ExternalClusterSpec(
+                driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+            ),
         ),
     ]
 

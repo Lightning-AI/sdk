@@ -17,6 +17,7 @@ from lightning_sdk.api.utils import (
 )
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
+    Create,
     Externalv1LightningappInstance,
     ModelIdVersionsBody,
     ModelsStoreApi,
@@ -28,6 +29,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
     V1ClusterAccelerator,
     V1Endpoint,
+    V1ExternalCluster,
+    V1GCSFolderDataConnection,
     V1Job,
     V1LoginRequest,
     V1Model,
@@ -36,6 +39,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Project,
     V1ProjectClusterBinding,
     V1PromptSuggestion,
+    V1R2DataConnection,
+    V1S3FolderDataConnection,
     V1Secret,
     V1SecretType,
     V1UpstreamOpenAI,
@@ -489,3 +494,24 @@ class TeamspaceApi:
         """
         pattern = r"^[A-Za-z_][A-Za-z0-9_]*$"
         return re.match(pattern, name) is not None
+
+    def new_folder(self, teamspace_id: str, name: str, cluster: Optional[V1ExternalCluster]) -> None:
+        create_request = Create(
+            name=name,
+            create_resources=True,
+            force=True,
+            writable=True,
+        )
+
+        if cluster is None:
+            create_request.r2 = V1R2DataConnection(name=name)
+        else:
+            create_request.cluster_id = cluster.id
+            create_request.access_cluster_ids = [cluster.id]
+
+            if cluster.spec.aws_v1:
+                create_request.s3_folder = V1S3FolderDataConnection()
+            elif cluster.spec.google_cloud_v1:
+                create_request.gcs_folder = V1GCSFolderDataConnection()
+
+        self._client.data_connection_service_create_data_connection(create_request, teamspace_id)

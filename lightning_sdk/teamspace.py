@@ -1,6 +1,7 @@
 import glob
 import os
 import warnings
+from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 
@@ -8,9 +9,9 @@ from tqdm.auto import tqdm
 
 import lightning_sdk
 from lightning_sdk.agents import Agent
-from lightning_sdk.api import TeamspaceApi
-from lightning_sdk.lightning_cloud.openapi import V1Model, V1ModelVersionArchive, V1ProjectClusterBinding
-from lightning_sdk.machine import Machine
+from lightning_sdk.api import CloudAccountApi, TeamspaceApi
+from lightning_sdk.lightning_cloud.openapi import V1ClusterType, V1Model, V1ModelVersionArchive, V1ProjectClusterBinding
+from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.models import UploadedModelInfo
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
@@ -28,6 +29,16 @@ if TYPE_CHECKING:
     from lightning_sdk.job import Job
     from lightning_sdk.mmt import MMT
     from lightning_sdk.studio import Studio
+
+
+class FolderLocation(Enum):
+    AWS = "AWS"
+    GCP = "GCP"
+    CLOUD_AGNOSTIC = "CLOUD_AGNOSTIC"
+
+    def __str__(self) -> str:
+        """Converts the FolderLocation to a str."""
+        return self.value
 
 
 class Teamspace:
@@ -54,6 +65,7 @@ class Teamspace:
         user: Optional[Union[str, User]] = None,
     ) -> None:
         self._teamspace_api = TeamspaceApi()
+        self._cloud_account_api = CloudAccountApi()
 
         name = _resolve_teamspace_name(name)
 
@@ -514,6 +526,53 @@ class Teamspace:
             teamspace_id=self._teamspace.id,
             cloud_account=self.default_cloud_account,
         )
+
+    def new_folder(
+        self, name: str, location: Optional[FolderLocation] = None, cloud_account: Optional[str] = None
+    ) -> None:
+        """Create a new folder in this Teamspace.
+
+        Args:
+            name: The name of the folder. Folders will be accesible under `/teamspace/folders/<name>`
+            location: The location of the folder. Defaults to cloud agnostic.
+            cloud_account: The cloud account to create the folder in. Not used for cloud agnostic folders.
+        """
+        if cloud_account is None:
+            cloud_account = self.default_cloud_account
+
+        cloud_accounts = self._cloud_account_api.list_cloud_accounts(self.id)
+        resolved_cloud_accounts = [
+            external_cloud for external_cloud in cloud_accounts if external_cloud.id == cloud_account
+        ]
+
+        if len(resolved_cloud_accounts) == 0:
+            raise ValueError(f"Cloud account not found: {cloud_account}")
+
+        resolved_cloud_account = resolved_cloud_accounts[0]
+
+        # if the cloud account is global, default to agnostic
+        if location is None and resolved_cloud_account.spec.cluster_type == V1ClusterType.GLOBAL:
+            location = FolderLocation.CLOUD_AGNOSTIC
+
+        # if it's global, then default to agnostic, and aws / gcp otherwise if set
+        if (
+            location is not None
+            and location != FolderLocation.CLOUD_AGNOSTIC
+            and resolved_cloud_account.spec.cluster_type == V1ClusterType.GLOBAL
+        ):
+            providers = self._cloud_account_api.get_cloud_account_provider_mapping(self.id)
+
+            if location == FolderLocation.AWS:
+                resolved_cloud_account = providers[CloudProvider.AWS]
+            elif location == FolderLocation.GCP:
+                resolved_cloud_account = providers[CloudProvider.GCP]
+
+        if location == FolderLocation.CLOUD_AGNOSTIC:
+            self._teamspace_api.new_folder(self.id, name, None)
+        else:
+            self._teamspace_api.new_folder(self.id, name, resolved_cloud_account)
+
+        return
 
 
 def _list_files(path: Union[str, Path]) -> Tuple[List[Path], List[str]]:
