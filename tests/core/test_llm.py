@@ -457,7 +457,7 @@ def test_reasoning_effort(monkeypatch, mock_public_model):
     monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
 
     llm = LLM("openai/gpt-4o")
-    with pytest.raises(ValueError, match="reasoning_effort must be 'low', 'medium', 'high', or None"):
+    with pytest.raises(ValueError, match="reasoning_effort must be 'none', 'low', 'medium', 'high', or None"):
         llm.chat("Hello, how are you?", reasoning_effort="somewhat high")
 
 
