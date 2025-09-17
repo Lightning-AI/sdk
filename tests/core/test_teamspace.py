@@ -14,6 +14,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudProvider,
     V1ClusterAccelerator,
     V1ClusterType,
+    V1EfsConfig,
     V1ExternalCluster,
     V1ExternalClusterSpec,
     V1Job,
@@ -31,7 +32,7 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 from lightning_sdk.mmt import MMT
 from lightning_sdk.organization import Organization
-from lightning_sdk.teamspace import Teamspace
+from lightning_sdk.teamspace import ConnectionType, Teamspace
 from lightning_sdk.user import User
 
 
@@ -706,6 +707,74 @@ def test_new_folder_byoc(
             force=True,
             writable=True,
             s3_folder=V1S3FolderDataConnection(),
+            cluster_id="byoc-cluster",
+            access_cluster_ids=["byoc-cluster"],
+        ),
+        ts.id,
+    )
+
+
+@pytest.mark.parametrize("writable", [True, False])
+@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+@mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+def test_new_connection_efs(mock_cloud_account_client, mock_teamspace_client, internal_user_api_mocker, writable):
+    mock_teamspace_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
+        [
+            V1Membership(
+                name="ts-abc", display_name="ts-abc", project_id="ts-abc002", owner_id="user-abc", owner_type="user"
+            ),
+        ],
+    )
+
+    mock_teamspace_client().projects_service_get_project.return_value = V1Project(
+        id="ts-abc002",
+        name="ts-abc",
+        project_settings=V1ProjectSettings(preferred_cluster="aws-cluster"),
+        owner_id="user-abc",
+        owner_type="user",
+    )
+
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    mock_project_response = V1ListProjectClustersResponse(
+        clusters=[
+            V1ExternalCluster(
+                id="aws-cluster",
+                spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL),
+            ),
+            V1ExternalCluster(
+                id="gcp-cluster",
+                spec=V1ExternalClusterSpec(driver=V1CloudProvider.GCP, cluster_type=V1ClusterType.GLOBAL),
+            ),
+            V1ExternalCluster(
+                id="byoc-cluster",
+                spec=V1ExternalClusterSpec(
+                    driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.BYOC, aws_v1=V1AWSDirectV1()
+                ),
+            ),
+        ]
+    )
+    mock_global_response = V1ListClustersResponse(clusters=[])
+    mock_cloud_account_client.return_value.cluster_service_list_project_clusters.return_value = mock_project_response
+    mock_cloud_account_client.return_value.cluster_service_list_clusters.return_value = mock_global_response
+
+    mock_teamspace_client.return_value.data_connection_service_create_data_connection = mock.MagicMock()
+
+    ts.new_connection(
+        name="test-connection-efs",
+        source="efs-filesystem-id",
+        connection_type=ConnectionType.EFS,
+        region="us-east-2",
+        writable=writable,
+    )
+
+    mock_teamspace_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
+        Create(
+            name="test-connection-efs",
+            create_resources=False,
+            force=True,
+            writable=writable,
+            efs=V1EfsConfig(file_system_id="efs-filesystem-id", region="us-east-2"),
             cluster_id="byoc-cluster",
             access_cluster_ids=["byoc-cluster"],
         ),

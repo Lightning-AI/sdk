@@ -28,6 +28,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Assistant,
     V1CloudSpace,
     V1ClusterAccelerator,
+    V1EfsConfig,
     V1Endpoint,
     V1ExternalCluster,
     V1GCSFolderDataConnection,
@@ -513,5 +514,22 @@ class TeamspaceApi:
                 create_request.s3_folder = V1S3FolderDataConnection()
             elif cluster.spec.google_cloud_v1:
                 create_request.gcs_folder = V1GCSFolderDataConnection()
+
+        self._client.data_connection_service_create_data_connection(create_request, teamspace_id)
+
+    def new_connection(
+        self, teamspace_id: str, name: str, source: str, cluster: V1ExternalCluster, writable: bool, region: str
+    ) -> None:
+        create_request = Create(
+            name=name,
+            create_resources=False,
+            force=True,
+            writable=writable,
+            cluster_id=cluster.id,
+            access_cluster_ids=[cluster.id],
+        )
+
+        # TODO: Add support for other connection types
+        create_request.efs = V1EfsConfig(file_system_id=source, region=region)
 
         self._client.data_connection_service_create_data_connection(create_request, teamspace_id)

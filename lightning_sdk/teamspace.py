@@ -41,6 +41,17 @@ class FolderLocation(Enum):
         return self.value
 
 
+class ConnectionType(Enum):
+    EFS = "EFS"
+    S3 = "S3"
+    GCS = "GCS"
+    FILESTORE = "FILESTORE"
+
+    def __str__(self) -> str:
+        """Converts the FolderLocation to a str."""
+        return self.value
+
+
 class Teamspace:
     """A teamspace is a collection of Studios, Clusters, Members and an associated Budget.
 
@@ -573,6 +584,49 @@ class Teamspace:
             self._teamspace_api.new_folder(self.id, name, resolved_cloud_account)
 
         return
+
+    def new_connection(
+        self,
+        name: str,
+        source: str,
+        connection_type: ConnectionType,
+        writable: bool = True,
+        cloud_account: Optional[str] = None,
+        region: Optional[str] = None,
+    ) -> None:
+        """Add an existing data source to this Teamspace.
+
+        Args:
+          name: the name under which your data will be available in this Teamspace
+          source: the source spec of your data. Format depends on the type of data to connect.
+            For EFS, this should be the filsystem id
+          connection_type: the kind of data to connect to this Teamspace
+          writable: whether to support write-back to this data source. If False, the data is connected as read-only
+          cloud_account: which cloud-account to connect to the data source to.
+            If not specified, will retrieve the cloud-account that matches the required provider type
+            starting with private cloud accounts and falling back to public if necessary.
+          region: which provider region this data is in. Required for some connection types only.
+        """
+        provider_for_connection = self._cloud_account_api.get_cloud_provider_for_connection_type(connection_type)
+
+        if connection_type == ConnectionType.EFS and region is None:
+            raise ValueError("Region must be specified")
+
+        cloud_account = self._cloud_account_api.resolve_cloud_account(
+            self.id, cloud_account, provider_for_connection, None
+        )
+
+        cloud_accounts = self._cloud_account_api.list_cloud_accounts(self.id)
+        resolved_cloud_accounts = [
+            external_cloud for external_cloud in cloud_accounts if external_cloud.id == cloud_account
+        ]
+
+        if len(resolved_cloud_accounts) == 0:
+            raise ValueError(f"Cloud account not found: {cloud_account}")
+
+        resolved_cloud_account = resolved_cloud_accounts[0]
+
+        self._teamspace_api.new_connection(self.id, name, source, resolved_cloud_account, writable, region or "")
 
 
 def _list_files(path: Union[str, Path]) -> Tuple[List[Path], List[str]]:

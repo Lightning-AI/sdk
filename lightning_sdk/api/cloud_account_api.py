@@ -13,6 +13,7 @@ from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import CloudProvider
+    from lightning_sdk.teamspace import ConnectionType
 
 
 class CloudAccountApi:
@@ -133,7 +134,7 @@ class CloudAccountApi:
 
     def get_cloud_account_provider_mapping(self, teamspace_id: str) -> Dict["CloudProvider", V1ExternalCluster]:
         """Gets the cloud account <-> provider mapping."""
-        res = self.list_global_cloud_accounts(teamspace_id=teamspace_id)
+        res = self.list_cloud_accounts(teamspace_id=teamspace_id)
         cloud_accounts = {cloud_account.id: cloud_account for cloud_account in res}
         providers = {cloud_account.id: self._get_cloud_account_provider(cloud_account) for cloud_account in res}
 
@@ -214,3 +215,13 @@ class CloudAccountApi:
             return default_cloud_account
 
         return None
+
+    @staticmethod
+    def get_cloud_provider_for_connection_type(connection_type: "ConnectionType") -> "CloudProvider":
+        from lightning_sdk.machine import CloudProvider
+        from lightning_sdk.teamspace import ConnectionType
+
+        if connection_type == ConnectionType.EFS:
+            return CloudProvider.AWS
+
+        raise ValueError(f"ConnectionType {ConnectionType} currently not supported!")
