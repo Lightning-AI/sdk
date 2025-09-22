@@ -265,7 +265,7 @@ class MMTApiV2:
             if (spec.instance_name and spec.instance_name in possible_identifiers) or (
                 spec.instance_type and spec.instance_type in possible_identifiers
             ):
-                return Machine.from_str(accelerator.slug_multi_cloud)
+                return Machine._from_accelerator(accelerator)
 
         return Machine.from_str(spec.instance_name or spec.instance_type)
 

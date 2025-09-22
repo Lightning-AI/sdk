@@ -116,7 +116,7 @@ class Machine:
         )
         for m in possible_values:
             for machine_id in [machine, *additional_machine_ids]:
-                if machine_id in (
+                if machine_id and machine_id in (
                     getattr(m, "name", None),
                     getattr(m, "instance_type", None),
                     getattr(m, "slug", None),
@@ -126,6 +126,21 @@ class Machine:
         if additional_machine_ids:
             return cls(machine, *additional_machine_ids)
         return cls(machine, machine, machine)
+
+    @classmethod
+    def _from_accelerator(cls, accelerator: Any) -> "Machine":
+        if accelerator.accelerator_type == "GPU":
+            accelerator_resources_count = accelerator.resources.gpu
+        else:
+            accelerator_resources_count = accelerator.resources.cpu
+
+        return Machine.from_str(
+            accelerator.slug_multi_cloud,
+            accelerator.slug,
+            accelerator.instance_id,
+            accelerator.secondary_instance_id,
+            f"lit-{accelerator.family.lower()}-{accelerator_resources_count}",
+        )
 
 
 # CPU machines

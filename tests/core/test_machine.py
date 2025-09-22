@@ -1,6 +1,7 @@
 import pytest
 
 from lightning_sdk import Machine
+from lightning_sdk.lightning_cloud.openapi import V1ClusterAccelerator, V1Resources
 
 
 @pytest.mark.parametrize(
@@ -161,3 +162,49 @@ def test_machine_from_str(machine_str: str, expected_cls_value: Machine):
 )
 def test_machine_equal_variant(variant, default_machine, is_equal):
     assert (variant == default_machine) is is_equal
+
+
+@pytest.mark.parametrize(
+    ("accelerator", "expected_machine_equality"),
+    [
+        (
+            V1ClusterAccelerator(
+                accelerator_type="GPU",
+                display_name="T4",
+                family="T4",
+                instance_id="g4dn.2xlarge",
+                resources=V1Resources(cpu=8, gpu=1),
+                slug="g4dn.2xlarge",
+                slug_multi_cloud="lit-t4-1",
+                secondary_instance_id="",
+            ),
+            Machine.T4,
+        ),
+        (
+            V1ClusterAccelerator(
+                accelerator_type="GPU",
+                display_name="T4",
+                family="T4",
+                instance_id="g4dn.xlarge",
+                resources=V1Resources(cpu=4, gpu=1),
+                slug="g4dn.xlarge",
+                slug_multi_cloud="",
+                secondary_instance_id="",
+            ),
+            Machine.T4,
+        ),
+        (
+            V1ClusterAccelerator(
+                accelerator_type="GPU",
+                family="T4",
+                resources=V1Resources(gpu=1),
+                slug=None,
+                slug_multi_cloud="lit-t4-1",
+            ),
+            Machine.T4,
+        ),
+    ],
+)
+def test_machine_from_accelerator(accelerator: V1ClusterAccelerator, expected_machine_equality: Machine):
+    acc_machine = Machine._from_accelerator(accelerator)
+    assert acc_machine == expected_machine_equality

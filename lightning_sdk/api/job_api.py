@@ -104,22 +104,23 @@ class JobApiV1:
             org_id=org_id,
         )
 
-        identifier = None
+        identifiers = []
 
         if user_requested_compute_config and user_requested_compute_config.name:
-            identifier = user_requested_compute_config.name
+            identifiers.append(user_requested_compute_config.name)
         else:
-            identifier = spec.compute_config.instance_type
+            identifiers.append(spec.compute_config.instance_type)
 
         for accelerator in accelerators:
-            if identifier in (
-                accelerator.slug,
-                accelerator.slug_multi_cloud,
-                accelerator.instance_id,
-            ):
-                return Machine.from_str(accelerator.slug_multi_cloud)
+            for ident in identifiers:
+                if ident in (
+                    accelerator.slug,
+                    accelerator.slug_multi_cloud,
+                    accelerator.instance_id,
+                ):
+                    return Machine._from_accelerator(accelerator)
 
-        return Machine.from_str(identifier)
+        return Machine.from_str(identifiers[0])
 
     def _get_machines_for_cloud_account(
         self, teamspace_id: str, cloud_account_id: str, org_id: str
@@ -431,7 +432,7 @@ class JobApiV2:
             if (spec.instance_name and spec.instance_name in possible_identifiers) or (
                 spec.instance_type and spec.instance_type in possible_identifiers
             ):
-                return Machine.from_str(accelerator.slug_multi_cloud)
+                return Machine._from_accelerator(accelerator)
 
         return Machine.from_str(spec.instance_name or spec.instance_type)
 

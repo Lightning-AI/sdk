@@ -31,6 +31,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1PluginsListResponse,
     V1Project,
     V1ProjectSettings,
+    V1Resources,
     V1UserRequestedComputeConfig,
 )
 from lightning_sdk.machine import CloudProvider, Machine
@@ -477,9 +478,30 @@ def test_studio_start(
     mock_list_clusters.return_value = V1ListClustersResponse(clusters=[])
     mock_list_accelerators.return_value = V1ListDefaultClusterAcceleratorsResponse(
         accelerator=[
-            V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
-            V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
-            V1ClusterAccelerator(instance_id="g4dn.2xlarge", slug_multi_cloud="lit-t4-1", enabled=True),
+            V1ClusterAccelerator(
+                accelerator_type="CPU",
+                instance_id="cpu-4",
+                slug_multi_cloud="cpu-4",
+                enabled=True,
+                resources=V1Resources(cpu=4),
+                family="CPU",
+            ),
+            V1ClusterAccelerator(
+                accelerator_type="CPU",
+                instance_id="data-large",
+                slug_multi_cloud="data-prep-mid",
+                enabled=True,
+                resources=V1Resources(cpu=32),
+                family="DATA_PREP",
+            ),
+            V1ClusterAccelerator(
+                accelerator_type="GPU",
+                instance_id="g4dn.2xlarge",
+                slug_multi_cloud="lit-t4-1",
+                enabled=True,
+                resources=V1Resources(gpu=1),
+                family="T4",
+            ),
         ]
     )
     mock_list_cloudspaces.side_effect = _list_cloudspaces_side_effect
@@ -673,9 +695,30 @@ def test_studio_start_on_demand_machine(
     mock_list_clusters.return_value = V1ListClustersResponse(clusters=[])
     mock_list_accelerators.return_value = V1ListDefaultClusterAcceleratorsResponse(
         accelerator=[
-            V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
-            V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
-            V1ClusterAccelerator(instance_id="g4dn.2xlarge", slug_multi_cloud="lit-t4-1", enabled=True),
+            V1ClusterAccelerator(
+                accelerator_type="CPU",
+                instance_id="cpu-4",
+                slug_multi_cloud="cpu-4",
+                enabled=True,
+                resources=V1Resources(cpu=4),
+                family="CPU",
+            ),
+            V1ClusterAccelerator(
+                accelerator_type="CPU",
+                instance_id="data-large",
+                slug_multi_cloud="data-prep-mid",
+                enabled=True,
+                resources=V1Resources(cpu=32),
+                family="DATA_PREP",
+            ),
+            V1ClusterAccelerator(
+                accelerator_type="GPU",
+                instance_id="g4dn.2xlarge",
+                slug_multi_cloud="lit-t4-1",
+                enabled=True,
+                resources=V1Resources(gpu=1),
+                family="T4",
+            ),
         ]
     )
     mock_list_cloudspaces.side_effect = _list_cloudspaces_side_effect
@@ -859,9 +902,30 @@ def test_studio_start_interruptible_override(
     mock_list_clusters.return_value = V1ListClustersResponse(clusters=[])
     mock_list_accelerators.return_value = V1ListDefaultClusterAcceleratorsResponse(
         accelerator=[
-            V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
-            V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
-            V1ClusterAccelerator(instance_id="g4dn.2xlarge", slug_multi_cloud="lit-t4-1", enabled=True),
+            V1ClusterAccelerator(
+                accelerator_type="CPU",
+                instance_id="cpu-4",
+                slug_multi_cloud="cpu-4",
+                enabled=True,
+                resources=V1Resources(cpu=4),
+                family="CPU",
+            ),
+            V1ClusterAccelerator(
+                accelerator_type="CPU",
+                instance_id="data-large",
+                slug_multi_cloud="data-prep-mid",
+                enabled=True,
+                resources=V1Resources(cpu=32),
+                family="DATA_PREP",
+            ),
+            V1ClusterAccelerator(
+                accelerator_type="GPU",
+                instance_id="g4dn.2xlarge",
+                slug_multi_cloud="lit-t4-1",
+                enabled=True,
+                resources=V1Resources(gpu=1),
+                family="T4",
+            ),
         ]
     )
     mock_list_cloudspaces.side_effect = _list_cloudspaces_side_effect
@@ -1044,9 +1108,30 @@ def test_studio_start_different_machine(
     mock_list_clusters.return_value = V1ListClustersResponse(clusters=[])
     mock_list_accelerators.return_value = V1ListDefaultClusterAcceleratorsResponse(
         accelerator=[
-            V1ClusterAccelerator(instance_id="cpu-4", slug_multi_cloud="cpu-4", enabled=True),
-            V1ClusterAccelerator(instance_id="data-large", slug_multi_cloud="data-prep-mid", enabled=True),
-            V1ClusterAccelerator(instance_id="g4dn.2xlarge", slug_multi_cloud="lit-t4-1", enabled=True),
+            V1ClusterAccelerator(
+                accelerator_type="CPU",
+                instance_id="cpu-4",
+                slug_multi_cloud="cpu-4",
+                enabled=True,
+                resources=V1Resources(cpu=4),
+                family="CPU",
+            ),
+            V1ClusterAccelerator(
+                accelerator_type="CPU",
+                instance_id="data-large",
+                slug_multi_cloud="data-prep-mid",
+                enabled=True,
+                resources=V1Resources(cpu=32),
+                family="DATA_PREP",
+            ),
+            V1ClusterAccelerator(
+                accelerator_type="GPU",
+                instance_id="g4dn.2xlarge",
+                slug_multi_cloud="lit-t4-1",
+                enabled=True,
+                resources=V1Resources(gpu=1),
+                family="T4",
+            ),
         ]
     )
     mock_list_cloudspaces.side_effect = _list_cloudspaces_side_effect

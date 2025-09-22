@@ -426,7 +426,7 @@ class StudioApi:
                 accelerator.slug_multi_cloud,
                 accelerator.instance_id,
             ):
-                return Machine.from_str(accelerator.slug_multi_cloud)
+                return Machine._from_accelerator(accelerator)
 
         return Machine.from_str(response.compute_config.name)
 
