@@ -48,7 +48,7 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
     if _LIGHTNING_DEBUG:
         tb_text = "".join(traceback.format_exception(exception_type, value, tb))
         renderables.append(Text("\n\nFull traceback:\n", style="bold yellow"))
-        renderables.append(Syntax(tb_text, "python", theme="monokai", line_numbers=False, word_wrap=True))
+        renderables.append(Syntax(tb_text, "python", theme="monokai light", line_numbers=False, word_wrap=True))
     else:
         renderables.append(Text("\n\n🐞 To view the full traceback, set: LIGHTNING_DEBUG=1"))
 
