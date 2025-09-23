@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
@@ -61,8 +61,14 @@ class UserApi:
     def _get_all_teamspace_memberships(
         self,
         user_id: str,  # todo: this is unused, but still required
+        org_id: Optional[str] = None,
     ) -> List[V1Membership]:
-        return self._client.projects_service_list_memberships(filter_by_user_id=True).memberships
+        kwargs: Dict[str, Union[bool, str]] = {"filter_by_user_id": True}
+
+        if org_id is not None:
+            kwargs["organization_id"] = org_id
+
+        return self._client.projects_service_list_memberships(**kwargs).memberships
 
     def _get_authed_user_name(self) -> str:
         """Gets the currently logged-in user."""
