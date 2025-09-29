@@ -17,7 +17,7 @@ Options:
 
 Commands:
   aihub      Interact with Lightning Studio - AI Hub.
-  config     Manage Lightning SDK and CLIconfiguration.
+  config     Manage Lightning SDK and CLI configuration.
   configure  Configure access to resources on the Lightning AI platform.
   connect    Connect to lightning products.
   create     Create new resources on the Lightning AI platform.
@@ -37,6 +37,7 @@ Commands:
   studio     Manage Lightning AI Studios.
   switch     Switch machines for resources on the Lightning AI platform.
   upload     Upload assets to Lightning AI.
+  vm         Manage Lightning AI VMs.
 """
     )
 
@@ -56,7 +57,7 @@ Options:
 
 Commands:
   aihub      Interact with Lightning Studio - AI Hub.
-  config     Manage Lightning SDK and CLIconfiguration.
+  config     Manage Lightning SDK and CLI configuration.
   configure  Configure access to resources on the Lightning AI platform.
   connect    Connect to lightning products.
   create     Create new resources on the Lightning AI platform.
@@ -76,6 +77,7 @@ Commands:
   studio     Manage Lightning AI Studios.
   switch     Switch machines for resources on the Lightning AI platform.
   upload     Upload assets to Lightning AI.
+  vm         Manage Lightning AI VMs.
 """
         in result_text  # can't check for equal as the installation logs are in there as well
     )

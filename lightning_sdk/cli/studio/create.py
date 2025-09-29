@@ -9,7 +9,7 @@ from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider
-from lightning_sdk.studio import Studio
+from lightning_sdk.studio import VM, Studio
 
 
 @click.command("create")
@@ -36,6 +36,16 @@ def create_studio(
     Example:
         lightning studio create
     """
+    create_impl(name=name, teamspace=teamspace, cloud_provider=cloud_provider, cloud_account=cloud_account, vm=False)
+
+
+def create_impl(
+    name: Optional[str],
+    teamspace: Optional[str],
+    cloud_provider: Optional[str],
+    cloud_account: Optional[str],
+    vm: bool,
+) -> None:
     menu = TeamspacesMenu()
 
     resolved_teamspace = menu(teamspace)
@@ -44,8 +54,12 @@ def create_studio(
     if cloud_provider is not None:
         cloud_provider = CloudProvider(cloud_provider)
 
+    create_cls = VM if vm else Studio
+    cls_name = create_cls.__qualname__
+
     try:
-        studio = Studio(
+        create_cls = VM if vm else Studio
+        studio = create_cls(
             name=name,
             teamspace=resolved_teamspace,
             create_ok=True,
@@ -54,7 +68,7 @@ def create_studio(
         )
     except (RuntimeError, ValueError, ApiException):
         if name:
-            raise ValueError(f"Could not create Studio: '{name}'. Does the Studio exist?") from None
-        raise ValueError(f"Could not create Studio: '{name}'. Please provide a Studio name") from None
+            raise ValueError(f"Could not create {cls_name}: '{name}'. Does the {cls_name} exist?") from None
+        raise ValueError(f"Could not create {cls_name}: '{name}'. Please provide a {cls_name} name") from None
 
-    click.echo(f"Studio {studio_name_link(studio)} created successfully")
+    click.echo(f"{cls_name} {studio_name_link(studio)} created successfully")

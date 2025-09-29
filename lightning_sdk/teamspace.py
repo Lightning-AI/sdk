@@ -28,7 +28,7 @@ from lightning_sdk.utils.resolve import (
 if TYPE_CHECKING:
     from lightning_sdk.job import Job
     from lightning_sdk.mmt import MMT
-    from lightning_sdk.studio import Studio
+    from lightning_sdk.studio import VM, Studio
 
 
 class FolderLocation(Enum):
@@ -144,13 +144,22 @@ class Teamspace:
         """All studios within that teamspace."""
         from lightning_sdk.studio import Studio
 
+        return self._get_studios(Studio)
+
+    @property
+    def vms(self) -> List["VM"]:
+        from lightning_sdk.studio import VM
+
+        return [x for x in self._get_studios(VM) if isinstance(x, VM)]
+
+    def _get_studios(self, target_cls: type) -> List[Union["Studio", "VM"]]:
         studios = []
         cloud_accounts = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
         for cl in cloud_accounts:
             _studios = self._teamspace_api.list_studios(teamspace_id=self.id, cloud_account=cl.cluster_id)
             for s in _studios:
                 with skip_studio_init():
-                    studio = Studio(name=s.name, teamspace=self, cluster=cl.cluster_name, create_ok=False)
+                    studio = target_cls(name=s.name, teamspace=self, cluster=cl.cluster_name, create_ok=False)
                     studio._studio = s
                     studio._teamspace = self
                     studios.append(studio)

@@ -6,6 +6,7 @@ from lightning_sdk.cli.config import register_commands as register_config_comman
 from lightning_sdk.cli.job import register_commands as register_job_commands
 from lightning_sdk.cli.mmt import register_commands as register_mmt_commands
 from lightning_sdk.cli.studio import register_commands as register_studio_commands
+from lightning_sdk.cli.vm import register_commands as register_vm_commands
 
 
 @click.group(name="studio")
@@ -25,7 +26,12 @@ def mmt() -> None:
 
 @click.group(name="config")
 def config() -> None:
-    """Manage Lightning SDK and CLIconfiguration."""
+    """Manage Lightning SDK and CLI configuration."""
+
+
+@click.group(name="vm")
+def vm() -> None:
+    """Manage Lightning AI VMs."""
 
 
 # Register config commands with the main config group
@@ -33,3 +39,4 @@ register_job_commands(job)
 register_mmt_commands(mmt)
 register_studio_commands(studio)
 register_config_commands(config)
+register_vm_commands(vm)
