@@ -15,12 +15,13 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  create  Create a new Studio.
-  delete  Delete a Studio.
-  list    List Studios in a teamspace.
-  ssh     SSH into a Studio.
-  start   Start a Studio.
-  stop    Stop a Studio.
-  switch  Switch a Studio to a different machine type.
+  connect  Connect to a Studio.
+  create   Create a new Studio.
+  delete   Delete a Studio.
+  list     List Studios in a teamspace.
+  ssh      SSH into a Studio.
+  start    Start a Studio.
+  stop     Stop a Studio.
+  switch   Switch a Studio to a different machine type.
 """
     )

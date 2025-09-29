@@ -5,6 +5,7 @@ import click
 
 def register_commands(group: click.Group) -> None:
     """Register studio commands with the given group."""
+    from lightning_sdk.cli.studio.connect import connect_studio
     from lightning_sdk.cli.studio.create import create_studio
     from lightning_sdk.cli.studio.delete import delete_studio
     from lightning_sdk.cli.studio.list import list_studios
@@ -20,3 +21,4 @@ def register_commands(group: click.Group) -> None:
     group.add_command(start_studio)
     group.add_command(stop_studio)
     group.add_command(switch_studio)
+    group.add_command(connect_studio)
