@@ -42,23 +42,43 @@ class UserIdAffiliatelinksBody(object):
     """
     swagger_types = {
         'code': 'str',
-        'name': 'str'
+        'expires_at': 'datetime',
+        'max_uses': 'int',
+        'name': 'str',
+        'skip_waitlist': 'bool',
+        'type': 'str'
     }
 
     attribute_map = {
         'code': 'code',
-        'name': 'name'
+        'expires_at': 'expiresAt',
+        'max_uses': 'maxUses',
+        'name': 'name',
+        'skip_waitlist': 'skipWaitlist',
+        'type': 'type'
     }
 
-    def __init__(self, code: 'str' =None, name: 'str' =None):  # noqa: E501
+    def __init__(self, code: 'str' =None, expires_at: 'datetime' =None, max_uses: 'int' =None, name: 'str' =None, skip_waitlist: 'bool' =None, type: 'str' =None):  # noqa: E501
         """UserIdAffiliatelinksBody - a model defined in Swagger"""  # noqa: E501
         self._code = None
+        self._expires_at = None
+        self._max_uses = None
         self._name = None
+        self._skip_waitlist = None
+        self._type = None
         self.discriminator = None
         if code is not None:
             self.code = code
+        if expires_at is not None:
+            self.expires_at = expires_at
+        if max_uses is not None:
+            self.max_uses = max_uses
         if name is not None:
             self.name = name
+        if skip_waitlist is not None:
+            self.skip_waitlist = skip_waitlist
+        if type is not None:
+            self.type = type
 
     @property
     def code(self) -> 'str':
@@ -82,6 +102,48 @@ class UserIdAffiliatelinksBody(object):
         self._code = code
 
     @property
+    def expires_at(self) -> 'datetime':
+        """Gets the expires_at of this UserIdAffiliatelinksBody.  # noqa: E501
+
+
+        :return: The expires_at of this UserIdAffiliatelinksBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._expires_at
+
+    @expires_at.setter
+    def expires_at(self, expires_at: 'datetime'):
+        """Sets the expires_at of this UserIdAffiliatelinksBody.
+
+
+        :param expires_at: The expires_at of this UserIdAffiliatelinksBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._expires_at = expires_at
+
+    @property
+    def max_uses(self) -> 'int':
+        """Gets the max_uses of this UserIdAffiliatelinksBody.  # noqa: E501
+
+
+        :return: The max_uses of this UserIdAffiliatelinksBody.  # noqa: E501
+        :rtype: int
+        """
+        return self._max_uses
+
+    @max_uses.setter
+    def max_uses(self, max_uses: 'int'):
+        """Sets the max_uses of this UserIdAffiliatelinksBody.
+
+
+        :param max_uses: The max_uses of this UserIdAffiliatelinksBody.  # noqa: E501
+        :type: int
+        """
+
+        self._max_uses = max_uses
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this UserIdAffiliatelinksBody.  # noqa: E501
 
@@ -101,6 +163,48 @@ class UserIdAffiliatelinksBody(object):
         """
 
         self._name = name
+
+    @property
+    def skip_waitlist(self) -> 'bool':
+        """Gets the skip_waitlist of this UserIdAffiliatelinksBody.  # noqa: E501
+
+
+        :return: The skip_waitlist of this UserIdAffiliatelinksBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._skip_waitlist
+
+    @skip_waitlist.setter
+    def skip_waitlist(self, skip_waitlist: 'bool'):
+        """Sets the skip_waitlist of this UserIdAffiliatelinksBody.
+
+
+        :param skip_waitlist: The skip_waitlist of this UserIdAffiliatelinksBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._skip_waitlist = skip_waitlist
+
+    @property
+    def type(self) -> 'str':
+        """Gets the type of this UserIdAffiliatelinksBody.  # noqa: E501
+
+
+        :return: The type of this UserIdAffiliatelinksBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._type
+
+    @type.setter
+    def type(self, type: 'str'):
+        """Sets the type of this UserIdAffiliatelinksBody.
+
+
+        :param type: The type of this UserIdAffiliatelinksBody.  # noqa: E501
+        :type: str
+        """
+
+        self._type = type
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

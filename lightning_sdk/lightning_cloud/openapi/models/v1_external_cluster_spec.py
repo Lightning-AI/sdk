@@ -56,6 +56,7 @@ class V1ExternalClusterSpec(object):
         'kubernetes_v1': 'V1KubernetesDirectV1',
         'lambda_labs_v1': 'V1LambdaLabsDirectV1',
         'locked_zones': 'list[str]',
+        'machine_v1': 'V1MachineDirectV1',
         'monitor_deletion_disabled': 'bool',
         'nebius_v1': 'V1NebiusDirectV1',
         'overprovisioning': 'list[V1InstanceOverprovisioningSpec]',
@@ -89,6 +90,7 @@ class V1ExternalClusterSpec(object):
         'kubernetes_v1': 'kubernetesV1',
         'lambda_labs_v1': 'lambdaLabsV1',
         'locked_zones': 'lockedZones',
+        'machine_v1': 'machineV1',
         'monitor_deletion_disabled': 'monitorDeletionDisabled',
         'nebius_v1': 'nebiusV1',
         'overprovisioning': 'overprovisioning',
@@ -106,7 +108,7 @@ class V1ExternalClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, ai_pod_v1: 'V1AiPodV1' =None, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, ai_pod_v1: 'V1AiPodV1' =None, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ExternalClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._ai_pod_v1 = None
         self._auth_token = None
@@ -123,6 +125,7 @@ class V1ExternalClusterSpec(object):
         self._kubernetes_v1 = None
         self._lambda_labs_v1 = None
         self._locked_zones = None
+        self._machine_v1 = None
         self._monitor_deletion_disabled = None
         self._nebius_v1 = None
         self._overprovisioning = None
@@ -169,6 +172,8 @@ class V1ExternalClusterSpec(object):
             self.lambda_labs_v1 = lambda_labs_v1
         if locked_zones is not None:
             self.locked_zones = locked_zones
+        if machine_v1 is not None:
+            self.machine_v1 = machine_v1
         if monitor_deletion_disabled is not None:
             self.monitor_deletion_disabled = monitor_deletion_disabled
         if nebius_v1 is not None:
@@ -516,6 +521,27 @@ class V1ExternalClusterSpec(object):
         """
 
         self._locked_zones = locked_zones
+
+    @property
+    def machine_v1(self) -> 'V1MachineDirectV1':
+        """Gets the machine_v1 of this V1ExternalClusterSpec.  # noqa: E501
+
+
+        :return: The machine_v1 of this V1ExternalClusterSpec.  # noqa: E501
+        :rtype: V1MachineDirectV1
+        """
+        return self._machine_v1
+
+    @machine_v1.setter
+    def machine_v1(self, machine_v1: 'V1MachineDirectV1'):
+        """Sets the machine_v1 of this V1ExternalClusterSpec.
+
+
+        :param machine_v1: The machine_v1 of this V1ExternalClusterSpec.  # noqa: E501
+        :type: V1MachineDirectV1
+        """
+
+        self._machine_v1 = machine_v1
 
     @property
     def monitor_deletion_disabled(self) -> 'bool':

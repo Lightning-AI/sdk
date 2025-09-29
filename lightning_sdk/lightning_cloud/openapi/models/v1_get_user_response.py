@@ -58,6 +58,7 @@ class V1GetUserResponse(object):
         'invite_code': 'str',
         'is_internal': 'bool',
         'last_name': 'str',
+        'linux_username': 'str',
         'non_developer_mode': 'bool',
         'opted_in_marketing_emails': 'bool',
         'organization': 'str',
@@ -101,6 +102,7 @@ class V1GetUserResponse(object):
         'invite_code': 'inviteCode',
         'is_internal': 'isInternal',
         'last_name': 'lastName',
+        'linux_username': 'linuxUsername',
         'non_developer_mode': 'nonDeveloperMode',
         'opted_in_marketing_emails': 'optedInMarketingEmails',
         'organization': 'organization',
@@ -126,7 +128,7 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, country: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, country: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
@@ -145,6 +147,7 @@ class V1GetUserResponse(object):
         self._invite_code = None
         self._is_internal = None
         self._last_name = None
+        self._linux_username = None
         self._non_developer_mode = None
         self._opted_in_marketing_emails = None
         self._organization = None
@@ -203,6 +206,8 @@ class V1GetUserResponse(object):
             self.is_internal = is_internal
         if last_name is not None:
             self.last_name = last_name
+        if linux_username is not None:
+            self.linux_username = linux_username
         if non_developer_mode is not None:
             self.non_developer_mode = non_developer_mode
         if opted_in_marketing_emails is not None:
@@ -606,6 +611,27 @@ class V1GetUserResponse(object):
         """
 
         self._last_name = last_name
+
+    @property
+    def linux_username(self) -> 'str':
+        """Gets the linux_username of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The linux_username of this V1GetUserResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._linux_username
+
+    @linux_username.setter
+    def linux_username(self, linux_username: 'str'):
+        """Sets the linux_username of this V1GetUserResponse.
+
+
+        :param linux_username: The linux_username of this V1GetUserResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._linux_username = linux_username
 
     @property
     def non_developer_mode(self) -> 'bool':

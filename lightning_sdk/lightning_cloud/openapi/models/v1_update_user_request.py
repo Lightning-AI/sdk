@@ -53,6 +53,7 @@ class V1UpdateUserRequest(object):
         'first_name': 'str',
         'general_audience_mode': 'bool',
         'last_name': 'str',
+        'linux_username': 'str',
         'non_developer_mode': 'bool',
         'opted_in_marketing_emails': 'bool',
         'organization': 'str',
@@ -82,6 +83,7 @@ class V1UpdateUserRequest(object):
         'first_name': 'firstName',
         'general_audience_mode': 'generalAudienceMode',
         'last_name': 'lastName',
+        'linux_username': 'linuxUsername',
         'non_developer_mode': 'nonDeveloperMode',
         'opted_in_marketing_emails': 'optedInMarketingEmails',
         'organization': 'organization',
@@ -98,7 +100,7 @@ class V1UpdateUserRequest(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1UpdateUserRequest - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
@@ -112,6 +114,7 @@ class V1UpdateUserRequest(object):
         self._first_name = None
         self._general_audience_mode = None
         self._last_name = None
+        self._linux_username = None
         self._non_developer_mode = None
         self._opted_in_marketing_emails = None
         self._organization = None
@@ -151,6 +154,8 @@ class V1UpdateUserRequest(object):
             self.general_audience_mode = general_audience_mode
         if last_name is not None:
             self.last_name = last_name
+        if linux_username is not None:
+            self.linux_username = linux_username
         if non_developer_mode is not None:
             self.non_developer_mode = non_developer_mode
         if opted_in_marketing_emails is not None:
@@ -431,6 +436,27 @@ class V1UpdateUserRequest(object):
         """
 
         self._last_name = last_name
+
+    @property
+    def linux_username(self) -> 'str':
+        """Gets the linux_username of this V1UpdateUserRequest.  # noqa: E501
+
+
+        :return: The linux_username of this V1UpdateUserRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._linux_username
+
+    @linux_username.setter
+    def linux_username(self, linux_username: 'str'):
+        """Sets the linux_username of this V1UpdateUserRequest.
+
+
+        :param linux_username: The linux_username of this V1UpdateUserRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._linux_username = linux_username
 
     @property
     def non_developer_mode(self) -> 'bool':

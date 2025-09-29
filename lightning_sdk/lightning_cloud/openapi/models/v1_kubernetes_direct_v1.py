@@ -45,6 +45,7 @@ class V1KubernetesDirectV1(object):
         'grafana_namespace': 'str',
         'grafana_service_name': 'str',
         'grafana_service_port': 'str',
+        'incident_slack_notifiers': 'list[V1SlackNotifier]',
         'kubeconfig': 'str',
         'kubeconfig_elevated': 'str',
         'skip_user_label_injection': 'bool'
@@ -55,17 +56,19 @@ class V1KubernetesDirectV1(object):
         'grafana_namespace': 'grafanaNamespace',
         'grafana_service_name': 'grafanaServiceName',
         'grafana_service_port': 'grafanaServicePort',
+        'incident_slack_notifiers': 'incidentSlackNotifiers',
         'kubeconfig': 'kubeconfig',
         'kubeconfig_elevated': 'kubeconfigElevated',
         'skip_user_label_injection': 'skipUserLabelInjection'
     }
 
-    def __init__(self, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
+    def __init__(self, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._grafana_dashboard_url = None
         self._grafana_namespace = None
         self._grafana_service_name = None
         self._grafana_service_port = None
+        self._incident_slack_notifiers = None
         self._kubeconfig = None
         self._kubeconfig_elevated = None
         self._skip_user_label_injection = None
@@ -78,6 +81,8 @@ class V1KubernetesDirectV1(object):
             self.grafana_service_name = grafana_service_name
         if grafana_service_port is not None:
             self.grafana_service_port = grafana_service_port
+        if incident_slack_notifiers is not None:
+            self.incident_slack_notifiers = incident_slack_notifiers
         if kubeconfig is not None:
             self.kubeconfig = kubeconfig
         if kubeconfig_elevated is not None:
@@ -168,6 +173,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._grafana_service_port = grafana_service_port
+
+    @property
+    def incident_slack_notifiers(self) -> 'list[V1SlackNotifier]':
+        """Gets the incident_slack_notifiers of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The incident_slack_notifiers of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: list[V1SlackNotifier]
+        """
+        return self._incident_slack_notifiers
+
+    @incident_slack_notifiers.setter
+    def incident_slack_notifiers(self, incident_slack_notifiers: 'list[V1SlackNotifier]'):
+        """Sets the incident_slack_notifiers of this V1KubernetesDirectV1.
+
+
+        :param incident_slack_notifiers: The incident_slack_notifiers of this V1KubernetesDirectV1.  # noqa: E501
+        :type: list[V1SlackNotifier]
+        """
+
+        self._incident_slack_notifiers = incident_slack_notifiers
 
     @property
     def kubeconfig(self) -> 'str':

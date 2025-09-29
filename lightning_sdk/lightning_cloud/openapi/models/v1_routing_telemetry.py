@@ -41,35 +41,46 @@ class V1RoutingTelemetry(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'captured': 'bool',
         'duration': 'float',
         'id': 'str',
         'method': 'str',
         'path': 'str',
         'received_at': 'datetime',
+        'request_body_size': 'float',
         'resource_id': 'str',
+        'response_body_size': 'float',
         'status_code': 'int'
     }
 
     attribute_map = {
+        'captured': 'captured',
         'duration': 'duration',
         'id': 'id',
         'method': 'method',
         'path': 'path',
         'received_at': 'receivedAt',
+        'request_body_size': 'requestBodySize',
         'resource_id': 'resourceId',
+        'response_body_size': 'responseBodySize',
         'status_code': 'statusCode'
     }
 
-    def __init__(self, duration: 'float' =None, id: 'str' =None, method: 'str' =None, path: 'str' =None, received_at: 'datetime' =None, resource_id: 'str' =None, status_code: 'int' =None):  # noqa: E501
+    def __init__(self, captured: 'bool' =None, duration: 'float' =None, id: 'str' =None, method: 'str' =None, path: 'str' =None, received_at: 'datetime' =None, request_body_size: 'float' =None, resource_id: 'str' =None, response_body_size: 'float' =None, status_code: 'int' =None):  # noqa: E501
         """V1RoutingTelemetry - a model defined in Swagger"""  # noqa: E501
+        self._captured = None
         self._duration = None
         self._id = None
         self._method = None
         self._path = None
         self._received_at = None
+        self._request_body_size = None
         self._resource_id = None
+        self._response_body_size = None
         self._status_code = None
         self.discriminator = None
+        if captured is not None:
+            self.captured = captured
         if duration is not None:
             self.duration = duration
         if id is not None:
@@ -80,10 +91,35 @@ class V1RoutingTelemetry(object):
             self.path = path
         if received_at is not None:
             self.received_at = received_at
+        if request_body_size is not None:
+            self.request_body_size = request_body_size
         if resource_id is not None:
             self.resource_id = resource_id
+        if response_body_size is not None:
+            self.response_body_size = response_body_size
         if status_code is not None:
             self.status_code = status_code
+
+    @property
+    def captured(self) -> 'bool':
+        """Gets the captured of this V1RoutingTelemetry.  # noqa: E501
+
+
+        :return: The captured of this V1RoutingTelemetry.  # noqa: E501
+        :rtype: bool
+        """
+        return self._captured
+
+    @captured.setter
+    def captured(self, captured: 'bool'):
+        """Sets the captured of this V1RoutingTelemetry.
+
+
+        :param captured: The captured of this V1RoutingTelemetry.  # noqa: E501
+        :type: bool
+        """
+
+        self._captured = captured
 
     @property
     def duration(self) -> 'float':
@@ -191,6 +227,27 @@ class V1RoutingTelemetry(object):
         self._received_at = received_at
 
     @property
+    def request_body_size(self) -> 'float':
+        """Gets the request_body_size of this V1RoutingTelemetry.  # noqa: E501
+
+
+        :return: The request_body_size of this V1RoutingTelemetry.  # noqa: E501
+        :rtype: float
+        """
+        return self._request_body_size
+
+    @request_body_size.setter
+    def request_body_size(self, request_body_size: 'float'):
+        """Sets the request_body_size of this V1RoutingTelemetry.
+
+
+        :param request_body_size: The request_body_size of this V1RoutingTelemetry.  # noqa: E501
+        :type: float
+        """
+
+        self._request_body_size = request_body_size
+
+    @property
     def resource_id(self) -> 'str':
         """Gets the resource_id of this V1RoutingTelemetry.  # noqa: E501
 
@@ -210,6 +267,27 @@ class V1RoutingTelemetry(object):
         """
 
         self._resource_id = resource_id
+
+    @property
+    def response_body_size(self) -> 'float':
+        """Gets the response_body_size of this V1RoutingTelemetry.  # noqa: E501
+
+
+        :return: The response_body_size of this V1RoutingTelemetry.  # noqa: E501
+        :rtype: float
+        """
+        return self._response_body_size
+
+    @response_body_size.setter
+    def response_body_size(self, response_body_size: 'float'):
+        """Sets the response_body_size of this V1RoutingTelemetry.
+
+
+        :param response_body_size: The response_body_size of this V1RoutingTelemetry.  # noqa: E501
+        :type: float
+        """
+
+        self._response_body_size = response_body_size
 
     @property
     def status_code(self) -> 'int':

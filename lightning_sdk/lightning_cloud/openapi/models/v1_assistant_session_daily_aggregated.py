@@ -42,6 +42,7 @@ class V1AssistantSessionDailyAggregated(object):
     """
     swagger_types = {
         'day': 'datetime',
+        'model_id': 'str',
         'name': 'str',
         'num_messages': 'int',
         'org_id': 'str',
@@ -55,6 +56,7 @@ class V1AssistantSessionDailyAggregated(object):
 
     attribute_map = {
         'day': 'day',
+        'model_id': 'modelId',
         'name': 'name',
         'num_messages': 'numMessages',
         'org_id': 'orgId',
@@ -66,9 +68,10 @@ class V1AssistantSessionDailyAggregated(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, day: 'datetime' =None, name: 'str' =None, num_messages: 'int' =None, org_id: 'str' =None, parent_id: 'str' =None, project_id: 'str' =None, total_completion_tokens: 'int' =None, total_cost: 'float' =None, total_prompt_tokens: 'int' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, day: 'datetime' =None, model_id: 'str' =None, name: 'str' =None, num_messages: 'int' =None, org_id: 'str' =None, parent_id: 'str' =None, project_id: 'str' =None, total_completion_tokens: 'int' =None, total_cost: 'float' =None, total_prompt_tokens: 'int' =None, user_id: 'str' =None):  # noqa: E501
         """V1AssistantSessionDailyAggregated - a model defined in Swagger"""  # noqa: E501
         self._day = None
+        self._model_id = None
         self._name = None
         self._num_messages = None
         self._org_id = None
@@ -81,6 +84,8 @@ class V1AssistantSessionDailyAggregated(object):
         self.discriminator = None
         if day is not None:
             self.day = day
+        if model_id is not None:
+            self.model_id = model_id
         if name is not None:
             self.name = name
         if num_messages is not None:
@@ -120,6 +125,27 @@ class V1AssistantSessionDailyAggregated(object):
         """
 
         self._day = day
+
+    @property
+    def model_id(self) -> 'str':
+        """Gets the model_id of this V1AssistantSessionDailyAggregated.  # noqa: E501
+
+
+        :return: The model_id of this V1AssistantSessionDailyAggregated.  # noqa: E501
+        :rtype: str
+        """
+        return self._model_id
+
+    @model_id.setter
+    def model_id(self, model_id: 'str'):
+        """Sets the model_id of this V1AssistantSessionDailyAggregated.
+
+
+        :param model_id: The model_id of this V1AssistantSessionDailyAggregated.  # noqa: E501
+        :type: str
+        """
+
+        self._model_id = model_id
 
     @property
     def name(self) -> 'str':

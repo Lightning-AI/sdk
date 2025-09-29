@@ -1356,41 +1356,43 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def billing_service_purchase_annual_upsell(self, **kwargs) -> 'V1PurchaseAnnualUpsellResponse':  # noqa: E501
+    def billing_service_purchase_annual_upsell(self, body: 'V1PurchaseAnnualUpsellRequest', **kwargs) -> 'V1PurchaseAnnualUpsellResponse':  # noqa: E501
         """billing_service_purchase_annual_upsell  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_purchase_annual_upsell(async_req=True)
+        >>> thread = api.billing_service_purchase_annual_upsell(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
+        :param V1PurchaseAnnualUpsellRequest body: (required)
         :return: V1PurchaseAnnualUpsellResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.billing_service_purchase_annual_upsell_with_http_info(**kwargs)  # noqa: E501
+            return self.billing_service_purchase_annual_upsell_with_http_info(body, **kwargs)  # noqa: E501
         else:
-            (data) = self.billing_service_purchase_annual_upsell_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.billing_service_purchase_annual_upsell_with_http_info(body, **kwargs)  # noqa: E501
             return data
 
-    def billing_service_purchase_annual_upsell_with_http_info(self, **kwargs) -> 'V1PurchaseAnnualUpsellResponse':  # noqa: E501
+    def billing_service_purchase_annual_upsell_with_http_info(self, body: 'V1PurchaseAnnualUpsellRequest', **kwargs) -> 'V1PurchaseAnnualUpsellResponse':  # noqa: E501
         """billing_service_purchase_annual_upsell  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.billing_service_purchase_annual_upsell_with_http_info(async_req=True)
+        >>> thread = api.billing_service_purchase_annual_upsell_with_http_info(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
+        :param V1PurchaseAnnualUpsellRequest body: (required)
         :return: V1PurchaseAnnualUpsellResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = []  # noqa: E501
+        all_params = ['body']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1405,6 +1407,10 @@ class BillingServiceApi(object):
                 )
             params[key] = val
         del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `billing_service_purchase_annual_upsell`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1418,8 +1424,14 @@ class BillingServiceApi(object):
         local_var_files = {}
 
         body_params = None
+        if 'body' in params:
+            body_params = params['body']
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
             ['application/json'])  # noqa: E501
 
         # Authentication setting
@@ -1450,6 +1462,7 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
+        :param str org_id:
         :return: V1QuoteAnnualUpsellResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1470,12 +1483,13 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
+        :param str org_id:
         :return: V1QuoteAnnualUpsellResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = []  # noqa: E501
+        all_params = ['org_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1496,6 +1510,8 @@ class BillingServiceApi(object):
         path_params = {}
 
         query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 
