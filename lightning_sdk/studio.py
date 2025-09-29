@@ -102,6 +102,8 @@ class Studio:
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
         cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
 
+        cls_name = self._cls_name
+
         # if we're skipping init, we don't need to resolve the cloud account as then we're not creating a studio
         if self._teamspace is not None:
             _cloud_account = self._cloud_account_api.resolve_cloud_account(
@@ -126,7 +128,7 @@ class Studio:
                 name = config.get_value(DefaultConfigKeys.studio)
                 if name is None and not create_ok:
                     raise ValueError(
-                        "Cannot autodetect Studio. Either use the SDK from within a Studio or pass a name!"
+                        f"Cannot autodetect {cls_name}. Either use the SDK from within a {cls_name} or pass a name!"
                     )
 
         if self._studio is None and not getattr(self._skip_init, "value", False):
@@ -136,7 +138,7 @@ class Studio:
                     # if we don't have a name, raise an error to get
                     # to the exception path and optionally create a studio
                     raise ValueError(
-                        "Cannot autodetect Studio. Either use the SDK from within a Studio or pass a name!"
+                        f"Cannot autodetect {cls_name}. Either use the SDK from within a {cls_name} or pass a name!"
                     )
                 self._studio = self._studio_api.get_studio(name, self._teamspace.id)
             except ValueError as e:
@@ -227,7 +229,9 @@ class Studio:
     @property
     def cluster(self) -> str:
         """Returns the cluster the Studio is running on."""
-        warnings.warn("Studio.cluster is deprecated. Use Studio.cloud_account instead", DeprecationWarning)
+        warnings.warn(
+            f"{self._cls_name}.cluster is deprecated. Use {self._cls_name}.cloud_account instead", DeprecationWarning
+        )
         return self.cloud_account
 
     @property
@@ -266,14 +270,17 @@ class Studio:
                 new_machine = Machine.from_str(machine)
             if new_machine != self.machine:
                 raise RuntimeError(
-                    f"Requested to start studio on {new_machine}, but studio is already running on {self.machine}."
+                    f"Requested to start {self._cls_name} on {new_machine}, "
+                    "but {self._cls_name} is already running on {self.machine}."
                     " Consider switching instead!"
                 )
-            _logger.info(f"Studio {self.name} is already running")
+            _logger.info(f"{self._cls_name} {self.name} is already running")
             return
 
         if status != Status.Stopped:
-            raise RuntimeError(f"Cannot start a studio that is not stopped. Studio {self.name} is {status}.")
+            raise RuntimeError(
+                f"Cannot start a {self._cls_name} that is not stopped. {self._cls_name} {self.name} is {status}."
+            )
 
         # Show progress bar during startup
         if self.show_progress:
@@ -362,7 +369,8 @@ class Studio:
         status = self.status
         if status != Status.Running:
             raise RuntimeError(
-                f"Cannot switch machine on a studio that is not running. Studio {self.name} is {status}."
+                f"Cannot switch machine on a {self._cls_name} that is not running. "
+                "{self._cls_name} {self.name} is {status}."
             )
 
         current_cloud = self._cloud_account_api.get_cloud_account_non_org(
@@ -420,7 +428,10 @@ class Studio:
             print(f"Running {commands=}")
         status = self.status
         if status != Status.Running:
-            raise RuntimeError(f"Cannot run a command in a studio that is not running. Studio {self.name} is {status}.")
+            raise RuntimeError(
+                f"Cannot run a command in a {self._cls_name} that is not running. "
+                "{self._cls_name} {self.name} is {status}."
+            )
 
         iter_output = self._studio_api.run_studio_commands_and_yield(
             self._studio.id, self._teamspace.id, *commands, timeout=timeout, check_interval=check_interval
@@ -446,7 +457,10 @@ class Studio:
 
         status = self.status
         if status != Status.Running:
-            raise RuntimeError(f"Cannot run a command in a studio that is not running. Studio {self.name} is {status}.")
+            raise RuntimeError(
+                f"Cannot run a command in a {self._cls_name} that is not running. "
+                "{self._cls_name} {self.name} is {status}."
+            )
         output, exit_code = self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)
         output = output.strip()
 
@@ -616,7 +630,7 @@ class Studio:
     @auto_sleep.setter
     def auto_sleep(self, value: bool) -> None:
         if not value and self.machine == Machine.CPU:
-            warnings.warn("Disabling auto-sleep will convert the Studio from free to paid!")
+            warnings.warn(f"Disabling auto-sleep will convert the {self._cls_name} from free to paid!")
         self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, enabled=value)
         self._update_studio_reference()
 
@@ -627,7 +641,7 @@ class Studio:
 
     @auto_sleep_time.setter
     def auto_sleep_time(self, value: int) -> None:
-        warnings.warn("Setting auto-sleep time will convert the Studio from free to paid!")
+        warnings.warn(f"Setting auto-sleep time will convert the {self._cls_name} from free to paid!")
         self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, idle_shutdown_seconds=value)
         self._update_studio_reference()
 
@@ -757,6 +771,36 @@ class Studio:
 
     def _update_studio_reference(self) -> None:
         self._studio = self._studio_api.get_studio_by_id(studio_id=self._studio.id, teamspace_id=self._teamspace.id)
+
+    @property
+    def _cls_name(self) -> str:
+        return self.__class__.__qualname__
+
+
+class VM(Studio):
+    """A single Lightning AI VM.
+
+    Allows to fully control a vm, including retrieving the status, running commands
+    and switching machine types.
+
+    Args:
+        name: the name of the vm
+        teamspace: the name of the teamspace the vm is contained by
+        org: the name of the organization owning the :param`teamspace` in case it is owned by an org
+        user: the name of the user owning the :param`teamspace` in case it is owned directly by a user instead of an org
+        cloud_account: the name of the cloud account, the vm should be created on.
+            Doesn't matter when the vm already exists.
+        cloud_account_provider: The provider to select the cloud-account from.
+            If set, must be in agreement with the provider from the cloud_account (if specified).
+            If not specified, falls backto the teamspace default cloud account.
+        create_ok: whether the vm will be created if it does not yet exist. Defaults to True
+        provider: the provider of the machine, the vm should be created on.
+
+    Note:
+        Since a teamspace can either be owned by an org or by a user directly,
+        only one of the arguments can be provided.
+
+    """
 
 
 def _internal_status_to_external_status(internal_status: str) -> Status:
