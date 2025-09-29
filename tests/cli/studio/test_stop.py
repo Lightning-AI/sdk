@@ -14,7 +14,7 @@ def test_stop_studio():
   Example:     lightning studio stop --name my-studio
 
 Options:
-  --name TEXT       The name of the studio to start. If not provided, will try
+  --name TEXT       The name of the studio to stop. If not provided, will try
                     to infer from environment, use the default value from the
                     config or prompt for interactive selection.
   --teamspace TEXT  Override default teamspace (format: owner/teamspace)

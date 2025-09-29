@@ -20,7 +20,7 @@ from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH
 @click.option(
     "--name",
     help=(
-        "The name of the studio to start. "
+        "The name of the studio to ssh into. "
         "If not provided, will try to infer from environment, "
         "use the default value from the config or prompt for interactive selection."
     ),
@@ -39,6 +39,10 @@ def ssh_studio(name: Optional[str] = None, teamspace: Optional[str] = None, opti
     Example:
         lightning studio ssh --name my-studio
     """
+    return ssh_impl(name=name, teamspace=teamspace, option=option, vm=False)
+
+
+def ssh_impl(name: Optional[str], teamspace: Optional[str], option: Optional[List[str]], vm: bool) -> None:
     auth = Auth()
     auth.authenticate()
     ssh_private_key_path = _download_ssh_keys(auth.api_key, force_download=False)
@@ -46,8 +50,10 @@ def ssh_studio(name: Optional[str] = None, teamspace: Optional[str] = None, opti
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace=teamspace)
 
-    menu = StudiosMenu(resolved_teamspace)
-    studio = menu(studio=name)
+    menu = StudiosMenu(resolved_teamspace, vm=vm)
+    studio = menu(
+        studio=name,
+    )
     save_studio_to_config(studio)
 
     ssh_options = " -o " + " -o ".join(option) if option else ""

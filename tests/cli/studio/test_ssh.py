@@ -14,7 +14,7 @@ def test_ssh_studio():
   Example:     lightning studio ssh --name my-studio
 
 Options:
-  --name TEXT        The name of the studio to start. If not provided, will
+  --name TEXT        The name of the studio to ssh into. If not provided, will
                      try to infer from environment, use the default value from
                      the config or prompt for interactive selection.
   --teamspace TEXT   Override default teamspace (format: owner/teamspace)

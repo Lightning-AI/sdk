@@ -14,9 +14,9 @@ def test_delete_studio():
   Example:   lightning studio delete --name my-studio
 
 Options:
-  --name TEXT       The name of the studio to start. If not provided, will try
-                    to infer from environment, use the default value from the
-                    config or prompt for interactive selection.
+  --name TEXT       The name of the studio to delete. If not provided, will
+                    try to infer from environment, use the default value from
+                    the config or prompt for interactive selection.
   --teamspace TEXT  Override default teamspace (format: owner/teamspace)
   --help            Show this message and exit.
 """

@@ -35,13 +35,17 @@ def list_studios(teamspace: Optional[str] = None, all: bool = False, sort_by: Op
         lightning studio list --teamspace owner/teamspace
 
     """
+    return list_impl(teamspace=teamspace, all=all, sort_by=sort_by, vm=False)
+
+
+def list_impl(teamspace: Optional[str], all: bool, sort_by: Optional[str], vm: bool) -> None:  # noqa: A002
     menu = TeamspacesMenu()
     teamspace_resolved = menu(teamspace=teamspace)
     save_teamspace_to_config(teamspace_resolved, overwrite=False)
 
     user = _get_authed_user()
 
-    studios = teamspace_resolved.studios
+    studios = teamspace_resolved.vms if vm else teamspace_resolved.studios
 
     table = Table(
         pad_edge=True,

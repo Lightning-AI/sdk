@@ -9,14 +9,13 @@ from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.machine import Machine
-from lightning_sdk.studio import Studio
 
 
 @click.command("switch")
 @click.option(
     "--name",
     help=(
-        "The name of the studio to start. "
+        "The name of the studio to switch to a different machine. "
         "If not provided, will try to infer from environment, "
         "use the default value from the config or prompt for interactive selection."
     ),
@@ -35,16 +34,33 @@ def switch_studio(
     interruptible: bool = False,
 ) -> None:
     """Switch a Studio to a different machine type."""
+    return switch_impl(
+        name=name,
+        teamspace=teamspace,
+        machine=machine,
+        interruptible=interruptible,
+        vm=False,
+    )
+
+
+def switch_impl(
+    name: Optional[str],
+    teamspace: Optional[str],
+    machine: Optional[str],
+    interruptible: bool,
+    vm: bool,
+) -> None:
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace=teamspace)
 
-    menu = StudiosMenu(resolved_teamspace)
+    menu = StudiosMenu(resolved_teamspace, vm=vm)
     studio = menu(studio=name)
 
     resolved_machine = Machine.from_str(machine)
-    Studio.show_progress = True
+
+    studio.__class__.show_progress = True
     studio.switch_machine(resolved_machine, interruptible=interruptible)
 
     save_studio_to_config(studio)
 
-    click.echo(f"Studio {studio_name_link(studio)} switched to machine '{resolved_machine}' successfully")
+    click.echo(f"{studio._cls_name} {studio_name_link(studio)} switched to machine '{resolved_machine}' successfully")

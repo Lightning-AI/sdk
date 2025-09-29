@@ -14,7 +14,7 @@ from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 @click.option(
     "--name",
     help=(
-        "The name of the studio to start. "
+        "The name of the studio to stop. "
         "If not provided, will try to infer from environment, "
         "use the default value from the config or prompt for interactive selection."
     ),
@@ -27,15 +27,19 @@ def stop_studio(name: Optional[str] = None, teamspace: Optional[str] = None) -> 
         lightning studio stop --name my-studio
 
     """
+    return stop_impl(name=name, teamspace=teamspace, vm=False)
+
+
+def stop_impl(name: Optional[str], teamspace: Optional[str], vm: bool) -> None:
     # missing studio_name and teamspace are handled by the studio class
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace=teamspace)
 
-    menu = StudiosMenu(resolved_teamspace)
+    menu = StudiosMenu(resolved_teamspace, vm=vm)
     studio = menu(studio=name)
 
     studio.stop()
 
     save_studio_to_config(studio)
 
-    click.echo(f"Studio {studio_name_link(studio)} stopped successfully")
+    click.echo(f"{studio._cls_name} {studio_name_link(studio)} stopped successfully")

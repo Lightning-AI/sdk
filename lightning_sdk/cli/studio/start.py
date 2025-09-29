@@ -9,7 +9,7 @@ from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.machine import CloudProvider, Machine
-from lightning_sdk.studio import Studio
+from lightning_sdk.studio import VM, Studio
 
 
 @click.command("start")
@@ -57,6 +57,28 @@ def start_studio(
         lightning studio start --name my-studio
 
     """
+    return start_impl(
+        name=name,
+        teamspace=teamspace,
+        create=create,
+        machine=machine,
+        interruptible=interruptible,
+        cloud_provider=cloud_provider,
+        cloud_account=cloud_account,
+        vm=False,
+    )
+
+
+def start_impl(
+    name: Optional[str],
+    teamspace: Optional[str],
+    create: bool,
+    machine: str,
+    interruptible: bool,
+    cloud_provider: Optional[str],
+    cloud_account: Optional[str],
+    vm: bool,
+) -> None:
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace=teamspace)
 
@@ -64,10 +86,11 @@ def start_studio(
         cloud_provider = CloudProvider(cloud_provider)
 
     if not create:
-        menu = StudiosMenu(resolved_teamspace)
+        menu = StudiosMenu(resolved_teamspace, vm=vm)
         studio = menu(studio=name)
     else:
-        studio = Studio(
+        create_cls = VM if vm else Studio
+        studio = create_cls(
             name=name,
             teamspace=resolved_teamspace,
             create_ok=create,
