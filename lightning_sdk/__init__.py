@@ -9,7 +9,7 @@ from lightning_sdk.mmt import MMT
 from lightning_sdk.organization import Organization
 from lightning_sdk.plugin import JobsPlugin, MultiMachineTrainingPlugin, Plugin, SlurmJobsPlugin
 from lightning_sdk.status import Status
-from lightning_sdk.studio import Studio
+from lightning_sdk.studio import VM, Studio
 from lightning_sdk.teamspace import ConnectionType, FolderLocation, Teamspace
 from lightning_sdk.user import User
 
@@ -32,6 +32,7 @@ __all__ = [
     "Studio",
     "Teamspace",
     "User",
+    "VM",
 ]
 
 __version__ = "2025.09.29"
