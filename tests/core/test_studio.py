@@ -8,6 +8,7 @@ import pytest
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
+    IdStartBody,
     ProjectIdCloudspacesBody,
     V1AWSDirectV1,
     V1CloudProvider,
@@ -1144,10 +1145,19 @@ def test_studio_start_different_machine(
     assert studio.status == Status.Stopped
     assert studio.machine is None
 
-    studio.start(Machine.T4)
+    studio.start(machine="T4")
 
-    assert studio.status == Status.Running
-    assert studio.machine is not None
+    mock_start_instance.assert_called_once_with(
+        mock.ANY,
+        IdStartBody(
+            compute_config=V1UserRequestedComputeConfig(
+                name="lit-t4-1",  # should be able to convert string "T4" to "lit-t4-1"
+                spot=True,
+            )
+        ),
+        "ts-abc",
+        "st-abc",
+    )
 
 
 @mock.patch("requests.put", autospec=True)

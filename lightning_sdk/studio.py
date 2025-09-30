@@ -264,10 +264,11 @@ class Studio:
             else:
                 interruptible = self.teamspace.start_studios_on_interruptible
 
+        new_machine = machine
+        if not isinstance(machine, Machine):
+            new_machine = Machine.from_str(machine)
+
         if status == Status.Running:
-            new_machine = machine
-            if not isinstance(machine, Machine):
-                new_machine = Machine.from_str(machine)
             if new_machine != self.machine:
                 raise RuntimeError(
                     f"Requested to start {self._cls_name} on {new_machine}, "
@@ -289,7 +290,11 @@ class Studio:
             with StudioProgressTracker("start", show_progress=True) as progress:
                 # Start the studio without blocking
                 self._studio_api.start_studio_async(
-                    self._studio.id, self._teamspace.id, machine, interruptible=interruptible, max_runtime=max_runtime
+                    self._studio.id,
+                    self._teamspace.id,
+                    new_machine,
+                    interruptible=interruptible,
+                    max_runtime=max_runtime,
                 )
 
                 # Track progress through completion
@@ -299,7 +304,7 @@ class Studio:
         else:
             # Use the blocking version if no progress is needed
             self._studio_api.start_studio(
-                self._studio.id, self._teamspace.id, machine, interruptible=interruptible, max_runtime=max_runtime
+                self._studio.id, self._teamspace.id, new_machine, interruptible=interruptible, max_runtime=max_runtime
             )
 
         self._setup()
