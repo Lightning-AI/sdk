@@ -14,7 +14,7 @@ from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.models import download_model
 from lightning_sdk.studio import Studio
-from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
+from lightning_sdk.utils.resolve import _get_authed_user
 
 
 def _expand_remote_path(path: str) -> str:
@@ -242,7 +242,7 @@ def _resolve_studio(studio: Optional[str]) -> Studio:
                     and (re.match(studio_name, st["name"]) or studio_name in st["name"]),
                     possible_studios,
                 )
-                if not possible_studios:
+                if not len(possible_studios):
                     raise ValueError(
                         f"Could not find Studio like '{studio}', please consider update your filtering pattern."
                     )
@@ -260,8 +260,7 @@ def _resolve_studio(studio: Optional[str]) -> Studio:
             "Please contact Lightning AI directly to resolve this issue."
         ) from e
 
-    with skip_studio_init():
-        return Studio(**selected_studio)
+    return Studio(**selected_studio)
 
 
 @download.command(name="licenses")

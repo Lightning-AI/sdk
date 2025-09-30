@@ -20,7 +20,7 @@ from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.models import upload_model as _upload_model
 from lightning_sdk.studio import Studio
-from lightning_sdk.utils.resolve import _get_authed_user, skip_studio_init
+from lightning_sdk.utils.resolve import _get_authed_user
 
 _STUDIO_UPLOAD_STATUS_PATH = "~/.lightning/studios/uploads"
 
@@ -285,8 +285,7 @@ def _resolve_studio(studio: Optional[str]) -> Studio:
             "Please contact Lightning AI directly to resolve this issue."
         ) from e
 
-    with skip_studio_init():
-        return Studio(**selected_studio)
+    return Studio(**selected_studio)
 
 
 def _print_docker_push(lines: Generator, console: Console, progress: Progress, push_task: rich.progress.TaskID) -> None:
