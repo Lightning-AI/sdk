@@ -21,7 +21,8 @@ Options:
                                   Defaults to teamspace default.
   --cloud-account TEXT            The cloud account to create the studio on.
                                   Defaults to teamspace default.
-  --gpus INTEGER                  The number of GPUs to start the studio on.
+  --gpus TEXT                     The number and type of GPUs to start the
+                                  studio on (format: TYPE:COUNT, e.g. L4:4)
   --help                          Show this message and exit.
 """
     )

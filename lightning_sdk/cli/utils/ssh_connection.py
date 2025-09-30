@@ -4,7 +4,15 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH
+
+
+def configure_ssh_internal(force_download: bool = False) -> str:
+    """Internal function to configure SSH without Click decorators."""
+    auth = Auth()
+    auth.authenticate()
+    return download_ssh_keys(auth.api_key, force_download=force_download)
 
 
 def download_ssh_keys(

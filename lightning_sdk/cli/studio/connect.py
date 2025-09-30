@@ -2,17 +2,16 @@
 
 import subprocess
 import sys
-from typing import Optional
+from typing import Dict, Optional, Set
 
 import click
 
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config, save_teamspace_to_config
-from lightning_sdk.cli.utils.ssh_connection import download_ssh_keys
+from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
-from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.machine import CloudProvider
+from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.names import random_unique_name
 
@@ -30,13 +29,17 @@ from lightning_sdk.utils.names import random_unique_name
     help="The cloud account to create the studio on. Defaults to teamspace default.",
     type=click.STRING,
 )
-@click.option("--gpus", help="The number of GPUs to start the studio on. ", type=click.INT)
+@click.option(
+    "--gpus",
+    help="The number and type of GPUs to start the studio on (format: TYPE:COUNT, e.g. L4:4)",
+    type=click.STRING,
+)
 def connect_studio(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     cloud_provider: Optional[str] = None,
     cloud_account: Optional[str] = None,
-    gpus: Optional[int] = None,
+    gpus: Optional[str] = None,
 ) -> None:
     """Connect to a Studio.
 
@@ -68,27 +71,65 @@ def connect_studio(
 
     machine = "CPU"
     Studio.show_progress = True
+
     if gpus:
-        # TODO: handle something like gpus=4:L4
-        pass
+        gpus = gpus.strip()
+        machine_name = gpus
+        machine_num = 1
+
+        machine_options = {
+            m.name.lower(): m.name for m in Machine.__dict__.values() if isinstance(m, Machine) and m._include_in_cli
+        }
+        if ":" in gpus:
+            machine_name, machine_val = gpus.split(":", 1)
+            machine_name = machine_name.strip()
+            machine_val = machine_val.strip()
+
+            if not machine_val.isdigit() or int(machine_val) <= 0:
+                raise ValueError(f"Invalid GPU count '{machine_val}'. Must be a positive integer.")
+            machine_num = int(machine_val)
+
+        if machine_num == 1:
+            # e.g. gpus=L4 or gpus=L4:1
+            gpu_key = machine_name.lower()
+            if gpu_key not in machine_options:
+                raise ValueError(
+                    f"Invalid GPU type '{machine_name}'. "
+                    f"Available options: {', '.join(_construct_available_gpus(machine_options))}"
+                )
+            machine = machine_options[gpu_key]
+        else:
+            # e.g. gpus=L4:4
+            gpu_key = f"{machine_name.lower()}_x_{machine_num}"
+            if gpu_key not in machine_options:
+                raise ValueError(
+                    f"Invalid GPU configuration '{gpus}'. "
+                    f"Available options: {', '.join(_construct_available_gpus(machine_options))}"
+                )
+            machine = machine_options[gpu_key]
 
     save_studio_to_config(studio)
-    studio.start(machine, interruptible=True)
+    # by default, interruptible is False
+    studio.start(machine=machine, interruptible=False)
 
-    ssh_private_key_path = _configure_ssh_internal()
+    ssh_private_key_path = configure_ssh_internal()
 
+    ssh_option = "-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=ERROR"
     try:
-        ssh_command = (
-            f"ssh -i {ssh_private_key_path} -o UserKnownHostsFile=/dev/null s_{studio._studio.id}@ssh.lightning.ai"
-        )
+        ssh_command = f"ssh -i {ssh_private_key_path} {ssh_option} s_{studio._studio.id}@ssh.lightning.ai"
         subprocess.run(ssh_command.split())
     except Exception as ex:
         print(f"Failed to establish SSH connection: {ex}")
         sys.exit(1)
 
 
-def _configure_ssh_internal() -> str:
-    """Internal function to configure SSH without Click decorators."""
-    auth = Auth()
-    auth.authenticate()
-    return download_ssh_keys(auth.api_key, force_download=False)
+def _construct_available_gpus(machine_options: Dict[str, str]) -> Set[str]:
+    # returns available gpus:count
+    available_gpus = set()
+    for v in machine_options.values():
+        if "_X_" in v:
+            gpu_type_num = v.replace("_X_", ":")
+            available_gpus.add(gpu_type_num)
+        else:
+            available_gpus.add(v)
+    return available_gpus

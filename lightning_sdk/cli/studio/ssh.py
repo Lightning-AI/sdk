@@ -6,10 +6,9 @@ from typing import List, Optional
 import click
 
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
-from lightning_sdk.cli.utils.ssh_connection import download_ssh_keys
+from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
-from lightning_sdk.lightning_cloud.login import Auth
 
 
 @click.command("ssh")
@@ -39,9 +38,7 @@ def ssh_studio(name: Optional[str] = None, teamspace: Optional[str] = None, opti
 
 
 def ssh_impl(name: Optional[str], teamspace: Optional[str], option: Optional[List[str]], vm: bool) -> None:
-    auth = Auth()
-    auth.authenticate()
-    ssh_private_key_path = download_ssh_keys(auth.api_key, force_download=False)
+    ssh_private_key_path = configure_ssh_internal()
 
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace=teamspace)
@@ -59,7 +56,7 @@ def ssh_impl(name: Optional[str], teamspace: Optional[str], option: Optional[Lis
         subprocess.run(ssh_command.split())
     except Exception:
         # redownload the keys to be sure they are up to date
-        download_ssh_keys(auth.api_key, force_download=True)
+        ssh_private_key_path = configure_ssh_internal(force_download=True)
         try:
             subprocess.run(ssh_command.split())
         except Exception:
