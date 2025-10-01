@@ -50,6 +50,7 @@ class _DummyResponse:
 @pytest.mark.parametrize("create_ok", [True, False])
 @pytest.mark.parametrize("cluster", [None, "c-abc"])
 @pytest.mark.parametrize("name", ["st-abc", "st-xyz"])
+@pytest.mark.parametrize("studio_type", [None, "python"])
 @mock.patch("requests.put", autospec=True)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
@@ -77,7 +78,9 @@ class _DummyResponse:
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.studio.BaseStudio", autospec=True)
 def test_studio_init(
+    mock_base_studio,
     mock_get_teamspace,
     mock_get_org,
     mock_get_status,
@@ -90,6 +93,7 @@ def test_studio_init(
     name,
     cluster,
     create_ok,
+    studio_type,
 ):
     # Setup mocks
     existing_studios = {
@@ -162,6 +166,14 @@ def test_studio_init(
     mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
     mock_get_status.side_effect = _get_status_side_effect
 
+    # Setup studio type
+    mock_base_studio_instance = mock.MagicMock()
+    mock_studio_type = mock.MagicMock()
+    mock_studio_type.id = "python"
+    mock_studio_type.name = "Python"
+    mock_base_studio_instance.list.return_value = [mock_studio_type]
+    mock_base_studio.return_value = mock_base_studio_instance
+
     # st-xyz does not exist and should not be created
     error_out = bool(name == "st-xyz" and not create_ok)
     contextman = pytest.raises(ValueError, match="Studio st-xyz does not exist") if error_out else nullcontext()
@@ -173,6 +185,7 @@ def test_studio_init(
             org="org-abc",
             cloud_account=cluster,
             create_ok=create_ok,
+            studio_type=studio_type,
         )
 
     if error_out:

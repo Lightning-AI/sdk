@@ -8,6 +8,7 @@ from tqdm.auto import tqdm
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.studio_api import StudioApi
+from lightning_sdk.base_studio import BaseStudio
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.openapi import V1ClusterType
 from lightning_sdk.machine import CloudProvider, Machine
@@ -51,6 +52,8 @@ class Studio:
             If not specified, falls backto the teamspace default cloud account.
         create_ok: whether the studio will be created if it does not yet exist. Defaults to True
         provider: the provider of the machine, the studio should be created on.
+        studio_type: Type of studio to create. Only effective during initial creation;
+            ignored for existing studios.
 
     Note:
         Since a teamspace can either be owned by an org or by a user directly,
@@ -78,6 +81,7 @@ class Studio:
         source: Optional[str] = None,
         disable_secrets: bool = False,
         provider: Optional[Union[CloudProvider, str]] = None,  # deprecated in favor of cloud_provider
+        studio_type: Optional[str] = None,  # for base studio templates
     ) -> None:
         self._studio_api = StudioApi()
         self._cloud_account_api = CloudAccountApi()
@@ -112,6 +116,25 @@ class Studio:
                 cloud_provider=cloud_provider,
                 default_cloud_account=self._teamspace.default_cloud_account,
             )
+
+        self._studio_type = None
+        if studio_type:
+            self._base_studio = BaseStudio()
+            self._available_base_studios = self._base_studio.list()
+            for bst in self._available_base_studios:
+                if (
+                    bst.id == studio_type
+                    or bst.name == studio_type
+                    or bst.name.lower().replace(" ", "-") == studio_type
+                ):
+                    self._studio_type = bst.id
+
+            if not self._studio_type:
+                raise ValueError(
+                    f"Could not find studio type with ID or name '{studio_type}'. "
+                    f"Available studio types: "
+                    f"{[bst.name.lower().replace(' ', '-') for bst in self._available_base_studios]}"
+                )
 
         # Resolve studio name if not provided: explicit → env (LIGHTNING_CLOUD_SPACE_ID) → config defaults
         if name is None and not getattr(self._skip_init, "value", False):
@@ -150,6 +173,7 @@ class Studio:
                         cloud_account=_cloud_account,
                         source=source,
                         disable_secrets=self._disable_secrets,
+                        cloud_space_environment_template_id=self._studio_type,
                     )
                 else:
                     raise e
