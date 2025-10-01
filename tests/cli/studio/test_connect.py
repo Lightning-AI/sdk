@@ -23,6 +23,9 @@ Options:
                                   Defaults to teamspace default.
   --gpus TEXT                     The number and type of GPUs to start the
                                   studio on (format: TYPE:COUNT, e.g. L4:4)
+  --studio-type TEXT              The base studio template to use for creating
+                                  the studio. Defaults to the first available
+                                  template.
   --help                          Show this message and exit.
 """
     )

@@ -6,6 +6,7 @@ from typing import Dict, Optional, Set
 
 import click
 
+from lightning_sdk.base_studio import BaseStudio
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config, save_teamspace_to_config
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
@@ -34,12 +35,18 @@ from lightning_sdk.utils.names import random_unique_name
     help="The number and type of GPUs to start the studio on (format: TYPE:COUNT, e.g. L4:4)",
     type=click.STRING,
 )
+@click.option(
+    "--studio-type",
+    help="The base studio template to use for creating the studio. Defaults to the first available template.",
+    type=click.STRING,
+)
 def connect_studio(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     cloud_provider: Optional[str] = None,
     cloud_account: Optional[str] = None,
     gpus: Optional[str] = None,
+    studio_type: Optional[str] = None,
 ) -> None:
     """Connect to a Studio.
 
@@ -56,6 +63,16 @@ def connect_studio(
 
     name = name or random_unique_name()
 
+    # check for available base studios
+    base_studios = BaseStudio()
+    base_studios = base_studios.list()
+    template_id = None
+    if base_studios and len(base_studios):
+        # if not specified by user, use the first existing template studio
+        template_id = base_studios[0].id
+        if studio_type:
+            template_id = studio_type
+
     try:
         studio = Studio(
             name=name,
@@ -63,6 +80,7 @@ def connect_studio(
             create_ok=True,
             cloud_provider=cloud_provider,
             cloud_account=cloud_account,
+            studio_type=template_id,
         )
     except (RuntimeError, ValueError, ApiException):
         raise ValueError(f"Could not create Studio: '{name}'") from None
