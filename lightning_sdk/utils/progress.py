@@ -17,6 +17,13 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_get_cloud_space_instance_st
 class StartupPhase(Enum):
     """Studio startup phase messages."""
 
+    SWITCHING_STUDIO = "Switching Studio..."
+
+    SETTING_UP_MACHINE = "Setting up machine..."
+    RESTORING_STUDIO = "Restoring Studio..."
+    RESTORING_BASE_STUDIO = "Restoring Base Studio..."
+    DONE = "Done"
+
     ALLOCATING_MACHINE = "Allocating machine from cloud provider..."
     STUDIO_STARTING = "Studio is starting up..."
     SETTING_UP_ENVIRONMENT = "Setting up Studio environment..."
@@ -25,22 +32,18 @@ class StartupPhase(Enum):
     COMPLETED = "Studio started successfully"
 
 
-def get_switching_progress_message(percentage: int, is_base_studio: bool, is_new_cloud_space: bool) -> str:
+def get_switching_progress_message(percentage: int, is_base_studio: bool) -> str:
     """Get progress message for switching studios."""
     percentage = max(0, min(100, round(percentage)))
 
     if percentage > 98:
-        message = "Done"
+        message = StartupPhase.DONE.value
     elif percentage > 80:
-        if is_new_cloud_space:
-            message = "Setting up Base Studio..." if is_base_studio else "Preparing Studio..."
-        else:
-            message = "Restoring Studio..."
+        message = StartupPhase.RESTORING_BASE_STUDIO.value if is_base_studio else StartupPhase.RESTORING_STUDIO.value
     elif percentage > 60:
-        message = "Setting up machine from cloud provider"
+        message = StartupPhase.SETTING_UP_MACHINE.value
     else:
-        message = "Allocating machine from cloud provider"
-
+        message = StartupPhase.SWITCHING_STUDIO.value
     return f"({percentage}%) {message}"
 
 
@@ -110,15 +113,13 @@ class StudioProgressTracker:
         if self.progress:
             self.progress.stop()
 
-    def update_progress(
-        self, percentage: int, message: str = "", is_base_studio: bool = False, is_new_cloud_space: bool = False
-    ) -> None:
+    def update_progress(self, percentage: int, message: str = "", is_base_studio: bool = False) -> None:
         """Update progress bar with current percentage and message."""
         if not self.progress or self.task_id is None:
             return
 
         if self.operation_type == "switch":
-            display_message = get_switching_progress_message(percentage, is_base_studio, is_new_cloud_space)
+            display_message = get_switching_progress_message(percentage, is_base_studio)
         else:
             display_message = message or f"{self.operation_type.capitalize()}ing Studio..."
 
