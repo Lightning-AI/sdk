@@ -14,7 +14,8 @@ def test_list_base_studios():
   Example:     lightning base-studio list
 
 Options:
-  --help  Show this message and exit.
+  --include-disabled  Include disabled Base Studios in the list.
+  --help              Show this message and exit.
 """
     )
 
@@ -33,12 +34,14 @@ def test_format_base_studio_name():
             name="Python Studio",
             managed_id="managed-1",
             description="A Python development studio",
+            enabled=True,
         ),
         BaseStudioInfo(
             id="2",
             name="Data Science Pro",
             managed_id="managed-2",
             description="Advanced data science environment",
+            enabled=True,
         ),
     ]
 
@@ -48,7 +51,7 @@ def test_format_base_studio_name():
         mock_base_studio_cls.return_value = mock_instance
 
         with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
-            list_impl()
+            list_impl(include_disabled=False)
 
             # Verify list was called twice (managed=True and managed=False)
             assert mock_instance.list.call_count == 2
@@ -74,6 +77,7 @@ def test_list_includes_managed_and_unmanaged():
             name="Managed Studio",
             managed_id="managed-1",
             description="Managed by Lightning",
+            enabled=True,
         ),
     ]
 
@@ -83,6 +87,7 @@ def test_list_includes_managed_and_unmanaged():
             name="Custom Studio",
             managed_id="",
             description="Custom user studio",
+            enabled=True,
         ),
     ]
 
@@ -92,15 +97,15 @@ def test_list_includes_managed_and_unmanaged():
         mock_base_studio_cls.return_value = mock_instance
 
         with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
-            list_impl()
+            list_impl(include_disabled=False)
 
             # Verify list was called with managed=True (default) and managed=False
             calls = mock_instance.list.call_args_list
             assert len(calls) == 2
-            # First call with default (managed=True)
-            assert calls[0][1] == {} or calls[0][1].get("managed", True)
-            # Second call with managed=False
-            assert calls[1][1] == {"managed": False}
+            # First call with default (managed=True) and include_disabled=False
+            assert calls[0][1].get("include_disabled") is False
+            # Second call with managed=False and include_disabled=False
+            assert calls[1][1] == {"managed": False, "include_disabled": False}
 
             # Verify both studios appear in output
             echo_call_args = mock_echo.call_args[0][0]
@@ -121,12 +126,14 @@ def test_list_handles_empty_description():
             name="No Description",
             managed_id="managed-1",
             description=None,
+            enabled=True,
         ),
         BaseStudioInfo(
             id="2",
             name="Empty Description",
             managed_id="managed-2",
             description="",
+            enabled=True,
         ),
     ]
 
@@ -136,7 +143,7 @@ def test_list_handles_empty_description():
         mock_base_studio_cls.return_value = mock_instance
 
         with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
-            list_impl()
+            list_impl(include_disabled=False)
 
             # Should not raise an exception
             assert mock_echo.called
@@ -160,3 +167,120 @@ def test_name_transformation():
     for original, expected in test_cases:
         result = original.lower().replace(" ", "-")
         assert result == expected, f"Expected {original} to transform to {expected}, got {result}"
+
+
+def test_list_excludes_disabled_by_default():
+    """Test that disabled base studios are excluded by default."""
+    from unittest.mock import Mock, patch
+
+    from lightning_sdk.base_studio import BaseStudioInfo
+    from lightning_sdk.cli.base_studio.list import list_impl
+
+    enabled_studios = [
+        BaseStudioInfo(
+            id="1",
+            name="Enabled Studio",
+            managed_id="managed-1",
+            description="This is enabled",
+            enabled=True,
+        ),
+    ]
+
+    with patch("lightning_sdk.cli.base_studio.list.BaseStudio") as mock_base_studio_cls:
+        mock_instance = Mock()
+        mock_instance.list.return_value = enabled_studios
+        mock_base_studio_cls.return_value = mock_instance
+
+        with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
+            list_impl(include_disabled=False)
+
+            calls = mock_instance.list.call_args_list
+            assert len(calls) == 2
+            assert calls[0][1]["include_disabled"] is False
+            assert calls[1][1]["include_disabled"] is False
+            assert calls[1][1]["managed"] is False
+
+            echo_call_args = mock_echo.call_args[0][0]
+            assert "enabled-studio" in echo_call_args
+
+
+def test_list_includes_disabled_when_flag_set():
+    """Test that disabled base studios are included when --include-disabled flag is set."""
+    from unittest.mock import Mock, patch
+
+    from lightning_sdk.base_studio import BaseStudioInfo
+    from lightning_sdk.cli.base_studio.list import list_impl
+
+    all_studios = [
+        BaseStudioInfo(
+            id="1",
+            name="Enabled Studio",
+            managed_id="managed-1",
+            description="This is enabled",
+            enabled=True,
+        ),
+        BaseStudioInfo(
+            id="2",
+            name="Disabled Studio",
+            managed_id="managed-2",
+            description="This is disabled",
+            enabled=False,
+        ),
+    ]
+
+    with patch("lightning_sdk.cli.base_studio.list.BaseStudio") as mock_base_studio_cls:
+        mock_instance = Mock()
+        mock_instance.list.return_value = all_studios
+        mock_base_studio_cls.return_value = mock_instance
+
+        with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
+            list_impl(include_disabled=True)
+
+            calls = mock_instance.list.call_args_list
+            assert len(calls) == 2
+            assert calls[0][1]["include_disabled"] is True
+            assert calls[1][1]["include_disabled"] is True
+            assert calls[1][1]["managed"] is False
+
+            echo_call_args = mock_echo.call_args[0][0]
+            assert "enabled-studio" in echo_call_args
+            assert "disabled-studio" in echo_call_args
+
+
+def test_list_displays_enabled_status():
+    """Test that the enabled status is correctly displayed as Yes/No."""
+    from unittest.mock import Mock, patch
+
+    from lightning_sdk.base_studio import BaseStudioInfo
+    from lightning_sdk.cli.base_studio.list import list_impl
+
+    studios_with_status = [
+        BaseStudioInfo(
+            id="1",
+            name="Enabled",
+            managed_id="managed-1",
+            description="Enabled studio",
+            enabled=True,
+        ),
+        BaseStudioInfo(
+            id="2",
+            name="Disabled",
+            managed_id="managed-2",
+            description="Disabled studio",
+            enabled=False,
+        ),
+    ]
+
+    with patch("lightning_sdk.cli.base_studio.list.BaseStudio") as mock_base_studio_cls:
+        mock_instance = Mock()
+        mock_instance.list.return_value = studios_with_status
+        mock_base_studio_cls.return_value = mock_instance
+
+        with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
+            list_impl(include_disabled=True)
+
+            echo_call_args = mock_echo.call_args[0][0]
+
+            assert "Yes" in echo_call_args
+            assert "No" in echo_call_args
+            assert "Enabled" in echo_call_args

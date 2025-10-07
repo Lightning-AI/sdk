@@ -89,3 +89,64 @@ def test_base_studio_list(monkeypatch, managed):
 
     assert len(a) == 1
     assert a[0].id == "test-template-id"
+
+
+@pytest.mark.parametrize(("include_disabled", "expected_count"), [(True, 3), (False, 2), (None, 2)])
+def test_base_studio_list_with_disabled_templates(monkeypatch, include_disabled, expected_count):
+    """Test that include_disabled parameter correctly filters disabled templates."""
+    resolve_user_mock = MagicMock()
+    monkeypatch.setattr(base_studio_module, "_resolve_user", resolve_user_mock)
+
+    mock_org = MagicMock()
+    mock_org.id = "org-id"
+    monkeypatch.setattr(base_studio_module, "_resolve_org", mock_org)
+
+    client = MagicMock()
+    monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
+
+    base_studio = base_studio_module.BaseStudio(org=mock_org, user="user")
+
+    mock_get_all = MagicMock()
+    mock_get_all.return_value = V1ListCloudSpaceEnvironmentTemplatesResponse(
+        templates=[
+            V1CloudSpaceEnvironmentTemplate(
+                id="enabled-template-1",
+                name="enabled-template-1",
+                disabled=False,
+                config=MagicMock(),
+            ),
+            V1CloudSpaceEnvironmentTemplate(
+                id="enabled-template-2",
+                name="enabled-template-2",
+                disabled=False,
+                config=MagicMock(),
+            ),
+            V1CloudSpaceEnvironmentTemplate(
+                id="disabled-template-1",
+                name="disabled-template-1",
+                disabled=True,
+                config=MagicMock(),
+            ),
+        ]
+    )
+    base_studio._base_studio_api.get_all_base_studios = mock_get_all
+
+    result = base_studio.list(include_disabled=include_disabled)
+
+    assert len(result) == expected_count
+
+    if include_disabled:
+        # All templates should be returned
+        assert result[0].id == "enabled-template-1"
+        assert result[0].enabled is True
+        assert result[1].id == "enabled-template-2"
+        assert result[1].enabled is True
+        assert result[2].id == "disabled-template-1"
+        assert result[2].enabled is False
+    else:
+        # Only enabled templates should be returned
+        assert result[0].id == "enabled-template-1"
+        assert result[0].enabled is True
+        assert result[1].id == "enabled-template-2"
+        assert result[1].enabled is True
+        assert all(template.enabled for template in result)

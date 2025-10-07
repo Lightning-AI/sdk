@@ -16,6 +16,7 @@ class BaseStudioInfo:
     name: str
     managed_id: str
     description: str
+    enabled: bool
 
 
 class BaseStudio:
@@ -80,20 +81,26 @@ class BaseStudio:
             disabled=disabled,
         )
 
-    def list(self, managed: bool = True) -> List[BaseStudioInfo]:
+    def list(self, managed: bool = True, include_disabled: bool = False) -> List[BaseStudioInfo]:
         """List all base studios in the organization.
 
+        Args:
+            managed: Whether to filter for managed base studios.
+            include_disabled: Whether to include disabled base studios in the results.
+
         Returns:
-            List[V1CloudSpaceEnvironmentTemplate]: A list of base studio templates.
+            List[BaseStudioInfo]: A list of base studio templates.
         """
-        result = []
-        for template in self._base_studio_api.get_all_base_studios(self._org.id, managed).templates:
-            result.append(
-                BaseStudioInfo(
-                    id=template.id,
-                    name=template.name,
-                    managed_id=template.managed_id,
-                    description=template.description,
-                ),
+        templates = self._base_studio_api.get_all_base_studios(self._org.id, managed).templates
+
+        return [
+            BaseStudioInfo(
+                id=template.id,
+                name=template.name,
+                managed_id=template.managed_id,
+                description=template.description,
+                enabled=not template.disabled,
             )
-        return result
+            for template in templates
+            if include_disabled or not template.disabled
+        ]
