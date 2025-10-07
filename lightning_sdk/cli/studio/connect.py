@@ -72,6 +72,27 @@ def _get_machine_from_gpus(gpus: str) -> Machine:
         raise ValueError(f"Invalid GPU configuration '{gpus}'. Available options: {available}") from None
 
 
+def _get_base_studio_id(studio_type: Optional[str]) -> Optional[str]:
+    base_studios = BaseStudio()
+    base_studios = base_studios.list()
+    template_id = None
+
+    if base_studios and len(base_studios):
+        # if not specified by user, use the first existing template studio
+        template_id = base_studios[0].id
+        # else, try to match the provided studio_type to base studio name
+        if studio_type:
+            normalized_studio_type = studio_type.lower().replace(" ", "-")
+            match = next(
+                (s for s in base_studios if s.name.lower().replace(" ", "-") == normalized_studio_type),
+                None,
+            )
+            if match:
+                template_id = match.id
+
+    return template_id
+
+
 @click.command("connect")
 @click.argument("name", required=False)
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
@@ -97,7 +118,10 @@ def _get_machine_from_gpus(gpus: str) -> Machine:
 )
 @click.option(
     "--studio-type",
-    help="The base studio template to use for creating the studio. Defaults to the first available template.",
+    help="The base studio template name to use for creating the studio. "
+    "Must be lowercase and hyphenated (use '-' instead of spaces). "
+    "Run 'lightning base-studio list' to see all available templates. "
+    "Defaults to the first available template.",
     type=click.STRING,
 )
 def connect_studio(
@@ -125,14 +149,7 @@ def connect_studio(
     name = name or random_unique_name()
 
     # check for available base studios
-    base_studios = BaseStudio()
-    base_studios = base_studios.list()
-    template_id = None
-    if base_studios and len(base_studios):
-        # if not specified by user, use the first existing template studio
-        template_id = base_studios[0].id
-        if studio_type:
-            template_id = studio_type
+    template_id = _get_base_studio_id(studio_type)
 
     try:
         studio = Studio(
