@@ -17,19 +17,17 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_get_cloud_space_instance_st
 class StartupPhase(Enum):
     """Studio startup phase messages."""
 
+    STARTING_STUDIO = "Starting Studio..."
+    GETTING_MACHINE = "Getting a machine..."
+
     SWITCHING_STUDIO = "Switching Studio..."
 
     SETTING_UP_MACHINE = "Setting up machine..."
     RESTORING_STUDIO = "Restoring Studio..."
+    PREPARING_STUDIO = "Preparing Studio..."
     RESTORING_BASE_STUDIO = "Restoring Base Studio..."
+    SETTING_UP_BASE_STUDIO = "Setting up Base Studio..."
     DONE = "Done"
-
-    ALLOCATING_MACHINE = "Allocating machine from cloud provider..."
-    STUDIO_STARTING = "Studio is starting up..."
-    SETTING_UP_ENVIRONMENT = "Setting up Studio environment..."
-    RESTORING_STATE = "Restoring Studio state..."
-    FINALIZING_SETUP = "Finalizing Studio setup..."
-    COMPLETED = "Studio started successfully"
 
 
 def get_switching_progress_message(percentage: int, is_base_studio: bool) -> str:
@@ -154,7 +152,7 @@ class StudioProgressTracker:
         message_stability_delay = 3.0  # Seconds to wait before changing message
 
         # Show initial progress immediately
-        self.update_progress(5, StartupPhase.ALLOCATING_MACHINE.value)
+        self.update_progress(5, StartupPhase.STARTING_STUDIO.value)
 
         while True:
             try:
@@ -164,7 +162,7 @@ class StudioProgressTracker:
                 # Default fallback progress based on time
                 time_based_progress = min(95, int((elapsed / timeout) * 100))
                 current_progress = max(last_progress, time_based_progress)
-                current_message = StartupPhase.ALLOCATING_MACHINE.value
+                current_message = StartupPhase.STARTING_STUDIO.value
 
                 # Check if we have detailed status information
                 if hasattr(status, "in_use") and status.in_use:
@@ -179,7 +177,7 @@ class StudioProgressTracker:
                             hasattr(startup_status, "top_up_restore_finished")
                             and startup_status.top_up_restore_finished
                         ):
-                            self.complete(StartupPhase.COMPLETED.value)
+                            self.complete(StartupPhase.DONE.value)
                             break
 
                         # Check other phases in descending priority
@@ -187,14 +185,14 @@ class StudioProgressTracker:
                             hasattr(startup_status, "initial_restore_finished")
                             and startup_status.initial_restore_finished
                         ):
-                            current_progress = max(current_progress, 85)
-                            current_message = StartupPhase.FINALIZING_SETUP.value
+                            current_progress = max(current_progress, 80)
+                            current_message = StartupPhase.PREPARING_STUDIO.value
                         elif hasattr(startup_status, "container_ready") and startup_status.container_ready:
-                            current_progress = max(current_progress, 70)
-                            current_message = StartupPhase.RESTORING_STATE.value
-                        elif hasattr(startup_status, "machine_ready") and startup_status.machine_ready:
                             current_progress = max(current_progress, 60)
-                            current_message = StartupPhase.SETTING_UP_ENVIRONMENT.value
+                            current_message = StartupPhase.SETTING_UP_MACHINE.value
+                        elif hasattr(startup_status, "machine_ready") and startup_status.machine_ready:
+                            current_progress = max(current_progress, 30)
+                            current_message = StartupPhase.GETTING_MACHINE.value
 
                     # Check general phase information
                     if hasattr(in_use, "phase") and in_use.phase:
@@ -202,7 +200,7 @@ class StudioProgressTracker:
 
                         if phase == "CLOUD_SPACE_INSTANCE_STATE_RUNNING":
                             current_progress = max(current_progress, 80)
-                            current_message = StartupPhase.STUDIO_STARTING.value
+                            current_message = StartupPhase.SETTING_UP_MACHINE.value
                         elif phase == "CLOUD_SPACE_INSTANCE_STATE_PENDING":
                             # Track time in pending phase for smoother progress
                             if "pending" not in phase_start_times:
@@ -212,7 +210,7 @@ class StudioProgressTracker:
                             # Progress more smoothly through pending phase (10-60%)
                             pending_progress = 10 + min(50, int((pending_elapsed / 60) * 50))
                             current_progress = max(current_progress, pending_progress)
-                            current_message = StartupPhase.ALLOCATING_MACHINE.value
+                            current_message = StartupPhase.GETTING_MACHINE.value
 
                 # Check for requested machine status (pre-allocation)
                 elif hasattr(status, "requested") and status.requested:
@@ -223,7 +221,7 @@ class StudioProgressTracker:
                     # Progress through allocation phase (5-30%)
                     allocation_progress = 5 + min(25, int((allocation_elapsed / 30) * 25))
                     current_progress = max(current_progress, allocation_progress)
-                    current_message = StartupPhase.ALLOCATING_MACHINE.value
+                    current_message = StartupPhase.GETTING_MACHINE.value
 
                 # Ensure progress never decreases and moves smoothly
                 if current_progress > last_progress:
@@ -263,12 +261,12 @@ class StudioProgressTracker:
 
                 # Only update message if enough time has passed
                 current_time = time.time()
-                should_update_message = StartupPhase.ALLOCATING_MACHINE.value != self._last_message and (
+                should_update_message = StartupPhase.GETTING_MACHINE.value != self._last_message and (
                     current_time - last_message_time >= message_stability_delay or last_message_time == 0
                 )
 
                 if should_update_message:
-                    self.update_progress(fallback_progress, StartupPhase.ALLOCATING_MACHINE.value)
+                    self.update_progress(fallback_progress, StartupPhase.GETTING_MACHINE.value)
                     last_message_time = current_time
                 else:
                     # Update progress but keep existing message
