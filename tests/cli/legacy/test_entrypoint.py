@@ -16,28 +16,29 @@ Options:
   --help     Show this message and exit.
 
 Commands:
-  aihub      Interact with Lightning Studio - AI Hub.
-  config     Manage Lightning SDK and CLI configuration.
-  configure  Configure access to resources on the Lightning AI platform.
-  connect    Connect to lightning products.
-  create     Create new resources on the Lightning AI platform.
-  delete     Delete resources on the Lightning AI platform.
-  deploy     Deploy a LitServe model.
-  dockerize  Generate a Dockerfile for a LitServe model.
-  download   Download resources from Lightning AI.
-  generate   Generate configs (such as ssh for studio) and print them to...
-  inspect    Inspect resources of the Lightning AI platform to get...
-  list       List resources on the Lightning AI platform.
-  login      Login to Lightning AI Studios.
-  logout     Logout from Lightning AI Studios.
-  open       Open a local file or folder in a Lightning Studio.
-  run        Run async workloads on the Lightning AI platform.
-  start      Start resources on the Lightning AI platform.
-  stop       Stop resources on the Lightning AI platform.
-  studio     Manage Lightning AI Studios.
-  switch     Switch machines for resources on the Lightning AI platform.
-  upload     Upload assets to Lightning AI.
-  vm         Manage Lightning AI VMs.
+  aihub        Interact with Lightning Studio - AI Hub.
+  base-studio  Manage Lightning AI Base Studios.
+  config       Manage Lightning SDK and CLI configuration.
+  configure    Configure access to resources on the Lightning AI platform.
+  connect      Connect to lightning products.
+  create       Create new resources on the Lightning AI platform.
+  delete       Delete resources on the Lightning AI platform.
+  deploy       Deploy a LitServe model.
+  dockerize    Generate a Dockerfile for a LitServe model.
+  download     Download resources from Lightning AI.
+  generate     Generate configs (such as ssh for studio) and print them...
+  inspect      Inspect resources of the Lightning AI platform to get...
+  list         List resources on the Lightning AI platform.
+  login        Login to Lightning AI Studios.
+  logout       Logout from Lightning AI Studios.
+  open         Open a local file or folder in a Lightning Studio.
+  run          Run async workloads on the Lightning AI platform.
+  start        Start resources on the Lightning AI platform.
+  stop         Stop resources on the Lightning AI platform.
+  studio       Manage Lightning AI Studios.
+  switch       Switch machines for resources on the Lightning AI platform.
+  upload       Upload assets to Lightning AI.
+  vm           Manage Lightning AI VMs.
 """
     )
 
@@ -56,28 +57,29 @@ Options:
   --help     Show this message and exit.
 
 Commands:
-  aihub      Interact with Lightning Studio - AI Hub.
-  config     Manage Lightning SDK and CLI configuration.
-  configure  Configure access to resources on the Lightning AI platform.
-  connect    Connect to lightning products.
-  create     Create new resources on the Lightning AI platform.
-  delete     Delete resources on the Lightning AI platform.
-  deploy     Deploy a LitServe model.
-  dockerize  Generate a Dockerfile for a LitServe model.
-  download   Download resources from Lightning AI.
-  generate   Generate configs (such as ssh for studio) and print them to...
-  inspect    Inspect resources of the Lightning AI platform to get...
-  list       List resources on the Lightning AI platform.
-  login      Login to Lightning AI Studios.
-  logout     Logout from Lightning AI Studios.
-  open       Open a local file or folder in a Lightning Studio.
-  run        Run async workloads on the Lightning AI platform.
-  start      Start resources on the Lightning AI platform.
-  stop       Stop resources on the Lightning AI platform.
-  studio     Manage Lightning AI Studios.
-  switch     Switch machines for resources on the Lightning AI platform.
-  upload     Upload assets to Lightning AI.
-  vm         Manage Lightning AI VMs.
+  aihub        Interact with Lightning Studio - AI Hub.
+  base-studio  Manage Lightning AI Base Studios.
+  config       Manage Lightning SDK and CLI configuration.
+  configure    Configure access to resources on the Lightning AI platform.
+  connect      Connect to lightning products.
+  create       Create new resources on the Lightning AI platform.
+  delete       Delete resources on the Lightning AI platform.
+  deploy       Deploy a LitServe model.
+  dockerize    Generate a Dockerfile for a LitServe model.
+  download     Download resources from Lightning AI.
+  generate     Generate configs (such as ssh for studio) and print them...
+  inspect      Inspect resources of the Lightning AI platform to get...
+  list         List resources on the Lightning AI platform.
+  login        Login to Lightning AI Studios.
+  logout       Logout from Lightning AI Studios.
+  open         Open a local file or folder in a Lightning Studio.
+  run          Run async workloads on the Lightning AI platform.
+  start        Start resources on the Lightning AI platform.
+  stop         Stop resources on the Lightning AI platform.
+  studio       Manage Lightning AI Studios.
+  switch       Switch machines for resources on the Lightning AI platform.
+  upload       Upload assets to Lightning AI.
+  vm           Manage Lightning AI VMs.
 """
         in result_text  # can't check for equal as the installation logs are in there as well
     )

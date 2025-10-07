@@ -17,6 +17,7 @@ from lightning_sdk.api.studio_api import _cloud_url
 
 # Import legacy groups directly from groups.py
 from lightning_sdk.cli.groups import (
+    base_studio,
     config,
     # job,
     # mmt,
@@ -85,6 +86,7 @@ main_cli.add_command(config)
 # main_cli.add_command(mmt)
 main_cli.add_command(studio)
 main_cli.add_command(vm)
+main_cli.add_command(base_studio)
 if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
     #### LEGACY COMMANDS ####
     # these commands are currently supported for backwards compatibility, but will potentially be removed in the future.
