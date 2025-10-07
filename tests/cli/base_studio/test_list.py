@@ -34,6 +34,7 @@ def test_format_base_studio_name():
             name="Python Studio",
             managed_id="managed-1",
             description="A Python development studio",
+            creator="⚡ Lightning AI",
             enabled=True,
         ),
         BaseStudioInfo(
@@ -41,6 +42,7 @@ def test_format_base_studio_name():
             name="Data Science Pro",
             managed_id="managed-2",
             description="Advanced data science environment",
+            creator="⚡ Lightning AI",
             enabled=True,
         ),
     ]
@@ -77,6 +79,7 @@ def test_list_includes_managed_and_unmanaged():
             name="Managed Studio",
             managed_id="managed-1",
             description="Managed by Lightning",
+            creator="⚡ Lightning AI",
             enabled=True,
         ),
     ]
@@ -87,6 +90,7 @@ def test_list_includes_managed_and_unmanaged():
             name="Custom Studio",
             managed_id="",
             description="Custom user studio",
+            creator="custom_user",
             enabled=True,
         ),
     ]
@@ -126,6 +130,7 @@ def test_list_handles_empty_description():
             name="No Description",
             managed_id="managed-1",
             description=None,
+            creator="⚡ Lightning AI",
             enabled=True,
         ),
         BaseStudioInfo(
@@ -133,6 +138,7 @@ def test_list_handles_empty_description():
             name="Empty Description",
             managed_id="managed-2",
             description="",
+            creator="⚡ Lightning AI",
             enabled=True,
         ),
     ]
@@ -182,6 +188,7 @@ def test_list_excludes_disabled_by_default():
             name="Enabled Studio",
             managed_id="managed-1",
             description="This is enabled",
+            creator="⚡ Lightning AI",
             enabled=True,
         ),
     ]
@@ -217,6 +224,7 @@ def test_list_includes_disabled_when_flag_set():
             name="Enabled Studio",
             managed_id="managed-1",
             description="This is enabled",
+            creator="⚡ Lightning AI",
             enabled=True,
         ),
         BaseStudioInfo(
@@ -224,6 +232,7 @@ def test_list_includes_disabled_when_flag_set():
             name="Disabled Studio",
             managed_id="managed-2",
             description="This is disabled",
+            creator="⚡ Lightning AI",
             enabled=False,
         ),
     ]
@@ -260,6 +269,7 @@ def test_list_displays_enabled_status():
             name="Enabled",
             managed_id="managed-1",
             description="Enabled studio",
+            creator="⚡ Lightning AI",
             enabled=True,
         ),
         BaseStudioInfo(
@@ -267,6 +277,7 @@ def test_list_displays_enabled_status():
             name="Disabled",
             managed_id="managed-2",
             description="Disabled studio",
+            creator="⚡ Lightning AI",
             enabled=False,
         ),
     ]
@@ -284,3 +295,127 @@ def test_list_displays_enabled_status():
             assert "Yes" in echo_call_args
             assert "No" in echo_call_args
             assert "Enabled" in echo_call_args
+
+
+def test_list_displays_creator_for_managed_studios():
+    """Test that managed studios display '⚡ Lightning AI' as creator."""
+    from unittest.mock import Mock, patch
+
+    from lightning_sdk.base_studio import BaseStudioInfo
+    from lightning_sdk.cli.base_studio.list import list_impl
+
+    managed_studios = [
+        BaseStudioInfo(
+            id="1",
+            name="Managed Studio 1",
+            managed_id="lightning-managed-1",
+            description="First managed studio",
+            creator="⚡ Lightning AI",
+            enabled=True,
+        ),
+        BaseStudioInfo(
+            id="2",
+            name="Managed Studio 2",
+            managed_id="lightning-managed-2",
+            description="Second managed studio",
+            creator="⚡ Lightning AI",
+            enabled=True,
+        ),
+    ]
+
+    with patch("lightning_sdk.cli.base_studio.list.BaseStudio") as mock_base_studio_cls:
+        mock_instance = Mock()
+        mock_instance.list.return_value = managed_studios
+        mock_base_studio_cls.return_value = mock_instance
+
+        with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
+            list_impl(include_disabled=False)
+
+            echo_call_args = mock_echo.call_args[0][0]
+
+            assert "Creator" in echo_call_args
+            assert "⚡ Lightning AI" in echo_call_args
+
+
+def test_list_displays_creator_for_custom_studios():
+    """Test that custom studios display the username as creator."""
+    from unittest.mock import Mock, patch
+
+    from lightning_sdk.base_studio import BaseStudioInfo
+    from lightning_sdk.cli.base_studio.list import list_impl
+
+    custom_studios = [
+        BaseStudioInfo(
+            id="1",
+            name="Custom Studio 1",
+            managed_id="",
+            description="User created studio",
+            creator="fake_user",
+            enabled=True,
+        ),
+        BaseStudioInfo(
+            id="2",
+            name="Custom Studio 2",
+            managed_id=None,
+            description="Another user studio",
+            creator="other_user",
+            enabled=True,
+        ),
+    ]
+
+    with patch("lightning_sdk.cli.base_studio.list.BaseStudio") as mock_base_studio_cls:
+        mock_instance = Mock()
+        mock_instance.list.side_effect = [[], custom_studios]
+        mock_base_studio_cls.return_value = mock_instance
+
+        with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
+            list_impl(include_disabled=False)
+
+            echo_call_args = mock_echo.call_args[0][0]
+
+            assert "fake_user" in echo_call_args
+            assert "other_user" in echo_call_args
+
+
+def test_list_displays_mixed_creators():
+    """Test that both managed and custom studios display correct creators."""
+    from unittest.mock import Mock, patch
+
+    from lightning_sdk.base_studio import BaseStudioInfo
+    from lightning_sdk.cli.base_studio.list import list_impl
+
+    managed_studios = [
+        BaseStudioInfo(
+            id="1",
+            name="Managed",
+            managed_id="lightning-1",
+            description="Managed by Lightning",
+            creator="⚡ Lightning AI",
+            enabled=True,
+        ),
+    ]
+
+    custom_studios = [
+        BaseStudioInfo(
+            id="2",
+            name="Custom",
+            managed_id="",
+            description="Custom studio",
+            creator="developer",
+            enabled=True,
+        ),
+    ]
+
+    with patch("lightning_sdk.cli.base_studio.list.BaseStudio") as mock_base_studio_cls:
+        mock_instance = Mock()
+        mock_instance.list.side_effect = [managed_studios, custom_studios]
+        mock_base_studio_cls.return_value = mock_instance
+
+        with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
+            list_impl(include_disabled=False)
+
+            echo_call_args = mock_echo.call_args[0][0]
+
+            assert "⚡ Lightning AI" in echo_call_args
+            assert "developer" in echo_call_args
+            assert "Creator" in echo_call_args  # Column header

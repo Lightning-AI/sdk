@@ -31,12 +31,14 @@ def list_impl(include_disabled: bool) -> None:
 
     table.add_column("Name")
     table.add_column("Description")
+    table.add_column("Creator")
     table.add_column("Enabled")
 
     for base_studio in base_studios:
         table.add_row(
             base_studio.name.lower().replace(" ", "-"),
             base_studio.description or "",
+            base_studio.creator,
             "Yes" if base_studio.enabled else "No",
         )
 

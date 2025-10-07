@@ -16,6 +16,7 @@ class BaseStudioInfo:
     name: str
     managed_id: str
     description: str
+    creator: str
     enabled: bool
 
 
@@ -99,6 +100,9 @@ class BaseStudio:
                 name=template.name,
                 managed_id=template.managed_id,
                 description=template.description,
+                creator="⚡ Lightning AI"
+                if template.managed_id
+                else UserApi()._get_user_by_id(template.user_id).username,
                 enabled=not template.disabled,
             )
             for template in templates
