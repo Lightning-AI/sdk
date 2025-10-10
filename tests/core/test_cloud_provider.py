@@ -5,7 +5,7 @@ from lightning_sdk.machine import CloudProvider
 
 
 @pytest.mark.parametrize(
-    "cloud_provider_str", ["AWS", "GCP", "VULTR", "LAMBDA_LABS", "DGX", "VOLTAGE_PARK", "NEBIUS", "LIGHTNING"]
+    "cloud_provider_str", ["AWS", "GCP", "LAMBDA_LABS", "DGX", "VOLTAGE_PARK", "NEBIUS", "LIGHTNING"]
 )
 def test_equality_cloud_provider_generated_cloud_provider_str(cloud_provider_str):
     # asserts the cloud_provider string value equality.

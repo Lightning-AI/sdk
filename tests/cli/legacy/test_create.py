@@ -50,11 +50,11 @@ Options:
                                   environment (e.g. when run from within a
                                   Studio.) or fall back to the teamspace
                                   default.
-  --cloud-provider [AWS|GCP|VULTR|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING]
+  --cloud-provider [AWS|GCP|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING]
                                   The provider to create the studio on. If
                                   --cloud-account is specified, this option is
                                   prioritized.
-  --provider [AWS|GCP|VULTR|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING]
+  --provider [AWS|GCP|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING]
                                   Deprecated. Use --cloud-provider instead.
                                   The provider to create the studio on. If
                                   --cloud-account is specified, this option is

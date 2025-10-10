@@ -173,8 +173,6 @@ class CloudAccountApi:
                 return CloudProvider.GCP
             if cloud_account.spec.lambda_labs_v1:
                 return CloudProvider.LAMBDA_LABS
-            if cloud_account.spec.vultr_v1:
-                return CloudProvider.VULTR
             if cloud_account.spec.voltage_park_v1:
                 return CloudProvider.VOLTAGE_PARK
             if cloud_account.spec.nebius_v1:
