@@ -269,6 +269,11 @@ class Job(_BaseJob):
         return self._internal_job.machine
 
     @property
+    def public_ip(self) -> Optional[str]:
+        """The public IP address of the machine the job is running on."""
+        return self._internal_job.public_ip
+
+    @property
     def artifact_path(self) -> Optional[str]:
         """Path to the artifacts created by the job within the distributed teamspace filesystem."""
         return self._internal_job.artifact_path

@@ -174,6 +174,14 @@ class _JobV2(_BaseJob):
         )
 
     @property
+    def public_ip(self) -> Optional[str]:
+        """Get the public IP of the machine the job is running on."""
+        try:
+            return self._job.public_ip_address
+        except AttributeError:
+            return None
+
+    @property
     def artifact_path(self) -> Optional[str]:
         """The path to the artifacts of the job within the distributed teamspace filesystem."""
         if self._guaranteed_job.spec.image != "":

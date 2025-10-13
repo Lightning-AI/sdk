@@ -243,6 +243,14 @@ class Studio:
         )
 
     @property
+    def public_ip(self) -> Optional[str]:
+        """Returns the public IP address of the machine the Studio is running on."""
+        return self._studio_api.get_public_ip(
+            self._studio.id,
+            self._teamspace.id,
+        )
+
+    @property
     def interruptible(self) -> bool:
         """Returns whether the Studio is running on a interruptible instance."""
         if self.status != Status.Running:

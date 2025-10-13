@@ -182,6 +182,14 @@ class _JobV1(_BaseJob):
         return self.work.machine
 
     @property
+    def public_ip(self) -> Optional[str]:
+        """Get the public IP of the machine the job is running on."""
+        try:
+            return self._job.status.ip_address
+        except AttributeError:
+            return None
+
+    @property
     def name(self) -> str:
         """The name of the job."""
         return self._job.name

@@ -438,6 +438,14 @@ class StudioApi:
 
         return response.compute_config.spot
 
+    def get_public_ip(self, studio_id: str, teamspace_id: str) -> Optional[str]:
+        """Get the public IP address of the Studio."""
+        internal_status = self.get_studio_status(studio_id=studio_id, teamspace_id=teamspace_id).in_use
+        if internal_status is None:
+            return None
+
+        return internal_status.public_ip_address
+
     def _get_machines_for_cloud_account(
         self, teamspace_id: str, cloud_account_id: str, org_id: str
     ) -> List[V1ClusterAccelerator]:
