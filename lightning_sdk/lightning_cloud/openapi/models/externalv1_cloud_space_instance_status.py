@@ -58,6 +58,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'jupyterlab_url': 'str',
         'phase': 'V1CloudSpaceInstanceState',
         'price': 'float',
+        'private_ip_address': 'str',
+        'public_ip_address': 'str',
         'ssh_host': 'str',
         'ssh_port': 'int',
         'ssh_username': 'str',
@@ -92,6 +94,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'jupyterlab_url': 'jupyterlabUrl',
         'phase': 'phase',
         'price': 'price',
+        'private_ip_address': 'privateIpAddress',
+        'public_ip_address': 'publicIpAddress',
         'ssh_host': 'sshHost',
         'ssh_port': 'sshPort',
         'ssh_username': 'sshUsername',
@@ -108,7 +112,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, transfer_metadata: 'V1CloudSpaceTransferMetadata' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, private_ip_address: 'str' =None, public_ip_address: 'str' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, transfer_metadata: 'V1CloudSpaceTransferMetadata' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._alerts = None
         self._app_url = None
@@ -127,6 +131,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self._jupyterlab_url = None
         self._phase = None
         self._price = None
+        self._private_ip_address = None
+        self._public_ip_address = None
         self._ssh_host = None
         self._ssh_port = None
         self._ssh_username = None
@@ -176,6 +182,10 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.phase = phase
         if price is not None:
             self.price = price
+        if private_ip_address is not None:
+            self.private_ip_address = private_ip_address
+        if public_ip_address is not None:
+            self.public_ip_address = public_ip_address
         if ssh_host is not None:
             self.ssh_host = ssh_host
         if ssh_port is not None:
@@ -561,6 +571,48 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._price = price
+
+    @property
+    def private_ip_address(self) -> 'str':
+        """Gets the private_ip_address of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The private_ip_address of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._private_ip_address
+
+    @private_ip_address.setter
+    def private_ip_address(self, private_ip_address: 'str'):
+        """Sets the private_ip_address of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param private_ip_address: The private_ip_address of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._private_ip_address = private_ip_address
+
+    @property
+    def public_ip_address(self) -> 'str':
+        """Gets the public_ip_address of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The public_ip_address of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._public_ip_address
+
+    @public_ip_address.setter
+    def public_ip_address(self, public_ip_address: 'str'):
+        """Sets the public_ip_address of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param public_ip_address: The public_ip_address of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._public_ip_address = public_ip_address
 
     @property
     def ssh_host(self) -> 'str':

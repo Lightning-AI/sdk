@@ -54,7 +54,9 @@ class V1Job(object):
         'name': 'str',
         'overprovisioned': 'bool',
         'pipeline_id': 'str',
+        'private_ip_address': 'str',
         'project_id': 'str',
+        'public_ip_address': 'str',
         'ready_at': 'datetime',
         'release_id': 'str',
         'restart_count': 'int',
@@ -88,7 +90,9 @@ class V1Job(object):
         'name': 'name',
         'overprovisioned': 'overprovisioned',
         'pipeline_id': 'pipelineId',
+        'private_ip_address': 'privateIpAddress',
         'project_id': 'projectId',
+        'public_ip_address': 'publicIpAddress',
         'ready_at': 'readyAt',
         'release_id': 'releaseId',
         'restart_count': 'restartCount',
@@ -108,7 +112,7 @@ class V1Job(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, project_id: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, private_ip_address: 'str' =None, project_id: 'str' =None, public_ip_address: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._deleted_at = None
@@ -123,7 +127,9 @@ class V1Job(object):
         self._name = None
         self._overprovisioned = None
         self._pipeline_id = None
+        self._private_ip_address = None
         self._project_id = None
+        self._public_ip_address = None
         self._ready_at = None
         self._release_id = None
         self._restart_count = None
@@ -168,8 +174,12 @@ class V1Job(object):
             self.overprovisioned = overprovisioned
         if pipeline_id is not None:
             self.pipeline_id = pipeline_id
+        if private_ip_address is not None:
+            self.private_ip_address = private_ip_address
         if project_id is not None:
             self.project_id = project_id
+        if public_ip_address is not None:
+            self.public_ip_address = public_ip_address
         if ready_at is not None:
             self.ready_at = ready_at
         if release_id is not None:
@@ -481,6 +491,27 @@ class V1Job(object):
         self._pipeline_id = pipeline_id
 
     @property
+    def private_ip_address(self) -> 'str':
+        """Gets the private_ip_address of this V1Job.  # noqa: E501
+
+
+        :return: The private_ip_address of this V1Job.  # noqa: E501
+        :rtype: str
+        """
+        return self._private_ip_address
+
+    @private_ip_address.setter
+    def private_ip_address(self, private_ip_address: 'str'):
+        """Sets the private_ip_address of this V1Job.
+
+
+        :param private_ip_address: The private_ip_address of this V1Job.  # noqa: E501
+        :type: str
+        """
+
+        self._private_ip_address = private_ip_address
+
+    @property
     def project_id(self) -> 'str':
         """Gets the project_id of this V1Job.  # noqa: E501
 
@@ -500,6 +531,27 @@ class V1Job(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def public_ip_address(self) -> 'str':
+        """Gets the public_ip_address of this V1Job.  # noqa: E501
+
+
+        :return: The public_ip_address of this V1Job.  # noqa: E501
+        :rtype: str
+        """
+        return self._public_ip_address
+
+    @public_ip_address.setter
+    def public_ip_address(self, public_ip_address: 'str'):
+        """Sets the public_ip_address of this V1Job.
+
+
+        :param public_ip_address: The public_ip_address of this V1Job.  # noqa: E501
+        :type: str
+        """
+
+        self._public_ip_address = public_ip_address
 
     @property
     def ready_at(self) -> 'datetime':

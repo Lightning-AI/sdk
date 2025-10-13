@@ -43,6 +43,224 @@ class K8SClusterServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
+    def k8_s_cluster_service_create_incident(self, body: 'ProjectIdIncidentsBody', project_id: 'str', **kwargs) -> 'V1Incident':  # noqa: E501
+        """k8_s_cluster_service_create_incident  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_create_incident(body, project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ProjectIdIncidentsBody body: (required)
+        :param str project_id: (required)
+        :return: V1Incident
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_create_incident_with_http_info(body, project_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_create_incident_with_http_info(body, project_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_create_incident_with_http_info(self, body: 'ProjectIdIncidentsBody', project_id: 'str', **kwargs) -> 'V1Incident':  # noqa: E501
+        """k8_s_cluster_service_create_incident  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_create_incident_with_http_info(body, project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ProjectIdIncidentsBody body: (required)
+        :param str project_id: (required)
+        :return: V1Incident
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_create_incident" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `k8_s_cluster_service_create_incident`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_create_incident`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/incidents', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1Incident',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_create_incident_message(self, body: 'IncidentIdMessagesBody', project_id: 'str', incident_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
+        """k8_s_cluster_service_create_incident_message  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_create_incident_message(body, project_id, incident_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IncidentIdMessagesBody body: (required)
+        :param str project_id: (required)
+        :param str incident_id: (required)
+        :return: V1IncidentMessage
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_create_incident_message_with_http_info(body, project_id, incident_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_create_incident_message_with_http_info(body, project_id, incident_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_create_incident_message_with_http_info(self, body: 'IncidentIdMessagesBody', project_id: 'str', incident_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
+        """k8_s_cluster_service_create_incident_message  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_create_incident_message_with_http_info(body, project_id, incident_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IncidentIdMessagesBody body: (required)
+        :param str project_id: (required)
+        :param str incident_id: (required)
+        :return: V1IncidentMessage
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'incident_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_create_incident_message" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `k8_s_cluster_service_create_incident_message`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_create_incident_message`")  # noqa: E501
+        # verify the required parameter 'incident_id' is set
+        if ('incident_id' not in params or
+                params['incident_id'] is None):
+            raise ValueError("Missing the required parameter `incident_id` when calling `k8_s_cluster_service_create_incident_message`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'incident_id' in params:
+            path_params['incidentId'] = params['incident_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/incidents/{incidentId}/messages', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1IncidentMessage',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def k8_s_cluster_service_create_kubernetes_template(self, body: 'ProjectIdKubernetestemplatesBody', project_id: 'str', **kwargs) -> 'V1KubernetesTemplate':  # noqa: E501
         """k8_s_cluster_service_create_kubernetes_template  # noqa: E501
 
@@ -148,6 +366,216 @@ class K8SClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def k8_s_cluster_service_delete_incident(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DeleteIncidentResponse':  # noqa: E501
+        """k8_s_cluster_service_delete_incident  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_delete_incident(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1DeleteIncidentResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_delete_incident_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_delete_incident_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_delete_incident_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DeleteIncidentResponse':  # noqa: E501
+        """k8_s_cluster_service_delete_incident  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_delete_incident_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1DeleteIncidentResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_delete_incident" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_delete_incident`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `k8_s_cluster_service_delete_incident`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/incidents/{id}', 'DELETE',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1DeleteIncidentResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_delete_incident_message(self, project_id: 'str', incident_id: 'str', message_id: 'str', **kwargs) -> 'V1DeleteIncidentMessageResponse':  # noqa: E501
+        """k8_s_cluster_service_delete_incident_message  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_delete_incident_message(project_id, incident_id, message_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str incident_id: (required)
+        :param str message_id: (required)
+        :return: V1DeleteIncidentMessageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_delete_incident_message_with_http_info(project_id, incident_id, message_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_delete_incident_message_with_http_info(project_id, incident_id, message_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_delete_incident_message_with_http_info(self, project_id: 'str', incident_id: 'str', message_id: 'str', **kwargs) -> 'V1DeleteIncidentMessageResponse':  # noqa: E501
+        """k8_s_cluster_service_delete_incident_message  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_delete_incident_message_with_http_info(project_id, incident_id, message_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str incident_id: (required)
+        :param str message_id: (required)
+        :return: V1DeleteIncidentMessageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'incident_id', 'message_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_delete_incident_message" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_delete_incident_message`")  # noqa: E501
+        # verify the required parameter 'incident_id' is set
+        if ('incident_id' not in params or
+                params['incident_id'] is None):
+            raise ValueError("Missing the required parameter `incident_id` when calling `k8_s_cluster_service_delete_incident_message`")  # noqa: E501
+        # verify the required parameter 'message_id' is set
+        if ('message_id' not in params or
+                params['message_id'] is None):
+            raise ValueError("Missing the required parameter `message_id` when calling `k8_s_cluster_service_delete_incident_message`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'incident_id' in params:
+            path_params['incidentId'] = params['incident_id']  # noqa: E501
+        if 'message_id' in params:
+            path_params['messageId'] = params['message_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/incidents/{incidentId}/messages/{messageId}', 'DELETE',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1DeleteIncidentMessageResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def k8_s_cluster_service_delete_kubernetes_template(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DeleteKubernetesTemplateResponse':  # noqa: E501
         """k8_s_cluster_service_delete_kubernetes_template  # noqa: E501
 
@@ -242,6 +670,107 @@ class K8SClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1DeleteKubernetesTemplateResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_get_incident(self, project_id: 'str', id: 'str', **kwargs) -> 'V1Incident':  # noqa: E501
+        """k8_s_cluster_service_get_incident  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_get_incident(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1Incident
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_get_incident_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_get_incident_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_get_incident_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1Incident':  # noqa: E501
+        """k8_s_cluster_service_get_incident  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_get_incident_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1Incident
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_get_incident" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_get_incident`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `k8_s_cluster_service_get_incident`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/incidents/{id}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1Incident',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -1145,6 +1674,123 @@ class K8SClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def k8_s_cluster_service_list_group_pod_metrics(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListGroupPodMetricsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_group_pod_metrics  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_group_pod_metrics(project_id, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cluster_id: (required)
+        :param str key:
+        :param str value:
+        :param datetime start: Date range.
+        :param datetime end:
+        :return: V1ListGroupPodMetricsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_list_group_pod_metrics_with_http_info(project_id, cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_list_group_pod_metrics_with_http_info(project_id, cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_list_group_pod_metrics_with_http_info(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListGroupPodMetricsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_group_pod_metrics  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_group_pod_metrics_with_http_info(project_id, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cluster_id: (required)
+        :param str key:
+        :param str value:
+        :param datetime start: Date range.
+        :param datetime end:
+        :return: V1ListGroupPodMetricsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'cluster_id', 'key', 'value', 'start', 'end']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_list_group_pod_metrics" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_list_group_pod_metrics`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_list_group_pod_metrics`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+        if 'key' in params:
+            query_params.append(('key', params['key']))  # noqa: E501
+        if 'value' in params:
+            query_params.append(('value', params['value']))  # noqa: E501
+        if 'start' in params:
+            query_params.append(('start', params['start']))  # noqa: E501
+        if 'end' in params:
+            query_params.append(('end', params['end']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/clusters/{clusterId}/metrics/group-pod', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListGroupPodMetricsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def k8_s_cluster_service_list_incident_events(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListIncidentEventsResponse':  # noqa: E501
         """k8_s_cluster_service_list_incident_events  # noqa: E501
 
@@ -1239,6 +1885,349 @@ class K8SClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1ListIncidentEventsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_list_incident_messages(self, project_id: 'str', incident_id: 'str', **kwargs) -> 'V1ListIncidentMessagesResponse':  # noqa: E501
+        """k8_s_cluster_service_list_incident_messages  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_incident_messages(project_id, incident_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str incident_id: (required)
+        :param int page_size:
+        :param str page_token:
+        :return: V1ListIncidentMessagesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_list_incident_messages_with_http_info(project_id, incident_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_list_incident_messages_with_http_info(project_id, incident_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_list_incident_messages_with_http_info(self, project_id: 'str', incident_id: 'str', **kwargs) -> 'V1ListIncidentMessagesResponse':  # noqa: E501
+        """k8_s_cluster_service_list_incident_messages  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_incident_messages_with_http_info(project_id, incident_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str incident_id: (required)
+        :param int page_size:
+        :param str page_token:
+        :return: V1ListIncidentMessagesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'incident_id', 'page_size', 'page_token']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_list_incident_messages" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_list_incident_messages`")  # noqa: E501
+        # verify the required parameter 'incident_id' is set
+        if ('incident_id' not in params or
+                params['incident_id'] is None):
+            raise ValueError("Missing the required parameter `incident_id` when calling `k8_s_cluster_service_list_incident_messages`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'incident_id' in params:
+            path_params['incidentId'] = params['incident_id']  # noqa: E501
+
+        query_params = []
+        if 'page_size' in params:
+            query_params.append(('pageSize', params['page_size']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/incidents/{incidentId}/messages', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListIncidentMessagesResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_list_incidents(self, project_id: 'str', **kwargs) -> 'V1ListIncidentsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_incidents  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_incidents(project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cluster_id:
+        :param str status:
+        :param str type:
+        :param str severity:
+        :param int page_size:
+        :param str page_token:
+        :return: V1ListIncidentsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_list_incidents_with_http_info(project_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_list_incidents_with_http_info(project_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_list_incidents_with_http_info(self, project_id: 'str', **kwargs) -> 'V1ListIncidentsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_incidents  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_incidents_with_http_info(project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cluster_id:
+        :param str status:
+        :param str type:
+        :param str severity:
+        :param int page_size:
+        :param str page_token:
+        :return: V1ListIncidentsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'cluster_id', 'status', 'type', 'severity', 'page_size', 'page_token']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_list_incidents" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_list_incidents`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+
+        query_params = []
+        if 'cluster_id' in params:
+            query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
+        if 'status' in params:
+            query_params.append(('status', params['status']))  # noqa: E501
+        if 'type' in params:
+            query_params.append(('type', params['type']))  # noqa: E501
+        if 'severity' in params:
+            query_params.append(('severity', params['severity']))  # noqa: E501
+        if 'page_size' in params:
+            query_params.append(('pageSize', params['page_size']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/incidents', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListIncidentsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_list_kai_scheduler_queues_metrics(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListKaiSchedulerQueuesMetricsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_kai_scheduler_queues_metrics  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_kai_scheduler_queues_metrics(project_id, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cluster_id: (required)
+        :param str namespace:
+        :param str user_id:
+        :param datetime start: Date range.
+        :param datetime end:
+        :return: V1ListKaiSchedulerQueuesMetricsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_list_kai_scheduler_queues_metrics_with_http_info(project_id, cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_list_kai_scheduler_queues_metrics_with_http_info(project_id, cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_list_kai_scheduler_queues_metrics_with_http_info(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListKaiSchedulerQueuesMetricsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_kai_scheduler_queues_metrics  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_kai_scheduler_queues_metrics_with_http_info(project_id, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str cluster_id: (required)
+        :param str namespace:
+        :param str user_id:
+        :param datetime start: Date range.
+        :param datetime end:
+        :return: V1ListKaiSchedulerQueuesMetricsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'cluster_id', 'namespace', 'user_id', 'start', 'end']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_list_kai_scheduler_queues_metrics" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_list_kai_scheduler_queues_metrics`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_list_kai_scheduler_queues_metrics`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+        if 'namespace' in params:
+            query_params.append(('namespace', params['namespace']))  # noqa: E501
+        if 'user_id' in params:
+            query_params.append(('userId', params['user_id']))  # noqa: E501
+        if 'start' in params:
+            query_params.append(('start', params['start']))  # noqa: E501
+        if 'end' in params:
+            query_params.append(('end', params['end']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/clusters/{clusterId}/cluster-kai-scheduler-queues-metrics', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListKaiSchedulerQueuesMetricsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -1905,6 +2894,240 @@ class K8SClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1ReportK8sClusterMetricsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_update_incident(self, body: 'IncidentsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Incident':  # noqa: E501
+        """k8_s_cluster_service_update_incident  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_update_incident(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IncidentsIdBody body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1Incident
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_update_incident_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_update_incident_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_update_incident_with_http_info(self, body: 'IncidentsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Incident':  # noqa: E501
+        """k8_s_cluster_service_update_incident  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_update_incident_with_http_info(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param IncidentsIdBody body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1Incident
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_update_incident" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `k8_s_cluster_service_update_incident`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_update_incident`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `k8_s_cluster_service_update_incident`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/incidents/{id}', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1Incident',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_update_incident_message(self, body: 'MessagesMessageIdBody', project_id: 'str', incident_id: 'str', message_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
+        """k8_s_cluster_service_update_incident_message  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_update_incident_message(body, project_id, incident_id, message_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param MessagesMessageIdBody body: (required)
+        :param str project_id: (required)
+        :param str incident_id: (required)
+        :param str message_id: (required)
+        :return: V1IncidentMessage
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_update_incident_message_with_http_info(body, project_id, incident_id, message_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_update_incident_message_with_http_info(body, project_id, incident_id, message_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_update_incident_message_with_http_info(self, body: 'MessagesMessageIdBody', project_id: 'str', incident_id: 'str', message_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
+        """k8_s_cluster_service_update_incident_message  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_update_incident_message_with_http_info(body, project_id, incident_id, message_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param MessagesMessageIdBody body: (required)
+        :param str project_id: (required)
+        :param str incident_id: (required)
+        :param str message_id: (required)
+        :return: V1IncidentMessage
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'incident_id', 'message_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_update_incident_message" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `k8_s_cluster_service_update_incident_message`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `k8_s_cluster_service_update_incident_message`")  # noqa: E501
+        # verify the required parameter 'incident_id' is set
+        if ('incident_id' not in params or
+                params['incident_id'] is None):
+            raise ValueError("Missing the required parameter `incident_id` when calling `k8_s_cluster_service_update_incident_message`")  # noqa: E501
+        # verify the required parameter 'message_id' is set
+        if ('message_id' not in params or
+                params['message_id'] is None):
+            raise ValueError("Missing the required parameter `message_id` when calling `k8_s_cluster_service_update_incident_message`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'incident_id' in params:
+            path_params['incidentId'] = params['incident_id']  # noqa: E501
+        if 'message_id' in params:
+            path_params['messageId'] = params['message_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/incidents/{incidentId}/messages/{messageId}', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1IncidentMessage',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

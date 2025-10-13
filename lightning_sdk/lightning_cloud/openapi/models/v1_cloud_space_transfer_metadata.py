@@ -41,35 +41,43 @@ class V1CloudSpaceTransferMetadata(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'expected_completion_time': 'datetime',
         'initial_transfer_started_at': 'datetime',
         'requested_code_config': 'V1UpdateCloudSpaceInstanceConfigRequest',
         'source_cluster_id': 'str',
         'source_deletion_started_at': 'datetime',
+        'start_after_transfer': 'bool',
         'target_cloud_provider': 'str',
         'target_cluster_id': 'str',
         'top_up_transfer_started_at': 'datetime'
     }
 
     attribute_map = {
+        'expected_completion_time': 'expectedCompletionTime',
         'initial_transfer_started_at': 'initialTransferStartedAt',
         'requested_code_config': 'requestedCodeConfig',
         'source_cluster_id': 'sourceClusterId',
         'source_deletion_started_at': 'sourceDeletionStartedAt',
+        'start_after_transfer': 'startAfterTransfer',
         'target_cloud_provider': 'targetCloudProvider',
         'target_cluster_id': 'targetClusterId',
         'top_up_transfer_started_at': 'topUpTransferStartedAt'
     }
 
-    def __init__(self, initial_transfer_started_at: 'datetime' =None, requested_code_config: 'V1UpdateCloudSpaceInstanceConfigRequest' =None, source_cluster_id: 'str' =None, source_deletion_started_at: 'datetime' =None, target_cloud_provider: 'str' =None, target_cluster_id: 'str' =None, top_up_transfer_started_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, expected_completion_time: 'datetime' =None, initial_transfer_started_at: 'datetime' =None, requested_code_config: 'V1UpdateCloudSpaceInstanceConfigRequest' =None, source_cluster_id: 'str' =None, source_deletion_started_at: 'datetime' =None, start_after_transfer: 'bool' =None, target_cloud_provider: 'str' =None, target_cluster_id: 'str' =None, top_up_transfer_started_at: 'datetime' =None):  # noqa: E501
         """V1CloudSpaceTransferMetadata - a model defined in Swagger"""  # noqa: E501
+        self._expected_completion_time = None
         self._initial_transfer_started_at = None
         self._requested_code_config = None
         self._source_cluster_id = None
         self._source_deletion_started_at = None
+        self._start_after_transfer = None
         self._target_cloud_provider = None
         self._target_cluster_id = None
         self._top_up_transfer_started_at = None
         self.discriminator = None
+        if expected_completion_time is not None:
+            self.expected_completion_time = expected_completion_time
         if initial_transfer_started_at is not None:
             self.initial_transfer_started_at = initial_transfer_started_at
         if requested_code_config is not None:
@@ -78,12 +86,35 @@ class V1CloudSpaceTransferMetadata(object):
             self.source_cluster_id = source_cluster_id
         if source_deletion_started_at is not None:
             self.source_deletion_started_at = source_deletion_started_at
+        if start_after_transfer is not None:
+            self.start_after_transfer = start_after_transfer
         if target_cloud_provider is not None:
             self.target_cloud_provider = target_cloud_provider
         if target_cluster_id is not None:
             self.target_cluster_id = target_cluster_id
         if top_up_transfer_started_at is not None:
             self.top_up_transfer_started_at = top_up_transfer_started_at
+
+    @property
+    def expected_completion_time(self) -> 'datetime':
+        """Gets the expected_completion_time of this V1CloudSpaceTransferMetadata.  # noqa: E501
+
+
+        :return: The expected_completion_time of this V1CloudSpaceTransferMetadata.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._expected_completion_time
+
+    @expected_completion_time.setter
+    def expected_completion_time(self, expected_completion_time: 'datetime'):
+        """Sets the expected_completion_time of this V1CloudSpaceTransferMetadata.
+
+
+        :param expected_completion_time: The expected_completion_time of this V1CloudSpaceTransferMetadata.  # noqa: E501
+        :type: datetime
+        """
+
+        self._expected_completion_time = expected_completion_time
 
     @property
     def initial_transfer_started_at(self) -> 'datetime':
@@ -168,6 +199,27 @@ class V1CloudSpaceTransferMetadata(object):
         """
 
         self._source_deletion_started_at = source_deletion_started_at
+
+    @property
+    def start_after_transfer(self) -> 'bool':
+        """Gets the start_after_transfer of this V1CloudSpaceTransferMetadata.  # noqa: E501
+
+
+        :return: The start_after_transfer of this V1CloudSpaceTransferMetadata.  # noqa: E501
+        :rtype: bool
+        """
+        return self._start_after_transfer
+
+    @start_after_transfer.setter
+    def start_after_transfer(self, start_after_transfer: 'bool'):
+        """Sets the start_after_transfer of this V1CloudSpaceTransferMetadata.
+
+
+        :param start_after_transfer: The start_after_transfer of this V1CloudSpaceTransferMetadata.  # noqa: E501
+        :type: bool
+        """
+
+        self._start_after_transfer = start_after_transfer
 
     @property
     def target_cloud_provider(self) -> 'str':

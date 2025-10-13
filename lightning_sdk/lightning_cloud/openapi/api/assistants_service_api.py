@@ -1570,43 +1570,45 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_get_published_managed_endpoint_by_model_id(self, id: 'str', **kwargs) -> 'V1ManagedEndpoint':  # noqa: E501
-        """GetPublishedManagedEndpointModel returns a managed endpoint with a single specific managed endpoint model included in modelsMetadata  # noqa: E501
+    def assistants_service_get_published_managed_endpoint(self, **kwargs) -> 'V1ManagedEndpoint':  # noqa: E501
+        """GetPublishedManagedEndpoint returns a managed endpoint with a single specific managed endpoint model included in modelsMetadata  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_get_published_managed_endpoint_by_model_id(id, async_req=True)
+        >>> thread = api.assistants_service_get_published_managed_endpoint(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
+        :param str id:
+        :param str name:
         :return: V1ManagedEndpoint
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.assistants_service_get_published_managed_endpoint_by_model_id_with_http_info(id, **kwargs)  # noqa: E501
+            return self.assistants_service_get_published_managed_endpoint_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.assistants_service_get_published_managed_endpoint_by_model_id_with_http_info(id, **kwargs)  # noqa: E501
+            (data) = self.assistants_service_get_published_managed_endpoint_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def assistants_service_get_published_managed_endpoint_by_model_id_with_http_info(self, id: 'str', **kwargs) -> 'V1ManagedEndpoint':  # noqa: E501
-        """GetPublishedManagedEndpointModel returns a managed endpoint with a single specific managed endpoint model included in modelsMetadata  # noqa: E501
+    def assistants_service_get_published_managed_endpoint_with_http_info(self, **kwargs) -> 'V1ManagedEndpoint':  # noqa: E501
+        """GetPublishedManagedEndpoint returns a managed endpoint with a single specific managed endpoint model included in modelsMetadata  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.assistants_service_get_published_managed_endpoint_by_model_id_with_http_info(id, async_req=True)
+        >>> thread = api.assistants_service_get_published_managed_endpoint_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
+        :param str id:
+        :param str name:
         :return: V1ManagedEndpoint
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['id']  # noqa: E501
+        all_params = ['id', 'name']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1617,22 +1619,20 @@ class AssistantsServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method assistants_service_get_published_managed_endpoint_by_model_id" % key
+                    " to method assistants_service_get_published_managed_endpoint" % key
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'id' is set
-        if ('id' not in params or
-                params['id'] is None):
-            raise ValueError("Missing the required parameter `id` when calling `assistants_service_get_published_managed_endpoint_by_model_id`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'id' in params:
-            path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'id' in params:
+            query_params.append(('id', params['id']))  # noqa: E501
+        if 'name' in params:
+            query_params.append(('name', params['name']))  # noqa: E501
 
         header_params = {}
 
@@ -1648,7 +1648,7 @@ class AssistantsServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/agent-published-managed-model/{id}', 'GET',
+            '/v1/agent-published-managed-model', 'GET',
             path_params,
             query_params,
             header_params,

@@ -37,6 +37,7 @@ from lightning_sdk.lightning_cloud.openapi.api.product_license_service_api impor
 from lightning_sdk.lightning_cloud.openapi.api.profiler_service_api import ProfilerServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.projects_service_api import ProjectsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.quest_service_api import QuestServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.sdk_command_history_service_api import SDKCommandHistoryServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.ssh_public_key_service_api import SSHPublicKeyServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.schedules_service_api import SchedulesServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.secret_service_api import SecretServiceApi

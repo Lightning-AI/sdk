@@ -44,6 +44,8 @@ class ClusterIdMetricsBody(object):
         'cluster_metrics': 'V1ClusterMetrics',
         'container_metrics': 'list[V1ContainerMetrics]',
         'group_node_metrics': 'list[V1GroupNodeMetrics]',
+        'group_pod_metrics': 'list[V1GroupPodMetrics]',
+        'kai_scheduler_queues_metrics': 'list[V1KaiSchedulerQueueMetrics]',
         'namespace_metrics': 'list[V1NamespaceMetrics]',
         'node_metrics': 'list[V1NodeMetrics]',
         'pod_metrics': 'list[V1PodMetrics]'
@@ -53,16 +55,20 @@ class ClusterIdMetricsBody(object):
         'cluster_metrics': 'clusterMetrics',
         'container_metrics': 'containerMetrics',
         'group_node_metrics': 'groupNodeMetrics',
+        'group_pod_metrics': 'groupPodMetrics',
+        'kai_scheduler_queues_metrics': 'kaiSchedulerQueuesMetrics',
         'namespace_metrics': 'namespaceMetrics',
         'node_metrics': 'nodeMetrics',
         'pod_metrics': 'podMetrics'
     }
 
-    def __init__(self, cluster_metrics: 'V1ClusterMetrics' =None, container_metrics: 'list[V1ContainerMetrics]' =None, group_node_metrics: 'list[V1GroupNodeMetrics]' =None, namespace_metrics: 'list[V1NamespaceMetrics]' =None, node_metrics: 'list[V1NodeMetrics]' =None, pod_metrics: 'list[V1PodMetrics]' =None):  # noqa: E501
+    def __init__(self, cluster_metrics: 'V1ClusterMetrics' =None, container_metrics: 'list[V1ContainerMetrics]' =None, group_node_metrics: 'list[V1GroupNodeMetrics]' =None, group_pod_metrics: 'list[V1GroupPodMetrics]' =None, kai_scheduler_queues_metrics: 'list[V1KaiSchedulerQueueMetrics]' =None, namespace_metrics: 'list[V1NamespaceMetrics]' =None, node_metrics: 'list[V1NodeMetrics]' =None, pod_metrics: 'list[V1PodMetrics]' =None):  # noqa: E501
         """ClusterIdMetricsBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_metrics = None
         self._container_metrics = None
         self._group_node_metrics = None
+        self._group_pod_metrics = None
+        self._kai_scheduler_queues_metrics = None
         self._namespace_metrics = None
         self._node_metrics = None
         self._pod_metrics = None
@@ -73,6 +79,10 @@ class ClusterIdMetricsBody(object):
             self.container_metrics = container_metrics
         if group_node_metrics is not None:
             self.group_node_metrics = group_node_metrics
+        if group_pod_metrics is not None:
+            self.group_pod_metrics = group_pod_metrics
+        if kai_scheduler_queues_metrics is not None:
+            self.kai_scheduler_queues_metrics = kai_scheduler_queues_metrics
         if namespace_metrics is not None:
             self.namespace_metrics = namespace_metrics
         if node_metrics is not None:
@@ -142,6 +152,48 @@ class ClusterIdMetricsBody(object):
         """
 
         self._group_node_metrics = group_node_metrics
+
+    @property
+    def group_pod_metrics(self) -> 'list[V1GroupPodMetrics]':
+        """Gets the group_pod_metrics of this ClusterIdMetricsBody.  # noqa: E501
+
+
+        :return: The group_pod_metrics of this ClusterIdMetricsBody.  # noqa: E501
+        :rtype: list[V1GroupPodMetrics]
+        """
+        return self._group_pod_metrics
+
+    @group_pod_metrics.setter
+    def group_pod_metrics(self, group_pod_metrics: 'list[V1GroupPodMetrics]'):
+        """Sets the group_pod_metrics of this ClusterIdMetricsBody.
+
+
+        :param group_pod_metrics: The group_pod_metrics of this ClusterIdMetricsBody.  # noqa: E501
+        :type: list[V1GroupPodMetrics]
+        """
+
+        self._group_pod_metrics = group_pod_metrics
+
+    @property
+    def kai_scheduler_queues_metrics(self) -> 'list[V1KaiSchedulerQueueMetrics]':
+        """Gets the kai_scheduler_queues_metrics of this ClusterIdMetricsBody.  # noqa: E501
+
+
+        :return: The kai_scheduler_queues_metrics of this ClusterIdMetricsBody.  # noqa: E501
+        :rtype: list[V1KaiSchedulerQueueMetrics]
+        """
+        return self._kai_scheduler_queues_metrics
+
+    @kai_scheduler_queues_metrics.setter
+    def kai_scheduler_queues_metrics(self, kai_scheduler_queues_metrics: 'list[V1KaiSchedulerQueueMetrics]'):
+        """Sets the kai_scheduler_queues_metrics of this ClusterIdMetricsBody.
+
+
+        :param kai_scheduler_queues_metrics: The kai_scheduler_queues_metrics of this ClusterIdMetricsBody.  # noqa: E501
+        :type: list[V1KaiSchedulerQueueMetrics]
+        """
+
+        self._kai_scheduler_queues_metrics = kai_scheduler_queues_metrics
 
     @property
     def namespace_metrics(self) -> 'list[V1NamespaceMetrics]':

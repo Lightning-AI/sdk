@@ -41,19 +41,71 @@ class IdTransferBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'compute_config': 'V1UserRequestedComputeConfig',
+        'start_after_transfer': 'bool',
         'target_cluster_id': 'str'
     }
 
     attribute_map = {
+        'compute_config': 'computeConfig',
+        'start_after_transfer': 'startAfterTransfer',
         'target_cluster_id': 'targetClusterId'
     }
 
-    def __init__(self, target_cluster_id: 'str' =None):  # noqa: E501
+    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, start_after_transfer: 'bool' =None, target_cluster_id: 'str' =None):  # noqa: E501
         """IdTransferBody - a model defined in Swagger"""  # noqa: E501
+        self._compute_config = None
+        self._start_after_transfer = None
         self._target_cluster_id = None
         self.discriminator = None
+        if compute_config is not None:
+            self.compute_config = compute_config
+        if start_after_transfer is not None:
+            self.start_after_transfer = start_after_transfer
         if target_cluster_id is not None:
             self.target_cluster_id = target_cluster_id
+
+    @property
+    def compute_config(self) -> 'V1UserRequestedComputeConfig':
+        """Gets the compute_config of this IdTransferBody.  # noqa: E501
+
+
+        :return: The compute_config of this IdTransferBody.  # noqa: E501
+        :rtype: V1UserRequestedComputeConfig
+        """
+        return self._compute_config
+
+    @compute_config.setter
+    def compute_config(self, compute_config: 'V1UserRequestedComputeConfig'):
+        """Sets the compute_config of this IdTransferBody.
+
+
+        :param compute_config: The compute_config of this IdTransferBody.  # noqa: E501
+        :type: V1UserRequestedComputeConfig
+        """
+
+        self._compute_config = compute_config
+
+    @property
+    def start_after_transfer(self) -> 'bool':
+        """Gets the start_after_transfer of this IdTransferBody.  # noqa: E501
+
+
+        :return: The start_after_transfer of this IdTransferBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._start_after_transfer
+
+    @start_after_transfer.setter
+    def start_after_transfer(self, start_after_transfer: 'bool'):
+        """Sets the start_after_transfer of this IdTransferBody.
+
+
+        :param start_after_transfer: The start_after_transfer of this IdTransferBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._start_after_transfer = start_after_transfer
 
     @property
     def target_cluster_id(self) -> 'str':

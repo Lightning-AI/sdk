@@ -62,6 +62,7 @@ class DeploymentsIdBody(object):
         'recipients': 'V1DeploymentAlertingRecipients',
         'release_id': 'str',
         'replicas': 'int',
+        'reuse_servers': 'bool',
         'spec': 'V1JobSpec',
         'status': 'V1DeploymentStatus',
         'strategy': 'V1DeploymentStrategy',
@@ -94,6 +95,7 @@ class DeploymentsIdBody(object):
         'recipients': 'recipients',
         'release_id': 'releaseId',
         'replicas': 'replicas',
+        'reuse_servers': 'reuseServers',
         'spec': 'spec',
         'status': 'status',
         'strategy': 'strategy',
@@ -104,7 +106,7 @@ class DeploymentsIdBody(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, source: 'str' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, source: 'str' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """DeploymentsIdBody - a model defined in Swagger"""  # noqa: E501
         self._source = None
         self._api_standard = None
@@ -127,6 +129,7 @@ class DeploymentsIdBody(object):
         self._recipients = None
         self._release_id = None
         self._replicas = None
+        self._reuse_servers = None
         self._spec = None
         self._status = None
         self._strategy = None
@@ -178,6 +181,8 @@ class DeploymentsIdBody(object):
             self.release_id = release_id
         if replicas is not None:
             self.replicas = replicas
+        if reuse_servers is not None:
+            self.reuse_servers = reuse_servers
         if spec is not None:
             self.spec = spec
         if status is not None:
@@ -635,6 +640,27 @@ class DeploymentsIdBody(object):
         """
 
         self._replicas = replicas
+
+    @property
+    def reuse_servers(self) -> 'bool':
+        """Gets the reuse_servers of this DeploymentsIdBody.  # noqa: E501
+
+
+        :return: The reuse_servers of this DeploymentsIdBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._reuse_servers
+
+    @reuse_servers.setter
+    def reuse_servers(self, reuse_servers: 'bool'):
+        """Sets the reuse_servers of this DeploymentsIdBody.
+
+
+        :param reuse_servers: The reuse_servers of this DeploymentsIdBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._reuse_servers = reuse_servers
 
     @property
     def spec(self) -> 'V1JobSpec':

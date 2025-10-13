@@ -53,6 +53,8 @@ class V1Machine(object):
         'provider_region': 'str',
         'provisioning_method': 'str',
         'ready_at': 'datetime',
+        'resource_id': 'str',
+        'resource_type': 'str',
         'resources': 'V1Resources',
         'status': 'str',
         'unschedulable': 'bool',
@@ -73,6 +75,8 @@ class V1Machine(object):
         'provider_region': 'providerRegion',
         'provisioning_method': 'provisioningMethod',
         'ready_at': 'readyAt',
+        'resource_id': 'resourceId',
+        'resource_type': 'resourceType',
         'resources': 'resources',
         'status': 'status',
         'unschedulable': 'unschedulable',
@@ -80,7 +84,7 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, address: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, org_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resources: 'V1Resources' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, org_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._address = None
         self._cluster_id = None
@@ -94,6 +98,8 @@ class V1Machine(object):
         self._provider_region = None
         self._provisioning_method = None
         self._ready_at = None
+        self._resource_id = None
+        self._resource_type = None
         self._resources = None
         self._status = None
         self._unschedulable = None
@@ -124,6 +130,10 @@ class V1Machine(object):
             self.provisioning_method = provisioning_method
         if ready_at is not None:
             self.ready_at = ready_at
+        if resource_id is not None:
+            self.resource_id = resource_id
+        if resource_type is not None:
+            self.resource_type = resource_type
         if resources is not None:
             self.resources = resources
         if status is not None:
@@ -386,6 +396,48 @@ class V1Machine(object):
         """
 
         self._ready_at = ready_at
+
+    @property
+    def resource_id(self) -> 'str':
+        """Gets the resource_id of this V1Machine.  # noqa: E501
+
+
+        :return: The resource_id of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_id
+
+    @resource_id.setter
+    def resource_id(self, resource_id: 'str'):
+        """Sets the resource_id of this V1Machine.
+
+
+        :param resource_id: The resource_id of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_id = resource_id
+
+    @property
+    def resource_type(self) -> 'str':
+        """Gets the resource_type of this V1Machine.  # noqa: E501
+
+
+        :return: The resource_type of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_type
+
+    @resource_type.setter
+    def resource_type(self, resource_type: 'str'):
+        """Sets the resource_type of this V1Machine.
+
+
+        :param resource_type: The resource_type of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_type = resource_type
 
     @property
     def resources(self) -> 'V1Resources':

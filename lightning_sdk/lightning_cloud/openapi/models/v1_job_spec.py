@@ -47,6 +47,7 @@ class V1JobSpec(object):
         'cluster_id': 'str',
         'command': 'str',
         'data_paths': 'list[V1DataPath]',
+        'disable_artifacts_persistence': 'bool',
         'entrypoint': 'str',
         'env': 'list[V1EnvVar]',
         'image': 'str',
@@ -79,6 +80,7 @@ class V1JobSpec(object):
         'cluster_id': 'clusterId',
         'command': 'command',
         'data_paths': 'dataPaths',
+        'disable_artifacts_persistence': 'disableArtifactsPersistence',
         'entrypoint': 'entrypoint',
         'env': 'env',
         'image': 'image',
@@ -104,7 +106,7 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_image_version: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_image_version: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
@@ -112,6 +114,7 @@ class V1JobSpec(object):
         self._cluster_id = None
         self._command = None
         self._data_paths = None
+        self._disable_artifacts_persistence = None
         self._entrypoint = None
         self._env = None
         self._image = None
@@ -148,6 +151,8 @@ class V1JobSpec(object):
             self.command = command
         if data_paths is not None:
             self.data_paths = data_paths
+        if disable_artifacts_persistence is not None:
+            self.disable_artifacts_persistence = disable_artifacts_persistence
         if entrypoint is not None:
             self.entrypoint = entrypoint
         if env is not None:
@@ -320,6 +325,27 @@ class V1JobSpec(object):
         """
 
         self._data_paths = data_paths
+
+    @property
+    def disable_artifacts_persistence(self) -> 'bool':
+        """Gets the disable_artifacts_persistence of this V1JobSpec.  # noqa: E501
+
+
+        :return: The disable_artifacts_persistence of this V1JobSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_artifacts_persistence
+
+    @disable_artifacts_persistence.setter
+    def disable_artifacts_persistence(self, disable_artifacts_persistence: 'bool'):
+        """Sets the disable_artifacts_persistence of this V1JobSpec.
+
+
+        :param disable_artifacts_persistence: The disable_artifacts_persistence of this V1JobSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_artifacts_persistence = disable_artifacts_persistence
 
     @property
     def entrypoint(self) -> 'str':

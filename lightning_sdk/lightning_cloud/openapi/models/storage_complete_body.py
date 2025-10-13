@@ -45,7 +45,7 @@ class StorageCompleteBody(object):
         'data_connection_id': 'str',
         'filename': 'str',
         'parts': 'list[V1CompleteUpload]',
-        'suppress_reindex': 'bool',
+        'reindex': 'bool',
         'upload_id': 'str'
     }
 
@@ -54,17 +54,17 @@ class StorageCompleteBody(object):
         'data_connection_id': 'dataConnectionId',
         'filename': 'filename',
         'parts': 'parts',
-        'suppress_reindex': 'suppressReindex',
+        'reindex': 'reindex',
         'upload_id': 'uploadId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, data_connection_id: 'str' =None, filename: 'str' =None, parts: 'list[V1CompleteUpload]' =None, suppress_reindex: 'bool' =None, upload_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, data_connection_id: 'str' =None, filename: 'str' =None, parts: 'list[V1CompleteUpload]' =None, reindex: 'bool' =None, upload_id: 'str' =None):  # noqa: E501
         """StorageCompleteBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._data_connection_id = None
         self._filename = None
         self._parts = None
-        self._suppress_reindex = None
+        self._reindex = None
         self._upload_id = None
         self.discriminator = None
         if cluster_id is not None:
@@ -75,8 +75,8 @@ class StorageCompleteBody(object):
             self.filename = filename
         if parts is not None:
             self.parts = parts
-        if suppress_reindex is not None:
-            self.suppress_reindex = suppress_reindex
+        if reindex is not None:
+            self.reindex = reindex
         if upload_id is not None:
             self.upload_id = upload_id
 
@@ -165,25 +165,25 @@ class StorageCompleteBody(object):
         self._parts = parts
 
     @property
-    def suppress_reindex(self) -> 'bool':
-        """Gets the suppress_reindex of this StorageCompleteBody.  # noqa: E501
+    def reindex(self) -> 'bool':
+        """Gets the reindex of this StorageCompleteBody.  # noqa: E501
 
 
-        :return: The suppress_reindex of this StorageCompleteBody.  # noqa: E501
+        :return: The reindex of this StorageCompleteBody.  # noqa: E501
         :rtype: bool
         """
-        return self._suppress_reindex
+        return self._reindex
 
-    @suppress_reindex.setter
-    def suppress_reindex(self, suppress_reindex: 'bool'):
-        """Sets the suppress_reindex of this StorageCompleteBody.
+    @reindex.setter
+    def reindex(self, reindex: 'bool'):
+        """Sets the reindex of this StorageCompleteBody.
 
 
-        :param suppress_reindex: The suppress_reindex of this StorageCompleteBody.  # noqa: E501
+        :param reindex: The reindex of this StorageCompleteBody.  # noqa: E501
         :type: bool
         """
 
-        self._suppress_reindex = suppress_reindex
+        self._reindex = reindex
 
     @property
     def upload_id(self) -> 'str':
