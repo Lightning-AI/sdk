@@ -41,29 +41,55 @@ class IdForkBody1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'new_name': 'str',
         'target_cluster_id': 'str',
         'target_project_id': 'str',
         'version_id': 'str'
     }
 
     attribute_map = {
+        'new_name': 'newName',
         'target_cluster_id': 'targetClusterId',
         'target_project_id': 'targetProjectId',
         'version_id': 'versionId'
     }
 
-    def __init__(self, target_cluster_id: 'str' =None, target_project_id: 'str' =None, version_id: 'str' =None):  # noqa: E501
+    def __init__(self, new_name: 'str' =None, target_cluster_id: 'str' =None, target_project_id: 'str' =None, version_id: 'str' =None):  # noqa: E501
         """IdForkBody1 - a model defined in Swagger"""  # noqa: E501
+        self._new_name = None
         self._target_cluster_id = None
         self._target_project_id = None
         self._version_id = None
         self.discriminator = None
+        if new_name is not None:
+            self.new_name = new_name
         if target_cluster_id is not None:
             self.target_cluster_id = target_cluster_id
         if target_project_id is not None:
             self.target_project_id = target_project_id
         if version_id is not None:
             self.version_id = version_id
+
+    @property
+    def new_name(self) -> 'str':
+        """Gets the new_name of this IdForkBody1.  # noqa: E501
+
+
+        :return: The new_name of this IdForkBody1.  # noqa: E501
+        :rtype: str
+        """
+        return self._new_name
+
+    @new_name.setter
+    def new_name(self, new_name: 'str'):
+        """Sets the new_name of this IdForkBody1.
+
+
+        :param new_name: The new_name of this IdForkBody1.  # noqa: E501
+        :type: str
+        """
+
+        self._new_name = new_name
 
     @property
     def target_cluster_id(self) -> 'str':
