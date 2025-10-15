@@ -43,6 +43,7 @@ class CreateMachineRequestRepresentsTheRequestToCreateAMachine(object):
     swagger_types = {
         'address': 'str',
         'instance_type': 'str',
+        'management_api_url': 'str',
         'name': 'str',
         'org_id': 'str',
         'parent_cluster_id': 'str',
@@ -59,6 +60,7 @@ class CreateMachineRequestRepresentsTheRequestToCreateAMachine(object):
     attribute_map = {
         'address': 'address',
         'instance_type': 'instanceType',
+        'management_api_url': 'managementApiUrl',
         'name': 'name',
         'org_id': 'orgId',
         'parent_cluster_id': 'parentClusterId',
@@ -72,10 +74,11 @@ class CreateMachineRequestRepresentsTheRequestToCreateAMachine(object):
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, address: 'str' =None, instance_type: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
         """CreateMachineRequestRepresentsTheRequestToCreateAMachine - a model defined in Swagger"""  # noqa: E501
         self._address = None
         self._instance_type = None
+        self._management_api_url = None
         self._name = None
         self._org_id = None
         self._parent_cluster_id = None
@@ -92,6 +95,8 @@ class CreateMachineRequestRepresentsTheRequestToCreateAMachine(object):
             self.address = address
         if instance_type is not None:
             self.instance_type = instance_type
+        if management_api_url is not None:
+            self.management_api_url = management_api_url
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -156,6 +161,27 @@ class CreateMachineRequestRepresentsTheRequestToCreateAMachine(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def management_api_url(self) -> 'str':
+        """Gets the management_api_url of this CreateMachineRequestRepresentsTheRequestToCreateAMachine.  # noqa: E501
+
+
+        :return: The management_api_url of this CreateMachineRequestRepresentsTheRequestToCreateAMachine.  # noqa: E501
+        :rtype: str
+        """
+        return self._management_api_url
+
+    @management_api_url.setter
+    def management_api_url(self, management_api_url: 'str'):
+        """Sets the management_api_url of this CreateMachineRequestRepresentsTheRequestToCreateAMachine.
+
+
+        :param management_api_url: The management_api_url of this CreateMachineRequestRepresentsTheRequestToCreateAMachine.  # noqa: E501
+        :type: str
+        """
+
+        self._management_api_url = management_api_url
 
     @property
     def name(self) -> 'str':

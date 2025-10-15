@@ -43,38 +43,38 @@ class ProductLicenseServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def product_license_service_create_product_license(self, body: 'V1ProductLicense', **kwargs) -> 'V1ProductLicense':  # noqa: E501
-        """Create product license  # noqa: E501
+    def product_license_service_create_license(self, body: 'V1CreateLicenseRequest', **kwargs) -> 'V1License':  # noqa: E501
+        """product_license_service_create_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_create_product_license(body, async_req=True)
+        >>> thread = api.product_license_service_create_license(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param V1ProductLicense body: (required)
-        :return: V1ProductLicense
+        :param V1CreateLicenseRequest body: (required)
+        :return: V1License
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.product_license_service_create_product_license_with_http_info(body, **kwargs)  # noqa: E501
+            return self.product_license_service_create_license_with_http_info(body, **kwargs)  # noqa: E501
         else:
-            (data) = self.product_license_service_create_product_license_with_http_info(body, **kwargs)  # noqa: E501
+            (data) = self.product_license_service_create_license_with_http_info(body, **kwargs)  # noqa: E501
             return data
 
-    def product_license_service_create_product_license_with_http_info(self, body: 'V1ProductLicense', **kwargs) -> 'V1ProductLicense':  # noqa: E501
-        """Create product license  # noqa: E501
+    def product_license_service_create_license_with_http_info(self, body: 'V1CreateLicenseRequest', **kwargs) -> 'V1License':  # noqa: E501
+        """product_license_service_create_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_create_product_license_with_http_info(body, async_req=True)
+        >>> thread = api.product_license_service_create_license_with_http_info(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param V1ProductLicense body: (required)
-        :return: V1ProductLicense
+        :param V1CreateLicenseRequest body: (required)
+        :return: V1License
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -90,14 +90,14 @@ class ProductLicenseServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method product_license_service_create_product_license" % key
+                    " to method product_license_service_create_license" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `product_license_service_create_product_license`")  # noqa: E501
+            raise ValueError("Missing the required parameter `body` when calling `product_license_service_create_license`")  # noqa: E501
 
         collection_formats = {}
 
@@ -132,7 +132,7 @@ class ProductLicenseServiceApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1ProductLicense',  # noqa: E501
+            response_type='V1License',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -140,43 +140,43 @@ class ProductLicenseServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def product_license_service_get_product_license(self, license_id: 'str', **kwargs) -> 'V1ProductLicense':  # noqa: E501
-        """Get product license  # noqa: E501
+    def product_license_service_delete_license(self, id: 'str', **kwargs) -> 'V1DeleteLicenseResponse':  # noqa: E501
+        """product_license_service_delete_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_get_product_license(license_id, async_req=True)
+        >>> thread = api.product_license_service_delete_license(id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str license_id: (required)
-        :return: V1ProductLicense
+        :param str id: (required)
+        :return: V1DeleteLicenseResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.product_license_service_get_product_license_with_http_info(license_id, **kwargs)  # noqa: E501
+            return self.product_license_service_delete_license_with_http_info(id, **kwargs)  # noqa: E501
         else:
-            (data) = self.product_license_service_get_product_license_with_http_info(license_id, **kwargs)  # noqa: E501
+            (data) = self.product_license_service_delete_license_with_http_info(id, **kwargs)  # noqa: E501
             return data
 
-    def product_license_service_get_product_license_with_http_info(self, license_id: 'str', **kwargs) -> 'V1ProductLicense':  # noqa: E501
-        """Get product license  # noqa: E501
+    def product_license_service_delete_license_with_http_info(self, id: 'str', **kwargs) -> 'V1DeleteLicenseResponse':  # noqa: E501
+        """product_license_service_delete_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_get_product_license_with_http_info(license_id, async_req=True)
+        >>> thread = api.product_license_service_delete_license_with_http_info(id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str license_id: (required)
-        :return: V1ProductLicense
+        :param str id: (required)
+        :return: V1DeleteLicenseResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['license_id']  # noqa: E501
+        all_params = ['id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -187,20 +187,20 @@ class ProductLicenseServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method product_license_service_get_product_license" % key
+                    " to method product_license_service_delete_license" % key
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'license_id' is set
-        if ('license_id' not in params or
-                params['license_id'] is None):
-            raise ValueError("Missing the required parameter `license_id` when calling `product_license_service_get_product_license`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `product_license_service_delete_license`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'license_id' in params:
-            path_params['licenseId'] = params['license_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
 
@@ -218,14 +218,14 @@ class ProductLicenseServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/licenses/{licenseId}', 'GET',
+            '/v1/licenses/{id}', 'DELETE',
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1ProductLicense',  # noqa: E501
+            response_type='V1DeleteLicenseResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -233,43 +233,43 @@ class ProductLicenseServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def product_license_service_list_user_licenses(self, user_id: 'str', **kwargs) -> 'V1ListProductLicensesResponse':  # noqa: E501
-        """list product licenses assigned to a user  # noqa: E501
+    def product_license_service_get_license(self, id: 'str', **kwargs) -> 'V1License':  # noqa: E501
+        """product_license_service_get_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_list_user_licenses(user_id, async_req=True)
+        >>> thread = api.product_license_service_get_license(id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str user_id: (required)
-        :return: V1ListProductLicensesResponse
+        :param str id: (required)
+        :return: V1License
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.product_license_service_list_user_licenses_with_http_info(user_id, **kwargs)  # noqa: E501
+            return self.product_license_service_get_license_with_http_info(id, **kwargs)  # noqa: E501
         else:
-            (data) = self.product_license_service_list_user_licenses_with_http_info(user_id, **kwargs)  # noqa: E501
+            (data) = self.product_license_service_get_license_with_http_info(id, **kwargs)  # noqa: E501
             return data
 
-    def product_license_service_list_user_licenses_with_http_info(self, user_id: 'str', **kwargs) -> 'V1ListProductLicensesResponse':  # noqa: E501
-        """list product licenses assigned to a user  # noqa: E501
+    def product_license_service_get_license_with_http_info(self, id: 'str', **kwargs) -> 'V1License':  # noqa: E501
+        """product_license_service_get_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_list_user_licenses_with_http_info(user_id, async_req=True)
+        >>> thread = api.product_license_service_get_license_with_http_info(id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str user_id: (required)
-        :return: V1ListProductLicensesResponse
+        :param str id: (required)
+        :return: V1License
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['user_id']  # noqa: E501
+        all_params = ['id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -280,20 +280,20 @@ class ProductLicenseServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method product_license_service_list_user_licenses" % key
+                    " to method product_license_service_get_license" % key
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'user_id' is set
-        if ('user_id' not in params or
-                params['user_id'] is None):
-            raise ValueError("Missing the required parameter `user_id` when calling `product_license_service_list_user_licenses`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `product_license_service_get_license`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'user_id' in params:
-            path_params['userId'] = params['user_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
 
@@ -311,14 +311,14 @@ class ProductLicenseServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/users/{userId}/licenses', 'GET',
+            '/v1/licenses/{id}', 'GET',
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1ListProductLicensesResponse',  # noqa: E501
+            response_type='V1License',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -326,43 +326,45 @@ class ProductLicenseServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def product_license_service_revoke_product_license(self, license_id: 'str', **kwargs) -> 'V1ProductLicense':  # noqa: E501
-        """revoke or invalidate product license  # noqa: E501
+    def product_license_service_list_licenses(self, **kwargs) -> 'V1ListLicenseResponse':  # noqa: E501
+        """product_license_service_list_licenses  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_revoke_product_license(license_id, async_req=True)
+        >>> thread = api.product_license_service_list_licenses(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str license_id: (required)
-        :return: V1ProductLicense
+        :param str owner_id:
+        :param str owner_type:
+        :return: V1ListLicenseResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.product_license_service_revoke_product_license_with_http_info(license_id, **kwargs)  # noqa: E501
+            return self.product_license_service_list_licenses_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.product_license_service_revoke_product_license_with_http_info(license_id, **kwargs)  # noqa: E501
+            (data) = self.product_license_service_list_licenses_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def product_license_service_revoke_product_license_with_http_info(self, license_id: 'str', **kwargs) -> 'V1ProductLicense':  # noqa: E501
-        """revoke or invalidate product license  # noqa: E501
+    def product_license_service_list_licenses_with_http_info(self, **kwargs) -> 'V1ListLicenseResponse':  # noqa: E501
+        """product_license_service_list_licenses  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_revoke_product_license_with_http_info(license_id, async_req=True)
+        >>> thread = api.product_license_service_list_licenses_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str license_id: (required)
-        :return: V1ProductLicense
+        :param str owner_id:
+        :param str owner_type:
+        :return: V1ListLicenseResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['license_id']  # noqa: E501
+        all_params = ['owner_id', 'owner_type']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -373,22 +375,20 @@ class ProductLicenseServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method product_license_service_revoke_product_license" % key
+                    " to method product_license_service_list_licenses" % key
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'license_id' is set
-        if ('license_id' not in params or
-                params['license_id'] is None):
-            raise ValueError("Missing the required parameter `license_id` when calling `product_license_service_revoke_product_license`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'license_id' in params:
-            path_params['licenseId'] = params['license_id']  # noqa: E501
 
         query_params = []
+        if 'owner_id' in params:
+            query_params.append(('ownerId', params['owner_id']))  # noqa: E501
+        if 'owner_type' in params:
+            query_params.append(('ownerType', params['owner_type']))  # noqa: E501
 
         header_params = {}
 
@@ -404,14 +404,14 @@ class ProductLicenseServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/licenses/{licenseId}', 'DELETE',
+            '/v1/licenses', 'GET',
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1ProductLicense',  # noqa: E501
+            response_type='V1ListLicenseResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -419,49 +419,45 @@ class ProductLicenseServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def product_license_service_validate_product_license(self, license_key: 'str', **kwargs) -> 'V1ProductLicenseCheckResponse':  # noqa: E501
-        """Validate product license  # noqa: E501
+    def product_license_service_validate_license(self, body: 'LicenseKeyValidateBody', license_key: 'str', **kwargs) -> 'V1ValidateLicenseResponse':  # noqa: E501
+        """product_license_service_validate_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_validate_product_license(license_key, async_req=True)
+        >>> thread = api.product_license_service_validate_license(body, license_key, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
+        :param LicenseKeyValidateBody body: (required)
         :param str license_key: (required)
-        :param str product_name:
-        :param str product_version:
-        :param str product_type:
-        :return: V1ProductLicenseCheckResponse
+        :return: V1ValidateLicenseResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.product_license_service_validate_product_license_with_http_info(license_key, **kwargs)  # noqa: E501
+            return self.product_license_service_validate_license_with_http_info(body, license_key, **kwargs)  # noqa: E501
         else:
-            (data) = self.product_license_service_validate_product_license_with_http_info(license_key, **kwargs)  # noqa: E501
+            (data) = self.product_license_service_validate_license_with_http_info(body, license_key, **kwargs)  # noqa: E501
             return data
 
-    def product_license_service_validate_product_license_with_http_info(self, license_key: 'str', **kwargs) -> 'V1ProductLicenseCheckResponse':  # noqa: E501
-        """Validate product license  # noqa: E501
+    def product_license_service_validate_license_with_http_info(self, body: 'LicenseKeyValidateBody', license_key: 'str', **kwargs) -> 'V1ValidateLicenseResponse':  # noqa: E501
+        """product_license_service_validate_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.product_license_service_validate_product_license_with_http_info(license_key, async_req=True)
+        >>> thread = api.product_license_service_validate_license_with_http_info(body, license_key, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
+        :param LicenseKeyValidateBody body: (required)
         :param str license_key: (required)
-        :param str product_name:
-        :param str product_version:
-        :param str product_type:
-        :return: V1ProductLicenseCheckResponse
+        :return: V1ValidateLicenseResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['license_key', 'product_name', 'product_version', 'product_type']  # noqa: E501
+        all_params = ['body', 'license_key']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -472,14 +468,18 @@ class ProductLicenseServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method product_license_service_validate_product_license" % key
+                    " to method product_license_service_validate_license" % key
                 )
             params[key] = val
         del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `product_license_service_validate_license`")  # noqa: E501
         # verify the required parameter 'license_key' is set
         if ('license_key' not in params or
                 params['license_key'] is None):
-            raise ValueError("Missing the required parameter `license_key` when calling `product_license_service_validate_product_license`")  # noqa: E501
+            raise ValueError("Missing the required parameter `license_key` when calling `product_license_service_validate_license`")  # noqa: E501
 
         collection_formats = {}
 
@@ -488,12 +488,6 @@ class ProductLicenseServiceApi(object):
             path_params['licenseKey'] = params['license_key']  # noqa: E501
 
         query_params = []
-        if 'product_name' in params:
-            query_params.append(('productName', params['product_name']))  # noqa: E501
-        if 'product_version' in params:
-            query_params.append(('productVersion', params['product_version']))  # noqa: E501
-        if 'product_type' in params:
-            query_params.append(('productType', params['product_type']))  # noqa: E501
 
         header_params = {}
 
@@ -501,22 +495,28 @@ class ProductLicenseServiceApi(object):
         local_var_files = {}
 
         body_params = None
+        if 'body' in params:
+            body_params = params['body']
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
             ['application/json'])  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/licenses/{licenseKey}/validate', 'GET',
+            '/v1/licenses/{licenseKey}/validate', 'POST',
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1ProductLicenseCheckResponse',  # noqa: E501
+            response_type='V1ValidateLicenseResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

@@ -46,6 +46,7 @@ class V1Machine(object):
         'created_at': 'datetime',
         'id': 'str',
         'instance_type': 'str',
+        'management_api_url': 'str',
         'name': 'str',
         'org_id': 'str',
         'provider': 'str',
@@ -68,6 +69,7 @@ class V1Machine(object):
         'created_at': 'createdAt',
         'id': 'id',
         'instance_type': 'instanceType',
+        'management_api_url': 'managementApiUrl',
         'name': 'name',
         'org_id': 'orgId',
         'provider': 'provider',
@@ -84,13 +86,14 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, address: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, org_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._address = None
         self._cluster_id = None
         self._created_at = None
         self._id = None
         self._instance_type = None
+        self._management_api_url = None
         self._name = None
         self._org_id = None
         self._provider = None
@@ -116,6 +119,8 @@ class V1Machine(object):
             self.id = id
         if instance_type is not None:
             self.instance_type = instance_type
+        if management_api_url is not None:
+            self.management_api_url = management_api_url
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -249,6 +254,27 @@ class V1Machine(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def management_api_url(self) -> 'str':
+        """Gets the management_api_url of this V1Machine.  # noqa: E501
+
+
+        :return: The management_api_url of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._management_api_url
+
+    @management_api_url.setter
+    def management_api_url(self, management_api_url: 'str'):
+        """Sets the management_api_url of this V1Machine.
+
+
+        :param management_api_url: The management_api_url of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._management_api_url = management_api_url
 
     @property
     def name(self) -> 'str':

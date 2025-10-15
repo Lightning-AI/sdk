@@ -55,6 +55,7 @@ class V1ExternalClusterSpec(object):
         'google_cloud_v1': 'V1GoogleCloudDirectV1',
         'kubernetes_v1': 'V1KubernetesDirectV1',
         'lambda_labs_v1': 'V1LambdaLabsDirectV1',
+        'lightning_elastic_cluster_v1': 'V1LightningElasticClusterV1',
         'locked_zones': 'list[str]',
         'machine_v1': 'V1MachineDirectV1',
         'monitor_deletion_disabled': 'bool',
@@ -89,6 +90,7 @@ class V1ExternalClusterSpec(object):
         'google_cloud_v1': 'googleCloudV1',
         'kubernetes_v1': 'kubernetesV1',
         'lambda_labs_v1': 'lambdaLabsV1',
+        'lightning_elastic_cluster_v1': 'lightningElasticClusterV1',
         'locked_zones': 'lockedZones',
         'machine_v1': 'machineV1',
         'monitor_deletion_disabled': 'monitorDeletionDisabled',
@@ -108,7 +110,7 @@ class V1ExternalClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, ai_pod_v1: 'V1AiPodV1' =None, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, ai_pod_v1: 'V1AiPodV1' =None, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ExternalClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._ai_pod_v1 = None
         self._auth_token = None
@@ -124,6 +126,7 @@ class V1ExternalClusterSpec(object):
         self._google_cloud_v1 = None
         self._kubernetes_v1 = None
         self._lambda_labs_v1 = None
+        self._lightning_elastic_cluster_v1 = None
         self._locked_zones = None
         self._machine_v1 = None
         self._monitor_deletion_disabled = None
@@ -170,6 +173,8 @@ class V1ExternalClusterSpec(object):
             self.kubernetes_v1 = kubernetes_v1
         if lambda_labs_v1 is not None:
             self.lambda_labs_v1 = lambda_labs_v1
+        if lightning_elastic_cluster_v1 is not None:
+            self.lightning_elastic_cluster_v1 = lightning_elastic_cluster_v1
         if locked_zones is not None:
             self.locked_zones = locked_zones
         if machine_v1 is not None:
@@ -500,6 +505,27 @@ class V1ExternalClusterSpec(object):
         """
 
         self._lambda_labs_v1 = lambda_labs_v1
+
+    @property
+    def lightning_elastic_cluster_v1(self) -> 'V1LightningElasticClusterV1':
+        """Gets the lightning_elastic_cluster_v1 of this V1ExternalClusterSpec.  # noqa: E501
+
+
+        :return: The lightning_elastic_cluster_v1 of this V1ExternalClusterSpec.  # noqa: E501
+        :rtype: V1LightningElasticClusterV1
+        """
+        return self._lightning_elastic_cluster_v1
+
+    @lightning_elastic_cluster_v1.setter
+    def lightning_elastic_cluster_v1(self, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1'):
+        """Sets the lightning_elastic_cluster_v1 of this V1ExternalClusterSpec.
+
+
+        :param lightning_elastic_cluster_v1: The lightning_elastic_cluster_v1 of this V1ExternalClusterSpec.  # noqa: E501
+        :type: V1LightningElasticClusterV1
+        """
+
+        self._lightning_elastic_cluster_v1 = lightning_elastic_cluster_v1
 
     @property
     def locked_zones(self) -> 'list[str]':

@@ -45,7 +45,6 @@ class V1UserFeatures(object):
         'agents_v2': 'bool',
         'ai_hub_monetization': 'bool',
         'auto_fast_load': 'bool',
-        'auto_join_orgs': 'bool',
         'b2c_experience': 'bool',
         'byo_machine_type': 'bool',
         'cap_add': 'list[str]',
@@ -90,7 +89,6 @@ class V1UserFeatures(object):
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'gcs_connections_optimized': 'bool',
-        'instant_capacity_reservation': 'bool',
         'job_artifacts_v2': 'bool',
         'kubernetes_cluster_ui': 'bool',
         'kubernetes_clusters': 'bool',
@@ -127,7 +125,6 @@ class V1UserFeatures(object):
         'studio_config': 'bool',
         'studio_sharing_v2': 'bool',
         'studio_version_visibility': 'bool',
-        'trainium2': 'bool',
         'vultr': 'bool',
         'weka': 'bool',
         'writable_s3_connections': 'bool'
@@ -138,7 +135,6 @@ class V1UserFeatures(object):
         'agents_v2': 'agentsV2',
         'ai_hub_monetization': 'aiHubMonetization',
         'auto_fast_load': 'autoFastLoad',
-        'auto_join_orgs': 'autoJoinOrgs',
         'b2c_experience': 'b2cExperience',
         'byo_machine_type': 'byoMachineType',
         'cap_add': 'capAdd',
@@ -183,7 +179,6 @@ class V1UserFeatures(object):
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'gcs_connections_optimized': 'gcsConnectionsOptimized',
-        'instant_capacity_reservation': 'instantCapacityReservation',
         'job_artifacts_v2': 'jobArtifactsV2',
         'kubernetes_cluster_ui': 'kubernetesClusterUi',
         'kubernetes_clusters': 'kubernetesClusters',
@@ -220,19 +215,17 @@ class V1UserFeatures(object):
         'studio_config': 'studioConfig',
         'studio_sharing_v2': 'studioSharingV2',
         'studio_version_visibility': 'studioVersionVisibility',
-        'trainium2': 'trainium2',
         'vultr': 'vultr',
         'weka': 'weka',
         'writable_s3_connections': 'writableS3Connections'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, auto_join_orgs: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, f227: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f239: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f248: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f255: 'bool' =None, f257: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f260: 'bool' =None, f261: 'bool' =None, f262: 'bool' =None, f263: 'bool' =None, f264: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_connections_optimized: 'bool' =None, instant_capacity_reservation: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, trainium2: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, custom_app_domain: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, deployment_persistent_disk: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, f227: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f239: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f248: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f255: 'bool' =None, f257: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f260: 'bool' =None, f261: 'bool' =None, f262: 'bool' =None, f263: 'bool' =None, f264: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, gcs_connections_optimized: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, model_api_dashboard: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_sharing_v2: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
         self._ai_hub_monetization = None
         self._auto_fast_load = None
-        self._auto_join_orgs = None
         self._b2c_experience = None
         self._byo_machine_type = None
         self._cap_add = None
@@ -277,7 +270,6 @@ class V1UserFeatures(object):
         self._fair_share = None
         self._featured_studios_admin = None
         self._gcs_connections_optimized = None
-        self._instant_capacity_reservation = None
         self._job_artifacts_v2 = None
         self._kubernetes_cluster_ui = None
         self._kubernetes_clusters = None
@@ -314,7 +306,6 @@ class V1UserFeatures(object):
         self._studio_config = None
         self._studio_sharing_v2 = None
         self._studio_version_visibility = None
-        self._trainium2 = None
         self._vultr = None
         self._weka = None
         self._writable_s3_connections = None
@@ -327,8 +318,6 @@ class V1UserFeatures(object):
             self.ai_hub_monetization = ai_hub_monetization
         if auto_fast_load is not None:
             self.auto_fast_load = auto_fast_load
-        if auto_join_orgs is not None:
-            self.auto_join_orgs = auto_join_orgs
         if b2c_experience is not None:
             self.b2c_experience = b2c_experience
         if byo_machine_type is not None:
@@ -417,8 +406,6 @@ class V1UserFeatures(object):
             self.featured_studios_admin = featured_studios_admin
         if gcs_connections_optimized is not None:
             self.gcs_connections_optimized = gcs_connections_optimized
-        if instant_capacity_reservation is not None:
-            self.instant_capacity_reservation = instant_capacity_reservation
         if job_artifacts_v2 is not None:
             self.job_artifacts_v2 = job_artifacts_v2
         if kubernetes_cluster_ui is not None:
@@ -491,8 +478,6 @@ class V1UserFeatures(object):
             self.studio_sharing_v2 = studio_sharing_v2
         if studio_version_visibility is not None:
             self.studio_version_visibility = studio_version_visibility
-        if trainium2 is not None:
-            self.trainium2 = trainium2
         if vultr is not None:
             self.vultr = vultr
         if weka is not None:
@@ -583,27 +568,6 @@ class V1UserFeatures(object):
         """
 
         self._auto_fast_load = auto_fast_load
-
-    @property
-    def auto_join_orgs(self) -> 'bool':
-        """Gets the auto_join_orgs of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The auto_join_orgs of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._auto_join_orgs
-
-    @auto_join_orgs.setter
-    def auto_join_orgs(self, auto_join_orgs: 'bool'):
-        """Sets the auto_join_orgs of this V1UserFeatures.
-
-
-        :param auto_join_orgs: The auto_join_orgs of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._auto_join_orgs = auto_join_orgs
 
     @property
     def b2c_experience(self) -> 'bool':
@@ -1530,27 +1494,6 @@ class V1UserFeatures(object):
         self._gcs_connections_optimized = gcs_connections_optimized
 
     @property
-    def instant_capacity_reservation(self) -> 'bool':
-        """Gets the instant_capacity_reservation of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The instant_capacity_reservation of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._instant_capacity_reservation
-
-    @instant_capacity_reservation.setter
-    def instant_capacity_reservation(self, instant_capacity_reservation: 'bool'):
-        """Sets the instant_capacity_reservation of this V1UserFeatures.
-
-
-        :param instant_capacity_reservation: The instant_capacity_reservation of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._instant_capacity_reservation = instant_capacity_reservation
-
-    @property
     def job_artifacts_v2(self) -> 'bool':
         """Gets the job_artifacts_v2 of this V1UserFeatures.  # noqa: E501
 
@@ -2305,27 +2248,6 @@ class V1UserFeatures(object):
         """
 
         self._studio_version_visibility = studio_version_visibility
-
-    @property
-    def trainium2(self) -> 'bool':
-        """Gets the trainium2 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The trainium2 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._trainium2
-
-    @trainium2.setter
-    def trainium2(self, trainium2: 'bool'):
-        """Sets the trainium2 of this V1UserFeatures.
-
-
-        :param trainium2: The trainium2 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._trainium2 = trainium2
 
     @property
     def vultr(self) -> 'bool':
