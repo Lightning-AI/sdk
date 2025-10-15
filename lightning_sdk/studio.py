@@ -659,6 +659,14 @@ class Studio:
         self._assistant_id = assistant.id
         _logger.info(assistant_info)
 
+    def rename(self, new_name: str) -> None:
+        """Renames the current Studio to the provided new name."""
+        if new_name == self._studio.name:
+            return
+
+        self._studio_api._update_cloudspace(self._studio, self._teamspace.id, "display_name", new_name)
+        self._update_studio_reference()
+
     @property
     def auto_sleep(self) -> bool:
         """Returns if a Studio has auto-sleep enabled."""
