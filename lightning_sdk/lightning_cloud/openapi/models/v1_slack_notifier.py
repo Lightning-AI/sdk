@@ -41,24 +41,76 @@ class V1SlackNotifier(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'api_key': 'str',
+        'channel_id': 'str',
         'type': 'V1SlackNotifierType',
         'url': 'str'
     }
 
     attribute_map = {
+        'api_key': 'apiKey',
+        'channel_id': 'channelId',
         'type': 'type',
         'url': 'url'
     }
 
-    def __init__(self, type: 'V1SlackNotifierType' =None, url: 'str' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, channel_id: 'str' =None, type: 'V1SlackNotifierType' =None, url: 'str' =None):  # noqa: E501
         """V1SlackNotifier - a model defined in Swagger"""  # noqa: E501
+        self._api_key = None
+        self._channel_id = None
         self._type = None
         self._url = None
         self.discriminator = None
+        if api_key is not None:
+            self.api_key = api_key
+        if channel_id is not None:
+            self.channel_id = channel_id
         if type is not None:
             self.type = type
         if url is not None:
             self.url = url
+
+    @property
+    def api_key(self) -> 'str':
+        """Gets the api_key of this V1SlackNotifier.  # noqa: E501
+
+
+        :return: The api_key of this V1SlackNotifier.  # noqa: E501
+        :rtype: str
+        """
+        return self._api_key
+
+    @api_key.setter
+    def api_key(self, api_key: 'str'):
+        """Sets the api_key of this V1SlackNotifier.
+
+
+        :param api_key: The api_key of this V1SlackNotifier.  # noqa: E501
+        :type: str
+        """
+
+        self._api_key = api_key
+
+    @property
+    def channel_id(self) -> 'str':
+        """Gets the channel_id of this V1SlackNotifier.  # noqa: E501
+
+
+        :return: The channel_id of this V1SlackNotifier.  # noqa: E501
+        :rtype: str
+        """
+        return self._channel_id
+
+    @channel_id.setter
+    def channel_id(self, channel_id: 'str'):
+        """Sets the channel_id of this V1SlackNotifier.
+
+
+        :param channel_id: The channel_id of this V1SlackNotifier.  # noqa: E501
+        :type: str
+        """
+
+        self._channel_id = channel_id
 
     @property
     def type(self) -> 'V1SlackNotifierType':

@@ -43,6 +43,7 @@ class V1Incident(object):
     swagger_types = {
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'details': 'list[V1IncidentDetail]',
         'ended_at': 'datetime',
         'id': 'str',
         'message': 'str',
@@ -63,6 +64,7 @@ class V1Incident(object):
     attribute_map = {
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'details': 'details',
         'ended_at': 'endedAt',
         'id': 'id',
         'message': 'message',
@@ -80,10 +82,11 @@ class V1Incident(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, ended_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, notified: 'bool' =None, project_id: 'str' =None, resolution_notes: 'str' =None, resource: 'str' =None, resource_id: 'str' =None, severity: 'V1IncidentSeverity' =None, started_at: 'datetime' =None, status: 'str' =None, title: 'str' =None, type: 'V1IncidentType' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, details: 'list[V1IncidentDetail]' =None, ended_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, notified: 'bool' =None, project_id: 'str' =None, resolution_notes: 'str' =None, resource: 'str' =None, resource_id: 'str' =None, severity: 'V1IncidentSeverity' =None, started_at: 'datetime' =None, status: 'str' =None, title: 'str' =None, type: 'V1IncidentType' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Incident - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
+        self._details = None
         self._ended_at = None
         self._id = None
         self._message = None
@@ -104,6 +107,8 @@ class V1Incident(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if details is not None:
+            self.details = details
         if ended_at is not None:
             self.ended_at = ended_at
         if id is not None:
@@ -176,6 +181,27 @@ class V1Incident(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def details(self) -> 'list[V1IncidentDetail]':
+        """Gets the details of this V1Incident.  # noqa: E501
+
+
+        :return: The details of this V1Incident.  # noqa: E501
+        :rtype: list[V1IncidentDetail]
+        """
+        return self._details
+
+    @details.setter
+    def details(self, details: 'list[V1IncidentDetail]'):
+        """Sets the details of this V1Incident.
+
+
+        :param details: The details of this V1Incident.  # noqa: E501
+        :type: list[V1IncidentDetail]
+        """
+
+        self._details = details
 
     @property
     def ended_at(self) -> 'datetime':

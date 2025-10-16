@@ -57,6 +57,7 @@ class V1IncidentEvent(object):
         'severity': 'V1IncidentSeverity',
         'threshold': 'float',
         'timestamp': 'datetime',
+        'title': 'str',
         'type': 'V1IncidentType',
         'updated_at': 'datetime'
     }
@@ -78,11 +79,12 @@ class V1IncidentEvent(object):
         'severity': 'severity',
         'threshold': 'threshold',
         'timestamp': 'timestamp',
+        'title': 'title',
         'type': 'type',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, closing: 'bool' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, current_value: 'float' =None, id: 'str' =None, incident_id: 'str' =None, k8s: 'V1K8sIncidentIndexes' =None, message: 'str' =None, multiple_event: 'bool' =None, notified: 'bool' =None, previous_value: 'float' =None, project_id: 'str' =None, resource: 'str' =None, severity: 'V1IncidentSeverity' =None, threshold: 'float' =None, timestamp: 'datetime' =None, type: 'V1IncidentType' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, closing: 'bool' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, current_value: 'float' =None, id: 'str' =None, incident_id: 'str' =None, k8s: 'V1K8sIncidentIndexes' =None, message: 'str' =None, multiple_event: 'bool' =None, notified: 'bool' =None, previous_value: 'float' =None, project_id: 'str' =None, resource: 'str' =None, severity: 'V1IncidentSeverity' =None, threshold: 'float' =None, timestamp: 'datetime' =None, title: 'str' =None, type: 'V1IncidentType' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1IncidentEvent - a model defined in Swagger"""  # noqa: E501
         self._closing = None
         self._cluster_id = None
@@ -100,6 +102,7 @@ class V1IncidentEvent(object):
         self._severity = None
         self._threshold = None
         self._timestamp = None
+        self._title = None
         self._type = None
         self._updated_at = None
         self.discriminator = None
@@ -135,6 +138,8 @@ class V1IncidentEvent(object):
             self.threshold = threshold
         if timestamp is not None:
             self.timestamp = timestamp
+        if title is not None:
+            self.title = title
         if type is not None:
             self.type = type
         if updated_at is not None:
@@ -475,6 +480,27 @@ class V1IncidentEvent(object):
         """
 
         self._timestamp = timestamp
+
+    @property
+    def title(self) -> 'str':
+        """Gets the title of this V1IncidentEvent.  # noqa: E501
+
+
+        :return: The title of this V1IncidentEvent.  # noqa: E501
+        :rtype: str
+        """
+        return self._title
+
+    @title.setter
+    def title(self, title: 'str'):
+        """Sets the title of this V1IncidentEvent.
+
+
+        :param title: The title of this V1IncidentEvent.  # noqa: E501
+        :type: str
+        """
+
+        self._title = title
 
     @property
     def type(self) -> 'V1IncidentType':

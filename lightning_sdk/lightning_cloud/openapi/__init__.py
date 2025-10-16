@@ -633,6 +633,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_ids_logger_metrics import V
 from lightning_sdk.lightning_cloud.openapi.models.v1_image_spec import V1ImageSpec
 from lightning_sdk.lightning_cloud.openapi.models.v1_image_state import V1ImageState
 from lightning_sdk.lightning_cloud.openapi.models.v1_incident import V1Incident
+from lightning_sdk.lightning_cloud.openapi.models.v1_incident_detail import V1IncidentDetail
 from lightning_sdk.lightning_cloud.openapi.models.v1_incident_event import V1IncidentEvent
 from lightning_sdk.lightning_cloud.openapi.models.v1_incident_message import V1IncidentMessage
 from lightning_sdk.lightning_cloud.openapi.models.v1_incident_severity import V1IncidentSeverity
