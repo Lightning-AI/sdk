@@ -589,7 +589,12 @@ class StudioApi:
         )
 
     def duplicate_studio(
-        self, studio_id: str, teamspace_id: str, target_teamspace_id: str, machine: Machine = Machine.CPU
+        self,
+        studio_id: str,
+        teamspace_id: str,
+        target_teamspace_id: str,
+        machine: Machine = Machine.CPU,
+        new_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Duplicates the given Studio from a given Teamspace into a given target Teamspace."""
         target_teamspace = self._client.projects_service_get_project(target_teamspace_id)
@@ -604,7 +609,7 @@ class StudioApi:
             init_kwargs["org"] = OrgApi()._get_org_by_id(target_teamspace.owner_id).name
 
         new_cloudspace = self._client.cloud_space_service_fork_cloud_space(
-            IdForkBody1(target_project_id=target_teamspace_id), project_id=teamspace_id, id=studio_id
+            IdForkBody1(target_project_id=target_teamspace_id, new_name=new_name), project_id=teamspace_id, id=studio_id
         )
 
         while self.get_studio_by_id(new_cloudspace.id, target_teamspace_id).state != V1CloudSpaceState.READY:

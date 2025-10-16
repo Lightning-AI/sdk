@@ -771,6 +771,138 @@ def test_duplicate_org(
     assert kwargs == {"name": "st-abc-de", "teamspace": "teamspace-abc", "org": "org-abc"}
 
 
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user", autospec=True
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.user_service_api.UserServiceApi.user_service_search_users", autospec=True
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+    autospec=True,
+)
+def test_duplicate_user_with_new_name(
+    mock_get_project,
+    mock_search_users,
+    mock_get_user,
+    mock_get_status,
+    mock_start_instance,
+    mock_get_cloudspace,
+    mock_fork_cloudspace,
+):
+    mock_get_project.return_value = V1Project(
+        id="ts-abc", name="teamspace-abc", display_name="Teamspace ABC", owner_id="user-abc", owner_type="user"
+    )
+    mock_search_users.return_value = V1SearchUsersResponse(users=[V1SearchUser(id="user-abc", username="user-abc")])
+    mock_get_user.return_value = V1GetUserResponse(id="user-abc", username="user-abc")
+    mock_fork_cloudspace.return_value = V1CloudSpace(
+        name="my-custom-studio", display_name="my-custom-studio", id="st-custom"
+    )
+    mock_get_cloudspace.return_value = V1CloudSpace(
+        name="my-custom-studio", display_name="my-custom-studio", id="st-custom", state=V1CloudSpaceState.READY
+    )
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        in_use=Externalv1CloudSpaceInstanceStatus(
+            startup_status=V1CloudSpaceInstanceStartupStatus(
+                initial_restore_finished=True, top_up_restore_finished=True
+            ),
+        )
+    )
+
+    studio_api = StudioApi()
+    kwargs = studio_api.duplicate_studio("st-abc", "ts-abc", "ts-abc", new_name="my-custom-studio")
+
+    mock_fork_cloudspace.assert_called_once()
+    call_args = mock_fork_cloudspace.call_args
+    body = call_args[0][1]
+    assert body.new_name == "my-custom-studio"
+    assert kwargs == {"name": "my-custom-studio", "teamspace": "teamspace-abc", "user": "user-abc"}
+
+
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_fork_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
+    autospec=True,
+)
+def test_duplicate_org_with_new_name(
+    mock_get_project,
+    mock_get_org,
+    mock_get_status,
+    mock_start_instance,
+    mock_get_cloudspace,
+    mock_fork_cloudspace,
+):
+    mock_get_project.return_value = V1Project(
+        id="ts-abc",
+        name="teamspace-abc",
+        display_name="Teamspace ABC",
+        owner_id="org-abc",
+        owner_type="organization",
+    )
+    mock_get_org.return_value = V1Organization(name="org-abc", display_name="org-abc", id="org-abc")
+    mock_fork_cloudspace.return_value = V1CloudSpace(
+        name="renamed-studio", display_name="renamed-studio", id="st-renamed"
+    )
+    mock_get_cloudspace.return_value = V1CloudSpace(
+        name="renamed-studio",
+        display_name="renamed-studio",
+        id="st-renamed",
+        state=V1CloudSpaceState.READY,
+        cluster_id="c-abc",
+    )
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        in_use=Externalv1CloudSpaceInstanceStatus(
+            startup_status=V1CloudSpaceInstanceStartupStatus(
+                initial_restore_finished=True, top_up_restore_finished=True
+            ),
+        )
+    )
+
+    studio_api = StudioApi()
+    kwargs = studio_api.duplicate_studio("st-abc", "ts-abc", "ts-abc", new_name="renamed-studio")
+
+    mock_fork_cloudspace.assert_called_once()
+    call_args = mock_fork_cloudspace.call_args
+    body = call_args[0][1]
+    assert body.new_name == "renamed-studio"
+    assert kwargs == {"name": "renamed-studio", "teamspace": "teamspace-abc", "org": "org-abc"}
+
+
 @pytest.mark.parametrize(
     ("studio_id", "expect_error", "error_message", "expect_info"),
     [

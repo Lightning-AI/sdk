@@ -353,7 +353,10 @@ class Studio:
         self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
 
     def duplicate(
-        self, target_teamspace: Optional[Union["Teamspace", str]] = None, machine: Machine = Machine.CPU
+        self,
+        target_teamspace: Optional[Union["Teamspace", str]] = None,
+        machine: Machine = Machine.CPU,
+        name: Optional[str] = None,
     ) -> "Studio":
         """Duplicates the existing Studio.
 
@@ -386,6 +389,7 @@ class Studio:
             teamspace_id=self._teamspace.id,
             target_teamspace_id=target_teamspace_id,
             machine=machine,
+            new_name=name,
         )
         return Studio(**kwargs)
 
