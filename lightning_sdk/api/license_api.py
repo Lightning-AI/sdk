@@ -1,70 +1,37 @@
-import os
-from typing import Optional
-from urllib.parse import urlencode
-
-from lightning_sdk.lightning_cloud import env
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
-
-LICENSE_CODE = os.environ.get("LICENSE_CODE", "d9s79g79ss")
-# https://lightning.ai/home?settings=licenses
-LICENSE_SIGNING_URL = f"{env.LIGHTNING_CLOUD_URL}?settings=licenses"
-
-
-def generate_url_user_settings(name: str, redirect_to: str = LICENSE_SIGNING_URL) -> str:
-    params = urlencode({"redirectTo": redirect_to, "okbhrt": LICENSE_CODE, "licenseName": name})
-    return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
+from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
+from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud.openapi import LicenseKeyValidateBody, ProductLicenseServiceApi
 
 
 class LicenseApi:
-    _client_authenticated: LightningClient = None
-    _client_public: LightningClient = None
+    def __init__(self, login_token: str) -> None:
+        self._cloud_url = _cloud_url()
+        self._auth = Auth()
+        self._auth.token_login(login_token, save_token=True)
+        self._client = self._auth.create_api_client()
+        self._api = ProductLicenseServiceApi(self._client)
 
-    @property
-    def client_public(self) -> LightningClient:
-        if not self._client_public:
-            self._client_public = LightningClient(retry=False, max_tries=0, with_auth=False)
-        return self._client_public
-
-    @property
-    def client_authenticated(self) -> LightningClient:
-        if not self._client_authenticated:
-            self._client_authenticated = LightningClient(retry=True, max_tries=3, with_auth=True)
-        return self._client_authenticated
-
-    def valid_license(
-        self,
-        license_key: str,
-        product_name: str,
-        product_version: Optional[str] = None,
-        product_type: str = "package",
-    ) -> bool:
-        """Check if the license key is valid.
+    def validate_license(self, license_key: str, product_id: str) -> bool:
+        """Validate a license key for a specific product.
 
         Args:
-            license_key: The license key to check.
-            product_name: The name of the product.
-            product_version: The version of the product.
-            product_type: The type of the product. Default is "package".
+            license_key: The license key to validate
+            product_id: The product ID
 
         Returns:
-            True if the license key is valid, False otherwise.
+            bool: True if license is valid, False otherwise
+
+        Raises:
+            Exception: If license validation fails
         """
-        response = self.client_public.product_license_service_validate_product_license(
-            license_key=license_key,
-            product_name=product_name,
-            product_version=product_version,
-            product_type=product_type,
-        )
-        return response.valid
+        try:
+            response = self._api.product_license_service_validate_license(
+                body=LicenseKeyValidateBody(product_id=product_id), license_key=license_key
+            )
+            return response.is_valid
+        except Exception:
+            raise InvalidLicenseError(f"Invalid license key {license_key} for product {product_id}") from None
 
-    def list_user_licenses(self, user_id: str) -> list:
-        """List all licenses for a user.
 
-        Args:
-            user_id: The ID of the user.
-
-        Returns:
-            A list of licenses for the user.
-        """
-        response = self.client_authenticated.product_license_service_list_user_licenses(user_id=user_id)
-        return response.licenses
+class InvalidLicenseError(Exception):
+    pass
