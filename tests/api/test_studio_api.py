@@ -172,6 +172,7 @@ def test_get_studio_status(mock_get_status):
         Machine.A100_X_2,
         Machine.A100_X_4,
         Machine.B200_X_8,
+        Machine.T4_SMALL,
     ],
 )
 @mock.patch(
@@ -378,6 +379,7 @@ def test_delete_studio(mock_delete_cloud_space):
         ("st-lmn", Machine.B200_X_8),
         ("st-opq", Machine.CPU_SMALL),
         ("st-rst", Machine.L4_X_2),
+        ("st-uvw", Machine.T4_SMALL),
     ],
 )
 @mock.patch(
@@ -422,6 +424,7 @@ def test_get_machine(
         "st-lmn": "a4-highgpu-8g",
         "st-opq": "n2d-standard-2",
         "st-rst": "g2-standard-24",
+        "st-uvw": "lit-t4-1-small",
     }
 
     def _side_effect(self, project_id, id, **kwargs):

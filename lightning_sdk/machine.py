@@ -34,6 +34,7 @@ class Machine:
 
     # supported GPU types
     # supported T4 variations
+    T4_SMALL: ClassVar["Machine"]
     T4: ClassVar["Machine"]
     T4_X_2: ClassVar["Machine"]
     T4_X_4: ClassVar["Machine"]
@@ -162,6 +163,7 @@ Machine.DATA_PREP_ULTRA = Machine(
 
 # GPU machines
 # available T4 machines
+Machine.T4_SMALL = Machine(name="T4_SMALL", slug="lit-t4-1-small", family="T4", accelerator_count=1)
 Machine.T4 = Machine(name="T4", slug="lit-t4-1", family="T4", accelerator_count=1)
 Machine.T4_X_2 = Machine(name="T4_X_2", slug="lit-t4-2", family="T4", accelerator_count=2)
 Machine.T4_X_4 = Machine(name="T4_X_4", slug="lit-t4-4", family="T4", accelerator_count=4)

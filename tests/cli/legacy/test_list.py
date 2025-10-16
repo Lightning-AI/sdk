@@ -124,6 +124,7 @@ def test_machines_output():
 │ L4_X_4          │
 │ L4_X_8          │
 │ T4              │
+│ T4_SMALL        │
 │ T4_X_2          │
 │ T4_X_4          │
 │ T4_X_8          │

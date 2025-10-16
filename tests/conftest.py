@@ -450,6 +450,7 @@ def internal_studio_api_mocker_get_machine(mocker):
         "st-lmn": "a4-highgpu-8g",
         "st-opq": "n2d-standard-2",
         "st-rst": "g2-standard-24",
+        "st-uvw": "g4dn.xlarge",
     }
 
     def _side_effect(self, project_id, id, **kwargs):
