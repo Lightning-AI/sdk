@@ -2,15 +2,8 @@
 
 import os
 import sys
-import traceback
-from types import TracebackType
-from typing import Type
 
 import click
-from rich.console import Group
-from rich.panel import Panel
-from rich.syntax import Syntax
-from rich.text import Text
 
 from lightning_sdk import __version__
 from lightning_sdk.api.studio_api import _cloud_url
@@ -24,38 +17,19 @@ from lightning_sdk.cli.groups import (
     studio,
     vm,
 )
-from lightning_sdk.cli.utils import CustomHelpFormatter, rich_to_str
-from lightning_sdk.constants import _LIGHTNING_DEBUG
+from lightning_sdk.cli.utils import CustomHelpFormatter
+from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
 
 
-def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:
-    """CLI won't show tracebacks, just print the exception message."""
-    message = str(value.args[0]) if value.args else str(value) or "An unknown error occurred"
-
-    error_text = Text()
-    error_text.append(f"{exception_type.__name__}: ", style="bold red")
-    error_text.append(message, style="white")
-
-    renderables = [error_text]
-
-    if _LIGHTNING_DEBUG:
-        tb_text = "".join(traceback.format_exception(exception_type, value, tb))
-        renderables.append(Text("\n\nFull traceback:\n", style="bold yellow"))
-        renderables.append(Syntax(tb_text, "python", theme="monokai light", line_numbers=False, word_wrap=True))
-    else:
-        renderables.append(Text("\n\n🐞 To view the full traceback, set: LIGHTNING_DEBUG=1"))
-
-    renderables.append(Text("\n📘 Need help? Run: lightning <command> --help", style="cyan"))
-
-    text = rich_to_str(Panel(Group(*renderables), title="⚡ Lightning CLI Error", border_style="red"))
-    click.echo(text, color=True)
-
-
-@click.group(name="lightning", help="Command line interface (CLI) to interact with/manage Lightning AI Studios.")
+@click.group(
+    name="lightning",
+    help="Command line interface (CLI) to interact with/manage Lightning AI Studios.",
+    cls=CommandLoggingGroup,
+)
 @click.version_option(__version__, message="Lightning CLI version %(version)s")
 def main_cli() -> None:
-    sys.excepthook = _notify_exception
+    sys.excepthook = logging_excepthook
 
 
 main_cli.context_class.formatter_class = CustomHelpFormatter

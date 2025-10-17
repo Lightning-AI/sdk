@@ -16,7 +16,7 @@ def configure_ssh_internal(force_download: bool = False) -> str:
 
 
 def download_ssh_keys(
-    api_key: str | None,
+    api_key: Optional[str],
     force_download: bool = False,
     ssh_key_name: str = "lightning_rsa",
 ) -> str:
