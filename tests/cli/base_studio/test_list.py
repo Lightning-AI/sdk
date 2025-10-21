@@ -55,8 +55,8 @@ def test_format_base_studio_name():
         with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
             list_impl(include_disabled=False)
 
-            # Verify list was called twice (managed=True and managed=False)
-            assert mock_instance.list.call_count == 2
+            # Verify list was called
+            assert mock_instance.list.call_count == 1
 
             # Get the table output that was echoed
             echo_call_args = mock_echo.call_args[0][0]
@@ -64,57 +64,6 @@ def test_format_base_studio_name():
             # Check that names are transformed to lowercase with hyphens
             assert "python-studio" in echo_call_args
             assert "data-science-pro" in echo_call_args
-
-
-def test_list_includes_managed_and_unmanaged():
-    """Test that list retrieves both managed and unmanaged base studios."""
-    from unittest.mock import Mock, patch
-
-    from lightning_sdk.base_studio import BaseStudioInfo
-    from lightning_sdk.cli.base_studio.list import list_impl
-
-    managed_studios = [
-        BaseStudioInfo(
-            id="1",
-            name="Managed Studio",
-            managed_id="managed-1",
-            description="Managed by Lightning",
-            creator="⚡ Lightning AI",
-            enabled=True,
-        ),
-    ]
-
-    unmanaged_studios = [
-        BaseStudioInfo(
-            id="2",
-            name="Custom Studio",
-            managed_id="",
-            description="Custom user studio",
-            creator="custom_user",
-            enabled=True,
-        ),
-    ]
-
-    with patch("lightning_sdk.cli.base_studio.list.BaseStudio") as mock_base_studio_cls:
-        mock_instance = Mock()
-        mock_instance.list.side_effect = [managed_studios, unmanaged_studios]
-        mock_base_studio_cls.return_value = mock_instance
-
-        with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
-            list_impl(include_disabled=False)
-
-            # Verify list was called with managed=True (default) and managed=False
-            calls = mock_instance.list.call_args_list
-            assert len(calls) == 2
-            # First call with default (managed=True) and include_disabled=False
-            assert calls[0][1].get("include_disabled") is False
-            # Second call with managed=False and include_disabled=False
-            assert calls[1][1] == {"managed": False, "include_disabled": False}
-
-            # Verify both studios appear in output
-            echo_call_args = mock_echo.call_args[0][0]
-            assert "managed-studio" in echo_call_args
-            assert "custom-studio" in echo_call_args
 
 
 def test_list_handles_empty_description():
@@ -202,10 +151,8 @@ def test_list_excludes_disabled_by_default():
             list_impl(include_disabled=False)
 
             calls = mock_instance.list.call_args_list
-            assert len(calls) == 2
+            assert len(calls) == 1
             assert calls[0][1]["include_disabled"] is False
-            assert calls[1][1]["include_disabled"] is False
-            assert calls[1][1]["managed"] is False
 
             echo_call_args = mock_echo.call_args[0][0]
             assert "enabled-studio" in echo_call_args
@@ -246,10 +193,8 @@ def test_list_includes_disabled_when_flag_set():
             list_impl(include_disabled=True)
 
             calls = mock_instance.list.call_args_list
-            assert len(calls) == 2
+            assert len(calls) == 1
             assert calls[0][1]["include_disabled"] is True
-            assert calls[1][1]["include_disabled"] is True
-            assert calls[1][1]["managed"] is False
 
             echo_call_args = mock_echo.call_args[0][0]
             assert "enabled-studio" in echo_call_args
@@ -365,7 +310,7 @@ def test_list_displays_creator_for_custom_studios():
 
     with patch("lightning_sdk.cli.base_studio.list.BaseStudio") as mock_base_studio_cls:
         mock_instance = Mock()
-        mock_instance.list.side_effect = [[], custom_studios]
+        mock_instance.list.return_value = custom_studios
         mock_base_studio_cls.return_value = mock_instance
 
         with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:
@@ -384,7 +329,7 @@ def test_list_displays_mixed_creators():
     from lightning_sdk.base_studio import BaseStudioInfo
     from lightning_sdk.cli.base_studio.list import list_impl
 
-    managed_studios = [
+    studios = [
         BaseStudioInfo(
             id="1",
             name="Managed",
@@ -393,9 +338,6 @@ def test_list_displays_mixed_creators():
             creator="⚡ Lightning AI",
             enabled=True,
         ),
-    ]
-
-    custom_studios = [
         BaseStudioInfo(
             id="2",
             name="Custom",
@@ -408,7 +350,7 @@ def test_list_displays_mixed_creators():
 
     with patch("lightning_sdk.cli.base_studio.list.BaseStudio") as mock_base_studio_cls:
         mock_instance = Mock()
-        mock_instance.list.side_effect = [managed_studios, custom_studios]
+        mock_instance.list.return_value = studios
         mock_base_studio_cls.return_value = mock_instance
 
         with patch("lightning_sdk.cli.base_studio.list.click.echo") as mock_echo:

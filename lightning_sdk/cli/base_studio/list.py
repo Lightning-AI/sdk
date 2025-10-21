@@ -21,9 +21,7 @@ def list_base_studios(include_disabled: bool) -> None:
 
 def list_impl(include_disabled: bool) -> None:
     base_studio_cls = BaseStudio()
-    base_studios = base_studio_cls.list(include_disabled=include_disabled) + base_studio_cls.list(
-        managed=False, include_disabled=include_disabled
-    )
+    base_studios = base_studio_cls.list(include_disabled=include_disabled)
 
     table = Table(
         pad_edge=True,

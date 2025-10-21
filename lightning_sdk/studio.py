@@ -119,7 +119,7 @@ class Studio:
 
         self._studio_type = None
         if studio_type:
-            self._base_studio = BaseStudio()
+            self._base_studio = BaseStudio(teamspace=self._teamspace)
             self._available_base_studios = self._base_studio.list()
             for bst in self._available_base_studios:
                 if (

@@ -15,24 +15,28 @@ class BaseStudioApi:
     def __init__(self) -> None:
         self._client = LightningClient(retry=False, max_tries=0)
 
-    def get_base_studio(self, base_studio_id: str, org_id: str) -> V1CloudSpaceEnvironmentTemplate:
+    def get_base_studio(self, base_studio_id: str, org_id: Optional[str] = None) -> V1CloudSpaceEnvironmentTemplate:
         """Retrieve the base studio by its ID."""
         try:
             return self._client.cloud_space_environment_template_service_get_cloud_space_environment_template(
-                base_studio_id, org_id=org_id
+                base_studio_id, org_id=org_id or ""
             )
         except ValueError as e:
             raise ValueError(f"Base studio {base_studio_id} does not exist") from e
 
-    def get_all_base_studios(self, org_id: str, managed: bool = True) -> V1ListCloudSpaceEnvironmentTemplatesResponse:
+    def get_all_base_studios(self, org_id: Optional[str]) -> V1ListCloudSpaceEnvironmentTemplatesResponse:
         """Retrieve all base studios for a given organization."""
-        if managed:
-            return self._client.cloud_space_environment_template_service_list_managed_cloud_space_environment_templates(
-                org_id=org_id
-            )
-        return self._client.cloud_space_environment_template_service_list_cloud_space_environment_templates(
-            org_id=org_id
+        result = self._client.cloud_space_environment_template_service_list_managed_cloud_space_environment_templates(
+            org_id=org_id or ""
         )
+        if org_id is not None:
+            org_templates = (
+                self._client.cloud_space_environment_template_service_list_cloud_space_environment_templates(
+                    org_id=org_id
+                )
+            )
+            result.templates = result.templates + org_templates.templates
+        return result
 
     def update_base_studio(
         self,

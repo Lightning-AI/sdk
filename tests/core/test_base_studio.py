@@ -11,12 +11,8 @@ from lightning_sdk.lightning_cloud.openapi.models import (
 
 
 def test_base_studio_update(monkeypatch):
-    resolve_user_mock = MagicMock()
-    monkeypatch.setattr(base_studio_module, "_resolve_user", resolve_user_mock)
-
-    mock_org = MagicMock()
-    mock_org.name = "org"
-    monkeypatch.setattr(base_studio_module, "_resolve_org", mock_org)
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(base_studio_module, "_resolve_teamspace", resolve_teamspace_mock)
 
     client = MagicMock()
     monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
@@ -50,14 +46,12 @@ def test_base_studio_update(monkeypatch):
     assert call_body.allowed_machines == ["machine1", "machine2"]
 
 
-@pytest.mark.parametrize("managed", [True, False])
-def test_base_studio_list(monkeypatch, managed):
-    resolve_user_mock = MagicMock()
-    monkeypatch.setattr(base_studio_module, "_resolve_user", resolve_user_mock)
+def test_base_studio_list(monkeypatch):
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(base_studio_module, "_resolve_teamspace", resolve_teamspace_mock)
 
     mock_org = MagicMock()
     mock_org.id = "org-id"
-    monkeypatch.setattr(base_studio_module, "_resolve_org", mock_org)
 
     client = MagicMock()
     monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
@@ -83,7 +77,7 @@ def test_base_studio_list(monkeypatch, managed):
     )
     base_studio._base_studio_api.get_all_base_studios = mock_get_all
 
-    a = base_studio.list(managed=managed)
+    a = base_studio.list()
 
     assert mock_get_all.called
     assert mock_get_all.call_count == 1
@@ -95,12 +89,11 @@ def test_base_studio_list(monkeypatch, managed):
 @pytest.mark.parametrize(("include_disabled", "expected_count"), [(True, 3), (False, 2), (None, 2)])
 def test_base_studio_list_with_disabled_templates(monkeypatch, include_disabled, expected_count):
     """Test that include_disabled parameter correctly filters disabled templates."""
-    resolve_user_mock = MagicMock()
-    monkeypatch.setattr(base_studio_module, "_resolve_user", resolve_user_mock)
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(base_studio_module, "_resolve_teamspace", resolve_teamspace_mock)
 
     mock_org = MagicMock()
     mock_org.id = "org-id"
-    monkeypatch.setattr(base_studio_module, "_resolve_org", mock_org)
 
     client = MagicMock()
     monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
@@ -158,12 +151,11 @@ def test_base_studio_list_with_disabled_templates(monkeypatch, include_disabled,
 
 def test_base_studio_list_creator_managed_templates(monkeypatch):
     """Test that managed templates show '⚡ Lightning AI' as creator."""
-    resolve_user_mock = MagicMock()
-    monkeypatch.setattr(base_studio_module, "_resolve_user", resolve_user_mock)
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(base_studio_module, "_resolve_teamspace", resolve_teamspace_mock)
 
     mock_org = MagicMock()
     mock_org.id = "org-id"
-    monkeypatch.setattr(base_studio_module, "_resolve_org", mock_org)
 
     client = MagicMock()
     monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
@@ -191,7 +183,7 @@ def test_base_studio_list_creator_managed_templates(monkeypatch):
     )
     base_studio._base_studio_api.get_all_base_studios = mock_get_all
 
-    result = base_studio.list(managed=True, include_disabled=False)
+    result = base_studio.list(include_disabled=False)
 
     assert len(result) == 2
     assert result[0].creator == "⚡ Lightning AI"
@@ -200,12 +192,11 @@ def test_base_studio_list_creator_managed_templates(monkeypatch):
 
 def test_base_studio_list_creator_unmanaged_templates(monkeypatch):
     """Test that unmanaged templates show the username of the creator."""
-    resolve_user_mock = MagicMock()
-    monkeypatch.setattr(base_studio_module, "_resolve_user", resolve_user_mock)
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(base_studio_module, "_resolve_teamspace", resolve_teamspace_mock)
 
     mock_org = MagicMock()
     mock_org.id = "org-id"
-    monkeypatch.setattr(base_studio_module, "_resolve_org", mock_org)
 
     client = MagicMock()
     monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
@@ -251,7 +242,7 @@ def test_base_studio_list_creator_unmanaged_templates(monkeypatch):
     )
     base_studio._base_studio_api.get_all_base_studios = mock_get_all
 
-    result = base_studio.list(managed=False, include_disabled=False)
+    result = base_studio.list(include_disabled=False)
 
     assert len(result) == 2
     assert result[0].creator == "fake_user"
@@ -260,12 +251,11 @@ def test_base_studio_list_creator_unmanaged_templates(monkeypatch):
 
 def test_base_studio_list_creator_mixed_templates(monkeypatch):
     """Test that mixed managed and unmanaged templates show correct creators."""
-    resolve_user_mock = MagicMock()
-    monkeypatch.setattr(base_studio_module, "_resolve_user", resolve_user_mock)
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(base_studio_module, "_resolve_teamspace", resolve_teamspace_mock)
 
     mock_org = MagicMock()
     mock_org.id = "org-id"
-    monkeypatch.setattr(base_studio_module, "_resolve_org", mock_org)
 
     client = MagicMock()
     monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
