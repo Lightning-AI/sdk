@@ -2,6 +2,7 @@
 
 import subprocess
 import sys
+from contextlib import suppress
 from typing import Optional
 
 import click
@@ -16,6 +17,43 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.names import random_unique_name
+
+
+def _parse_args_or_get_from_current_studio(
+    teamspace: Optional[str],
+    cloud_account: Optional[str],
+    studio_type: Optional[str],
+    machine: Optional[str],
+    gpus: Optional[str],
+    cloud_provider: Optional[str],
+    name: Optional[str],
+) -> tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
+    # Parse args provided by user
+    menu = TeamspacesMenu()
+    resolved_teamspace = menu(teamspace)
+    save_teamspace_to_config(resolved_teamspace, overwrite=False)
+
+    template_id = get_base_studio_id(studio_type)
+
+    if cloud_provider is not None:
+        cloud_provider = CloudProvider(cloud_provider)
+
+    name = name or random_unique_name()
+
+    with suppress(ValueError):
+        # Gets current studio context to use its parameters as defaults
+        s = Studio()
+        if not teamspace:
+            resolved_teamspace = s.teamspace
+            save_teamspace_to_config(resolved_teamspace, overwrite=False)
+        if not cloud_account:
+            cloud_account = s.cloud_account
+        if not template_id:
+            template_id = s._studio.environment_template_id
+        if not machine and not gpus:
+            machine = s.machine
+
+    return resolved_teamspace, cloud_account, template_id, machine, cloud_provider, name
 
 
 @click.command("connect")
@@ -65,23 +103,14 @@ def connect_studio(
     Example:
         lightning studio connect
     """
-    menu = TeamspacesMenu()
-
-    resolved_teamspace = menu(teamspace)
-    save_teamspace_to_config(resolved_teamspace, overwrite=False)
-
-    if cloud_provider is not None:
-        cloud_provider = CloudProvider(cloud_provider)
-
-    name = name or random_unique_name()
-
-    # check for available base studios
-    template_id = get_base_studio_id(studio_type)
+    teamspace, cloud_account, template_id, machine, cloud_provider, name = _parse_args_or_get_from_current_studio(
+        teamspace, cloud_account, studio_type, machine, gpus, cloud_provider, name
+    )
 
     try:
         studio = Studio(
             name=name,
-            teamspace=resolved_teamspace,
+            teamspace=teamspace,
             create_ok=True,
             cloud_provider=cloud_provider,
             cloud_account=cloud_account,
