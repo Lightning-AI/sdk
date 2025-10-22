@@ -55,7 +55,7 @@ def test_connect_studio_machine_and_gpus_mutually_exclusive(monkeypatch):
 
     with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
         "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect._get_base_studio_id", return_value="template-id"), patch(
+    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"), patch(
         "lightning_sdk.cli.studio.connect.Studio"
     ), patch("lightning_sdk.cli.studio.connect.save_studio_to_config"), patch(
         "lightning_sdk.cli.studio.connect.configure_ssh_internal"
@@ -85,7 +85,7 @@ def test_connect_studio_with_gpus_option(monkeypatch):
 
     with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
         "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect._get_base_studio_id", return_value="template-id"), patch(
+    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"), patch(
         "lightning_sdk.cli.studio.connect.Studio", mock_studio_class
     ), patch("lightning_sdk.cli.studio.connect.save_studio_to_config"), patch(
         "lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"
@@ -119,7 +119,7 @@ def test_connect_studio_uses_default_machine(monkeypatch):
 
     with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
         "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect._get_base_studio_id", return_value="template-id"), patch(
+    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"), patch(
         "lightning_sdk.cli.studio.connect.Studio", mock_studio_class
     ), patch("lightning_sdk.cli.studio.connect.save_studio_to_config"), patch(
         "lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"

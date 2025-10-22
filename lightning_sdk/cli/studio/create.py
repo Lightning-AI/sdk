@@ -4,6 +4,7 @@ from typing import Optional
 
 import click
 
+from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
@@ -25,18 +26,34 @@ from lightning_sdk.studio import VM, Studio
     help="The cloud account to create the studio on. Defaults to teamspace default.",
     type=click.STRING,
 )
+@click.option(
+    "--studio-type",
+    help="The base studio template name to use for creating the studio. "
+    "Must be lowercase and hyphenated (use '-' instead of spaces). "
+    "Run 'lightning base-studio list' to see all available templates. "
+    "Defaults to the first available template.",
+    type=click.STRING,
+)
 def create_studio(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     cloud_provider: Optional[str] = None,
     cloud_account: Optional[str] = None,
+    studio_type: Optional[str] = None,
 ) -> None:
     """Create a new Studio.
 
     Example:
         lightning studio create
     """
-    create_impl(name=name, teamspace=teamspace, cloud_provider=cloud_provider, cloud_account=cloud_account, vm=False)
+    create_impl(
+        name=name,
+        teamspace=teamspace,
+        cloud_provider=cloud_provider,
+        cloud_account=cloud_account,
+        vm=False,
+        studio_type=studio_type,
+    )
 
 
 def create_impl(
@@ -45,6 +62,7 @@ def create_impl(
     cloud_provider: Optional[str],
     cloud_account: Optional[str],
     vm: bool,
+    studio_type: Optional[str],
 ) -> None:
     menu = TeamspacesMenu()
 
@@ -57,6 +75,9 @@ def create_impl(
     create_cls = VM if vm else Studio
     cls_name = create_cls.__qualname__
 
+    # check for available base studios
+    template_id = get_base_studio_id(studio_type)
+
     try:
         create_cls = VM if vm else Studio
         studio = create_cls(
@@ -65,6 +86,7 @@ def create_impl(
             create_ok=True,
             cloud_provider=cloud_provider,
             cloud_account=cloud_account,
+            template_id=template_id,
         )
     except (RuntimeError, ValueError, ApiException):
         if name:

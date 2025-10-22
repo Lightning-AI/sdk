@@ -6,7 +6,7 @@ from typing import Optional
 
 import click
 
-from lightning_sdk.base_studio import BaseStudio
+from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
 from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config, save_teamspace_to_config
@@ -16,27 +16,6 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.names import random_unique_name
-
-
-def _get_base_studio_id(studio_type: Optional[str]) -> Optional[str]:
-    base_studios = BaseStudio()
-    base_studios = base_studios.list()
-    template_id = None
-
-    if base_studios and len(base_studios):
-        # if not specified by user, use the first existing template studio
-        template_id = base_studios[0].id
-        # else, try to match the provided studio_type to base studio name
-        if studio_type:
-            normalized_studio_type = studio_type.lower().replace(" ", "-")
-            match = next(
-                (s for s in base_studios if s.name.lower().replace(" ", "-") == normalized_studio_type),
-                None,
-            )
-            if match:
-                template_id = match.id
-
-    return template_id
 
 
 @click.command("connect")
@@ -97,7 +76,7 @@ def connect_studio(
     name = name or random_unique_name()
 
     # check for available base studios
-    template_id = _get_base_studio_id(studio_type)
+    template_id = get_base_studio_id(studio_type)
 
     try:
         studio = Studio(
