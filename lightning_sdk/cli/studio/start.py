@@ -4,6 +4,7 @@ from typing import Optional
 
 import click
 
+from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
@@ -32,8 +33,7 @@ from lightning_sdk.studio import VM, Studio
 @click.option(
     "--cloud-provider",
     help=(
-        "The cloud provider to start the studio on. Defaults to teamspace default. "
-        "Only used if --create is specified."
+        "The cloud provider to start the studio on. Defaults to teamspace default. Only used if --create is specified."
     ),
     type=click.Choice(m.name for m in list(CloudProvider)),
 )
@@ -42,11 +42,17 @@ from lightning_sdk.studio import VM, Studio
     help="The cloud account to start the studio on. Defaults to teamspace default. Only used if --create is specified.",
     type=click.STRING,
 )
+@click.option(
+    "--gpus",
+    help="The number and type of GPUs to start the studio on (format: TYPE:COUNT, e.g. L4:4)",
+    type=click.STRING,
+)
 def start_studio(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     create: bool = False,
     machine: str = "CPU",
+    gpus: Optional[str] = None,
     interruptible: bool = False,
     cloud_provider: Optional[str] = None,
     cloud_account: Optional[str] = None,
@@ -62,6 +68,7 @@ def start_studio(
         teamspace=teamspace,
         create=create,
         machine=machine,
+        gpus=gpus,
         interruptible=interruptible,
         cloud_provider=cloud_provider,
         cloud_account=cloud_account,
@@ -74,6 +81,7 @@ def start_impl(
     teamspace: Optional[str],
     create: bool,
     machine: str,
+    gpus: Optional[str],
     interruptible: bool,
     cloud_provider: Optional[str],
     cloud_account: Optional[str],
@@ -97,6 +105,8 @@ def start_impl(
             cloud_provider=cloud_provider,
             cloud_account=cloud_account,
         )
+
+    machine = handle_machine_and_gpus_args(machine, gpus)
 
     save_studio_to_config(studio)
 

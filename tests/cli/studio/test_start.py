@@ -33,6 +33,8 @@ Options:
   --cloud-account TEXT            The cloud account to start the studio on.
                                   Defaults to teamspace default. Only used if
                                   --create is specified.
+  --gpus TEXT                     The number and type of GPUs to start the
+                                  studio on (format: TYPE:COUNT, e.g. L4:4)
   --help                          Show this message and exit.
 """  # noqa: E501
     )
