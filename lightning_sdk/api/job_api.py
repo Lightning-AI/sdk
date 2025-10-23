@@ -250,6 +250,7 @@ class JobApiV2:
         artifacts_local: Optional[str],  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str],  # deprecated in favor of path_mappings
         max_runtime: Optional[int] = None,
+        reuse_snapshot: bool = True,
     ) -> V1Job:
         body = self._create_job_body(
             name=name,
@@ -267,6 +268,7 @@ class JobApiV2:
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
             max_runtime=max_runtime,
+            reuse_snapshot=reuse_snapshot,
         )
 
         job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
@@ -288,6 +290,7 @@ class JobApiV2:
         path_mappings: Optional[Dict[str, str]],
         artifacts_local: Optional[str],  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str],  # deprecated in favor of path_mappings)
+        reuse_snapshot: bool,
         max_runtime: Optional[int] = None,
         machine_image_version: Optional[str] = None,
     ) -> ProjectIdJobsBody:
@@ -298,7 +301,7 @@ class JobApiV2:
 
         instance_name = _machine_to_compute_name(machine)
 
-        run_id = __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id] if studio_id is not None else ""
+        run_id = __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id] if (studio_id is not None and reuse_snapshot) else ""
 
         path_mappings_list = resolve_path_mappings(
             mappings=path_mappings or {},

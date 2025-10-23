@@ -185,6 +185,7 @@ def test_submit_job_v2_image(
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
+        reuse_snapshot=True,
     )
 
 
@@ -223,6 +224,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
+        reuse_snapshot=True,
     )
 
 
@@ -470,6 +472,7 @@ def test_submit_jobv2_studio_resolve(
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
+        reuse_snapshot=True,
     )
 
 
@@ -535,6 +538,7 @@ def test_submit_jobv2_studio_path(
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
+        reuse_snapshot=True,
     )
 
     job._internal_job._job = V1Job(
@@ -591,6 +595,7 @@ def test_submit_job_v2_image_from_studio(
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
+        reuse_snapshot=True,
     )
     assert keeping_alive_mock.call_count == 0
 

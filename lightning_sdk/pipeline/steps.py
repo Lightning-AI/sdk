@@ -239,6 +239,7 @@ class JobStep:
             artifacts_remote=None,
             max_runtime=self.max_runtime,
             machine_image_version=machine_image_version,
+            reuse_snapshot=True,
         )
 
         return V1PipelineStep(

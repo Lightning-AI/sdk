@@ -54,6 +54,7 @@ class _JobV1(_BaseJob):
         cloud_provider: Optional[str] = None,
         interruptible: bool = False,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
+        reuse_snapshot: bool = True,
     ) -> "_BaseJob":
         """Start a new async workload from your studio.
 
@@ -89,6 +90,7 @@ class _JobV1(_BaseJob):
             cluster=cluster,
             path_mappings=None,
             max_runtime=None,
+            reuse_snapshot=reuse_snapshot,
         )
 
     def _submit(
@@ -108,6 +110,7 @@ class _JobV1(_BaseJob):
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
+        reuse_snapshot: bool = True,
     ) -> "_JobV1":
         """Submit a job to run on a machine.
 

@@ -97,6 +97,7 @@ class Job(_BaseJob):
         artifacts_local: Optional[str] = None,  # deprecated in terms of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in terms of path_mappings
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
+        reuse_snapshot: bool = True,
     ) -> "Job":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -140,6 +141,8 @@ class Job(_BaseJob):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
+        reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
         ret_val = super().run(
             name=name,
@@ -162,6 +165,7 @@ class Job(_BaseJob):
             path_mappings=path_mappings,
             max_runtime=max_runtime,
             cluster=cluster,
+            reuse_snapshot=reuse_snapshot,
         )
         # required for typing with "Job"
         assert isinstance(ret_val, cls)
@@ -186,6 +190,7 @@ class Job(_BaseJob):
         artifacts_local: Optional[str] = None,  # deprecated in terms of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in terms of path_mappings
         max_runtime: Optional[int] = None,
+        reuse_snapshot: bool = True,
     ) -> "Job":
         """Submit a new job to the Lightning AI platform.
 
@@ -224,6 +229,8 @@ class Job(_BaseJob):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
         self._job = self._internal_job._submit(
             machine=machine,
@@ -241,6 +248,7 @@ class Job(_BaseJob):
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
             max_runtime=max_runtime,
+            reuse_snapshot=reuse_snapshot,
         )
         return self
 

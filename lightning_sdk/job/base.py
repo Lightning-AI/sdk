@@ -90,6 +90,7 @@ class _BaseJob(ABC):
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
+        reuse_snapshot: bool = True,
     ) -> "_BaseJob":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -134,6 +135,8 @@ class _BaseJob(ABC):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
@@ -231,6 +234,7 @@ class _BaseJob(ABC):
             entrypoint=entrypoint,
             path_mappings=path_mappings,
             max_runtime=max_runtime,
+            reuse_snapshot=reuse_snapshot,
         )
 
     @abstractmethod
@@ -251,6 +255,7 @@ class _BaseJob(ABC):
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
+        reuse_snapshot: bool = True,
     ) -> "_BaseJob":
         """Submit a new job to the Lightning AI platform.
 
@@ -290,6 +295,8 @@ class _BaseJob(ABC):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
 
     @abstractmethod
