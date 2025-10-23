@@ -71,7 +71,7 @@ def test_create_studio_with_studio_type(monkeypatch):
 
         mock_studio_class.assert_called_once()
         call_kwargs = mock_studio_class.call_args[1]
-        assert call_kwargs["template_id"] == "template-id-123"
+        assert call_kwargs["studio_type"] == "template-id-123"
 
 
 def test_create_studio_without_studio_type(monkeypatch):
@@ -105,7 +105,7 @@ def test_create_studio_without_studio_type(monkeypatch):
 
         mock_studio_class.assert_called_once()
         call_kwargs = mock_studio_class.call_args[1]
-        assert call_kwargs["template_id"] == "default-template-id"
+        assert call_kwargs["studio_type"] == "default-template-id"
 
 
 def test_create_studio_with_cloud_provider(monkeypatch):
@@ -167,3 +167,82 @@ def test_create_studio_with_cloud_account(monkeypatch):
         mock_studio_class.assert_called_once()
         call_kwargs = mock_studio_class.call_args[1]
         assert call_kwargs["cloud_account"] == "my-account"
+
+
+def test_create_studio_passes_correct_parameter_name():
+    from unittest.mock import MagicMock, patch
+
+    from click.testing import CliRunner
+
+    from lightning_sdk.cli.studio.create import create_studio
+
+    runner = CliRunner()
+
+    mock_teamspace_menu = MagicMock()
+    mock_teamspace_menu.return_value = "owner/teamspace"
+
+    mock_studio_instance = MagicMock()
+    mock_studio_instance._studio.id = "studio-123"
+    mock_studio_class = MagicMock(return_value=mock_studio_instance)
+    mock_studio_class.__qualname__ = "Studio"
+
+    with patch("lightning_sdk.cli.studio.create.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
+        "lightning_sdk.cli.studio.create.save_teamspace_to_config"
+    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", return_value="template-id-xyz"), patch(
+        "lightning_sdk.cli.studio.create.Studio", mock_studio_class
+    ):
+        result = runner.invoke(create_studio, ["--name", "test-studio", "--studio-type", "data-science"])
+
+        if result.exit_code != 0:
+            print(f"Exit code: {result.exit_code}")
+            print(f"Output: {result.output}")
+            if result.exception:
+                raise result.exception
+
+        mock_studio_class.assert_called_once()
+        call_kwargs = mock_studio_class.call_args[1]
+
+        assert "studio_type" in call_kwargs, "studio_type parameter is missing"
+        assert "template_id" not in call_kwargs, "template_id should not be passed (wrong parameter name)"
+        assert call_kwargs["studio_type"] == "template-id-xyz"
+
+
+def test_create_studio_with_all_options():
+    """Test that all options are passed correctly to Studio constructor."""
+    from unittest.mock import MagicMock, patch
+
+    from lightning_sdk.cli.studio.create import create_impl
+    from lightning_sdk.machine import CloudProvider
+
+    mock_teamspace_menu = MagicMock()
+    mock_teamspace_menu.return_value = "owner/teamspace"
+
+    mock_studio_instance = MagicMock()
+    mock_studio_instance._studio.id = "studio-123"
+    mock_studio_class = MagicMock(return_value=mock_studio_instance)
+    mock_studio_class.__qualname__ = "Studio"
+
+    with patch("lightning_sdk.cli.studio.create.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
+        "lightning_sdk.cli.studio.create.save_teamspace_to_config"
+    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", return_value="ml-template"), patch(
+        "lightning_sdk.cli.studio.create.Studio", mock_studio_class
+    ):
+        create_impl(
+            name="my-studio",
+            teamspace="owner/teamspace",
+            cloud_provider="AWS",
+            cloud_account="my-cloud-account",
+            vm=False,
+            studio_type="machine-learning",
+        )
+
+        mock_studio_class.assert_called_once()
+        call_kwargs = mock_studio_class.call_args[1]
+
+        assert call_kwargs["name"] == "my-studio"
+        assert call_kwargs["teamspace"] == "owner/teamspace"
+        assert call_kwargs["create_ok"] is True
+        assert call_kwargs["cloud_provider"] == CloudProvider.AWS
+        assert call_kwargs["cloud_account"] == "my-cloud-account"
+        assert call_kwargs["studio_type"] == "ml-template"
+        assert "template_id" not in call_kwargs

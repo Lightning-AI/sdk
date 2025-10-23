@@ -86,7 +86,7 @@ def create_impl(
             create_ok=True,
             cloud_provider=cloud_provider,
             cloud_account=cloud_account,
-            template_id=template_id,
+            studio_type=template_id,
         )
     except (RuntimeError, ValueError, ApiException):
         if name:
