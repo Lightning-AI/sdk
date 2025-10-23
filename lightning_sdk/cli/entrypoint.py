@@ -13,6 +13,7 @@ from lightning_sdk.cli.groups import (
     base_studio,
     config,
     # job,
+    license,
     # mmt,
     studio,
     vm,
@@ -61,6 +62,8 @@ main_cli.add_command(config)
 main_cli.add_command(studio)
 main_cli.add_command(vm)
 main_cli.add_command(base_studio)
+main_cli.add_command(license)
+
 if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
     #### LEGACY COMMANDS ####
     # these commands are currently supported for backwards compatibility, but will potentially be removed in the future.

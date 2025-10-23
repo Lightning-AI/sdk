@@ -1,7 +1,6 @@
 import os
-from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Sequence
+from typing import Any, Dict, Mapping, Optional, Sequence
 
 import yaml
 
@@ -25,6 +24,8 @@ class DefaultConfigKeys:
 
     cloud_account: str = "cloud_account.name"
     cloud_provider: str = "cloud_provider.name"
+
+    license: str = "license"
 
 
 class ConfigProxy:
@@ -101,6 +102,20 @@ class Config:
         Returns:
             The config value if found, None otherwise
         """
+        return self._get_value_type(key_path, str)
+
+    def get_sub_config(self, key_path: str) -> Optional[Mapping[str, Any]]:
+        """Gets a subconfig from the config using dot notation.
+
+        Args:
+            key_path: the dot-separated path to the subconfig (e.g. "license")
+
+        Returns:
+            The subconfig if found, None otherwise
+        """
+        return self._get_value_type(key_path, Mapping)
+
+    def _get_value_type(self, key_path: str, subtype: type) -> Optional[Any]:
         config = self._load_config()
         if not isinstance(config, Mapping):
             return None
@@ -111,7 +126,7 @@ class Config:
             if not isinstance(curr, dict) or k not in curr:
                 return None
             curr = curr[k]
-        return curr if isinstance(curr, str) else None
+        return curr if isinstance(curr, subtype) else None
 
     def __getattr__(self, name: str) -> ConfigProxy:
         """Returns a proxy to the actual values to allow for nested access.

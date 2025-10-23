@@ -28,6 +28,7 @@ Commands:
   download     Download resources from Lightning AI.
   generate     Generate configs (such as ssh for studio) and print them...
   inspect      Inspect resources of the Lightning AI platform to get...
+  license      Manage Lightning AI Product Licenses.
   list         List resources on the Lightning AI platform.
   login        Login to Lightning AI Studios.
   logout       Logout from Lightning AI Studios.
@@ -69,6 +70,7 @@ Commands:
   download     Download resources from Lightning AI.
   generate     Generate configs (such as ssh for studio) and print them...
   inspect      Inspect resources of the Lightning AI platform to get...
+  license      Manage Lightning AI Product Licenses.
   list         List resources on the Lightning AI platform.
   login        Login to Lightning AI Studios.
   logout       Logout from Lightning AI Studios.
