@@ -11,7 +11,7 @@ from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.base_studio import BaseStudio
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.openapi import V1ClusterType
-from lightning_sdk.machine import CloudProvider, Machine
+from lightning_sdk.machine import DEFAULT_MACHINE, CloudProvider, Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
 from lightning_sdk.status import Status
@@ -103,7 +103,16 @@ class Studio:
         self._plugins = {}
         self._studio = None
 
-        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+        # Check to see if we're inside a studio
+        current_studio = None
+        studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
+        if studio_id is not None:
+            # We're inside a studio, get it by ID
+            current_studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
+
+        cloud_account = _resolve_deprecated_cluster(
+            cloud_account, cluster, current_studio.cluster_id if current_studio else None
+        )
         cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
 
         cls_name = self._cls_name
@@ -135,14 +144,14 @@ class Studio:
                     f"Available studio types: "
                     f"{[bst.name.lower().replace(' ', '-') for bst in self._available_base_studios]}"
                 )
+        else:
+            if current_studio:
+                self._studio_type = current_studio.environment_template_id
 
         # Resolve studio name if not provided: explicit → env (LIGHTNING_CLOUD_SPACE_ID) → config defaults
         if name is None and not getattr(self._skip_init, "value", False):
-            studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
-            if studio_id is not None:
-                # We're inside a studio, get it by ID
-                self._studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
-                name = self._studio.name
+            if current_studio:
+                name = current_studio.name
             else:
                 # Try config defaults
                 from lightning_sdk.utils.config import Config, DefaultConfigKeys
@@ -272,7 +281,7 @@ class Studio:
 
     def start(
         self,
-        machine: Union[Machine, str] = Machine.CPU,
+        machine: Optional[Union[Machine, str]] = None,
         interruptible: Optional[bool] = None,
         max_runtime: Optional[int] = None,
     ) -> None:
@@ -287,6 +296,22 @@ class Studio:
                 Defaults to 3h
 
         """
+        # Check to see if we're inside a studio and if its running
+        current_studio_machine = None
+        studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
+        if studio_id is not None:
+            # We're inside a studio, get the machine if it is running
+            current_studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
+            current_status = self._studio_api._get_studio_instance_status_from_object(current_studio)
+
+            if current_status and _internal_status_to_external_status(current_status) == Status.Running:
+                current_studio_machine = self._studio_api.get_machine(
+                    current_studio.id,
+                    self._teamspace.id,
+                    current_studio.cluster_id,
+                    _get_org_id(self._teamspace),
+                )
+
         status = self.status
 
         if interruptible is None:
@@ -296,9 +321,14 @@ class Studio:
             else:
                 interruptible = self.teamspace.start_studios_on_interruptible
 
-        new_machine = machine
-        if not isinstance(machine, Machine):
-            new_machine = Machine.from_str(machine)
+        new_machine = DEFAULT_MACHINE
+        if machine is not None:
+            new_machine = machine
+        elif current_studio_machine is not None:
+            new_machine = current_studio_machine
+
+        if not isinstance(new_machine, Machine):
+            new_machine = Machine.from_str(new_machine)
 
         if status == Status.Running:
             if new_machine != self.machine:

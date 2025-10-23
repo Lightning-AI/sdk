@@ -2,9 +2,7 @@ from typing import Dict, Optional, Set
 
 import click
 
-from lightning_sdk.machine import Machine
-
-DEFAULT_MACHINE = "CPU"
+from lightning_sdk.machine import DEFAULT_MACHINE, Machine
 
 
 def _split_gpus_spec(gpus: str) -> tuple[str, int]:

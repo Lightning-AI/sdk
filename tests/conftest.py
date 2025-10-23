@@ -826,6 +826,9 @@ def internal_studio_init_mocker(mocker, internal_get_org_api_mocker, internal_te
         "st-def": V1CloudSpace(
             name="st-def", display_name="st-def", cluster_id="c-def", project_id="ts-abc", id="st-def"
         ),
+        "st-abc-de": V1CloudSpace(
+            name="st-abc-de", display_name="st-abc-de", cluster_id="c-abc", project_id="ts-abc", id="st-abc-de"
+        ),
     }
 
     def _create_cloudspace_side_effect(self, body, project_id, **kwargs):

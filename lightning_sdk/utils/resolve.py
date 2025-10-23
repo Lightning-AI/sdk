@@ -75,7 +75,9 @@ def _resolve_deprecated_provider(
     return cloud_provider
 
 
-def _resolve_deprecated_cluster(cloud_account: Optional[str], cluster: Optional[str]) -> Optional[str]:
+def _resolve_deprecated_cluster(
+    cloud_account: Optional[str], cluster: Optional[str], current_cloud_account: Optional[str] = None
+) -> Optional[str]:
     if cluster is not None:
         if cloud_account is not None:
             raise ValueError(
@@ -95,6 +97,9 @@ def _resolve_deprecated_cluster(cloud_account: Optional[str], cluster: Optional[
 
         config = Config()
         cloud_account = config.get_value(DefaultConfigKeys.cloud_account)
+
+        if cloud_account is None:
+            cloud_account = current_cloud_account
 
     return cloud_account
 

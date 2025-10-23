@@ -218,3 +218,6 @@ Machine.H200 = Machine(name="H200", slug="lit-h200x-1", family="H200", accelerat
 Machine.H200_X_8 = Machine(name="H200_X_8", slug="lit-h200x-8", family="H200", accelerator_count=8)
 # available B200 machines
 Machine.B200_X_8 = Machine(name="B200_X_8", slug="lit-b200x-8", family="B200", accelerator_count=8)
+
+
+DEFAULT_MACHINE = Machine.CPU.name
