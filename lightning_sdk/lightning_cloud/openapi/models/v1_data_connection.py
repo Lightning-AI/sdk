@@ -56,6 +56,7 @@ class V1DataConnection(object):
         'is_billable_folder': 'bool',
         'is_cache': 'bool',
         'is_managed': 'bool',
+        'is_public': 'bool',
         'lock_out': 'bool',
         'lustre': 'V1LustreDataConnection',
         'name': 'str',
@@ -91,6 +92,7 @@ class V1DataConnection(object):
         'is_billable_folder': 'isBillableFolder',
         'is_cache': 'isCache',
         'is_managed': 'isManaged',
+        'is_public': 'isPublic',
         'lock_out': 'lockOut',
         'lustre': 'lustre',
         'name': 'name',
@@ -110,7 +112,7 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, lock_out: 'bool' =None, lustre: 'V1LustreDataConnection' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, is_public: 'bool' =None, lock_out: 'bool' =None, lustre: 'V1LustreDataConnection' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
@@ -127,6 +129,7 @@ class V1DataConnection(object):
         self._is_billable_folder = None
         self._is_cache = None
         self._is_managed = None
+        self._is_public = None
         self._lock_out = None
         self._lustre = None
         self._name = None
@@ -175,6 +178,8 @@ class V1DataConnection(object):
             self.is_cache = is_cache
         if is_managed is not None:
             self.is_managed = is_managed
+        if is_public is not None:
+            self.is_public = is_public
         if lock_out is not None:
             self.lock_out = lock_out
         if lustre is not None:
@@ -524,6 +529,27 @@ class V1DataConnection(object):
         """
 
         self._is_managed = is_managed
+
+    @property
+    def is_public(self) -> 'bool':
+        """Gets the is_public of this V1DataConnection.  # noqa: E501
+
+
+        :return: The is_public of this V1DataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_public
+
+    @is_public.setter
+    def is_public(self, is_public: 'bool'):
+        """Sets the is_public of this V1DataConnection.
+
+
+        :param is_public: The is_public of this V1DataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_public = is_public
 
     @property
     def lock_out(self) -> 'bool':

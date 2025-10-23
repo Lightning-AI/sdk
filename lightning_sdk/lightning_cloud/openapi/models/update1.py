@@ -41,6 +41,7 @@ class Update1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'auto_increase_enabled': 'bool',
         'aws': 'V1AwsDataConnection',
         'efs': 'V1EfsConfig',
         'gcp': 'V1GcpDataConnection',
@@ -54,6 +55,7 @@ class Update1(object):
     }
 
     attribute_map = {
+        'auto_increase_enabled': 'autoIncreaseEnabled',
         'aws': 'aws',
         'efs': 'efs',
         'gcp': 'gcp',
@@ -66,8 +68,9 @@ class Update1(object):
         'writable': 'writable'
     }
 
-    def __init__(self, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, auto_increase_enabled: 'bool' =None, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """Update1 - a model defined in Swagger"""  # noqa: E501
+        self._auto_increase_enabled = None
         self._aws = None
         self._efs = None
         self._gcp = None
@@ -79,6 +82,8 @@ class Update1(object):
         self._snowflake = None
         self._writable = None
         self.discriminator = None
+        if auto_increase_enabled is not None:
+            self.auto_increase_enabled = auto_increase_enabled
         if aws is not None:
             self.aws = aws
         if efs is not None:
@@ -99,6 +104,27 @@ class Update1(object):
             self.snowflake = snowflake
         if writable is not None:
             self.writable = writable
+
+    @property
+    def auto_increase_enabled(self) -> 'bool':
+        """Gets the auto_increase_enabled of this Update1.  # noqa: E501
+
+
+        :return: The auto_increase_enabled of this Update1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._auto_increase_enabled
+
+    @auto_increase_enabled.setter
+    def auto_increase_enabled(self, auto_increase_enabled: 'bool'):
+        """Sets the auto_increase_enabled of this Update1.
+
+
+        :param auto_increase_enabled: The auto_increase_enabled of this Update1.  # noqa: E501
+        :type: bool
+        """
+
+        self._auto_increase_enabled = auto_increase_enabled
 
     @property
     def aws(self) -> 'V1AwsDataConnection':
