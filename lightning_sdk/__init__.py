@@ -35,7 +35,7 @@ __all__ = [
     "VM",
 ]
 
-__version__ = "2025.10.23"
+__version__ = "2025.10.27"
 
 _version_checker = VersionChecker()
 _version_checker.check_and_prompt_upgrade(__version__)
