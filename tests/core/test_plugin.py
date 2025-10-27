@@ -53,6 +53,11 @@ def test_run_job(
     job = plugin.run(command="python my-file.py", name="", machine=cloud_compute)
     assert job.name != ""
 
+    # set reuse_snapshot flag
+    # set name explicitly to empty string
+    job = plugin.run(command="python my-file.py", name="", machine=cloud_compute, reuse_snapshot=False)
+    assert job.name != ""
+
 
 @pytest.mark.parametrize(
     "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]

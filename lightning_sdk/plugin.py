@@ -128,6 +128,7 @@ class JobsPlugin(_Plugin):
         machine: Machine = Machine.CPU,
         cloud_compute: Optional[Machine] = None,
         interruptible: bool = False,
+        reuse_snapshot: bool = True,
     ) -> Job:
         """Launches an asynchronous job.
 
@@ -137,6 +138,8 @@ class JobsPlugin(_Plugin):
             machine: The machine to run the job on.
             interruptible: Whether to run the job on an interruptible machine.
                 These are cheaper but can be preempted at any time.
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
         if not name:
             name = _run_name("job")
@@ -151,6 +154,7 @@ class JobsPlugin(_Plugin):
             teamspace=self._studio.teamspace,
             cloud_account=self._studio.cloud_account,
             interruptible=interruptible,
+            reuse_snapshot=reuse_snapshot,
         )
 
 

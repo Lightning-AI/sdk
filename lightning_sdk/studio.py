@@ -627,6 +627,7 @@ class Studio:
         command: str,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
+        reuse_snapshot: bool = True,
     ) -> "Job":
         """Run async workloads using the compute environment from your studio.
 
@@ -636,6 +637,8 @@ class Studio:
             command: The command to run inside your job.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
         from lightning_sdk.job import Job
 
@@ -649,6 +652,7 @@ class Studio:
             cloud_account=self.cloud_account,
             env=env,
             interruptible=interruptible,
+            reuse_snapshot=reuse_snapshot,
         )
 
     def run_mmt(
