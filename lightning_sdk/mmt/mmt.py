@@ -102,6 +102,7 @@ class MMT(_BaseMMT):
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
+        reuse_snapshot: bool = True,
     ) -> "MMT":
         """Run async workloads using a docker image across multiple machines.
 
@@ -141,6 +142,8 @@ class MMT(_BaseMMT):
                     }
                 If the path inside the connection is omitted it's assumed to be the root path of that connection.
                 Only applicable when submitting docker jobs.
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
         ret_val = super().run(
             name=name,
@@ -164,6 +167,7 @@ class MMT(_BaseMMT):
             artifacts_remote=artifacts_remote,
             cluster=cluster,  # deprecated in favor of cloud_account
             max_runtime=max_runtime,
+            reuse_snapshot=reuse_snapshot,
         )
         # required for typing with "MMT"
         assert isinstance(ret_val, cls)
@@ -191,6 +195,7 @@ class MMT(_BaseMMT):
         max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
+        reuse_snapshot: bool = True,
     ) -> "MMT":
         """Submit a new multi-machine job to the Lightning AI platform.
 
@@ -231,6 +236,8 @@ class MMT(_BaseMMT):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
         self._job = self._internal_mmt._submit(
             num_machines=num_machines,
@@ -249,6 +256,7 @@ class MMT(_BaseMMT):
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
             max_runtime=max_runtime,
+            reuse_snapshot=reuse_snapshot,
         )
         return self
 

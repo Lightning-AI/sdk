@@ -175,6 +175,7 @@ class JobStep:
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         wait_for: Union[str, List[str], None] = DEFAULT,
+        reuse_snapshot: bool = True,
     ) -> None:
         self.name = name
         self.machine = machine or Machine.CPU
@@ -201,6 +202,7 @@ class JobStep:
         self.path_mappings = path_mappings
         self.max_runtime = max_runtime
         self.wait_for = wait_for
+        self.reuse_snapshot = reuse_snapshot
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -239,7 +241,7 @@ class JobStep:
             artifacts_remote=None,
             max_runtime=self.max_runtime,
             machine_image_version=machine_image_version,
-            reuse_snapshot=True,
+            reuse_snapshot=self.reuse_snapshot,
         )
 
         return V1PipelineStep(
@@ -273,6 +275,7 @@ class MMTStep:
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
+        reuse_snapshot: bool = True,
     ) -> None:
         self.machine = machine or Machine.CPU
         self.num_machines = num_machines
@@ -298,6 +301,7 @@ class MMTStep:
         self.path_mappings = path_mappings
         self.max_runtime = max_runtime
         self.wait_for = wait_for
+        self.reuse_snapshot = reuse_snapshot
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -333,6 +337,7 @@ class MMTStep:
             artifacts_remote=None,  # deprecated in favor of path_mappings
             max_runtime=self.max_runtime,
             machine_image_version=machine_image_version,
+            reuse_snapshot=self.reuse_snapshot,
         )
 
         return V1PipelineStep(

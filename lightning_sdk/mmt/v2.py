@@ -58,6 +58,7 @@ class _MMTV2(_BaseMMT):
         max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
+        reuse_snapshot: bool = True,
     ) -> "_MMTV2":
         """Submit a new multi-machine job to the Lightning AI platform.
 
@@ -98,6 +99,8 @@ class _MMTV2(_BaseMMT):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
         # Command is required if Studio is provided to know what to run
         # Image is mutually exclusive with Studio
@@ -141,6 +144,7 @@ class _MMTV2(_BaseMMT):
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
             max_runtime=max_runtime,
+            reuse_snapshot=reuse_snapshot,
         )
         self._job = submitted
         self._name = submitted.name

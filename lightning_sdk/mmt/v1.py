@@ -58,6 +58,7 @@ class _MMTV1(_BaseMMT):
         max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
+        reuse_snapshot: bool = True,
     ) -> "_MMTV1":
         """Submit a new multi-machine job to the Lightning AI platform.
 
@@ -96,7 +97,8 @@ class _MMTV1(_BaseMMT):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
-
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
         raise NotImplementedError("Cannot submit new mmts with MMTV1!")
 

@@ -58,6 +58,7 @@ def test_submit_mmt_v2_image(
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
+        reuse_snapshot=True,
     )
 
 
@@ -98,6 +99,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
+        reuse_snapshot=True,
     )
 
 

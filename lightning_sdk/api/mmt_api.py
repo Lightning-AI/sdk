@@ -88,6 +88,7 @@ class MMTApiV2:
         artifacts_local: Optional[str],  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str],  # deprecated in favor of path_mappings
         max_runtime: Optional[int],
+        reuse_snapshot: bool,
     ) -> V1MultiMachineJob:
         body = self._create_mmt_body(
             name=name,
@@ -106,6 +107,7 @@ class MMTApiV2:
             artifacts_local=artifacts_local,  # deprecated in favor of path_mappings
             artifacts_remote=artifacts_remote,  # deprecated in favor of path_mappings
             max_runtime=max_runtime,
+            reuse_snapshot=reuse_snapshot,
         )
 
         job: V1MultiMachineJob = self._client.jobs_service_create_multi_machine_job(project_id=teamspace_id, body=body)
@@ -128,6 +130,7 @@ class MMTApiV2:
         path_mappings: Optional[Dict[str, str]],
         artifacts_local: Optional[str],  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str],  # deprecated in favor of path_mappings
+        reuse_snapshot: bool,
         max_runtime: Optional[int] = None,
         machine_image_version: Optional[str] = None,
     ) -> ProjectIdMultimachinejobsBody:
@@ -138,7 +141,7 @@ class MMTApiV2:
 
         instance_name = _machine_to_compute_name(machine)
 
-        run_id = __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id] if studio_id is not None else ""
+        run_id = __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id] if (studio_id is not None and reuse_snapshot) else ""
 
         path_mappings_list = resolve_path_mappings(
             mappings=path_mappings or {},

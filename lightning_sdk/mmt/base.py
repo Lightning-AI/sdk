@@ -75,6 +75,7 @@ class _BaseMMT(_BaseJob):
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
+        reuse_snapshot: bool = True,
     ) -> "_BaseMMT":
         """Run async workloads using a docker image across multiple machines.
 
@@ -119,6 +120,8 @@ class _BaseMMT(_BaseJob):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
@@ -214,6 +217,7 @@ class _BaseMMT(_BaseJob):
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
             max_runtime=max_runtime,
+            reuse_snapshot=reuse_snapshot,
         )
         return inst
 
@@ -236,6 +240,7 @@ class _BaseMMT(_BaseJob):
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
         max_runtime: Optional[int] = None,
+        reuse_snapshot: bool = True,
     ) -> None:
         """Submit a new multi-machine job to the Lightning AI platform.
 
@@ -271,6 +276,8 @@ class _BaseMMT(_BaseJob):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
         """
 
     @property

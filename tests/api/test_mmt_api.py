@@ -115,6 +115,7 @@ def test_mmt_v2_submit_job():
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
+        reuse_snapshot=True,
     )
 
     spec = V1JobSpec(
@@ -154,6 +155,7 @@ def test_mmt_v2_submit_job():
         entrypoint="sh -c",
         path_mappings={"/output2": "data2:some-other-path"},
         max_runtime=500,
+        reuse_snapshot=True,
     )
 
     spec = V1JobSpec(
