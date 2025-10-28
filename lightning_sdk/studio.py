@@ -17,6 +17,7 @@ from lightning_sdk.owner import Owner
 from lightning_sdk.status import Status
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
+from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.names import random_unique_name
 from lightning_sdk.utils.resolve import (
     _get_org_id,
@@ -34,7 +35,7 @@ if TYPE_CHECKING:
 _logger = _setup_logger(__name__)
 
 
-class Studio:
+class Studio(metaclass=TrackCallsMeta):
     """A single Lightning AI Studio.
 
     Allows to fully control a studio, including retrieving the status, running commands
