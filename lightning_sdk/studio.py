@@ -107,7 +107,7 @@ class Studio(metaclass=TrackCallsMeta):
         # Check to see if we're inside a studio
         current_studio = None
         studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
-        if studio_id is not None:
+        if studio_id is not None and self._teamspace is not None:
             # We're inside a studio, get it by ID
             current_studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
 

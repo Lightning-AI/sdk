@@ -73,7 +73,7 @@ class TeamspaceApi:
     def _get_teamspace_by_id(self, teamspace_id: str) -> V1Project:
         return self._client.projects_service_get_project(teamspace_id)
 
-    def list_teamspaces(self, owner_id: str, name: Optional[str] = None) -> Optional[V1Project]:
+    def list_teamspaces(self, owner_id: str, name: Optional[str] = None) -> Optional[List[V1Project]]:
         """Lists teamspaces from owner.
 
         If name is passed only teamspaces matching that name will be returned
