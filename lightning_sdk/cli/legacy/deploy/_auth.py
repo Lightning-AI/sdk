@@ -73,9 +73,8 @@ def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
 
 def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
     if teamspace is None:
-        user = _get_authed_user()
         menu = TeamspacesMenu()
-        possible_teamspaces = menu._get_possible_teamspaces(user)
+        possible_teamspaces = menu._get_possible_teamspaces(_get_authed_user())
         if len(possible_teamspaces) == 1:
             name = next(iter(possible_teamspaces.values()))["name"]
             return Teamspace(name=name, org=org, user=user)

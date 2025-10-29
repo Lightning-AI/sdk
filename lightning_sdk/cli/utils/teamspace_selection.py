@@ -50,12 +50,11 @@ class TeamspacesMenu:
 
         return TerminalMenu(possible_teamspaces, title=title, clear_menu_on_exit=True)
 
-    @staticmethod
-    def _get_possible_teamspaces(user: User, owner: Owner) -> Dict[str, str]:
+    def _get_possible_teamspaces(self, user: User) -> Dict[str, str]:
         user_api = user._user_api
 
         memberships = user_api._get_all_teamspace_memberships(
-            user_id=user.id, org_id=owner.id if isinstance(owner, Organization) else None
+            user_id=user.id, org_id=self._owner.id if isinstance(self._owner, Organization) else None
         )
 
         teamspaces = {}
@@ -64,7 +63,7 @@ class TeamspacesMenu:
             teamspace_id = membership.project_id
             teamspace_name = membership.name
 
-            if membership.owner_id == owner.id:
+            if membership.owner_id == self._owner.id:
                 teamspaces[teamspace_id] = teamspace_name
 
         return teamspaces
@@ -106,7 +105,7 @@ class TeamspacesMenu:
         try:
             auth_user = _get_authed_user()
 
-            possible_teamspaces = self._get_possible_teamspaces(auth_user, self._owner)
+            possible_teamspaces = self._get_possible_teamspaces(auth_user)
             if teamspace is None:
                 teamspace_name = self._get_teamspace_from_interactive_menu(possible_teamspaces=possible_teamspaces)
             else:
