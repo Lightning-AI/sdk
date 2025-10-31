@@ -41,24 +41,50 @@ class ProjectIdStoragetransfersBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'new_folder_name': 'str',
         'source_data_connection_id': 'str',
         'target_data_connection_id': 'str'
     }
 
     attribute_map = {
+        'new_folder_name': 'newFolderName',
         'source_data_connection_id': 'sourceDataConnectionId',
         'target_data_connection_id': 'targetDataConnectionId'
     }
 
-    def __init__(self, source_data_connection_id: 'str' =None, target_data_connection_id: 'str' =None):  # noqa: E501
+    def __init__(self, new_folder_name: 'str' =None, source_data_connection_id: 'str' =None, target_data_connection_id: 'str' =None):  # noqa: E501
         """ProjectIdStoragetransfersBody - a model defined in Swagger"""  # noqa: E501
+        self._new_folder_name = None
         self._source_data_connection_id = None
         self._target_data_connection_id = None
         self.discriminator = None
+        if new_folder_name is not None:
+            self.new_folder_name = new_folder_name
         if source_data_connection_id is not None:
             self.source_data_connection_id = source_data_connection_id
         if target_data_connection_id is not None:
             self.target_data_connection_id = target_data_connection_id
+
+    @property
+    def new_folder_name(self) -> 'str':
+        """Gets the new_folder_name of this ProjectIdStoragetransfersBody.  # noqa: E501
+
+
+        :return: The new_folder_name of this ProjectIdStoragetransfersBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._new_folder_name
+
+    @new_folder_name.setter
+    def new_folder_name(self, new_folder_name: 'str'):
+        """Sets the new_folder_name of this ProjectIdStoragetransfersBody.
+
+
+        :param new_folder_name: The new_folder_name of this ProjectIdStoragetransfersBody.  # noqa: E501
+        :type: str
+        """
+
+        self._new_folder_name = new_folder_name
 
     @property
     def source_data_connection_id(self) -> 'str':

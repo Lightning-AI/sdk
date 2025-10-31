@@ -44,6 +44,7 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         'allowed_machines': 'list[str]',
         'default_machine': 'str',
         'environment_type': 'V1CloudSpaceEnvironmentType',
+        'files_template_id': 'str',
         'initial_setup_script_text': 'str',
         'machine_image_version': 'str',
         'plugins': 'list[str]',
@@ -55,6 +56,7 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         'allowed_machines': 'allowedMachines',
         'default_machine': 'defaultMachine',
         'environment_type': 'environmentType',
+        'files_template_id': 'filesTemplateId',
         'initial_setup_script_text': 'initialSetupScriptText',
         'machine_image_version': 'machineImageVersion',
         'plugins': 'plugins',
@@ -62,11 +64,12 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         'specialized_view': 'specializedView'
     }
 
-    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, plugins: 'list[str]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, files_template_id: 'str' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, plugins: 'list[str]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplateConfig - a model defined in Swagger"""  # noqa: E501
         self._allowed_machines = None
         self._default_machine = None
         self._environment_type = None
+        self._files_template_id = None
         self._initial_setup_script_text = None
         self._machine_image_version = None
         self._plugins = None
@@ -79,6 +82,8 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
             self.default_machine = default_machine
         if environment_type is not None:
             self.environment_type = environment_type
+        if files_template_id is not None:
+            self.files_template_id = files_template_id
         if initial_setup_script_text is not None:
             self.initial_setup_script_text = initial_setup_script_text
         if machine_image_version is not None:
@@ -152,6 +157,27 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         """
 
         self._environment_type = environment_type
+
+    @property
+    def files_template_id(self) -> 'str':
+        """Gets the files_template_id of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+
+
+        :return: The files_template_id of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._files_template_id
+
+    @files_template_id.setter
+    def files_template_id(self, files_template_id: 'str'):
+        """Sets the files_template_id of this V1CloudSpaceEnvironmentTemplateConfig.
+
+
+        :param files_template_id: The files_template_id of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._files_template_id = files_template_id
 
     @property
     def initial_setup_script_text(self) -> 'str':

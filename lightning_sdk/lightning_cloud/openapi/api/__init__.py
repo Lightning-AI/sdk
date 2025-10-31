@@ -29,6 +29,7 @@ from lightning_sdk.lightning_cloud.openapi.api.lit_dataset_service_api import Li
 from lightning_sdk.lightning_cloud.openapi.api.lit_logger_service_api import LitLoggerServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lit_page_service_api import LitPageServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lit_registry_service_api import LitRegistryServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.markets_service_api import MarketsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.models_store_api import ModelsStoreApi
 from lightning_sdk.lightning_cloud.openapi.api.organizations_service_api import OrganizationsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.pipeline_templates_service_api import PipelineTemplatesServiceApi

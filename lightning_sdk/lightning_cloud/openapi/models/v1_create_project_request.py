@@ -44,6 +44,7 @@ class V1CreateProjectRequest(object):
         'allow_credits_auto_replenish': 'bool',
         'auto_replenish_amount': 'float',
         'auto_replenish_threshold': 'float',
+        'budgeting_enabled': 'bool',
         'default_machine_image_version': 'str',
         'default_machine_type': 'str',
         'description': 'str',
@@ -60,6 +61,7 @@ class V1CreateProjectRequest(object):
         'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
         'auto_replenish_amount': 'autoReplenishAmount',
         'auto_replenish_threshold': 'autoReplenishThreshold',
+        'budgeting_enabled': 'budgetingEnabled',
         'default_machine_image_version': 'defaultMachineImageVersion',
         'default_machine_type': 'defaultMachineType',
         'description': 'description',
@@ -72,11 +74,12 @@ class V1CreateProjectRequest(object):
         'quotas': 'quotas'
     }
 
-    def __init__(self, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, layout_config: 'list[V1ProjectTab]' =None, name: 'str' =None, organization_billing_enabled: 'bool' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
+    def __init__(self, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, budgeting_enabled: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, layout_config: 'list[V1ProjectTab]' =None, name: 'str' =None, organization_billing_enabled: 'bool' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
         """V1CreateProjectRequest - a model defined in Swagger"""  # noqa: E501
         self._allow_credits_auto_replenish = None
         self._auto_replenish_amount = None
         self._auto_replenish_threshold = None
+        self._budgeting_enabled = None
         self._default_machine_image_version = None
         self._default_machine_type = None
         self._description = None
@@ -94,6 +97,8 @@ class V1CreateProjectRequest(object):
             self.auto_replenish_amount = auto_replenish_amount
         if auto_replenish_threshold is not None:
             self.auto_replenish_threshold = auto_replenish_threshold
+        if budgeting_enabled is not None:
+            self.budgeting_enabled = budgeting_enabled
         if default_machine_image_version is not None:
             self.default_machine_image_version = default_machine_image_version
         if default_machine_type is not None:
@@ -177,6 +182,27 @@ class V1CreateProjectRequest(object):
         """
 
         self._auto_replenish_threshold = auto_replenish_threshold
+
+    @property
+    def budgeting_enabled(self) -> 'bool':
+        """Gets the budgeting_enabled of this V1CreateProjectRequest.  # noqa: E501
+
+
+        :return: The budgeting_enabled of this V1CreateProjectRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._budgeting_enabled
+
+    @budgeting_enabled.setter
+    def budgeting_enabled(self, budgeting_enabled: 'bool'):
+        """Sets the budgeting_enabled of this V1CreateProjectRequest.
+
+
+        :param budgeting_enabled: The budgeting_enabled of this V1CreateProjectRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._budgeting_enabled = budgeting_enabled
 
     @property
     def default_machine_image_version(self) -> 'str':

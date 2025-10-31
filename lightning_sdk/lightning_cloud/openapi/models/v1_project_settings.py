@@ -54,6 +54,7 @@ class V1ProjectSettings(object):
         'auto_replenish_amount': 'float',
         'auto_replenish_threshold': 'float',
         'auto_switch_machine': 'bool',
+        'budgeting_enabled': 'bool',
         'default_machine_image_version': 'str',
         'default_machine_type': 'str',
         'organization_billing_enabled': 'bool',
@@ -79,6 +80,7 @@ class V1ProjectSettings(object):
         'auto_replenish_amount': 'autoReplenishAmount',
         'auto_replenish_threshold': 'autoReplenishThreshold',
         'auto_switch_machine': 'autoSwitchMachine',
+        'budgeting_enabled': 'budgetingEnabled',
         'default_machine_image_version': 'defaultMachineImageVersion',
         'default_machine_type': 'defaultMachineType',
         'organization_billing_enabled': 'organizationBillingEnabled',
@@ -90,7 +92,7 @@ class V1ProjectSettings(object):
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, organization_billing_enabled: 'bool' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, budgeting_enabled: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, organization_billing_enabled: 'bool' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
         """V1ProjectSettings - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_credits_auto_replenish = None
@@ -105,6 +107,7 @@ class V1ProjectSettings(object):
         self._auto_replenish_amount = None
         self._auto_replenish_threshold = None
         self._auto_switch_machine = None
+        self._budgeting_enabled = None
         self._default_machine_image_version = None
         self._default_machine_type = None
         self._organization_billing_enabled = None
@@ -141,6 +144,8 @@ class V1ProjectSettings(object):
             self.auto_replenish_threshold = auto_replenish_threshold
         if auto_switch_machine is not None:
             self.auto_switch_machine = auto_switch_machine
+        if budgeting_enabled is not None:
+            self.budgeting_enabled = budgeting_enabled
         if default_machine_image_version is not None:
             self.default_machine_image_version = default_machine_image_version
         if default_machine_type is not None:
@@ -434,6 +439,27 @@ class V1ProjectSettings(object):
         """
 
         self._auto_switch_machine = auto_switch_machine
+
+    @property
+    def budgeting_enabled(self) -> 'bool':
+        """Gets the budgeting_enabled of this V1ProjectSettings.  # noqa: E501
+
+
+        :return: The budgeting_enabled of this V1ProjectSettings.  # noqa: E501
+        :rtype: bool
+        """
+        return self._budgeting_enabled
+
+    @budgeting_enabled.setter
+    def budgeting_enabled(self, budgeting_enabled: 'bool'):
+        """Sets the budgeting_enabled of this V1ProjectSettings.
+
+
+        :param budgeting_enabled: The budgeting_enabled of this V1ProjectSettings.  # noqa: E501
+        :type: bool
+        """
+
+        self._budgeting_enabled = budgeting_enabled
 
     @property
     def default_machine_image_version(self) -> 'str':

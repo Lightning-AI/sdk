@@ -40,6 +40,7 @@ class V1CloudSpaceSpecializedView(object):
     UNSPECIFIED = "CLOUD_SPACE_SPECIALIZED_VIEW_UNSPECIFIED"
     DEFAULT = "CLOUD_SPACE_SPECIALIZED_VIEW_DEFAULT"
     STREAMLIT = "CLOUD_SPACE_SPECIALIZED_VIEW_STREAMLIT"
+    SERVERLESS = "CLOUD_SPACE_SPECIALIZED_VIEW_SERVERLESS"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

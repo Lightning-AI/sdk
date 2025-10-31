@@ -52,6 +52,7 @@ class V1ClusterCapacityReservation(object):
         'in_use_aggregate': 'str',
         'instance_type': 'str',
         'match_pattern': 'str',
+        'node_group_name': 'str',
         'num_instances': 'str',
         'project_id': 'str',
         'region': 'str',
@@ -71,6 +72,7 @@ class V1ClusterCapacityReservation(object):
         'in_use_aggregate': 'inUseAggregate',
         'instance_type': 'instanceType',
         'match_pattern': 'matchPattern',
+        'node_group_name': 'nodeGroupName',
         'num_instances': 'numInstances',
         'project_id': 'projectId',
         'region': 'region',
@@ -78,7 +80,7 @@ class V1ClusterCapacityReservation(object):
         'zone': 'zone'
     }
 
-    def __init__(self, aggregate_availability: 'str' =None, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, in_use: 'str' =None, in_use_aggregate: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
+    def __init__(self, aggregate_availability: 'str' =None, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, in_use: 'str' =None, in_use_aggregate: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, node_group_name: 'str' =None, num_instances: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
         """V1ClusterCapacityReservation - a model defined in Swagger"""  # noqa: E501
         self._aggregate_availability = None
         self._capacity_reservation_type = None
@@ -91,6 +93,7 @@ class V1ClusterCapacityReservation(object):
         self._in_use_aggregate = None
         self._instance_type = None
         self._match_pattern = None
+        self._node_group_name = None
         self._num_instances = None
         self._project_id = None
         self._region = None
@@ -119,6 +122,8 @@ class V1ClusterCapacityReservation(object):
             self.instance_type = instance_type
         if match_pattern is not None:
             self.match_pattern = match_pattern
+        if node_group_name is not None:
+            self.node_group_name = node_group_name
         if num_instances is not None:
             self.num_instances = num_instances
         if project_id is not None:
@@ -360,6 +365,27 @@ class V1ClusterCapacityReservation(object):
         """
 
         self._match_pattern = match_pattern
+
+    @property
+    def node_group_name(self) -> 'str':
+        """Gets the node_group_name of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The node_group_name of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: str
+        """
+        return self._node_group_name
+
+    @node_group_name.setter
+    def node_group_name(self, node_group_name: 'str'):
+        """Sets the node_group_name of this V1ClusterCapacityReservation.
+
+
+        :param node_group_name: The node_group_name of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: str
+        """
+
+        self._node_group_name = node_group_name
 
     @property
     def num_instances(self) -> 'str':

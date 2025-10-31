@@ -41,6 +41,7 @@ class V1KubernetesDirectV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'aws': 'V1KubernetesAWSConfig',
         'grafana_dashboard_url': 'str',
         'grafana_namespace': 'str',
         'grafana_service_name': 'str',
@@ -48,10 +49,12 @@ class V1KubernetesDirectV1(object):
         'incident_slack_notifiers': 'list[V1SlackNotifier]',
         'kubeconfig': 'str',
         'kubeconfig_elevated': 'str',
+        'settings': 'V1KubernetesDirectSettingsV1',
         'skip_user_label_injection': 'bool'
     }
 
     attribute_map = {
+        'aws': 'aws',
         'grafana_dashboard_url': 'grafanaDashboardUrl',
         'grafana_namespace': 'grafanaNamespace',
         'grafana_service_name': 'grafanaServiceName',
@@ -59,11 +62,13 @@ class V1KubernetesDirectV1(object):
         'incident_slack_notifiers': 'incidentSlackNotifiers',
         'kubeconfig': 'kubeconfig',
         'kubeconfig_elevated': 'kubeconfigElevated',
+        'settings': 'settings',
         'skip_user_label_injection': 'skipUserLabelInjection'
     }
 
-    def __init__(self, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
+    def __init__(self, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
+        self._aws = None
         self._grafana_dashboard_url = None
         self._grafana_namespace = None
         self._grafana_service_name = None
@@ -71,8 +76,11 @@ class V1KubernetesDirectV1(object):
         self._incident_slack_notifiers = None
         self._kubeconfig = None
         self._kubeconfig_elevated = None
+        self._settings = None
         self._skip_user_label_injection = None
         self.discriminator = None
+        if aws is not None:
+            self.aws = aws
         if grafana_dashboard_url is not None:
             self.grafana_dashboard_url = grafana_dashboard_url
         if grafana_namespace is not None:
@@ -87,8 +95,31 @@ class V1KubernetesDirectV1(object):
             self.kubeconfig = kubeconfig
         if kubeconfig_elevated is not None:
             self.kubeconfig_elevated = kubeconfig_elevated
+        if settings is not None:
+            self.settings = settings
         if skip_user_label_injection is not None:
             self.skip_user_label_injection = skip_user_label_injection
+
+    @property
+    def aws(self) -> 'V1KubernetesAWSConfig':
+        """Gets the aws of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The aws of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: V1KubernetesAWSConfig
+        """
+        return self._aws
+
+    @aws.setter
+    def aws(self, aws: 'V1KubernetesAWSConfig'):
+        """Sets the aws of this V1KubernetesDirectV1.
+
+
+        :param aws: The aws of this V1KubernetesDirectV1.  # noqa: E501
+        :type: V1KubernetesAWSConfig
+        """
+
+        self._aws = aws
 
     @property
     def grafana_dashboard_url(self) -> 'str':
@@ -236,6 +267,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._kubeconfig_elevated = kubeconfig_elevated
+
+    @property
+    def settings(self) -> 'V1KubernetesDirectSettingsV1':
+        """Gets the settings of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The settings of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: V1KubernetesDirectSettingsV1
+        """
+        return self._settings
+
+    @settings.setter
+    def settings(self, settings: 'V1KubernetesDirectSettingsV1'):
+        """Sets the settings of this V1KubernetesDirectV1.
+
+
+        :param settings: The settings of this V1KubernetesDirectV1.  # noqa: E501
+        :type: V1KubernetesDirectSettingsV1
+        """
+
+        self._settings = settings
 
     @property
     def skip_user_label_injection(self) -> 'bool':

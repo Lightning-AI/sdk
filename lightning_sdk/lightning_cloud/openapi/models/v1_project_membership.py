@@ -43,6 +43,7 @@ class V1ProjectMembership(object):
     swagger_types = {
         'avatar_url': 'str',
         'balance': 'float',
+        'budgeting_enabled': 'bool',
         'created_at': 'datetime',
         'creator_id': 'str',
         'current_storage_bytes': 'str',
@@ -76,6 +77,7 @@ class V1ProjectMembership(object):
     attribute_map = {
         'avatar_url': 'avatarUrl',
         'balance': 'balance',
+        'budgeting_enabled': 'budgetingEnabled',
         'created_at': 'createdAt',
         'creator_id': 'creatorId',
         'current_storage_bytes': 'currentStorageBytes',
@@ -106,10 +108,11 @@ class V1ProjectMembership(object):
         'username': 'username'
     }
 
-    def __init__(self, avatar_url: 'str' =None, balance: 'float' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, email: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, free_storage_bytes: 'str' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant: 'str' =None, organization: 'str' =None, organization_billing_enabled: 'bool' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, avatar_url: 'str' =None, balance: 'float' =None, budgeting_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, email: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, free_storage_bytes: 'str' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant: 'str' =None, organization: 'str' =None, organization_billing_enabled: 'bool' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
         """V1ProjectMembership - a model defined in Swagger"""  # noqa: E501
         self._avatar_url = None
         self._balance = None
+        self._budgeting_enabled = None
         self._created_at = None
         self._creator_id = None
         self._current_storage_bytes = None
@@ -143,6 +146,8 @@ class V1ProjectMembership(object):
             self.avatar_url = avatar_url
         if balance is not None:
             self.balance = balance
+        if budgeting_enabled is not None:
+            self.budgeting_enabled = budgeting_enabled
         if created_at is not None:
             self.created_at = created_at
         if creator_id is not None:
@@ -241,6 +246,27 @@ class V1ProjectMembership(object):
         """
 
         self._balance = balance
+
+    @property
+    def budgeting_enabled(self) -> 'bool':
+        """Gets the budgeting_enabled of this V1ProjectMembership.  # noqa: E501
+
+
+        :return: The budgeting_enabled of this V1ProjectMembership.  # noqa: E501
+        :rtype: bool
+        """
+        return self._budgeting_enabled
+
+    @budgeting_enabled.setter
+    def budgeting_enabled(self, budgeting_enabled: 'bool'):
+        """Sets the budgeting_enabled of this V1ProjectMembership.
+
+
+        :param budgeting_enabled: The budgeting_enabled of this V1ProjectMembership.  # noqa: E501
+        :type: bool
+        """
+
+        self._budgeting_enabled = budgeting_enabled
 
     @property
     def created_at(self) -> 'datetime':
