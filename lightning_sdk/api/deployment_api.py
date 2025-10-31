@@ -304,6 +304,10 @@ class DeploymentApi:
             if deployment.strategy is None:
                 raise RuntimeError("When doing a new release, a release strategy needs to be defined.")
 
+            # Force the deployment to make a new snapshot
+            if deployment.spec.cloudspace_id != "" and deployment.spec.run_id != "":
+                deployment.spec.run_id = ""
+
             print("Some core arguments have changed. We are making a new release.")
 
         apply_change(deployment.endpoint, "custom_domain", custom_domain)
