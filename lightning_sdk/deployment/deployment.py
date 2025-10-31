@@ -6,6 +6,7 @@ import requests
 
 from lightning_sdk.api import UserApi
 from lightning_sdk.api.deployment_api import (
+    ApiKeyAuth,
     Auth,
     AutoScaleConfig,
     BasicAuth,
@@ -121,7 +122,7 @@ class Deployment:
         spot: Optional[bool] = None,
         replicas: Optional[int] = None,
         health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
-        auth: Optional[Union[BasicAuth, TokenAuth]] = None,
+        auth: Optional[Union[BasicAuth, TokenAuth, ApiKeyAuth]] = None,
         cloud_account: Optional[str] = None,
         custom_domain: Optional[str] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account

@@ -58,6 +58,10 @@ class TokenAuth(Auth):
         self.token = token
 
 
+class ApiKeyAuth(Auth):
+    """The ApiKeyAuth describes that the user requires a Lightning API Key to authenticate."""
+
+
 class ReleaseStrategy:
     """The base class for release strategy."""
 
@@ -371,11 +375,15 @@ def restore_auth(auth: Optional[V1EndpointAuth] = None) -> Optional[Auth]:
     if not auth:
         return None
 
+    if auth.user_api_key:
+        return ApiKeyAuth()
+
     if auth.username and auth.password:
         return BasicAuth(username=auth.username, password=auth.password)
 
     if auth.token:
         return TokenAuth(token=auth.token)
+
     return None
 
 
@@ -512,6 +520,10 @@ def to_endpoint_auth(auth: Optional[Auth] = None) -> Optional[V1EndpointAuth]:
             raise ValueError("The token should be defined.")
 
         return V1EndpointAuth(enabled=True, token=auth.token)
+
+    if isinstance(auth, ApiKeyAuth):
+        return V1EndpointAuth(enabled=True, user_api_key=True)
+
     return None
 
 
