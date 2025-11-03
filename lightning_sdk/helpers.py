@@ -73,7 +73,7 @@ class VersionChecker:
             self._warning_shown = True
 
 
-def _set_tqdm_envvars_noninteractive() -> None:
+def set_tqdm_envvars_noninteractive() -> None:
     # note: stderr is the default stream tqdm writes progressbars to
     # so we check that one.
     if os.isatty(sys.stderr.fileno()):

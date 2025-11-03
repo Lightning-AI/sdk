@@ -50,7 +50,7 @@ lightning = "lightning_sdk.cli.entrypoint:main_cli"
 lightning-sdk = "lightning_sdk.cli.entrypoint:main_cli"
 
 [tool.setuptools.dynamic]
-version = {attr = "lightning_sdk.__version__"}
+version = {attr = "lightning_sdk.__version__.__version__"}
 
 [tool.setuptools.packages.find]
 exclude = ["tests*", "examples*"]

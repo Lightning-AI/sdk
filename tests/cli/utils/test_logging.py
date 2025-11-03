@@ -48,7 +48,8 @@ class TestLogCommand:
         assert isinstance(body, V1CreateSDKCommandHistoryRequest)
         assert body.command == "lightning studio create"
         assert body.duration == 100
-        assert body.message == "Test message"
+        assert "Test message" in body.message
+        assert "VERSION:" in body.message
         assert body.project_id is None
         assert body.severity == V1SDKCommandHistorySeverity.INFO
         assert body.type == V1SDKCommandHistoryType.CLI
@@ -111,7 +112,7 @@ class TestLogCommand:
         call_args = mock_client.s_dk_command_history_service_create_sdk_command_history.call_args
         body = call_args.kwargs["body"]
 
-        assert body.message == ""
+        assert "VERSION:" in body.message
         assert body.duration == 0
 
 

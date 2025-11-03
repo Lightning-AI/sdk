@@ -5,6 +5,7 @@ import traceback
 from contextlib import suppress
 from typing import Callable, Dict, Tuple
 
+from lightning_sdk.__version__ import __version__
 from lightning_sdk.lightning_cloud.openapi import V1CreateSDKCommandHistoryRequest, V1SDKCommandHistorySeverity
 from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_type import V1SDKCommandHistoryType
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -19,7 +20,8 @@ def track_calls() -> Callable[..., any]:
             bound_args = sig.bind(*args, **kwargs)
             bound_args.apply_defaults()
 
-            message = f"""ARGS: {", ".join(f"{k}: {v}" for k, v in bound_args.arguments.items() if k != "self")} """
+            args_str = ", ".join(f"{k}: {v}" for k, v in bound_args.arguments.items() if k != "self")
+            message = f"VERSION: {__version__} | ARGS: {args_str} "
 
             body = V1CreateSDKCommandHistoryRequest(
                 command=func.__qualname__,

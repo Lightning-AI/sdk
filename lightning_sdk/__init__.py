@@ -1,8 +1,9 @@
+from lightning_sdk.__version__ import __version__
 from lightning_sdk.agents import Agent
 from lightning_sdk.ai_hub import AIHub
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noqa: F401
 from lightning_sdk.deployment import Deployment
-from lightning_sdk.helpers import VersionChecker, _set_tqdm_envvars_noninteractive
+from lightning_sdk.helpers import VersionChecker, set_tqdm_envvars_noninteractive
 from lightning_sdk.job import Job
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.mmt import MMT
@@ -14,6 +15,8 @@ from lightning_sdk.teamspace import ConnectionType, FolderLocation, Teamspace
 from lightning_sdk.user import User
 
 __all__ = [
+    "MMT",
+    "VM",
     "AIHub",
     "Agent",
     "CloudProvider",
@@ -23,7 +26,6 @@ __all__ = [
     "Job",
     "JobsPlugin",
     "Machine",
-    "MMT",
     "MultiMachineTrainingPlugin",
     "Organization",
     "Plugin",
@@ -32,12 +34,10 @@ __all__ = [
     "Studio",
     "Teamspace",
     "User",
-    "VM",
+    "__version__",
 ]
-
-__version__ = "2025.10.31"
 
 _version_checker = VersionChecker()
 _version_checker.check_and_prompt_upgrade(__version__)
 
-_set_tqdm_envvars_noninteractive()
+set_tqdm_envvars_noninteractive()

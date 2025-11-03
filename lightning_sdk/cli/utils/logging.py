@@ -12,6 +12,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.text import Text
 
+from lightning_sdk.__version__ import __version__
 from lightning_sdk.cli.utils import rich_to_str
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.openapi.models.v1_create_sdk_command_history_request import (
@@ -29,7 +30,7 @@ def _log_command(message: str = "", duration: int = 0, error: Optional[str] = No
     body = V1CreateSDKCommandHistoryRequest(
         command=original_command,
         duration=duration,
-        message=message,
+        message=f"VERSION: {__version__} | {message}",
         project_id=None,
         severity=V1SDKCommandHistorySeverity.INFO,
         type=V1SDKCommandHistoryType.CLI,

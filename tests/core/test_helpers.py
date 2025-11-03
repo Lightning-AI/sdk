@@ -8,9 +8,9 @@ from tqdm import tqdm
 @mock.patch("os.isatty", return_value=False, autospec=True)
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_tqdm_notty(_):
-    from lightning_sdk.helpers import _set_tqdm_envvars_noninteractive
+    from lightning_sdk.helpers import set_tqdm_envvars_noninteractive
 
-    _set_tqdm_envvars_noninteractive()
+    set_tqdm_envvars_noninteractive()
 
     assert "TQDM_POSITION" in os.environ
     assert os.environ["TQDM_POSITION"] == "-1"
@@ -26,9 +26,9 @@ def test_tqdm_notty(_):
 @mock.patch("os.isatty", return_value=True, autospec=True)
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_tqdm_tty(_):
-    from lightning_sdk.helpers import _set_tqdm_envvars_noninteractive
+    from lightning_sdk.helpers import set_tqdm_envvars_noninteractive
 
-    _set_tqdm_envvars_noninteractive()
+    set_tqdm_envvars_noninteractive()
 
     assert "TQDM_POSITION" not in os.environ
     assert "TQDM_MININTERVAL" not in os.environ
