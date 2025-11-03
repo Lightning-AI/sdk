@@ -16,6 +16,7 @@ from lightning_sdk.models import UploadedModelInfo
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
 from lightning_sdk.user import User
+from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import (
     _get_organizations_for_authed_user,
     _parse_model_and_version,
@@ -52,7 +53,7 @@ class ConnectionType(Enum):
         return self.value
 
 
-class Teamspace:
+class Teamspace(metaclass=TrackCallsMeta):
     """A teamspace is a collection of Studios, Clusters, Members and an associated Budget.
 
     Args:

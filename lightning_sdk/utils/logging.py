@@ -2,6 +2,7 @@ import functools
 import inspect
 import time
 import traceback
+from abc import ABCMeta
 from contextlib import suppress
 from typing import Callable, Dict, Tuple
 
@@ -72,3 +73,7 @@ class TrackCallsMeta(type):
             else:
                 attrs[attr_name] = attr_value
         return super().__new__(cls, name, bases, attrs)
+
+
+class TrackCallsABCMeta(ABCMeta, TrackCallsMeta):
+    """Combined metaclass for classes that need both ABC and TrackCalls functionality."""

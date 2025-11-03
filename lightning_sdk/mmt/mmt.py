@@ -20,9 +20,9 @@ _logger = _setup_logger(__name__)
 class MMT(_BaseMMT):
     """Class to submit and manage multi-machine jobs on the Lightning AI Platform."""
 
-    _force_v1: (
-        bool
-    ) = False  # required for studio plugin still working correctly as v2 currently does not support the studio env
+    _force_v1: bool = (
+        False  # required for studio plugin still working correctly as v2 currently does not support the studio env
+    )
 
     def __init__(
         self,

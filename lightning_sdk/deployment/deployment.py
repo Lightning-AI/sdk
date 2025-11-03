@@ -36,10 +36,11 @@ from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
+from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_org, _resolve_teamspace, _resolve_user
 
 
-class Deployment:
+class Deployment(metaclass=TrackCallsMeta):
     """The Lightning AI Deployment.
 
     Allows to fully control a deployment, including retrieving the status, making new release

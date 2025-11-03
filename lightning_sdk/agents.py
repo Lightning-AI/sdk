@@ -1,9 +1,10 @@
 from typing import List, Optional
 
 from lightning_sdk.api.agents_api import AgentApi
+from lightning_sdk.utils.logging import TrackCallsMeta
 
 
-class Agent:
+class Agent(metaclass=TrackCallsMeta):
     def __init__(self, agent_id: str) -> None:
         self.id = agent_id
         self._agent_api = AgentApi()

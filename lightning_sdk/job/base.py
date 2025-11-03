@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, TypedDict, Union
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.utils.logging import TrackCallsABCMeta
 from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace, in_studio, skip_studio_setup
 
 if TYPE_CHECKING:
@@ -29,7 +30,7 @@ class JobDict(MachineDict):
     total_cost: float
 
 
-class _BaseJob(ABC):
+class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
     """Base interface to all job types."""
 
     def __init__(

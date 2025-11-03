@@ -5,6 +5,7 @@ from lightning_sdk.api import AIHubApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.lightning_cloud.openapi.models import V1Deployment
 from lightning_sdk.user import User
+from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import _resolve_teamspace
 
 if TYPE_CHECKING:
@@ -12,7 +13,7 @@ if TYPE_CHECKING:
     from lightning_sdk.machine import Machine
 
 
-class AIHub:
+class AIHub(metaclass=TrackCallsMeta):
     """An interface to interact with the AI Hub.
 
     Example:

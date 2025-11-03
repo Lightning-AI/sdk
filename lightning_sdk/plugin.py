@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, Generator, Optional, Protocol, Union, run
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
+from lightning_sdk.utils.logging import TrackCallsABCMeta
 from lightning_sdk.utils.resolve import (
     _LIGHTNING_SERVICE_EXECUTION_ID_KEY,
     _resolve_deprecated_cloud_compute,
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
 _logger = _setup_logger(__name__)
 
 
-class _Plugin(ABC):
+class _Plugin(ABC, metaclass=TrackCallsABCMeta):
     """Abstract Plugin class defining the API.
 
     Args:

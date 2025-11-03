@@ -2,12 +2,13 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, List
 
 from lightning_sdk.api import TeamspaceApi
+from lightning_sdk.utils.logging import TrackCallsABCMeta
 
 if TYPE_CHECKING:
     from lightning_sdk.teamspace import Teamspace
 
 
-class Owner(ABC):
+class Owner(ABC, metaclass=TrackCallsABCMeta):
     """Represents an owner of teamspaces and studios."""
 
     def __init__(self) -> None:
