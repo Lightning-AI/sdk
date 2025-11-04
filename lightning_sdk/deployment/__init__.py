@@ -1,4 +1,5 @@
 from lightning_sdk.api.deployment_api import (
+    ApiKeyAuth,
     AutoScaleConfig,
     AutoScalingMetric,
     BasicAuth,
@@ -24,4 +25,5 @@ __all__ = [
     "Secret",
     "TokenAuth",
     "Deployment",
+    "ApiKeyAuth",
 ]
