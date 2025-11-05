@@ -46,7 +46,6 @@ class V1KubernetesTemplate(object):
         'description': 'str',
         'id': 'str',
         'name': 'str',
-        'project_id': 'str',
         'properties': 'list[V1KubernetesTemplateProperty]',
         'spec': 'str',
         'updated_at': 'datetime',
@@ -60,7 +59,6 @@ class V1KubernetesTemplate(object):
         'description': 'description',
         'id': 'id',
         'name': 'name',
-        'project_id': 'projectId',
         'properties': 'properties',
         'spec': 'spec',
         'updated_at': 'updatedAt',
@@ -68,14 +66,13 @@ class V1KubernetesTemplate(object):
         'version': 'version'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, properties: 'list[V1KubernetesTemplateProperty]' =None, spec: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, id: 'str' =None, name: 'str' =None, properties: 'list[V1KubernetesTemplateProperty]' =None, spec: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1KubernetesTemplate - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
         self._description = None
         self._id = None
         self._name = None
-        self._project_id = None
         self._properties = None
         self._spec = None
         self._updated_at = None
@@ -92,8 +89,6 @@ class V1KubernetesTemplate(object):
             self.id = id
         if name is not None:
             self.name = name
-        if project_id is not None:
-            self.project_id = project_id
         if properties is not None:
             self.properties = properties
         if spec is not None:
@@ -209,27 +204,6 @@ class V1KubernetesTemplate(object):
         """
 
         self._name = name
-
-    @property
-    def project_id(self) -> 'str':
-        """Gets the project_id of this V1KubernetesTemplate.  # noqa: E501
-
-
-        :return: The project_id of this V1KubernetesTemplate.  # noqa: E501
-        :rtype: str
-        """
-        return self._project_id
-
-    @project_id.setter
-    def project_id(self, project_id: 'str'):
-        """Sets the project_id of this V1KubernetesTemplate.
-
-
-        :param project_id: The project_id of this V1KubernetesTemplate.  # noqa: E501
-        :type: str
-        """
-
-        self._project_id = project_id
 
     @property
     def properties(self) -> 'list[V1KubernetesTemplateProperty]':

@@ -41,7 +41,6 @@ class KubernetestemplatesIdBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'cluster_id': 'str',
         'description': 'str',
         'name': 'str',
         'properties': 'list[V1KubernetesTemplateProperty]',
@@ -49,23 +48,19 @@ class KubernetestemplatesIdBody(object):
     }
 
     attribute_map = {
-        'cluster_id': 'clusterId',
         'description': 'description',
         'name': 'name',
         'properties': 'properties',
         'spec': 'spec'
     }
 
-    def __init__(self, cluster_id: 'str' =None, description: 'str' =None, name: 'str' =None, properties: 'list[V1KubernetesTemplateProperty]' =None, spec: 'str' =None):  # noqa: E501
+    def __init__(self, description: 'str' =None, name: 'str' =None, properties: 'list[V1KubernetesTemplateProperty]' =None, spec: 'str' =None):  # noqa: E501
         """KubernetestemplatesIdBody - a model defined in Swagger"""  # noqa: E501
-        self._cluster_id = None
         self._description = None
         self._name = None
         self._properties = None
         self._spec = None
         self.discriminator = None
-        if cluster_id is not None:
-            self.cluster_id = cluster_id
         if description is not None:
             self.description = description
         if name is not None:
@@ -74,27 +69,6 @@ class KubernetestemplatesIdBody(object):
             self.properties = properties
         if spec is not None:
             self.spec = spec
-
-    @property
-    def cluster_id(self) -> 'str':
-        """Gets the cluster_id of this KubernetestemplatesIdBody.  # noqa: E501
-
-
-        :return: The cluster_id of this KubernetestemplatesIdBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._cluster_id
-
-    @cluster_id.setter
-    def cluster_id(self, cluster_id: 'str'):
-        """Sets the cluster_id of this KubernetestemplatesIdBody.
-
-
-        :param cluster_id: The cluster_id of this KubernetestemplatesIdBody.  # noqa: E501
-        :type: str
-        """
-
-        self._cluster_id = cluster_id
 
     @property
     def description(self) -> 'str':

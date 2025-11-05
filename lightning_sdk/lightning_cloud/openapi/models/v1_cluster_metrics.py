@@ -56,9 +56,11 @@ class V1ClusterMetrics(object):
         'gpus_temp_avg_running': 'float',
         'gpus_util': 'float',
         'gpus_util_over_allocable': 'float',
+        'gpus_util_over_allocated': 'float',
         'gpus_util_over_requested': 'float',
         'max_gpu_temp_recorded': 'int',
         'max_power_per_gpu': 'int',
+        'num_allocated_gpus': 'int',
         'num_cpus': 'int',
         'num_gpus': 'int',
         'num_gpus_allocable': 'int',
@@ -69,6 +71,15 @@ class V1ClusterMetrics(object):
         'num_pods': 'int',
         'num_requested_cpus': 'int',
         'num_requested_gpus': 'int',
+        'num_throttled_gpus': 'int',
+        'num_throttled_gpus_application_clock': 'int',
+        'num_throttled_gpus_hardware_thermal_slowdown': 'int',
+        'num_throttled_gpus_hw_power_brake': 'int',
+        'num_throttled_gpus_hw_slowdown': 'int',
+        'num_throttled_gpus_idle_workloads': 'int',
+        'num_throttled_gpus_software_thermal_slowdown': 'int',
+        'num_throttled_gpus_sw_power_limit': 'int',
+        'num_throttled_gpus_sync_boost': 'int',
         'nvlink_rx_gib_avg': 'float',
         'nvlink_tx_gib_avg': 'float',
         'pcie_rx_gib_avg': 'float',
@@ -103,9 +114,11 @@ class V1ClusterMetrics(object):
         'gpus_temp_avg_running': 'gpusTempAvgRunning',
         'gpus_util': 'gpusUtil',
         'gpus_util_over_allocable': 'gpusUtilOverAllocable',
+        'gpus_util_over_allocated': 'gpusUtilOverAllocated',
         'gpus_util_over_requested': 'gpusUtilOverRequested',
         'max_gpu_temp_recorded': 'maxGpuTempRecorded',
         'max_power_per_gpu': 'maxPowerPerGpu',
+        'num_allocated_gpus': 'numAllocatedGpus',
         'num_cpus': 'numCpus',
         'num_gpus': 'numGpus',
         'num_gpus_allocable': 'numGpusAllocable',
@@ -116,6 +129,15 @@ class V1ClusterMetrics(object):
         'num_pods': 'numPods',
         'num_requested_cpus': 'numRequestedCpus',
         'num_requested_gpus': 'numRequestedGpus',
+        'num_throttled_gpus': 'numThrottledGpus',
+        'num_throttled_gpus_application_clock': 'numThrottledGpusApplicationClock',
+        'num_throttled_gpus_hardware_thermal_slowdown': 'numThrottledGpusHardwareThermalSlowdown',
+        'num_throttled_gpus_hw_power_brake': 'numThrottledGpusHwPowerBrake',
+        'num_throttled_gpus_hw_slowdown': 'numThrottledGpusHwSlowdown',
+        'num_throttled_gpus_idle_workloads': 'numThrottledGpusIdleWorkloads',
+        'num_throttled_gpus_software_thermal_slowdown': 'numThrottledGpusSoftwareThermalSlowdown',
+        'num_throttled_gpus_sw_power_limit': 'numThrottledGpusSwPowerLimit',
+        'num_throttled_gpus_sync_boost': 'numThrottledGpusSyncBoost',
         'nvlink_rx_gib_avg': 'nvlinkRxGibAvg',
         'nvlink_tx_gib_avg': 'nvlinkTxGibAvg',
         'pcie_rx_gib_avg': 'pcieRxGibAvg',
@@ -134,7 +156,7 @@ class V1ClusterMetrics(object):
         'vram_util': 'vramUtil'
     }
 
-    def __init__(self, cpus_util: 'float' =None, filesystem_inode_util: 'float' =None, filesystem_read_rate: 'float' =None, filesystem_total: 'str' =None, filesystem_util: 'float' =None, filesystem_write_rate: 'float' =None, gpu_sm_active: 'float' =None, gpu_sm_occupancy: 'float' =None, gpus_energy_avg: 'float' =None, gpus_energy_avg_running: 'float' =None, gpus_energy_total: 'float' =None, gpus_temp_avg: 'float' =None, gpus_temp_avg_running: 'float' =None, gpus_util: 'float' =None, gpus_util_over_allocable: 'float' =None, gpus_util_over_requested: 'float' =None, max_gpu_temp_recorded: 'int' =None, max_power_per_gpu: 'int' =None, num_cpus: 'int' =None, num_gpus: 'int' =None, num_gpus_allocable: 'int' =None, num_limit_cpus: 'int' =None, num_limit_gpus: 'int' =None, num_namespaces: 'int' =None, num_nodes: 'int' =None, num_pods: 'int' =None, num_requested_cpus: 'int' =None, num_requested_gpus: 'int' =None, nvlink_rx_gib_avg: 'float' =None, nvlink_tx_gib_avg: 'float' =None, pcie_rx_gib_avg: 'float' =None, pcie_tx_gib_avg: 'float' =None, ram_limit: 'str' =None, ram_requested: 'str' =None, ram_total: 'str' =None, ram_util: 'float' =None, timestamp: 'datetime' =None, vram_limit: 'int' =None, vram_read_write_util: 'float' =None, vram_requested: 'int' =None, vram_total: 'int' =None, vram_used_avg: 'int' =None, vram_used_total: 'int' =None, vram_util: 'float' =None):  # noqa: E501
+    def __init__(self, cpus_util: 'float' =None, filesystem_inode_util: 'float' =None, filesystem_read_rate: 'float' =None, filesystem_total: 'str' =None, filesystem_util: 'float' =None, filesystem_write_rate: 'float' =None, gpu_sm_active: 'float' =None, gpu_sm_occupancy: 'float' =None, gpus_energy_avg: 'float' =None, gpus_energy_avg_running: 'float' =None, gpus_energy_total: 'float' =None, gpus_temp_avg: 'float' =None, gpus_temp_avg_running: 'float' =None, gpus_util: 'float' =None, gpus_util_over_allocable: 'float' =None, gpus_util_over_allocated: 'float' =None, gpus_util_over_requested: 'float' =None, max_gpu_temp_recorded: 'int' =None, max_power_per_gpu: 'int' =None, num_allocated_gpus: 'int' =None, num_cpus: 'int' =None, num_gpus: 'int' =None, num_gpus_allocable: 'int' =None, num_limit_cpus: 'int' =None, num_limit_gpus: 'int' =None, num_namespaces: 'int' =None, num_nodes: 'int' =None, num_pods: 'int' =None, num_requested_cpus: 'int' =None, num_requested_gpus: 'int' =None, num_throttled_gpus: 'int' =None, num_throttled_gpus_application_clock: 'int' =None, num_throttled_gpus_hardware_thermal_slowdown: 'int' =None, num_throttled_gpus_hw_power_brake: 'int' =None, num_throttled_gpus_hw_slowdown: 'int' =None, num_throttled_gpus_idle_workloads: 'int' =None, num_throttled_gpus_software_thermal_slowdown: 'int' =None, num_throttled_gpus_sw_power_limit: 'int' =None, num_throttled_gpus_sync_boost: 'int' =None, nvlink_rx_gib_avg: 'float' =None, nvlink_tx_gib_avg: 'float' =None, pcie_rx_gib_avg: 'float' =None, pcie_tx_gib_avg: 'float' =None, ram_limit: 'str' =None, ram_requested: 'str' =None, ram_total: 'str' =None, ram_util: 'float' =None, timestamp: 'datetime' =None, vram_limit: 'int' =None, vram_read_write_util: 'float' =None, vram_requested: 'int' =None, vram_total: 'int' =None, vram_used_avg: 'int' =None, vram_used_total: 'int' =None, vram_util: 'float' =None):  # noqa: E501
         """V1ClusterMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpus_util = None
         self._filesystem_inode_util = None
@@ -151,9 +173,11 @@ class V1ClusterMetrics(object):
         self._gpus_temp_avg_running = None
         self._gpus_util = None
         self._gpus_util_over_allocable = None
+        self._gpus_util_over_allocated = None
         self._gpus_util_over_requested = None
         self._max_gpu_temp_recorded = None
         self._max_power_per_gpu = None
+        self._num_allocated_gpus = None
         self._num_cpus = None
         self._num_gpus = None
         self._num_gpus_allocable = None
@@ -164,6 +188,15 @@ class V1ClusterMetrics(object):
         self._num_pods = None
         self._num_requested_cpus = None
         self._num_requested_gpus = None
+        self._num_throttled_gpus = None
+        self._num_throttled_gpus_application_clock = None
+        self._num_throttled_gpus_hardware_thermal_slowdown = None
+        self._num_throttled_gpus_hw_power_brake = None
+        self._num_throttled_gpus_hw_slowdown = None
+        self._num_throttled_gpus_idle_workloads = None
+        self._num_throttled_gpus_software_thermal_slowdown = None
+        self._num_throttled_gpus_sw_power_limit = None
+        self._num_throttled_gpus_sync_boost = None
         self._nvlink_rx_gib_avg = None
         self._nvlink_tx_gib_avg = None
         self._pcie_rx_gib_avg = None
@@ -211,12 +244,16 @@ class V1ClusterMetrics(object):
             self.gpus_util = gpus_util
         if gpus_util_over_allocable is not None:
             self.gpus_util_over_allocable = gpus_util_over_allocable
+        if gpus_util_over_allocated is not None:
+            self.gpus_util_over_allocated = gpus_util_over_allocated
         if gpus_util_over_requested is not None:
             self.gpus_util_over_requested = gpus_util_over_requested
         if max_gpu_temp_recorded is not None:
             self.max_gpu_temp_recorded = max_gpu_temp_recorded
         if max_power_per_gpu is not None:
             self.max_power_per_gpu = max_power_per_gpu
+        if num_allocated_gpus is not None:
+            self.num_allocated_gpus = num_allocated_gpus
         if num_cpus is not None:
             self.num_cpus = num_cpus
         if num_gpus is not None:
@@ -237,6 +274,24 @@ class V1ClusterMetrics(object):
             self.num_requested_cpus = num_requested_cpus
         if num_requested_gpus is not None:
             self.num_requested_gpus = num_requested_gpus
+        if num_throttled_gpus is not None:
+            self.num_throttled_gpus = num_throttled_gpus
+        if num_throttled_gpus_application_clock is not None:
+            self.num_throttled_gpus_application_clock = num_throttled_gpus_application_clock
+        if num_throttled_gpus_hardware_thermal_slowdown is not None:
+            self.num_throttled_gpus_hardware_thermal_slowdown = num_throttled_gpus_hardware_thermal_slowdown
+        if num_throttled_gpus_hw_power_brake is not None:
+            self.num_throttled_gpus_hw_power_brake = num_throttled_gpus_hw_power_brake
+        if num_throttled_gpus_hw_slowdown is not None:
+            self.num_throttled_gpus_hw_slowdown = num_throttled_gpus_hw_slowdown
+        if num_throttled_gpus_idle_workloads is not None:
+            self.num_throttled_gpus_idle_workloads = num_throttled_gpus_idle_workloads
+        if num_throttled_gpus_software_thermal_slowdown is not None:
+            self.num_throttled_gpus_software_thermal_slowdown = num_throttled_gpus_software_thermal_slowdown
+        if num_throttled_gpus_sw_power_limit is not None:
+            self.num_throttled_gpus_sw_power_limit = num_throttled_gpus_sw_power_limit
+        if num_throttled_gpus_sync_boost is not None:
+            self.num_throttled_gpus_sync_boost = num_throttled_gpus_sync_boost
         if nvlink_rx_gib_avg is not None:
             self.nvlink_rx_gib_avg = nvlink_rx_gib_avg
         if nvlink_tx_gib_avg is not None:
@@ -586,6 +641,27 @@ class V1ClusterMetrics(object):
         self._gpus_util_over_allocable = gpus_util_over_allocable
 
     @property
+    def gpus_util_over_allocated(self) -> 'float':
+        """Gets the gpus_util_over_allocated of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The gpus_util_over_allocated of this V1ClusterMetrics.  # noqa: E501
+        :rtype: float
+        """
+        return self._gpus_util_over_allocated
+
+    @gpus_util_over_allocated.setter
+    def gpus_util_over_allocated(self, gpus_util_over_allocated: 'float'):
+        """Sets the gpus_util_over_allocated of this V1ClusterMetrics.
+
+
+        :param gpus_util_over_allocated: The gpus_util_over_allocated of this V1ClusterMetrics.  # noqa: E501
+        :type: float
+        """
+
+        self._gpus_util_over_allocated = gpus_util_over_allocated
+
+    @property
     def gpus_util_over_requested(self) -> 'float':
         """Gets the gpus_util_over_requested of this V1ClusterMetrics.  # noqa: E501
 
@@ -647,6 +723,27 @@ class V1ClusterMetrics(object):
         """
 
         self._max_power_per_gpu = max_power_per_gpu
+
+    @property
+    def num_allocated_gpus(self) -> 'int':
+        """Gets the num_allocated_gpus of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_allocated_gpus of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_allocated_gpus
+
+    @num_allocated_gpus.setter
+    def num_allocated_gpus(self, num_allocated_gpus: 'int'):
+        """Sets the num_allocated_gpus of this V1ClusterMetrics.
+
+
+        :param num_allocated_gpus: The num_allocated_gpus of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_allocated_gpus = num_allocated_gpus
 
     @property
     def num_cpus(self) -> 'int':
@@ -857,6 +954,195 @@ class V1ClusterMetrics(object):
         """
 
         self._num_requested_gpus = num_requested_gpus
+
+    @property
+    def num_throttled_gpus(self) -> 'int':
+        """Gets the num_throttled_gpus of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_throttled_gpus of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_throttled_gpus
+
+    @num_throttled_gpus.setter
+    def num_throttled_gpus(self, num_throttled_gpus: 'int'):
+        """Sets the num_throttled_gpus of this V1ClusterMetrics.
+
+
+        :param num_throttled_gpus: The num_throttled_gpus of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_throttled_gpus = num_throttled_gpus
+
+    @property
+    def num_throttled_gpus_application_clock(self) -> 'int':
+        """Gets the num_throttled_gpus_application_clock of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_throttled_gpus_application_clock of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_throttled_gpus_application_clock
+
+    @num_throttled_gpus_application_clock.setter
+    def num_throttled_gpus_application_clock(self, num_throttled_gpus_application_clock: 'int'):
+        """Sets the num_throttled_gpus_application_clock of this V1ClusterMetrics.
+
+
+        :param num_throttled_gpus_application_clock: The num_throttled_gpus_application_clock of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_throttled_gpus_application_clock = num_throttled_gpus_application_clock
+
+    @property
+    def num_throttled_gpus_hardware_thermal_slowdown(self) -> 'int':
+        """Gets the num_throttled_gpus_hardware_thermal_slowdown of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_throttled_gpus_hardware_thermal_slowdown of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_throttled_gpus_hardware_thermal_slowdown
+
+    @num_throttled_gpus_hardware_thermal_slowdown.setter
+    def num_throttled_gpus_hardware_thermal_slowdown(self, num_throttled_gpus_hardware_thermal_slowdown: 'int'):
+        """Sets the num_throttled_gpus_hardware_thermal_slowdown of this V1ClusterMetrics.
+
+
+        :param num_throttled_gpus_hardware_thermal_slowdown: The num_throttled_gpus_hardware_thermal_slowdown of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_throttled_gpus_hardware_thermal_slowdown = num_throttled_gpus_hardware_thermal_slowdown
+
+    @property
+    def num_throttled_gpus_hw_power_brake(self) -> 'int':
+        """Gets the num_throttled_gpus_hw_power_brake of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_throttled_gpus_hw_power_brake of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_throttled_gpus_hw_power_brake
+
+    @num_throttled_gpus_hw_power_brake.setter
+    def num_throttled_gpus_hw_power_brake(self, num_throttled_gpus_hw_power_brake: 'int'):
+        """Sets the num_throttled_gpus_hw_power_brake of this V1ClusterMetrics.
+
+
+        :param num_throttled_gpus_hw_power_brake: The num_throttled_gpus_hw_power_brake of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_throttled_gpus_hw_power_brake = num_throttled_gpus_hw_power_brake
+
+    @property
+    def num_throttled_gpus_hw_slowdown(self) -> 'int':
+        """Gets the num_throttled_gpus_hw_slowdown of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_throttled_gpus_hw_slowdown of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_throttled_gpus_hw_slowdown
+
+    @num_throttled_gpus_hw_slowdown.setter
+    def num_throttled_gpus_hw_slowdown(self, num_throttled_gpus_hw_slowdown: 'int'):
+        """Sets the num_throttled_gpus_hw_slowdown of this V1ClusterMetrics.
+
+
+        :param num_throttled_gpus_hw_slowdown: The num_throttled_gpus_hw_slowdown of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_throttled_gpus_hw_slowdown = num_throttled_gpus_hw_slowdown
+
+    @property
+    def num_throttled_gpus_idle_workloads(self) -> 'int':
+        """Gets the num_throttled_gpus_idle_workloads of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_throttled_gpus_idle_workloads of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_throttled_gpus_idle_workloads
+
+    @num_throttled_gpus_idle_workloads.setter
+    def num_throttled_gpus_idle_workloads(self, num_throttled_gpus_idle_workloads: 'int'):
+        """Sets the num_throttled_gpus_idle_workloads of this V1ClusterMetrics.
+
+
+        :param num_throttled_gpus_idle_workloads: The num_throttled_gpus_idle_workloads of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_throttled_gpus_idle_workloads = num_throttled_gpus_idle_workloads
+
+    @property
+    def num_throttled_gpus_software_thermal_slowdown(self) -> 'int':
+        """Gets the num_throttled_gpus_software_thermal_slowdown of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_throttled_gpus_software_thermal_slowdown of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_throttled_gpus_software_thermal_slowdown
+
+    @num_throttled_gpus_software_thermal_slowdown.setter
+    def num_throttled_gpus_software_thermal_slowdown(self, num_throttled_gpus_software_thermal_slowdown: 'int'):
+        """Sets the num_throttled_gpus_software_thermal_slowdown of this V1ClusterMetrics.
+
+
+        :param num_throttled_gpus_software_thermal_slowdown: The num_throttled_gpus_software_thermal_slowdown of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_throttled_gpus_software_thermal_slowdown = num_throttled_gpus_software_thermal_slowdown
+
+    @property
+    def num_throttled_gpus_sw_power_limit(self) -> 'int':
+        """Gets the num_throttled_gpus_sw_power_limit of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_throttled_gpus_sw_power_limit of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_throttled_gpus_sw_power_limit
+
+    @num_throttled_gpus_sw_power_limit.setter
+    def num_throttled_gpus_sw_power_limit(self, num_throttled_gpus_sw_power_limit: 'int'):
+        """Sets the num_throttled_gpus_sw_power_limit of this V1ClusterMetrics.
+
+
+        :param num_throttled_gpus_sw_power_limit: The num_throttled_gpus_sw_power_limit of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_throttled_gpus_sw_power_limit = num_throttled_gpus_sw_power_limit
+
+    @property
+    def num_throttled_gpus_sync_boost(self) -> 'int':
+        """Gets the num_throttled_gpus_sync_boost of this V1ClusterMetrics.  # noqa: E501
+
+
+        :return: The num_throttled_gpus_sync_boost of this V1ClusterMetrics.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_throttled_gpus_sync_boost
+
+    @num_throttled_gpus_sync_boost.setter
+    def num_throttled_gpus_sync_boost(self, num_throttled_gpus_sync_boost: 'int'):
+        """Sets the num_throttled_gpus_sync_boost of this V1ClusterMetrics.
+
+
+        :param num_throttled_gpus_sync_boost: The num_throttled_gpus_sync_boost of this V1ClusterMetrics.  # noqa: E501
+        :type: int
+        """
+
+        self._num_throttled_gpus_sync_boost = num_throttled_gpus_sync_boost
 
     @property
     def nvlink_rx_gib_avg(self) -> 'float':

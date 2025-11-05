@@ -41,24 +41,19 @@ class IncidentIdMessagesBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'message': 'str',
-        'user_id': 'str'
+        'message': 'str'
     }
 
     attribute_map = {
-        'message': 'message',
-        'user_id': 'userId'
+        'message': 'message'
     }
 
-    def __init__(self, message: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, message: 'str' =None):  # noqa: E501
         """IncidentIdMessagesBody - a model defined in Swagger"""  # noqa: E501
         self._message = None
-        self._user_id = None
         self.discriminator = None
         if message is not None:
             self.message = message
-        if user_id is not None:
-            self.user_id = user_id
 
     @property
     def message(self) -> 'str':
@@ -80,27 +75,6 @@ class IncidentIdMessagesBody(object):
         """
 
         self._message = message
-
-    @property
-    def user_id(self) -> 'str':
-        """Gets the user_id of this IncidentIdMessagesBody.  # noqa: E501
-
-
-        :return: The user_id of this IncidentIdMessagesBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._user_id
-
-    @user_id.setter
-    def user_id(self, user_id: 'str'):
-        """Sets the user_id of this IncidentIdMessagesBody.
-
-
-        :param user_id: The user_id of this IncidentIdMessagesBody.  # noqa: E501
-        :type: str
-        """
-
-        self._user_id = user_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

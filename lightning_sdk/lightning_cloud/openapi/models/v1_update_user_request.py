@@ -48,6 +48,7 @@ class V1UpdateUserRequest(object):
         'complete_sign_up': 'bool',
         'completed_project_onboarding': 'bool',
         'country': 'str',
+        'disable_shell_persistence': 'bool',
         'email': 'str',
         'experimentation_id': 'str',
         'first_name': 'str',
@@ -78,6 +79,7 @@ class V1UpdateUserRequest(object):
         'complete_sign_up': 'completeSignUp',
         'completed_project_onboarding': 'completedProjectOnboarding',
         'country': 'country',
+        'disable_shell_persistence': 'disableShellPersistence',
         'email': 'email',
         'experimentation_id': 'experimentationId',
         'first_name': 'firstName',
@@ -100,7 +102,7 @@ class V1UpdateUserRequest(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1UpdateUserRequest - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
@@ -109,6 +111,7 @@ class V1UpdateUserRequest(object):
         self._complete_sign_up = None
         self._completed_project_onboarding = None
         self._country = None
+        self._disable_shell_persistence = None
         self._email = None
         self._experimentation_id = None
         self._first_name = None
@@ -144,6 +147,8 @@ class V1UpdateUserRequest(object):
             self.completed_project_onboarding = completed_project_onboarding
         if country is not None:
             self.country = country
+        if disable_shell_persistence is not None:
+            self.disable_shell_persistence = disable_shell_persistence
         if email is not None:
             self.email = email
         if experimentation_id is not None:
@@ -331,6 +336,27 @@ class V1UpdateUserRequest(object):
         """
 
         self._country = country
+
+    @property
+    def disable_shell_persistence(self) -> 'bool':
+        """Gets the disable_shell_persistence of this V1UpdateUserRequest.  # noqa: E501
+
+
+        :return: The disable_shell_persistence of this V1UpdateUserRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_shell_persistence
+
+    @disable_shell_persistence.setter
+    def disable_shell_persistence(self, disable_shell_persistence: 'bool'):
+        """Sets the disable_shell_persistence of this V1UpdateUserRequest.
+
+
+        :param disable_shell_persistence: The disable_shell_persistence of this V1UpdateUserRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_shell_persistence = disable_shell_persistence
 
     @property
     def email(self) -> 'str':

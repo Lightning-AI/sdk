@@ -63,7 +63,6 @@ class V1UserFeatures(object):
         'enterprise_compute_admin': 'bool',
         'f234': 'bool',
         'f236': 'bool',
-        'f239': 'bool',
         'f240': 'bool',
         'f241': 'bool',
         'f243': 'bool',
@@ -73,7 +72,6 @@ class V1UserFeatures(object):
         'f252': 'bool',
         'f253': 'bool',
         'f254': 'bool',
-        'f255': 'bool',
         'f258': 'bool',
         'f259': 'bool',
         'f261': 'bool',
@@ -86,6 +84,7 @@ class V1UserFeatures(object):
         'f271': 'bool',
         'f272': 'bool',
         'f273': 'bool',
+        'f274': 'bool',
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'job_artifacts_v2': 'bool',
@@ -150,7 +149,6 @@ class V1UserFeatures(object):
         'enterprise_compute_admin': 'enterpriseComputeAdmin',
         'f234': 'f234',
         'f236': 'f236',
-        'f239': 'f239',
         'f240': 'f240',
         'f241': 'f241',
         'f243': 'f243',
@@ -160,7 +158,6 @@ class V1UserFeatures(object):
         'f252': 'f252',
         'f253': 'f253',
         'f254': 'f254',
-        'f255': 'f255',
         'f258': 'f258',
         'f259': 'f259',
         'f261': 'f261',
@@ -173,6 +170,7 @@ class V1UserFeatures(object):
         'f271': 'f271',
         'f272': 'f272',
         'f273': 'f273',
+        'f274': 'f274',
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'job_artifacts_v2': 'jobArtifactsV2',
@@ -214,7 +212,7 @@ class V1UserFeatures(object):
         'writable_s3_connections': 'writableS3Connections'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f239: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f255: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f261: 'bool' =None, f262: 'bool' =None, f265: 'bool' =None, f266: 'bool' =None, f268: 'bool' =None, f269: 'bool' =None, f270: 'bool' =None, f271: 'bool' =None, f272: 'bool' =None, f273: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, agents_v2: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, drive_v2: 'bool' =None, enterprise_compute_admin: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f261: 'bool' =None, f262: 'bool' =None, f265: 'bool' =None, f266: 'bool' =None, f268: 'bool' =None, f269: 'bool' =None, f270: 'bool' =None, f271: 'bool' =None, f272: 'bool' =None, f273: 'bool' =None, f274: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, lit_logger: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, pricing_updates: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None, writable_s3_connections: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._agents_v2 = None
@@ -238,7 +236,6 @@ class V1UserFeatures(object):
         self._enterprise_compute_admin = None
         self._f234 = None
         self._f236 = None
-        self._f239 = None
         self._f240 = None
         self._f241 = None
         self._f243 = None
@@ -248,7 +245,6 @@ class V1UserFeatures(object):
         self._f252 = None
         self._f253 = None
         self._f254 = None
-        self._f255 = None
         self._f258 = None
         self._f259 = None
         self._f261 = None
@@ -261,6 +257,7 @@ class V1UserFeatures(object):
         self._f271 = None
         self._f272 = None
         self._f273 = None
+        self._f274 = None
         self._fair_share = None
         self._featured_studios_admin = None
         self._job_artifacts_v2 = None
@@ -345,8 +342,6 @@ class V1UserFeatures(object):
             self.f234 = f234
         if f236 is not None:
             self.f236 = f236
-        if f239 is not None:
-            self.f239 = f239
         if f240 is not None:
             self.f240 = f240
         if f241 is not None:
@@ -365,8 +360,6 @@ class V1UserFeatures(object):
             self.f253 = f253
         if f254 is not None:
             self.f254 = f254
-        if f255 is not None:
-            self.f255 = f255
         if f258 is not None:
             self.f258 = f258
         if f259 is not None:
@@ -391,6 +384,8 @@ class V1UserFeatures(object):
             self.f272 = f272
         if f273 is not None:
             self.f273 = f273
+        if f274 is not None:
+            self.f274 = f274
         if fair_share is not None:
             self.fair_share = fair_share
         if featured_studios_admin is not None:
@@ -933,27 +928,6 @@ class V1UserFeatures(object):
         self._f236 = f236
 
     @property
-    def f239(self) -> 'bool':
-        """Gets the f239 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The f239 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._f239
-
-    @f239.setter
-    def f239(self, f239: 'bool'):
-        """Sets the f239 of this V1UserFeatures.
-
-
-        :param f239: The f239 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._f239 = f239
-
-    @property
     def f240(self) -> 'bool':
         """Gets the f240 of this V1UserFeatures.  # noqa: E501
 
@@ -1141,27 +1115,6 @@ class V1UserFeatures(object):
         """
 
         self._f254 = f254
-
-    @property
-    def f255(self) -> 'bool':
-        """Gets the f255 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The f255 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._f255
-
-    @f255.setter
-    def f255(self, f255: 'bool'):
-        """Sets the f255 of this V1UserFeatures.
-
-
-        :param f255: The f255 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._f255 = f255
 
     @property
     def f258(self) -> 'bool':
@@ -1414,6 +1367,27 @@ class V1UserFeatures(object):
         """
 
         self._f273 = f273
+
+    @property
+    def f274(self) -> 'bool':
+        """Gets the f274 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f274 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f274
+
+    @f274.setter
+    def f274(self, f274: 'bool'):
+        """Sets the f274 of this V1UserFeatures.
+
+
+        :param f274: The f274 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f274 = f274
 
     @property
     def fair_share(self) -> 'bool':
