@@ -7,15 +7,23 @@ import pytest
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
     ProjectIdCloudspacesBody,
+    V1AWSDirectV1,
     V1CloudSpace,
+    V1ClusterType,
+    V1ExternalCluster,
+    V1ExternalClusterSpec,
     V1GetCloudSpaceInstanceStatusResponse,
+    V1GoogleCloudDirectV1,
     V1LightningRun,
     V1ListCloudSpacesResponse,
+    V1ListClustersResponse,
+    V1ListProjectClustersResponse,
     V1Organization,
     V1PluginsListResponse,
     V1Project,
     V1ProjectSettings,
 )
+from lightning_sdk.machine import CloudProvider
 from lightning_sdk.studio import Studio
 
 
@@ -484,3 +492,345 @@ def test_studio_init_uses_current_studio_template(
 
     assert studio.name == "st-new"
     mock_get_cloud_space.assert_called()
+
+
+@mock.patch("requests.put", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_project_clusters",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
+    autospec=True,
+)
+def test_studio_init_with_cloud_provider_without_cloud_account(
+    mock_list_clusters,
+    mock_list_project_clusters,
+    mock_get_teamspace,
+    mock_get_org,
+    mock_get_status,
+    mock_list_cloudspaces,
+    mock_create_cloudspace,
+    mock_create_lightning_run,
+    mock_list_installed_plugins,
+    mock_list_available_plugins,
+    mock_requests_put,
+):
+    """Test that Studio.__init__ can be called with cloud_provider without cloud_account."""
+    mock_list_clusters.return_value = V1ListClustersResponse(
+        [
+            V1ExternalCluster(
+                id="aws-public",
+                spec=V1ExternalClusterSpec(aws_v1=V1AWSDirectV1(), cluster_type=V1ClusterType.GLOBAL),
+            ),
+            V1ExternalCluster(
+                id="gcp-public",
+                spec=V1ExternalClusterSpec(google_cloud_v1=V1GoogleCloudDirectV1(), cluster_type=V1ClusterType.GLOBAL),
+            ),
+        ]
+    )
+
+    mock_list_project_clusters.return_value = V1ListProjectClustersResponse([])
+
+    def _create_cloudspace_side_effect(*args, **kwargs):
+        body = args[1] if len(args) > 1 else kwargs.get("body")
+        project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
+        assert isinstance(body, ProjectIdCloudspacesBody)
+        return V1CloudSpace(
+            name=body.name,
+            display_name=body.display_name,
+            cluster_id=body.cluster_id,
+            project_id=project_id,
+            id=body.name,
+        )
+
+    def _create_lightning_run_side_effect(*args, **kwargs):
+        body = args[1] if len(args) > 1 else kwargs.get("body")
+        project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
+        cloudspace_id = args[3] if len(args) > 3 else kwargs.get("cloudspace_id")
+        return V1LightningRun(
+            cluster_id=body.cluster_id,
+            cloudspace_id=cloudspace_id,
+            project_id=project_id,
+            id=cloudspace_id + "_run",
+        )
+
+    mock_list_cloudspaces.return_value = V1ListCloudSpacesResponse([])
+    mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
+    mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
+
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        in_use=Externalv1CloudSpaceInstanceStatus(phase="CLOUD_SPACE_INSTANCE_STATE_STOPPED")
+    )
+
+    mock_get_teamspace.return_value = V1Project(
+        name="ts-abc",
+        display_name="ts-abc",
+        id="ts-abc",
+        project_settings=V1ProjectSettings(preferred_cluster="my-preferred-cluster"),
+    )
+
+    mock_get_org.return_value = V1Organization(
+        display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
+    )
+
+    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
+    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
+
+    studio = Studio(
+        name="test-studio-gcp",
+        teamspace="ts-abc",
+        org="org-abc",
+        cloud_provider=CloudProvider.GCP,
+        create_ok=True,
+    )
+
+    assert studio.teamspace.name == "ts-abc"
+    assert studio.owner.name == "org-abc"
+    assert studio.name == "test-studio-gcp"
+    assert studio.cloud_account == "gcp-public"
+
+
+@mock.patch("requests.put", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_project_clusters",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
+    autospec=True,
+)
+def test_studio_init_with_cloud_provider_string_without_cloud_account(
+    mock_list_clusters,
+    mock_list_project_clusters,
+    mock_get_teamspace,
+    mock_get_org,
+    mock_get_status,
+    mock_list_cloudspaces,
+    mock_create_cloudspace,
+    mock_create_lightning_run,
+    mock_list_installed_plugins,
+    mock_list_available_plugins,
+    mock_requests_put,
+):
+    """Test that Studio.__init__ can be called with cloud_provider as string without cloud_account."""
+    mock_list_clusters.return_value = V1ListClustersResponse(
+        [
+            V1ExternalCluster(
+                id="aws-public",
+                spec=V1ExternalClusterSpec(aws_v1=V1AWSDirectV1(), cluster_type=V1ClusterType.GLOBAL),
+            ),
+            V1ExternalCluster(
+                id="gcp-public",
+                spec=V1ExternalClusterSpec(google_cloud_v1=V1GoogleCloudDirectV1(), cluster_type=V1ClusterType.GLOBAL),
+            ),
+        ]
+    )
+
+    mock_list_project_clusters.return_value = V1ListProjectClustersResponse([])
+
+    def _create_cloudspace_side_effect(*args, **kwargs):
+        body = args[1] if len(args) > 1 else kwargs.get("body")
+        project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
+        assert isinstance(body, ProjectIdCloudspacesBody)
+        return V1CloudSpace(
+            name=body.name,
+            display_name=body.display_name,
+            cluster_id=body.cluster_id,
+            project_id=project_id,
+            id=body.name,
+        )
+
+    def _create_lightning_run_side_effect(*args, **kwargs):
+        body = args[1] if len(args) > 1 else kwargs.get("body")
+        project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
+        cloudspace_id = args[3] if len(args) > 3 else kwargs.get("cloudspace_id")
+        return V1LightningRun(
+            cluster_id=body.cluster_id,
+            cloudspace_id=cloudspace_id,
+            project_id=project_id,
+            id=cloudspace_id + "_run",
+        )
+
+    mock_list_cloudspaces.return_value = V1ListCloudSpacesResponse([])
+    mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
+    mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
+
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        in_use=Externalv1CloudSpaceInstanceStatus(phase="CLOUD_SPACE_INSTANCE_STATE_STOPPED")
+    )
+
+    mock_get_teamspace.return_value = V1Project(
+        name="ts-abc",
+        display_name="ts-abc",
+        id="ts-abc",
+        project_settings=V1ProjectSettings(preferred_cluster="my-preferred-cluster"),
+    )
+
+    mock_get_org.return_value = V1Organization(
+        display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
+    )
+
+    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
+    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
+
+    studio = Studio(
+        name="test-studio-aws-str",
+        teamspace="ts-abc",
+        org="org-abc",
+        cloud_provider="AWS",
+        create_ok=True,
+    )
+
+    assert studio.teamspace.name == "ts-abc"
+    assert studio.owner.name == "org-abc"
+    assert studio.name == "test-studio-aws-str"
+    assert studio.cloud_account == "aws-public"
+
+
+@mock.patch("requests.put", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_project_clusters",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
+    autospec=True,
+)
+def test_studio_init_with_cloud_provider_for_existing_studio(
+    mock_list_clusters,
+    mock_list_project_clusters,
+    mock_get_teamspace,
+    mock_get_org,
+    mock_get_status,
+    mock_list_cloudspaces,
+    mock_list_installed_plugins,
+    mock_list_available_plugins,
+    mock_requests_put,
+):
+    """Test that cloud_provider arg doesn't break when accessing existing studio."""
+    mock_list_clusters.return_value = V1ListClustersResponse(
+        [
+            V1ExternalCluster(
+                id="aws-public",
+                spec=V1ExternalClusterSpec(aws_v1=V1AWSDirectV1(), cluster_type=V1ClusterType.GLOBAL),
+            ),
+            V1ExternalCluster(
+                id="gcp-public",
+                spec=V1ExternalClusterSpec(google_cloud_v1=V1GoogleCloudDirectV1(), cluster_type=V1ClusterType.GLOBAL),
+            ),
+        ]
+    )
+
+    mock_list_project_clusters.return_value = V1ListProjectClustersResponse([])
+
+    existing_studio = V1CloudSpace(
+        name="existing-studio",
+        display_name="existing-studio",
+        cluster_id="aws-public",
+        project_id="ts-abc",
+        id="existing-studio",
+    )
+
+    mock_list_cloudspaces.return_value = V1ListCloudSpacesResponse([existing_studio])
+
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        in_use=Externalv1CloudSpaceInstanceStatus(phase="CLOUD_SPACE_INSTANCE_STATE_STOPPED")
+    )
+
+    mock_get_teamspace.return_value = V1Project(
+        name="ts-abc",
+        display_name="ts-abc",
+        id="ts-abc",
+        project_settings=V1ProjectSettings(preferred_cluster="my-preferred-cluster"),
+    )
+
+    mock_get_org.return_value = V1Organization(
+        display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
+    )
+
+    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
+    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
+
+    studio = Studio(
+        name="existing-studio",
+        teamspace="ts-abc",
+        org="org-abc",
+        cloud_provider=CloudProvider.GCP,
+        create_ok=False,
+    )
+
+    assert studio.teamspace.name == "ts-abc"
+    assert studio.owner.name == "org-abc"
+    assert studio.name == "existing-studio"
+    assert studio.cloud_account == "aws-public"

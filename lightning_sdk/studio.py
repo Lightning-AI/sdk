@@ -50,7 +50,7 @@ class Studio(metaclass=TrackCallsMeta):
             Doesn't matter when the studio already exists.
         cloud_account_provider: The provider to select the cloud-account from.
             If set, must be in agreement with the provider from the cloud_account (if specified).
-            If not specified, falls backto the teamspace default cloud account.
+            If not specified, falls back to the teamspace default cloud account.
         create_ok: whether the studio will be created if it does not yet exist. Defaults to True
         provider: the provider of the machine, the studio should be created on.
         studio_type: Type of studio to create. Only effective during initial creation;
@@ -111,10 +111,13 @@ class Studio(metaclass=TrackCallsMeta):
             # We're inside a studio, get it by ID
             current_studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
 
-        cloud_account = _resolve_deprecated_cluster(
-            cloud_account, cluster, current_studio.cluster_id if current_studio else None
-        )
-        cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
+        if cloud_account or not cloud_provider:
+            cloud_account = _resolve_deprecated_cluster(
+                cloud_account, cluster, current_studio.cluster_id if current_studio else None
+            )
+            cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
+        else:
+            cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
 
         cls_name = self._cls_name
 

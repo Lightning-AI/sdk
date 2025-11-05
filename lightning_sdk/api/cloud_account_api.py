@@ -198,8 +198,8 @@ class CloudAccountApi:
                 cloud_provider_resp = self._get_cloud_account_provider(cloud_account_resp)
                 if cloud_provider_resp != cloud_provider:
                     raise RuntimeError(
-                        f"Specified both cloud_provider ({cloud_provider}) and "
-                        "cloud_account ({cloud_account} has cloud provider {cloud_provider_resp}) which don't match!"
+                        f"Specified both cloud_provider ({cloud_provider}) and cloud_account ({cloud_account} "
+                        f"has cloud provider {cloud_provider_resp}) which don't match!"
                     )
 
             return cloud_account
