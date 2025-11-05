@@ -133,6 +133,7 @@ class Deployment(metaclass=TrackCallsMeta):
         from_onboarding: Optional[bool] = None,
         from_litserve: Optional[bool] = None,
         max_runtime: Optional[int] = None,
+        path_mappings: Optional[Dict[str, str]] = None,
     ) -> None:
         """The Lightning AI Deployment.
 
@@ -164,6 +165,15 @@ class Deployment(metaclass=TrackCallsMeta):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
+            path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
+                represents the data-connection name and the path inside that connection.
+                Should be of form
+                    {
+                        "<CONTAINER_PATH_1>": "<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1>",
+                        "<CONTAINER_PATH_2>": "<CONNECTION_NAME_2>"
+                    }
+                If the path inside the connection is omitted it's assumed to be the root path of that connection.
+                Only applicable when deploying docker containers.
 
         Note:
             Since a teamspace can either be owned by an org or by a user directly,
@@ -240,6 +250,7 @@ class Deployment(metaclass=TrackCallsMeta):
                     cloudspace_id=cloudspace_id,
                     max_runtime=max_runtime,
                     machine_image_version=machine_image_version,
+                    path_mappings=path_mappings,
                 ),
                 strategy=to_strategy(release_strategy),
             ),
@@ -276,6 +287,7 @@ class Deployment(metaclass=TrackCallsMeta):
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
         max_runtime: Optional[int] = None,
+        path_mappings: Optional[Dict[str, str]] = None,
     ) -> None:
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
@@ -303,6 +315,7 @@ class Deployment(metaclass=TrackCallsMeta):
             quantity=quantity,
             include_credentials=include_credentials,
             max_runtime=max_runtime,
+            path_mappings=path_mappings,
         )
 
     def stop(self) -> None:

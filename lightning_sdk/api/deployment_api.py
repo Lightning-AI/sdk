@@ -1,7 +1,7 @@
 from time import sleep
 from typing import Any, Dict, List, Literal, Optional, Union
 
-from lightning_sdk.api.utils import _machine_to_compute_name
+from lightning_sdk.api.utils import _machine_to_compute_name, resolve_path_mappings
 from lightning_sdk.lightning_cloud.openapi import (
     CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs,
     V1AutoscalingSpec,
@@ -269,6 +269,7 @@ class DeploymentApi:
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
         max_runtime: Optional[int] = None,
+        path_mappings: Optional[Dict[str, str]] = None,
     ) -> V1Deployment:
         # Update the deployment in place
 
@@ -287,6 +288,11 @@ class DeploymentApi:
 
         requires_release = False
         requires_release |= apply_change(deployment.spec, "image", image)
+
+        if path_mappings:
+            requires_release |= apply_change(
+                deployment.spec, "path_mappings", resolve_path_mappings(path_mappings, None, None)
+            )
 
         requires_release |= apply_change(deployment.spec, "entrypoint", entrypoint)
         requires_release |= apply_change(deployment.spec, "command", command)
@@ -591,6 +597,7 @@ def to_spec(
     cloudspace_id: Optional[None] = None,
     max_runtime: Optional[int] = None,
     machine_image_version: Optional[str] = None,
+    path_mappings: Optional[Dict[str, str]] = None,
 ) -> V1JobSpec:
     if cloud_account is None:
         raise ValueError("The cloud account should be defined.")
@@ -612,6 +619,8 @@ def to_spec(
     if max_runtime:
         optional_spec_kwargs["requested_run_duration_seconds"] = str(max_runtime)
 
+    path_mapping_list = resolve_path_mappings(path_mappings or {}, None, None)
+
     return V1JobSpec(
         cluster_id=cloud_account,
         command=command,
@@ -625,6 +634,7 @@ def to_spec(
         include_credentials=include_credentials,
         cloudspace_id=cloudspace_id,
         machine_image_version=machine_image_version,
+        path_mappings=path_mapping_list,
         **optional_spec_kwargs,
     )
 

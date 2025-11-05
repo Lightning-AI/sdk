@@ -753,3 +753,81 @@ def test_apply_change():
 
     spec = V1JobSpec()
     assert apply_change(spec, "readiness_probe", to_health_check(None))
+
+
+def test_deployment_start_with_path_mappings(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+    monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock())
+
+    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
+
+    organization = organization_module.Organization(name="toto")
+    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
+
+    client = MagicMock()
+
+    def fn(*_, **__):
+        raise ApiException(status=400, reason="Reason: Not Found")
+
+    client.jobs_service_get_deployment_by_name = fn
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="test-deployment")
+
+    path_mappings = {"/app/data": "my-connection:path/to/data", "/app/models": "models-connection:models"}
+
+    deployment.start(
+        ports=[8080],
+        cloud_account="cluster_id",
+        machine=Machine.L4,
+        image="test:latest",
+        path_mappings=path_mappings,
+    )
+
+    client.jobs_service_create_deployment.assert_called()
+    spec = client.jobs_service_create_deployment._mock_call_args_list[0].kwargs["body"].spec
+    assert spec.path_mappings is not None
+    assert len(spec.path_mappings) == 2
+
+
+def test_deployment_update_with_path_mappings(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+
+    client = MagicMock()
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(
+        name="test-deployment",
+        spec=V1JobSpec(quantity=1, include_credentials=False),
+        endpoint=V1Endpoint(),
+        strategy=None,
+        release_id="release-id",
+    )
+
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="test-deployment")
+
+    path_mappings = {"/app/data": "my-connection:path/to/data", "/app/models": "models-connection:models"}
+
+    deployment.update(
+        entrypoint="new_entrypoint",
+        release_strategy=deployment_api_module.RollingUpdateReleaseStrategy(),
+        path_mappings=path_mappings,
+    )
+
+    client.jobs_service_update_deployment.assert_called()
+    spec = client.jobs_service_update_deployment._mock_mock_calls[0].kwargs["body"].spec
+    assert spec.path_mappings is not None
+    assert len(spec.path_mappings) == 2
