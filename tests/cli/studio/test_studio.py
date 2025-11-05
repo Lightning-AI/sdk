@@ -16,6 +16,7 @@ Options:
 
 Commands:
   connect  Connect to a Studio.
+  cp       Copy a Studio file.
   create   Create a new Studio.
   delete   Delete a Studio.
   list     List Studios in a teamspace.
