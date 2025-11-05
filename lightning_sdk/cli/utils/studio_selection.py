@@ -52,11 +52,11 @@ class StudiosMenu:
 
     def _get_possible_studios(self) -> Dict[str, Union[Studio, VM]]:
         """Get all available studios in the teamspace."""
-        studios = {}
+        studios: Dict[str, Union[Studio, VM]] = {}
 
         user = _get_authed_user()
-        studios = self.teamspace.vms if self.vm else self.teamspace.studios
-        for studio in self.teamspace.studios:
+        teamspace_studios = self.teamspace.vms if self.vm else self.teamspace.studios
+        for studio in teamspace_studios:
             if studio._studio.user_id == user.id:
                 studios[studio.name] = studio
         return studios
