@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from lightning_sdk import CloudProvider, teamspace, user
 from lightning_sdk import organization as organization_module
-from lightning_sdk import teamspace, user
 from lightning_sdk.api import deployment_api as deployment_api_module
 from lightning_sdk.api.deployment_api import apply_change, to_env, to_health_check
 from lightning_sdk.deployment import deployment as deployment_module
@@ -339,6 +339,161 @@ def test_deployment_start_first_time(monkeypatch):
     assert deployment.failing_replicas == 2
     assert deployment.pending_replicas == 3
     assert deployment.running_replicas == 4
+
+
+def test_deployment_start_with_cloud_provider(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+    resolve_user_mock = MagicMock()
+    monkeypatch.setattr(deployment_module, "_resolve_user", resolve_user_mock)
+    # Create mock objects for the cluster-related API methods
+    mock_cloud_account_api = MagicMock()
+    mock_cloud_account_api.resolve_cloud_account.return_value = "gcp-public"
+
+    # Patch the CloudAccountApi to return your mock
+    monkeypatch.setattr(deployment_module, "CloudAccountApi", MagicMock(return_value=mock_cloud_account_api))
+
+    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
+
+    organization = organization_module.Organization(name="toto")
+    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
+
+    client = MagicMock()
+
+    def fn(*_, **__):
+        raise ApiException(status=400, reason="Reason: Not Found")
+
+    client.jobs_service_get_deployment_by_name = fn
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="ollama")
+
+    deployment = deployment_module.Deployment()
+
+    assert deployment._name.startswith("dep_")
+
+    deployment = deployment_module.Deployment(name="ollama")
+
+    resolve_user_mock.assert_called()
+
+    assert deployment.name == "ollama"
+
+    assert isinstance(deployment.org, organization_module.Organization)
+
+    deployment.start(
+        autoscale=AutoScaleConfig(
+            metric="GPU",
+            threshold=75,
+        ),
+        ports=[50],
+        cloud_provider=CloudProvider.GCP,
+        machine=Machine.L4,
+        image="ollama/ollama:latest",
+        quantity=2,
+        include_credentials=False,
+        commands=["cd /", "ls"],
+    )
+    client.jobs_service_create_deployment.assert_called()
+
+    spec = client.jobs_service_create_deployment._mock_call_args_list[0].kwargs["body"].spec
+    assert spec.include_credentials is False
+    assert spec.quantity == 2
+    assert spec.image == "ollama/ollama:latest"
+    assert spec.cluster_id == "gcp-public"
+    assert spec.command == "cd / && ls"
+
+    with pytest.raises(RuntimeError, match="This deployment has already been started."):
+        deployment.start()
+
+    _deployment_api_mock = MagicMock()
+    deployment._deployment_api = _deployment_api_mock
+    status = V1DeploymentStatus(
+        deleting_replicas=1,
+        failing_replicas=2,
+        pending_replicas=3,
+        ready_replicas=4,
+    )
+    _deployment_mock = MagicMock()
+    _deployment_mock.status = status
+    _deployment_api_mock.get_deployment_by_name = MagicMock(return_value=_deployment_mock)
+    assert deployment.deleting_replicas == 1
+    assert deployment.failing_replicas == 2
+    assert deployment.pending_replicas == 3
+    assert deployment.running_replicas == 4
+
+    mock_cloud_account_api.resolve_cloud_account.assert_called_once_with(
+        teamspace_mock.id,
+        cloud_account=None,
+        cloud_provider=CloudProvider.GCP,
+        default_cloud_account=teamspace_mock.default_cloud_account,
+    )
+
+
+def test_deployment_start_with_both_cloud_account_and_provider(monkeypatch):
+    """Test that passing both cloud_account and cloud_provider raises an error."""
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+
+    # Create mock objects for the cluster-related API methods
+    mock_cloud_account_api = MagicMock()
+    # Configure the mock to raise an error when both are provided
+    mock_cloud_account_api.resolve_cloud_account.side_effect = ValueError(
+        "Cannot specify both cloud_account and cloud_provider"
+    )
+
+    # Patch the CloudAccountApi to return your mock
+    monkeypatch.setattr(deployment_module, "CloudAccountApi", MagicMock(return_value=mock_cloud_account_api))
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    teamspace_mock.default_cloud_account = None
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+    monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock())
+
+    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
+
+    organization = organization_module.Organization(name="toto")
+    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
+
+    client = MagicMock()
+
+    def fn(*_, **__):
+        raise ApiException(status=400, reason="Reason: Not Found")
+
+    client.jobs_service_get_deployment_by_name = fn
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="ollama")
+
+    # This should raise ValueError
+    with pytest.raises(ValueError, match="Cannot specify both cloud_account and cloud_provider"):
+        deployment.start(
+            autoscale=AutoScaleConfig(
+                metric="GPU",
+                threshold=75,
+            ),
+            ports=[50],
+            cloud_account="aws-public",  # Both specified
+            cloud_provider=CloudProvider.GCP,  # Both specified
+            machine=Machine.L4,
+            image="ollama/ollama:latest",
+            quantity=2,
+            include_credentials=False,
+            commands=["cd /", "ls"],
+        )
+
+    # Verify resolve_cloud_account was called with both parameters
+    mock_cloud_account_api.resolve_cloud_account.assert_called_once_with(
+        teamspace_mock.id,
+        cloud_account="aws-public",
+        cloud_provider=CloudProvider.GCP,
+        default_cloud_account=None,
+    )
 
 
 def test_deployment_start_already_exist(monkeypatch):

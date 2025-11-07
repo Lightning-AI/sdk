@@ -34,7 +34,7 @@ def test_run_on_cloud(mock_deployment, mock_autoscale, deployer):
     teamspace.name = "name"
     image = "scratch"
     mock_deployment.return_value.is_started = False
-    deployer.run_on_cloud("example", teamspace=teamspace, image=image, port=8000)
+    deployer.run_on_cloud("example", teamspace=teamspace, image=image, port=8000, cloud_provider="GCP")
     mock_deployment.assert_called_with("example", teamspace)
     mock_deployment.return_value.start.assert_called_with(
         machine=Machine.CPU,
@@ -49,6 +49,7 @@ def test_run_on_cloud(mock_deployment, mock_autoscale, deployer):
         from_litserve=True,
         from_onboarding=False,
         command="",
+        cloud_provider="GCP",
     )
 
 

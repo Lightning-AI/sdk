@@ -93,6 +93,10 @@ Options:
                                   running with studio compute env. If not
                                   provided will fall back to the teamspaces
                                   default cloud account.
+  --cloud-provider, --cloud_provider TEXT
+                                  The provider to create the studio on. If
+                                  --cloud-account is specified, this option is
+                                  prioritized.
   --port INTEGER                  The port to expose the API on.
   --min_replica, --min-replica INTEGER
                                   Number of replicas to start with.
@@ -492,6 +496,7 @@ def test_handle_cloud_with_cloud_account(
         from_onboarding=False,
         image=image,
         metric=None,
+        cloud_provider=None,
     )
     assert "Deployment started, access at" in mock_console.print.call_args[0][0]
 

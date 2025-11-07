@@ -16,6 +16,14 @@ class CloudProvider(Enum):
         """Converts the CloudProvider to a str."""
         return self.value
 
+    @classmethod
+    def from_str(cls, provider: str) -> "CloudProvider":
+        """Converts a string to a CloudProvider enum member."""
+        for cp in cls:
+            if cp.value.lower() == provider.lower():
+                return cp
+        raise ValueError(f"Unknown CloudProvider: {provider}")
+
 
 @dataclass(frozen=True)
 class Machine:

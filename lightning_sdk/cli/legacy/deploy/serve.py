@@ -12,7 +12,7 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm
 
-from lightning_sdk import Machine, Teamspace
+from lightning_sdk import CloudProvider, Machine, Teamspace
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_registry_url
 from lightning_sdk.cli.legacy.clusters_menu import _ClustersMenu
@@ -122,6 +122,12 @@ def deploy() -> None:
         "If not provided will fall back to the teamspaces default cloud account."
     ),
 )
+@click.option(
+    "--cloud-provider",
+    "--cloud_provider",
+    default=None,
+    help="The provider to create the studio on. If --cloud-account is specified, this option is prioritized.",
+)
 @click.option("--port", default=8000, help="The port to expose the API on.")
 @click.option("--min_replica", "--min-replica", default=0, help="Number of replicas to start with.")
 @click.option("--max_replica", "--max-replica", default=1, help="Number of replicas to scale up to.")
@@ -152,6 +158,7 @@ def api(
     max_replica: Optional[int],
     replicas: Optional[int],
     no_credentials: Optional[bool],
+    cloud_provider: Optional[str],
 ) -> None:
     """Deploy a LitServe model script."""
     return api_impl(
@@ -172,6 +179,7 @@ def api(
         min_replica=min_replica,
         max_replica=max_replica,
         include_credentials=not no_credentials,
+        cloud_provider=cloud_provider,
     )
 
 
@@ -194,6 +202,7 @@ def api_impl(
     max_replica: Optional[int] = 1,
     replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
+    cloud_provider: Optional[str] = None,
 ) -> None:
     """Deploy a LitServe model script."""
     console = Console()
@@ -226,6 +235,7 @@ def api_impl(
         return _handle_devbox(name, script_path, console, non_interactive, machine, interruptible, teamspace, org, user)
 
     machine = Machine.from_str(machine)
+    cloud_provider = CloudProvider.from_str(cloud_provider) if cloud_provider else None
     return _handle_cloud(
         script_path,
         console,
@@ -243,6 +253,7 @@ def api_impl(
         max_replica=max_replica,
         replicas=replicas,
         include_credentials=include_credentials,
+        cloud_provider=cloud_provider,
     )
 
 
@@ -304,6 +315,7 @@ def _handle_cloud(
     max_replica: Optional[int] = 1,
     replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
+    cloud_provider: Optional[CloudProvider] = None,
 ) -> None:
     if not is_connected():
         console.print("❌ Internet connection required to deploy to the cloud.", style="red")
@@ -379,7 +391,7 @@ def _handle_cloud(
         resolved_teamspace = select_teamspace(teamspace, org, user)
 
     lightning_containers_cloud_account = cloud_account
-    if not cloud_account:
+    if not cloud_account and not cloud_provider:
         clusters_menu = _ClustersMenu()
         lightning_containers_cloud_account = clusters_menu._resolve_cluster(resolved_teamspace)
         cloud_account = resolved_teamspace.default_cloud_account
@@ -414,6 +426,7 @@ def _handle_cloud(
                 "include_credentials": include_credentials,
                 "cloudspace_id": cloudspace_id,
                 "from_onboarding": from_onboarding,
+                "cloud_provider": cloud_provider,
             },
         )
         thread.start()
@@ -446,6 +459,7 @@ def _handle_cloud(
         include_credentials=include_credentials,
         cloudspace_id=cloudspace_id,
         from_onboarding=from_onboarding,
+        cloud_provider=cloud_provider,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")
     if user_status["onboarded"]:

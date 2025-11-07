@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import requests
 
-from lightning_sdk.api import UserApi
+from lightning_sdk.api import CloudAccountApi, UserApi
 from lightning_sdk.api.deployment_api import (
     ApiKeyAuth,
     Auth,
@@ -30,7 +30,7 @@ from lightning_sdk.api.deployment_api import (
 )
 from lightning_sdk.lightning_cloud import login
 from lightning_sdk.lightning_cloud.openapi import V1Deployment
-from lightning_sdk.machine import Machine
+from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.studio import Studio
@@ -66,6 +66,7 @@ class Deployment(metaclass=TrackCallsMeta):
         user: Optional[Union[str, User]] = None,
     ) -> None:
         self._request_session = None
+        self._cloud_account_api = CloudAccountApi()
 
         self._auth = login.Auth()
         self._user = None
@@ -134,6 +135,7 @@ class Deployment(metaclass=TrackCallsMeta):
         from_litserve: Optional[bool] = None,
         max_runtime: Optional[int] = None,
         path_mappings: Optional[Dict[str, str]] = None,
+        cloud_provider: Optional[CloudProvider] = None,
     ) -> None:
         """The Lightning AI Deployment.
 
@@ -199,9 +201,16 @@ class Deployment(metaclass=TrackCallsMeta):
         if cloud_account is None:
             cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
-        if cloud_account is None and self._cloud_account is not None:
+        if cloud_account is None and self._cloud_account is not None and cloud_provider is None:
             print(f"No cloud account was provided, defaulting to {self._cloud_account.cluster_id}")
             cloud_account = os.getenv("LIGHTNING_CLUSTER_ID") or self._cloud_account.cluster_id
+
+        _cloud_account = self._cloud_account_api.resolve_cloud_account(
+            self.teamspace.id,
+            cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
+            default_cloud_account=self._teamspace.default_cloud_account,
+        )
 
         if isinstance(ports, float):
             ports = [ports]
@@ -237,7 +246,7 @@ class Deployment(metaclass=TrackCallsMeta):
                 replicas=replicas,
                 cloudspace_id=cloudspace_id,
                 spec=to_spec(
-                    cloud_account=cloud_account,
+                    cloud_account=_cloud_account,
                     command=command,
                     entrypoint=entrypoint,
                     env=env,

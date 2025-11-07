@@ -7,7 +7,7 @@ from typing import Generator, List, Optional, Union
 import docker
 from rich.console import Console
 
-from lightning_sdk import Deployment, Machine, Teamspace
+from lightning_sdk import CloudProvider, Deployment, Machine, Teamspace
 from lightning_sdk.api.deployment_api import AutoScaleConfig, DeploymentApi, Env, Secret
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_cloud_url
@@ -249,6 +249,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
         include_credentials: Optional[bool] = True,
         cloudspace_id: Optional[str] = None,
         from_onboarding: bool = False,
+        cloud_provider: Optional[CloudProvider] = None,
     ) -> dict:
         """Run a deployment on the cloud. If the deployment already exists, it will be updated.
 
@@ -304,6 +305,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
             from_litserve=True,
             from_onboarding=from_onboarding,
             command="",
+            cloud_provider=cloud_provider,
         )
 
         return {"deployment": deployment, "url": url}
