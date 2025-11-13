@@ -4,7 +4,8 @@ import math
 import os
 import re
 from concurrent.futures import ThreadPoolExecutor
-from functools import partial
+from enum import Enum
+from functools import lru_cache, partial
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union
 
@@ -747,3 +748,59 @@ def resolve_path_mappings(
             )
 
     return path_mappings_list
+
+
+class AccessibleResource(Enum):
+    Studios = "studio"
+    Drive = "drive"
+    Jobs = "jobs"
+    Deployments = "deployments"
+    Pipelines = "pipelines"
+    Models = "models"
+    Containers = "containers"
+    Settings = "settings"
+
+    def __str__(self) -> str:
+        """Return the string representation of the resource type."""
+        return self.value
+
+    def __repr__(self) -> str:
+        """Return the string representation of the resource type."""
+        return self.value
+
+    def __eq__(self, other: object) -> bool:
+        """Return True if the resource type is equal to the other resource type."""
+        if isinstance(other, AccessibleResource):
+            return self.value == other.value
+        return str(other) == self.value
+
+    def __hash__(self) -> int:
+        """Return the hash of the resource type."""
+        return hash(self.value)
+
+
+@lru_cache
+def allowed_resource_access(resource_type: AccessibleResource, teamspace_id: str) -> bool:
+    # TODO: change this to proper API
+    from lightning_sdk.api.teamspace_api import TeamspaceApi
+
+    teamspace_api = TeamspaceApi()
+    teamspace = teamspace_api._get_teamspace_by_id(teamspace_id=teamspace_id)
+
+    # when we find the tab, check if it is enabled
+    if teamspace.layout_config:
+        for tab in teamspace.layout_config:
+            if tab.slug == resource_type:
+                return tab.is_enabled
+
+    # tab isn't found, allow access by default for backwards compatibility
+    # TODO: add additional checks here if required
+    return True
+
+
+def raise_access_error_if_not_allowed(resource_type: AccessibleResource, teamspace_id: str) -> None:
+    if not allowed_resource_access(resource_type, teamspace_id):
+        raise PermissionError(
+            f"Access to {resource_type.name} has been disabled for this teamspace. "
+            "Contact a teamspace administrator to enable it."
+        )

@@ -182,7 +182,7 @@ addopts = [
   "--ignore=legacy/checkpoints",
 ]
 markers = [
-    "cloud:Run the cloud tests for example",
+    "project_permission_test: marker for project permission tests",
 ]
 filterwarnings = [
   "error::FutureWarning",

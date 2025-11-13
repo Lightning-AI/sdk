@@ -3,6 +3,7 @@ from typing import List, Optional, Union
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.pipeline_api import PipelineApi
+from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.machine import CloudProvider
 from lightning_sdk.organization import Organization
 from lightning_sdk.pipeline.printer import PipelinePrinter
@@ -48,6 +49,8 @@ class Pipeline:
         )
         if self._teamspace is None:
             raise RuntimeError("Could not resolve teamspace")
+
+        raise_access_error_if_not_allowed(AccessibleResource.Pipelines, self._teamspace.id)
 
         self._pipeline_api = PipelineApi()
         self._cloud_account_api = CloudAccountApi()

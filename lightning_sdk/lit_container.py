@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 from rich.console import Console
 
 from lightning_sdk.api.lit_container_api import LitContainerApi
+from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.utils.resolve import _resolve_teamspace
 
 
@@ -31,6 +32,8 @@ class LitContainer:
         except Exception:
             console.print(f"[bold red]Could not resolve teamspace: {teamspace}[/bold red]")
             return []
+
+        raise_access_error_if_not_allowed(AccessibleResource.Containers, teamspace.id)
         project_id = teamspace.id
         repositories = self._api.list_containers(project_id, cloud_account=cloud_account)
         table = []
@@ -68,6 +71,8 @@ class LitContainer:
             teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         except Exception as e:
             raise ValueError("Could not resolve teamspace") from e
+
+        raise_access_error_if_not_allowed(AccessibleResource.Containers, teamspace.id)
         project_id = teamspace.id
         return self._api.delete_container(project_id, container)
 
@@ -98,6 +103,8 @@ class LitContainer:
             teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         except Exception as e:
             raise ValueError(f"Could not resolve teamspace: {e}") from e
+
+        raise_access_error_if_not_allowed(AccessibleResource.Containers, teamspace.id)
 
         resp = self._api.upload_container(
             container, teamspace, tag, cloud_account, platform=platform, return_final_dict=return_final_dict
@@ -133,5 +140,7 @@ class LitContainer:
             teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         except Exception as e:
             raise ValueError(f"Could not resolve teamspace: {e}") from e
+
+        raise_access_error_if_not_allowed(AccessibleResource.Containers, teamspace.id)
 
         return self._api.download_container(container, teamspace, tag, cloud_account)

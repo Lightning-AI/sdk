@@ -10,6 +10,7 @@ from tqdm.auto import tqdm
 import lightning_sdk
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import CloudAccountApi, TeamspaceApi
+from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.lightning_cloud.openapi import V1ClusterType, V1Model, V1ModelVersionArchive, V1ProjectClusterBinding
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.models import UploadedModelInfo
@@ -143,12 +144,17 @@ class Teamspace(metaclass=TrackCallsMeta):
     @property
     def studios(self) -> List["Studio"]:
         """All studios within that teamspace."""
+        raise_access_error_if_not_allowed(AccessibleResource.Studios, self.id)
         from lightning_sdk.studio import Studio
 
         return self._get_studios(Studio)
 
     @property
     def vms(self) -> List["VM"]:
+        try:
+            raise_access_error_if_not_allowed(AccessibleResource.Studios, self.id)
+        except PermissionError as e:
+            raise PermissionError(str(e).replace("Studios", "VMs")) from e
         from lightning_sdk.studio import VM
 
         return [x for x in self._get_studios(VM) if isinstance(x, VM)]
@@ -204,6 +210,8 @@ class Teamspace(metaclass=TrackCallsMeta):
         from lightning_sdk.job import Job
         from lightning_sdk.plugin import forced_v1
 
+        raise_access_error_if_not_allowed(AccessibleResource.Jobs, self.id)
+
         jobsv1, jobsv2 = self._teamspace_api.list_jobs(teamspace_id=self.id)
 
         jobs = []
@@ -227,6 +235,8 @@ class Teamspace(metaclass=TrackCallsMeta):
     def multi_machine_jobs(self) -> Tuple["MMT", ...]:
         from lightning_sdk.mmt import MMT
         from lightning_sdk.plugin import forced_v1
+
+        raise_access_error_if_not_allowed(AccessibleResource.Jobs, self.id)
 
         mmtsv1, mmtsv2 = self._teamspace_api.list_mmts(teamspace_id=self.id)
 
@@ -351,6 +361,7 @@ class Teamspace(metaclass=TrackCallsMeta):
             progress_bar: Whether to show a progress bar for the upload.
             metadata: Metadata to attach to the model. Can be a dictionary.
         """
+        raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         if not path:
             raise ValueError("No path provided to upload")
         if not name:
@@ -430,6 +441,7 @@ class Teamspace(metaclass=TrackCallsMeta):
             The absolute path to the downloaded model file or folder.
 
         """
+        raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         if not name:
             raise ValueError("No name provided for the model")
         if download_dir is None:
@@ -468,15 +480,18 @@ class Teamspace(metaclass=TrackCallsMeta):
                  e.g. 'entity/modelname:v1'.
 
         """
+        raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         name, version = _parse_model_and_version(name)
         self._teamspace_api.delete_model(name=name, version=version, teamspace_id=self.id)
 
     def list_models(self) -> List[V1Model]:
         """List all models in the model store."""
+        raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         return self._teamspace_api.list_models(teamspace_id=self.id)
 
     def list_model_versions(self, name: str) -> List[V1ModelVersionArchive]:
         """List all versions of a model in the model store."""
+        raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         if ":" in name:
             raise ValueError(
                 "Model name should not contain a version tag. Please provide the model name without a version."

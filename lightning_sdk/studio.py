@@ -8,6 +8,7 @@ from tqdm.auto import tqdm
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.studio_api import StudioApi
+from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.base_studio import BaseStudio
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.openapi import V1ClusterType
@@ -97,6 +98,7 @@ class Studio(metaclass=TrackCallsMeta):
                 raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
 
             self._teamspace = _teamspace
+            raise_access_error_if_not_allowed(AccessibleResource.Studios, self._teamspace.id)
 
         self._setup_done = getattr(self._skip_setup, "value", False)
         self._disable_secrets = disable_secrets

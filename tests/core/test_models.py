@@ -114,8 +114,15 @@ def test_get_teamspace_other_user_owner(
     mock_user_api()._get_user_by_id.assert_called_once_with("user-id-2")
 
 
+@mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.models.TeamspaceApi")
-def test_download_model_errors(mock_teamspace_api):
+def test_download_model_errors(mock_teamspace_api, mock_get_teamspace):
+    from lightning_sdk.teamspace import Teamspace
+
+    mock_ts = mock.MagicMock(spec=Teamspace)
+    mock_ts.id = "test-teamspace-id"
+    mock_get_teamspace.return_value = mock_ts
+
     mock_teamspace_api().download_model_files.side_effect = ApiException(status=404)
 
     with pytest.raises(RuntimeError, match="Model 'owner/teamspace/model' not found"):
@@ -131,13 +138,24 @@ def test_download_model_errors(mock_teamspace_api):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.organization.OrgApi")
 def test_download_model_in_studio_with_org(
-    mock_org_api, mock_teamspace_api, mock_download_model_files, mock_parse_org_teamspace_model_version
+    mock_org_api,
+    mock_teamspace_api,
+    mock_download_model_files,
+    mock_parse_org_teamspace_model_version,
+    mock_get_teamspace,
 ):
+    from lightning_sdk.teamspace import Teamspace
+
+    mock_ts = mock.MagicMock(spec=Teamspace)
+    mock_ts.id = "test-teamspace-id"
+    mock_get_teamspace.return_value = mock_ts
+
     mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
     mock_org_api().get_org.return_value = V1Organization(name="org-abc")
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
@@ -156,13 +174,24 @@ def test_download_model_in_studio_with_org(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.user.UserApi")
 def test_download_model_in_studio_with_user(
-    mock_user_api, mock_teamspace_api, mock_download_model_files, mock_parse_org_teamspace_model_version
+    mock_user_api,
+    mock_teamspace_api,
+    mock_download_model_files,
+    mock_parse_org_teamspace_model_version,
+    mock_get_teamspace,
 ):
+    from lightning_sdk.teamspace import Teamspace
+
+    mock_ts = mock.MagicMock(spec=Teamspace)
+    mock_ts.id = "test-teamspace-id"
+    mock_get_teamspace.return_value = mock_ts
+
     mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", None)
     mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
     mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
@@ -349,8 +378,15 @@ def test_list_model_versions_in_studio_with_user(
     mock_ts.list_model_versions.assert_called_once_with(name="model_name")
 
 
+@mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
-def test_download_dir_home_path_shorthand(mock_download_model_files):
+def test_download_dir_home_path_shorthand(mock_download_model_files, mock_get_teamspace):
+    from lightning_sdk.teamspace import Teamspace
+
+    mock_ts = mock.MagicMock(spec=Teamspace)
+    mock_ts.id = "test-teamspace-id"
+    mock_get_teamspace.return_value = mock_ts
+
     input_model = "lightning-ai/general/sdk-test-file"
     file_name = "sdk-test-file"
     teamspace = "general"

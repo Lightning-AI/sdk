@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from lightning_sdk.api import OrgApi, TeamspaceApi, UserApi
+from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.lightning_cloud.openapi import V1ModelVersionArchive
 from lightning_sdk.lightning_cloud.openapi.models import V1Membership, V1OwnerType
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -121,6 +122,10 @@ def download_model(
     """
     name = _extend_model_name_with_teamspace(name)
     teamspace_owner_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
+
+    teamspace = _get_teamspace(name=teamspace_name, organization=teamspace_owner_name)
+    raise_access_error_if_not_allowed(AccessibleResource.Models, teamspace.id)
+
     api = TeamspaceApi()
 
     try:
@@ -162,6 +167,7 @@ def upload_model(
     name = _extend_model_name_with_teamspace(name)
     org_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
     teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
+    raise_access_error_if_not_allowed(AccessibleResource.Models, teamspace.id)
     return teamspace.upload_model(
         path=path,
         name=model_name,
@@ -185,6 +191,7 @@ def delete_model(
     name = _extend_model_name_with_teamspace(name)
     org_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
     teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
+    raise_access_error_if_not_allowed(AccessibleResource.Models, teamspace.id)
     teamspace.delete_model(name=f"{model_name}:{version}" if version else model_name)
 
 
@@ -200,4 +207,5 @@ def list_model_versions(
     name = _extend_model_name_with_teamspace(name)
     org_name, teamspace_name, model_name, _ = _parse_org_teamspace_model_version(name)
     teamspace = _get_teamspace(name=teamspace_name, organization=org_name)
+    raise_access_error_if_not_allowed(AccessibleResource.Models, teamspace.id)
     return teamspace.list_model_versions(name=model_name)

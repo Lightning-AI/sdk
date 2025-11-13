@@ -28,6 +28,7 @@ from lightning_sdk.api.deployment_api import (
     to_spec,
     to_strategy,
 )
+from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.lightning_cloud import login
 from lightning_sdk.lightning_cloud.openapi import V1Deployment
 from lightning_sdk.machine import CloudProvider, Machine
@@ -92,6 +93,8 @@ class Deployment(metaclass=TrackCallsMeta):
         )
         if self._teamspace is None:
             raise ValueError("You need to pass a teamspace or an org for your deployment.")
+
+        raise_access_error_if_not_allowed(AccessibleResource.Deployments, self._teamspace.id)
 
         self._deployment_api = DeploymentApi()
         self._cloud_account = _get_cluster(client=self._deployment_api._client, project_id=self._teamspace.id)
@@ -182,6 +185,7 @@ class Deployment(metaclass=TrackCallsMeta):
             only one of the arguments can be provided.
 
         """
+        raise_access_error_if_not_allowed(AccessibleResource.Deployments, self._teamspace.id)
         if self._is_created:
             raise RuntimeError("This deployment has already been started.")
 
@@ -298,6 +302,7 @@ class Deployment(metaclass=TrackCallsMeta):
         max_runtime: Optional[int] = None,
         path_mappings: Optional[Dict[str, str]] = None,
     ) -> None:
+        raise_access_error_if_not_allowed(AccessibleResource.Deployments, self._teamspace.id)
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
         if command is None and commands is not None:

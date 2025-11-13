@@ -26,6 +26,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1MultiMachineJob,
     V1Project,
     V1ProjectSettings,
+    V1ProjectTab,
     V1R2DataConnection,
     V1Resources,
     V1S3FolderDataConnection,
@@ -780,3 +781,260 @@ def test_new_connection_efs(mock_cloud_account_client, mock_teamspace_client, in
         ),
         ts.id,
     )
+
+
+# Permission tests for Teamspace resource access
+@pytest.fixture(autouse=True)
+def _clear_teamspace_permission_cache():
+    """Clear the permission cache before each test."""
+    from lightning_sdk.api.utils import allowed_resource_access
+
+    allowed_resource_access.cache_clear()
+    yield
+    allowed_resource_access.cache_clear()
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@pytest.mark.project_permission_test()
+def test_teamspace_studios_property_when_allowed(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
+    """Test that Teamspace.studios succeeds when Studios permission is allowed."""
+    mock_user = mock.Mock(spec=User)
+    mock_user.name = "test-user"
+    mock_resolve_user.return_value = mock_user
+
+    # Mock the teamspace with Studios enabled
+    mock_project = V1Project(
+        id="test-teamspace-id",
+        name="test-teamspace",
+        layout_config=[V1ProjectTab(slug="studio", is_enabled=True)],
+    )
+    # Mock get_teamspace to return the project directly, bypassing list_teamspaces
+    mock_teamspace_api_module.return_value.get_teamspace = mock.Mock(return_value=mock_project)
+    mock_teamspace_api_module.return_value.list_teamspaces.return_value = [mock_project]
+
+    mock_teamspace_api_module.return_value._get_teamspace_by_id.return_value = mock_project
+
+    # Mock _get_authed_user_id to prevent authentication calls
+    mock_teamspace_api_module.return_value._get_authed_user_id.return_value = "test-user-id"
+
+    # Mock cloud accounts and studios lists
+    from lightning_sdk.lightning_cloud.openapi import V1ProjectClusterBinding
+
+    mock_cloud_account = V1ProjectClusterBinding(cluster_id="cluster-1", cluster_name="cluster-1")
+    mock_teamspace_api_module.return_value.list_cloud_accounts.return_value = [mock_cloud_account]
+    mock_teamspace_api_module.return_value.list_studios.return_value = []
+
+    ts = Teamspace("test-teamspace", user="test-user")
+
+    # Should not raise
+    studios = ts.studios
+    assert isinstance(studios, list)
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@pytest.mark.project_permission_test()
+def test_teamspace_studios_property_when_denied(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
+    """Test that Teamspace.studios raises PermissionError when Studios permission is denied."""
+    mock_user = mock.Mock(spec=User)
+    mock_user.name = "test-user"
+    mock_resolve_user.return_value = mock_user
+
+    # Mock the teamspace with Studios disabled
+    mock_project = V1Project(
+        id="test-teamspace-id",
+        name="test-teamspace",
+        layout_config=[V1ProjectTab(slug="studio", is_enabled=False)],
+    )
+    # Mock get_teamspace to return the project directly, bypassing list_teamspaces
+    mock_teamspace_api_module.return_value.get_teamspace = mock.Mock(return_value=mock_project)
+    mock_teamspace_api_module.return_value.list_teamspaces.return_value = [mock_project]
+
+    mock_teamspace_api_module.return_value._get_teamspace_by_id.return_value = mock_project
+    # Also mock the TeamspaceApi used by allowed_resource_access
+    mock_teamspace_api.return_value._get_teamspace_by_id.return_value = mock_project
+
+    # Mock _get_authed_user_id to prevent authentication calls
+    mock_teamspace_api_module.return_value._get_authed_user_id.return_value = "test-user-id"
+
+    ts = Teamspace("test-teamspace", user="test-user")
+
+    with pytest.raises(PermissionError, match="Access to Studios has been disabled"):
+        _ = ts.studios
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@pytest.mark.project_permission_test()
+def test_teamspace_vms_property_when_denied(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
+    """Test that Teamspace.vms raises PermissionError with VMs in message when Studios permission is denied."""
+    mock_user = mock.Mock(spec=User)
+    mock_user.name = "test-user"
+    mock_resolve_user.return_value = mock_user
+
+    # Mock the teamspace with Studios disabled
+    mock_project = V1Project(
+        id="test-teamspace-id",
+        name="test-teamspace",
+        layout_config=[V1ProjectTab(slug="studio", is_enabled=False)],
+    )
+    # Mock get_teamspace to return the project directly, bypassing list_teamspaces
+    mock_teamspace_api_module.return_value.get_teamspace = mock.Mock(return_value=mock_project)
+    mock_teamspace_api_module.return_value.list_teamspaces.return_value = [mock_project]
+
+    mock_teamspace_api_module.return_value._get_teamspace_by_id.return_value = mock_project
+    # Also mock the TeamspaceApi used by allowed_resource_access
+    mock_teamspace_api.return_value._get_teamspace_by_id.return_value = mock_project
+
+    # Mock _get_authed_user_id to prevent authentication calls
+    mock_teamspace_api_module.return_value._get_authed_user_id.return_value = "test-user-id"
+
+    ts = Teamspace("test-teamspace", user="test-user")
+
+    # VMs should have "VMs" in the error message, not "Studios"
+    with pytest.raises(PermissionError, match="Access to VMs has been disabled"):
+        _ = ts.vms
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@pytest.mark.project_permission_test()
+def test_teamspace_jobs_property_when_allowed(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
+    """Test that Teamspace.jobs succeeds when Jobs permission is allowed."""
+    mock_user = mock.Mock(spec=User)
+    mock_user.name = "test-user"
+    mock_resolve_user.return_value = mock_user
+
+    # Mock the teamspace with Jobs enabled
+    mock_project = V1Project(
+        id="test-teamspace-id",
+        name="test-teamspace",
+        layout_config=[V1ProjectTab(slug="jobs", is_enabled=True)],
+    )
+    # Mock get_teamspace to return the project directly, bypassing list_teamspaces
+    mock_teamspace_api_module.return_value.get_teamspace = mock.Mock(return_value=mock_project)
+    mock_teamspace_api_module.return_value.list_teamspaces.return_value = [mock_project]
+
+    mock_teamspace_api_module.return_value._get_teamspace_by_id.return_value = mock_project
+
+    # Mock _get_authed_user_id to prevent authentication calls
+    mock_teamspace_api_module.return_value._get_authed_user_id.return_value = "test-user-id"
+
+    # Mock empty job list response
+    mock_teamspace_api_module.return_value.list_jobs.return_value = ([], [])
+
+    ts = Teamspace("test-teamspace", user="test-user")
+
+    # Should not raise
+    jobs = ts.jobs
+    assert isinstance(jobs, tuple)
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@pytest.mark.project_permission_test()
+def test_teamspace_jobs_property_when_denied(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
+    """Test that Teamspace.jobs raises PermissionError when Jobs permission is denied."""
+    mock_user = mock.Mock(spec=User)
+    mock_user.name = "test-user"
+    mock_resolve_user.return_value = mock_user
+
+    # Mock the teamspace with Jobs disabled
+    mock_project = V1Project(
+        id="test-teamspace-id",
+        name="test-teamspace",
+        layout_config=[V1ProjectTab(slug="jobs", is_enabled=False)],
+    )
+    # Mock get_teamspace to return the project directly, bypassing list_teamspaces
+    mock_teamspace_api_module.return_value.get_teamspace = mock.Mock(return_value=mock_project)
+    mock_teamspace_api_module.return_value.list_teamspaces.return_value = [mock_project]
+
+    mock_teamspace_api_module.return_value._get_teamspace_by_id.return_value = mock_project
+    # Also mock the TeamspaceApi used by allowed_resource_access
+    mock_teamspace_api.return_value._get_teamspace_by_id.return_value = mock_project
+
+    # Mock _get_authed_user_id to prevent authentication calls
+    mock_teamspace_api_module.return_value._get_authed_user_id.return_value = "test-user-id"
+
+    ts = Teamspace("test-teamspace", user="test-user")
+
+    with pytest.raises(PermissionError, match="Access to Jobs has been disabled"):
+        _ = ts.jobs
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@pytest.mark.project_permission_test()
+def test_teamspace_multi_machine_jobs_property_when_allowed(
+    mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module
+):
+    """Test that Teamspace.multi_machine_jobs succeeds when Jobs permission is allowed."""
+    mock_user = mock.Mock(spec=User)
+    mock_user.name = "test-user"
+    mock_resolve_user.return_value = mock_user
+
+    # Mock the teamspace with Jobs enabled
+    mock_project = V1Project(
+        id="test-teamspace-id",
+        name="test-teamspace",
+        layout_config=[V1ProjectTab(slug="jobs", is_enabled=True)],
+    )
+    # Mock get_teamspace to return the project directly, bypassing list_teamspaces
+    mock_teamspace_api_module.return_value.get_teamspace = mock.Mock(return_value=mock_project)
+    mock_teamspace_api_module.return_value.list_teamspaces.return_value = [mock_project]
+
+    mock_teamspace_api_module.return_value._get_teamspace_by_id.return_value = mock_project
+
+    # Mock _get_authed_user_id to prevent authentication calls
+    mock_teamspace_api_module.return_value._get_authed_user_id.return_value = "test-user-id"
+
+    # Mock empty MMT list response
+    mock_teamspace_api_module.return_value.list_mmts.return_value = ([], [])
+
+    ts = Teamspace("test-teamspace", user="test-user")
+
+    # Should not raise
+    mmts = ts.multi_machine_jobs
+    assert isinstance(mmts, tuple)
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@pytest.mark.project_permission_test()
+def test_teamspace_multi_machine_jobs_property_when_denied(
+    mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module
+):
+    """Test that Teamspace.multi_machine_jobs raises PermissionError when Jobs permission is denied."""
+    mock_user = mock.Mock(spec=User)
+    mock_user.name = "test-user"
+    mock_resolve_user.return_value = mock_user
+
+    # Mock the teamspace with Jobs disabled
+    mock_project = V1Project(
+        id="test-teamspace-id",
+        name="test-teamspace",
+        layout_config=[V1ProjectTab(slug="jobs", is_enabled=False)],
+    )
+    # Mock get_teamspace to return the project directly, bypassing list_teamspaces
+    mock_teamspace_api_module.return_value.get_teamspace = mock.Mock(return_value=mock_project)
+    mock_teamspace_api_module.return_value.list_teamspaces.return_value = [mock_project]
+
+    mock_teamspace_api_module.return_value._get_teamspace_by_id.return_value = mock_project
+    # Also mock the TeamspaceApi used by allowed_resource_access
+    mock_teamspace_api.return_value._get_teamspace_by_id.return_value = mock_project
+
+    # Mock _get_authed_user_id to prevent authentication calls
+    mock_teamspace_api_module.return_value._get_authed_user_id.return_value = "test-user-id"
+
+    ts = Teamspace("test-teamspace", user="test-user")
+
+    with pytest.raises(PermissionError, match="Access to Jobs has been disabled"):
+        _ = ts.multi_machine_jobs

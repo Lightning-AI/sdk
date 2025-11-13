@@ -1,11 +1,13 @@
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
+from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.job.base import _BaseJob
 from lightning_sdk.job.v1 import _JobV1
 from lightning_sdk.job.v2 import _JobV2
-from lightning_sdk.utils.resolve import _setup_logger
+from lightning_sdk.utils.resolve import _resolve_teamspace, _setup_logger
 
 _logger = _setup_logger(__name__)
+
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import CloudProvider, Machine
@@ -39,6 +41,10 @@ class Job(_BaseJob):
             user: the name of the user owning the :param`teamspace`
                 in case it is owned directly by a user instead of an org.
         """
+        teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+
+        raise_access_error_if_not_allowed(AccessibleResource.Jobs, teamspace.id)
+
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
         if not self._force_v1:

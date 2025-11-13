@@ -2934,3 +2934,20 @@ def internal_mmt_fallback_mocker(mocker):
     )
     yield [mocker]
     mocker.resetall()
+
+
+@pytest.fixture(autouse=True)
+def _mock_allowed_resource_access(mocker, request):
+    """Mock allowed_resource_access to always return True by default.
+
+    This prevents permission checks from making real API calls during tests.
+    Tests that need to test specific permission scenarios can override this fixture.
+    """
+    if "project_permission_test" in request.keywords:
+        return
+
+    mocker.patch(
+        "lightning_sdk.api.utils.allowed_resource_access",
+        return_value=True,
+        autospec=True,
+    )
