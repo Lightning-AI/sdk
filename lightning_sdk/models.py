@@ -123,9 +123,6 @@ def download_model(
     name = _extend_model_name_with_teamspace(name)
     teamspace_owner_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
 
-    teamspace = _get_teamspace(name=teamspace_name, organization=teamspace_owner_name)
-    raise_access_error_if_not_allowed(AccessibleResource.Models, teamspace.id)
-
     api = TeamspaceApi()
 
     try:
