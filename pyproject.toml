@@ -165,10 +165,8 @@ convention = "google"
 max-complexity = 10
 
 [tool.pytest]
-mock_use_standalone_module = true
-mock_traceback_monkeypatch = false
-
-[tool.pytest.ini_options]
+mock_use_standalone_module = "true"
+mock_traceback_monkeypatch = "false"
 norecursedirs = [
     ".git",
     ".github",
@@ -188,10 +186,11 @@ markers = [
 ]
 filterwarnings = [
   "error::FutureWarning",
-    "error::pytest.PytestUnhandledThreadExceptionWarning"
+  "error::pytest.PytestUnhandledThreadExceptionWarning",
 ]
 xfail_strict = true
 junit_duration_report = "call"
+
 
 [tool.coverage.run]
 source = ["lightning_sdk"]
