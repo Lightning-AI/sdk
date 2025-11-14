@@ -39,6 +39,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     SSHPublicKeyServiceApi,
     StorageServiceApi,
     UserServiceApi,
+    K8SClusterServiceApi
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.source_code.logs_socket_api import LightningLogsSocketAPI
@@ -107,6 +108,7 @@ class GridRestClient(
     ProductLicenseServiceApi,
     CloudSpaceEnvironmentTemplateServiceApi,
     SDKCommandHistoryServiceApi,
+    K8SClusterServiceApi,
 ):
 
     def __init__(self, api_client: Optional[ApiClient] = None, with_auth: bool = True):
