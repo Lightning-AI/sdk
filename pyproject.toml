@@ -22,6 +22,7 @@ dependencies = [ # alphabetically sorted
     "docker", # for lit-container-registry
     "fastapi", # for lightning-cloud
     "packaging", # for version checks
+    "pandas", # for handling metrics
     "pyjwt", # for lightning-cloud
     "pyyaml", # for config handling
     "requests", # for downloading files via urls
