@@ -4,6 +4,7 @@ import math
 import os
 import re
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache, partial
 from pathlib import Path
@@ -804,3 +805,21 @@ def raise_access_error_if_not_allowed(resource_type: AccessibleResource, teamspa
             f"Access to {resource_type.name} has been disabled for this teamspace. "
             "Contact a teamspace administrator to enable it."
         )
+
+
+def to_iso_z(dt: datetime) -> str:
+    """Convert a datetime object to an ISO 8601 formatted string with UTC timezone (Z).
+
+    This function takes a datetime object, converts it to UTC timezone, formats it
+    to include milliseconds, and replaces the UTC offset with 'Z' to indicate UTC.
+
+    Args:
+        dt (datetime): The datetime object to be converted.
+
+    Returns:
+        str: The ISO 8601 formatted string in UTC timezone.
+    """
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc).isoformat(timespec="milliseconds")
+    return dt.isoformat(timespec="milliseconds")
