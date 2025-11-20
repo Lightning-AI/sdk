@@ -46,6 +46,7 @@ class V1KubernetesDirectV1(object):
         'grafana_namespace': 'str',
         'grafana_service_name': 'str',
         'grafana_service_port': 'str',
+        'incident_historical_scan_complete': 'bool',
         'incident_slack_notifiers': 'list[V1SlackNotifier]',
         'kubeconfig': 'str',
         'kubeconfig_elevated': 'str',
@@ -59,6 +60,7 @@ class V1KubernetesDirectV1(object):
         'grafana_namespace': 'grafanaNamespace',
         'grafana_service_name': 'grafanaServiceName',
         'grafana_service_port': 'grafanaServicePort',
+        'incident_historical_scan_complete': 'incidentHistoricalScanComplete',
         'incident_slack_notifiers': 'incidentSlackNotifiers',
         'kubeconfig': 'kubeconfig',
         'kubeconfig_elevated': 'kubeconfigElevated',
@@ -66,13 +68,14 @@ class V1KubernetesDirectV1(object):
         'skip_user_label_injection': 'skipUserLabelInjection'
     }
 
-    def __init__(self, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
+    def __init__(self, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_historical_scan_complete: 'bool' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._aws = None
         self._grafana_dashboard_url = None
         self._grafana_namespace = None
         self._grafana_service_name = None
         self._grafana_service_port = None
+        self._incident_historical_scan_complete = None
         self._incident_slack_notifiers = None
         self._kubeconfig = None
         self._kubeconfig_elevated = None
@@ -89,6 +92,8 @@ class V1KubernetesDirectV1(object):
             self.grafana_service_name = grafana_service_name
         if grafana_service_port is not None:
             self.grafana_service_port = grafana_service_port
+        if incident_historical_scan_complete is not None:
+            self.incident_historical_scan_complete = incident_historical_scan_complete
         if incident_slack_notifiers is not None:
             self.incident_slack_notifiers = incident_slack_notifiers
         if kubeconfig is not None:
@@ -204,6 +209,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._grafana_service_port = grafana_service_port
+
+    @property
+    def incident_historical_scan_complete(self) -> 'bool':
+        """Gets the incident_historical_scan_complete of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The incident_historical_scan_complete of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._incident_historical_scan_complete
+
+    @incident_historical_scan_complete.setter
+    def incident_historical_scan_complete(self, incident_historical_scan_complete: 'bool'):
+        """Sets the incident_historical_scan_complete of this V1KubernetesDirectV1.
+
+
+        :param incident_historical_scan_complete: The incident_historical_scan_complete of this V1KubernetesDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._incident_historical_scan_complete = incident_historical_scan_complete
 
     @property
     def incident_slack_notifiers(self) -> 'list[V1SlackNotifier]':

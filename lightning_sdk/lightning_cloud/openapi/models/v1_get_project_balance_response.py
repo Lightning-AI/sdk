@@ -43,6 +43,7 @@ class V1GetProjectBalanceResponse(object):
     swagger_types = {
         'account_id': 'str',
         'balance': 'float',
+        'balance_limit': 'float',
         'project_id': 'str',
         'transactions': 'list[V1Transaction]'
     }
@@ -50,14 +51,16 @@ class V1GetProjectBalanceResponse(object):
     attribute_map = {
         'account_id': 'accountId',
         'balance': 'balance',
+        'balance_limit': 'balanceLimit',
         'project_id': 'projectId',
         'transactions': 'transactions'
     }
 
-    def __init__(self, account_id: 'str' =None, balance: 'float' =None, project_id: 'str' =None, transactions: 'list[V1Transaction]' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, balance: 'float' =None, balance_limit: 'float' =None, project_id: 'str' =None, transactions: 'list[V1Transaction]' =None):  # noqa: E501
         """V1GetProjectBalanceResponse - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
         self._balance = None
+        self._balance_limit = None
         self._project_id = None
         self._transactions = None
         self.discriminator = None
@@ -65,6 +68,8 @@ class V1GetProjectBalanceResponse(object):
             self.account_id = account_id
         if balance is not None:
             self.balance = balance
+        if balance_limit is not None:
+            self.balance_limit = balance_limit
         if project_id is not None:
             self.project_id = project_id
         if transactions is not None:
@@ -111,6 +116,27 @@ class V1GetProjectBalanceResponse(object):
         """
 
         self._balance = balance
+
+    @property
+    def balance_limit(self) -> 'float':
+        """Gets the balance_limit of this V1GetProjectBalanceResponse.  # noqa: E501
+
+
+        :return: The balance_limit of this V1GetProjectBalanceResponse.  # noqa: E501
+        :rtype: float
+        """
+        return self._balance_limit
+
+    @balance_limit.setter
+    def balance_limit(self, balance_limit: 'float'):
+        """Sets the balance_limit of this V1GetProjectBalanceResponse.
+
+
+        :param balance_limit: The balance_limit of this V1GetProjectBalanceResponse.  # noqa: E501
+        :type: float
+        """
+
+        self._balance_limit = balance_limit
 
     @property
     def project_id(self) -> 'str':

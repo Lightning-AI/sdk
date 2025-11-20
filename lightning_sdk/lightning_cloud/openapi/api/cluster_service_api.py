@@ -3152,6 +3152,7 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str org_id:
         :param str project_id:
+        :param bool include_configuring_state:
         :return: V1ListClustersResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3174,12 +3175,13 @@ class ClusterServiceApi(object):
         :param async_req bool
         :param str org_id:
         :param str project_id:
+        :param bool include_configuring_state:
         :return: V1ListClustersResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_id']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'include_configuring_state']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3204,6 +3206,8 @@ class ClusterServiceApi(object):
             query_params.append(('orgId', params['org_id']))  # noqa: E501
         if 'project_id' in params:
             query_params.append(('projectId', params['project_id']))  # noqa: E501
+        if 'include_configuring_state' in params:
+            query_params.append(('includeConfiguringState', params['include_configuring_state']))  # noqa: E501
 
         header_params = {}
 

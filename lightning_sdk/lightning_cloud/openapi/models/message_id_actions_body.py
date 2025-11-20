@@ -43,6 +43,7 @@ class MessageIdActionsBody(object):
     swagger_types = {
         'actioned_at': 'datetime',
         'block_id': 'str',
+        'cloudspace_id': 'str',
         'project_id': 'str',
         'type': 'str'
     }
@@ -50,14 +51,16 @@ class MessageIdActionsBody(object):
     attribute_map = {
         'actioned_at': 'actionedAt',
         'block_id': 'blockId',
+        'cloudspace_id': 'cloudspaceId',
         'project_id': 'projectId',
         'type': 'type'
     }
 
-    def __init__(self, actioned_at: 'datetime' =None, block_id: 'str' =None, project_id: 'str' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, actioned_at: 'datetime' =None, block_id: 'str' =None, cloudspace_id: 'str' =None, project_id: 'str' =None, type: 'str' =None):  # noqa: E501
         """MessageIdActionsBody - a model defined in Swagger"""  # noqa: E501
         self._actioned_at = None
         self._block_id = None
+        self._cloudspace_id = None
         self._project_id = None
         self._type = None
         self.discriminator = None
@@ -65,6 +68,8 @@ class MessageIdActionsBody(object):
             self.actioned_at = actioned_at
         if block_id is not None:
             self.block_id = block_id
+        if cloudspace_id is not None:
+            self.cloudspace_id = cloudspace_id
         if project_id is not None:
             self.project_id = project_id
         if type is not None:
@@ -111,6 +116,27 @@ class MessageIdActionsBody(object):
         """
 
         self._block_id = block_id
+
+    @property
+    def cloudspace_id(self) -> 'str':
+        """Gets the cloudspace_id of this MessageIdActionsBody.  # noqa: E501
+
+
+        :return: The cloudspace_id of this MessageIdActionsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloudspace_id
+
+    @cloudspace_id.setter
+    def cloudspace_id(self, cloudspace_id: 'str'):
+        """Sets the cloudspace_id of this MessageIdActionsBody.
+
+
+        :param cloudspace_id: The cloudspace_id of this MessageIdActionsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cloudspace_id = cloudspace_id
 
     @property
     def project_id(self) -> 'str':

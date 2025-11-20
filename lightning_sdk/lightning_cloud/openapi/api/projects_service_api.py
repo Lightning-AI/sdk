@@ -1395,6 +1395,7 @@ class ProjectsServiceApi(object):
         :param async_req bool
         :param str organization_id:
         :param bool filter_by_user_id:
+        :param bool guest:
         :return: V1ListMembershipsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1417,12 +1418,13 @@ class ProjectsServiceApi(object):
         :param async_req bool
         :param str organization_id:
         :param bool filter_by_user_id:
+        :param bool guest:
         :return: V1ListMembershipsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['organization_id', 'filter_by_user_id']  # noqa: E501
+        all_params = ['organization_id', 'filter_by_user_id', 'guest']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1447,6 +1449,8 @@ class ProjectsServiceApi(object):
             query_params.append(('organizationId', params['organization_id']))  # noqa: E501
         if 'filter_by_user_id' in params:
             query_params.append(('filterByUserId', params['filter_by_user_id']))  # noqa: E501
+        if 'guest' in params:
+            query_params.append(('guest', params['guest']))  # noqa: E501
 
         header_params = {}
 

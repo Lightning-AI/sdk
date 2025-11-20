@@ -54,6 +54,7 @@ class V1AWSDirectV1(object):
         'regions': 'list[str]',
         'role_arn': 'str',
         'source_cidr_ips': 'list[str]',
+        'subnet_cidr_prefix': 'str',
         'use_launch_templates': 'bool'
     }
 
@@ -71,10 +72,11 @@ class V1AWSDirectV1(object):
         'regions': 'regions',
         'role_arn': 'roleArn',
         'source_cidr_ips': 'sourceCidrIps',
+        'subnet_cidr_prefix': 'subnetCIDRPrefix',
         'use_launch_templates': 'useLaunchTemplates'
     }
 
-    def __init__(self, ami_owner_id: 'str' =None, bucket_endpoint: 'str' =None, bucket_name: 'str' =None, cloud_formation_disabled: 'bool' =None, efs_enabled: 'bool' =None, external_id: 'str' =None, inventory_database: 'str' =None, inventory_table: 'str' =None, primary_region: 'str' =None, regional_load_balancers: 'list[V1RegionalLoadBalancer]' =None, regions: 'list[str]' =None, role_arn: 'str' =None, source_cidr_ips: 'list[str]' =None, use_launch_templates: 'bool' =None):  # noqa: E501
+    def __init__(self, ami_owner_id: 'str' =None, bucket_endpoint: 'str' =None, bucket_name: 'str' =None, cloud_formation_disabled: 'bool' =None, efs_enabled: 'bool' =None, external_id: 'str' =None, inventory_database: 'str' =None, inventory_table: 'str' =None, primary_region: 'str' =None, regional_load_balancers: 'list[V1RegionalLoadBalancer]' =None, regions: 'list[str]' =None, role_arn: 'str' =None, source_cidr_ips: 'list[str]' =None, subnet_cidr_prefix: 'str' =None, use_launch_templates: 'bool' =None):  # noqa: E501
         """V1AWSDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._ami_owner_id = None
         self._bucket_endpoint = None
@@ -89,6 +91,7 @@ class V1AWSDirectV1(object):
         self._regions = None
         self._role_arn = None
         self._source_cidr_ips = None
+        self._subnet_cidr_prefix = None
         self._use_launch_templates = None
         self.discriminator = None
         if ami_owner_id is not None:
@@ -117,6 +120,8 @@ class V1AWSDirectV1(object):
             self.role_arn = role_arn
         if source_cidr_ips is not None:
             self.source_cidr_ips = source_cidr_ips
+        if subnet_cidr_prefix is not None:
+            self.subnet_cidr_prefix = subnet_cidr_prefix
         if use_launch_templates is not None:
             self.use_launch_templates = use_launch_templates
 
@@ -394,6 +399,27 @@ class V1AWSDirectV1(object):
         """
 
         self._source_cidr_ips = source_cidr_ips
+
+    @property
+    def subnet_cidr_prefix(self) -> 'str':
+        """Gets the subnet_cidr_prefix of this V1AWSDirectV1.  # noqa: E501
+
+
+        :return: The subnet_cidr_prefix of this V1AWSDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._subnet_cidr_prefix
+
+    @subnet_cidr_prefix.setter
+    def subnet_cidr_prefix(self, subnet_cidr_prefix: 'str'):
+        """Sets the subnet_cidr_prefix of this V1AWSDirectV1.
+
+
+        :param subnet_cidr_prefix: The subnet_cidr_prefix of this V1AWSDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._subnet_cidr_prefix = subnet_cidr_prefix
 
     @property
     def use_launch_templates(self) -> 'bool':

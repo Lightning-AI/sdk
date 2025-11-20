@@ -48,7 +48,8 @@ class ClusterIdMetricsBody(object):
         'kai_scheduler_queues_metrics': 'list[V1KaiSchedulerQueueMetrics]',
         'namespace_metrics': 'list[V1NamespaceMetrics]',
         'node_metrics': 'list[V1NodeMetrics]',
-        'pod_metrics': 'list[V1PodMetrics]'
+        'pod_metrics': 'list[V1PodMetrics]',
+        'pod_preemption_events': 'list[V1PodPreemptionEvent]'
     }
 
     attribute_map = {
@@ -59,10 +60,11 @@ class ClusterIdMetricsBody(object):
         'kai_scheduler_queues_metrics': 'kaiSchedulerQueuesMetrics',
         'namespace_metrics': 'namespaceMetrics',
         'node_metrics': 'nodeMetrics',
-        'pod_metrics': 'podMetrics'
+        'pod_metrics': 'podMetrics',
+        'pod_preemption_events': 'podPreemptionEvents'
     }
 
-    def __init__(self, cluster_metrics: 'V1ClusterMetrics' =None, container_metrics: 'list[V1ContainerMetrics]' =None, group_node_metrics: 'list[V1GroupNodeMetrics]' =None, group_pod_metrics: 'list[V1GroupPodMetrics]' =None, kai_scheduler_queues_metrics: 'list[V1KaiSchedulerQueueMetrics]' =None, namespace_metrics: 'list[V1NamespaceMetrics]' =None, node_metrics: 'list[V1NodeMetrics]' =None, pod_metrics: 'list[V1PodMetrics]' =None):  # noqa: E501
+    def __init__(self, cluster_metrics: 'V1ClusterMetrics' =None, container_metrics: 'list[V1ContainerMetrics]' =None, group_node_metrics: 'list[V1GroupNodeMetrics]' =None, group_pod_metrics: 'list[V1GroupPodMetrics]' =None, kai_scheduler_queues_metrics: 'list[V1KaiSchedulerQueueMetrics]' =None, namespace_metrics: 'list[V1NamespaceMetrics]' =None, node_metrics: 'list[V1NodeMetrics]' =None, pod_metrics: 'list[V1PodMetrics]' =None, pod_preemption_events: 'list[V1PodPreemptionEvent]' =None):  # noqa: E501
         """ClusterIdMetricsBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_metrics = None
         self._container_metrics = None
@@ -72,6 +74,7 @@ class ClusterIdMetricsBody(object):
         self._namespace_metrics = None
         self._node_metrics = None
         self._pod_metrics = None
+        self._pod_preemption_events = None
         self.discriminator = None
         if cluster_metrics is not None:
             self.cluster_metrics = cluster_metrics
@@ -89,6 +92,8 @@ class ClusterIdMetricsBody(object):
             self.node_metrics = node_metrics
         if pod_metrics is not None:
             self.pod_metrics = pod_metrics
+        if pod_preemption_events is not None:
+            self.pod_preemption_events = pod_preemption_events
 
     @property
     def cluster_metrics(self) -> 'V1ClusterMetrics':
@@ -257,6 +262,27 @@ class ClusterIdMetricsBody(object):
         """
 
         self._pod_metrics = pod_metrics
+
+    @property
+    def pod_preemption_events(self) -> 'list[V1PodPreemptionEvent]':
+        """Gets the pod_preemption_events of this ClusterIdMetricsBody.  # noqa: E501
+
+
+        :return: The pod_preemption_events of this ClusterIdMetricsBody.  # noqa: E501
+        :rtype: list[V1PodPreemptionEvent]
+        """
+        return self._pod_preemption_events
+
+    @pod_preemption_events.setter
+    def pod_preemption_events(self, pod_preemption_events: 'list[V1PodPreemptionEvent]'):
+        """Sets the pod_preemption_events of this ClusterIdMetricsBody.
+
+
+        :param pod_preemption_events: The pod_preemption_events of this ClusterIdMetricsBody.  # noqa: E501
+        :type: list[V1PodPreemptionEvent]
+        """
+
+        self._pod_preemption_events = pod_preemption_events
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

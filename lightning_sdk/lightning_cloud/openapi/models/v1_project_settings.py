@@ -57,7 +57,6 @@ class V1ProjectSettings(object):
         'budgeting_enabled': 'bool',
         'default_machine_image_version': 'str',
         'default_machine_type': 'str',
-        'organization_billing_enabled': 'bool',
         'preferred_cluster': 'str',
         'preferred_deployment_provider': 'str',
         'preferred_studio_provider': 'str',
@@ -83,7 +82,6 @@ class V1ProjectSettings(object):
         'budgeting_enabled': 'budgetingEnabled',
         'default_machine_image_version': 'defaultMachineImageVersion',
         'default_machine_type': 'defaultMachineType',
-        'organization_billing_enabled': 'organizationBillingEnabled',
         'preferred_cluster': 'preferredCluster',
         'preferred_deployment_provider': 'preferredDeploymentProvider',
         'preferred_studio_provider': 'preferredStudioProvider',
@@ -92,7 +90,7 @@ class V1ProjectSettings(object):
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, budgeting_enabled: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, organization_billing_enabled: 'bool' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, budgeting_enabled: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
         """V1ProjectSettings - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_credits_auto_replenish = None
@@ -110,7 +108,6 @@ class V1ProjectSettings(object):
         self._budgeting_enabled = None
         self._default_machine_image_version = None
         self._default_machine_type = None
-        self._organization_billing_enabled = None
         self._preferred_cluster = None
         self._preferred_deployment_provider = None
         self._preferred_studio_provider = None
@@ -150,8 +147,6 @@ class V1ProjectSettings(object):
             self.default_machine_image_version = default_machine_image_version
         if default_machine_type is not None:
             self.default_machine_type = default_machine_type
-        if organization_billing_enabled is not None:
-            self.organization_billing_enabled = organization_billing_enabled
         if preferred_cluster is not None:
             self.preferred_cluster = preferred_cluster
         if preferred_deployment_provider is not None:
@@ -502,27 +497,6 @@ class V1ProjectSettings(object):
         """
 
         self._default_machine_type = default_machine_type
-
-    @property
-    def organization_billing_enabled(self) -> 'bool':
-        """Gets the organization_billing_enabled of this V1ProjectSettings.  # noqa: E501
-
-
-        :return: The organization_billing_enabled of this V1ProjectSettings.  # noqa: E501
-        :rtype: bool
-        """
-        return self._organization_billing_enabled
-
-    @organization_billing_enabled.setter
-    def organization_billing_enabled(self, organization_billing_enabled: 'bool'):
-        """Sets the organization_billing_enabled of this V1ProjectSettings.
-
-
-        :param organization_billing_enabled: The organization_billing_enabled of this V1ProjectSettings.  # noqa: E501
-        :type: bool
-        """
-
-        self._organization_billing_enabled = organization_billing_enabled
 
     @property
     def preferred_cluster(self) -> 'str':

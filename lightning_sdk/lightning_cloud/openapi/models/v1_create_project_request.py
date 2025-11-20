@@ -51,7 +51,6 @@ class V1CreateProjectRequest(object):
         'display_name': 'str',
         'layout_config': 'list[V1ProjectTab]',
         'name': 'str',
-        'organization_billing_enabled': 'bool',
         'organization_id': 'str',
         'preferred_cluster': 'str',
         'quotas': 'V1Quotas'
@@ -68,13 +67,12 @@ class V1CreateProjectRequest(object):
         'display_name': 'displayName',
         'layout_config': 'layoutConfig',
         'name': 'name',
-        'organization_billing_enabled': 'organizationBillingEnabled',
         'organization_id': 'organizationId',
         'preferred_cluster': 'preferredCluster',
         'quotas': 'quotas'
     }
 
-    def __init__(self, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, budgeting_enabled: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, layout_config: 'list[V1ProjectTab]' =None, name: 'str' =None, organization_billing_enabled: 'bool' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
+    def __init__(self, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, budgeting_enabled: 'bool' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, layout_config: 'list[V1ProjectTab]' =None, name: 'str' =None, organization_id: 'str' =None, preferred_cluster: 'str' =None, quotas: 'V1Quotas' =None):  # noqa: E501
         """V1CreateProjectRequest - a model defined in Swagger"""  # noqa: E501
         self._allow_credits_auto_replenish = None
         self._auto_replenish_amount = None
@@ -86,7 +84,6 @@ class V1CreateProjectRequest(object):
         self._display_name = None
         self._layout_config = None
         self._name = None
-        self._organization_billing_enabled = None
         self._organization_id = None
         self._preferred_cluster = None
         self._quotas = None
@@ -111,8 +108,6 @@ class V1CreateProjectRequest(object):
             self.layout_config = layout_config
         if name is not None:
             self.name = name
-        if organization_billing_enabled is not None:
-            self.organization_billing_enabled = organization_billing_enabled
         if organization_id is not None:
             self.organization_id = organization_id
         if preferred_cluster is not None:
@@ -329,27 +324,6 @@ class V1CreateProjectRequest(object):
         """
 
         self._name = name
-
-    @property
-    def organization_billing_enabled(self) -> 'bool':
-        """Gets the organization_billing_enabled of this V1CreateProjectRequest.  # noqa: E501
-
-
-        :return: The organization_billing_enabled of this V1CreateProjectRequest.  # noqa: E501
-        :rtype: bool
-        """
-        return self._organization_billing_enabled
-
-    @organization_billing_enabled.setter
-    def organization_billing_enabled(self, organization_billing_enabled: 'bool'):
-        """Sets the organization_billing_enabled of this V1CreateProjectRequest.
-
-
-        :param organization_billing_enabled: The organization_billing_enabled of this V1CreateProjectRequest.  # noqa: E501
-        :type: bool
-        """
-
-        self._organization_billing_enabled = organization_billing_enabled
 
     @property
     def organization_id(self) -> 'str':

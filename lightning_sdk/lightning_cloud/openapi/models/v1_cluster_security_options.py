@@ -44,6 +44,7 @@ class V1ClusterSecurityOptions(object):
         'bucket_kms_key': 'str',
         'cloud_init_boot_cmds': 'list[str]',
         'cloud_init_run_cmds': 'list[str]',
+        'cloudflare_workers_access_enabled': 'bool',
         'containers_non_privileged': 'bool',
         'disable_public_ip': 'bool',
         'disabled_services': 'list[str]',
@@ -58,13 +59,17 @@ class V1ClusterSecurityOptions(object):
         'protect_instance_metadata': 'bool',
         'rootless_docker': 'bool',
         'setup_network_load_balancer': 'bool',
-        'ssh_disabled': 'bool'
+        'ssh_disabled': 'bool',
+        'vpn_gateway_ip': 'str',
+        'vpn_preshared_key': 'str',
+        'vpn_route_cidrs': 'list[str]'
     }
 
     attribute_map = {
         'bucket_kms_key': 'bucketKmsKey',
         'cloud_init_boot_cmds': 'cloudInitBootCmds',
         'cloud_init_run_cmds': 'cloudInitRunCmds',
+        'cloudflare_workers_access_enabled': 'cloudflareWorkersAccessEnabled',
         'containers_non_privileged': 'containersNonPrivileged',
         'disable_public_ip': 'disablePublicIp',
         'disabled_services': 'disabledServices',
@@ -79,14 +84,18 @@ class V1ClusterSecurityOptions(object):
         'protect_instance_metadata': 'protectInstanceMetadata',
         'rootless_docker': 'rootlessDocker',
         'setup_network_load_balancer': 'setupNetworkLoadBalancer',
-        'ssh_disabled': 'sshDisabled'
+        'ssh_disabled': 'sshDisabled',
+        'vpn_gateway_ip': 'vpnGatewayIp',
+        'vpn_preshared_key': 'vpnPresharedKey',
+        'vpn_route_cidrs': 'vpnRouteCidrs'
     }
 
-    def __init__(self, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, exposed_ports: 'list[str]' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_firewall_rules: 'list[V1FirewallRule]' =None, extra_policy: 'str' =None, extra_sa_scopes: 'list[str]' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None):  # noqa: E501
+    def __init__(self, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, cloudflare_workers_access_enabled: 'bool' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, exposed_ports: 'list[str]' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_firewall_rules: 'list[V1FirewallRule]' =None, extra_policy: 'str' =None, extra_sa_scopes: 'list[str]' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None, vpn_gateway_ip: 'str' =None, vpn_preshared_key: 'str' =None, vpn_route_cidrs: 'list[str]' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
         self._bucket_kms_key = None
         self._cloud_init_boot_cmds = None
         self._cloud_init_run_cmds = None
+        self._cloudflare_workers_access_enabled = None
         self._containers_non_privileged = None
         self._disable_public_ip = None
         self._disabled_services = None
@@ -102,6 +111,9 @@ class V1ClusterSecurityOptions(object):
         self._rootless_docker = None
         self._setup_network_load_balancer = None
         self._ssh_disabled = None
+        self._vpn_gateway_ip = None
+        self._vpn_preshared_key = None
+        self._vpn_route_cidrs = None
         self.discriminator = None
         if bucket_kms_key is not None:
             self.bucket_kms_key = bucket_kms_key
@@ -109,6 +121,8 @@ class V1ClusterSecurityOptions(object):
             self.cloud_init_boot_cmds = cloud_init_boot_cmds
         if cloud_init_run_cmds is not None:
             self.cloud_init_run_cmds = cloud_init_run_cmds
+        if cloudflare_workers_access_enabled is not None:
+            self.cloudflare_workers_access_enabled = cloudflare_workers_access_enabled
         if containers_non_privileged is not None:
             self.containers_non_privileged = containers_non_privileged
         if disable_public_ip is not None:
@@ -139,6 +153,12 @@ class V1ClusterSecurityOptions(object):
             self.setup_network_load_balancer = setup_network_load_balancer
         if ssh_disabled is not None:
             self.ssh_disabled = ssh_disabled
+        if vpn_gateway_ip is not None:
+            self.vpn_gateway_ip = vpn_gateway_ip
+        if vpn_preshared_key is not None:
+            self.vpn_preshared_key = vpn_preshared_key
+        if vpn_route_cidrs is not None:
+            self.vpn_route_cidrs = vpn_route_cidrs
 
     @property
     def bucket_kms_key(self) -> 'str':
@@ -202,6 +222,27 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._cloud_init_run_cmds = cloud_init_run_cmds
+
+    @property
+    def cloudflare_workers_access_enabled(self) -> 'bool':
+        """Gets the cloudflare_workers_access_enabled of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The cloudflare_workers_access_enabled of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._cloudflare_workers_access_enabled
+
+    @cloudflare_workers_access_enabled.setter
+    def cloudflare_workers_access_enabled(self, cloudflare_workers_access_enabled: 'bool'):
+        """Sets the cloudflare_workers_access_enabled of this V1ClusterSecurityOptions.
+
+
+        :param cloudflare_workers_access_enabled: The cloudflare_workers_access_enabled of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._cloudflare_workers_access_enabled = cloudflare_workers_access_enabled
 
     @property
     def containers_non_privileged(self) -> 'bool':
@@ -517,6 +558,69 @@ class V1ClusterSecurityOptions(object):
         """
 
         self._ssh_disabled = ssh_disabled
+
+    @property
+    def vpn_gateway_ip(self) -> 'str':
+        """Gets the vpn_gateway_ip of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The vpn_gateway_ip of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: str
+        """
+        return self._vpn_gateway_ip
+
+    @vpn_gateway_ip.setter
+    def vpn_gateway_ip(self, vpn_gateway_ip: 'str'):
+        """Sets the vpn_gateway_ip of this V1ClusterSecurityOptions.
+
+
+        :param vpn_gateway_ip: The vpn_gateway_ip of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: str
+        """
+
+        self._vpn_gateway_ip = vpn_gateway_ip
+
+    @property
+    def vpn_preshared_key(self) -> 'str':
+        """Gets the vpn_preshared_key of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The vpn_preshared_key of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: str
+        """
+        return self._vpn_preshared_key
+
+    @vpn_preshared_key.setter
+    def vpn_preshared_key(self, vpn_preshared_key: 'str'):
+        """Sets the vpn_preshared_key of this V1ClusterSecurityOptions.
+
+
+        :param vpn_preshared_key: The vpn_preshared_key of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: str
+        """
+
+        self._vpn_preshared_key = vpn_preshared_key
+
+    @property
+    def vpn_route_cidrs(self) -> 'list[str]':
+        """Gets the vpn_route_cidrs of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The vpn_route_cidrs of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._vpn_route_cidrs
+
+    @vpn_route_cidrs.setter
+    def vpn_route_cidrs(self, vpn_route_cidrs: 'list[str]'):
+        """Sets the vpn_route_cidrs of this V1ClusterSecurityOptions.
+
+
+        :param vpn_route_cidrs: The vpn_route_cidrs of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._vpn_route_cidrs = vpn_route_cidrs
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

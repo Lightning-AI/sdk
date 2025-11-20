@@ -55,6 +55,7 @@ class MarketsServiceApi(object):
         :param str asset: (required)
         :param datetime start_date:
         :param datetime end_date:
+        :param int number_of_gpus:
         :return: V1GetMarketPricingResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -78,12 +79,13 @@ class MarketsServiceApi(object):
         :param str asset: (required)
         :param datetime start_date:
         :param datetime end_date:
+        :param int number_of_gpus:
         :return: V1GetMarketPricingResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['asset', 'start_date', 'end_date']  # noqa: E501
+        all_params = ['asset', 'start_date', 'end_date', 'number_of_gpus']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -114,6 +116,8 @@ class MarketsServiceApi(object):
             query_params.append(('startDate', params['start_date']))  # noqa: E501
         if 'end_date' in params:
             query_params.append(('endDate', params['end_date']))  # noqa: E501
+        if 'number_of_gpus' in params:
+            query_params.append(('numberOfGpus', params['number_of_gpus']))  # noqa: E501
 
         header_params = {}
 

@@ -49,6 +49,7 @@ class V1ClusterSpec(object):
         'cloudflare_v1': 'V1CloudflareV1',
         'cluster_type': 'V1ClusterType',
         'compute_cluster_ids': 'list[str]',
+        'compute_cluster_request': 'V1ComputeClusterRequest',
         'deletion_options': 'V1ClusterDeletionOptions',
         'desired_state': 'V1ClusterState',
         'domain': 'str',
@@ -74,6 +75,7 @@ class V1ClusterSpec(object):
         'security_options': 'V1ClusterSecurityOptions',
         'slurm_v1': 'V1SlurmV1',
         'tagging_options': 'V1ClusterTaggingOptions',
+        'unavailability_spikes_detection_enabled': 'bool',
         'user_id': 'str',
         'vibe_coding_enabled': 'bool',
         'voltage_park_v1': 'V1VoltageParkDirectV1',
@@ -89,6 +91,7 @@ class V1ClusterSpec(object):
         'cloudflare_v1': 'cloudflareV1',
         'cluster_type': 'clusterType',
         'compute_cluster_ids': 'computeClusterIds',
+        'compute_cluster_request': 'computeClusterRequest',
         'deletion_options': 'deletionOptions',
         'desired_state': 'desiredState',
         'domain': 'domain',
@@ -114,13 +117,14 @@ class V1ClusterSpec(object):
         'security_options': 'securityOptions',
         'slurm_v1': 'slurmV1',
         'tagging_options': 'taggingOptions',
+        'unavailability_spikes_detection_enabled': 'unavailabilitySpikesDetectionEnabled',
         'user_id': 'userId',
         'vibe_coding_enabled': 'vibeCodingEnabled',
         'voltage_park_v1': 'voltageParkV1',
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, ai_pod_v1: 'V1AiPodV1' =None, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, ai_pod_v1: 'V1AiPodV1' =None, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._ai_pod_v1 = None
         self._auth_token = None
@@ -130,6 +134,7 @@ class V1ClusterSpec(object):
         self._cloudflare_v1 = None
         self._cluster_type = None
         self._compute_cluster_ids = None
+        self._compute_cluster_request = None
         self._deletion_options = None
         self._desired_state = None
         self._domain = None
@@ -155,6 +160,7 @@ class V1ClusterSpec(object):
         self._security_options = None
         self._slurm_v1 = None
         self._tagging_options = None
+        self._unavailability_spikes_detection_enabled = None
         self._user_id = None
         self._vibe_coding_enabled = None
         self._voltage_park_v1 = None
@@ -176,6 +182,8 @@ class V1ClusterSpec(object):
             self.cluster_type = cluster_type
         if compute_cluster_ids is not None:
             self.compute_cluster_ids = compute_cluster_ids
+        if compute_cluster_request is not None:
+            self.compute_cluster_request = compute_cluster_request
         if deletion_options is not None:
             self.deletion_options = deletion_options
         if desired_state is not None:
@@ -226,6 +234,8 @@ class V1ClusterSpec(object):
             self.slurm_v1 = slurm_v1
         if tagging_options is not None:
             self.tagging_options = tagging_options
+        if unavailability_spikes_detection_enabled is not None:
+            self.unavailability_spikes_detection_enabled = unavailability_spikes_detection_enabled
         if user_id is not None:
             self.user_id = user_id
         if vibe_coding_enabled is not None:
@@ -402,6 +412,27 @@ class V1ClusterSpec(object):
         """
 
         self._compute_cluster_ids = compute_cluster_ids
+
+    @property
+    def compute_cluster_request(self) -> 'V1ComputeClusterRequest':
+        """Gets the compute_cluster_request of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The compute_cluster_request of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1ComputeClusterRequest
+        """
+        return self._compute_cluster_request
+
+    @compute_cluster_request.setter
+    def compute_cluster_request(self, compute_cluster_request: 'V1ComputeClusterRequest'):
+        """Sets the compute_cluster_request of this V1ClusterSpec.
+
+
+        :param compute_cluster_request: The compute_cluster_request of this V1ClusterSpec.  # noqa: E501
+        :type: V1ComputeClusterRequest
+        """
+
+        self._compute_cluster_request = compute_cluster_request
 
     @property
     def deletion_options(self) -> 'V1ClusterDeletionOptions':
@@ -929,6 +960,27 @@ class V1ClusterSpec(object):
         """
 
         self._tagging_options = tagging_options
+
+    @property
+    def unavailability_spikes_detection_enabled(self) -> 'bool':
+        """Gets the unavailability_spikes_detection_enabled of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The unavailability_spikes_detection_enabled of this V1ClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._unavailability_spikes_detection_enabled
+
+    @unavailability_spikes_detection_enabled.setter
+    def unavailability_spikes_detection_enabled(self, unavailability_spikes_detection_enabled: 'bool'):
+        """Sets the unavailability_spikes_detection_enabled of this V1ClusterSpec.
+
+
+        :param unavailability_spikes_detection_enabled: The unavailability_spikes_detection_enabled of this V1ClusterSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._unavailability_spikes_detection_enabled = unavailability_spikes_detection_enabled
 
     @property
     def user_id(self) -> 'str':

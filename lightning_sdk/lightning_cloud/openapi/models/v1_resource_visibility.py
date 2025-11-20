@@ -43,25 +43,30 @@ class V1ResourceVisibility(object):
     swagger_types = {
         'all_org_users': 'bool',
         'all_users': 'bool',
+        'org_ids': 'list[str]',
         'user_ids': 'list[str]'
     }
 
     attribute_map = {
         'all_org_users': 'allOrgUsers',
         'all_users': 'allUsers',
+        'org_ids': 'orgIds',
         'user_ids': 'userIds'
     }
 
-    def __init__(self, all_org_users: 'bool' =None, all_users: 'bool' =None, user_ids: 'list[str]' =None):  # noqa: E501
+    def __init__(self, all_org_users: 'bool' =None, all_users: 'bool' =None, org_ids: 'list[str]' =None, user_ids: 'list[str]' =None):  # noqa: E501
         """V1ResourceVisibility - a model defined in Swagger"""  # noqa: E501
         self._all_org_users = None
         self._all_users = None
+        self._org_ids = None
         self._user_ids = None
         self.discriminator = None
         if all_org_users is not None:
             self.all_org_users = all_org_users
         if all_users is not None:
             self.all_users = all_users
+        if org_ids is not None:
+            self.org_ids = org_ids
         if user_ids is not None:
             self.user_ids = user_ids
 
@@ -106,6 +111,27 @@ class V1ResourceVisibility(object):
         """
 
         self._all_users = all_users
+
+    @property
+    def org_ids(self) -> 'list[str]':
+        """Gets the org_ids of this V1ResourceVisibility.  # noqa: E501
+
+
+        :return: The org_ids of this V1ResourceVisibility.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._org_ids
+
+    @org_ids.setter
+    def org_ids(self, org_ids: 'list[str]'):
+        """Sets the org_ids of this V1ResourceVisibility.
+
+
+        :param org_ids: The org_ids of this V1ResourceVisibility.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._org_ids = org_ids
 
     @property
     def user_ids(self) -> 'list[str]':

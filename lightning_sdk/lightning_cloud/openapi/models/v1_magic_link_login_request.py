@@ -44,6 +44,7 @@ class V1MagicLinkLoginRequest(object):
         'collab_session_id': 'str',
         'email': 'str',
         'experimentation_id': 'str',
+        'guest_user_api_key': 'str',
         'invite_code': 'str',
         'redirect_url': 'str',
         'referrer_params': 'str'
@@ -53,16 +54,18 @@ class V1MagicLinkLoginRequest(object):
         'collab_session_id': 'collabSessionId',
         'email': 'email',
         'experimentation_id': 'experimentationId',
+        'guest_user_api_key': 'guestUserApiKey',
         'invite_code': 'inviteCode',
         'redirect_url': 'redirectUrl',
         'referrer_params': 'referrerParams'
     }
 
-    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, invite_code: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None):  # noqa: E501
+    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, guest_user_api_key: 'str' =None, invite_code: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None):  # noqa: E501
         """V1MagicLinkLoginRequest - a model defined in Swagger"""  # noqa: E501
         self._collab_session_id = None
         self._email = None
         self._experimentation_id = None
+        self._guest_user_api_key = None
         self._invite_code = None
         self._redirect_url = None
         self._referrer_params = None
@@ -73,6 +76,8 @@ class V1MagicLinkLoginRequest(object):
             self.email = email
         if experimentation_id is not None:
             self.experimentation_id = experimentation_id
+        if guest_user_api_key is not None:
+            self.guest_user_api_key = guest_user_api_key
         if invite_code is not None:
             self.invite_code = invite_code
         if redirect_url is not None:
@@ -142,6 +147,27 @@ class V1MagicLinkLoginRequest(object):
         """
 
         self._experimentation_id = experimentation_id
+
+    @property
+    def guest_user_api_key(self) -> 'str':
+        """Gets the guest_user_api_key of this V1MagicLinkLoginRequest.  # noqa: E501
+
+
+        :return: The guest_user_api_key of this V1MagicLinkLoginRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._guest_user_api_key
+
+    @guest_user_api_key.setter
+    def guest_user_api_key(self, guest_user_api_key: 'str'):
+        """Sets the guest_user_api_key of this V1MagicLinkLoginRequest.
+
+
+        :param guest_user_api_key: The guest_user_api_key of this V1MagicLinkLoginRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._guest_user_api_key = guest_user_api_key
 
     @property
     def invite_code(self) -> 'str':

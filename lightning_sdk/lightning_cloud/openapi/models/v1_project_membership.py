@@ -63,7 +63,6 @@ class V1ProjectMembership(object):
         'name': 'str',
         'next_free_credits_grant': 'str',
         'organization': 'str',
-        'organization_billing_enabled': 'bool',
         'owner_id': 'str',
         'owner_type': 'V1OwnerType',
         'project_id': 'str',
@@ -97,7 +96,6 @@ class V1ProjectMembership(object):
         'name': 'name',
         'next_free_credits_grant': 'nextFreeCreditsGrant',
         'organization': 'organization',
-        'organization_billing_enabled': 'organizationBillingEnabled',
         'owner_id': 'ownerId',
         'owner_type': 'ownerType',
         'project_id': 'projectId',
@@ -108,7 +106,7 @@ class V1ProjectMembership(object):
         'username': 'username'
     }
 
-    def __init__(self, avatar_url: 'str' =None, balance: 'float' =None, budgeting_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, email: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, free_storage_bytes: 'str' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant: 'str' =None, organization: 'str' =None, organization_billing_enabled: 'bool' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, avatar_url: 'str' =None, balance: 'float' =None, budgeting_enabled: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, current_storage_bytes: 'str' =None, datastore_count: 'str' =None, description: 'str' =None, display_name: 'str' =None, email: 'str' =None, first_name: 'str' =None, free_credits_enabled: 'bool' =None, free_storage_bytes: 'str' =None, inactive: 'bool' =None, is_default: 'bool' =None, job_count: 'str' =None, job_title: 'str' =None, last_name: 'str' =None, membership_count: 'str' =None, name: 'str' =None, next_free_credits_grant: 'str' =None, organization: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, project_id: 'str' =None, quotas: 'V1Quotas' =None, roles: 'list[V1Role]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, username: 'str' =None):  # noqa: E501
         """V1ProjectMembership - a model defined in Swagger"""  # noqa: E501
         self._avatar_url = None
         self._balance = None
@@ -132,7 +130,6 @@ class V1ProjectMembership(object):
         self._name = None
         self._next_free_credits_grant = None
         self._organization = None
-        self._organization_billing_enabled = None
         self._owner_id = None
         self._owner_type = None
         self._project_id = None
@@ -186,8 +183,6 @@ class V1ProjectMembership(object):
             self.next_free_credits_grant = next_free_credits_grant
         if organization is not None:
             self.organization = organization
-        if organization_billing_enabled is not None:
-            self.organization_billing_enabled = organization_billing_enabled
         if owner_id is not None:
             self.owner_id = owner_id
         if owner_type is not None:
@@ -666,27 +661,6 @@ class V1ProjectMembership(object):
         """
 
         self._organization = organization
-
-    @property
-    def organization_billing_enabled(self) -> 'bool':
-        """Gets the organization_billing_enabled of this V1ProjectMembership.  # noqa: E501
-
-
-        :return: The organization_billing_enabled of this V1ProjectMembership.  # noqa: E501
-        :rtype: bool
-        """
-        return self._organization_billing_enabled
-
-    @organization_billing_enabled.setter
-    def organization_billing_enabled(self, organization_billing_enabled: 'bool'):
-        """Sets the organization_billing_enabled of this V1ProjectMembership.
-
-
-        :param organization_billing_enabled: The organization_billing_enabled of this V1ProjectMembership.  # noqa: E501
-        :type: bool
-        """
-
-        self._organization_billing_enabled = organization_billing_enabled
 
     @property
     def owner_id(self) -> 'str':

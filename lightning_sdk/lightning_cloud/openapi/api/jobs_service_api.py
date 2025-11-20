@@ -2934,6 +2934,212 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def jobs_service_get_org_deployment_visibility(self, org_id: 'str', deployment_id: 'str', **kwargs) -> 'V1OrgDeploymentVisibility':  # noqa: E501
+        """jobs_service_get_org_deployment_visibility  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_get_org_deployment_visibility(org_id, deployment_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id: (required)
+        :param str deployment_id: (required)
+        :return: V1OrgDeploymentVisibility
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_get_org_deployment_visibility_with_http_info(org_id, deployment_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_get_org_deployment_visibility_with_http_info(org_id, deployment_id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_get_org_deployment_visibility_with_http_info(self, org_id: 'str', deployment_id: 'str', **kwargs) -> 'V1OrgDeploymentVisibility':  # noqa: E501
+        """jobs_service_get_org_deployment_visibility  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_get_org_deployment_visibility_with_http_info(org_id, deployment_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id: (required)
+        :param str deployment_id: (required)
+        :return: V1OrgDeploymentVisibility
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id', 'deployment_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_get_org_deployment_visibility" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'org_id' is set
+        if ('org_id' not in params or
+                params['org_id'] is None):
+            raise ValueError("Missing the required parameter `org_id` when calling `jobs_service_get_org_deployment_visibility`")  # noqa: E501
+        # verify the required parameter 'deployment_id' is set
+        if ('deployment_id' not in params or
+                params['deployment_id'] is None):
+            raise ValueError("Missing the required parameter `deployment_id` when calling `jobs_service_get_org_deployment_visibility`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'org_id' in params:
+            path_params['orgId'] = params['org_id']  # noqa: E501
+        if 'deployment_id' in params:
+            path_params['deploymentId'] = params['deployment_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/orgs/{orgId}/deployments/{deploymentId}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1OrgDeploymentVisibility',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def jobs_service_list_all_jobs(self, **kwargs) -> 'V1ListAllJobsResponse':  # noqa: E501
+        """jobs_service_list_all_jobs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_list_all_jobs(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id:
+        :param str page_token:
+        :param int limit:
+        :param str sort_by:
+        :param str sort_order:
+        :return: V1ListAllJobsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_list_all_jobs_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_list_all_jobs_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_list_all_jobs_with_http_info(self, **kwargs) -> 'V1ListAllJobsResponse':  # noqa: E501
+        """jobs_service_list_all_jobs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_list_all_jobs_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id:
+        :param str page_token:
+        :param int limit:
+        :param str sort_by:
+        :param str sort_order:
+        :return: V1ListAllJobsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'page_token', 'limit', 'sort_by', 'sort_order']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_list_all_jobs" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'sort_by' in params:
+            query_params.append(('sortBy', params['sort_by']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/jobs/all', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListAllJobsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def jobs_service_list_deployment_alerting_events(self, project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1ListDeploymentAlertingEventsResponse':  # noqa: E501
         """ListDeploymentAlertingEvents lists the deployment alert events  # noqa: E501
 
@@ -3368,6 +3574,7 @@ class JobsServiceApi(object):
         :param list[str] path:
         :param list[int] status_code:
         :param int limit:
+        :param bool filter_successful:
         :return: V1GeListDeploymentRoutingTelemetryResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3397,12 +3604,13 @@ class JobsServiceApi(object):
         :param list[str] path:
         :param list[int] status_code:
         :param int limit:
+        :param bool filter_successful:
         :return: V1GeListDeploymentRoutingTelemetryResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'first_request_id', 'last_request_id', 'start', 'end', 'path', 'status_code', 'limit']  # noqa: E501
+        all_params = ['project_id', 'id', 'first_request_id', 'last_request_id', 'start', 'end', 'path', 'status_code', 'limit', 'filter_successful']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3451,6 +3659,8 @@ class JobsServiceApi(object):
             collection_formats['statusCode'] = 'multi'  # noqa: E501
         if 'limit' in params:
             query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'filter_successful' in params:
+            query_params.append(('filterSuccessful', params['filter_successful']))  # noqa: E501
 
         header_params = {}
 
@@ -3737,6 +3947,8 @@ class JobsServiceApi(object):
         :param str page_token:
         :param int limit:
         :param str state:
+        :param str sort_by:
+        :param str sort_order:
         :return: V1ListJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3766,12 +3978,14 @@ class JobsServiceApi(object):
         :param str page_token:
         :param int limit:
         :param str state:
+        :param str sort_by:
+        :param str sort_order:
         :return: V1ListJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'user_id', 'deployment_id', 'multi_machine_job_id', 'standalone', 'page_token', 'limit', 'state']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'user_id', 'deployment_id', 'multi_machine_job_id', 'standalone', 'page_token', 'limit', 'state', 'sort_by', 'sort_order']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3814,6 +4028,10 @@ class JobsServiceApi(object):
             query_params.append(('limit', params['limit']))  # noqa: E501
         if 'state' in params:
             query_params.append(('state', params['state']))  # noqa: E501
+        if 'sort_by' in params:
+            query_params.append(('sortBy', params['sort_by']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
 
         header_params = {}
 
@@ -4058,6 +4276,99 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def jobs_service_list_org_deployments(self, org_id: 'str', **kwargs) -> 'V1ListDeploymentsResponse':  # noqa: E501
+        """jobs_service_list_org_deployments  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_list_org_deployments(org_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id: (required)
+        :return: V1ListDeploymentsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_list_org_deployments_with_http_info(org_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_list_org_deployments_with_http_info(org_id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_list_org_deployments_with_http_info(self, org_id: 'str', **kwargs) -> 'V1ListDeploymentsResponse':  # noqa: E501
+        """jobs_service_list_org_deployments  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_list_org_deployments_with_http_info(org_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id: (required)
+        :return: V1ListDeploymentsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_list_org_deployments" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'org_id' is set
+        if ('org_id' not in params or
+                params['org_id'] is None):
+            raise ValueError("Missing the required parameter `org_id` when calling `jobs_service_list_org_deployments`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'org_id' in params:
+            path_params['orgId'] = params['org_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/orgs/{orgId}/deployments', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListDeploymentsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def jobs_service_report_deployment_routing_telemetry(self, body: 'JobIdReportroutingtelemetryBody', project_id: 'str', deployment_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportDeploymentRoutingTelemetryResponse':  # noqa: E501
         """The tired proxy collects the requests sent to the resource and inform the CP  # noqa: E501
 
@@ -4172,6 +4483,119 @@ class JobsServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1ReportDeploymentRoutingTelemetryResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def jobs_service_report_job_system_metrics(self, body: 'JobIdSystemmetricsBody', project_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportJobSystemMetricsResponse':  # noqa: E501
+        """ReportJobSystemMetrics is used by the tired proxy to report job system metrics back to the CP  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_report_job_system_metrics(body, project_id, job_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param JobIdSystemmetricsBody body: (required)
+        :param str project_id: (required)
+        :param str job_id: (required)
+        :return: V1ReportJobSystemMetricsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_report_job_system_metrics_with_http_info(body, project_id, job_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_report_job_system_metrics_with_http_info(body, project_id, job_id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_report_job_system_metrics_with_http_info(self, body: 'JobIdSystemmetricsBody', project_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportJobSystemMetricsResponse':  # noqa: E501
+        """ReportJobSystemMetrics is used by the tired proxy to report job system metrics back to the CP  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_report_job_system_metrics_with_http_info(body, project_id, job_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param JobIdSystemmetricsBody body: (required)
+        :param str project_id: (required)
+        :param str job_id: (required)
+        :return: V1ReportJobSystemMetricsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'job_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_report_job_system_metrics" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `jobs_service_report_job_system_metrics`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_report_job_system_metrics`")  # noqa: E501
+        # verify the required parameter 'job_id' is set
+        if ('job_id' not in params or
+                params['job_id'] is None):
+            raise ValueError("Missing the required parameter `job_id` when calling `jobs_service_report_job_system_metrics`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'job_id' in params:
+            path_params['jobId'] = params['job_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/jobs/{jobId}/system-metrics', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ReportJobSystemMetricsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -5552,6 +5976,119 @@ class JobsServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1MultiMachineJob',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def jobs_service_update_org_deployment_visibility(self, body: 'DeploymentsDeploymentIdBody', org_id: 'str', deployment_id: 'str', **kwargs) -> 'V1OrgDeploymentVisibility':  # noqa: E501
+        """jobs_service_update_org_deployment_visibility  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_update_org_deployment_visibility(body, org_id, deployment_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param DeploymentsDeploymentIdBody body: (required)
+        :param str org_id: (required)
+        :param str deployment_id: (required)
+        :return: V1OrgDeploymentVisibility
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_update_org_deployment_visibility_with_http_info(body, org_id, deployment_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_update_org_deployment_visibility_with_http_info(body, org_id, deployment_id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_update_org_deployment_visibility_with_http_info(self, body: 'DeploymentsDeploymentIdBody', org_id: 'str', deployment_id: 'str', **kwargs) -> 'V1OrgDeploymentVisibility':  # noqa: E501
+        """jobs_service_update_org_deployment_visibility  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_update_org_deployment_visibility_with_http_info(body, org_id, deployment_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param DeploymentsDeploymentIdBody body: (required)
+        :param str org_id: (required)
+        :param str deployment_id: (required)
+        :return: V1OrgDeploymentVisibility
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'org_id', 'deployment_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_update_org_deployment_visibility" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `jobs_service_update_org_deployment_visibility`")  # noqa: E501
+        # verify the required parameter 'org_id' is set
+        if ('org_id' not in params or
+                params['org_id'] is None):
+            raise ValueError("Missing the required parameter `org_id` when calling `jobs_service_update_org_deployment_visibility`")  # noqa: E501
+        # verify the required parameter 'deployment_id' is set
+        if ('deployment_id' not in params or
+                params['deployment_id'] is None):
+            raise ValueError("Missing the required parameter `deployment_id` when calling `jobs_service_update_org_deployment_visibility`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'org_id' in params:
+            path_params['orgId'] = params['org_id']  # noqa: E501
+        if 'deployment_id' in params:
+            path_params['deploymentId'] = params['deployment_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/orgs/{orgId}/deployments/{deploymentId}', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1OrgDeploymentVisibility',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

@@ -54,6 +54,7 @@ class V1Message(object):
         'like': 'V1LikeStatus',
         'metadata': 'dict(str, str)',
         'model': 'str',
+        'parent_conversation_id': 'str',
         'parent_message_id': 'str',
         'prompt_tokens': 'str',
         'throughput': 'float'
@@ -73,12 +74,13 @@ class V1Message(object):
         'like': 'like',
         'metadata': 'metadata',
         'model': 'model',
+        'parent_conversation_id': 'parentConversationId',
         'parent_message_id': 'parentMessageId',
         'prompt_tokens': 'promptTokens',
         'throughput': 'throughput'
     }
 
-    def __init__(self, account_id: 'str' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, like: 'V1LikeStatus' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, like: 'V1LikeStatus' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
         self._assistant_id = None
@@ -93,6 +95,7 @@ class V1Message(object):
         self._like = None
         self._metadata = None
         self._model = None
+        self._parent_conversation_id = None
         self._parent_message_id = None
         self._prompt_tokens = None
         self._throughput = None
@@ -123,6 +126,8 @@ class V1Message(object):
             self.metadata = metadata
         if model is not None:
             self.model = model
+        if parent_conversation_id is not None:
+            self.parent_conversation_id = parent_conversation_id
         if parent_message_id is not None:
             self.parent_message_id = parent_message_id
         if prompt_tokens is not None:
@@ -402,6 +407,27 @@ class V1Message(object):
         """
 
         self._model = model
+
+    @property
+    def parent_conversation_id(self) -> 'str':
+        """Gets the parent_conversation_id of this V1Message.  # noqa: E501
+
+
+        :return: The parent_conversation_id of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_conversation_id
+
+    @parent_conversation_id.setter
+    def parent_conversation_id(self, parent_conversation_id: 'str'):
+        """Sets the parent_conversation_id of this V1Message.
+
+
+        :param parent_conversation_id: The parent_conversation_id of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_conversation_id = parent_conversation_id
 
     @property
     def parent_message_id(self) -> 'str':
