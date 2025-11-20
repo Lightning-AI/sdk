@@ -1520,3 +1520,91 @@ def test_set_env_empty_new_env(mock_update_cloudspace):
     env_vars = call_args[0][3]  # value (list of V1EnvVar)
 
     assert env_vars == []
+
+
+@pytest.mark.parametrize(
+    ("machine", "accelerators", "expected_result"),
+    [
+        # GPU, available
+        (
+            Machine.T4,
+            [
+                V1ClusterAccelerator(
+                    instance_id="g4dn.2xlarge",
+                    slug_multi_cloud="lit-t4-1",
+                    enabled=True,
+                    resources=V1Resources(gpu=1),
+                    family="T4",
+                    accelerator_type="GPU",
+                    out_of_capacity=False,
+                )
+            ],
+            True,
+        ),
+        # GPU, unavailable
+        (
+            Machine.T4,
+            [
+                V1ClusterAccelerator(
+                    instance_id="g4dn.2xlarge",
+                    slug_multi_cloud="lit-t4-1",
+                    enabled=True,
+                    resources=V1Resources(gpu=1),
+                    family="T4",
+                    accelerator_type="GPU",
+                    out_of_capacity=True,
+                )
+            ],
+            False,
+        ),
+        # CPU, available
+        (
+            Machine.CPU,
+            [
+                V1ClusterAccelerator(
+                    instance_id="cpu-4",
+                    slug_multi_cloud="cpu-4",
+                    enabled=True,
+                    resources=V1Resources(cpu=4),
+                    family="CPU",
+                    accelerator_type="CPU",
+                    out_of_capacity=False,
+                )
+            ],
+            True,
+        ),
+        # CPU, unavailable
+        (
+            Machine.CPU,
+            [
+                V1ClusterAccelerator(
+                    instance_id="cpu-4",
+                    slug_multi_cloud="cpu-4",
+                    enabled=True,
+                    resources=V1Resources(cpu=4),
+                    family="CPU",
+                    accelerator_type="CPU",
+                    out_of_capacity=True,
+                )
+            ],
+            False,
+        ),
+    ],
+)
+@mock.patch(
+    "lightning_sdk.api.studio_api.StudioApi._get_machines_for_cloud_account",
+    autospec=True,
+)
+def test_machine_has_capacity(mock_get_machines, machine, accelerators, expected_result):
+    """Test machine_has_capacity method with various scenarios."""
+    mock_get_machines.return_value = accelerators
+
+    studio_api = StudioApi()
+    result = studio_api.machine_has_capacity(
+        machine=machine, teamspace_id="ts-abc", cloud_account_id="cluster-abc", org_id="org-abc"
+    )
+
+    assert result == expected_result
+    mock_get_machines.assert_called_once_with(
+        mock.ANY, teamspace_id="ts-abc", cloud_account_id="cluster-abc", org_id="org-abc"
+    )

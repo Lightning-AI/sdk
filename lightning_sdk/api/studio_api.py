@@ -411,6 +411,25 @@ class StudioApi:
 
         progress.complete("Machine switch completed successfully")
 
+    def machine_has_capacity(self, machine: Machine, teamspace_id: str, cloud_account_id: str, org_id: str) -> bool:
+        """Check capacity of the requested machine."""
+        accelerators = self._get_machines_for_cloud_account(
+            teamspace_id=teamspace_id, cloud_account_id=cloud_account_id, org_id=org_id
+        )
+
+        for accelerator in accelerators:
+            if accelerator.accelerator_type == "GPU":
+                accelerator_resources_count = accelerator.resources.gpu
+            else:
+                accelerator_resources_count = accelerator.resources.cpu
+            if (
+                machine.accelerator_count == accelerator_resources_count
+                and machine.family == accelerator.family
+                and accelerator.out_of_capacity
+            ):
+                return False
+        return True
+
     def get_machine(self, studio_id: str, teamspace_id: str, cloud_account_id: str, org_id: str) -> Machine:
         """Get the current machine type the given Studio is running on."""
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(

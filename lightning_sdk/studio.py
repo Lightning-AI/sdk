@@ -346,6 +346,17 @@ class Studio(metaclass=TrackCallsMeta):
             _logger.info(f"{self._cls_name} {self.name} is already running")
             return
 
+        if not self._studio_api.machine_has_capacity(
+            new_machine,
+            self._teamspace.id,
+            self.cloud_account,
+            _get_org_id(self._teamspace),
+        ):
+            raise RuntimeError(
+                "Requested machine is not available in the selected cloud account. "
+                "Try a different machine or cloud account."
+            )
+
         if status != Status.Stopped:
             raise RuntimeError(
                 f"Cannot start a {self._cls_name} that is not stopped. {self._cls_name} {self.name} is {status}."
