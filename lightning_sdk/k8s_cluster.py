@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import pandas as pd
 
-from lightning_sdk.api.billing_api import BillingApi
+from lightning_sdk.api.k8s_api import K8sClusterApi
 from lightning_sdk.api.utils import to_iso_z
 
 
@@ -21,8 +21,8 @@ class K8sUsageResponse:
     total_usage: float
 
 
-class Billing:
-    """A class to interact with the billing API and retrieve billing-related information.
+class K8sCluster:
+    """A class to interact with the k8s API and retrieve usage-related information.
 
     Methods:
     -------
@@ -30,8 +30,9 @@ class Billing:
       Retrieves Kubernetes usage information for a given cloud account.
     """
 
-    def __init__(self) -> None:
-        self._billing_api = BillingApi()
+    def __init__(self, cloud_account: str) -> None:
+        self._cloud_account = cloud_account
+        self._k8s_cluster = K8sClusterApi(cloud_account=cloud_account)
 
     def _convert_to_k8s_usage_response(self, df: pd.DataFrame) -> K8sUsageResponse:
         """Converts a DataFrame to K8sUsageResponse.
@@ -42,6 +43,8 @@ class Billing:
         Returns:
             K8sUsageResponse: The converted response containing hourly usage and total usage.
         """
+        if df.empty:
+            return K8sUsageResponse(hours=[], total_usage=0.0)
         # Convert each row of the DataFrame to HourlyUsage
         hourly_usage_list: List[HourlyUsage] = [
             HourlyUsage(time=row["hour"], available_gpus=row["num_gpus"], billed_gpus=row["billed_gpus"])
@@ -54,14 +57,13 @@ class Billing:
         # Create and return the K8sUsageResponse
         return K8sUsageResponse(hours=hourly_usage_list, total_usage=total_usage)
 
-    def get_k8s_usage(
+    def get_billing_usage(
         self,
-        cloud_account: str,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         print_data: bool = False,
     ) -> K8sUsageResponse:
-        """Gets the mean gpus/hour.
+        """Gets the k8s usage metrics.
 
         Args:
             cloud_account: The cloud account to get usage for
@@ -69,7 +71,7 @@ class Billing:
             end_date: The UTC end date for the usage period (optional)
 
         Returns:
-            The avaerage number of allocated gpus per hour
+            K8sUsageResponse: The Kubernetes usage response containing hourly usage and total usage.
         """
         k8s_args = {}
         if start_date is not None:
@@ -77,5 +79,5 @@ class Billing:
         if end_date is not None:
             k8s_args["end"] = to_iso_z(end_date)
         return self._convert_to_k8s_usage_response(
-            self._billing_api.get_k8s_usage(cloud_account, print_data=print_data, **k8s_args)
+            self._k8s_cluster.get_billing_usage(cloud_account=self._cloud_account, print_data=print_data, **k8s_args)
         )
