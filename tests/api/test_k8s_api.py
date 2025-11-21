@@ -8,8 +8,8 @@ from lightning_sdk.api.k8s_api import K8sClusterApi, K8sClusterApiError
 from lightning_sdk.lightning_cloud.openapi.models import V1ClusterMetrics, V1ListClusterMetricsResponse
 
 mock_cluster = [
-    {"timestamp": datetime(2025, 11, 19, 12), "num_allocated_gpus": 6},
-    {"timestamp": datetime(2025, 11, 19, 13), "num_allocated_gpus": 4},
+    {"timestamp": datetime(2025, 11, 19, 12), "num_allocated_gpus": 6, "num_requested_gpus": 6, "num_gpus": 8},
+    {"timestamp": datetime(2025, 11, 19, 13), "num_allocated_gpus": 4, "num_requested_gpus": 4, "num_gpus": 8},
 ]
 
 
@@ -108,4 +108,39 @@ def test_get_billing_usage_metrics_print_to_stdout():
         k8s_api.get_billing_usage(print_data=True)
         mock_print.assert_called_once()
 
+    get_k8s_mock.assert_called_once_with("test")
+
+
+def test_get_billing_usage_with_dates_get_folded_into_same_hour():
+    k8s_api = K8sClusterApi("test")
+    test_cluster = [
+        mock_cluster[0],
+        mock_cluster[1],
+        {
+            "timestamp": datetime(2025, 11, 19, 12, 30),
+            "num_allocated_gpus": 10,
+            "num_requested_gpus": 10,
+            "num_gpus": 8,
+        },
+        {
+            "timestamp": datetime(2025, 11, 19, 13, 45),
+            "num_allocated_gpus": 8,
+            "num_requested_gpus": 8,
+            "num_gpus": 12,
+        },
+    ]
+    get_k8s_mock = mock.Mock(
+        return_value=V1ListClusterMetricsResponse(cluster_metrics=[V1ClusterMetrics(**data) for data in test_cluster])
+    )
+
+    k8s_api._client.k8_s_cluster_service_list_cluster_metrics = get_k8s_mock
+
+    result = k8s_api.get_billing_usage(print_data=True)
+
+    assert result.shape[0] == 2
+    assert result.iloc[0]["hour"] == pd.Timestamp("2025-11-19 12:00:00")
+    assert result.iloc[1]["hour"] == pd.Timestamp("2025-11-19 13:00:00")
+    # The average between 6 and 10 is 8.0 meaning we properly folded the data
+    assert result.iloc[0]["num_allocated_gpus"] == 8.0
+    assert result.iloc[1]["num_allocated_gpus"] == 6.0
     get_k8s_mock.assert_called_once_with("test")

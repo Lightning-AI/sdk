@@ -79,5 +79,5 @@ class K8sCluster:
         if end_date is not None:
             k8s_args["end"] = to_iso_z(end_date)
         return self._convert_to_k8s_usage_response(
-            self._k8s_cluster.get_billing_usage(cloud_account=self._cloud_account, print_data=print_data, **k8s_args)
+            self._k8s_cluster.get_billing_usage(print_data=print_data, **k8s_args)
         )

@@ -76,11 +76,21 @@ class K8sClusterApi:
             df = pd.DataFrame.from_records(cluster_metrics)
             if df.empty:
                 return df
-            # new cell
-            # Average num_allocated_gpus per hour
+
+            df["hour"] = pd.to_datetime(df["timestamp"]).dt.floor("h")
+
+            # Calculate the mean of num_allocated_gpus for each hour
+            aggregated = df.groupby("hour", as_index=False)["num_allocated_gpus"].mean()
+            # Merge the aggregated values back into the original DataFrame
+            df = df.merge(aggregated, on="hour", suffixes=("", "_mean"))
+
+            # Replace the original num_allocated_gpus with the mean values
+            df["num_allocated_gpus"] = df["num_allocated_gpus_mean"]
+
+            # We group the data by hour and take the first occurrence to avoid duplicates
+            df = df.drop_duplicates(subset="hour", keep="first")
 
             # Convert timestamp to hourly floor and rename columns
-            df["hour"] = df["timestamp"].dt.floor("h")
             df["billed_gpus"] = df.apply(_calculate_billed_k8s_gpus, axis=1)
 
             # Keep only the required columns
@@ -88,7 +98,6 @@ class K8sClusterApi:
             if print_data:
                 with pd.option_context("display.max_rows", None, "display.max_columns", None):
                     print(df)
-            # Sum all hourly averages
             return df
         except ApiException as e:
             msg = self._parse_request_failure_body(e)

@@ -36,7 +36,7 @@ def test_get_billing_usage_with_empty_metrics():
     assert isinstance(result, K8sUsageResponse)
     assert result.total_usage == 0
     assert len(result.hours) == 0
-    get_billing_usage_mock.assert_called_once_with(cloud_account="test", print_data=False)
+    get_billing_usage_mock.assert_called_once_with(print_data=False)
 
 
 def test_get_billing_usage_with_no_range():
@@ -52,7 +52,7 @@ def test_get_billing_usage_with_no_range():
     assert len(result.hours) == 2
     assert result.hours[0].billed_gpus == 6
     assert result.hours[1].billed_gpus == 4
-    get_billing_usage_mock.assert_called_once_with(cloud_account="test", print_data=False)
+    get_billing_usage_mock.assert_called_once_with(print_data=False)
 
 
 def test_get_billing_usage_with_only_start():
@@ -70,7 +70,7 @@ def test_get_billing_usage_with_only_start():
     assert result.hours[0].billed_gpus == 4
     assert result.hours[0].available_gpus == 8
     assert result.hours[0].time.isoformat() == "2025-11-19T13:00:00"
-    get_billing_usage_mock.assert_called_once_with(cloud_account="test", print_data=False, start=to_iso_z(date))
+    get_billing_usage_mock.assert_called_once_with(print_data=False, start=to_iso_z(date))
 
 
 def test_get_billing_usage_with_only_end():
@@ -88,7 +88,7 @@ def test_get_billing_usage_with_only_end():
     assert result.hours[0].billed_gpus == 6
     assert result.hours[0].available_gpus == 8
     assert result.hours[0].time.isoformat() == "2025-11-19T12:00:00"
-    get_billing_usage_mock.assert_called_once_with(cloud_account="test", print_data=False, end=to_iso_z(date))
+    get_billing_usage_mock.assert_called_once_with(print_data=False, end=to_iso_z(date))
 
 
 def test_get_billing_usage_with_date_range():
@@ -110,6 +110,4 @@ def test_get_billing_usage_with_date_range():
     assert result.hours[1].billed_gpus == 4
     assert result.hours[1].available_gpus == 8
     assert result.hours[1].time.isoformat() == "2025-11-19T13:00:00"
-    get_billing_usage_mock.assert_called_once_with(
-        cloud_account="test", print_data=False, start=to_iso_z(start_date), end=to_iso_z(end_date)
-    )
+    get_billing_usage_mock.assert_called_once_with(print_data=False, start=to_iso_z(start_date), end=to_iso_z(end_date))
