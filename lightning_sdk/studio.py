@@ -11,6 +11,7 @@ from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.base_studio import BaseStudio
 from lightning_sdk.constants import _LIGHTNING_DEBUG
+from lightning_sdk.exceptions import OutOfCapacityError
 from lightning_sdk.lightning_cloud.openapi import V1ClusterType
 from lightning_sdk.machine import DEFAULT_MACHINE, CloudProvider, Machine
 from lightning_sdk.organization import Organization
@@ -352,7 +353,7 @@ class Studio(metaclass=TrackCallsMeta):
             self.cloud_account,
             _get_org_id(self._teamspace),
         ):
-            raise RuntimeError(
+            raise OutOfCapacityError(
                 "Requested machine is not available in the selected cloud account. "
                 "Try a different machine or cloud account."
             )
