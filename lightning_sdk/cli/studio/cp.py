@@ -106,7 +106,7 @@ def cp_upload(
     )
     console.print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
 
-    selected_studio.upload_file(local_file_path, studio_file_path)
+    selected_studio.upload_file(local_file_path, studio_path_result["destination"])
 
     studio_url = (
         _get_cloud_url().replace(":443", "")

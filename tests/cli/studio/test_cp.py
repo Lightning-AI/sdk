@@ -98,9 +98,7 @@ def test_cp_upload_successful(tmp_path: Path):
             studio_file_path="lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt",
         )
 
-        mock_studio_instance.upload_file.assert_called_once_with(
-            str(test_file), "lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt"
-        )
+        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
 
 
 def test_cp_upload_without_teamspace(tmp_path: Path):
@@ -133,7 +131,7 @@ def test_cp_upload_without_teamspace(tmp_path: Path):
         )
 
         mock_teamspace_menu.assert_called_once_with(teamspace=None)
-        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "lit://test-studio/remote_file.txt")
+        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
 
 
 def test_cp_studio_file_upload_integration(tmp_path: Path):
@@ -166,9 +164,7 @@ def test_cp_studio_file_upload_integration(tmp_path: Path):
         )
 
         assert result.exit_code == 0
-        mock_studio_instance.upload_file.assert_called_once_with(
-            str(test_file), "lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt"
-        )
+        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
 
 
 def test_cp_studio_file_download_not_implemented(tmp_path: Path):
@@ -259,9 +255,7 @@ def test_cp_upload_with_nested_path(tmp_path: Path):
             studio_file_path="lit://test-studio/folder/subfolder/remote_file.txt",
         )
 
-        mock_studio_instance.upload_file.assert_called_once_with(
-            str(test_file), "lit://test-studio/folder/subfolder/remote_file.txt"
-        )
+        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "folder/subfolder/remote_file.txt")
 
 
 def test_cp_impl_dispatches_to_upload(tmp_path: Path):
@@ -290,7 +284,7 @@ def test_cp_impl_dispatches_to_upload(tmp_path: Path):
     ), patch("lightning_sdk.cli.studio.cp._get_cloud_url", return_value="https://lightning.ai"):
         cp_impl(source=str(test_file), destination="lit://test-studio/remote_file.txt")
 
-        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "lit://test-studio/remote_file.txt")
+        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
 
 
 def test_cp_impl_dispatches_to_download():
@@ -367,10 +361,10 @@ def test_cp_studio_file_with_special_characters_in_filename(tmp_path: Path):
     ), patch("lightning_sdk.cli.studio.cp._get_cloud_url", return_value="https://lightning.ai"):
         cp_upload(
             local_file_path=str(test_file),
-            studio_file_path="lit://test-studio/remote file.txt",
+            studio_file_path="lit://test-studio/file.txt",
         )
 
-        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "lit://test-studio/remote file.txt")
+        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "file.txt")
 
 
 def test_cp_upload_url_construction(tmp_path: Path):
