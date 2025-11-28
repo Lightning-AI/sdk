@@ -1208,6 +1208,46 @@ def test_create_inference_run(mock_create_app):
     assert resp.name == "fancy-inference-name"
 
 
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
+)
+def test_get_tree(mock_login, mock_requests_get):
+    """Test get_tree retrieves directory structure from studio."""
+    mock_login.return_value = V1LoginResponse(token="test-token")
+
+    mock_response = mock.MagicMock()
+    mock_response.json.return_value = {
+        "tree": [
+            {"path": "file1.txt", "type": "blob", "size": 1234},
+            {"path": "folder1", "type": "tree"},
+            {"path": "file2.py", "type": "blob", "size": 5678},
+        ],
+        "truncated": False,
+    }
+    mock_requests_get.return_value = mock_response
+
+    studio_api = StudioApi()
+
+    result = studio_api.get_tree("st-abc", "ts-abc", "my-folder/")
+
+    assert result == {
+        "tree": [
+            {"path": "file1.txt", "type": "blob", "size": 1234},
+            {"path": "folder1", "type": "tree"},
+            {"path": "file2.py", "type": "blob", "size": 5678},
+        ],
+        "truncated": False,
+    }
+
+    mock_requests_get.assert_called_once()
+    call_args = mock_requests_get.call_args
+
+    assert "/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/my-folder/" in call_args[0][0]
+    assert call_args[1]["params"] == {"token": "test-token"}
+    mock_login.assert_called_once()
+
+
 @pytest.mark.parametrize("progress_bar", [True, False])
 @mock.patch("lightning_sdk.api.studio_api._FileUploader", autospec=True)
 def test_upload_file(

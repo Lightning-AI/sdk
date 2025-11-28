@@ -645,6 +645,20 @@ class StudioApi:
         self.stop_keeping_alive(teamspace_id=teamspace_id, studio_id=studio_id)
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
 
+    def get_tree(self, studio_id: str, teamspace_id: str, path: str) -> None:
+        auth = Auth()
+        auth.authenticate()
+        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+
+        query_params = {
+            "token": token,
+        }
+        r = requests.get(
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/trees/{path}",
+            params=query_params,
+        )
+        return r.json()
+
     def upload_file(
         self,
         studio_id: str,
