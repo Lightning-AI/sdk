@@ -570,6 +570,31 @@ class Studio(metaclass=TrackCallsMeta):
             raise RuntimeError(output)
         return output
 
+    def get_path_info(self, path: str = "") -> dict:
+        path = path.strip("/")
+
+        if "/" in path:
+            parent_path = path.rsplit("/", 1)[0]
+            target_name = path.rsplit("/", 1)[1]
+        else:
+            parent_path = ""
+            target_name = path
+
+        tree = self._studio_api.get_tree(self._studio.id, self._teamspace.id, path=parent_path)
+        tree_items = tree.get("tree", [])
+        for item in tree_items:
+            item_name = item.get("path", "")
+            if item_name == target_name:
+                item_type = item.get("type")
+                # if type == "blob" it's a file, if "tree" it's a directory
+                return {
+                    "exists": True,
+                    "type": "file" if item_type == "blob" else "directory",
+                    "size": item.get("size", 0) if item_type == "blob" else None,
+                }
+        warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
+        return {"exists": False, "type": None, "size": None}
+
     def upload_file(self, file_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
         """Uploads a given file to a remote path on the Studio."""
         if remote_path is None:
