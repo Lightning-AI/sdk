@@ -2,6 +2,7 @@ import contextlib
 import json
 import os
 import subprocess
+import warnings
 from unittest import mock
 
 import pytest
@@ -1246,6 +1247,87 @@ def test_get_tree(mock_login, mock_requests_get):
     assert "/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/my-folder/" in call_args[0][0]
     assert call_args[1]["params"] == {"token": "test-token"}
     mock_login.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    ("path", "tree_response", "expected_result"),
+    [
+        (
+            "",
+            None,
+            {"exists": True, "type": "directory", "size": None},
+        ),
+        # file exists
+        (
+            "test.txt",
+            {"tree": [{"path": "test.txt", "type": "blob", "size": 1024}]},
+            {"exists": True, "type": "file", "size": 1024},
+        ),
+        # directory exists
+        (
+            "test-dir",
+            {"tree": [{"path": "test-dir", "type": "tree"}]},
+            {"exists": True, "type": "directory", "size": None},
+        ),
+        # Test case 3: File does not exist (empty tree)
+        (
+            "nonexistent.txt",
+            {"tree": []},
+            {"exists": False, "type": None, "size": None},
+        ),
+        # nested file
+        (
+            "path/to/data.csv",
+            {"tree": [{"path": "data.csv", "type": "blob", "size": 2048}]},
+            {"exists": True, "type": "file", "size": 2048},
+        ),
+        # nested directory
+        (
+            "path/to/subfolder",
+            {"tree": [{"path": "subfolder", "type": "tree"}]},
+            {"exists": True, "type": "directory", "size": None},
+        ),
+    ],
+)
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login",
+    autospec=True,
+)
+def test_get_path_info(mock_login, mock_requests_get, path, tree_response, expected_result):
+    from lightning_sdk.lightning_cloud.openapi import V1LoginResponse
+
+    mock_login.return_value = V1LoginResponse(token="test-token")
+
+    mock_response = mock.MagicMock()
+    mock_response.json.return_value = tree_response
+    mock_requests_get.return_value = mock_response
+
+    studio_api = StudioApi()
+
+    if not expected_result["exists"]:
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = studio_api.get_path_info("st-abc", "ts-abc", path)
+
+            # Check warning was raised
+            assert len(w) == 1
+            assert "may be empty" in str(w[0].message)
+    else:
+        result = studio_api.get_path_info("st-abc", "ts-abc", path)
+
+    assert result == expected_result
+
+    if path.strip("/") == "":
+        mock_requests_get.assert_not_called()
+    else:
+        if "/" in path:
+            expected_parent = path.rsplit("/", 1)[0]
+            assert expected_parent in mock_requests_get.call_args[0][0]
+        else:
+            # root level should include /trees/
+            call_url = mock_requests_get.call_args[0][0]
+            assert "/trees/" in call_url
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
