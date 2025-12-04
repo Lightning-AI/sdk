@@ -498,7 +498,9 @@ class Teamspace(metaclass=TrackCallsMeta):
             )
         return self._teamspace_api.list_model_versions(teamspace_id=self.id, model_name=name)
 
-    def upload_file(self, file_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
+    def upload_file(
+        self, file_path: Union[Path, str], remote_path: Optional[str] = None, progress_bar: bool = True
+    ) -> None:
         """Uploads file to given remote path in the Teamspace drive."""
         if remote_path is None:
             remote_path = os.path.split(file_path)[1]
