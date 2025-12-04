@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 from click.testing import CliRunner
 
-from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.studio.cp import cp_download, cp_impl, cp_studio_file, cp_upload, resolve_studio
 
 
@@ -49,23 +48,21 @@ def test_cp_impl_both_local_files_raises_error():
         cp_impl(source="local_file1.txt", destination="local_file2.txt")
 
 
-def test_cp_upload_with_directory_raises_error(tmp_path: Path):
-    """Test that providing a directory path raises StudioCliError."""
-    test_dir = tmp_path / "test_dir"
-    test_dir.mkdir()
-
-    with pytest.raises(StudioCliError, match="The provided path is a folder"):
-        cp_upload(local_file_path=str(test_dir), studio_file_path="lit://owner/teamspace/studios/test-studio/dest.txt")
-
-
-def test_cp_upload_with_nonexistent_file_raises_error(tmp_path: Path):
-    """Test that providing a nonexistent file path raises FileNotFoundError."""
+def test_cp_upload_with_nonexistent_raises_error(tmp_path: Path):
+    """Test that providing a nonexistent file and folder path raises FileNotFoundError."""
     nonexistent_file = tmp_path / "nonexistent.txt"
 
     with pytest.raises(FileNotFoundError, match="The provided path does not exist"):
         cp_upload(
             local_file_path=str(nonexistent_file),
             studio_file_path="lit://owner/teamspace/studios/test-studio/dest.txt",
+        )
+    nonexistent_dir = tmp_path / "nonexistent_dir"
+
+    with pytest.raises(FileNotFoundError, match="The provided path does not exist"):
+        cp_upload(
+            local_file_path=str(nonexistent_dir),
+            studio_file_path="lit://owner/teamspace/studios/test-studio/dest/",
         )
 
 
@@ -130,6 +127,22 @@ def test_cp_upload_successful(tmp_path: Path):
         )
 
         mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
+
+    test_dir = tmp_path
+    test_dir_file = test_dir / "test_file.txt"
+    test_dir_file.write_text("test content")
+
+    with patch("lightning_sdk.cli.studio.cp.OwnerMenu", return_value=mock_owner_menu), patch(
+        "lightning_sdk.cli.studio.cp.TeamspacesMenu", return_value=mock_teamspace_menu
+    ), patch("lightning_sdk.cli.studio.cp.StudiosMenu", return_value=mock_studio_menu), patch(
+        "lightning_sdk.cli.studio.cp.Console"
+    ), patch("lightning_sdk.cli.studio.cp._get_cloud_url", return_value="https://lightning.ai"):
+        cp_upload(
+            local_file_path=str(test_dir),
+            studio_file_path="lit://test-owner/test-teamspace/studios/test-studio/remote-dir/",
+        )
+
+        mock_studio_instance.upload_folder.assert_called_once_with(str(test_dir), "remote-dir/")
 
 
 def test_cp_download_successful(tmp_path: Path):

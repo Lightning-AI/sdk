@@ -8,7 +8,6 @@ import click
 from rich.console import Console
 
 from lightning_sdk.api.utils import _get_cloud_url
-from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.utils.owner_selection import OwnerMenu
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
@@ -93,12 +92,8 @@ def cp_upload(
     studio_file_path: str,
 ) -> None:
     console = Console()
-    if Path(local_file_path).is_dir():
-        raise StudioCliError(
-            f"The provided path is a folder: {local_file_path}. Use `lightning upload folder` instead."
-        )
     if not Path(local_file_path).exists():
-        raise FileNotFoundError(f"The provided path does not exist: {local_file_path}.")
+        raise FileNotFoundError(f"The provided path does not exist: {local_file_path}")
 
     studio_path_result = parse_studio_path(studio_file_path)
 
@@ -107,7 +102,14 @@ def cp_upload(
     )
     console.print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
 
-    selected_studio.upload_file(local_file_path, studio_path_result["destination"])
+    if Path(local_file_path).is_dir():
+        selected_studio.upload_folder(local_file_path, studio_path_result["destination"])
+    else:
+        if studio_file_path.endswith(("/", "\\")):
+            # if destination ends with / or \, treat it as a directory
+            file_name = os.path.basename(local_file_path)
+            studio_path_result["destination"] = os.path.join(studio_path_result["destination"], file_name)
+        selected_studio.upload_file(local_file_path, studio_path_result["destination"])
 
     studio_url = (
         _get_cloud_url().replace(":443", "")
@@ -138,7 +140,7 @@ def cp_download(
     )
     if not path_info["exists"]:
         raise FileNotFoundError(
-            f"The provided path does not exist in the studio: {studio_path_result['destination']}. "
+            f"The provided path does not exist in the studio: {studio_path_result['destination']} "
             "Note that empty folders may not be detected as existing."
         )
 
