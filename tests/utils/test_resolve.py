@@ -19,6 +19,7 @@ from lightning_sdk.utils.resolve import (
     _resolve_teamspace_name,
     _resolve_user,
     _resolve_user_name,
+    in_studio,
     skip_studio_init,
 )
 
@@ -469,3 +470,14 @@ def test_skip_studio_init_prevents_resolution():
             assert (
                 not mock_cloud_api_class.resolve_cloud_account.called
             ), "resolve_cloud_account should not be called when _skip_init is True"
+
+
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "lightning.ai:443", "LIGHTNING_INTERACTIVE": "true"}, clear=True
+)
+def test_in_studio():
+    assert in_studio() is True
+
+
+def test_not_in_studio():
+    assert in_studio() is False

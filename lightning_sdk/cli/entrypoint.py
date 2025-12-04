@@ -21,6 +21,7 @@ from lightning_sdk.cli.groups import (
 from lightning_sdk.cli.utils import CustomHelpFormatter
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 
 
 @click.group(
@@ -39,13 +40,22 @@ main_cli.context_class.formatter_class = CustomHelpFormatter
 @main_cli.command
 def login() -> None:
     """Login to Lightning AI Studios."""
-    auth = Auth()
-    auth.clear()
+    if in_studio():
+        # if inside a Studio, no need to run login command
+        try:
+            auth_user = _get_authed_user()
+        except Exception:
+            raise RuntimeError("Unable to identify user within a Studio") from None
 
-    try:
-        auth.authenticate()
-    except ConnectionError:
-        raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
+        click.echo(f'You are currently logged in as "{auth_user.name}"')
+        click.echo('"lightning login" is not required within a Studio')
+    else:
+        auth = Auth()
+        auth.clear()
+        try:
+            auth.authenticate()
+        except ConnectionError:
+            raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
 
 
 @main_cli.command
