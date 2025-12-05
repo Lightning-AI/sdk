@@ -27,12 +27,12 @@ dependencies = [ # alphabetically sorted
     "pyyaml", # for config handling
     "requests", # for downloading files via urls
     "rich", # for nice printing
-  "simple-term-menu", # for CLI
+    "simple-term-menu", # for CLI
     "six", # for lightning_cloud
     "tqdm", # for progressbars
-    "urllib3", # for downloading files via urls
+    "urllib3<=2.5.0", # for downloading files via urls
     "uvicorn", # for login
-  "websocket-client", # for lightning-cloud logs
+    "websocket-client", # for lightning-cloud logs
     "wget", # for CLI
 ]
 
