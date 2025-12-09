@@ -40,22 +40,26 @@ main_cli.context_class.formatter_class = CustomHelpFormatter
 @main_cli.command
 def login() -> None:
     """Login to Lightning AI Studios."""
-    if in_studio():
-        # if inside a Studio, no need to run login command
+    # try to fetch credentials, if successful (e.g. in a Studio or already logged in), no need to relogin
+    auth = Auth()
+    if (auth.user_id and auth.api_key) or auth.load():
         try:
             auth_user = _get_authed_user()
+            click.echo(f'You are currently logged in as "{auth_user.name}"')
         except Exception:
-            raise RuntimeError("Unable to identify user within a Studio") from None
+            click.echo("You are already logged in")
+        click.echo('"lightning login" is not required within a Studio or when already logged in')
+        return
 
-        click.echo(f'You are currently logged in as "{auth_user.name}"')
-        click.echo('"lightning login" is not required within a Studio')
-    else:
-        auth = Auth()
-        auth.clear()
-        try:
-            auth.authenticate()
-        except ConnectionError:
-            raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
+    if in_studio():
+        # this is unexpected, as we automatically auth within a Studio
+        raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
+
+    auth.clear()
+    try:
+        auth.authenticate()
+    except ConnectionError:
+        raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
 
 
 @main_cli.command
