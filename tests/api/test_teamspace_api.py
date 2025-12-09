@@ -285,18 +285,12 @@ def test_upload_file(
 def test_download_file(tmpdir, internal_teamspace_api_mocker, internal_studio_api_login):
     file_content = b"test file content"
 
-    mock_redirect_response = mock.Mock()
-    mock_redirect_response.status_code = 303
-    mock_redirect_response.headers = {"Location": "https://s3.amazonaws.com/signed-url-here"}
-
     mock_s3_response = mock.Mock()
     mock_s3_response.status_code = 200
     mock_s3_response.headers = {"content-length": str(len(file_content))}
     mock_s3_response.iter_content = lambda chunk_size: [file_content]
 
     def get_side_effect(url, **kwargs):
-        if "artifacts/download" in url:
-            return mock_redirect_response
         return mock_s3_response
 
     teamspace_api = TeamspaceApi()

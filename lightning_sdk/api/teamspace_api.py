@@ -400,12 +400,9 @@ class TeamspaceApi:
                 f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
                 params=query_params,
                 stream=True,
-                allow_redirects=False,
             )
 
-            if r.status_code == 303:
-                redirect_url = r.headers.get("Location")
-                r = requests.get(redirect_url, stream=True)
+            if r.status_code == 200:
                 found = True
                 break
 
