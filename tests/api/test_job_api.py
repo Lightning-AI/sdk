@@ -8,7 +8,7 @@ from lightning_sdk.job.v2 import JobApiV2
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
     Externalv1Lightningwork,
-    JobsIdBody1,
+    JobsServiceUpdateJobBody,
     V1Job,
     V1JobSpec,
     V1PathMapping,
@@ -91,7 +91,7 @@ def test_get_work(mocker_auth, internal_job_api_mocker_get_work):
 
 
 def test_job_v2_submit_job(mocker_auth):
-    from lightning_sdk.lightning_cloud.openapi import ProjectIdJobsBody, V1EnvVar, V1JobSpec
+    from lightning_sdk.lightning_cloud.openapi import JobsServiceCreateJobBody, V1EnvVar, V1JobSpec
 
     job_api = JobApiV2()
 
@@ -130,7 +130,7 @@ def test_job_v2_submit_job(mocker_auth):
         entrypoint="sh -c",
         path_mappings=[],
     )
-    body = ProjectIdJobsBody(name="test-job", spec=spec)
+    body = JobsServiceCreateJobBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
     create_job_mock = mock.MagicMock()
@@ -170,7 +170,7 @@ def test_job_v2_submit_job(mocker_auth):
             V1PathMapping(container_path="/output", connection_name="data", connection_path="some-path"),
         ],
     )
-    body = ProjectIdJobsBody(name="test-job", spec=spec)
+    body = JobsServiceCreateJobBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
@@ -269,7 +269,9 @@ def test_jobv2_stop(mocker_auth, job_states: List[str], total_calls_get_job: int
     assert get_job_mock.call_count == total_calls_get_job
 
     if called_update_job:
-        update_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc", body=JobsIdBody1(state="stop"))
+        update_job_mock.assert_called_once_with(
+            id="test-job-id", project_id="ts-abc", body=JobsServiceUpdateJobBody(state="stop")
+        )
     else:
         update_job_mock.assert_not_called()
 

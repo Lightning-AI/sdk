@@ -43,6 +43,7 @@ class V1Conversation(object):
     swagger_types = {
         'assistant_id': 'str',
         'created_at': 'datetime',
+        'goal': 'str',
         'id': 'str',
         'like': 'V1LikeStatus',
         'messages': 'list[V1Message]',
@@ -56,6 +57,7 @@ class V1Conversation(object):
     attribute_map = {
         'assistant_id': 'assistantId',
         'created_at': 'createdAt',
+        'goal': 'goal',
         'id': 'id',
         'like': 'like',
         'messages': 'messages',
@@ -66,10 +68,11 @@ class V1Conversation(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, assistant_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, like: 'V1LikeStatus' =None, messages: 'list[V1Message]' =None, name: 'str' =None, project_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, created_at: 'datetime' =None, goal: 'str' =None, id: 'str' =None, like: 'V1LikeStatus' =None, messages: 'list[V1Message]' =None, name: 'str' =None, project_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Conversation - a model defined in Swagger"""  # noqa: E501
         self._assistant_id = None
         self._created_at = None
+        self._goal = None
         self._id = None
         self._like = None
         self._messages = None
@@ -83,6 +86,8 @@ class V1Conversation(object):
             self.assistant_id = assistant_id
         if created_at is not None:
             self.created_at = created_at
+        if goal is not None:
+            self.goal = goal
         if id is not None:
             self.id = id
         if like is not None:
@@ -141,6 +146,27 @@ class V1Conversation(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def goal(self) -> 'str':
+        """Gets the goal of this V1Conversation.  # noqa: E501
+
+
+        :return: The goal of this V1Conversation.  # noqa: E501
+        :rtype: str
+        """
+        return self._goal
+
+    @goal.setter
+    def goal(self, goal: 'str'):
+        """Sets the goal of this V1Conversation.
+
+
+        :param goal: The goal of this V1Conversation.  # noqa: E501
+        :type: str
+        """
+
+        self._goal = goal
 
     @property
     def id(self) -> 'str':

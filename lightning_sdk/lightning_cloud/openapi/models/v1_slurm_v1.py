@@ -74,6 +74,7 @@ class V1SlurmV1(object):
     def login_node_ip(self) -> 'str':
         """Gets the login_node_ip of this V1SlurmV1.  # noqa: E501
 
+        Where login node is located, this is used for the SSH proxy. Login node must have controlplane's public SSH key installed.  # noqa: E501
 
         :return: The login_node_ip of this V1SlurmV1.  # noqa: E501
         :rtype: str
@@ -84,6 +85,7 @@ class V1SlurmV1(object):
     def login_node_ip(self, login_node_ip: 'str'):
         """Sets the login_node_ip of this V1SlurmV1.
 
+        Where login node is located, this is used for the SSH proxy. Login node must have controlplane's public SSH key installed.  # noqa: E501
 
         :param login_node_ip: The login_node_ip of this V1SlurmV1.  # noqa: E501
         :type: str
@@ -137,6 +139,7 @@ class V1SlurmV1(object):
     def work_dir(self) -> 'str':
         """Gets the work_dir of this V1SlurmV1.  # noqa: E501
 
+        Where the slurm work dir is located. This should be a shared filesystem (when in a cluster) between the head node and the compute nodes.  # noqa: E501
 
         :return: The work_dir of this V1SlurmV1.  # noqa: E501
         :rtype: str
@@ -147,6 +150,7 @@ class V1SlurmV1(object):
     def work_dir(self, work_dir: 'str'):
         """Sets the work_dir of this V1SlurmV1.
 
+        Where the slurm work dir is located. This should be a shared filesystem (when in a cluster) between the head node and the compute nodes.  # noqa: E501
 
         :param work_dir: The work_dir of this V1SlurmV1.  # noqa: E501
         :type: str

@@ -64,6 +64,7 @@ class V1AutoscalingTargetMetric(object):
     def name(self) -> 'str':
         """Gets the name of this V1AutoscalingTargetMetric.  # noqa: E501
 
+        CPUUtilization, etc.  # noqa: E501
 
         :return: The name of this V1AutoscalingTargetMetric.  # noqa: E501
         :rtype: str
@@ -74,6 +75,7 @@ class V1AutoscalingTargetMetric(object):
     def name(self, name: 'str'):
         """Sets the name of this V1AutoscalingTargetMetric.
 
+        CPUUtilization, etc.  # noqa: E501
 
         :param name: The name of this V1AutoscalingTargetMetric.  # noqa: E501
         :type: str

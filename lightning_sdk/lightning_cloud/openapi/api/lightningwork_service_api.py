@@ -43,7 +43,7 @@ class LightningworkServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def lightningwork_service_batch_update_lightningworks(self, body: 'AppIdWorksBody', project_id: 'str', app_id: 'str', **kwargs) -> 'V1BatchUpdateLightningworkResponse':  # noqa: E501
+    def lightningwork_service_batch_update_lightningworks(self, body: 'LightningworkServiceBatchUpdateLightningworksBody', project_id: 'str', app_id: 'str', **kwargs) -> 'V1BatchUpdateLightningworkResponse':  # noqa: E501
         """lightningwork_service_batch_update_lightningworks  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class LightningworkServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AppIdWorksBody body: (required)
+        :param LightningworkServiceBatchUpdateLightningworksBody body: (required)
         :param str project_id: (required)
         :param str app_id: (required)
         :return: V1BatchUpdateLightningworkResponse
@@ -66,7 +66,7 @@ class LightningworkServiceApi(object):
             (data) = self.lightningwork_service_batch_update_lightningworks_with_http_info(body, project_id, app_id, **kwargs)  # noqa: E501
             return data
 
-    def lightningwork_service_batch_update_lightningworks_with_http_info(self, body: 'AppIdWorksBody', project_id: 'str', app_id: 'str', **kwargs) -> 'V1BatchUpdateLightningworkResponse':  # noqa: E501
+    def lightningwork_service_batch_update_lightningworks_with_http_info(self, body: 'LightningworkServiceBatchUpdateLightningworksBody', project_id: 'str', app_id: 'str', **kwargs) -> 'V1BatchUpdateLightningworkResponse':  # noqa: E501
         """lightningwork_service_batch_update_lightningworks  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -75,7 +75,7 @@ class LightningworkServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AppIdWorksBody body: (required)
+        :param LightningworkServiceBatchUpdateLightningworksBody body: (required)
         :param str project_id: (required)
         :param str app_id: (required)
         :return: V1BatchUpdateLightningworkResponse
@@ -156,7 +156,7 @@ class LightningworkServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lightningwork_service_create_lightningwork(self, body: 'SpecLightningappInstanceIdWorksBody', project_id: 'str', spec_lightningapp_instance_id: 'str', **kwargs) -> 'Externalv1Lightningwork':  # noqa: E501
+    def lightningwork_service_create_lightningwork(self, body: 'LightningworkServiceCreateLightningworkBody', project_id: 'str', spec_lightningapp_instance_id: 'str', **kwargs) -> 'Externalv1Lightningwork':  # noqa: E501
         """lightningwork_service_create_lightningwork  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -165,9 +165,9 @@ class LightningworkServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SpecLightningappInstanceIdWorksBody body: (required)
+        :param LightningworkServiceCreateLightningworkBody body: (required)
         :param str project_id: (required)
-        :param str spec_lightningapp_instance_id: (required)
+        :param str spec_lightningapp_instance_id: the work belongs to this app instance (required)
         :return: Externalv1Lightningwork
                  If the method is called asynchronously,
                  returns the request thread.
@@ -179,7 +179,7 @@ class LightningworkServiceApi(object):
             (data) = self.lightningwork_service_create_lightningwork_with_http_info(body, project_id, spec_lightningapp_instance_id, **kwargs)  # noqa: E501
             return data
 
-    def lightningwork_service_create_lightningwork_with_http_info(self, body: 'SpecLightningappInstanceIdWorksBody', project_id: 'str', spec_lightningapp_instance_id: 'str', **kwargs) -> 'Externalv1Lightningwork':  # noqa: E501
+    def lightningwork_service_create_lightningwork_with_http_info(self, body: 'LightningworkServiceCreateLightningworkBody', project_id: 'str', spec_lightningapp_instance_id: 'str', **kwargs) -> 'Externalv1Lightningwork':  # noqa: E501
         """lightningwork_service_create_lightningwork  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -188,9 +188,9 @@ class LightningworkServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SpecLightningappInstanceIdWorksBody body: (required)
+        :param LightningworkServiceCreateLightningworkBody body: (required)
         :param str project_id: (required)
-        :param str spec_lightningapp_instance_id: (required)
+        :param str spec_lightningapp_instance_id: the work belongs to this app instance (required)
         :return: Externalv1Lightningwork
                  If the method is called asynchronously,
                  returns the request thread.
@@ -833,7 +833,7 @@ class LightningworkServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lightningwork_service_update_lightningwork(self, body: 'WorksIdBody', project_id: 'str', spec_lightningapp_instance_id: 'str', id: 'str', **kwargs) -> 'Externalv1Lightningwork':  # noqa: E501
+    def lightningwork_service_update_lightningwork(self, body: 'LightningworkServiceUpdateLightningworkBody', project_id: 'str', spec_lightningapp_instance_id: 'str', id: 'str', **kwargs) -> 'Externalv1Lightningwork':  # noqa: E501
         """lightningwork_service_update_lightningwork  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -842,9 +842,9 @@ class LightningworkServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param WorksIdBody body: (required)
+        :param LightningworkServiceUpdateLightningworkBody body: (required)
         :param str project_id: (required)
-        :param str spec_lightningapp_instance_id: (required)
+        :param str spec_lightningapp_instance_id: the work belongs to this app instance (required)
         :param str id: (required)
         :return: Externalv1Lightningwork
                  If the method is called asynchronously,
@@ -857,7 +857,7 @@ class LightningworkServiceApi(object):
             (data) = self.lightningwork_service_update_lightningwork_with_http_info(body, project_id, spec_lightningapp_instance_id, id, **kwargs)  # noqa: E501
             return data
 
-    def lightningwork_service_update_lightningwork_with_http_info(self, body: 'WorksIdBody', project_id: 'str', spec_lightningapp_instance_id: 'str', id: 'str', **kwargs) -> 'Externalv1Lightningwork':  # noqa: E501
+    def lightningwork_service_update_lightningwork_with_http_info(self, body: 'LightningworkServiceUpdateLightningworkBody', project_id: 'str', spec_lightningapp_instance_id: 'str', id: 'str', **kwargs) -> 'Externalv1Lightningwork':  # noqa: E501
         """lightningwork_service_update_lightningwork  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -866,9 +866,9 @@ class LightningworkServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param WorksIdBody body: (required)
+        :param LightningworkServiceUpdateLightningworkBody body: (required)
         :param str project_id: (required)
-        :param str spec_lightningapp_instance_id: (required)
+        :param str spec_lightningapp_instance_id: the work belongs to this app instance (required)
         :param str id: (required)
         :return: Externalv1Lightningwork
                  If the method is called asynchronously,

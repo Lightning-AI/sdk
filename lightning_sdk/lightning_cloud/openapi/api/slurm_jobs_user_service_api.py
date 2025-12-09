@@ -43,7 +43,7 @@ class SlurmJobsUserServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def slurm_jobs_user_service_create_slurm_cluster_user(self, body: 'ClusterIdSlurmusersBody', cluster_id: 'str', **kwargs) -> 'V1SlurmClusterUser':  # noqa: E501
+    def slurm_jobs_user_service_create_slurm_cluster_user(self, body: 'SlurmJobsUserServiceCreateSLURMClusterUserBody', cluster_id: 'str', **kwargs) -> 'V1SlurmClusterUser':  # noqa: E501
         """CreateSLURMClusterUser is used to create a new user on a SLURM cluster.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class SlurmJobsUserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdSlurmusersBody body: (required)
+        :param SlurmJobsUserServiceCreateSLURMClusterUserBody body: (required)
         :param str cluster_id: (required)
         :return: V1SlurmClusterUser
                  If the method is called asynchronously,
@@ -65,7 +65,7 @@ class SlurmJobsUserServiceApi(object):
             (data) = self.slurm_jobs_user_service_create_slurm_cluster_user_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def slurm_jobs_user_service_create_slurm_cluster_user_with_http_info(self, body: 'ClusterIdSlurmusersBody', cluster_id: 'str', **kwargs) -> 'V1SlurmClusterUser':  # noqa: E501
+    def slurm_jobs_user_service_create_slurm_cluster_user_with_http_info(self, body: 'SlurmJobsUserServiceCreateSLURMClusterUserBody', cluster_id: 'str', **kwargs) -> 'V1SlurmClusterUser':  # noqa: E501
         """CreateSLURMClusterUser is used to create a new user on a SLURM cluster.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,7 +74,7 @@ class SlurmJobsUserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdSlurmusersBody body: (required)
+        :param SlurmJobsUserServiceCreateSLURMClusterUserBody body: (required)
         :param str cluster_id: (required)
         :return: V1SlurmClusterUser
                  If the method is called asynchronously,
@@ -148,7 +148,7 @@ class SlurmJobsUserServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def slurm_jobs_user_service_create_user_slurm_job(self, body: 'SlurmJobsBody', project_id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
+    def slurm_jobs_user_service_create_user_slurm_job(self, body: 'SlurmJobsUserServiceCreateUserSLURMJobBody', project_id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
         """CreateUserSLURMJob is used to create a new SLURM job for an authenticated user. For creating SLURM Jobs from an agent, please use the SLURMJobsAgentService.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -157,7 +157,7 @@ class SlurmJobsUserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SlurmJobsBody body: (required)
+        :param SlurmJobsUserServiceCreateUserSLURMJobBody body: (required)
         :param str project_id: (required)
         :return: V1SLURMJob
                  If the method is called asynchronously,
@@ -170,7 +170,7 @@ class SlurmJobsUserServiceApi(object):
             (data) = self.slurm_jobs_user_service_create_user_slurm_job_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def slurm_jobs_user_service_create_user_slurm_job_with_http_info(self, body: 'SlurmJobsBody', project_id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
+    def slurm_jobs_user_service_create_user_slurm_job_with_http_info(self, body: 'SlurmJobsUserServiceCreateUserSLURMJobBody', project_id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
         """CreateUserSLURMJob is used to create a new SLURM job for an authenticated user. For creating SLURM Jobs from an agent, please use the SLURMJobsAgentService.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -179,7 +179,7 @@ class SlurmJobsUserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SlurmJobsBody body: (required)
+        :param SlurmJobsUserServiceCreateUserSLURMJobBody body: (required)
         :param str project_id: (required)
         :return: V1SLURMJob
                  If the method is called asynchronously,
@@ -778,7 +778,7 @@ class SlurmJobsUserServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def slurm_jobs_user_service_update_user_slurm_job(self, body: 'JobsIdBody2', project_id: 'str', id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
+    def slurm_jobs_user_service_update_user_slurm_job(self, body: 'SlurmJobsUserServiceUpdateUserSLURMJobBody', project_id: 'str', id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
         """UpdateUserSLURMJob is used to update a specific SLURM job for an authenticated user. For updating SLURM Jobs from an agent, please use the SLURMJobsAgentService.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -787,7 +787,7 @@ class SlurmJobsUserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobsIdBody2 body: (required)
+        :param SlurmJobsUserServiceUpdateUserSLURMJobBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1SLURMJob
@@ -801,7 +801,7 @@ class SlurmJobsUserServiceApi(object):
             (data) = self.slurm_jobs_user_service_update_user_slurm_job_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def slurm_jobs_user_service_update_user_slurm_job_with_http_info(self, body: 'JobsIdBody2', project_id: 'str', id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
+    def slurm_jobs_user_service_update_user_slurm_job_with_http_info(self, body: 'SlurmJobsUserServiceUpdateUserSLURMJobBody', project_id: 'str', id: 'str', **kwargs) -> 'V1SLURMJob':  # noqa: E501
         """UpdateUserSLURMJob is used to update a specific SLURM job for an authenticated user. For updating SLURM Jobs from an agent, please use the SLURMJobsAgentService.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -810,7 +810,7 @@ class SlurmJobsUserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobsIdBody2 body: (required)
+        :param SlurmJobsUserServiceUpdateUserSLURMJobBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1SLURMJob
@@ -891,7 +891,7 @@ class SlurmJobsUserServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def slurm_jobs_user_service_user_slurm_job_action(self, body: 'IdActionBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UserSLURMJobActionResponse':  # noqa: E501
+    def slurm_jobs_user_service_user_slurm_job_action(self, body: 'SlurmJobsUserServiceUserSLURMJobActionBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UserSLURMJobActionResponse':  # noqa: E501
         """UserSLURMJobAction can be used to call an action on a specific SLURM job. For  example cancel the job.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -900,7 +900,7 @@ class SlurmJobsUserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdActionBody body: (required)
+        :param SlurmJobsUserServiceUserSLURMJobActionBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UserSLURMJobActionResponse
@@ -914,7 +914,7 @@ class SlurmJobsUserServiceApi(object):
             (data) = self.slurm_jobs_user_service_user_slurm_job_action_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def slurm_jobs_user_service_user_slurm_job_action_with_http_info(self, body: 'IdActionBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UserSLURMJobActionResponse':  # noqa: E501
+    def slurm_jobs_user_service_user_slurm_job_action_with_http_info(self, body: 'SlurmJobsUserServiceUserSLURMJobActionBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UserSLURMJobActionResponse':  # noqa: E501
         """UserSLURMJobAction can be used to call an action on a specific SLURM job. For  example cancel the job.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -923,7 +923,7 @@ class SlurmJobsUserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdActionBody body: (required)
+        :param SlurmJobsUserServiceUserSLURMJobActionBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UserSLURMJobActionResponse

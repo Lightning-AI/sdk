@@ -17,14 +17,14 @@ from lightning_sdk.api.utils import (
 )
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
-    Create,
+    AssistantsServiceCreateAssistantBody,
+    DataConnectionServiceCreateDataConnectionBody,
     Externalv1LightningappInstance,
-    ModelIdVersionsBody,
     ModelsStoreApi,
-    ProjectIdAgentsBody,
-    ProjectIdModelsBody,
-    ProjectIdSecretsBody,
-    SecretsIdBody,
+    ModelsStoreCreateModelBody,
+    ModelsStoreCreateModelVersionBody,
+    SecretServiceCreateSecretBody,
+    SecretServiceUpdateSecretBody,
     V1Assistant,
     V1CloudSpace,
     V1ClusterAccelerator,
@@ -174,7 +174,7 @@ class TeamspaceApi:
 
         ([V1PromptSuggestion(content=suggestion) for suggestion in prompt_suggestions] if prompt_suggestions else None)
 
-        body = ProjectIdAgentsBody(
+        body = AssistantsServiceCreateAssistantBody(
             endpoint=endpoint,
             name=name,
             model=model,
@@ -209,12 +209,14 @@ class TeamspaceApi:
         models = self.models_api.models_store_list_models(project_id=teamspace_id, name=name).models
         if len(models) == 0:
             return self.models_api.models_store_create_model(
-                body=ProjectIdModelsBody(cluster_id=cloud_account, metadata=metadata, name=name, private=private),
+                body=ModelsStoreCreateModelBody(
+                    cluster_id=cloud_account, metadata=metadata, name=name, private=private
+                ),
                 project_id=teamspace_id,
             )
         assert len(models) == 1, "Multiple models with the same name found"
         return self.models_api.models_store_create_model_version(
-            body=ModelIdVersionsBody(cluster_id=cloud_account, version=version),
+            body=ModelsStoreCreateModelVersionBody(cluster_id=cloud_account, version=version),
             project_id=teamspace_id,
             model_id=models[0].id,
         )
@@ -485,7 +487,7 @@ class TeamspaceApi:
 
     def _update_secret(self, teamspace_id: str, secret_id: str, value: str) -> None:
         self._client.secret_service_update_secret(
-            body=SecretsIdBody(value=value),
+            body=SecretServiceUpdateSecretBody(value=value),
             project_id=teamspace_id,
             id=secret_id,
         )
@@ -497,7 +499,8 @@ class TeamspaceApi:
         value: str,
     ) -> None:
         self._client.secret_service_create_secret(
-            body=ProjectIdSecretsBody(name=key, value=value, type=V1SecretType.UNSPECIFIED), project_id=teamspace_id
+            body=SecretServiceCreateSecretBody(name=key, value=value, type=V1SecretType.UNSPECIFIED),
+            project_id=teamspace_id,
         )
 
     def verify_secret_name(self, name: str) -> bool:
@@ -509,7 +512,7 @@ class TeamspaceApi:
         return re.match(pattern, name) is not None
 
     def new_folder(self, teamspace_id: str, name: str, cluster: Optional[V1ExternalCluster]) -> None:
-        create_request = Create(
+        create_request = DataConnectionServiceCreateDataConnectionBody(
             name=name,
             create_resources=True,
             force=True,
@@ -532,7 +535,7 @@ class TeamspaceApi:
     def new_connection(
         self, teamspace_id: str, name: str, source: str, cluster: V1ExternalCluster, writable: bool, region: str
     ) -> None:
-        create_request = Create(
+        create_request = DataConnectionServiceCreateDataConnectionBody(
             name=name,
             create_resources=False,
             force=True,

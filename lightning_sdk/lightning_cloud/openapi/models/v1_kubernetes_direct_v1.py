@@ -41,6 +41,7 @@ class V1KubernetesDirectV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'automate_agent_installation': 'bool',
         'aws': 'V1KubernetesAWSConfig',
         'grafana_dashboard_url': 'str',
         'grafana_namespace': 'str',
@@ -50,11 +51,13 @@ class V1KubernetesDirectV1(object):
         'incident_slack_notifiers': 'list[V1SlackNotifier]',
         'kubeconfig': 'str',
         'kubeconfig_elevated': 'str',
+        'prometheus_url': 'str',
         'settings': 'V1KubernetesDirectSettingsV1',
         'skip_user_label_injection': 'bool'
     }
 
     attribute_map = {
+        'automate_agent_installation': 'automateAgentInstallation',
         'aws': 'aws',
         'grafana_dashboard_url': 'grafanaDashboardUrl',
         'grafana_namespace': 'grafanaNamespace',
@@ -64,12 +67,14 @@ class V1KubernetesDirectV1(object):
         'incident_slack_notifiers': 'incidentSlackNotifiers',
         'kubeconfig': 'kubeconfig',
         'kubeconfig_elevated': 'kubeconfigElevated',
+        'prometheus_url': 'prometheusUrl',
         'settings': 'settings',
         'skip_user_label_injection': 'skipUserLabelInjection'
     }
 
-    def __init__(self, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_historical_scan_complete: 'bool' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
+    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_historical_scan_complete: 'bool' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
+        self._automate_agent_installation = None
         self._aws = None
         self._grafana_dashboard_url = None
         self._grafana_namespace = None
@@ -79,9 +84,12 @@ class V1KubernetesDirectV1(object):
         self._incident_slack_notifiers = None
         self._kubeconfig = None
         self._kubeconfig_elevated = None
+        self._prometheus_url = None
         self._settings = None
         self._skip_user_label_injection = None
         self.discriminator = None
+        if automate_agent_installation is not None:
+            self.automate_agent_installation = automate_agent_installation
         if aws is not None:
             self.aws = aws
         if grafana_dashboard_url is not None:
@@ -100,10 +108,33 @@ class V1KubernetesDirectV1(object):
             self.kubeconfig = kubeconfig
         if kubeconfig_elevated is not None:
             self.kubeconfig_elevated = kubeconfig_elevated
+        if prometheus_url is not None:
+            self.prometheus_url = prometheus_url
         if settings is not None:
             self.settings = settings
         if skip_user_label_injection is not None:
             self.skip_user_label_injection = skip_user_label_injection
+
+    @property
+    def automate_agent_installation(self) -> 'bool':
+        """Gets the automate_agent_installation of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The automate_agent_installation of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._automate_agent_installation
+
+    @automate_agent_installation.setter
+    def automate_agent_installation(self, automate_agent_installation: 'bool'):
+        """Sets the automate_agent_installation of this V1KubernetesDirectV1.
+
+
+        :param automate_agent_installation: The automate_agent_installation of this V1KubernetesDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._automate_agent_installation = automate_agent_installation
 
     @property
     def aws(self) -> 'V1KubernetesAWSConfig':
@@ -293,6 +324,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._kubeconfig_elevated = kubeconfig_elevated
+
+    @property
+    def prometheus_url(self) -> 'str':
+        """Gets the prometheus_url of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The prometheus_url of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._prometheus_url
+
+    @prometheus_url.setter
+    def prometheus_url(self, prometheus_url: 'str'):
+        """Sets the prometheus_url of this V1KubernetesDirectV1.
+
+
+        :param prometheus_url: The prometheus_url of this V1KubernetesDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._prometheus_url = prometheus_url
 
     @property
     def settings(self) -> 'V1KubernetesDirectSettingsV1':

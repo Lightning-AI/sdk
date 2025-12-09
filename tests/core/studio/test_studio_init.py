@@ -5,8 +5,8 @@ from unittest import mock
 import pytest
 
 from lightning_sdk.lightning_cloud.openapi import (
+    CloudSpaceServiceCreateCloudSpaceBody,
     Externalv1CloudSpaceInstanceStatus,
-    ProjectIdCloudspacesBody,
     V1AWSDirectV1,
     V1CloudSpace,
     V1ClusterType,
@@ -98,7 +98,7 @@ def test_studio_init(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -561,7 +561,7 @@ def test_studio_init_with_cloud_provider_without_cloud_account(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         return V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -684,7 +684,7 @@ def test_studio_init_with_cloud_provider_string_without_cloud_account(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         return V1CloudSpace(
             name=body.name,
             display_name=body.display_name,

@@ -1,10 +1,8 @@
 from typing import Optional, List, Tuple, Union
 import os
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
-from lightning_sdk.lightning_cloud.openapi import (
-    ProjectIdDatasetsBody,
-    V1DatasetType,
-)
+from lightning_sdk.lightning_cloud.openapi.models.v1_dataset_type import V1DatasetType
+from lightning_sdk.lightning_cloud.openapi.models.dataset_service_create_dataset_body import DatasetServiceCreateDatasetBody
 
 def _create_dataset(
     input_dir: str,
@@ -38,7 +36,7 @@ def _create_dataset(
     client = LightningClient(retry=False)
 
     client.dataset_service_create_dataset(
-        body=ProjectIdDatasetsBody(
+        body=DatasetServiceCreateDatasetBody(
             cloud_space_id=cloud_space_id if lightning_app_id is None else None,
             cluster_id=cluster_id,
             creator_id=user_id,

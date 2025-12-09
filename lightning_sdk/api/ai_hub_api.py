@@ -7,7 +7,7 @@ import backoff
 from lightning_sdk.api.deployment_api import apply_change
 from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.lightning_cloud.openapi.models import (
-    CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs,
+    JobsServiceCreateDeploymentBody,
     V1Deployment,
     V1DeploymentTemplate,
     V1DeploymentTemplateParameter,
@@ -158,7 +158,7 @@ class AIHubApi:
             apply_change(template.spec_v2.job, "cluster_id", cloud_account)
         return self._client.jobs_service_create_deployment(
             project_id=project_id,
-            body=CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(
+            body=JobsServiceCreateDeploymentBody(
                 autoscaling=template.spec_v2.autoscaling,
                 cluster_id=cloud_account,
                 endpoint=template.spec_v2.endpoint,

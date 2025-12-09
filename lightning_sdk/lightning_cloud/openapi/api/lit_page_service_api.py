@@ -419,7 +419,7 @@ class LitPageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_page_service_update_lit_page(self, body: 'LitpagesIdBody', id: 'str', **kwargs) -> 'V1UpdateLitPageResponse':  # noqa: E501
+    def lit_page_service_update_lit_page(self, body: 'LitPageServiceUpdateLitPageBody', id: 'str', **kwargs) -> 'V1UpdateLitPageResponse':  # noqa: E501
         """lit_page_service_update_lit_page  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -428,7 +428,7 @@ class LitPageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LitpagesIdBody body: (required)
+        :param LitPageServiceUpdateLitPageBody body: (required)
         :param str id: (required)
         :return: V1UpdateLitPageResponse
                  If the method is called asynchronously,
@@ -441,7 +441,7 @@ class LitPageServiceApi(object):
             (data) = self.lit_page_service_update_lit_page_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def lit_page_service_update_lit_page_with_http_info(self, body: 'LitpagesIdBody', id: 'str', **kwargs) -> 'V1UpdateLitPageResponse':  # noqa: E501
+    def lit_page_service_update_lit_page_with_http_info(self, body: 'LitPageServiceUpdateLitPageBody', id: 'str', **kwargs) -> 'V1UpdateLitPageResponse':  # noqa: E501
         """lit_page_service_update_lit_page  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -450,7 +450,7 @@ class LitPageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LitpagesIdBody body: (required)
+        :param LitPageServiceUpdateLitPageBody body: (required)
         :param str id: (required)
         :return: V1UpdateLitPageResponse
                  If the method is called asynchronously,

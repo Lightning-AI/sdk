@@ -419,7 +419,7 @@ class ProductLicenseServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def product_license_service_validate_license(self, body: 'LicenseKeyValidateBody', license_key: 'str', **kwargs) -> 'V1ValidateLicenseResponse':  # noqa: E501
+    def product_license_service_validate_license(self, body: 'ProductLicenseServiceValidateLicenseBody', license_key: 'str', **kwargs) -> 'V1ValidateLicenseResponse':  # noqa: E501
         """product_license_service_validate_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -428,7 +428,7 @@ class ProductLicenseServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LicenseKeyValidateBody body: (required)
+        :param ProductLicenseServiceValidateLicenseBody body: (required)
         :param str license_key: (required)
         :return: V1ValidateLicenseResponse
                  If the method is called asynchronously,
@@ -441,7 +441,7 @@ class ProductLicenseServiceApi(object):
             (data) = self.product_license_service_validate_license_with_http_info(body, license_key, **kwargs)  # noqa: E501
             return data
 
-    def product_license_service_validate_license_with_http_info(self, body: 'LicenseKeyValidateBody', license_key: 'str', **kwargs) -> 'V1ValidateLicenseResponse':  # noqa: E501
+    def product_license_service_validate_license_with_http_info(self, body: 'ProductLicenseServiceValidateLicenseBody', license_key: 'str', **kwargs) -> 'V1ValidateLicenseResponse':  # noqa: E501
         """product_license_service_validate_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -450,7 +450,7 @@ class ProductLicenseServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LicenseKeyValidateBody body: (required)
+        :param ProductLicenseServiceValidateLicenseBody body: (required)
         :param str license_key: (required)
         :return: V1ValidateLicenseResponse
                  If the method is called asynchronously,

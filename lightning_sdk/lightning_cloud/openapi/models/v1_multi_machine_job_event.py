@@ -225,6 +225,7 @@ class V1MultiMachineJobEvent(object):
     def reason(self) -> 'str':
         """Gets the reason of this V1MultiMachineJobEvent.  # noqa: E501
 
+        Reason is why the action was taken. It is human-readable.  # noqa: E501
 
         :return: The reason of this V1MultiMachineJobEvent.  # noqa: E501
         :rtype: str
@@ -235,6 +236,7 @@ class V1MultiMachineJobEvent(object):
     def reason(self, reason: 'str'):
         """Sets the reason of this V1MultiMachineJobEvent.
 
+        Reason is why the action was taken. It is human-readable.  # noqa: E501
 
         :param reason: The reason of this V1MultiMachineJobEvent.  # noqa: E501
         :type: str

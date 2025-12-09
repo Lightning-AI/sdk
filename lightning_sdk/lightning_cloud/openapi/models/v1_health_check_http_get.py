@@ -41,24 +41,102 @@ class V1HealthCheckHttpGet(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'body': 'str',
+        'count': 'int',
+        'method': 'str',
         'path': 'str',
         'port': 'int'
     }
 
     attribute_map = {
+        'body': 'body',
+        'count': 'count',
+        'method': 'method',
         'path': 'path',
         'port': 'port'
     }
 
-    def __init__(self, path: 'str' =None, port: 'int' =None):  # noqa: E501
+    def __init__(self, body: 'str' =None, count: 'int' =None, method: 'str' =None, path: 'str' =None, port: 'int' =None):  # noqa: E501
         """V1HealthCheckHttpGet - a model defined in Swagger"""  # noqa: E501
+        self._body = None
+        self._count = None
+        self._method = None
         self._path = None
         self._port = None
         self.discriminator = None
+        if body is not None:
+            self.body = body
+        if count is not None:
+            self.count = count
+        if method is not None:
+            self.method = method
         if path is not None:
             self.path = path
         if port is not None:
             self.port = port
+
+    @property
+    def body(self) -> 'str':
+        """Gets the body of this V1HealthCheckHttpGet.  # noqa: E501
+
+
+        :return: The body of this V1HealthCheckHttpGet.  # noqa: E501
+        :rtype: str
+        """
+        return self._body
+
+    @body.setter
+    def body(self, body: 'str'):
+        """Sets the body of this V1HealthCheckHttpGet.
+
+
+        :param body: The body of this V1HealthCheckHttpGet.  # noqa: E501
+        :type: str
+        """
+
+        self._body = body
+
+    @property
+    def count(self) -> 'int':
+        """Gets the count of this V1HealthCheckHttpGet.  # noqa: E501
+
+
+        :return: The count of this V1HealthCheckHttpGet.  # noqa: E501
+        :rtype: int
+        """
+        return self._count
+
+    @count.setter
+    def count(self, count: 'int'):
+        """Sets the count of this V1HealthCheckHttpGet.
+
+
+        :param count: The count of this V1HealthCheckHttpGet.  # noqa: E501
+        :type: int
+        """
+
+        self._count = count
+
+    @property
+    def method(self) -> 'str':
+        """Gets the method of this V1HealthCheckHttpGet.  # noqa: E501
+
+
+        :return: The method of this V1HealthCheckHttpGet.  # noqa: E501
+        :rtype: str
+        """
+        return self._method
+
+    @method.setter
+    def method(self, method: 'str'):
+        """Sets the method of this V1HealthCheckHttpGet.
+
+
+        :param method: The method of this V1HealthCheckHttpGet.  # noqa: E501
+        :type: str
+        """
+
+        self._method = method
 
     @property
     def path(self) -> 'str':

@@ -285,6 +285,7 @@ class V1GetUserResponse(object):
     def allow_credits_auto_replenish(self) -> 'bool':
         """Gets the allow_credits_auto_replenish of this V1GetUserResponse.  # noqa: E501
 
+        If true, credits will be auto-replenished from the credit card on file.  # noqa: E501
 
         :return: The allow_credits_auto_replenish of this V1GetUserResponse.  # noqa: E501
         :rtype: bool
@@ -295,6 +296,7 @@ class V1GetUserResponse(object):
     def allow_credits_auto_replenish(self, allow_credits_auto_replenish: 'bool'):
         """Sets the allow_credits_auto_replenish of this V1GetUserResponse.
 
+        If true, credits will be auto-replenished from the credit card on file.  # noqa: E501
 
         :param allow_credits_auto_replenish: The allow_credits_auto_replenish of this V1GetUserResponse.  # noqa: E501
         :type: bool

@@ -433,7 +433,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_create_cloud_space(self, body: 'ProjectIdCloudspacesBody', project_id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
+    def cloud_space_service_create_cloud_space(self, body: 'CloudSpaceServiceCreateCloudSpaceBody', project_id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
         """cloud_space_service_create_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -442,7 +442,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdCloudspacesBody body: (required)
+        :param CloudSpaceServiceCreateCloudSpaceBody body: (required)
         :param str project_id: (required)
         :return: V1CloudSpace
                  If the method is called asynchronously,
@@ -455,7 +455,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_create_cloud_space_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_create_cloud_space_with_http_info(self, body: 'ProjectIdCloudspacesBody', project_id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
+    def cloud_space_service_create_cloud_space_with_http_info(self, body: 'CloudSpaceServiceCreateCloudSpaceBody', project_id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
         """cloud_space_service_create_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -464,7 +464,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdCloudspacesBody body: (required)
+        :param CloudSpaceServiceCreateCloudSpaceBody body: (required)
         :param str project_id: (required)
         :return: V1CloudSpace
                  If the method is called asynchronously,
@@ -635,7 +635,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_create_cloud_space_app_instance(self, body: 'AppsIdBody1', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1CreateCloudSpaceAppInstanceResponse':  # noqa: E501
+    def cloud_space_service_create_cloud_space_app_instance(self, body: 'CloudSpaceServiceCreateCloudSpaceAppInstanceBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1CreateCloudSpaceAppInstanceResponse':  # noqa: E501
         """cloud_space_service_create_cloud_space_app_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -644,10 +644,10 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AppsIdBody1 body: (required)
-        :param str project_id: (required)
-        :param str cloudspace_id: (required)
-        :param str id: (required)
+        :param CloudSpaceServiceCreateCloudSpaceAppInstanceBody body: (required)
+        :param str project_id: the project ID the cloudspace lives in. (required)
+        :param str cloudspace_id: the cloudspace ID the cloudspace app should be run in. (required)
+        :param str id: the ID of the cloudspace app to run. (required)
         :return: V1CreateCloudSpaceAppInstanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -659,7 +659,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_create_cloud_space_app_instance_with_http_info(body, project_id, cloudspace_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_create_cloud_space_app_instance_with_http_info(self, body: 'AppsIdBody1', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1CreateCloudSpaceAppInstanceResponse':  # noqa: E501
+    def cloud_space_service_create_cloud_space_app_instance_with_http_info(self, body: 'CloudSpaceServiceCreateCloudSpaceAppInstanceBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1CreateCloudSpaceAppInstanceResponse':  # noqa: E501
         """cloud_space_service_create_cloud_space_app_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -668,10 +668,10 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AppsIdBody1 body: (required)
-        :param str project_id: (required)
-        :param str cloudspace_id: (required)
-        :param str id: (required)
+        :param CloudSpaceServiceCreateCloudSpaceAppInstanceBody body: (required)
+        :param str project_id: the project ID the cloudspace lives in. (required)
+        :param str cloudspace_id: the cloudspace ID the cloudspace app should be run in. (required)
+        :param str id: the ID of the cloudspace app to run. (required)
         :return: V1CreateCloudSpaceAppInstanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -756,7 +756,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_create_cloud_space_instance_metric(self, body: 'CloudspaceIdMetricBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1CreateCloudSpaceInstanceMetricResponse':  # noqa: E501
+    def cloud_space_service_create_cloud_space_instance_metric(self, body: 'CloudSpaceServiceCreateCloudSpaceInstanceMetricBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1CreateCloudSpaceInstanceMetricResponse':  # noqa: E501
         """Endpoint for collecting Studio startup metrics  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -765,7 +765,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspaceIdMetricBody body: (required)
+        :param CloudSpaceServiceCreateCloudSpaceInstanceMetricBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :return: V1CreateCloudSpaceInstanceMetricResponse
@@ -779,7 +779,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_create_cloud_space_instance_metric_with_http_info(body, project_id, cloudspace_id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_create_cloud_space_instance_metric_with_http_info(self, body: 'CloudspaceIdMetricBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1CreateCloudSpaceInstanceMetricResponse':  # noqa: E501
+    def cloud_space_service_create_cloud_space_instance_metric_with_http_info(self, body: 'CloudSpaceServiceCreateCloudSpaceInstanceMetricBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1CreateCloudSpaceInstanceMetricResponse':  # noqa: E501
         """Endpoint for collecting Studio startup metrics  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -788,7 +788,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspaceIdMetricBody body: (required)
+        :param CloudSpaceServiceCreateCloudSpaceInstanceMetricBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :return: V1CreateCloudSpaceInstanceMetricResponse
@@ -970,7 +970,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_create_cloud_space_version(self, body: 'CloudSpaceIdVersionsBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
+    def cloud_space_service_create_cloud_space_version(self, body: 'CloudSpaceServiceCreateCloudSpaceVersionBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
         """cloud_space_service_create_cloud_space_version  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -979,7 +979,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudSpaceIdVersionsBody body: (required)
+        :param CloudSpaceServiceCreateCloudSpaceVersionBody body: (required)
         :param str project_id: (required)
         :param str cloud_space_id: (required)
         :return: V1CloudSpaceVersion
@@ -993,7 +993,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_create_cloud_space_version_with_http_info(body, project_id, cloud_space_id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_create_cloud_space_version_with_http_info(self, body: 'CloudSpaceIdVersionsBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
+    def cloud_space_service_create_cloud_space_version_with_http_info(self, body: 'CloudSpaceServiceCreateCloudSpaceVersionBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
         """cloud_space_service_create_cloud_space_version  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1002,7 +1002,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudSpaceIdVersionsBody body: (required)
+        :param CloudSpaceServiceCreateCloudSpaceVersionBody body: (required)
         :param str project_id: (required)
         :param str cloud_space_id: (required)
         :return: V1CloudSpaceVersion
@@ -1083,7 +1083,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_create_cloud_space_version_publication(self, body: 'CloudSpaceIdVersionpublicationsBody1', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
+    def cloud_space_service_create_cloud_space_version_publication(self, body: 'CloudSpaceServiceCreateCloudSpaceVersionPublicationBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
         """cloud_space_service_create_cloud_space_version_publication  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1092,7 +1092,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudSpaceIdVersionpublicationsBody1 body: (required)
+        :param CloudSpaceServiceCreateCloudSpaceVersionPublicationBody body: (required)
         :param str project_id: (required)
         :param str cloud_space_id: (required)
         :return: V1CloudSpaceVersionPublication
@@ -1106,7 +1106,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_create_cloud_space_version_publication_with_http_info(body, project_id, cloud_space_id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_create_cloud_space_version_publication_with_http_info(self, body: 'CloudSpaceIdVersionpublicationsBody1', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
+    def cloud_space_service_create_cloud_space_version_publication_with_http_info(self, body: 'CloudSpaceServiceCreateCloudSpaceVersionPublicationBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
         """cloud_space_service_create_cloud_space_version_publication  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1115,7 +1115,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudSpaceIdVersionpublicationsBody1 body: (required)
+        :param CloudSpaceServiceCreateCloudSpaceVersionPublicationBody body: (required)
         :param str project_id: (required)
         :param str cloud_space_id: (required)
         :return: V1CloudSpaceVersionPublication
@@ -1196,7 +1196,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_create_lightning_run(self, body: 'CloudspaceIdRunsBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1LightningRun':  # noqa: E501
+    def cloud_space_service_create_lightning_run(self, body: 'CloudSpaceServiceCreateLightningRunBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1LightningRun':  # noqa: E501
         """cloud_space_service_create_lightning_run  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1205,7 +1205,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspaceIdRunsBody body: (required)
+        :param CloudSpaceServiceCreateLightningRunBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :return: V1LightningRun
@@ -1219,7 +1219,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_create_lightning_run_with_http_info(body, project_id, cloudspace_id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_create_lightning_run_with_http_info(self, body: 'CloudspaceIdRunsBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1LightningRun':  # noqa: E501
+    def cloud_space_service_create_lightning_run_with_http_info(self, body: 'CloudSpaceServiceCreateLightningRunBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1LightningRun':  # noqa: E501
         """cloud_space_service_create_lightning_run  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1228,7 +1228,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspaceIdRunsBody body: (required)
+        :param CloudSpaceServiceCreateLightningRunBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :return: V1LightningRun
@@ -1309,7 +1309,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_create_lightning_run_instance(self, body: 'IdGetBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def cloud_space_service_create_lightning_run_instance(self, body: 'CloudSpaceServiceCreateLightningRunInstanceBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """cloud_space_service_create_lightning_run_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1318,7 +1318,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdGetBody body: (required)
+        :param CloudSpaceServiceCreateLightningRunInstanceBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
@@ -1333,7 +1333,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_create_lightning_run_instance_with_http_info(body, project_id, cloudspace_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_create_lightning_run_instance_with_http_info(self, body: 'IdGetBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def cloud_space_service_create_lightning_run_instance_with_http_info(self, body: 'CloudSpaceServiceCreateLightningRunInstanceBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """cloud_space_service_create_lightning_run_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1342,7 +1342,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdGetBody body: (required)
+        :param CloudSpaceServiceCreateLightningRunInstanceBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
@@ -2161,7 +2161,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_engage_cloud_space(self, body: 'IdEngageBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceEngagementResponse':  # noqa: E501
+    def cloud_space_service_engage_cloud_space(self, body: 'CloudSpaceServiceEngageCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceEngagementResponse':  # noqa: E501
         """cloud_space_service_engage_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2170,7 +2170,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdEngageBody1 body: (required)
+        :param CloudSpaceServiceEngageCloudSpaceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1CloudSpaceEngagementResponse
@@ -2184,7 +2184,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_engage_cloud_space_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_engage_cloud_space_with_http_info(self, body: 'IdEngageBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceEngagementResponse':  # noqa: E501
+    def cloud_space_service_engage_cloud_space_with_http_info(self, body: 'CloudSpaceServiceEngageCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceEngagementResponse':  # noqa: E501
         """cloud_space_service_engage_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2193,7 +2193,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdEngageBody1 body: (required)
+        :param CloudSpaceServiceEngageCloudSpaceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1CloudSpaceEngagementResponse
@@ -2274,7 +2274,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_execute_command_in_cloud_space(self, body: 'IdExecuteBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1ExecuteCloudSpaceCommandResponse':  # noqa: E501
+    def cloud_space_service_execute_command_in_cloud_space(self, body: 'CloudSpaceServiceExecuteCommandInCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ExecuteCloudSpaceCommandResponse':  # noqa: E501
         """cloud_space_service_execute_command_in_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2283,7 +2283,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdExecuteBody1 body: (required)
+        :param CloudSpaceServiceExecuteCommandInCloudSpaceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1ExecuteCloudSpaceCommandResponse
@@ -2297,7 +2297,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_execute_command_in_cloud_space_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_execute_command_in_cloud_space_with_http_info(self, body: 'IdExecuteBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1ExecuteCloudSpaceCommandResponse':  # noqa: E501
+    def cloud_space_service_execute_command_in_cloud_space_with_http_info(self, body: 'CloudSpaceServiceExecuteCommandInCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ExecuteCloudSpaceCommandResponse':  # noqa: E501
         """cloud_space_service_execute_command_in_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2306,7 +2306,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdExecuteBody1 body: (required)
+        :param CloudSpaceServiceExecuteCommandInCloudSpaceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1ExecuteCloudSpaceCommandResponse
@@ -2387,7 +2387,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_execute_in_cloud_space_session(self, body: 'IdExecuteBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1ExecuteInCloudSpaceSessionResponse':  # noqa: E501
+    def cloud_space_service_execute_in_cloud_space_session(self, body: 'CloudSpaceServiceExecuteInCloudSpaceSessionBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1ExecuteInCloudSpaceSessionResponse':  # noqa: E501
         """cloud_space_service_execute_in_cloud_space_session  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2396,7 +2396,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdExecuteBody body: (required)
+        :param CloudSpaceServiceExecuteInCloudSpaceSessionBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
@@ -2411,7 +2411,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_execute_in_cloud_space_session_with_http_info(body, project_id, cloudspace_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_execute_in_cloud_space_session_with_http_info(self, body: 'IdExecuteBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1ExecuteInCloudSpaceSessionResponse':  # noqa: E501
+    def cloud_space_service_execute_in_cloud_space_session_with_http_info(self, body: 'CloudSpaceServiceExecuteInCloudSpaceSessionBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'V1ExecuteInCloudSpaceSessionResponse':  # noqa: E501
         """cloud_space_service_execute_in_cloud_space_session  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2420,7 +2420,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdExecuteBody body: (required)
+        :param CloudSpaceServiceExecuteInCloudSpaceSessionBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
@@ -2520,6 +2520,9 @@ class CloudSpaceServiceApi(object):
         :param str project_id: (required)
         :param str id: (required)
         :param str plugin_id: (required)
+        :param str state:
+        :param str error:
+        :param str additional_info:
         :return: V1Plugin
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2543,12 +2546,15 @@ class CloudSpaceServiceApi(object):
         :param str project_id: (required)
         :param str id: (required)
         :param str plugin_id: (required)
+        :param str state:
+        :param str error:
+        :param str additional_info:
         :return: V1Plugin
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'plugin_id']  # noqa: E501
+        all_params = ['project_id', 'id', 'plugin_id', 'state', 'error', 'additional_info']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2587,6 +2593,12 @@ class CloudSpaceServiceApi(object):
             path_params['pluginId'] = params['plugin_id']  # noqa: E501
 
         query_params = []
+        if 'state' in params:
+            query_params.append(('state', params['state']))  # noqa: E501
+        if 'error' in params:
+            query_params.append(('error', params['error']))  # noqa: E501
+        if 'additional_info' in params:
+            query_params.append(('additionalInfo', params['additional_info']))  # noqa: E501
 
         header_params = {}
 
@@ -2617,7 +2629,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_fork_cloud_space(self, body: 'IdForkBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
+    def cloud_space_service_fork_cloud_space(self, body: 'CloudSpaceServiceForkCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
         """cloud_space_service_fork_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2626,9 +2638,9 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdForkBody1 body: (required)
-        :param str project_id: (required)
-        :param str id: (required)
+        :param CloudSpaceServiceForkCloudSpaceBody body: (required)
+        :param str project_id: source project ID (required)
+        :param str id: source studio ID (required)
         :return: V1CloudSpace
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2640,7 +2652,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_fork_cloud_space_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_fork_cloud_space_with_http_info(self, body: 'IdForkBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
+    def cloud_space_service_fork_cloud_space_with_http_info(self, body: 'CloudSpaceServiceForkCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
         """cloud_space_service_fork_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2649,9 +2661,9 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdForkBody1 body: (required)
-        :param str project_id: (required)
-        :param str id: (required)
+        :param CloudSpaceServiceForkCloudSpaceBody body: (required)
+        :param str project_id: source project ID (required)
+        :param str id: source studio ID (required)
         :return: V1CloudSpace
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2730,7 +2742,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_fork_cloud_space_app_instance(self, body: 'IdForkBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def cloud_space_service_fork_cloud_space_app_instance(self, body: 'CloudSpaceServiceForkCloudSpaceAppInstanceBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """cloud_space_service_fork_cloud_space_app_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2739,7 +2751,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdForkBody body: (required)
+        :param CloudSpaceServiceForkCloudSpaceAppInstanceBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
@@ -2754,7 +2766,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_fork_cloud_space_app_instance_with_http_info(body, project_id, cloudspace_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_fork_cloud_space_app_instance_with_http_info(self, body: 'IdForkBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def cloud_space_service_fork_cloud_space_app_instance_with_http_info(self, body: 'CloudSpaceServiceForkCloudSpaceAppInstanceBody', project_id: 'str', cloudspace_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """cloud_space_service_fork_cloud_space_app_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2763,7 +2775,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdForkBody body: (required)
+        :param CloudSpaceServiceForkCloudSpaceAppInstanceBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :param str id: (required)
@@ -3060,7 +3072,7 @@ class CloudSpaceServiceApi(object):
         :param str prefix:
         :param bool include_download_url:
         :param str cluster_id:
-        :param bool local_index:
+        :param bool local_index: if true, fetch from the local index
         :return: V1GetArtifactsPageResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3087,7 +3099,7 @@ class CloudSpaceServiceApi(object):
         :param str prefix:
         :param bool include_download_url:
         :param str cluster_id:
-        :param bool local_index:
+        :param bool local_index: if true, fetch from the local index
         :return: V1GetArtifactsPageResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3482,7 +3494,7 @@ class CloudSpaceServiceApi(object):
         :param str id: (required)
         :param str prefix:
         :param str cluster_id:
-        :param bool local_index:
+        :param bool local_index: if true, fetch from the local index
         :return: V1GetFolderIndexResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3507,7 +3519,7 @@ class CloudSpaceServiceApi(object):
         :param str id: (required)
         :param str prefix:
         :param str cluster_id:
-        :param bool local_index:
+        :param bool local_index: if true, fetch from the local index
         :return: V1GetFolderIndexResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -5298,6 +5310,9 @@ class CloudSpaceServiceApi(object):
         :param str project_id: (required)
         :param str id: (required)
         :param str plugin_id: (required)
+        :param str state:
+        :param str error:
+        :param str additional_info:
         :return: V1Plugin
                  If the method is called asynchronously,
                  returns the request thread.
@@ -5321,12 +5336,15 @@ class CloudSpaceServiceApi(object):
         :param str project_id: (required)
         :param str id: (required)
         :param str plugin_id: (required)
+        :param str state:
+        :param str error:
+        :param str additional_info:
         :return: V1Plugin
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'plugin_id']  # noqa: E501
+        all_params = ['project_id', 'id', 'plugin_id', 'state', 'error', 'additional_info']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -5365,6 +5383,12 @@ class CloudSpaceServiceApi(object):
             path_params['pluginId'] = params['plugin_id']  # noqa: E501
 
         query_params = []
+        if 'state' in params:
+            query_params.append(('state', params['state']))  # noqa: E501
+        if 'error' in params:
+            query_params.append(('error', params['error']))  # noqa: E501
+        if 'additional_info' in params:
+            query_params.append(('additionalInfo', params['additional_info']))  # noqa: E501
 
         header_params = {}
 
@@ -5496,7 +5520,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_keep_alive_cloud_space_instance(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1KeepAliveCloudSpaceInstanceResponse':  # noqa: E501
+    def cloud_space_service_keep_alive_cloud_space_instance(self, body: 'CloudSpaceServiceKeepAliveCloudSpaceInstanceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1KeepAliveCloudSpaceInstanceResponse':  # noqa: E501
         """cloud_space_service_keep_alive_cloud_space_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5505,7 +5529,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param CloudSpaceServiceKeepAliveCloudSpaceInstanceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1KeepAliveCloudSpaceInstanceResponse
@@ -5519,7 +5543,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_keep_alive_cloud_space_instance_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_keep_alive_cloud_space_instance_with_http_info(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1KeepAliveCloudSpaceInstanceResponse':  # noqa: E501
+    def cloud_space_service_keep_alive_cloud_space_instance_with_http_info(self, body: 'CloudSpaceServiceKeepAliveCloudSpaceInstanceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1KeepAliveCloudSpaceInstanceResponse':  # noqa: E501
         """cloud_space_service_keep_alive_cloud_space_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5528,7 +5552,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param CloudSpaceServiceKeepAliveCloudSpaceInstanceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1KeepAliveCloudSpaceInstanceResponse
@@ -5905,7 +5929,7 @@ class CloudSpaceServiceApi(object):
         :param str org_id:
         :param str project_id:
         :param str cluster_id:
-        :param str page_token:
+        :param str page_token: Pagination
         :param str limit:
         :return: V1ListCloudSpaceInstancesResponse
                  If the method is called asynchronously,
@@ -5931,7 +5955,7 @@ class CloudSpaceServiceApi(object):
         :param str org_id:
         :param str project_id:
         :param str cluster_id:
-        :param str page_token:
+        :param str page_token: Pagination
         :param str limit:
         :return: V1ListCloudSpaceInstancesResponse
                  If the method is called asynchronously,
@@ -6614,13 +6638,14 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id:
-        :param str page_token:
+        :param str page_token: Pagination
         :param str limit:
-        :param str name:
-        :param str user_id:
-        :param bool active_only:
-        :param bool is_favorite:
-        :param bool is_locked:
+        :param str name: Filters
+        :param str user_id: Filters
+        :param bool active_only: If set, returns only active CloudSpaces (at least one CloudSpace instance exists for them)
+        :param bool is_favorite: Filters
+        :param bool is_locked: Filters
+        :param list[str] ids: list by cloudspace ids
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -6643,19 +6668,20 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str cluster_id:
-        :param str page_token:
+        :param str page_token: Pagination
         :param str limit:
-        :param str name:
-        :param str user_id:
-        :param bool active_only:
-        :param bool is_favorite:
-        :param bool is_locked:
+        :param str name: Filters
+        :param str user_id: Filters
+        :param bool active_only: If set, returns only active CloudSpaces (at least one CloudSpace instance exists for them)
+        :param bool is_favorite: Filters
+        :param bool is_locked: Filters
+        :param list[str] ids: list by cloudspace ids
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'active_only', 'is_favorite', 'is_locked']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'active_only', 'is_favorite', 'is_locked', 'ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -6698,6 +6724,9 @@ class CloudSpaceServiceApi(object):
             query_params.append(('isFavorite', params['is_favorite']))  # noqa: E501
         if 'is_locked' in params:
             query_params.append(('isLocked', params['is_locked']))  # noqa: E501
+        if 'ids' in params:
+            query_params.append(('ids', params['ids']))  # noqa: E501
+            collection_formats['ids'] = 'multi'  # noqa: E501
 
         header_params = {}
 
@@ -6739,13 +6768,14 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id:
         :param str cluster_id:
-        :param str page_token:
+        :param str page_token: Pagination
         :param str limit:
-        :param str name:
-        :param str user_id:
-        :param bool active_only:
-        :param bool is_favorite:
-        :param bool is_locked:
+        :param str name: Filters
+        :param str user_id: Filters
+        :param bool active_only: If set, returns only active CloudSpaces (at least one CloudSpace instance exists for them)
+        :param bool is_favorite: Filters
+        :param bool is_locked: Filters
+        :param list[str] ids: list by cloudspace ids
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -6768,19 +6798,20 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id:
         :param str cluster_id:
-        :param str page_token:
+        :param str page_token: Pagination
         :param str limit:
-        :param str name:
-        :param str user_id:
-        :param bool active_only:
-        :param bool is_favorite:
-        :param bool is_locked:
+        :param str name: Filters
+        :param str user_id: Filters
+        :param bool active_only: If set, returns only active CloudSpaces (at least one CloudSpace instance exists for them)
+        :param bool is_favorite: Filters
+        :param bool is_locked: Filters
+        :param list[str] ids: list by cloudspace ids
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'active_only', 'is_favorite', 'is_locked']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'active_only', 'is_favorite', 'is_locked', 'ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -6819,6 +6850,9 @@ class CloudSpaceServiceApi(object):
             query_params.append(('isFavorite', params['is_favorite']))  # noqa: E501
         if 'is_locked' in params:
             query_params.append(('isLocked', params['is_locked']))  # noqa: E501
+        if 'ids' in params:
+            query_params.append(('ids', params['ids']))  # noqa: E501
+            collection_formats['ids'] = 'multi'  # noqa: E501
 
         header_params = {}
 
@@ -7062,12 +7096,12 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str username:
         :param str search_query:
-        :param str page_token:
+        :param str page_token: Pagination
         :param str limit:
         :param str sort_by:
         :param str org_id:
         :param str tag:
-        :param str internal_name:
+        :param str internal_name: name for studios use internally
         :param list[str] cloud_space_ids:
         :return: V1ListPublishedCloudSpacesResponse
                  If the method is called asynchronously,
@@ -7091,12 +7125,12 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str username:
         :param str search_query:
-        :param str page_token:
+        :param str page_token: Pagination
         :param str limit:
         :param str sort_by:
         :param str org_id:
         :param str tag:
-        :param str internal_name:
+        :param str internal_name: name for studios use internally
         :param list[str] cloud_space_ids:
         :return: V1ListPublishedCloudSpacesResponse
                  If the method is called asynchronously,
@@ -7173,7 +7207,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_publish_cloud_space(self, body: 'IdPublicationsBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1PublishCloudSpaceResponse':  # noqa: E501
+    def cloud_space_service_publish_cloud_space(self, body: 'CloudSpaceServicePublishCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1PublishCloudSpaceResponse':  # noqa: E501
         """TODO(yurij/karolis): update these methods to allow publishing globally in addition to orgs and remove the \"is_published\" field from CloudSpace proto  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -7182,7 +7216,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdPublicationsBody1 body: (required)
+        :param CloudSpaceServicePublishCloudSpaceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1PublishCloudSpaceResponse
@@ -7196,7 +7230,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_publish_cloud_space_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_publish_cloud_space_with_http_info(self, body: 'IdPublicationsBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1PublishCloudSpaceResponse':  # noqa: E501
+    def cloud_space_service_publish_cloud_space_with_http_info(self, body: 'CloudSpaceServicePublishCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1PublishCloudSpaceResponse':  # noqa: E501
         """TODO(yurij/karolis): update these methods to allow publishing globally in addition to orgs and remove the \"is_published\" field from CloudSpace proto  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -7205,7 +7239,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdPublicationsBody1 body: (required)
+        :param CloudSpaceServicePublishCloudSpaceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1PublishCloudSpaceResponse
@@ -7286,7 +7320,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_refresh_cloud_space_index(self, body: 'IdIndexBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1RefreshIndexResponse':  # noqa: E501
+    def cloud_space_service_refresh_cloud_space_index(self, body: 'CloudSpaceServiceRefreshCloudSpaceIndexBody', project_id: 'str', id: 'str', **kwargs) -> 'V1RefreshIndexResponse':  # noqa: E501
         """cloud_space_service_refresh_cloud_space_index  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -7295,7 +7329,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdIndexBody1 body: (required)
+        :param CloudSpaceServiceRefreshCloudSpaceIndexBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1RefreshIndexResponse
@@ -7309,7 +7343,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_refresh_cloud_space_index_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_refresh_cloud_space_index_with_http_info(self, body: 'IdIndexBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1RefreshIndexResponse':  # noqa: E501
+    def cloud_space_service_refresh_cloud_space_index_with_http_info(self, body: 'CloudSpaceServiceRefreshCloudSpaceIndexBody', project_id: 'str', id: 'str', **kwargs) -> 'V1RefreshIndexResponse':  # noqa: E501
         """cloud_space_service_refresh_cloud_space_index  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -7318,7 +7352,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdIndexBody1 body: (required)
+        :param CloudSpaceServiceRefreshCloudSpaceIndexBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1RefreshIndexResponse
@@ -7410,6 +7444,7 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param str path:
         :return: V1RefreshPathResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -7432,12 +7467,13 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param str path:
         :return: V1RefreshPathResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id']  # noqa: E501
+        all_params = ['project_id', 'id', 'path']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -7470,6 +7506,8 @@ class CloudSpaceServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'path' in params:
+            query_params.append(('path', params['path']))  # noqa: E501
 
         header_params = {}
 
@@ -7609,7 +7647,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_report_cloud_space_instance_system_metrics(self, body: 'CloudspaceIdSystemmetricsBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1ReportCloudSpaceInstanceSystemMetricsResponse':  # noqa: E501
+    def cloud_space_service_report_cloud_space_instance_system_metrics(self, body: 'CloudSpaceServiceReportCloudSpaceInstanceSystemMetricsBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1ReportCloudSpaceInstanceSystemMetricsResponse':  # noqa: E501
         """cloud_space_service_report_cloud_space_instance_system_metrics  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -7618,7 +7656,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspaceIdSystemmetricsBody body: (required)
+        :param CloudSpaceServiceReportCloudSpaceInstanceSystemMetricsBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :return: V1ReportCloudSpaceInstanceSystemMetricsResponse
@@ -7632,7 +7670,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_report_cloud_space_instance_system_metrics_with_http_info(body, project_id, cloudspace_id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_report_cloud_space_instance_system_metrics_with_http_info(self, body: 'CloudspaceIdSystemmetricsBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1ReportCloudSpaceInstanceSystemMetricsResponse':  # noqa: E501
+    def cloud_space_service_report_cloud_space_instance_system_metrics_with_http_info(self, body: 'CloudSpaceServiceReportCloudSpaceInstanceSystemMetricsBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1ReportCloudSpaceInstanceSystemMetricsResponse':  # noqa: E501
         """cloud_space_service_report_cloud_space_instance_system_metrics  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -7641,7 +7679,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspaceIdSystemmetricsBody body: (required)
+        :param CloudSpaceServiceReportCloudSpaceInstanceSystemMetricsBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :return: V1ReportCloudSpaceInstanceSystemMetricsResponse
@@ -7722,7 +7760,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_request_cloud_space_access(self, body: 'object', user_name: 'str', project_name: 'str', cloudspace_name: 'str', **kwargs) -> 'V1RequestCloudSpaceAccessResponse':  # noqa: E501
+    def cloud_space_service_request_cloud_space_access(self, body: 'CloudSpaceServiceRequestCloudSpaceAccessBody', user_name: 'str', project_name: 'str', cloudspace_name: 'str', **kwargs) -> 'V1RequestCloudSpaceAccessResponse':  # noqa: E501
         """RequestCloudSpaceAccess  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -7731,7 +7769,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param CloudSpaceServiceRequestCloudSpaceAccessBody body: (required)
         :param str user_name: (required)
         :param str project_name: (required)
         :param str cloudspace_name: (required)
@@ -7746,7 +7784,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_request_cloud_space_access_with_http_info(body, user_name, project_name, cloudspace_name, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_request_cloud_space_access_with_http_info(self, body: 'object', user_name: 'str', project_name: 'str', cloudspace_name: 'str', **kwargs) -> 'V1RequestCloudSpaceAccessResponse':  # noqa: E501
+    def cloud_space_service_request_cloud_space_access_with_http_info(self, body: 'CloudSpaceServiceRequestCloudSpaceAccessBody', user_name: 'str', project_name: 'str', cloudspace_name: 'str', **kwargs) -> 'V1RequestCloudSpaceAccessResponse':  # noqa: E501
         """RequestCloudSpaceAccess  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -7755,7 +7793,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param CloudSpaceServiceRequestCloudSpaceAccessBody body: (required)
         :param str user_name: (required)
         :param str project_name: (required)
         :param str cloudspace_name: (required)
@@ -7854,6 +7892,7 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param bool force:
         :return: V1RestartCloudSpaceInstanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -7876,12 +7915,13 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param bool force:
         :return: V1RestartCloudSpaceInstanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id']  # noqa: E501
+        all_params = ['project_id', 'id', 'force']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -7914,6 +7954,8 @@ class CloudSpaceServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'force' in params:
+            query_params.append(('force', params['force']))  # noqa: E501
 
         header_params = {}
 
@@ -8049,7 +8091,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_start_cloud_space_instance(self, body: 'IdStartBody', project_id: 'str', id: 'str', **kwargs) -> 'V1StartCloudSpaceInstanceResponse':  # noqa: E501
+    def cloud_space_service_start_cloud_space_instance(self, body: 'CloudSpaceServiceStartCloudSpaceInstanceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1StartCloudSpaceInstanceResponse':  # noqa: E501
         """cloud_space_service_start_cloud_space_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -8058,7 +8100,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdStartBody body: (required)
+        :param CloudSpaceServiceStartCloudSpaceInstanceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1StartCloudSpaceInstanceResponse
@@ -8072,7 +8114,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_start_cloud_space_instance_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_start_cloud_space_instance_with_http_info(self, body: 'IdStartBody', project_id: 'str', id: 'str', **kwargs) -> 'V1StartCloudSpaceInstanceResponse':  # noqa: E501
+    def cloud_space_service_start_cloud_space_instance_with_http_info(self, body: 'CloudSpaceServiceStartCloudSpaceInstanceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1StartCloudSpaceInstanceResponse':  # noqa: E501
         """cloud_space_service_start_cloud_space_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -8081,7 +8123,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdStartBody body: (required)
+        :param CloudSpaceServiceStartCloudSpaceInstanceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1StartCloudSpaceInstanceResponse
@@ -8173,6 +8215,7 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param bool force:
         :return: V1StopCloudSpaceInstanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -8195,12 +8238,13 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param bool force:
         :return: V1StopCloudSpaceInstanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id']  # noqa: E501
+        all_params = ['project_id', 'id', 'force']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -8233,6 +8277,8 @@ class CloudSpaceServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'force' in params:
+            query_params.append(('force', params['force']))  # noqa: E501
 
         header_params = {}
 
@@ -8274,6 +8320,7 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param bool skip_running_check: If true, the switch will be performed even if the instance is not running
         :return: V1SwitchCloudSpaceInstanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -8296,12 +8343,13 @@ class CloudSpaceServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: (required)
+        :param bool skip_running_check: If true, the switch will be performed even if the instance is not running
         :return: V1SwitchCloudSpaceInstanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id']  # noqa: E501
+        all_params = ['project_id', 'id', 'skip_running_check']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -8334,6 +8382,8 @@ class CloudSpaceServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'skip_running_check' in params:
+            query_params.append(('skipRunningCheck', params['skip_running_check']))  # noqa: E501
 
         header_params = {}
 
@@ -8364,7 +8414,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_transfer_cloud_space(self, body: 'IdTransferBody', project_id: 'str', id: 'str', **kwargs) -> 'V1TransferCloudSpaceResponse':  # noqa: E501
+    def cloud_space_service_transfer_cloud_space(self, body: 'CloudSpaceServiceTransferCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1TransferCloudSpaceResponse':  # noqa: E501
         """cloud_space_service_transfer_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -8373,7 +8423,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdTransferBody body: (required)
+        :param CloudSpaceServiceTransferCloudSpaceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1TransferCloudSpaceResponse
@@ -8387,7 +8437,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_transfer_cloud_space_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_transfer_cloud_space_with_http_info(self, body: 'IdTransferBody', project_id: 'str', id: 'str', **kwargs) -> 'V1TransferCloudSpaceResponse':  # noqa: E501
+    def cloud_space_service_transfer_cloud_space_with_http_info(self, body: 'CloudSpaceServiceTransferCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1TransferCloudSpaceResponse':  # noqa: E501
         """cloud_space_service_transfer_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -8396,7 +8446,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdTransferBody body: (required)
+        :param CloudSpaceServiceTransferCloudSpaceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1TransferCloudSpaceResponse
@@ -8703,7 +8753,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_update_cloud_space(self, body: 'CloudspacesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
+    def cloud_space_service_update_cloud_space(self, body: 'CloudSpaceServiceUpdateCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
         """cloud_space_service_update_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -8712,7 +8762,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspacesIdBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1CloudSpace
@@ -8726,7 +8776,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_update_cloud_space_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_update_cloud_space_with_http_info(self, body: 'CloudspacesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
+    def cloud_space_service_update_cloud_space_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpaceBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpace':  # noqa: E501
         """cloud_space_service_update_cloud_space  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -8735,7 +8785,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspacesIdBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1CloudSpace
@@ -8816,7 +8866,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_update_cloud_space_app(self, body: 'AppsIdBody', id: 'str', **kwargs) -> 'V1CloudSpaceApp':  # noqa: E501
+    def cloud_space_service_update_cloud_space_app(self, body: 'CloudSpaceServiceUpdateCloudSpaceAppBody', id: 'str', **kwargs) -> 'V1CloudSpaceApp':  # noqa: E501
         """cloud_space_service_update_cloud_space_app  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -8825,7 +8875,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AppsIdBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceAppBody body: (required)
         :param str id: (required)
         :return: V1CloudSpaceApp
                  If the method is called asynchronously,
@@ -8838,7 +8888,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_update_cloud_space_app_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_update_cloud_space_app_with_http_info(self, body: 'AppsIdBody', id: 'str', **kwargs) -> 'V1CloudSpaceApp':  # noqa: E501
+    def cloud_space_service_update_cloud_space_app_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpaceAppBody', id: 'str', **kwargs) -> 'V1CloudSpaceApp':  # noqa: E501
         """cloud_space_service_update_cloud_space_app  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -8847,7 +8897,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AppsIdBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceAppBody body: (required)
         :param str id: (required)
         :return: V1CloudSpaceApp
                  If the method is called asynchronously,
@@ -8921,7 +8971,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_update_cloud_space_collab(self, body: 'IdCollaborateBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateCloudSpaceCollabResponse':  # noqa: E501
+    def cloud_space_service_update_cloud_space_collab(self, body: 'CloudSpaceServiceUpdateCloudSpaceCollabBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateCloudSpaceCollabResponse':  # noqa: E501
         """cloud_space_service_update_cloud_space_collab  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -8930,7 +8980,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdCollaborateBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceCollabBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateCloudSpaceCollabResponse
@@ -8944,7 +8994,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_update_cloud_space_collab_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_update_cloud_space_collab_with_http_info(self, body: 'IdCollaborateBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateCloudSpaceCollabResponse':  # noqa: E501
+    def cloud_space_service_update_cloud_space_collab_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpaceCollabBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateCloudSpaceCollabResponse':  # noqa: E501
         """cloud_space_service_update_cloud_space_collab  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -8953,7 +9003,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdCollaborateBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceCollabBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateCloudSpaceCollabResponse
@@ -9034,7 +9084,120 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_update_cloud_space_index(self, body: 'IdIndexBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateIndexResponse':  # noqa: E501
+    def cloud_space_service_update_cloud_space_ide(self, body: 'CloudSpaceServiceUpdateCloudSpaceIdeBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceInstanceConfig':  # noqa: E501
+        """cloud_space_service_update_cloud_space_ide  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_update_cloud_space_ide(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CloudSpaceServiceUpdateCloudSpaceIdeBody body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1CloudSpaceInstanceConfig
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cloud_space_service_update_cloud_space_ide_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cloud_space_service_update_cloud_space_ide_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def cloud_space_service_update_cloud_space_ide_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpaceIdeBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceInstanceConfig':  # noqa: E501
+        """cloud_space_service_update_cloud_space_ide  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cloud_space_service_update_cloud_space_ide_with_http_info(body, project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CloudSpaceServiceUpdateCloudSpaceIdeBody body: (required)
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1CloudSpaceInstanceConfig
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cloud_space_service_update_cloud_space_ide" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `cloud_space_service_update_cloud_space_ide`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `cloud_space_service_update_cloud_space_ide`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `cloud_space_service_update_cloud_space_ide`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/cloudspaces/{id}/ide', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CloudSpaceInstanceConfig',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cloud_space_service_update_cloud_space_index(self, body: 'CloudSpaceServiceUpdateCloudSpaceIndexBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateIndexResponse':  # noqa: E501
         """cloud_space_service_update_cloud_space_index  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9043,7 +9206,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdIndexBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceIndexBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateIndexResponse
@@ -9057,7 +9220,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_update_cloud_space_index_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_update_cloud_space_index_with_http_info(self, body: 'IdIndexBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateIndexResponse':  # noqa: E501
+    def cloud_space_service_update_cloud_space_index_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpaceIndexBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateIndexResponse':  # noqa: E501
         """cloud_space_service_update_cloud_space_index  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9066,7 +9229,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdIndexBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceIndexBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateIndexResponse
@@ -9147,7 +9310,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_update_cloud_space_instance_config(self, body: 'IdCodeconfigBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceInstanceConfig':  # noqa: E501
+    def cloud_space_service_update_cloud_space_instance_config(self, body: 'CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceInstanceConfig':  # noqa: E501
         """cloud_space_service_update_cloud_space_instance_config  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9156,7 +9319,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdCodeconfigBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1CloudSpaceInstanceConfig
@@ -9170,7 +9333,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_update_cloud_space_instance_config_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_update_cloud_space_instance_config_with_http_info(self, body: 'IdCodeconfigBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceInstanceConfig':  # noqa: E501
+    def cloud_space_service_update_cloud_space_instance_config_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceInstanceConfig':  # noqa: E501
         """cloud_space_service_update_cloud_space_instance_config  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9179,7 +9342,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdCodeconfigBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1CloudSpaceInstanceConfig
@@ -9260,7 +9423,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_update_cloud_space_publication(self, body: 'IdPublicationsBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateCloudSpacePublicationResponse':  # noqa: E501
+    def cloud_space_service_update_cloud_space_publication(self, body: 'CloudSpaceServiceUpdateCloudSpacePublicationBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateCloudSpacePublicationResponse':  # noqa: E501
         """cloud_space_service_update_cloud_space_publication  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9269,7 +9432,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdPublicationsBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpacePublicationBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateCloudSpacePublicationResponse
@@ -9283,7 +9446,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_update_cloud_space_publication_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_update_cloud_space_publication_with_http_info(self, body: 'IdPublicationsBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateCloudSpacePublicationResponse':  # noqa: E501
+    def cloud_space_service_update_cloud_space_publication_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpacePublicationBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateCloudSpacePublicationResponse':  # noqa: E501
         """cloud_space_service_update_cloud_space_publication  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9292,7 +9455,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdPublicationsBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpacePublicationBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateCloudSpacePublicationResponse
@@ -9373,7 +9536,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_update_cloud_space_sleep_config(self, body: 'IdSleepconfigBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceInstanceConfig':  # noqa: E501
+    def cloud_space_service_update_cloud_space_sleep_config(self, body: 'CloudSpaceServiceUpdateCloudSpaceSleepConfigBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceInstanceConfig':  # noqa: E501
         """cloud_space_service_update_cloud_space_sleep_config  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9382,7 +9545,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdSleepconfigBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceSleepConfigBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1CloudSpaceInstanceConfig
@@ -9396,7 +9559,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_update_cloud_space_sleep_config_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_update_cloud_space_sleep_config_with_http_info(self, body: 'IdSleepconfigBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceInstanceConfig':  # noqa: E501
+    def cloud_space_service_update_cloud_space_sleep_config_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpaceSleepConfigBody', project_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceInstanceConfig':  # noqa: E501
         """cloud_space_service_update_cloud_space_sleep_config  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9405,7 +9568,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdSleepconfigBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceSleepConfigBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1CloudSpaceInstanceConfig
@@ -9486,7 +9649,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_update_cloud_space_version(self, body: 'VersionsIdBody', project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
+    def cloud_space_service_update_cloud_space_version(self, body: 'CloudSpaceServiceUpdateCloudSpaceVersionBody', project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
         """cloud_space_service_update_cloud_space_version  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9495,7 +9658,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionsIdBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceVersionBody body: (required)
         :param str project_id: (required)
         :param str cloud_space_id: (required)
         :param str id: (required)
@@ -9510,7 +9673,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_update_cloud_space_version_with_http_info(body, project_id, cloud_space_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_update_cloud_space_version_with_http_info(self, body: 'VersionsIdBody', project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
+    def cloud_space_service_update_cloud_space_version_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpaceVersionBody', project_id: 'str', cloud_space_id: 'str', id: 'str', **kwargs) -> 'V1CloudSpaceVersion':  # noqa: E501
         """cloud_space_service_update_cloud_space_version  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9519,7 +9682,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionsIdBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceVersionBody body: (required)
         :param str project_id: (required)
         :param str cloud_space_id: (required)
         :param str id: (required)
@@ -9607,7 +9770,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_update_cloud_space_version_publication(self, body: 'CloudSpaceIdVersionpublicationsBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
+    def cloud_space_service_update_cloud_space_version_publication(self, body: 'CloudSpaceServiceUpdateCloudSpaceVersionPublicationBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
         """cloud_space_service_update_cloud_space_version_publication  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9616,7 +9779,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudSpaceIdVersionpublicationsBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceVersionPublicationBody body: (required)
         :param str project_id: (required)
         :param str cloud_space_id: (required)
         :return: V1CloudSpaceVersionPublication
@@ -9630,7 +9793,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_update_cloud_space_version_publication_with_http_info(body, project_id, cloud_space_id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_update_cloud_space_version_publication_with_http_info(self, body: 'CloudSpaceIdVersionpublicationsBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
+    def cloud_space_service_update_cloud_space_version_publication_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpaceVersionPublicationBody', project_id: 'str', cloud_space_id: 'str', **kwargs) -> 'V1CloudSpaceVersionPublication':  # noqa: E501
         """cloud_space_service_update_cloud_space_version_publication  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9639,7 +9802,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudSpaceIdVersionpublicationsBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceVersionPublicationBody body: (required)
         :param str project_id: (required)
         :param str cloud_space_id: (required)
         :return: V1CloudSpaceVersionPublication
@@ -9720,7 +9883,7 @@ class CloudSpaceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_service_update_cloud_space_visibility(self, body: 'CloudspaceIdVisibilityBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1UpdateCloudSpaceVisibilityResponse':  # noqa: E501
+    def cloud_space_service_update_cloud_space_visibility(self, body: 'CloudSpaceServiceUpdateCloudSpaceVisibilityBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1UpdateCloudSpaceVisibilityResponse':  # noqa: E501
         """UpdateJobVisibility updates the jobs visibility, mainly switch between public and private  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9729,7 +9892,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspaceIdVisibilityBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceVisibilityBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :return: V1UpdateCloudSpaceVisibilityResponse
@@ -9743,7 +9906,7 @@ class CloudSpaceServiceApi(object):
             (data) = self.cloud_space_service_update_cloud_space_visibility_with_http_info(body, project_id, cloudspace_id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_service_update_cloud_space_visibility_with_http_info(self, body: 'CloudspaceIdVisibilityBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1UpdateCloudSpaceVisibilityResponse':  # noqa: E501
+    def cloud_space_service_update_cloud_space_visibility_with_http_info(self, body: 'CloudSpaceServiceUpdateCloudSpaceVisibilityBody', project_id: 'str', cloudspace_id: 'str', **kwargs) -> 'V1UpdateCloudSpaceVisibilityResponse':  # noqa: E501
         """UpdateJobVisibility updates the jobs visibility, mainly switch between public and private  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -9752,7 +9915,7 @@ class CloudSpaceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CloudspaceIdVisibilityBody body: (required)
+        :param CloudSpaceServiceUpdateCloudSpaceVisibilityBody body: (required)
         :param str project_id: (required)
         :param str cloudspace_id: (required)
         :return: V1UpdateCloudSpaceVisibilityResponse

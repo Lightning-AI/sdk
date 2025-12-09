@@ -43,7 +43,7 @@ class ExperimentsServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def experiments_service_assign_variant(self, body: 'ExperimentNameVariantNameBody', experiment_name: 'str', variant_name: 'str', **kwargs) -> 'V1AssignVariantResponse':  # noqa: E501
+    def experiments_service_assign_variant(self, body: 'ExperimentsServiceAssignVariantBody', experiment_name: 'str', variant_name: 'str', **kwargs) -> 'V1AssignVariantResponse':  # noqa: E501
         """experiments_service_assign_variant  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,9 +52,9 @@ class ExperimentsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ExperimentNameVariantNameBody body: (required)
-        :param str experiment_name: (required)
-        :param str variant_name: (required)
+        :param ExperimentsServiceAssignVariantBody body: (required)
+        :param str experiment_name: Name of the experiment that contains the assigned variant (required)
+        :param str variant_name: name of the variant the user will be assigned to. (required)
         :return: V1AssignVariantResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -66,7 +66,7 @@ class ExperimentsServiceApi(object):
             (data) = self.experiments_service_assign_variant_with_http_info(body, experiment_name, variant_name, **kwargs)  # noqa: E501
             return data
 
-    def experiments_service_assign_variant_with_http_info(self, body: 'ExperimentNameVariantNameBody', experiment_name: 'str', variant_name: 'str', **kwargs) -> 'V1AssignVariantResponse':  # noqa: E501
+    def experiments_service_assign_variant_with_http_info(self, body: 'ExperimentsServiceAssignVariantBody', experiment_name: 'str', variant_name: 'str', **kwargs) -> 'V1AssignVariantResponse':  # noqa: E501
         """experiments_service_assign_variant  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -75,9 +75,9 @@ class ExperimentsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ExperimentNameVariantNameBody body: (required)
-        :param str experiment_name: (required)
-        :param str variant_name: (required)
+        :param ExperimentsServiceAssignVariantBody body: (required)
+        :param str experiment_name: Name of the experiment that contains the assigned variant (required)
+        :param str variant_name: name of the variant the user will be assigned to. (required)
         :return: V1AssignVariantResponse
                  If the method is called asynchronously,
                  returns the request thread.

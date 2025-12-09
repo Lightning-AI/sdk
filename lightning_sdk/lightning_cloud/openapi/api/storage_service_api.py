@@ -43,7 +43,7 @@ class StorageServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def storage_service_abort_storage_transfer(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1AbortStorageTransferResponse':  # noqa: E501
+    def storage_service_abort_storage_transfer(self, body: 'StorageServiceAbortStorageTransferBody', project_id: 'str', id: 'str', **kwargs) -> 'V1AbortStorageTransferResponse':  # noqa: E501
         """storage_service_abort_storage_transfer  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param StorageServiceAbortStorageTransferBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1AbortStorageTransferResponse
@@ -66,7 +66,7 @@ class StorageServiceApi(object):
             (data) = self.storage_service_abort_storage_transfer_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def storage_service_abort_storage_transfer_with_http_info(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1AbortStorageTransferResponse':  # noqa: E501
+    def storage_service_abort_storage_transfer_with_http_info(self, body: 'StorageServiceAbortStorageTransferBody', project_id: 'str', id: 'str', **kwargs) -> 'V1AbortStorageTransferResponse':  # noqa: E501
         """storage_service_abort_storage_transfer  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -75,7 +75,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param StorageServiceAbortStorageTransferBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1AbortStorageTransferResponse
@@ -156,7 +156,7 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def storage_service_complete_upload_project_artifact(self, body: 'StorageCompleteBody', project_id: 'str', **kwargs) -> 'V1CompleteUploadProjectArtifactResponse':  # noqa: E501
+    def storage_service_complete_upload_project_artifact(self, body: 'StorageServiceCompleteUploadProjectArtifactBody', project_id: 'str', **kwargs) -> 'V1CompleteUploadProjectArtifactResponse':  # noqa: E501
         """storage_service_complete_upload_project_artifact  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -165,7 +165,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param StorageCompleteBody body: (required)
+        :param StorageServiceCompleteUploadProjectArtifactBody body: (required)
         :param str project_id: (required)
         :return: V1CompleteUploadProjectArtifactResponse
                  If the method is called asynchronously,
@@ -178,7 +178,7 @@ class StorageServiceApi(object):
             (data) = self.storage_service_complete_upload_project_artifact_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def storage_service_complete_upload_project_artifact_with_http_info(self, body: 'StorageCompleteBody', project_id: 'str', **kwargs) -> 'V1CompleteUploadProjectArtifactResponse':  # noqa: E501
+    def storage_service_complete_upload_project_artifact_with_http_info(self, body: 'StorageServiceCompleteUploadProjectArtifactBody', project_id: 'str', **kwargs) -> 'V1CompleteUploadProjectArtifactResponse':  # noqa: E501
         """storage_service_complete_upload_project_artifact  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -187,7 +187,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param StorageCompleteBody body: (required)
+        :param StorageServiceCompleteUploadProjectArtifactBody body: (required)
         :param str project_id: (required)
         :return: V1CompleteUploadProjectArtifactResponse
                  If the method is called asynchronously,
@@ -358,7 +358,7 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def storage_service_create_storage_transfer(self, body: 'ProjectIdStoragetransfersBody', project_id: 'str', **kwargs) -> 'V1StorageTransfer':  # noqa: E501
+    def storage_service_create_storage_transfer(self, body: 'StorageServiceCreateStorageTransferBody', project_id: 'str', **kwargs) -> 'V1StorageTransfer':  # noqa: E501
         """storage_service_create_storage_transfer  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -367,7 +367,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdStoragetransfersBody body: (required)
+        :param StorageServiceCreateStorageTransferBody body: (required)
         :param str project_id: (required)
         :return: V1StorageTransfer
                  If the method is called asynchronously,
@@ -380,7 +380,7 @@ class StorageServiceApi(object):
             (data) = self.storage_service_create_storage_transfer_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def storage_service_create_storage_transfer_with_http_info(self, body: 'ProjectIdStoragetransfersBody', project_id: 'str', **kwargs) -> 'V1StorageTransfer':  # noqa: E501
+    def storage_service_create_storage_transfer_with_http_info(self, body: 'StorageServiceCreateStorageTransferBody', project_id: 'str', **kwargs) -> 'V1StorageTransfer':  # noqa: E501
         """storage_service_create_storage_transfer  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -389,7 +389,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdStoragetransfersBody body: (required)
+        :param StorageServiceCreateStorageTransferBody body: (required)
         :param str project_id: (required)
         :return: V1StorageTransfer
                  If the method is called asynchronously,
@@ -870,7 +870,7 @@ class StorageServiceApi(object):
         :param str prefix:
         :param bool include_download_url:
         :param str cluster_id:
-        :param bool local_index:
+        :param bool local_index: if true, fetch from the local index
         :return: V1GetArtifactsPageResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -897,7 +897,7 @@ class StorageServiceApi(object):
         :param str prefix:
         :param bool include_download_url:
         :param str cluster_id:
-        :param bool local_index:
+        :param bool local_index: if true, fetch from the local index
         :return: V1GetArtifactsPageResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -985,7 +985,7 @@ class StorageServiceApi(object):
         :param str id:
         :param str prefix:
         :param str cluster_id:
-        :param bool local_index:
+        :param bool local_index: if true, fetch from the local index
         :return: V1GetFolderIndexResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1010,7 +1010,7 @@ class StorageServiceApi(object):
         :param str id:
         :param str prefix:
         :param str cluster_id:
-        :param bool local_index:
+        :param bool local_index: if true, fetch from the local index
         :return: V1GetFolderIndexResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1498,7 +1498,7 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def storage_service_pause_storage_transfer(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1PauseStorageTransferResponse':  # noqa: E501
+    def storage_service_pause_storage_transfer(self, body: 'StorageServicePauseStorageTransferBody', project_id: 'str', id: 'str', **kwargs) -> 'V1PauseStorageTransferResponse':  # noqa: E501
         """storage_service_pause_storage_transfer  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1507,7 +1507,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param StorageServicePauseStorageTransferBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1PauseStorageTransferResponse
@@ -1521,7 +1521,7 @@ class StorageServiceApi(object):
             (data) = self.storage_service_pause_storage_transfer_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def storage_service_pause_storage_transfer_with_http_info(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1PauseStorageTransferResponse':  # noqa: E501
+    def storage_service_pause_storage_transfer_with_http_info(self, body: 'StorageServicePauseStorageTransferBody', project_id: 'str', id: 'str', **kwargs) -> 'V1PauseStorageTransferResponse':  # noqa: E501
         """storage_service_pause_storage_transfer  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1530,7 +1530,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param StorageServicePauseStorageTransferBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1PauseStorageTransferResponse
@@ -1712,7 +1712,7 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def storage_service_resume_storage_transfer(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1ResumeStorageTransferResponse':  # noqa: E501
+    def storage_service_resume_storage_transfer(self, body: 'StorageServiceResumeStorageTransferBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ResumeStorageTransferResponse':  # noqa: E501
         """storage_service_resume_storage_transfer  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1721,7 +1721,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param StorageServiceResumeStorageTransferBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1ResumeStorageTransferResponse
@@ -1735,7 +1735,7 @@ class StorageServiceApi(object):
             (data) = self.storage_service_resume_storage_transfer_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def storage_service_resume_storage_transfer_with_http_info(self, body: 'object', project_id: 'str', id: 'str', **kwargs) -> 'V1ResumeStorageTransferResponse':  # noqa: E501
+    def storage_service_resume_storage_transfer_with_http_info(self, body: 'StorageServiceResumeStorageTransferBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ResumeStorageTransferResponse':  # noqa: E501
         """storage_service_resume_storage_transfer  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1744,7 +1744,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param StorageServiceResumeStorageTransferBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1ResumeStorageTransferResponse
@@ -1825,7 +1825,7 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def storage_service_upload_project_artifact(self, body: 'ProjectIdStorageBody', project_id: 'str', **kwargs) -> 'V1UploadProjectArtifactResponse':  # noqa: E501
+    def storage_service_upload_project_artifact(self, body: 'StorageServiceUploadProjectArtifactBody', project_id: 'str', **kwargs) -> 'V1UploadProjectArtifactResponse':  # noqa: E501
         """UploadProjectArtifact - starts the multipart upload process and returns the upload ID. You will then need to use the upload ID with UploadProjectArtifactParts to get the upload URLs  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1834,7 +1834,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdStorageBody body: (required)
+        :param StorageServiceUploadProjectArtifactBody body: (required)
         :param str project_id: (required)
         :return: V1UploadProjectArtifactResponse
                  If the method is called asynchronously,
@@ -1847,7 +1847,7 @@ class StorageServiceApi(object):
             (data) = self.storage_service_upload_project_artifact_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def storage_service_upload_project_artifact_with_http_info(self, body: 'ProjectIdStorageBody', project_id: 'str', **kwargs) -> 'V1UploadProjectArtifactResponse':  # noqa: E501
+    def storage_service_upload_project_artifact_with_http_info(self, body: 'StorageServiceUploadProjectArtifactBody', project_id: 'str', **kwargs) -> 'V1UploadProjectArtifactResponse':  # noqa: E501
         """UploadProjectArtifact - starts the multipart upload process and returns the upload ID. You will then need to use the upload ID with UploadProjectArtifactParts to get the upload URLs  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1856,7 +1856,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdStorageBody body: (required)
+        :param StorageServiceUploadProjectArtifactBody body: (required)
         :param str project_id: (required)
         :return: V1UploadProjectArtifactResponse
                  If the method is called asynchronously,
@@ -1930,7 +1930,7 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def storage_service_upload_project_artifact_parts(self, body: 'UploadsUploadIdBody1', project_id: 'str', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
+    def storage_service_upload_project_artifact_parts(self, body: 'StorageServiceUploadProjectArtifactPartsBody', project_id: 'str', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
         """storage_service_upload_project_artifact_parts  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1939,7 +1939,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadsUploadIdBody1 body: (required)
+        :param StorageServiceUploadProjectArtifactPartsBody body: (required)
         :param str project_id: (required)
         :param str upload_id: (required)
         :return: V1UploadProjectArtifactPartsResponse
@@ -1953,7 +1953,7 @@ class StorageServiceApi(object):
             (data) = self.storage_service_upload_project_artifact_parts_with_http_info(body, project_id, upload_id, **kwargs)  # noqa: E501
             return data
 
-    def storage_service_upload_project_artifact_parts_with_http_info(self, body: 'UploadsUploadIdBody1', project_id: 'str', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
+    def storage_service_upload_project_artifact_parts_with_http_info(self, body: 'StorageServiceUploadProjectArtifactPartsBody', project_id: 'str', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
         """storage_service_upload_project_artifact_parts  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1962,7 +1962,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadsUploadIdBody1 body: (required)
+        :param StorageServiceUploadProjectArtifactPartsBody body: (required)
         :param str project_id: (required)
         :param str upload_id: (required)
         :return: V1UploadProjectArtifactPartsResponse
@@ -2140,7 +2140,7 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def storage_service_upload_temporary_artifact_parts(self, body: 'UploadsUploadIdBody', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
+    def storage_service_upload_temporary_artifact_parts(self, body: 'StorageServiceUploadTemporaryArtifactPartsBody', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
         """storage_service_upload_temporary_artifact_parts  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2149,7 +2149,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadsUploadIdBody body: (required)
+        :param StorageServiceUploadTemporaryArtifactPartsBody body: (required)
         :param str upload_id: (required)
         :return: V1UploadProjectArtifactPartsResponse
                  If the method is called asynchronously,
@@ -2162,7 +2162,7 @@ class StorageServiceApi(object):
             (data) = self.storage_service_upload_temporary_artifact_parts_with_http_info(body, upload_id, **kwargs)  # noqa: E501
             return data
 
-    def storage_service_upload_temporary_artifact_parts_with_http_info(self, body: 'UploadsUploadIdBody', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
+    def storage_service_upload_temporary_artifact_parts_with_http_info(self, body: 'StorageServiceUploadTemporaryArtifactPartsBody', upload_id: 'str', **kwargs) -> 'V1UploadProjectArtifactPartsResponse':  # noqa: E501
         """storage_service_upload_temporary_artifact_parts  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2171,7 +2171,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadsUploadIdBody body: (required)
+        :param StorageServiceUploadTemporaryArtifactPartsBody body: (required)
         :param str upload_id: (required)
         :return: V1UploadProjectArtifactPartsResponse
                  If the method is called asynchronously,
@@ -2245,7 +2245,7 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def storage_service_validate_storage_transfer(self, body: 'StoragetransfersValidateBody', project_id: 'str', **kwargs) -> 'V1ValidateStorageTransferResponse':  # noqa: E501
+    def storage_service_validate_storage_transfer(self, body: 'StorageServiceValidateStorageTransferBody', project_id: 'str', **kwargs) -> 'V1ValidateStorageTransferResponse':  # noqa: E501
         """storage_service_validate_storage_transfer  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2254,7 +2254,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param StoragetransfersValidateBody body: (required)
+        :param StorageServiceValidateStorageTransferBody body: (required)
         :param str project_id: (required)
         :return: V1ValidateStorageTransferResponse
                  If the method is called asynchronously,
@@ -2267,7 +2267,7 @@ class StorageServiceApi(object):
             (data) = self.storage_service_validate_storage_transfer_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def storage_service_validate_storage_transfer_with_http_info(self, body: 'StoragetransfersValidateBody', project_id: 'str', **kwargs) -> 'V1ValidateStorageTransferResponse':  # noqa: E501
+    def storage_service_validate_storage_transfer_with_http_info(self, body: 'StorageServiceValidateStorageTransferBody', project_id: 'str', **kwargs) -> 'V1ValidateStorageTransferResponse':  # noqa: E501
         """storage_service_validate_storage_transfer  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2276,7 +2276,7 @@ class StorageServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param StoragetransfersValidateBody body: (required)
+        :param StorageServiceValidateStorageTransferBody body: (required)
         :param str project_id: (required)
         :return: V1ValidateStorageTransferResponse
                  If the method is called asynchronously,

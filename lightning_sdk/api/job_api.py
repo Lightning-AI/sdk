@@ -11,11 +11,11 @@ from lightning_sdk.api.utils import (
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
 from lightning_sdk.lightning_cloud.openapi import (
-    AppinstancesIdBody,
     Externalv1LightningappInstance,
     Externalv1Lightningwork,
-    JobsIdBody1,
-    ProjectIdJobsBody,
+    JobsServiceCreateJobBody,
+    JobsServiceUpdateJobBody,
+    LightningappInstanceServiceUpdateLightningappInstanceBody,
     V1CloudSpace,
     V1ClusterAccelerator,
     V1DownloadJobLogsResponse,
@@ -64,7 +64,9 @@ class JobApiV1:
         return None
 
     def stop_job(self, job_id: str, teamspace_id: str) -> None:
-        body = AppinstancesIdBody(spec=V1LightningappInstanceSpec(desired_state=V1LightningappInstanceState.STOPPED))
+        body = LightningappInstanceServiceUpdateLightningappInstanceBody(
+            spec=V1LightningappInstanceSpec(desired_state=V1LightningappInstanceState.STOPPED)
+        )
         self._client.lightningapp_instance_service_update_lightningapp_instance(
             project_id=teamspace_id,
             id=job_id,
@@ -293,7 +295,7 @@ class JobApiV2:
         reuse_snapshot: bool,
         max_runtime: Optional[int] = None,
         machine_image_version: Optional[str] = None,
-    ) -> ProjectIdJobsBody:
+    ) -> JobsServiceCreateJobBody:
         env_vars = []
         if env is not None:
             for k, v in env.items():
@@ -330,7 +332,7 @@ class JobApiV2:
             machine_image_version=machine_image_version,
             **optional_spec_kwargs,
         )
-        return ProjectIdJobsBody(name=name, spec=spec)
+        return JobsServiceCreateJobBody(name=name, spec=spec)
 
     def get_job_by_name(self, name: str, teamspace_id: str) -> V1Job:
         job: V1Job = self._client.jobs_service_find_job(project_id=teamspace_id, name=name)
@@ -355,7 +357,7 @@ class JobApiV2:
             return
 
         if current_state != Status.Stopping:
-            update_body = JobsIdBody1(state=self.v2_job_state_stop)
+            update_body = JobsServiceUpdateJobBody(state=self.v2_job_state_stop)
             self._client.jobs_service_update_job(body=update_body, project_id=teamspace_id, id=job_id)
 
         while True:

@@ -8,8 +8,8 @@ import pytest
 from lightning_sdk.api.teamspace_api import TeamspaceApi
 from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
-    ModelIdVersionsBody,
-    ProjectIdModelsBody,
+    ModelsStoreCreateModelBody,
+    ModelsStoreCreateModelVersionBody,
     V1CloudSpace,
     V1ClusterAccelerator,
     V1ListProjectClusterAcceleratorsResponse,
@@ -156,7 +156,7 @@ def test_create_delete_model():
     # validate the calls
     teamspace_api._models_api.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
     teamspace_api._models_api.models_store_create_model.assert_called_with(
-        body=ProjectIdModelsBody(**model_body), project_id="ts-abc"
+        body=ModelsStoreCreateModelBody(**model_body), project_id="ts-abc"
     )
 
     # mock the models_store_list_models and models_store_create_model for non-empty state
@@ -189,7 +189,9 @@ def test_create_delete_model_version():
     )
     teamspace_api._models_api.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
     teamspace_api._models_api.models_store_create_model_version.assert_called_with(
-        project_id="ts-abc", body=ModelIdVersionsBody(cluster_id="cluster-abc", version="vVv"), model_id="model-id"
+        project_id="ts-abc",
+        body=ModelsStoreCreateModelVersionBody(cluster_id="cluster-abc", version="vVv"),
+        model_id="model-id",
     )
 
     teamspace_api._models_api = mock.MagicMock(

@@ -110,6 +110,7 @@ class V1UsageReport(object):
     def has_more(self) -> 'bool':
         """Gets the has_more of this V1UsageReport.  # noqa: E501
 
+        Used to signify the frontends that more data is available past LIMIT.  # noqa: E501
 
         :return: The has_more of this V1UsageReport.  # noqa: E501
         :rtype: bool
@@ -120,6 +121,7 @@ class V1UsageReport(object):
     def has_more(self, has_more: 'bool'):
         """Sets the has_more of this V1UsageReport.
 
+        Used to signify the frontends that more data is available past LIMIT.  # noqa: E501
 
         :param has_more: The has_more of this V1UsageReport.  # noqa: E501
         :type: bool
@@ -131,6 +133,7 @@ class V1UsageReport(object):
     def search_after(self) -> 'datetime':
         """Gets the search_after of this V1UsageReport.  # noqa: E501
 
+        This is the cursor used to signal the next search_after query. Will only be applied if there is a LIMIT in the GetUsageReportRequest message, otherwise, not used.  # noqa: E501
 
         :return: The search_after of this V1UsageReport.  # noqa: E501
         :rtype: datetime
@@ -141,6 +144,7 @@ class V1UsageReport(object):
     def search_after(self, search_after: 'datetime'):
         """Sets the search_after of this V1UsageReport.
 
+        This is the cursor used to signal the next search_after query. Will only be applied if there is a LIMIT in the GetUsageReportRequest message, otherwise, not used.  # noqa: E501
 
         :param search_after: The search_after of this V1UsageReport.  # noqa: E501
         :type: datetime
@@ -194,6 +198,7 @@ class V1UsageReport(object):
     def total_users(self) -> 'int':
         """Gets the total_users of this V1UsageReport.  # noqa: E501
 
+        Total users for all resources within the time range specified. Important when paginating because the UI won't have all the data upfront.  # noqa: E501
 
         :return: The total_users of this V1UsageReport.  # noqa: E501
         :rtype: int
@@ -204,6 +209,7 @@ class V1UsageReport(object):
     def total_users(self, total_users: 'int'):
         """Sets the total_users of this V1UsageReport.
 
+        Total users for all resources within the time range specified. Important when paginating because the UI won't have all the data upfront.  # noqa: E501
 
         :param total_users: The total_users of this V1UsageReport.  # noqa: E501
         :type: int

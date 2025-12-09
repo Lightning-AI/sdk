@@ -68,6 +68,8 @@ class V1JobSpec(object):
         'resources': 'V1Resources',
         'restart_policy': 'str',
         'run_id': 'str',
+        'shutdown_delay_seconds': 'int',
+        'shutdown_timeout_seconds': 'int',
         'spot': 'bool',
         'use_tls': 'bool',
         'volumes': 'list[V1Volume]'
@@ -101,12 +103,14 @@ class V1JobSpec(object):
         'resources': 'resources',
         'restart_policy': 'restartPolicy',
         'run_id': 'runId',
+        'shutdown_delay_seconds': 'shutdownDelaySeconds',
+        'shutdown_timeout_seconds': 'shutdownTimeoutSeconds',
         'spot': 'spot',
         'use_tls': 'useTls',
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_image_version: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_image_version: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
@@ -135,6 +139,8 @@ class V1JobSpec(object):
         self._resources = None
         self._restart_policy = None
         self._run_id = None
+        self._shutdown_delay_seconds = None
+        self._shutdown_timeout_seconds = None
         self._spot = None
         self._use_tls = None
         self._volumes = None
@@ -193,6 +199,10 @@ class V1JobSpec(object):
             self.restart_policy = restart_policy
         if run_id is not None:
             self.run_id = run_id
+        if shutdown_delay_seconds is not None:
+            self.shutdown_delay_seconds = shutdown_delay_seconds
+        if shutdown_timeout_seconds is not None:
+            self.shutdown_timeout_seconds = shutdown_timeout_seconds
         if spot is not None:
             self.spot = spot
         if use_tls is not None:
@@ -225,6 +235,7 @@ class V1JobSpec(object):
     def artifacts_source(self) -> 'str':
         """Gets the artifacts_source of this V1JobSpec.  # noqa: E501
 
+        Which folder artifacts should be persisted from  # noqa: E501
 
         :return: The artifacts_source of this V1JobSpec.  # noqa: E501
         :rtype: str
@@ -235,6 +246,7 @@ class V1JobSpec(object):
     def artifacts_source(self, artifacts_source: 'str'):
         """Sets the artifacts_source of this V1JobSpec.
 
+        Which folder artifacts should be persisted from  # noqa: E501
 
         :param artifacts_source: The artifacts_source of this V1JobSpec.  # noqa: E501
         :type: str
@@ -288,6 +300,7 @@ class V1JobSpec(object):
     def command(self) -> 'str':
         """Gets the command of this V1JobSpec.  # noqa: E501
 
+        Command to run on the machine  # noqa: E501
 
         :return: The command of this V1JobSpec.  # noqa: E501
         :rtype: str
@@ -298,6 +311,7 @@ class V1JobSpec(object):
     def command(self, command: 'str'):
         """Sets the command of this V1JobSpec.
 
+        Command to run on the machine  # noqa: E501
 
         :param command: The command of this V1JobSpec.  # noqa: E501
         :type: str
@@ -477,6 +491,7 @@ class V1JobSpec(object):
     def instance_name(self) -> 'str':
         """Gets the instance_name of this V1JobSpec.  # noqa: E501
 
+        User requested instance name (nickname such as cpu-4, etc.)  # noqa: E501
 
         :return: The instance_name of this V1JobSpec.  # noqa: E501
         :rtype: str
@@ -487,6 +502,7 @@ class V1JobSpec(object):
     def instance_name(self, instance_name: 'str'):
         """Sets the instance_name of this V1JobSpec.
 
+        User requested instance name (nickname such as cpu-4, etc.)  # noqa: E501
 
         :param instance_name: The instance_name of this V1JobSpec.  # noqa: E501
         :type: str
@@ -766,6 +782,48 @@ class V1JobSpec(object):
         """
 
         self._run_id = run_id
+
+    @property
+    def shutdown_delay_seconds(self) -> 'int':
+        """Gets the shutdown_delay_seconds of this V1JobSpec.  # noqa: E501
+
+
+        :return: The shutdown_delay_seconds of this V1JobSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._shutdown_delay_seconds
+
+    @shutdown_delay_seconds.setter
+    def shutdown_delay_seconds(self, shutdown_delay_seconds: 'int'):
+        """Sets the shutdown_delay_seconds of this V1JobSpec.
+
+
+        :param shutdown_delay_seconds: The shutdown_delay_seconds of this V1JobSpec.  # noqa: E501
+        :type: int
+        """
+
+        self._shutdown_delay_seconds = shutdown_delay_seconds
+
+    @property
+    def shutdown_timeout_seconds(self) -> 'int':
+        """Gets the shutdown_timeout_seconds of this V1JobSpec.  # noqa: E501
+
+
+        :return: The shutdown_timeout_seconds of this V1JobSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._shutdown_timeout_seconds
+
+    @shutdown_timeout_seconds.setter
+    def shutdown_timeout_seconds(self, shutdown_timeout_seconds: 'int'):
+        """Sets the shutdown_timeout_seconds of this V1JobSpec.
+
+
+        :param shutdown_timeout_seconds: The shutdown_timeout_seconds of this V1JobSpec.  # noqa: E501
+        :type: int
+        """
+
+        self._shutdown_timeout_seconds = shutdown_timeout_seconds
 
     @property
     def spot(self) -> 'bool':

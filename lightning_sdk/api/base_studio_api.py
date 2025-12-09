@@ -1,10 +1,12 @@
 from typing import Any, List, Optional
 
 from lightning_sdk.lightning_cloud.openapi import (
+    CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody as BaseStudioUpdateBody,
+)
+from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpaceEnvironmentType,
     V1ListCloudSpaceEnvironmentTemplatesResponse,
 )
-from lightning_sdk.lightning_cloud.openapi.models.update import Update as BaseStudioUpdateBody
 from lightning_sdk.lightning_cloud.openapi.models.v1_cloud_space_environment_template import (
     V1CloudSpaceEnvironmentTemplate,
 )

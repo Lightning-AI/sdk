@@ -43,7 +43,7 @@ class LitLoggerServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def lit_logger_service_append_logger_metrics(self, body: 'LoggermetricsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1AppendLoggerMetricsResponse':  # noqa: E501
+    def lit_logger_service_append_logger_metrics(self, body: 'LitLoggerServiceAppendLoggerMetricsBody', project_id: 'str', id: 'str', **kwargs) -> 'V1AppendLoggerMetricsResponse':  # noqa: E501
         """lit_logger_service_append_logger_metrics  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LoggermetricsIdBody body: (required)
+        :param LitLoggerServiceAppendLoggerMetricsBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1AppendLoggerMetricsResponse
@@ -66,7 +66,7 @@ class LitLoggerServiceApi(object):
             (data) = self.lit_logger_service_append_logger_metrics_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def lit_logger_service_append_logger_metrics_with_http_info(self, body: 'LoggermetricsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1AppendLoggerMetricsResponse':  # noqa: E501
+    def lit_logger_service_append_logger_metrics_with_http_info(self, body: 'LitLoggerServiceAppendLoggerMetricsBody', project_id: 'str', id: 'str', **kwargs) -> 'V1AppendLoggerMetricsResponse':  # noqa: E501
         """lit_logger_service_append_logger_metrics  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -75,7 +75,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LoggermetricsIdBody body: (required)
+        :param LitLoggerServiceAppendLoggerMetricsBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1AppendLoggerMetricsResponse
@@ -261,7 +261,7 @@ class LitLoggerServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_logger_service_create_logger_artifact(self, body: 'MetricsStreamIdLoggerartifactsBody', project_id: 'str', metrics_stream_id: 'str', **kwargs) -> 'V1LoggerArtifact':  # noqa: E501
+    def lit_logger_service_create_logger_artifact(self, body: 'LitLoggerServiceCreateLoggerArtifactBody', project_id: 'str', metrics_stream_id: 'str', **kwargs) -> 'V1LoggerArtifact':  # noqa: E501
         """Artifact tracking  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -270,7 +270,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetricsStreamIdLoggerartifactsBody body: (required)
+        :param LitLoggerServiceCreateLoggerArtifactBody body: (required)
         :param str project_id: (required)
         :param str metrics_stream_id: (required)
         :return: V1LoggerArtifact
@@ -284,7 +284,7 @@ class LitLoggerServiceApi(object):
             (data) = self.lit_logger_service_create_logger_artifact_with_http_info(body, project_id, metrics_stream_id, **kwargs)  # noqa: E501
             return data
 
-    def lit_logger_service_create_logger_artifact_with_http_info(self, body: 'MetricsStreamIdLoggerartifactsBody', project_id: 'str', metrics_stream_id: 'str', **kwargs) -> 'V1LoggerArtifact':  # noqa: E501
+    def lit_logger_service_create_logger_artifact_with_http_info(self, body: 'LitLoggerServiceCreateLoggerArtifactBody', project_id: 'str', metrics_stream_id: 'str', **kwargs) -> 'V1LoggerArtifact':  # noqa: E501
         """Artifact tracking  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -293,7 +293,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetricsStreamIdLoggerartifactsBody body: (required)
+        :param LitLoggerServiceCreateLoggerArtifactBody body: (required)
         :param str project_id: (required)
         :param str metrics_stream_id: (required)
         :return: V1LoggerArtifact
@@ -374,7 +374,7 @@ class LitLoggerServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_logger_service_create_metrics_stream(self, body: 'MetricsstreamCreateBody', project_id: 'str', **kwargs) -> 'V1MetricsStream':  # noqa: E501
+    def lit_logger_service_create_metrics_stream(self, body: 'LitLoggerServiceCreateMetricsStreamBody', project_id: 'str', **kwargs) -> 'V1MetricsStream':  # noqa: E501
         """lit_logger_service_create_metrics_stream  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -383,7 +383,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetricsstreamCreateBody body: (required)
+        :param LitLoggerServiceCreateMetricsStreamBody body: (required)
         :param str project_id: (required)
         :return: V1MetricsStream
                  If the method is called asynchronously,
@@ -396,7 +396,7 @@ class LitLoggerServiceApi(object):
             (data) = self.lit_logger_service_create_metrics_stream_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def lit_logger_service_create_metrics_stream_with_http_info(self, body: 'MetricsstreamCreateBody', project_id: 'str', **kwargs) -> 'V1MetricsStream':  # noqa: E501
+    def lit_logger_service_create_metrics_stream_with_http_info(self, body: 'LitLoggerServiceCreateMetricsStreamBody', project_id: 'str', **kwargs) -> 'V1MetricsStream':  # noqa: E501
         """lit_logger_service_create_metrics_stream  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -405,7 +405,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetricsstreamCreateBody body: (required)
+        :param LitLoggerServiceCreateMetricsStreamBody body: (required)
         :param str project_id: (required)
         :return: V1MetricsStream
                  If the method is called asynchronously,
@@ -685,7 +685,7 @@ class LitLoggerServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_logger_service_delete_metrics_stream(self, body: 'MetricsstreamDeleteBody', project_id: 'str', **kwargs) -> 'V1DeleteMetricsStreamResponse':  # noqa: E501
+    def lit_logger_service_delete_metrics_stream(self, body: 'LitLoggerServiceDeleteMetricsStreamBody', project_id: 'str', **kwargs) -> 'V1DeleteMetricsStreamResponse':  # noqa: E501
         """lit_logger_service_delete_metrics_stream  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -694,7 +694,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetricsstreamDeleteBody body: (required)
+        :param LitLoggerServiceDeleteMetricsStreamBody body: (required)
         :param str project_id: (required)
         :return: V1DeleteMetricsStreamResponse
                  If the method is called asynchronously,
@@ -707,7 +707,7 @@ class LitLoggerServiceApi(object):
             (data) = self.lit_logger_service_delete_metrics_stream_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def lit_logger_service_delete_metrics_stream_with_http_info(self, body: 'MetricsstreamDeleteBody', project_id: 'str', **kwargs) -> 'V1DeleteMetricsStreamResponse':  # noqa: E501
+    def lit_logger_service_delete_metrics_stream_with_http_info(self, body: 'LitLoggerServiceDeleteMetricsStreamBody', project_id: 'str', **kwargs) -> 'V1DeleteMetricsStreamResponse':  # noqa: E501
         """lit_logger_service_delete_metrics_stream  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -716,7 +716,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetricsstreamDeleteBody body: (required)
+        :param LitLoggerServiceDeleteMetricsStreamBody body: (required)
         :param str project_id: (required)
         :return: V1DeleteMetricsStreamResponse
                  If the method is called asynchronously,
@@ -1433,7 +1433,7 @@ class LitLoggerServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_logger_service_update_metrics_stream(self, body: 'MetricsstreamIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1MetricsStream':  # noqa: E501
+    def lit_logger_service_update_metrics_stream(self, body: 'LitLoggerServiceUpdateMetricsStreamBody', project_id: 'str', id: 'str', **kwargs) -> 'V1MetricsStream':  # noqa: E501
         """lit_logger_service_update_metrics_stream  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1442,7 +1442,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetricsstreamIdBody body: (required)
+        :param LitLoggerServiceUpdateMetricsStreamBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1MetricsStream
@@ -1456,7 +1456,7 @@ class LitLoggerServiceApi(object):
             (data) = self.lit_logger_service_update_metrics_stream_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def lit_logger_service_update_metrics_stream_with_http_info(self, body: 'MetricsstreamIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1MetricsStream':  # noqa: E501
+    def lit_logger_service_update_metrics_stream_with_http_info(self, body: 'LitLoggerServiceUpdateMetricsStreamBody', project_id: 'str', id: 'str', **kwargs) -> 'V1MetricsStream':  # noqa: E501
         """lit_logger_service_update_metrics_stream  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1465,7 +1465,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetricsstreamIdBody body: (required)
+        :param LitLoggerServiceUpdateMetricsStreamBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1MetricsStream
@@ -1546,7 +1546,7 @@ class LitLoggerServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_logger_service_update_metrics_stream_visibility(self, body: 'IdVisibilityBody2', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateMetricsStreamVisibilityResponse':  # noqa: E501
+    def lit_logger_service_update_metrics_stream_visibility(self, body: 'LitLoggerServiceUpdateMetricsStreamVisibilityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateMetricsStreamVisibilityResponse':  # noqa: E501
         """lit_logger_service_update_metrics_stream_visibility  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1555,7 +1555,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdVisibilityBody2 body: (required)
+        :param LitLoggerServiceUpdateMetricsStreamVisibilityBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateMetricsStreamVisibilityResponse
@@ -1569,7 +1569,7 @@ class LitLoggerServiceApi(object):
             (data) = self.lit_logger_service_update_metrics_stream_visibility_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def lit_logger_service_update_metrics_stream_visibility_with_http_info(self, body: 'IdVisibilityBody2', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateMetricsStreamVisibilityResponse':  # noqa: E501
+    def lit_logger_service_update_metrics_stream_visibility_with_http_info(self, body: 'LitLoggerServiceUpdateMetricsStreamVisibilityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateMetricsStreamVisibilityResponse':  # noqa: E501
         """lit_logger_service_update_metrics_stream_visibility  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1578,7 +1578,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdVisibilityBody2 body: (required)
+        :param LitLoggerServiceUpdateMetricsStreamVisibilityBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateMetricsStreamVisibilityResponse
@@ -1659,7 +1659,7 @@ class LitLoggerServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_logger_service_update_shared_metrics_stream(self, body: 'LitloggermetricsIdBody', id: 'str', **kwargs) -> 'V1UpdateSharedMetricsStreamResponse':  # noqa: E501
+    def lit_logger_service_update_shared_metrics_stream(self, body: 'LitLoggerServiceUpdateSharedMetricsStreamBody', id: 'str', **kwargs) -> 'V1UpdateSharedMetricsStreamResponse':  # noqa: E501
         """lit_logger_service_update_shared_metrics_stream  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1668,7 +1668,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LitloggermetricsIdBody body: (required)
+        :param LitLoggerServiceUpdateSharedMetricsStreamBody body: (required)
         :param str id: (required)
         :return: V1UpdateSharedMetricsStreamResponse
                  If the method is called asynchronously,
@@ -1681,7 +1681,7 @@ class LitLoggerServiceApi(object):
             (data) = self.lit_logger_service_update_shared_metrics_stream_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def lit_logger_service_update_shared_metrics_stream_with_http_info(self, body: 'LitloggermetricsIdBody', id: 'str', **kwargs) -> 'V1UpdateSharedMetricsStreamResponse':  # noqa: E501
+    def lit_logger_service_update_shared_metrics_stream_with_http_info(self, body: 'LitLoggerServiceUpdateSharedMetricsStreamBody', id: 'str', **kwargs) -> 'V1UpdateSharedMetricsStreamResponse':  # noqa: E501
         """lit_logger_service_update_shared_metrics_stream  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1690,7 +1690,7 @@ class LitLoggerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LitloggermetricsIdBody body: (required)
+        :param LitLoggerServiceUpdateSharedMetricsStreamBody body: (required)
         :param str id: (required)
         :return: V1UpdateSharedMetricsStreamResponse
                  If the method is called asynchronously,

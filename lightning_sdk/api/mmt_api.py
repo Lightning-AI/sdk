@@ -12,8 +12,8 @@ from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
-    MultimachinejobsIdBody,
-    ProjectIdMultimachinejobsBody,
+    JobsServiceCreateMultiMachineJobBody,
+    JobsServiceUpdateMultiMachineJobBody,
     V1CloudSpace,
     V1EnvVar,
     V1Job,
@@ -133,7 +133,7 @@ class MMTApiV2:
         reuse_snapshot: bool,
         max_runtime: Optional[int] = None,
         machine_image_version: Optional[str] = None,
-    ) -> ProjectIdMultimachinejobsBody:
+    ) -> JobsServiceCreateMultiMachineJobBody:
         env_vars = []
         if env is not None:
             for k, v in env.items():
@@ -170,7 +170,7 @@ class MMTApiV2:
             machine_image_version=machine_image_version,
             **optional_spec_kwargs,
         )
-        return ProjectIdMultimachinejobsBody(
+        return JobsServiceCreateMultiMachineJobBody(
             name=name, spec=spec, cluster_id=cloud_account or "", machines=num_machines
         )
 
@@ -199,7 +199,7 @@ class MMTApiV2:
             return
 
         if current_state != Status.Stopped:
-            update_body = MultimachinejobsIdBody(desired_state=V1MultiMachineJobState.STOP)
+            update_body = JobsServiceUpdateMultiMachineJobBody(desired_state=V1MultiMachineJobState.STOP)
             self._client.jobs_service_update_multi_machine_job(body=update_body, project_id=teamspace_id, id=job_id)
 
         while True:

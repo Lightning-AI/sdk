@@ -140,7 +140,7 @@ class DeploymentTemplatesServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def deployment_templates_service_engage_deployment_template(self, body: 'IdEngageBody', id: 'str', **kwargs) -> 'V1DeploymentTemplateEngagementResponse':  # noqa: E501
+    def deployment_templates_service_engage_deployment_template(self, body: 'DeploymentTemplatesServiceEngageDeploymentTemplateBody', id: 'str', **kwargs) -> 'V1DeploymentTemplateEngagementResponse':  # noqa: E501
         """deployment_templates_service_engage_deployment_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -149,7 +149,7 @@ class DeploymentTemplatesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdEngageBody body: (required)
+        :param DeploymentTemplatesServiceEngageDeploymentTemplateBody body: (required)
         :param str id: (required)
         :return: V1DeploymentTemplateEngagementResponse
                  If the method is called asynchronously,
@@ -162,7 +162,7 @@ class DeploymentTemplatesServiceApi(object):
             (data) = self.deployment_templates_service_engage_deployment_template_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def deployment_templates_service_engage_deployment_template_with_http_info(self, body: 'IdEngageBody', id: 'str', **kwargs) -> 'V1DeploymentTemplateEngagementResponse':  # noqa: E501
+    def deployment_templates_service_engage_deployment_template_with_http_info(self, body: 'DeploymentTemplatesServiceEngageDeploymentTemplateBody', id: 'str', **kwargs) -> 'V1DeploymentTemplateEngagementResponse':  # noqa: E501
         """deployment_templates_service_engage_deployment_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -171,7 +171,7 @@ class DeploymentTemplatesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdEngageBody body: (required)
+        :param DeploymentTemplatesServiceEngageDeploymentTemplateBody body: (required)
         :param str id: (required)
         :return: V1DeploymentTemplateEngagementResponse
                  If the method is called asynchronously,
@@ -650,7 +650,7 @@ class DeploymentTemplatesServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def deployment_templates_service_update_deployment_template(self, body: 'DeploymenttemplatesIdBody', id: 'str', **kwargs) -> 'V1DeploymentTemplate':  # noqa: E501
+    def deployment_templates_service_update_deployment_template(self, body: 'DeploymentTemplatesServiceUpdateDeploymentTemplateBody', id: 'str', **kwargs) -> 'V1DeploymentTemplate':  # noqa: E501
         """deployment_templates_service_update_deployment_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -659,7 +659,7 @@ class DeploymentTemplatesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DeploymenttemplatesIdBody body: (required)
+        :param DeploymentTemplatesServiceUpdateDeploymentTemplateBody body: (required)
         :param str id: (required)
         :return: V1DeploymentTemplate
                  If the method is called asynchronously,
@@ -672,7 +672,7 @@ class DeploymentTemplatesServiceApi(object):
             (data) = self.deployment_templates_service_update_deployment_template_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def deployment_templates_service_update_deployment_template_with_http_info(self, body: 'DeploymenttemplatesIdBody', id: 'str', **kwargs) -> 'V1DeploymentTemplate':  # noqa: E501
+    def deployment_templates_service_update_deployment_template_with_http_info(self, body: 'DeploymentTemplatesServiceUpdateDeploymentTemplateBody', id: 'str', **kwargs) -> 'V1DeploymentTemplate':  # noqa: E501
         """deployment_templates_service_update_deployment_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -681,7 +681,7 @@ class DeploymentTemplatesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DeploymenttemplatesIdBody body: (required)
+        :param DeploymentTemplatesServiceUpdateDeploymentTemplateBody body: (required)
         :param str id: (required)
         :return: V1DeploymentTemplate
                  If the method is called asynchronously,

@@ -6,8 +6,8 @@ import pytest
 from lightning_sdk.api.pipeline_api import (
     ApiException,
     PipelineApi,
-    ProjectIdPipelinesBody,
-    ProjectIdSchedulesBody,
+    PipelinesServiceCreatePipelineBody,
+    SchedulesServiceCreateScheduleBody,
     V1DeletePipelineResponse,
     V1Pipeline,
     V1ScheduleResourceType,
@@ -124,7 +124,7 @@ class TestCreatePipeline:
         mock_lightning_client.pipelines_service_create_pipeline.assert_called_once()
         call_args, call_kwargs = mock_lightning_client.pipelines_service_create_pipeline.call_args
         body = call_args[0]
-        assert isinstance(body, ProjectIdPipelinesBody)
+        assert isinstance(body, PipelinesServiceCreatePipelineBody)
         assert body.name == PIPELINE_NAME
         assert body.shared_filesystem.enabled is True
         assert body.parent_pipeline_id == ""
@@ -169,7 +169,7 @@ class TestCreatePipeline:
         # Check call 1
         call1_args, _ = mock_lightning_client.schedules_service_create_schedule.call_args_list[0]
         body1 = call1_args[0]
-        assert isinstance(body1, ProjectIdSchedulesBody)
+        assert isinstance(body1, SchedulesServiceCreateScheduleBody)
         assert body1.cron_expression == "* * * * *"
         assert body1.display_name == "daily"
         assert body1.resource_id == mock_created_pipeline.id

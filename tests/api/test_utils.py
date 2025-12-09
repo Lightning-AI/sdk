@@ -18,21 +18,17 @@ from lightning_sdk.api.utils import (
     resolve_path_mappings,
 )
 from lightning_sdk.lightning_cloud.openapi import (
-    ProjectIdStorageBody,
-    UploadIdPartsBody,
+    ModelsStoreCreateMultiPartUploadBody,
+    ModelsStoreGetModelFileUploadUrlsBody,
+    StorageServiceUploadProjectArtifactBody,
+    StorageServiceUploadProjectArtifactPartsBody,
     V1ListProjectArtifactsResponse,
     V1PathMapping,
     V1PresignedUrl,
     V1ProjectArtifact,
     V1SignedUrl,
     V1UploadProjectArtifactPartsResponse,
-    VersionUploadsBody,
 )
-
-try:
-    from lightning_sdk.lightning_cloud.openapi import UploadsUploadIdBody1 as UploadsUploadIdBody
-except ImportError:
-    from lightning_sdk.lightning_cloud.openapi import UploadsUploadIdBody
 from lightning_sdk.machine import Machine
 
 
@@ -88,11 +84,13 @@ def test_file_uploader(_, tmp_path, monkeypatch):
     uploader()
 
     uploader.client.storage_service_upload_project_artifact.assert_called_once_with(
-        body=ProjectIdStorageBody(filename="path/to/file/on/remote", cluster_id="test-cluster-id"),
+        body=StorageServiceUploadProjectArtifactBody(filename="path/to/file/on/remote", cluster_id="test-cluster-id"),
         project_id="test-project-id",
     )
     uploader.client.storage_service_upload_project_artifact_parts.assert_called_once_with(
-        UploadsUploadIdBody(filename="path/to/file/on/remote", parts=[1], cluster_id="test-cluster-id"),
+        StorageServiceUploadProjectArtifactPartsBody(
+            filename="path/to/file/on/remote", parts=[1], cluster_id="test-cluster-id"
+        ),
         "test-project-id",
         "test-upload-id",
     )
@@ -143,13 +141,13 @@ def test_model_file_uploader(_, tmp_path, monkeypatch):
     uploader()
 
     uploader.api.models_store_create_multi_part_upload.assert_called_once_with(
-        VersionUploadsBody(filepath="path/to/file/on/remote"),
+        ModelsStoreCreateMultiPartUploadBody(filepath="path/to/file/on/remote"),
         model_id="test-model-id",
         project_id="test-project-id",
         version="test-version",
     )
     uploader.api.models_store_get_model_file_upload_urls.assert_called_once_with(
-        UploadIdPartsBody(filepath="path/to/file/on/remote", parts=[1]),
+        ModelsStoreGetModelFileUploadUrlsBody(filepath="path/to/file/on/remote", parts=[1]),
         model_id="test-model-id",
         project_id="test-project-id",
         version="test-version",

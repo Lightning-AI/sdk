@@ -69,6 +69,7 @@ class V1UserRequestedFlowComputeConfig(object):
     def name(self) -> 'str':
         """Gets the name of this V1UserRequestedFlowComputeConfig.  # noqa: E501
 
+        optional - can be instance type, ie t2.medium. If not specified it'll default to the smallest available instance type. GPU instance types are not allowed.  # noqa: E501
 
         :return: The name of this V1UserRequestedFlowComputeConfig.  # noqa: E501
         :rtype: str
@@ -79,6 +80,7 @@ class V1UserRequestedFlowComputeConfig(object):
     def name(self, name: 'str'):
         """Sets the name of this V1UserRequestedFlowComputeConfig.
 
+        optional - can be instance type, ie t2.medium. If not specified it'll default to the smallest available instance type. GPU instance types are not allowed.  # noqa: E501
 
         :param name: The name of this V1UserRequestedFlowComputeConfig.  # noqa: E501
         :type: str

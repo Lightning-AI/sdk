@@ -162,6 +162,7 @@ class V1CreateCheckoutSessionRequest(object):
     def org_id(self) -> 'str':
         """Gets the org_id of this V1CreateCheckoutSessionRequest.  # noqa: E501
 
+        Ignored if `wallet_type` is not `Org`.  # noqa: E501
 
         :return: The org_id of this V1CreateCheckoutSessionRequest.  # noqa: E501
         :rtype: str
@@ -172,6 +173,7 @@ class V1CreateCheckoutSessionRequest(object):
     def org_id(self, org_id: 'str'):
         """Sets the org_id of this V1CreateCheckoutSessionRequest.
 
+        Ignored if `wallet_type` is not `Org`.  # noqa: E501
 
         :param org_id: The org_id of this V1CreateCheckoutSessionRequest.  # noqa: E501
         :type: str
@@ -183,6 +185,7 @@ class V1CreateCheckoutSessionRequest(object):
     def project_id(self) -> 'str':
         """Gets the project_id of this V1CreateCheckoutSessionRequest.  # noqa: E501
 
+        Ignored if `wallet_type` is not `Project`.  # noqa: E501
 
         :return: The project_id of this V1CreateCheckoutSessionRequest.  # noqa: E501
         :rtype: str
@@ -193,6 +196,7 @@ class V1CreateCheckoutSessionRequest(object):
     def project_id(self, project_id: 'str'):
         """Sets the project_id of this V1CreateCheckoutSessionRequest.
 
+        Ignored if `wallet_type` is not `Project`.  # noqa: E501
 
         :param project_id: The project_id of this V1CreateCheckoutSessionRequest.  # noqa: E501
         :type: str

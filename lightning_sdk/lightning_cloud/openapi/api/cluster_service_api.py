@@ -237,7 +237,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_create_cluster_capacity_reservation(self, body: 'ClusterIdCapacityreservationsBody', project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1CreateClusterCapacityReservationResponse':  # noqa: E501
+    def cluster_service_create_cluster_capacity_reservation(self, body: 'ClusterServiceCreateClusterCapacityReservationBody', project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1CreateClusterCapacityReservationResponse':  # noqa: E501
         """cluster_service_create_cluster_capacity_reservation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -246,7 +246,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdCapacityreservationsBody body: (required)
+        :param ClusterServiceCreateClusterCapacityReservationBody body: (required)
         :param str project_id: (required)
         :param str cluster_id: (required)
         :return: V1CreateClusterCapacityReservationResponse
@@ -260,7 +260,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_create_cluster_capacity_reservation_with_http_info(body, project_id, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_create_cluster_capacity_reservation_with_http_info(self, body: 'ClusterIdCapacityreservationsBody', project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1CreateClusterCapacityReservationResponse':  # noqa: E501
+    def cluster_service_create_cluster_capacity_reservation_with_http_info(self, body: 'ClusterServiceCreateClusterCapacityReservationBody', project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1CreateClusterCapacityReservationResponse':  # noqa: E501
         """cluster_service_create_cluster_capacity_reservation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -269,7 +269,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdCapacityreservationsBody body: (required)
+        :param ClusterServiceCreateClusterCapacityReservationBody body: (required)
         :param str project_id: (required)
         :param str cluster_id: (required)
         :return: V1CreateClusterCapacityReservationResponse
@@ -447,7 +447,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_create_cluster_proxy(self, body: 'ClusterIdProxiesBody', cluster_id: 'str', **kwargs) -> 'V1ClusterProxy':  # noqa: E501
+    def cluster_service_create_cluster_proxy(self, body: 'ClusterServiceCreateClusterProxyBody', cluster_id: 'str', **kwargs) -> 'V1ClusterProxy':  # noqa: E501
         """cluster_service_create_cluster_proxy  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -456,7 +456,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdProxiesBody body: (required)
+        :param ClusterServiceCreateClusterProxyBody body: (required)
         :param str cluster_id: (required)
         :return: V1ClusterProxy
                  If the method is called asynchronously,
@@ -469,7 +469,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_create_cluster_proxy_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_create_cluster_proxy_with_http_info(self, body: 'ClusterIdProxiesBody', cluster_id: 'str', **kwargs) -> 'V1ClusterProxy':  # noqa: E501
+    def cluster_service_create_cluster_proxy_with_http_info(self, body: 'ClusterServiceCreateClusterProxyBody', cluster_id: 'str', **kwargs) -> 'V1ClusterProxy':  # noqa: E501
         """cluster_service_create_cluster_proxy  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -478,7 +478,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdProxiesBody body: (required)
+        :param ClusterServiceCreateClusterProxyBody body: (required)
         :param str cluster_id: (required)
         :return: V1ClusterProxy
                  If the method is called asynchronously,
@@ -552,7 +552,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_create_cluster_usage_restriction(self, body: 'ClusterIdUsagerestrictionsBody', cluster_id: 'str', **kwargs) -> 'V1ClusterUsageRestriction':  # noqa: E501
+    def cluster_service_create_cluster_usage_restriction(self, body: 'ClusterServiceCreateClusterUsageRestrictionBody', cluster_id: 'str', **kwargs) -> 'V1ClusterUsageRestriction':  # noqa: E501
         """cluster_service_create_cluster_usage_restriction  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -561,7 +561,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdUsagerestrictionsBody body: (required)
+        :param ClusterServiceCreateClusterUsageRestrictionBody body: (required)
         :param str cluster_id: (required)
         :return: V1ClusterUsageRestriction
                  If the method is called asynchronously,
@@ -574,7 +574,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_create_cluster_usage_restriction_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_create_cluster_usage_restriction_with_http_info(self, body: 'ClusterIdUsagerestrictionsBody', cluster_id: 'str', **kwargs) -> 'V1ClusterUsageRestriction':  # noqa: E501
+    def cluster_service_create_cluster_usage_restriction_with_http_info(self, body: 'ClusterServiceCreateClusterUsageRestrictionBody', cluster_id: 'str', **kwargs) -> 'V1ClusterUsageRestriction':  # noqa: E501
         """cluster_service_create_cluster_usage_restriction  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -583,7 +583,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdUsagerestrictionsBody body: (required)
+        :param ClusterServiceCreateClusterUsageRestrictionBody body: (required)
         :param str cluster_id: (required)
         :return: V1ClusterUsageRestriction
                  If the method is called asynchronously,
@@ -657,7 +657,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_create_machine(self, body: 'CreateMachineRequestRepresentsTheRequestToCreateAMachine', cluster_id: 'str', **kwargs) -> 'V1CreateMachineResponse':  # noqa: E501
+    def cluster_service_create_machine(self, body: 'ClusterServiceCreateMachineBody', cluster_id: 'str', **kwargs) -> 'V1CreateMachineResponse':  # noqa: E501
         """cluster_service_create_machine  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -666,7 +666,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CreateMachineRequestRepresentsTheRequestToCreateAMachine body: (required)
+        :param ClusterServiceCreateMachineBody body: (required)
         :param str cluster_id: (required)
         :return: V1CreateMachineResponse
                  If the method is called asynchronously,
@@ -679,7 +679,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_create_machine_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_create_machine_with_http_info(self, body: 'CreateMachineRequestRepresentsTheRequestToCreateAMachine', cluster_id: 'str', **kwargs) -> 'V1CreateMachineResponse':  # noqa: E501
+    def cluster_service_create_machine_with_http_info(self, body: 'ClusterServiceCreateMachineBody', cluster_id: 'str', **kwargs) -> 'V1CreateMachineResponse':  # noqa: E501
         """cluster_service_create_machine  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -688,7 +688,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CreateMachineRequestRepresentsTheRequestToCreateAMachine body: (required)
+        :param ClusterServiceCreateMachineBody body: (required)
         :param str cluster_id: (required)
         :return: V1CreateMachineResponse
                  If the method is called asynchronously,
@@ -762,7 +762,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_create_project_cluster(self, body: 'ProjectIdClustersBody', project_id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
+    def cluster_service_create_project_cluster(self, body: 'ClusterServiceCreateProjectClusterBody', project_id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
         """cluster_service_create_project_cluster  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -771,7 +771,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdClustersBody body: (required)
+        :param ClusterServiceCreateProjectClusterBody body: (required)
         :param str project_id: (required)
         :return: Externalv1Cluster
                  If the method is called asynchronously,
@@ -784,7 +784,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_create_project_cluster_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_create_project_cluster_with_http_info(self, body: 'ProjectIdClustersBody', project_id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
+    def cluster_service_create_project_cluster_with_http_info(self, body: 'ClusterServiceCreateProjectClusterBody', project_id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
         """cluster_service_create_project_cluster  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -793,7 +793,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdClustersBody body: (required)
+        :param ClusterServiceCreateProjectClusterBody body: (required)
         :param str project_id: (required)
         :return: Externalv1Cluster
                  If the method is called asynchronously,
@@ -867,7 +867,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_create_server_alert(self, body: 'ServerIdAlertsBody', server_id: 'str', **kwargs) -> 'V1CreateServerAlertResponse':  # noqa: E501
+    def cluster_service_create_server_alert(self, body: 'ClusterServiceCreateServerAlertBody', server_id: 'str', **kwargs) -> 'V1CreateServerAlertResponse':  # noqa: E501
         """cluster_service_create_server_alert  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -876,7 +876,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ServerIdAlertsBody body: (required)
+        :param ClusterServiceCreateServerAlertBody body: (required)
         :param str server_id: (required)
         :return: V1CreateServerAlertResponse
                  If the method is called asynchronously,
@@ -889,7 +889,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_create_server_alert_with_http_info(body, server_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_create_server_alert_with_http_info(self, body: 'ServerIdAlertsBody', server_id: 'str', **kwargs) -> 'V1CreateServerAlertResponse':  # noqa: E501
+    def cluster_service_create_server_alert_with_http_info(self, body: 'ClusterServiceCreateServerAlertBody', server_id: 'str', **kwargs) -> 'V1CreateServerAlertResponse':  # noqa: E501
         """cluster_service_create_server_alert  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -898,7 +898,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ServerIdAlertsBody body: (required)
+        :param ClusterServiceCreateServerAlertBody body: (required)
         :param str server_id: (required)
         :return: V1CreateServerAlertResponse
                  If the method is called asynchronously,
@@ -985,7 +985,7 @@ class ClusterServiceApi(object):
         :param str org_id:
         :param str project_id:
         :param bool force:
-        :param bool delete_artifacts: if set to true, artifacts in the cloud provider object storage will be deleted.
+        :param bool delete_artifacts: if set to true, artifacts in the cloud provider object storage will be deleted
         :param bool delete_system_logs:
         :return: V1DeleteClusterResponse
                  If the method is called asynchronously,
@@ -1011,7 +1011,7 @@ class ClusterServiceApi(object):
         :param str org_id:
         :param str project_id:
         :param bool force:
-        :param bool delete_artifacts: if set to true, artifacts in the cloud provider object storage will be deleted.
+        :param bool delete_artifacts: if set to true, artifacts in the cloud provider object storage will be deleted
         :param bool delete_system_logs:
         :return: V1DeleteClusterResponse
                  If the method is called asynchronously,
@@ -1614,7 +1614,7 @@ class ClusterServiceApi(object):
         :param str project_id: (required)
         :param str id: (required)
         :param bool force:
-        :param bool delete_artifacts: if set to true, artifacts in the cloud provider object storage will be deleted.
+        :param bool delete_artifacts: if set to true, artifacts in the cloud provider object storage will be deleted
         :param bool delete_system_logs:
         :return: V1DeleteProjectClusterResponse
                  If the method is called asynchronously,
@@ -1639,7 +1639,7 @@ class ClusterServiceApi(object):
         :param str project_id: (required)
         :param str id: (required)
         :param bool force:
-        :param bool delete_artifacts: if set to true, artifacts in the cloud provider object storage will be deleted.
+        :param bool delete_artifacts: if set to true, artifacts in the cloud provider object storage will be deleted
         :param bool delete_system_logs:
         :return: V1DeleteProjectClusterResponse
                  If the method is called asynchronously,
@@ -2527,7 +2527,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_interrupt_server(self, body: 'object', server_id: 'str', **kwargs) -> 'V1InterruptServerResponse':  # noqa: E501
+    def cluster_service_interrupt_server(self, body: 'ClusterServiceInterruptServerBody', server_id: 'str', **kwargs) -> 'V1InterruptServerResponse':  # noqa: E501
         """cluster_service_interrupt_server  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2536,7 +2536,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param ClusterServiceInterruptServerBody body: (required)
         :param str server_id: (required)
         :return: V1InterruptServerResponse
                  If the method is called asynchronously,
@@ -2549,7 +2549,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_interrupt_server_with_http_info(body, server_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_interrupt_server_with_http_info(self, body: 'object', server_id: 'str', **kwargs) -> 'V1InterruptServerResponse':  # noqa: E501
+    def cluster_service_interrupt_server_with_http_info(self, body: 'ClusterServiceInterruptServerBody', server_id: 'str', **kwargs) -> 'V1InterruptServerResponse':  # noqa: E501
         """cluster_service_interrupt_server  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2558,7 +2558,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param ClusterServiceInterruptServerBody body: (required)
         :param str server_id: (required)
         :return: V1InterruptServerResponse
                  If the method is called asynchronously,
@@ -2841,7 +2841,7 @@ class ClusterServiceApi(object):
         :param datetime end_time:
         :param bool available_only:
         :param bool from_aggregate:
-        :param str apparent_provider:
+        :param str apparent_provider: only required if from aggregate, storage.providertype (eg `lightningaggregate`)
         :return: V1ListClusterCapacityReservationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2868,7 +2868,7 @@ class ClusterServiceApi(object):
         :param datetime end_time:
         :param bool available_only:
         :param bool from_aggregate:
-        :param str apparent_provider:
+        :param str apparent_provider: only required if from aggregate, storage.providertype (eg `lightningaggregate`)
         :return: V1ListClusterCapacityReservationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3727,7 +3727,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_purchase_capacity_block(self, body: 'ClusterIdCapacityblockBody', project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1PurchaseCapacityBlockResponse':  # noqa: E501
+    def cluster_service_purchase_capacity_block(self, body: 'ClusterServicePurchaseCapacityBlockBody', project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1PurchaseCapacityBlockResponse':  # noqa: E501
         """cluster_service_purchase_capacity_block  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3736,7 +3736,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdCapacityblockBody body: (required)
+        :param ClusterServicePurchaseCapacityBlockBody body: (required)
         :param str project_id: (required)
         :param str cluster_id: (required)
         :return: V1PurchaseCapacityBlockResponse
@@ -3750,7 +3750,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_purchase_capacity_block_with_http_info(body, project_id, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_purchase_capacity_block_with_http_info(self, body: 'ClusterIdCapacityblockBody', project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1PurchaseCapacityBlockResponse':  # noqa: E501
+    def cluster_service_purchase_capacity_block_with_http_info(self, body: 'ClusterServicePurchaseCapacityBlockBody', project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1PurchaseCapacityBlockResponse':  # noqa: E501
         """cluster_service_purchase_capacity_block  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3759,7 +3759,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdCapacityblockBody body: (required)
+        :param ClusterServicePurchaseCapacityBlockBody body: (required)
         :param str project_id: (required)
         :param str cluster_id: (required)
         :return: V1PurchaseCapacityBlockResponse
@@ -3937,7 +3937,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_server_check_in(self, body: 'ServersServerIdBody', server_id: 'str', **kwargs) -> 'V1ServerCheckInResponse':  # noqa: E501
+    def cluster_service_server_check_in(self, body: 'ClusterServiceServerCheckInBody', server_id: 'str', **kwargs) -> 'V1ServerCheckInResponse':  # noqa: E501
         """cluster_service_server_check_in  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3946,7 +3946,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ServersServerIdBody body: (required)
+        :param ClusterServiceServerCheckInBody body: (required)
         :param str server_id: (required)
         :return: V1ServerCheckInResponse
                  If the method is called asynchronously,
@@ -3959,7 +3959,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_server_check_in_with_http_info(body, server_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_server_check_in_with_http_info(self, body: 'ServersServerIdBody', server_id: 'str', **kwargs) -> 'V1ServerCheckInResponse':  # noqa: E501
+    def cluster_service_server_check_in_with_http_info(self, body: 'ClusterServiceServerCheckInBody', server_id: 'str', **kwargs) -> 'V1ServerCheckInResponse':  # noqa: E501
         """cluster_service_server_check_in  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3968,7 +3968,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ServersServerIdBody body: (required)
+        :param ClusterServiceServerCheckInBody body: (required)
         :param str server_id: (required)
         :return: V1ServerCheckInResponse
                  If the method is called asynchronously,
@@ -4042,7 +4042,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_sleep_server(self, body: 'object', server_id: 'str', **kwargs) -> 'V1SleepServerResponse':  # noqa: E501
+    def cluster_service_sleep_server(self, body: 'ClusterServiceSleepServerBody', server_id: 'str', **kwargs) -> 'V1SleepServerResponse':  # noqa: E501
         """cluster_service_sleep_server  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4051,7 +4051,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param ClusterServiceSleepServerBody body: (required)
         :param str server_id: (required)
         :return: V1SleepServerResponse
                  If the method is called asynchronously,
@@ -4064,7 +4064,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_sleep_server_with_http_info(body, server_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_sleep_server_with_http_info(self, body: 'object', server_id: 'str', **kwargs) -> 'V1SleepServerResponse':  # noqa: E501
+    def cluster_service_sleep_server_with_http_info(self, body: 'ClusterServiceSleepServerBody', server_id: 'str', **kwargs) -> 'V1SleepServerResponse':  # noqa: E501
         """cluster_service_sleep_server  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4073,7 +4073,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param ClusterServiceSleepServerBody body: (required)
         :param str server_id: (required)
         :return: V1SleepServerResponse
                  If the method is called asynchronously,
@@ -4147,7 +4147,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_update_cluster(self, body: 'ClustersIdBody', id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
+    def cluster_service_update_cluster(self, body: 'ClusterServiceUpdateClusterBody', id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
         """cluster_service_update_cluster  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4156,7 +4156,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClustersIdBody body: (required)
+        :param ClusterServiceUpdateClusterBody body: (required)
         :param str id: (required)
         :return: Externalv1Cluster
                  If the method is called asynchronously,
@@ -4169,7 +4169,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_update_cluster_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_update_cluster_with_http_info(self, body: 'ClustersIdBody', id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
+    def cluster_service_update_cluster_with_http_info(self, body: 'ClusterServiceUpdateClusterBody', id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
         """cluster_service_update_cluster  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4178,7 +4178,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClustersIdBody body: (required)
+        :param ClusterServiceUpdateClusterBody body: (required)
         :param str id: (required)
         :return: Externalv1Cluster
                  If the method is called asynchronously,
@@ -4446,7 +4446,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_update_cluster_usage_restriction(self, body: 'UsagerestrictionsIdBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1ClusterUsageRestriction':  # noqa: E501
+    def cluster_service_update_cluster_usage_restriction(self, body: 'ClusterServiceUpdateClusterUsageRestrictionBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1ClusterUsageRestriction':  # noqa: E501
         """cluster_service_update_cluster_usage_restriction  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4455,7 +4455,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UsagerestrictionsIdBody body: (required)
+        :param ClusterServiceUpdateClusterUsageRestrictionBody body: (required)
         :param str cluster_id: (required)
         :param str id: (required)
         :return: V1ClusterUsageRestriction
@@ -4469,7 +4469,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_update_cluster_usage_restriction_with_http_info(body, cluster_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_update_cluster_usage_restriction_with_http_info(self, body: 'UsagerestrictionsIdBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1ClusterUsageRestriction':  # noqa: E501
+    def cluster_service_update_cluster_usage_restriction_with_http_info(self, body: 'ClusterServiceUpdateClusterUsageRestrictionBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1ClusterUsageRestriction':  # noqa: E501
         """cluster_service_update_cluster_usage_restriction  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4478,7 +4478,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UsagerestrictionsIdBody body: (required)
+        :param ClusterServiceUpdateClusterUsageRestrictionBody body: (required)
         :param str cluster_id: (required)
         :param str id: (required)
         :return: V1ClusterUsageRestriction
@@ -4559,7 +4559,7 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_update_project_cluster(self, body: 'ClustersIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
+    def cluster_service_update_project_cluster(self, body: 'ClusterServiceUpdateProjectClusterBody', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
         """cluster_service_update_project_cluster  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4568,7 +4568,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClustersIdBody1 body: (required)
+        :param ClusterServiceUpdateProjectClusterBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: Externalv1Cluster
@@ -4582,7 +4582,7 @@ class ClusterServiceApi(object):
             (data) = self.cluster_service_update_project_cluster_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_update_project_cluster_with_http_info(self, body: 'ClustersIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
+    def cluster_service_update_project_cluster_with_http_info(self, body: 'ClusterServiceUpdateProjectClusterBody', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1Cluster':  # noqa: E501
         """cluster_service_update_project_cluster  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4591,7 +4591,7 @@ class ClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClustersIdBody1 body: (required)
+        :param ClusterServiceUpdateProjectClusterBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: Externalv1Cluster

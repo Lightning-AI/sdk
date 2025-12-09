@@ -427,7 +427,7 @@ class BlogPostsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def blog_posts_service_update_blog_post(self, body: 'BlogpostsIdBody', id: 'str', **kwargs) -> 'V1BlogPost':  # noqa: E501
+    def blog_posts_service_update_blog_post(self, body: 'BlogPostsServiceUpdateBlogPostBody', id: 'str', **kwargs) -> 'V1BlogPost':  # noqa: E501
         """blog_posts_service_update_blog_post  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -436,7 +436,7 @@ class BlogPostsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param BlogpostsIdBody body: (required)
+        :param BlogPostsServiceUpdateBlogPostBody body: (required)
         :param str id: (required)
         :return: V1BlogPost
                  If the method is called asynchronously,
@@ -449,7 +449,7 @@ class BlogPostsServiceApi(object):
             (data) = self.blog_posts_service_update_blog_post_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def blog_posts_service_update_blog_post_with_http_info(self, body: 'BlogpostsIdBody', id: 'str', **kwargs) -> 'V1BlogPost':  # noqa: E501
+    def blog_posts_service_update_blog_post_with_http_info(self, body: 'BlogPostsServiceUpdateBlogPostBody', id: 'str', **kwargs) -> 'V1BlogPost':  # noqa: E501
         """blog_posts_service_update_blog_post  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -458,7 +458,7 @@ class BlogPostsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param BlogpostsIdBody body: (required)
+        :param BlogPostsServiceUpdateBlogPostBody body: (required)
         :param str id: (required)
         :return: V1BlogPost
                  If the method is called asynchronously,

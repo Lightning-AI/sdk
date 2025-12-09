@@ -471,6 +471,7 @@ class V1DataConnection(object):
     def is_billable_folder(self) -> 'bool':
         """Gets the is_billable_folder of this V1DataConnection.  # noqa: E501
 
+        Identifies data connections that are folders such as gcs_folders, s3_folders, r2_folders and efs folders that we do bill for actually.  # noqa: E501
 
         :return: The is_billable_folder of this V1DataConnection.  # noqa: E501
         :rtype: bool
@@ -481,6 +482,7 @@ class V1DataConnection(object):
     def is_billable_folder(self, is_billable_folder: 'bool'):
         """Sets the is_billable_folder of this V1DataConnection.
 
+        Identifies data connections that are folders such as gcs_folders, s3_folders, r2_folders and efs folders that we do bill for actually.  # noqa: E501
 
         :param is_billable_folder: The is_billable_folder of this V1DataConnection.  # noqa: E501
         :type: bool
@@ -765,6 +767,7 @@ class V1DataConnection(object):
     def total_daily_read_bytes(self) -> 'str':
         """Gets the total_daily_read_bytes of this V1DataConnection.  # noqa: E501
 
+        Used to track the daily read bytes for drive assets (like efs) that a customer utilizes. This will help us ensure that we're presenting the customer with the more accurate look at their EFS cost footprint.  # noqa: E501
 
         :return: The total_daily_read_bytes of this V1DataConnection.  # noqa: E501
         :rtype: str
@@ -775,6 +778,7 @@ class V1DataConnection(object):
     def total_daily_read_bytes(self, total_daily_read_bytes: 'str'):
         """Sets the total_daily_read_bytes of this V1DataConnection.
 
+        Used to track the daily read bytes for drive assets (like efs) that a customer utilizes. This will help us ensure that we're presenting the customer with the more accurate look at their EFS cost footprint.  # noqa: E501
 
         :param total_daily_read_bytes: The total_daily_read_bytes of this V1DataConnection.  # noqa: E501
         :type: str
@@ -786,6 +790,7 @@ class V1DataConnection(object):
     def total_daily_write_bytes(self) -> 'str':
         """Gets the total_daily_write_bytes of this V1DataConnection.  # noqa: E501
 
+        Used to track the daily write bytes for drive assets (like write) that a customer utilizes. This will help us ensure that we're presenting the customer with the more accurate look at their EFS cost footprint.  # noqa: E501
 
         :return: The total_daily_write_bytes of this V1DataConnection.  # noqa: E501
         :rtype: str
@@ -796,6 +801,7 @@ class V1DataConnection(object):
     def total_daily_write_bytes(self, total_daily_write_bytes: 'str'):
         """Sets the total_daily_write_bytes of this V1DataConnection.
 
+        Used to track the daily write bytes for drive assets (like write) that a customer utilizes. This will help us ensure that we're presenting the customer with the more accurate look at their EFS cost footprint.  # noqa: E501
 
         :param total_daily_write_bytes: The total_daily_write_bytes of this V1DataConnection.  # noqa: E501
         :type: str

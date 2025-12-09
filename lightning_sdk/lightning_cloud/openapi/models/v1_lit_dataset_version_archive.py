@@ -371,6 +371,7 @@ class V1LitDatasetVersionArchive(object):
     def version(self) -> 'str':
         """Gets the version of this V1LitDatasetVersionArchive.  # noqa: E501
 
+        v1, v2, v3, etc.  # noqa: E501
 
         :return: The version of this V1LitDatasetVersionArchive.  # noqa: E501
         :rtype: str
@@ -381,6 +382,7 @@ class V1LitDatasetVersionArchive(object):
     def version(self, version: 'str'):
         """Sets the version of this V1LitDatasetVersionArchive.
 
+        v1, v2, v3, etc.  # noqa: E501
 
         :param version: The version of this V1LitDatasetVersionArchive.  # noqa: E501
         :type: str

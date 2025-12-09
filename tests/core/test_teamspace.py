@@ -8,7 +8,7 @@ import pytest
 import lightning_sdk
 from lightning_sdk.job import Job
 from lightning_sdk.lightning_cloud.openapi import (
-    Create,
+    DataConnectionServiceCreateDataConnectionBody,
     Externalv1LightningappInstance,
     V1AWSDirectV1,
     V1CloudProvider,
@@ -639,7 +639,7 @@ def test_new_folder_agnostic(
     ts.new_folder("test-folder")
 
     mock_teamspace_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
-        Create(
+        DataConnectionServiceCreateDataConnectionBody(
             name="test-folder",
             create_resources=True,
             force=True,
@@ -702,7 +702,7 @@ def test_new_folder_byoc(
     ts.new_folder("test-folder", cloud_account="byoc-cluster")
 
     mock_teamspace_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
-        Create(
+        DataConnectionServiceCreateDataConnectionBody(
             name="test-folder",
             create_resources=True,
             force=True,
@@ -770,7 +770,7 @@ def test_new_connection_efs(mock_cloud_account_client, mock_teamspace_client, in
     )
 
     mock_teamspace_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
-        Create(
+        DataConnectionServiceCreateDataConnectionBody(
             name="test-connection-efs",
             create_resources=False,
             force=True,

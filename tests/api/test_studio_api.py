@@ -11,9 +11,9 @@ from lightning_sdk.api import studio_api as studio_api_module
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
+    CloudSpaceServiceCreateCloudSpaceBody,
     Externalv1CloudSpaceInstanceStatus,
     Externalv1LightningappInstance,
-    ProjectIdCloudspacesBody,
     V1AWSDirectV1,
     V1CloudProvider,
     V1CloudSpace,
@@ -101,7 +101,7 @@ def test_get_studio_error(mock_list_cloudspaces):
 )
 def test_create_studio(mock_create_cloud_space, mock_create_lightning_run, _, cloud_account, sandbox, disable_secrets):
     def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         return V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -127,7 +127,7 @@ def test_create_studio(mock_create_cloud_space, mock_create_lightning_run, _, cl
 
     mock_create_cloud_space.assert_called_once_with(
         mock.ANY,
-        ProjectIdCloudspacesBody(
+        CloudSpaceServiceCreateCloudSpaceBody(
             cluster_id=cloud_account,
             name="st-abc",
             display_name="st-abc",

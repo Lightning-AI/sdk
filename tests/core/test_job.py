@@ -10,7 +10,7 @@ from lightning_sdk.job.v2 import _JobV2
 from lightning_sdk.job.work import Work
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1LightningappInstance,
-    JobsIdBody1,
+    JobsServiceUpdateJobBody,
     V1ComputeConfig,
     V1EnvVar,
     V1Job,
@@ -422,7 +422,9 @@ def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker)
     job.stop()
 
     assert get_job_mock.call_count == 6
-    update_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc001", body=JobsIdBody1(state="stop"))
+    update_job_mock.assert_called_once_with(
+        id="test-job-id", project_id="ts-abc001", body=JobsServiceUpdateJobBody(state="stop")
+    )
 
 
 def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocker):

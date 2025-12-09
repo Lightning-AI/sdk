@@ -4,14 +4,12 @@ from unittest import mock
 import pytest
 
 from lightning_sdk.api.mmt_api import MMTApiV1, MMTApiV2
-
-try:
-    from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
-except ImportError:
-    from lightning_sdk.lightning_cloud.openapi import AppsIdBody
 from lightning_sdk.lightning_cloud.openapi import (
-    MultimachinejobsIdBody,
-    ProjectIdMultimachinejobsBody,
+    CloudSpaceServiceCreateCloudSpaceAppInstanceBody as AppsIdBody,
+)
+from lightning_sdk.lightning_cloud.openapi import (
+    JobsServiceCreateMultiMachineJobBody,
+    JobsServiceUpdateMultiMachineJobBody,
     V1EnvVar,
     V1JobSpec,
     V1MultiMachineJob,
@@ -132,7 +130,7 @@ def test_mmt_v2_submit_job():
         image_secret_ref="",
         path_mappings=[],
     )
-    body = ProjectIdMultimachinejobsBody(name="test-job", spec=spec, cluster_id="c-abc", machines=5)
+    body = JobsServiceCreateMultiMachineJobBody(name="test-job", spec=spec, cluster_id="c-abc", machines=5)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
     create_job_mock = mock.MagicMock()
@@ -176,7 +174,7 @@ def test_mmt_v2_submit_job():
         ],
         requested_run_duration_seconds="500",
     )
-    body = ProjectIdMultimachinejobsBody(name="test-job", spec=spec, cluster_id="c-abc", machines=2)
+    body = JobsServiceCreateMultiMachineJobBody(name="test-job", spec=spec, cluster_id="c-abc", machines=2)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
 
@@ -288,7 +286,7 @@ def test_mmt_stop(job_states: List[str], total_calls_get_job: int, called_update
         update_job_mock.assert_called_once_with(
             id="test-job-id",
             project_id="ts-abc",
-            body=MultimachinejobsIdBody(desired_state="MultiMachineJob_STATE_STOP"),
+            body=JobsServiceUpdateMultiMachineJobBody(desired_state="MultiMachineJob_STATE_STOP"),
         )
     else:
         update_job_mock.assert_not_called()

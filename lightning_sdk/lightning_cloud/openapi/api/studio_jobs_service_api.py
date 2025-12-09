@@ -43,7 +43,7 @@ class StudioJobsServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def studio_jobs_service_create_studio_job(self, body: 'StudioappJobsBody', project_id: 'str', **kwargs) -> 'V1StudioJob':  # noqa: E501
+    def studio_jobs_service_create_studio_job(self, body: 'StudioJobsServiceCreateStudioJobBody', project_id: 'str', **kwargs) -> 'V1StudioJob':  # noqa: E501
         """studio_jobs_service_create_studio_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class StudioJobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param StudioappJobsBody body: (required)
+        :param StudioJobsServiceCreateStudioJobBody body: (required)
         :param str project_id: (required)
         :return: V1StudioJob
                  If the method is called asynchronously,
@@ -65,7 +65,7 @@ class StudioJobsServiceApi(object):
             (data) = self.studio_jobs_service_create_studio_job_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def studio_jobs_service_create_studio_job_with_http_info(self, body: 'StudioappJobsBody', project_id: 'str', **kwargs) -> 'V1StudioJob':  # noqa: E501
+    def studio_jobs_service_create_studio_job_with_http_info(self, body: 'StudioJobsServiceCreateStudioJobBody', project_id: 'str', **kwargs) -> 'V1StudioJob':  # noqa: E501
         """studio_jobs_service_create_studio_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,7 +74,7 @@ class StudioJobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param StudioappJobsBody body: (required)
+        :param StudioJobsServiceCreateStudioJobBody body: (required)
         :param str project_id: (required)
         :return: V1StudioJob
                  If the method is called asynchronously,
@@ -553,7 +553,7 @@ class StudioJobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def studio_jobs_service_update_studio_job(self, body: 'JobsIdBody3', project_id: 'str', id: 'str', **kwargs) -> 'V1StudioJob':  # noqa: E501
+    def studio_jobs_service_update_studio_job(self, body: 'StudioJobsServiceUpdateStudioJobBody', project_id: 'str', id: 'str', **kwargs) -> 'V1StudioJob':  # noqa: E501
         """studio_jobs_service_update_studio_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -562,7 +562,7 @@ class StudioJobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobsIdBody3 body: (required)
+        :param StudioJobsServiceUpdateStudioJobBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1StudioJob
@@ -576,7 +576,7 @@ class StudioJobsServiceApi(object):
             (data) = self.studio_jobs_service_update_studio_job_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def studio_jobs_service_update_studio_job_with_http_info(self, body: 'JobsIdBody3', project_id: 'str', id: 'str', **kwargs) -> 'V1StudioJob':  # noqa: E501
+    def studio_jobs_service_update_studio_job_with_http_info(self, body: 'StudioJobsServiceUpdateStudioJobBody', project_id: 'str', id: 'str', **kwargs) -> 'V1StudioJob':  # noqa: E501
         """studio_jobs_service_update_studio_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -585,7 +585,7 @@ class StudioJobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobsIdBody3 body: (required)
+        :param StudioJobsServiceUpdateStudioJobBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1StudioJob

@@ -43,7 +43,7 @@ class QuestServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def quest_service_complete_quest(self, body: 'object', id: 'str', **kwargs) -> 'V1Quest':  # noqa: E501
+    def quest_service_complete_quest(self, body: 'QuestServiceCompleteQuestBody', id: 'str', **kwargs) -> 'V1Quest':  # noqa: E501
         """CompleteQuest attempts to verify the quest is completed.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class QuestServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param QuestServiceCompleteQuestBody body: (required)
         :param str id: (required)
         :return: V1Quest
                  If the method is called asynchronously,
@@ -65,7 +65,7 @@ class QuestServiceApi(object):
             (data) = self.quest_service_complete_quest_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def quest_service_complete_quest_with_http_info(self, body: 'object', id: 'str', **kwargs) -> 'V1Quest':  # noqa: E501
+    def quest_service_complete_quest_with_http_info(self, body: 'QuestServiceCompleteQuestBody', id: 'str', **kwargs) -> 'V1Quest':  # noqa: E501
         """CompleteQuest attempts to verify the quest is completed.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,7 +74,7 @@ class QuestServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param QuestServiceCompleteQuestBody body: (required)
         :param str id: (required)
         :return: V1Quest
                  If the method is called asynchronously,
@@ -326,7 +326,7 @@ class QuestServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def quest_service_start_quest(self, body: 'object', id: 'str', **kwargs) -> 'V1Quest':  # noqa: E501
+    def quest_service_start_quest(self, body: 'QuestServiceStartQuestBody', id: 'str', **kwargs) -> 'V1Quest':  # noqa: E501
         """StartQuest begins the quest  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -335,7 +335,7 @@ class QuestServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param QuestServiceStartQuestBody body: (required)
         :param str id: (required)
         :return: V1Quest
                  If the method is called asynchronously,
@@ -348,7 +348,7 @@ class QuestServiceApi(object):
             (data) = self.quest_service_start_quest_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def quest_service_start_quest_with_http_info(self, body: 'object', id: 'str', **kwargs) -> 'V1Quest':  # noqa: E501
+    def quest_service_start_quest_with_http_info(self, body: 'QuestServiceStartQuestBody', id: 'str', **kwargs) -> 'V1Quest':  # noqa: E501
         """StartQuest begins the quest  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -357,7 +357,7 @@ class QuestServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param QuestServiceStartQuestBody body: (required)
         :param str id: (required)
         :return: V1Quest
                  If the method is called asynchronously,

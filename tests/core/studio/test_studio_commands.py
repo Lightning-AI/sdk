@@ -5,8 +5,8 @@ import pytest
 
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.lightning_cloud.openapi import (
+    CloudSpaceServiceCreateCloudSpaceBody,
     Externalv1CloudSpaceInstanceStatus,
-    ProjectIdCloudspacesBody,
     V1CloudSpace,
     V1CloudSpaceInstanceStartupStatus,
     V1ExecuteCloudSpaceCommandResponse,
@@ -96,7 +96,7 @@ def test_run_command(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -223,7 +223,7 @@ def test_run_command_error(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -346,7 +346,7 @@ def test_run_command_exit_code(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -474,7 +474,7 @@ def test_run_command_and_detach(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,

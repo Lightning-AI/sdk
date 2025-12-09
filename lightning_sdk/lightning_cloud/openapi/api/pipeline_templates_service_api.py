@@ -233,7 +233,7 @@ class PipelineTemplatesServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def pipeline_templates_service_update_pipeline_template(self, body: 'PipelinetemplatesIdBody', id: 'str', **kwargs) -> 'V1PipelineTemplate':  # noqa: E501
+    def pipeline_templates_service_update_pipeline_template(self, body: 'PipelineTemplatesServiceUpdatePipelineTemplateBody', id: 'str', **kwargs) -> 'V1PipelineTemplate':  # noqa: E501
         """pipeline_templates_service_update_pipeline_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -242,7 +242,7 @@ class PipelineTemplatesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param PipelinetemplatesIdBody body: (required)
+        :param PipelineTemplatesServiceUpdatePipelineTemplateBody body: (required)
         :param str id: (required)
         :return: V1PipelineTemplate
                  If the method is called asynchronously,
@@ -255,7 +255,7 @@ class PipelineTemplatesServiceApi(object):
             (data) = self.pipeline_templates_service_update_pipeline_template_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def pipeline_templates_service_update_pipeline_template_with_http_info(self, body: 'PipelinetemplatesIdBody', id: 'str', **kwargs) -> 'V1PipelineTemplate':  # noqa: E501
+    def pipeline_templates_service_update_pipeline_template_with_http_info(self, body: 'PipelineTemplatesServiceUpdatePipelineTemplateBody', id: 'str', **kwargs) -> 'V1PipelineTemplate':  # noqa: E501
         """pipeline_templates_service_update_pipeline_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -264,7 +264,7 @@ class PipelineTemplatesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param PipelinetemplatesIdBody body: (required)
+        :param PipelineTemplatesServiceUpdatePipelineTemplateBody body: (required)
         :param str id: (required)
         :return: V1PipelineTemplate
                  If the method is called asynchronously,

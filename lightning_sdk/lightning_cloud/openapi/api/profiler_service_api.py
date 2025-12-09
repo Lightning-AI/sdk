@@ -43,7 +43,7 @@ class ProfilerServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def profiler_service_create_profiler_capture(self, body: 'ProfilerCapturesBody', project_id: 'str', **kwargs) -> 'V1ProfilerCapture':  # noqa: E501
+    def profiler_service_create_profiler_capture(self, body: 'ProfilerServiceCreateProfilerCaptureBody', project_id: 'str', **kwargs) -> 'V1ProfilerCapture':  # noqa: E501
         """profiler_service_create_profiler_capture  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class ProfilerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProfilerCapturesBody body: (required)
+        :param ProfilerServiceCreateProfilerCaptureBody body: (required)
         :param str project_id: (required)
         :return: V1ProfilerCapture
                  If the method is called asynchronously,
@@ -65,7 +65,7 @@ class ProfilerServiceApi(object):
             (data) = self.profiler_service_create_profiler_capture_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def profiler_service_create_profiler_capture_with_http_info(self, body: 'ProfilerCapturesBody', project_id: 'str', **kwargs) -> 'V1ProfilerCapture':  # noqa: E501
+    def profiler_service_create_profiler_capture_with_http_info(self, body: 'ProfilerServiceCreateProfilerCaptureBody', project_id: 'str', **kwargs) -> 'V1ProfilerCapture':  # noqa: E501
         """profiler_service_create_profiler_capture  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,7 +74,7 @@ class ProfilerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProfilerCapturesBody body: (required)
+        :param ProfilerServiceCreateProfilerCaptureBody body: (required)
         :param str project_id: (required)
         :return: V1ProfilerCapture
                  If the method is called asynchronously,
@@ -444,7 +444,7 @@ class ProfilerServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def profiler_service_update_profiler_capture(self, body: 'CapturesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ProfilerCapture':  # noqa: E501
+    def profiler_service_update_profiler_capture(self, body: 'ProfilerServiceUpdateProfilerCaptureBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ProfilerCapture':  # noqa: E501
         """profiler_service_update_profiler_capture  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -453,7 +453,7 @@ class ProfilerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CapturesIdBody body: (required)
+        :param ProfilerServiceUpdateProfilerCaptureBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1ProfilerCapture
@@ -467,7 +467,7 @@ class ProfilerServiceApi(object):
             (data) = self.profiler_service_update_profiler_capture_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def profiler_service_update_profiler_capture_with_http_info(self, body: 'CapturesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ProfilerCapture':  # noqa: E501
+    def profiler_service_update_profiler_capture_with_http_info(self, body: 'ProfilerServiceUpdateProfilerCaptureBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ProfilerCapture':  # noqa: E501
         """profiler_service_update_profiler_capture  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -476,7 +476,7 @@ class ProfilerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CapturesIdBody body: (required)
+        :param ProfilerServiceUpdateProfilerCaptureBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1ProfilerCapture
@@ -557,7 +557,7 @@ class ProfilerServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def profiler_service_update_profiler_enabled(self, body: 'ProfilerEnabledBody', project_id: 'str', **kwargs) -> 'V1ProfilerEnabledResponse':  # noqa: E501
+    def profiler_service_update_profiler_enabled(self, body: 'ProfilerServiceUpdateProfilerEnabledBody', project_id: 'str', **kwargs) -> 'V1ProfilerEnabledResponse':  # noqa: E501
         """profiler_service_update_profiler_enabled  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -566,7 +566,7 @@ class ProfilerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProfilerEnabledBody body: (required)
+        :param ProfilerServiceUpdateProfilerEnabledBody body: (required)
         :param str project_id: (required)
         :return: V1ProfilerEnabledResponse
                  If the method is called asynchronously,
@@ -579,7 +579,7 @@ class ProfilerServiceApi(object):
             (data) = self.profiler_service_update_profiler_enabled_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def profiler_service_update_profiler_enabled_with_http_info(self, body: 'ProfilerEnabledBody', project_id: 'str', **kwargs) -> 'V1ProfilerEnabledResponse':  # noqa: E501
+    def profiler_service_update_profiler_enabled_with_http_info(self, body: 'ProfilerServiceUpdateProfilerEnabledBody', project_id: 'str', **kwargs) -> 'V1ProfilerEnabledResponse':  # noqa: E501
         """profiler_service_update_profiler_enabled  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -588,7 +588,7 @@ class ProfilerServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProfilerEnabledBody body: (required)
+        :param ProfilerServiceUpdateProfilerEnabledBody body: (required)
         :param str project_id: (required)
         :return: V1ProfilerEnabledResponse
                  If the method is called asynchronously,

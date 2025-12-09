@@ -235,6 +235,7 @@ class V1BillingSubscription(object):
     def period(self) -> 'str':
         """Gets the period of this V1BillingSubscription.  # noqa: E501
 
+        TODO: This should use BillingPeriod enum.  # noqa: E501
 
         :return: The period of this V1BillingSubscription.  # noqa: E501
         :rtype: str
@@ -245,6 +246,7 @@ class V1BillingSubscription(object):
     def period(self, period: 'str'):
         """Sets the period of this V1BillingSubscription.
 
+        TODO: This should use BillingPeriod enum.  # noqa: E501
 
         :param period: The period of this V1BillingSubscription.  # noqa: E501
         :type: str

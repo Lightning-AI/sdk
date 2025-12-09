@@ -17,13 +17,16 @@ from tqdm.auto import tqdm
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__, _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.openapi import (
     CloudSpaceServiceApi,
+    CloudSpaceServiceCreateCloudSpaceAppInstanceBody,
     Externalv1LightningappInstance,
     ModelsStoreApi,
-    ProjectIdStorageBody,
-    StorageCompleteBody,
+    ModelsStoreCompleteMultiPartUploadBody,
+    ModelsStoreCreateMultiPartUploadBody,
+    ModelsStoreGetModelFileUploadUrlsBody,
     StorageServiceApi,
-    UploadIdCompleteBody,
-    UploadIdPartsBody,
+    StorageServiceCompleteUploadProjectArtifactBody,
+    StorageServiceUploadProjectArtifactBody,
+    StorageServiceUploadProjectArtifactPartsBody,
     V1CompletedPart,
     V1CompleteUpload,
     V1PathMapping,
@@ -31,20 +34,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1SignedUrl,
     V1UploadProjectArtifactPartsResponse,
     V1UploadProjectArtifactResponse,
-    VersionUploadsBody,
 )
 from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive import V1ModelVersionArchive
-
-try:
-    from lightning_sdk.lightning_cloud.openapi import AppsIdBody1 as AppsIdBody
-except ImportError:
-    from lightning_sdk.lightning_cloud.openapi import AppsIdBody
-
-try:
-    from lightning_sdk.lightning_cloud.openapi import UploadsUploadIdBody1 as UploadsUploadIdBody
-except ImportError:
-    from lightning_sdk.lightning_cloud.openapi import UploadsUploadIdBody
-
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
@@ -120,7 +111,7 @@ class _FileUploader:
 
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload."""
-        body = ProjectIdStorageBody(cluster_id=self.cloud_account, filename=self.remote_path)
+        body = StorageServiceUploadProjectArtifactBody(cluster_id=self.cloud_account, filename=self.remote_path)
         resp: V1UploadProjectArtifactResponse = self.client.storage_service_upload_project_artifact(
             body=body, project_id=self.teamspace_id
         )
@@ -135,7 +126,7 @@ class _FileUploader:
             for batch in batched_indices:
                 completed.extend(self._process_upload_batch(executor=p, batch=batch, upload_id=resp.upload_id))
 
-        completed_body = StorageCompleteBody(
+        completed_body = StorageServiceCompleteUploadProjectArtifactBody(
             cluster_id=self.cloud_account, filename=self.remote_path, parts=completed, upload_id=resp.upload_id
         )
         self.client.storage_service_complete_upload_project_artifact(body=completed_body, project_id=self.teamspace_id)
@@ -148,7 +139,9 @@ class _FileUploader:
 
     def _request_urls(self, parts: List[int], upload_id: str) -> List[V1PresignedUrl]:
         """Requests urls for a batch of parts."""
-        body = UploadsUploadIdBody(filename=self.remote_path, parts=parts, cluster_id=self.cloud_account)
+        body = StorageServiceUploadProjectArtifactPartsBody(
+            filename=self.remote_path, parts=parts, cluster_id=self.cloud_account
+        )
         resp: V1UploadProjectArtifactPartsResponse = self.client.storage_service_upload_project_artifact_parts(
             body, self.teamspace_id, upload_id
         )
@@ -244,7 +237,7 @@ class _ModelFileUploader:
 
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload."""
-        body = VersionUploadsBody(filepath=self.remote_path)
+        body = ModelsStoreCreateMultiPartUploadBody(filepath=self.remote_path)
         resp = self.api.models_store_create_multi_part_upload(
             body,
             project_id=self.teamspace_id,
@@ -262,7 +255,7 @@ class _ModelFileUploader:
             for batch in batched_indices:
                 completed.extend(self._process_upload_batch(executor=p, batch=batch, upload_id=resp.upload_id))
 
-        completed_body = UploadIdCompleteBody(filepath=self.remote_path, parts=completed)
+        completed_body = ModelsStoreCompleteMultiPartUploadBody(filepath=self.remote_path, parts=completed)
         self.api.models_store_complete_multi_part_upload(
             completed_body,
             project_id=self.teamspace_id,
@@ -279,7 +272,7 @@ class _ModelFileUploader:
 
     def _request_urls(self, parts: List[int], upload_id: str) -> List[V1SignedUrl]:
         """Requests urls for a batch of parts."""
-        body = UploadIdPartsBody(filepath=self.remote_path, parts=parts)
+        body = ModelsStoreGetModelFileUploadUrlsBody(filepath=self.remote_path, parts=parts)
         resp = self.api.models_store_get_model_file_upload_urls(
             body,
             project_id=self.teamspace_id,
@@ -676,7 +669,7 @@ def _create_app(
         other_arguments["spot"] = str(other_arguments["interruptible"]).lower()
         del other_arguments["interruptible"]
 
-    body = AppsIdBody(
+    body = CloudSpaceServiceCreateCloudSpaceAppInstanceBody(
         cluster_id=cloud_account,
         plugin_arguments=other_arguments,
         service_id=os.getenv(_LIGHTNING_SERVICE_EXECUTION_ID_KEY),

@@ -1,6 +1,6 @@
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.lightning_cloud.openapi import LicenseKeyValidateBody, ProductLicenseServiceApi
+from lightning_sdk.lightning_cloud.openapi import ProductLicenseServiceApi, ProductLicenseServiceValidateLicenseBody
 
 
 class LicenseApi:
@@ -26,7 +26,7 @@ class LicenseApi:
         """
         try:
             response = self._api.product_license_service_validate_license(
-                body=LicenseKeyValidateBody(product_id=product_id), license_key=license_key
+                body=ProductLicenseServiceValidateLicenseBody(product_id=product_id), license_key=license_key
             )
             return response.is_valid
         except Exception:

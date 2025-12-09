@@ -43,7 +43,7 @@ class LitDatasetServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def lit_dataset_service_complete_lit_dataset_multi_part_upload(self, body: 'UploadIdCompleteBody', project_id: 'str', dataset_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1CompleteLitDatasetMultiPartUploadResponse':  # noqa: E501
+    def lit_dataset_service_complete_lit_dataset_multi_part_upload(self, body: 'LitDatasetServiceCompleteLitDatasetMultiPartUploadBody', project_id: 'str', dataset_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1CompleteLitDatasetMultiPartUploadResponse':  # noqa: E501
         """CompleteMultiPartUpload marks the given file-parts as completed/uploaded. Once all parts of a file are completed, the file will materialize in S3 storage  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadIdCompleteBody body: (required)
+        :param LitDatasetServiceCompleteLitDatasetMultiPartUploadBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -68,7 +68,7 @@ class LitDatasetServiceApi(object):
             (data) = self.lit_dataset_service_complete_lit_dataset_multi_part_upload_with_http_info(body, project_id, dataset_id, version, upload_id, **kwargs)  # noqa: E501
             return data
 
-    def lit_dataset_service_complete_lit_dataset_multi_part_upload_with_http_info(self, body: 'UploadIdCompleteBody', project_id: 'str', dataset_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1CompleteLitDatasetMultiPartUploadResponse':  # noqa: E501
+    def lit_dataset_service_complete_lit_dataset_multi_part_upload_with_http_info(self, body: 'LitDatasetServiceCompleteLitDatasetMultiPartUploadBody', project_id: 'str', dataset_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1CompleteLitDatasetMultiPartUploadResponse':  # noqa: E501
         """CompleteMultiPartUpload marks the given file-parts as completed/uploaded. Once all parts of a file are completed, the file will materialize in S3 storage  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -77,7 +77,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadIdCompleteBody body: (required)
+        :param LitDatasetServiceCompleteLitDatasetMultiPartUploadBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -172,7 +172,7 @@ class LitDatasetServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_dataset_service_complete_lit_dataset_upload(self, body: 'object', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1CompleteLitDatasetUploadResponse':  # noqa: E501
+    def lit_dataset_service_complete_lit_dataset_upload(self, body: 'LitDatasetServiceCompleteLitDatasetUploadBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1CompleteLitDatasetUploadResponse':  # noqa: E501
         """CompleteLitDatasetUpload marks the dataset upload as complete after all files have been uploaded. This marks the dataset as visible for list, delete, etc. operations  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -181,7 +181,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param LitDatasetServiceCompleteLitDatasetUploadBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -196,7 +196,7 @@ class LitDatasetServiceApi(object):
             (data) = self.lit_dataset_service_complete_lit_dataset_upload_with_http_info(body, project_id, dataset_id, version, **kwargs)  # noqa: E501
             return data
 
-    def lit_dataset_service_complete_lit_dataset_upload_with_http_info(self, body: 'object', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1CompleteLitDatasetUploadResponse':  # noqa: E501
+    def lit_dataset_service_complete_lit_dataset_upload_with_http_info(self, body: 'LitDatasetServiceCompleteLitDatasetUploadBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1CompleteLitDatasetUploadResponse':  # noqa: E501
         """CompleteLitDatasetUpload marks the dataset upload as complete after all files have been uploaded. This marks the dataset as visible for list, delete, etc. operations  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -205,7 +205,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param LitDatasetServiceCompleteLitDatasetUploadBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -293,7 +293,7 @@ class LitDatasetServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_dataset_service_create_lit_dataset(self, body: 'ProjectIdLitdatasetsBody', project_id: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
+    def lit_dataset_service_create_lit_dataset(self, body: 'LitDatasetServiceCreateLitDatasetBody', project_id: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
         """CreateLitDataset creates a new dataset.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -302,7 +302,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdLitdatasetsBody body: (required)
+        :param LitDatasetServiceCreateLitDatasetBody body: (required)
         :param str project_id: (required)
         :return: V1LitDataset
                  If the method is called asynchronously,
@@ -315,7 +315,7 @@ class LitDatasetServiceApi(object):
             (data) = self.lit_dataset_service_create_lit_dataset_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def lit_dataset_service_create_lit_dataset_with_http_info(self, body: 'ProjectIdLitdatasetsBody', project_id: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
+    def lit_dataset_service_create_lit_dataset_with_http_info(self, body: 'LitDatasetServiceCreateLitDatasetBody', project_id: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
         """CreateLitDataset creates a new dataset.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -324,7 +324,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdLitdatasetsBody body: (required)
+        :param LitDatasetServiceCreateLitDatasetBody body: (required)
         :param str project_id: (required)
         :return: V1LitDataset
                  If the method is called asynchronously,
@@ -398,7 +398,7 @@ class LitDatasetServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_dataset_service_create_lit_dataset_multi_part_upload(self, body: 'VersionUploadsBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1CreateLitDatasetMultiPartUploadResponse':  # noqa: E501
+    def lit_dataset_service_create_lit_dataset_multi_part_upload(self, body: 'LitDatasetServiceCreateLitDatasetMultiPartUploadBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1CreateLitDatasetMultiPartUploadResponse':  # noqa: E501
         """CreateMultiPartUpload initiates the multi-part upload of a file. Multiple requests can be sent to upload different files.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -407,7 +407,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionUploadsBody body: (required)
+        :param LitDatasetServiceCreateLitDatasetMultiPartUploadBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -422,7 +422,7 @@ class LitDatasetServiceApi(object):
             (data) = self.lit_dataset_service_create_lit_dataset_multi_part_upload_with_http_info(body, project_id, dataset_id, version, **kwargs)  # noqa: E501
             return data
 
-    def lit_dataset_service_create_lit_dataset_multi_part_upload_with_http_info(self, body: 'VersionUploadsBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1CreateLitDatasetMultiPartUploadResponse':  # noqa: E501
+    def lit_dataset_service_create_lit_dataset_multi_part_upload_with_http_info(self, body: 'LitDatasetServiceCreateLitDatasetMultiPartUploadBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1CreateLitDatasetMultiPartUploadResponse':  # noqa: E501
         """CreateMultiPartUpload initiates the multi-part upload of a file. Multiple requests can be sent to upload different files.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -431,7 +431,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionUploadsBody body: (required)
+        :param LitDatasetServiceCreateLitDatasetMultiPartUploadBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -519,7 +519,7 @@ class LitDatasetServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_dataset_service_create_lit_dataset_version(self, body: 'DatasetIdVersionsBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1LitDatasetVersionArchive':  # noqa: E501
+    def lit_dataset_service_create_lit_dataset_version(self, body: 'LitDatasetServiceCreateLitDatasetVersionBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1LitDatasetVersionArchive':  # noqa: E501
         """CreateLitDatasetVersion creates a new version of a dataset and marks the upload as incomplete. Files are expected to be uploaded using the multi-part upload APIs below, followed by a completion request after which the dataset will be fully visible (can list, delete etc.)  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -528,9 +528,9 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DatasetIdVersionsBody body: (required)
+        :param LitDatasetServiceCreateLitDatasetVersionBody body: (required)
         :param str project_id: (required)
-        :param str dataset_id: (required)
+        :param str dataset_id: Unique ID of the dataset (required)
         :return: V1LitDatasetVersionArchive
                  If the method is called asynchronously,
                  returns the request thread.
@@ -542,7 +542,7 @@ class LitDatasetServiceApi(object):
             (data) = self.lit_dataset_service_create_lit_dataset_version_with_http_info(body, project_id, dataset_id, **kwargs)  # noqa: E501
             return data
 
-    def lit_dataset_service_create_lit_dataset_version_with_http_info(self, body: 'DatasetIdVersionsBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1LitDatasetVersionArchive':  # noqa: E501
+    def lit_dataset_service_create_lit_dataset_version_with_http_info(self, body: 'LitDatasetServiceCreateLitDatasetVersionBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1LitDatasetVersionArchive':  # noqa: E501
         """CreateLitDatasetVersion creates a new version of a dataset and marks the upload as incomplete. Files are expected to be uploaded using the multi-part upload APIs below, followed by a completion request after which the dataset will be fully visible (can list, delete etc.)  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -551,9 +551,9 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DatasetIdVersionsBody body: (required)
+        :param LitDatasetServiceCreateLitDatasetVersionBody body: (required)
         :param str project_id: (required)
-        :param str dataset_id: (required)
+        :param str dataset_id: Unique ID of the dataset (required)
         :return: V1LitDatasetVersionArchive
                  If the method is called asynchronously,
                  returns the request thread.
@@ -951,7 +951,7 @@ class LitDatasetServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_dataset_service_get_lit_dataset_file_upload_urls(self, body: 'UploadIdPartsBody', project_id: 'str', dataset_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1GetLitDatasetFileUploadUrlsResponse':  # noqa: E501
+    def lit_dataset_service_get_lit_dataset_file_upload_urls(self, body: 'LitDatasetServiceGetLitDatasetFileUploadUrlsBody', project_id: 'str', dataset_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1GetLitDatasetFileUploadUrlsResponse':  # noqa: E501
         """GetLitDatasetFileUploadUrls requests pre-signed URLs for a given number of file parts.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -960,7 +960,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadIdPartsBody body: (required)
+        :param LitDatasetServiceGetLitDatasetFileUploadUrlsBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -976,7 +976,7 @@ class LitDatasetServiceApi(object):
             (data) = self.lit_dataset_service_get_lit_dataset_file_upload_urls_with_http_info(body, project_id, dataset_id, version, upload_id, **kwargs)  # noqa: E501
             return data
 
-    def lit_dataset_service_get_lit_dataset_file_upload_urls_with_http_info(self, body: 'UploadIdPartsBody', project_id: 'str', dataset_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1GetLitDatasetFileUploadUrlsResponse':  # noqa: E501
+    def lit_dataset_service_get_lit_dataset_file_upload_urls_with_http_info(self, body: 'LitDatasetServiceGetLitDatasetFileUploadUrlsBody', project_id: 'str', dataset_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1GetLitDatasetFileUploadUrlsResponse':  # noqa: E501
         """GetLitDatasetFileUploadUrls requests pre-signed URLs for a given number of file parts.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -985,7 +985,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadIdPartsBody body: (required)
+        :param LitDatasetServiceGetLitDatasetFileUploadUrlsBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -1504,7 +1504,7 @@ class LitDatasetServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_dataset_service_set_lit_dataset_default_version(self, body: 'VersionDefaultBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
+    def lit_dataset_service_set_lit_dataset_default_version(self, body: 'LitDatasetServiceSetLitDatasetDefaultVersionBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
         """lit_dataset_service_set_lit_dataset_default_version  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1513,7 +1513,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionDefaultBody body: (required)
+        :param LitDatasetServiceSetLitDatasetDefaultVersionBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -1528,7 +1528,7 @@ class LitDatasetServiceApi(object):
             (data) = self.lit_dataset_service_set_lit_dataset_default_version_with_http_info(body, project_id, dataset_id, version, **kwargs)  # noqa: E501
             return data
 
-    def lit_dataset_service_set_lit_dataset_default_version_with_http_info(self, body: 'VersionDefaultBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
+    def lit_dataset_service_set_lit_dataset_default_version_with_http_info(self, body: 'LitDatasetServiceSetLitDatasetDefaultVersionBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
         """lit_dataset_service_set_lit_dataset_default_version  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1537,7 +1537,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionDefaultBody body: (required)
+        :param LitDatasetServiceSetLitDatasetDefaultVersionBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -1625,7 +1625,7 @@ class LitDatasetServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_dataset_service_update_lit_dataset(self, body: 'LitdatasetsDatasetIdBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
+    def lit_dataset_service_update_lit_dataset(self, body: 'LitDatasetServiceUpdateLitDatasetBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
         """UpdateLitDataset updates the dataset, in particular the dataset's name.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1634,7 +1634,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LitdatasetsDatasetIdBody body: (required)
+        :param LitDatasetServiceUpdateLitDatasetBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :return: V1LitDataset
@@ -1648,7 +1648,7 @@ class LitDatasetServiceApi(object):
             (data) = self.lit_dataset_service_update_lit_dataset_with_http_info(body, project_id, dataset_id, **kwargs)  # noqa: E501
             return data
 
-    def lit_dataset_service_update_lit_dataset_with_http_info(self, body: 'LitdatasetsDatasetIdBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
+    def lit_dataset_service_update_lit_dataset_with_http_info(self, body: 'LitDatasetServiceUpdateLitDatasetBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1LitDataset':  # noqa: E501
         """UpdateLitDataset updates the dataset, in particular the dataset's name.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1657,7 +1657,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LitdatasetsDatasetIdBody body: (required)
+        :param LitDatasetServiceUpdateLitDatasetBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :return: V1LitDataset
@@ -1738,7 +1738,7 @@ class LitDatasetServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_dataset_service_update_lit_dataset_version(self, body: 'VersionsVersionBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1LitDatasetVersionArchive':  # noqa: E501
+    def lit_dataset_service_update_lit_dataset_version(self, body: 'LitDatasetServiceUpdateLitDatasetVersionBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1LitDatasetVersionArchive':  # noqa: E501
         """UpdateLitDatasetVersion updates the dataset version, in particular the dataset version's name.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1747,7 +1747,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionsVersionBody body: (required)
+        :param LitDatasetServiceUpdateLitDatasetVersionBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -1762,7 +1762,7 @@ class LitDatasetServiceApi(object):
             (data) = self.lit_dataset_service_update_lit_dataset_version_with_http_info(body, project_id, dataset_id, version, **kwargs)  # noqa: E501
             return data
 
-    def lit_dataset_service_update_lit_dataset_version_with_http_info(self, body: 'VersionsVersionBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1LitDatasetVersionArchive':  # noqa: E501
+    def lit_dataset_service_update_lit_dataset_version_with_http_info(self, body: 'LitDatasetServiceUpdateLitDatasetVersionBody', project_id: 'str', dataset_id: 'str', version: 'str', **kwargs) -> 'V1LitDatasetVersionArchive':  # noqa: E501
         """UpdateLitDatasetVersion updates the dataset version, in particular the dataset version's name.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1771,7 +1771,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionsVersionBody body: (required)
+        :param LitDatasetServiceUpdateLitDatasetVersionBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :param str version: (required)
@@ -1859,7 +1859,7 @@ class LitDatasetServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_dataset_service_update_lit_dataset_visibility(self, body: 'DatasetIdVisibilityBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1UpdateLitDatasetVisibilityResponse':  # noqa: E501
+    def lit_dataset_service_update_lit_dataset_visibility(self, body: 'LitDatasetServiceUpdateLitDatasetVisibilityBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1UpdateLitDatasetVisibilityResponse':  # noqa: E501
         """UpdateLitDatasetVisibility updates the dataset version, mainly switch between public and private  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1868,7 +1868,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DatasetIdVisibilityBody body: (required)
+        :param LitDatasetServiceUpdateLitDatasetVisibilityBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :return: V1UpdateLitDatasetVisibilityResponse
@@ -1882,7 +1882,7 @@ class LitDatasetServiceApi(object):
             (data) = self.lit_dataset_service_update_lit_dataset_visibility_with_http_info(body, project_id, dataset_id, **kwargs)  # noqa: E501
             return data
 
-    def lit_dataset_service_update_lit_dataset_visibility_with_http_info(self, body: 'DatasetIdVisibilityBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1UpdateLitDatasetVisibilityResponse':  # noqa: E501
+    def lit_dataset_service_update_lit_dataset_visibility_with_http_info(self, body: 'LitDatasetServiceUpdateLitDatasetVisibilityBody', project_id: 'str', dataset_id: 'str', **kwargs) -> 'V1UpdateLitDatasetVisibilityResponse':  # noqa: E501
         """UpdateLitDatasetVisibility updates the dataset version, mainly switch between public and private  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1891,7 +1891,7 @@ class LitDatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DatasetIdVisibilityBody body: (required)
+        :param LitDatasetServiceUpdateLitDatasetVisibilityBody body: (required)
         :param str project_id: (required)
         :param str dataset_id: (required)
         :return: V1UpdateLitDatasetVisibilityResponse

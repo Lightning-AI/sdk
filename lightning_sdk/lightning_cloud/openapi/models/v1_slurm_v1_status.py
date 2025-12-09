@@ -142,6 +142,7 @@ class V1SlurmV1Status(object):
     def ssh_username(self) -> 'str':
         """Gets the ssh_username of this V1SlurmV1Status.  # noqa: E501
 
+        Username to use for SSH (i.e. s_<cluster ID>)  # noqa: E501
 
         :return: The ssh_username of this V1SlurmV1Status.  # noqa: E501
         :rtype: str
@@ -152,6 +153,7 @@ class V1SlurmV1Status(object):
     def ssh_username(self, ssh_username: 'str'):
         """Sets the ssh_username of this V1SlurmV1Status.
 
+        Username to use for SSH (i.e. s_<cluster ID>)  # noqa: E501
 
         :param ssh_username: The ssh_username of this V1SlurmV1Status.  # noqa: E501
         :type: str

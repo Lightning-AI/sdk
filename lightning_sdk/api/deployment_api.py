@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Literal, Optional, Union
 
 from lightning_sdk.api.utils import _machine_to_compute_name, resolve_path_mappings
 from lightning_sdk.lightning_cloud.openapi import (
-    CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs,
+    JobsServiceCreateDeploymentBody,
     V1AutoscalingSpec,
     V1AutoscalingTargetMetric,
     V1Deployment,
@@ -233,7 +233,7 @@ class DeploymentApi:
     ) -> V1Deployment:
         return self._client.jobs_service_create_deployment(
             project_id=deployment.project_id,
-            body=CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs(
+            body=JobsServiceCreateDeploymentBody(
                 cloudspace_id=deployment.cloudspace_id,
                 autoscaling=deployment.autoscaling,
                 cluster_id=deployment.spec.cluster_id,

@@ -144,7 +144,7 @@ class VolumeServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def volume_service_update_volume(self, body: 'VolumesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateVolumeResponse':  # noqa: E501
+    def volume_service_update_volume(self, body: 'VolumeServiceUpdateVolumeBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateVolumeResponse':  # noqa: E501
         """volume_service_update_volume  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -153,7 +153,7 @@ class VolumeServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VolumesIdBody body: (required)
+        :param VolumeServiceUpdateVolumeBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateVolumeResponse
@@ -167,7 +167,7 @@ class VolumeServiceApi(object):
             (data) = self.volume_service_update_volume_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def volume_service_update_volume_with_http_info(self, body: 'VolumesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateVolumeResponse':  # noqa: E501
+    def volume_service_update_volume_with_http_info(self, body: 'VolumeServiceUpdateVolumeBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateVolumeResponse':  # noqa: E501
         """volume_service_update_volume  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -176,7 +176,7 @@ class VolumeServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VolumesIdBody body: (required)
+        :param VolumeServiceUpdateVolumeBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateVolumeResponse

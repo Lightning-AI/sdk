@@ -188,6 +188,7 @@ class V1AwsDataConnection(object):
     def secret_arn_value(self) -> 'str':
         """Gets the secret_arn_value of this V1AwsDataConnection.  # noqa: E501
 
+        The secret Arn Role. Only populated on the GridLet side during reconciliation.  # noqa: E501
 
         :return: The secret_arn_value of this V1AwsDataConnection.  # noqa: E501
         :rtype: str
@@ -198,6 +199,7 @@ class V1AwsDataConnection(object):
     def secret_arn_value(self, secret_arn_value: 'str'):
         """Sets the secret_arn_value of this V1AwsDataConnection.
 
+        The secret Arn Role. Only populated on the GridLet side during reconciliation.  # noqa: E501
 
         :param secret_arn_value: The secret_arn_value of this V1AwsDataConnection.  # noqa: E501
         :type: str

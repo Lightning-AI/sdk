@@ -240,6 +240,7 @@ class V1Experiment(object):
     def seed(self) -> 'str':
         """Gets the seed of this V1Experiment.  # noqa: E501
 
+        Seed that's unique to each experiment to guarantee unique shuffling.  # noqa: E501
 
         :return: The seed of this V1Experiment.  # noqa: E501
         :rtype: str
@@ -250,6 +251,7 @@ class V1Experiment(object):
     def seed(self, seed: 'str'):
         """Sets the seed of this V1Experiment.
 
+        Seed that's unique to each experiment to guarantee unique shuffling.  # noqa: E501
 
         :param seed: The seed of this V1Experiment.  # noqa: E501
         :type: str

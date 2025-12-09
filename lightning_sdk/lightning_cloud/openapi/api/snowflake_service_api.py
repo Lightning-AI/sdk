@@ -156,7 +156,7 @@ class SnowflakeServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def snowflake_service_create_snowflake_connection(self, body: 'ProjectIdSnowflakeBody', project_id: 'str', **kwargs) -> 'V1CreateSnowflakeConnectionResponse':  # noqa: E501
+    def snowflake_service_create_snowflake_connection(self, body: 'SnowflakeServiceCreateSnowflakeConnectionBody', project_id: 'str', **kwargs) -> 'V1CreateSnowflakeConnectionResponse':  # noqa: E501
         """snowflake_service_create_snowflake_connection  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -165,7 +165,7 @@ class SnowflakeServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdSnowflakeBody body: (required)
+        :param SnowflakeServiceCreateSnowflakeConnectionBody body: (required)
         :param str project_id: (required)
         :return: V1CreateSnowflakeConnectionResponse
                  If the method is called asynchronously,
@@ -178,7 +178,7 @@ class SnowflakeServiceApi(object):
             (data) = self.snowflake_service_create_snowflake_connection_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def snowflake_service_create_snowflake_connection_with_http_info(self, body: 'ProjectIdSnowflakeBody', project_id: 'str', **kwargs) -> 'V1CreateSnowflakeConnectionResponse':  # noqa: E501
+    def snowflake_service_create_snowflake_connection_with_http_info(self, body: 'SnowflakeServiceCreateSnowflakeConnectionBody', project_id: 'str', **kwargs) -> 'V1CreateSnowflakeConnectionResponse':  # noqa: E501
         """snowflake_service_create_snowflake_connection  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -187,7 +187,7 @@ class SnowflakeServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdSnowflakeBody body: (required)
+        :param SnowflakeServiceCreateSnowflakeConnectionBody body: (required)
         :param str project_id: (required)
         :return: V1CreateSnowflakeConnectionResponse
                  If the method is called asynchronously,
@@ -261,7 +261,7 @@ class SnowflakeServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def snowflake_service_execute_snowflake_query(self, body: 'SnowflakeQueryBody', project_id: 'str', **kwargs) -> 'V1ExecuteSnowflakeQueryResponse':  # noqa: E501
+    def snowflake_service_execute_snowflake_query(self, body: 'SnowflakeServiceExecuteSnowflakeQueryBody', project_id: 'str', **kwargs) -> 'V1ExecuteSnowflakeQueryResponse':  # noqa: E501
         """snowflake_service_execute_snowflake_query  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -270,7 +270,7 @@ class SnowflakeServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SnowflakeQueryBody body: (required)
+        :param SnowflakeServiceExecuteSnowflakeQueryBody body: (required)
         :param str project_id: (required)
         :return: V1ExecuteSnowflakeQueryResponse
                  If the method is called asynchronously,
@@ -283,7 +283,7 @@ class SnowflakeServiceApi(object):
             (data) = self.snowflake_service_execute_snowflake_query_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def snowflake_service_execute_snowflake_query_with_http_info(self, body: 'SnowflakeQueryBody', project_id: 'str', **kwargs) -> 'V1ExecuteSnowflakeQueryResponse':  # noqa: E501
+    def snowflake_service_execute_snowflake_query_with_http_info(self, body: 'SnowflakeServiceExecuteSnowflakeQueryBody', project_id: 'str', **kwargs) -> 'V1ExecuteSnowflakeQueryResponse':  # noqa: E501
         """snowflake_service_execute_snowflake_query  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -292,7 +292,7 @@ class SnowflakeServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SnowflakeQueryBody body: (required)
+        :param SnowflakeServiceExecuteSnowflakeQueryBody body: (required)
         :param str project_id: (required)
         :return: V1ExecuteSnowflakeQueryResponse
                  If the method is called asynchronously,
@@ -366,7 +366,7 @@ class SnowflakeServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def snowflake_service_export_snowflake_query(self, body: 'SnowflakeExportBody', project_id: 'str', **kwargs) -> 'V1ExportSnowflakeQueryResponse':  # noqa: E501
+    def snowflake_service_export_snowflake_query(self, body: 'SnowflakeServiceExportSnowflakeQueryBody', project_id: 'str', **kwargs) -> 'V1ExportSnowflakeQueryResponse':  # noqa: E501
         """snowflake_service_export_snowflake_query  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -375,7 +375,7 @@ class SnowflakeServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SnowflakeExportBody body: (required)
+        :param SnowflakeServiceExportSnowflakeQueryBody body: (required)
         :param str project_id: (required)
         :return: V1ExportSnowflakeQueryResponse
                  If the method is called asynchronously,
@@ -388,7 +388,7 @@ class SnowflakeServiceApi(object):
             (data) = self.snowflake_service_export_snowflake_query_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def snowflake_service_export_snowflake_query_with_http_info(self, body: 'SnowflakeExportBody', project_id: 'str', **kwargs) -> 'V1ExportSnowflakeQueryResponse':  # noqa: E501
+    def snowflake_service_export_snowflake_query_with_http_info(self, body: 'SnowflakeServiceExportSnowflakeQueryBody', project_id: 'str', **kwargs) -> 'V1ExportSnowflakeQueryResponse':  # noqa: E501
         """snowflake_service_export_snowflake_query  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -397,7 +397,7 @@ class SnowflakeServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SnowflakeExportBody body: (required)
+        :param SnowflakeServiceExportSnowflakeQueryBody body: (required)
         :param str project_id: (required)
         :return: V1ExportSnowflakeQueryResponse
                  If the method is called asynchronously,
@@ -572,7 +572,7 @@ class SnowflakeServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def snowflake_service_update_snowflake_query(self, body: 'QueryQueryIdBody', project_id: 'str', query_id: 'str', **kwargs) -> 'V1UpdateSnowflakeQueryResponse':  # noqa: E501
+    def snowflake_service_update_snowflake_query(self, body: 'SnowflakeServiceUpdateSnowflakeQueryBody', project_id: 'str', query_id: 'str', **kwargs) -> 'V1UpdateSnowflakeQueryResponse':  # noqa: E501
         """snowflake_service_update_snowflake_query  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -581,7 +581,7 @@ class SnowflakeServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param QueryQueryIdBody body: (required)
+        :param SnowflakeServiceUpdateSnowflakeQueryBody body: (required)
         :param str project_id: (required)
         :param str query_id: (required)
         :return: V1UpdateSnowflakeQueryResponse
@@ -595,7 +595,7 @@ class SnowflakeServiceApi(object):
             (data) = self.snowflake_service_update_snowflake_query_with_http_info(body, project_id, query_id, **kwargs)  # noqa: E501
             return data
 
-    def snowflake_service_update_snowflake_query_with_http_info(self, body: 'QueryQueryIdBody', project_id: 'str', query_id: 'str', **kwargs) -> 'V1UpdateSnowflakeQueryResponse':  # noqa: E501
+    def snowflake_service_update_snowflake_query_with_http_info(self, body: 'SnowflakeServiceUpdateSnowflakeQueryBody', project_id: 'str', query_id: 'str', **kwargs) -> 'V1UpdateSnowflakeQueryResponse':  # noqa: E501
         """snowflake_service_update_snowflake_query  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -604,7 +604,7 @@ class SnowflakeServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param QueryQueryIdBody body: (required)
+        :param SnowflakeServiceUpdateSnowflakeQueryBody body: (required)
         :param str project_id: (required)
         :param str query_id: (required)
         :return: V1UpdateSnowflakeQueryResponse

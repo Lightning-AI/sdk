@@ -140,7 +140,7 @@ class ProjectsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def projects_service_create_project_cluster_binding(self, body: 'ProjectIdProjectclustersbindingsBody', project_id: 'str', **kwargs) -> 'V1ProjectClusterBinding':  # noqa: E501
+    def projects_service_create_project_cluster_binding(self, body: 'ProjectsServiceCreateProjectClusterBindingBody', project_id: 'str', **kwargs) -> 'V1ProjectClusterBinding':  # noqa: E501
         """projects_service_create_project_cluster_binding  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -149,7 +149,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdProjectclustersbindingsBody body: (required)
+        :param ProjectsServiceCreateProjectClusterBindingBody body: (required)
         :param str project_id: (required)
         :return: V1ProjectClusterBinding
                  If the method is called asynchronously,
@@ -162,7 +162,7 @@ class ProjectsServiceApi(object):
             (data) = self.projects_service_create_project_cluster_binding_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def projects_service_create_project_cluster_binding_with_http_info(self, body: 'ProjectIdProjectclustersbindingsBody', project_id: 'str', **kwargs) -> 'V1ProjectClusterBinding':  # noqa: E501
+    def projects_service_create_project_cluster_binding_with_http_info(self, body: 'ProjectsServiceCreateProjectClusterBindingBody', project_id: 'str', **kwargs) -> 'V1ProjectClusterBinding':  # noqa: E501
         """projects_service_create_project_cluster_binding  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -171,7 +171,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdProjectclustersbindingsBody body: (required)
+        :param ProjectsServiceCreateProjectClusterBindingBody body: (required)
         :param str project_id: (required)
         :return: V1ProjectClusterBinding
                  If the method is called asynchronously,
@@ -245,7 +245,7 @@ class ProjectsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def projects_service_create_project_membership(self, body: 'ProjectIdMembershipsBody', project_id: 'str', **kwargs) -> 'V1ProjectMembership':  # noqa: E501
+    def projects_service_create_project_membership(self, body: 'ProjectsServiceCreateProjectMembershipBody', project_id: 'str', **kwargs) -> 'V1ProjectMembership':  # noqa: E501
         """projects_service_create_project_membership  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -254,7 +254,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdMembershipsBody body: (required)
+        :param ProjectsServiceCreateProjectMembershipBody body: (required)
         :param str project_id: (required)
         :return: V1ProjectMembership
                  If the method is called asynchronously,
@@ -267,7 +267,7 @@ class ProjectsServiceApi(object):
             (data) = self.projects_service_create_project_membership_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def projects_service_create_project_membership_with_http_info(self, body: 'ProjectIdMembershipsBody', project_id: 'str', **kwargs) -> 'V1ProjectMembership':  # noqa: E501
+    def projects_service_create_project_membership_with_http_info(self, body: 'ProjectsServiceCreateProjectMembershipBody', project_id: 'str', **kwargs) -> 'V1ProjectMembership':  # noqa: E501
         """projects_service_create_project_membership  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -276,7 +276,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdMembershipsBody body: (required)
+        :param ProjectsServiceCreateProjectMembershipBody body: (required)
         :param str project_id: (required)
         :return: V1ProjectMembership
                  If the method is called asynchronously,
@@ -350,7 +350,7 @@ class ProjectsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def projects_service_create_project_membership_role_binding(self, body: 'UserIdMembershiprolebindingsBody1', project_id: 'str', user_id: 'str', **kwargs) -> 'V1ProjectMembershipRoleBinding':  # noqa: E501
+    def projects_service_create_project_membership_role_binding(self, body: 'ProjectsServiceCreateProjectMembershipRoleBindingBody', project_id: 'str', user_id: 'str', **kwargs) -> 'V1ProjectMembershipRoleBinding':  # noqa: E501
         """projects_service_create_project_membership_role_binding  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -359,7 +359,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UserIdMembershiprolebindingsBody1 body: (required)
+        :param ProjectsServiceCreateProjectMembershipRoleBindingBody body: (required)
         :param str project_id: (required)
         :param str user_id: (required)
         :return: V1ProjectMembershipRoleBinding
@@ -373,7 +373,7 @@ class ProjectsServiceApi(object):
             (data) = self.projects_service_create_project_membership_role_binding_with_http_info(body, project_id, user_id, **kwargs)  # noqa: E501
             return data
 
-    def projects_service_create_project_membership_role_binding_with_http_info(self, body: 'UserIdMembershiprolebindingsBody1', project_id: 'str', user_id: 'str', **kwargs) -> 'V1ProjectMembershipRoleBinding':  # noqa: E501
+    def projects_service_create_project_membership_role_binding_with_http_info(self, body: 'ProjectsServiceCreateProjectMembershipRoleBindingBody', project_id: 'str', user_id: 'str', **kwargs) -> 'V1ProjectMembershipRoleBinding':  # noqa: E501
         """projects_service_create_project_membership_role_binding  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -382,7 +382,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UserIdMembershiprolebindingsBody1 body: (required)
+        :param ProjectsServiceCreateProjectMembershipRoleBindingBody body: (required)
         :param str project_id: (required)
         :param str user_id: (required)
         :return: V1ProjectMembershipRoleBinding
@@ -463,7 +463,7 @@ class ProjectsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def projects_service_create_project_role(self, body: 'ProjectsProjectIdBody', project_id: 'str', **kwargs) -> 'V1Role':  # noqa: E501
+    def projects_service_create_project_role(self, body: 'ProjectsServiceCreateProjectRoleBody', project_id: 'str', **kwargs) -> 'V1Role':  # noqa: E501
         """projects_service_create_project_role  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -472,7 +472,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectsProjectIdBody body: (required)
+        :param ProjectsServiceCreateProjectRoleBody body: (required)
         :param str project_id: (required)
         :return: V1Role
                  If the method is called asynchronously,
@@ -485,7 +485,7 @@ class ProjectsServiceApi(object):
             (data) = self.projects_service_create_project_role_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def projects_service_create_project_role_with_http_info(self, body: 'ProjectsProjectIdBody', project_id: 'str', **kwargs) -> 'V1Role':  # noqa: E501
+    def projects_service_create_project_role_with_http_info(self, body: 'ProjectsServiceCreateProjectRoleBody', project_id: 'str', **kwargs) -> 'V1Role':  # noqa: E501
         """projects_service_create_project_role  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -494,7 +494,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectsProjectIdBody body: (required)
+        :param ProjectsServiceCreateProjectRoleBody body: (required)
         :param str project_id: (required)
         :return: V1Role
                  If the method is called asynchronously,
@@ -578,8 +578,8 @@ class ProjectsServiceApi(object):
 
         :param async_req bool
         :param str id: (required)
-        :param str balance_destination_id:
-        :param bool is_org:
+        :param str balance_destination_id: Destination project/org to transfer remaining balance to
+        :param bool is_org: Destination is org
         :return: V1DeleteProjectResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -601,8 +601,8 @@ class ProjectsServiceApi(object):
 
         :param async_req bool
         :param str id: (required)
-        :param str balance_destination_id:
-        :param bool is_org:
+        :param str balance_destination_id: Destination project/org to transfer remaining balance to
+        :param bool is_org: Destination is org
         :return: V1DeleteProjectResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1279,7 +1279,7 @@ class ProjectsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def projects_service_invite_project_membership(self, body: 'ProjectIdInviteBody', project_id: 'str', **kwargs) -> 'V1InviteProjectMembershipResponse':  # noqa: E501
+    def projects_service_invite_project_membership(self, body: 'ProjectsServiceInviteProjectMembershipBody', project_id: 'str', **kwargs) -> 'V1InviteProjectMembershipResponse':  # noqa: E501
         """projects_service_invite_project_membership  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1288,7 +1288,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdInviteBody body: (required)
+        :param ProjectsServiceInviteProjectMembershipBody body: (required)
         :param str project_id: project_id to invite to (required)
         :return: V1InviteProjectMembershipResponse
                  If the method is called asynchronously,
@@ -1301,7 +1301,7 @@ class ProjectsServiceApi(object):
             (data) = self.projects_service_invite_project_membership_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def projects_service_invite_project_membership_with_http_info(self, body: 'ProjectIdInviteBody', project_id: 'str', **kwargs) -> 'V1InviteProjectMembershipResponse':  # noqa: E501
+    def projects_service_invite_project_membership_with_http_info(self, body: 'ProjectsServiceInviteProjectMembershipBody', project_id: 'str', **kwargs) -> 'V1InviteProjectMembershipResponse':  # noqa: E501
         """projects_service_invite_project_membership  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1310,7 +1310,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdInviteBody body: (required)
+        :param ProjectsServiceInviteProjectMembershipBody body: (required)
         :param str project_id: project_id to invite to (required)
         :return: V1InviteProjectMembershipResponse
                  If the method is called asynchronously,
@@ -1865,7 +1865,7 @@ class ProjectsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def projects_service_update_project(self, body: 'ProjectsIdBody', id: 'str', **kwargs) -> 'V1Project':  # noqa: E501
+    def projects_service_update_project(self, body: 'ProjectsServiceUpdateProjectBody', id: 'str', **kwargs) -> 'V1Project':  # noqa: E501
         """projects_service_update_project  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1874,7 +1874,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectsIdBody body: (required)
+        :param ProjectsServiceUpdateProjectBody body: (required)
         :param str id: (required)
         :return: V1Project
                  If the method is called asynchronously,
@@ -1887,7 +1887,7 @@ class ProjectsServiceApi(object):
             (data) = self.projects_service_update_project_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def projects_service_update_project_with_http_info(self, body: 'ProjectsIdBody', id: 'str', **kwargs) -> 'V1Project':  # noqa: E501
+    def projects_service_update_project_with_http_info(self, body: 'ProjectsServiceUpdateProjectBody', id: 'str', **kwargs) -> 'V1Project':  # noqa: E501
         """projects_service_update_project  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1896,7 +1896,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectsIdBody body: (required)
+        :param ProjectsServiceUpdateProjectBody body: (required)
         :param str id: (required)
         :return: V1Project
                  If the method is called asynchronously,
@@ -1970,7 +1970,7 @@ class ProjectsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def projects_service_update_project_tab_order(self, body: 'ProjectTabManagementMessages', project_id: 'str', **kwargs) -> 'V1UpdateProjectTabOrderResponse':  # noqa: E501
+    def projects_service_update_project_tab_order(self, body: 'ProjectsServiceUpdateProjectTabOrderBody', project_id: 'str', **kwargs) -> 'V1UpdateProjectTabOrderResponse':  # noqa: E501
         """Project tab management  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1979,7 +1979,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectTabManagementMessages body: (required)
+        :param ProjectsServiceUpdateProjectTabOrderBody body: (required)
         :param str project_id: (required)
         :return: V1UpdateProjectTabOrderResponse
                  If the method is called asynchronously,
@@ -1992,7 +1992,7 @@ class ProjectsServiceApi(object):
             (data) = self.projects_service_update_project_tab_order_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def projects_service_update_project_tab_order_with_http_info(self, body: 'ProjectTabManagementMessages', project_id: 'str', **kwargs) -> 'V1UpdateProjectTabOrderResponse':  # noqa: E501
+    def projects_service_update_project_tab_order_with_http_info(self, body: 'ProjectsServiceUpdateProjectTabOrderBody', project_id: 'str', **kwargs) -> 'V1UpdateProjectTabOrderResponse':  # noqa: E501
         """Project tab management  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2001,7 +2001,7 @@ class ProjectsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectTabManagementMessages body: (required)
+        :param ProjectsServiceUpdateProjectTabOrderBody body: (required)
         :param str project_id: (required)
         :return: V1UpdateProjectTabOrderResponse
                  If the method is called asynchronously,

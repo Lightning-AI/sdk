@@ -140,7 +140,7 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def billing_service_create_billing_upgrade_trigger_record(self, body: 'UserIdUpgradetriggerBody', user_id: 'str', **kwargs) -> 'V1CreateBillingUpgradeTriggerRecordResponse':  # noqa: E501
+    def billing_service_create_billing_upgrade_trigger_record(self, body: 'BillingServiceCreateBillingUpgradeTriggerRecordBody', user_id: 'str', **kwargs) -> 'V1CreateBillingUpgradeTriggerRecordResponse':  # noqa: E501
         """billing_service_create_billing_upgrade_trigger_record  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -149,7 +149,7 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UserIdUpgradetriggerBody body: (required)
+        :param BillingServiceCreateBillingUpgradeTriggerRecordBody body: (required)
         :param str user_id: (required)
         :return: V1CreateBillingUpgradeTriggerRecordResponse
                  If the method is called asynchronously,
@@ -162,7 +162,7 @@ class BillingServiceApi(object):
             (data) = self.billing_service_create_billing_upgrade_trigger_record_with_http_info(body, user_id, **kwargs)  # noqa: E501
             return data
 
-    def billing_service_create_billing_upgrade_trigger_record_with_http_info(self, body: 'UserIdUpgradetriggerBody', user_id: 'str', **kwargs) -> 'V1CreateBillingUpgradeTriggerRecordResponse':  # noqa: E501
+    def billing_service_create_billing_upgrade_trigger_record_with_http_info(self, body: 'BillingServiceCreateBillingUpgradeTriggerRecordBody', user_id: 'str', **kwargs) -> 'V1CreateBillingUpgradeTriggerRecordResponse':  # noqa: E501
         """billing_service_create_billing_upgrade_trigger_record  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -171,7 +171,7 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UserIdUpgradetriggerBody body: (required)
+        :param BillingServiceCreateBillingUpgradeTriggerRecordBody body: (required)
         :param str user_id: (required)
         :return: V1CreateBillingUpgradeTriggerRecordResponse
                  If the method is called asynchronously,
@@ -342,7 +342,7 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def billing_service_create_org_checkout_session(self, body: 'BillingCheckoutBody', org_id: 'str', **kwargs) -> 'V1CreateCheckoutSessionResponse':  # noqa: E501
+    def billing_service_create_org_checkout_session(self, body: 'BillingServiceCreateOrgCheckoutSessionBody', org_id: 'str', **kwargs) -> 'V1CreateCheckoutSessionResponse':  # noqa: E501
         """billing_service_create_org_checkout_session  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -351,7 +351,7 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param BillingCheckoutBody body: (required)
+        :param BillingServiceCreateOrgCheckoutSessionBody body: (required)
         :param str org_id: (required)
         :return: V1CreateCheckoutSessionResponse
                  If the method is called asynchronously,
@@ -364,7 +364,7 @@ class BillingServiceApi(object):
             (data) = self.billing_service_create_org_checkout_session_with_http_info(body, org_id, **kwargs)  # noqa: E501
             return data
 
-    def billing_service_create_org_checkout_session_with_http_info(self, body: 'BillingCheckoutBody', org_id: 'str', **kwargs) -> 'V1CreateCheckoutSessionResponse':  # noqa: E501
+    def billing_service_create_org_checkout_session_with_http_info(self, body: 'BillingServiceCreateOrgCheckoutSessionBody', org_id: 'str', **kwargs) -> 'V1CreateCheckoutSessionResponse':  # noqa: E501
         """billing_service_create_org_checkout_session  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -373,7 +373,7 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param BillingCheckoutBody body: (required)
+        :param BillingServiceCreateOrgCheckoutSessionBody body: (required)
         :param str org_id: (required)
         :return: V1CreateCheckoutSessionResponse
                  If the method is called asynchronously,
@@ -558,7 +558,7 @@ class BillingServiceApi(object):
         :param datetime to:
         :param str user_id:
         :param str org_id:
-        :param bool details:
+        :param bool details: whether to display details of the sessions
         :return: V1GetAssistantSessionDailyAggregatedResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -584,7 +584,7 @@ class BillingServiceApi(object):
         :param datetime to:
         :param str user_id:
         :param str org_id:
-        :param bool details:
+        :param bool details: whether to display details of the sessions
         :return: V1GetAssistantSessionDailyAggregatedResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -756,6 +756,7 @@ class BillingServiceApi(object):
 
         :param async_req bool
         :param str org_id: (required)
+        :param bool include_transactions:
         :return: V1GetProjectBalanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -777,12 +778,13 @@ class BillingServiceApi(object):
 
         :param async_req bool
         :param str org_id: (required)
+        :param bool include_transactions:
         :return: V1GetProjectBalanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id']  # noqa: E501
+        all_params = ['org_id', 'include_transactions']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -809,6 +811,8 @@ class BillingServiceApi(object):
             path_params['orgId'] = params['org_id']  # noqa: E501
 
         query_params = []
+        if 'include_transactions' in params:
+            query_params.append(('includeTransactions', params['include_transactions']))  # noqa: E501
 
         header_params = {}
 
@@ -849,6 +853,7 @@ class BillingServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
+        :param bool include_transactions:
         :return: V1GetProjectBalanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -870,12 +875,13 @@ class BillingServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
+        :param bool include_transactions:
         :return: V1GetProjectBalanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id']  # noqa: E501
+        all_params = ['project_id', 'include_transactions']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -902,6 +908,8 @@ class BillingServiceApi(object):
             path_params['projectId'] = params['project_id']  # noqa: E501
 
         query_params = []
+        if 'include_transactions' in params:
+            query_params.append(('includeTransactions', params['include_transactions']))  # noqa: E501
 
         header_params = {}
 
@@ -941,10 +949,10 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param datetime _from:
-        :param datetime to:
-        :param str resource_id:
+        :param str project_id: required project id (required)
+        :param datetime _from: Optional filter, defaults to the current day
+        :param datetime to: Optional filter, defaults to the current day
+        :param str resource_id: Optional filter based on resource ID, e.g. session or experiment ID
         :return: V1GetProjectComputeUsageResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -965,10 +973,10 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param datetime _from:
-        :param datetime to:
-        :param str resource_id:
+        :param str project_id: required project id (required)
+        :param datetime _from: Optional filter, defaults to the current day
+        :param datetime to: Optional filter, defaults to the current day
+        :param str resource_id: Optional filter based on resource ID, e.g. session or experiment ID
         :return: V1GetProjectComputeUsageResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1049,8 +1057,8 @@ class BillingServiceApi(object):
         :param str project_id:
         :param str resource_id:
         :param str resource_type:
-        :param datetime session_ended_at:
-        :param datetime session_started_at:
+        :param datetime session_ended_at: To request billing sessions details for teamspace storage - since all entries will have the same resource_id
+        :param datetime session_started_at: To request billing sessions details for studios - since all entries will have the same resource_id
         :return: V1GetUsageDetailsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1074,8 +1082,8 @@ class BillingServiceApi(object):
         :param str project_id:
         :param str resource_id:
         :param str resource_type:
-        :param datetime session_ended_at:
-        :param datetime session_started_at:
+        :param datetime session_ended_at: To request billing sessions details for teamspace storage - since all entries will have the same resource_id
+        :param datetime session_started_at: To request billing sessions details for studios - since all entries will have the same resource_id
         :return: V1GetUsageDetailsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1153,15 +1161,15 @@ class BillingServiceApi(object):
         :param async_req bool
         :param str org_id:
         :param str project_id:
-        :param str cluster_id:
-        :param str resource_type:
-        :param str resource_id:
-        :param datetime _from:
-        :param datetime to:
-        :param str user_id:
-        :param str time_zone:
-        :param int limit:
-        :param datetime search_after:
+        :param str cluster_id: Optional, if not specified, takes all clusters of the project
+        :param str resource_type: Optional, if not specified, all resource types will be returned
+        :param str resource_id: Optional, if not specified, all filtered resources will be returned
+        :param datetime _from: Optional, if not specified, we take the project creation / resource creation time
+        :param datetime to: Optional, if not specified, we take the resource deletion time or the current date
+        :param str user_id: Optional, if specified, filters owner by User ID
+        :param str time_zone: UTC offset of the user's timezone
+        :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
+        :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1184,15 +1192,15 @@ class BillingServiceApi(object):
         :param async_req bool
         :param str org_id:
         :param str project_id:
-        :param str cluster_id:
-        :param str resource_type:
-        :param str resource_id:
-        :param datetime _from:
-        :param datetime to:
-        :param str user_id:
-        :param str time_zone:
-        :param int limit:
-        :param datetime search_after:
+        :param str cluster_id: Optional, if not specified, takes all clusters of the project
+        :param str resource_type: Optional, if not specified, all resource types will be returned
+        :param str resource_id: Optional, if not specified, all filtered resources will be returned
+        :param datetime _from: Optional, if not specified, we take the project creation / resource creation time
+        :param datetime to: Optional, if not specified, we take the resource deletion time or the current date
+        :param str user_id: Optional, if specified, filters owner by User ID
+        :param str time_zone: UTC offset of the user's timezone
+        :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
+        :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1280,6 +1288,7 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
+        :param bool include_transactions:
         :return: V1GetUserBalanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1300,12 +1309,13 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
+        :param bool include_transactions:
         :return: V1GetUserBalanceResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = []  # noqa: E501
+        all_params = ['include_transactions']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1326,6 +1336,8 @@ class BillingServiceApi(object):
         path_params = {}
 
         query_params = []
+        if 'include_transactions' in params:
+            query_params.append(('includeTransactions', params['include_transactions']))  # noqa: E501
 
         header_params = {}
 
@@ -1551,9 +1563,9 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id:
-        :param str product_id:
-        :param str tier:
+        :param str org_id: \"\" for PLG user.
+        :param str product_id: Field no longer used, kept for compatibility.
+        :param str tier: If set, return current pricing for the given tier.
         :return: V1QuoteSubscriptionResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1574,9 +1586,9 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id:
-        :param str product_id:
-        :param str tier:
+        :param str org_id: \"\" for PLG user.
+        :param str product_id: Field no longer used, kept for compatibility.
+        :param str tier: If set, return current pricing for the given tier.
         :return: V1QuoteSubscriptionResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1639,7 +1651,7 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def billing_service_transfer_org_balance(self, body: 'BillingTransferBody', org_src_id: 'str', **kwargs) -> 'V1TransferOrgBalanceResponse':  # noqa: E501
+    def billing_service_transfer_org_balance(self, body: 'BillingServiceTransferOrgBalanceBody', org_src_id: 'str', **kwargs) -> 'V1TransferOrgBalanceResponse':  # noqa: E501
         """Org wallet management  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1648,7 +1660,7 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param BillingTransferBody body: (required)
+        :param BillingServiceTransferOrgBalanceBody body: (required)
         :param str org_src_id: (required)
         :return: V1TransferOrgBalanceResponse
                  If the method is called asynchronously,
@@ -1661,7 +1673,7 @@ class BillingServiceApi(object):
             (data) = self.billing_service_transfer_org_balance_with_http_info(body, org_src_id, **kwargs)  # noqa: E501
             return data
 
-    def billing_service_transfer_org_balance_with_http_info(self, body: 'BillingTransferBody', org_src_id: 'str', **kwargs) -> 'V1TransferOrgBalanceResponse':  # noqa: E501
+    def billing_service_transfer_org_balance_with_http_info(self, body: 'BillingServiceTransferOrgBalanceBody', org_src_id: 'str', **kwargs) -> 'V1TransferOrgBalanceResponse':  # noqa: E501
         """Org wallet management  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1670,7 +1682,7 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param BillingTransferBody body: (required)
+        :param BillingServiceTransferOrgBalanceBody body: (required)
         :param str org_src_id: (required)
         :return: V1TransferOrgBalanceResponse
                  If the method is called asynchronously,
@@ -1744,7 +1756,7 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def billing_service_transfer_project_balance(self, body: 'BillingTransferBody1', project_src_id: 'str', **kwargs) -> 'V1TransferProjectBalanceResponse':  # noqa: E501
+    def billing_service_transfer_project_balance(self, body: 'BillingServiceTransferProjectBalanceBody', project_src_id: 'str', **kwargs) -> 'V1TransferProjectBalanceResponse':  # noqa: E501
         """Project wallet management  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1753,7 +1765,7 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param BillingTransferBody1 body: (required)
+        :param BillingServiceTransferProjectBalanceBody body: (required)
         :param str project_src_id: (required)
         :return: V1TransferProjectBalanceResponse
                  If the method is called asynchronously,
@@ -1766,7 +1778,7 @@ class BillingServiceApi(object):
             (data) = self.billing_service_transfer_project_balance_with_http_info(body, project_src_id, **kwargs)  # noqa: E501
             return data
 
-    def billing_service_transfer_project_balance_with_http_info(self, body: 'BillingTransferBody1', project_src_id: 'str', **kwargs) -> 'V1TransferProjectBalanceResponse':  # noqa: E501
+    def billing_service_transfer_project_balance_with_http_info(self, body: 'BillingServiceTransferProjectBalanceBody', project_src_id: 'str', **kwargs) -> 'V1TransferProjectBalanceResponse':  # noqa: E501
         """Project wallet management  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1775,7 +1787,7 @@ class BillingServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param BillingTransferBody1 body: (required)
+        :param BillingServiceTransferProjectBalanceBody body: (required)
         :param str project_src_id: (required)
         :return: V1TransferProjectBalanceResponse
                  If the method is called asynchronously,

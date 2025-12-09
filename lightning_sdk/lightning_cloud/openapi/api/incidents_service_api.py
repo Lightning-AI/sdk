@@ -140,7 +140,7 @@ class IncidentsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def incidents_service_create_incident_message(self, body: 'IncidentIdMessagesBody', incident_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
+    def incidents_service_create_incident_message(self, body: 'IncidentsServiceCreateIncidentMessageBody', incident_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
         """incidents_service_create_incident_message  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -149,7 +149,7 @@ class IncidentsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IncidentIdMessagesBody body: (required)
+        :param IncidentsServiceCreateIncidentMessageBody body: (required)
         :param str incident_id: (required)
         :return: V1IncidentMessage
                  If the method is called asynchronously,
@@ -162,7 +162,7 @@ class IncidentsServiceApi(object):
             (data) = self.incidents_service_create_incident_message_with_http_info(body, incident_id, **kwargs)  # noqa: E501
             return data
 
-    def incidents_service_create_incident_message_with_http_info(self, body: 'IncidentIdMessagesBody', incident_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
+    def incidents_service_create_incident_message_with_http_info(self, body: 'IncidentsServiceCreateIncidentMessageBody', incident_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
         """incidents_service_create_incident_message  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -171,7 +171,7 @@ class IncidentsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IncidentIdMessagesBody body: (required)
+        :param IncidentsServiceCreateIncidentMessageBody body: (required)
         :param str incident_id: (required)
         :return: V1IncidentMessage
                  If the method is called asynchronously,
@@ -737,9 +737,9 @@ class IncidentsServiceApi(object):
         :param async_req bool
         :param str project_id:
         :param str cluster_id:
-        :param str status:
-        :param str type:
-        :param str severity:
+        :param str status: optional filter
+        :param str type: optional filter   - INCIDENT_TYPE_USER_REPORTED: Manually reported by a user
+        :param str severity: optional filter
         :param int page_size:
         :param str page_token:
         :return: V1ListIncidentsResponse
@@ -764,9 +764,9 @@ class IncidentsServiceApi(object):
         :param async_req bool
         :param str project_id:
         :param str cluster_id:
-        :param str status:
-        :param str type:
-        :param str severity:
+        :param str status: optional filter
+        :param str type: optional filter   - INCIDENT_TYPE_USER_REPORTED: Manually reported by a user
+        :param str severity: optional filter
         :param int page_size:
         :param str page_token:
         :return: V1ListIncidentsResponse
@@ -839,7 +839,7 @@ class IncidentsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def incidents_service_update_incident(self, body: 'IncidentsIdBody', id: 'str', **kwargs) -> 'V1Incident':  # noqa: E501
+    def incidents_service_update_incident(self, body: 'IncidentsServiceUpdateIncidentBody', id: 'str', **kwargs) -> 'V1Incident':  # noqa: E501
         """incidents_service_update_incident  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -848,7 +848,7 @@ class IncidentsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IncidentsIdBody body: (required)
+        :param IncidentsServiceUpdateIncidentBody body: (required)
         :param str id: (required)
         :return: V1Incident
                  If the method is called asynchronously,
@@ -861,7 +861,7 @@ class IncidentsServiceApi(object):
             (data) = self.incidents_service_update_incident_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def incidents_service_update_incident_with_http_info(self, body: 'IncidentsIdBody', id: 'str', **kwargs) -> 'V1Incident':  # noqa: E501
+    def incidents_service_update_incident_with_http_info(self, body: 'IncidentsServiceUpdateIncidentBody', id: 'str', **kwargs) -> 'V1Incident':  # noqa: E501
         """incidents_service_update_incident  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -870,7 +870,7 @@ class IncidentsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IncidentsIdBody body: (required)
+        :param IncidentsServiceUpdateIncidentBody body: (required)
         :param str id: (required)
         :return: V1Incident
                  If the method is called asynchronously,
@@ -944,7 +944,7 @@ class IncidentsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def incidents_service_update_incident_message(self, body: 'MessagesMessageIdBody', incident_id: 'str', message_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
+    def incidents_service_update_incident_message(self, body: 'IncidentsServiceUpdateIncidentMessageBody', incident_id: 'str', message_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
         """incidents_service_update_incident_message  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -953,7 +953,7 @@ class IncidentsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MessagesMessageIdBody body: (required)
+        :param IncidentsServiceUpdateIncidentMessageBody body: (required)
         :param str incident_id: (required)
         :param str message_id: (required)
         :return: V1IncidentMessage
@@ -967,7 +967,7 @@ class IncidentsServiceApi(object):
             (data) = self.incidents_service_update_incident_message_with_http_info(body, incident_id, message_id, **kwargs)  # noqa: E501
             return data
 
-    def incidents_service_update_incident_message_with_http_info(self, body: 'MessagesMessageIdBody', incident_id: 'str', message_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
+    def incidents_service_update_incident_message_with_http_info(self, body: 'IncidentsServiceUpdateIncidentMessageBody', incident_id: 'str', message_id: 'str', **kwargs) -> 'V1IncidentMessage':  # noqa: E501
         """incidents_service_update_incident_message  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -976,7 +976,7 @@ class IncidentsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MessagesMessageIdBody body: (required)
+        :param IncidentsServiceUpdateIncidentMessageBody body: (required)
         :param str incident_id: (required)
         :param str message_id: (required)
         :return: V1IncidentMessage

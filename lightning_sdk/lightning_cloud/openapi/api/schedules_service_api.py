@@ -43,7 +43,7 @@ class SchedulesServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def schedules_service_create_schedule(self, body: 'ProjectIdSchedulesBody', project_id: 'str', **kwargs) -> 'V1Schedule':  # noqa: E501
+    def schedules_service_create_schedule(self, body: 'SchedulesServiceCreateScheduleBody', project_id: 'str', **kwargs) -> 'V1Schedule':  # noqa: E501
         """schedules_service_create_schedule  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,8 +52,8 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdSchedulesBody body: (required)
-        :param str project_id: (required)
+        :param SchedulesServiceCreateScheduleBody body: (required)
+        :param str project_id: Required (required)
         :return: V1Schedule
                  If the method is called asynchronously,
                  returns the request thread.
@@ -65,7 +65,7 @@ class SchedulesServiceApi(object):
             (data) = self.schedules_service_create_schedule_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def schedules_service_create_schedule_with_http_info(self, body: 'ProjectIdSchedulesBody', project_id: 'str', **kwargs) -> 'V1Schedule':  # noqa: E501
+    def schedules_service_create_schedule_with_http_info(self, body: 'SchedulesServiceCreateScheduleBody', project_id: 'str', **kwargs) -> 'V1Schedule':  # noqa: E501
         """schedules_service_create_schedule  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,8 +74,8 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdSchedulesBody body: (required)
-        :param str project_id: (required)
+        :param SchedulesServiceCreateScheduleBody body: (required)
+        :param str project_id: Required (required)
         :return: V1Schedule
                  If the method is called asynchronously,
                  returns the request thread.
@@ -148,7 +148,7 @@ class SchedulesServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def schedules_service_create_schedule_run(self, body: 'object', project_id: 'str', cloudspace_id: 'str', schedule_id: 'str', **kwargs) -> 'V1ScheduleRun':  # noqa: E501
+    def schedules_service_create_schedule_run(self, body: 'SchedulesServiceCreateScheduleRunBody', project_id: 'str', cloudspace_id: 'str', schedule_id: 'str', **kwargs) -> 'V1ScheduleRun':  # noqa: E501
         """schedules_service_create_schedule_run  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -157,10 +157,10 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
-        :param str project_id: (required)
-        :param str cloudspace_id: (required)
-        :param str schedule_id: (required)
+        :param SchedulesServiceCreateScheduleRunBody body: (required)
+        :param str project_id: Required (required)
+        :param str cloudspace_id: Required (required)
+        :param str schedule_id: Required (required)
         :return: V1ScheduleRun
                  If the method is called asynchronously,
                  returns the request thread.
@@ -172,7 +172,7 @@ class SchedulesServiceApi(object):
             (data) = self.schedules_service_create_schedule_run_with_http_info(body, project_id, cloudspace_id, schedule_id, **kwargs)  # noqa: E501
             return data
 
-    def schedules_service_create_schedule_run_with_http_info(self, body: 'object', project_id: 'str', cloudspace_id: 'str', schedule_id: 'str', **kwargs) -> 'V1ScheduleRun':  # noqa: E501
+    def schedules_service_create_schedule_run_with_http_info(self, body: 'SchedulesServiceCreateScheduleRunBody', project_id: 'str', cloudspace_id: 'str', schedule_id: 'str', **kwargs) -> 'V1ScheduleRun':  # noqa: E501
         """schedules_service_create_schedule_run  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -181,10 +181,10 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
-        :param str project_id: (required)
-        :param str cloudspace_id: (required)
-        :param str schedule_id: (required)
+        :param SchedulesServiceCreateScheduleRunBody body: (required)
+        :param str project_id: Required (required)
+        :param str cloudspace_id: Required (required)
+        :param str schedule_id: Required (required)
         :return: V1ScheduleRun
                  If the method is called asynchronously,
                  returns the request thread.
@@ -278,8 +278,8 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1DeleteScheduleResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -300,8 +300,8 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1DeleteScheduleResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -379,8 +379,8 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1Schedule
                  If the method is called asynchronously,
                  returns the request thread.
@@ -401,8 +401,8 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1Schedule
                  If the method is called asynchronously,
                  returns the request thread.
@@ -480,10 +480,10 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str cloudspace_id: (required)
-        :param str schedule_id: (required)
-        :param str run_id: (required)
+        :param str project_id: Required (required)
+        :param str cloudspace_id: Required (required)
+        :param str schedule_id: Required (required)
+        :param str run_id: Required (required)
         :return: V1ScheduleRun
                  If the method is called asynchronously,
                  returns the request thread.
@@ -504,10 +504,10 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str cloudspace_id: (required)
-        :param str schedule_id: (required)
-        :param str run_id: (required)
+        :param str project_id: Required (required)
+        :param str cloudspace_id: Required (required)
+        :param str schedule_id: Required (required)
+        :param str run_id: Required (required)
         :return: V1ScheduleRun
                  If the method is called asynchronously,
                  returns the request thread.
@@ -597,9 +597,9 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str cloudspace_id: (required)
-        :param str schedule_id: (required)
+        :param str project_id: Required (required)
+        :param str cloudspace_id: Required (required)
+        :param str schedule_id: Required (required)
         :return: V1ListScheduleRunsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -620,9 +620,9 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str cloudspace_id: (required)
-        :param str schedule_id: (required)
+        :param str project_id: Required (required)
+        :param str cloudspace_id: Required (required)
+        :param str schedule_id: Required (required)
         :return: V1ListScheduleRunsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -706,11 +706,11 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str resource_id:
         :param str page_token:
         :param int limit:
-        :param str state:
+        :param str state: For example, running, stopped, completed, failed
         :param str parent_resource_id:
         :return: V1ListSchedulesResponse
                  If the method is called asynchronously,
@@ -732,11 +732,11 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str resource_id:
         :param str page_token:
         :param int limit:
-        :param str state:
+        :param str state: For example, running, stopped, completed, failed
         :param str parent_resource_id:
         :return: V1ListSchedulesResponse
                  If the method is called asynchronously,
@@ -810,7 +810,7 @@ class SchedulesServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def schedules_service_update_schedule(self, body: 'SchedulesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Schedule':  # noqa: E501
+    def schedules_service_update_schedule(self, body: 'SchedulesServiceUpdateScheduleBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Schedule':  # noqa: E501
         """schedules_service_update_schedule  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -819,9 +819,9 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SchedulesIdBody body: (required)
+        :param SchedulesServiceUpdateScheduleBody body: (required)
         :param str project_id: (required)
-        :param str id: (required)
+        :param str id: Read only (required)
         :return: V1Schedule
                  If the method is called asynchronously,
                  returns the request thread.
@@ -833,7 +833,7 @@ class SchedulesServiceApi(object):
             (data) = self.schedules_service_update_schedule_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def schedules_service_update_schedule_with_http_info(self, body: 'SchedulesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Schedule':  # noqa: E501
+    def schedules_service_update_schedule_with_http_info(self, body: 'SchedulesServiceUpdateScheduleBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Schedule':  # noqa: E501
         """schedules_service_update_schedule  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -842,9 +842,9 @@ class SchedulesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SchedulesIdBody body: (required)
+        :param SchedulesServiceUpdateScheduleBody body: (required)
         :param str project_id: (required)
-        :param str id: (required)
+        :param str id: Read only (required)
         :return: V1Schedule
                  If the method is called asynchronously,
                  returns the request thread.

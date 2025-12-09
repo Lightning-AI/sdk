@@ -213,7 +213,7 @@ class UserServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def user_service_create_affiliate_link(self, body: 'UserIdAffiliatelinksBody', user_id: 'str', **kwargs) -> 'V1AffiliateLink':  # noqa: E501
+    def user_service_create_affiliate_link(self, body: 'UserServiceCreateAffiliateLinkBody', user_id: 'str', **kwargs) -> 'V1AffiliateLink':  # noqa: E501
         """create affiliate link  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -222,7 +222,7 @@ class UserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UserIdAffiliatelinksBody body: (required)
+        :param UserServiceCreateAffiliateLinkBody body: (required)
         :param str user_id: (required)
         :return: V1AffiliateLink
                  If the method is called asynchronously,
@@ -235,7 +235,7 @@ class UserServiceApi(object):
             (data) = self.user_service_create_affiliate_link_with_http_info(body, user_id, **kwargs)  # noqa: E501
             return data
 
-    def user_service_create_affiliate_link_with_http_info(self, body: 'UserIdAffiliatelinksBody', user_id: 'str', **kwargs) -> 'V1AffiliateLink':  # noqa: E501
+    def user_service_create_affiliate_link_with_http_info(self, body: 'UserServiceCreateAffiliateLinkBody', user_id: 'str', **kwargs) -> 'V1AffiliateLink':  # noqa: E501
         """create affiliate link  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -244,7 +244,7 @@ class UserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UserIdAffiliatelinksBody body: (required)
+        :param UserServiceCreateAffiliateLinkBody body: (required)
         :param str user_id: (required)
         :return: V1AffiliateLink
                  If the method is called asynchronously,
@@ -893,7 +893,7 @@ class UserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param bool unseen:
+        :param bool unseen: if true, only return unseen features
         :return: V1ListNotificationDialogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -914,7 +914,7 @@ class UserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param bool unseen:
+        :param bool unseen: if true, only return unseen features
         :return: V1ListNotificationDialogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1081,7 +1081,7 @@ class UserServiceApi(object):
         :param async_req bool
         :param str page_token:
         :param str page_size:
-        :param str query:
+        :param str query: they can query can be by id, username, email, or name (if org provided)
         :param str organization_id:
         :return: V1SearchUsersResponse
                  If the method is called asynchronously,
@@ -1105,7 +1105,7 @@ class UserServiceApi(object):
         :param async_req bool
         :param str page_token:
         :param str page_size:
-        :param str query:
+        :param str query: they can query can be by id, username, email, or name (if org provided)
         :param str organization_id:
         :return: V1SearchUsersResponse
                  If the method is called asynchronously,
@@ -1171,7 +1171,7 @@ class UserServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def user_service_update_affiliate_link(self, body: 'AffiliatelinksIdBody', user_id: 'str', id: 'str', **kwargs) -> 'V1AffiliateLink':  # noqa: E501
+    def user_service_update_affiliate_link(self, body: 'UserServiceUpdateAffiliateLinkBody', user_id: 'str', id: 'str', **kwargs) -> 'V1AffiliateLink':  # noqa: E501
         """update affiliate link  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1180,7 +1180,7 @@ class UserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AffiliatelinksIdBody body: (required)
+        :param UserServiceUpdateAffiliateLinkBody body: (required)
         :param str user_id: (required)
         :param str id: (required)
         :return: V1AffiliateLink
@@ -1194,7 +1194,7 @@ class UserServiceApi(object):
             (data) = self.user_service_update_affiliate_link_with_http_info(body, user_id, id, **kwargs)  # noqa: E501
             return data
 
-    def user_service_update_affiliate_link_with_http_info(self, body: 'AffiliatelinksIdBody', user_id: 'str', id: 'str', **kwargs) -> 'V1AffiliateLink':  # noqa: E501
+    def user_service_update_affiliate_link_with_http_info(self, body: 'UserServiceUpdateAffiliateLinkBody', user_id: 'str', id: 'str', **kwargs) -> 'V1AffiliateLink':  # noqa: E501
         """update affiliate link  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1203,7 +1203,7 @@ class UserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AffiliatelinksIdBody body: (required)
+        :param UserServiceUpdateAffiliateLinkBody body: (required)
         :param str user_id: (required)
         :param str id: (required)
         :return: V1AffiliateLink
@@ -1284,7 +1284,7 @@ class UserServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def user_service_update_user_credits_auto_replenish(self, body: 'CreditsAutoreplenishBody1', user_id: 'str', **kwargs) -> 'V1UpdateUserCreditsAutoReplenishResponse':  # noqa: E501
+    def user_service_update_user_credits_auto_replenish(self, body: 'UserServiceUpdateUserCreditsAutoReplenishBody', user_id: 'str', **kwargs) -> 'V1UpdateUserCreditsAutoReplenishResponse':  # noqa: E501
         """user_service_update_user_credits_auto_replenish  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1293,7 +1293,7 @@ class UserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CreditsAutoreplenishBody1 body: (required)
+        :param UserServiceUpdateUserCreditsAutoReplenishBody body: (required)
         :param str user_id: (required)
         :return: V1UpdateUserCreditsAutoReplenishResponse
                  If the method is called asynchronously,
@@ -1306,7 +1306,7 @@ class UserServiceApi(object):
             (data) = self.user_service_update_user_credits_auto_replenish_with_http_info(body, user_id, **kwargs)  # noqa: E501
             return data
 
-    def user_service_update_user_credits_auto_replenish_with_http_info(self, body: 'CreditsAutoreplenishBody1', user_id: 'str', **kwargs) -> 'V1UpdateUserCreditsAutoReplenishResponse':  # noqa: E501
+    def user_service_update_user_credits_auto_replenish_with_http_info(self, body: 'UserServiceUpdateUserCreditsAutoReplenishBody', user_id: 'str', **kwargs) -> 'V1UpdateUserCreditsAutoReplenishResponse':  # noqa: E501
         """user_service_update_user_credits_auto_replenish  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1315,7 +1315,7 @@ class UserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CreditsAutoreplenishBody1 body: (required)
+        :param UserServiceUpdateUserCreditsAutoReplenishBody body: (required)
         :param str user_id: (required)
         :return: V1UpdateUserCreditsAutoReplenishResponse
                  If the method is called asynchronously,
@@ -1486,7 +1486,7 @@ class UserServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def user_service_upload_settings(self, body: 'object', filename: 'str', **kwargs) -> 'V1UploadSettingsResponse':  # noqa: E501
+    def user_service_upload_settings(self, body: 'UserServiceUploadSettingsBody', filename: 'str', **kwargs) -> 'V1UploadSettingsResponse':  # noqa: E501
         """user_service_upload_settings  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1495,7 +1495,7 @@ class UserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param UserServiceUploadSettingsBody body: (required)
         :param str filename: (required)
         :return: V1UploadSettingsResponse
                  If the method is called asynchronously,
@@ -1508,7 +1508,7 @@ class UserServiceApi(object):
             (data) = self.user_service_upload_settings_with_http_info(body, filename, **kwargs)  # noqa: E501
             return data
 
-    def user_service_upload_settings_with_http_info(self, body: 'object', filename: 'str', **kwargs) -> 'V1UploadSettingsResponse':  # noqa: E501
+    def user_service_upload_settings_with_http_info(self, body: 'UserServiceUploadSettingsBody', filename: 'str', **kwargs) -> 'V1UploadSettingsResponse':  # noqa: E501
         """user_service_upload_settings  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1517,7 +1517,7 @@ class UserServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param UserServiceUploadSettingsBody body: (required)
         :param str filename: (required)
         :return: V1UploadSettingsResponse
                  If the method is called asynchronously,

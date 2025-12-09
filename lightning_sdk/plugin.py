@@ -324,7 +324,7 @@ class SlurmJobsPlugin(_Plugin):
                 If you update your files and don't change the cache_id, they won't be used.
 
         """
-        from lightning_sdk.lightning_cloud.openapi import SlurmJobsBody
+        from lightning_sdk.lightning_cloud.openapi import SlurmJobsUserServiceCreateUserSLURMJobBody
 
         if work_dir == "":
             raise ValueError("The argument `work_dir` needs to be a proper path on the SLURM Cluster.")
@@ -384,7 +384,7 @@ class SlurmJobsPlugin(_Plugin):
 
         resp = client.slurm_jobs_user_service_create_user_slurm_job(
             project_id=self._studio._teamspace.id,
-            body=SlurmJobsBody(
+            body=SlurmJobsUserServiceCreateUserSLURMJobBody(
                 cloudspace_id=self._studio._studio.id,
                 cluster_id=selected_cluster.id,
                 command=command,

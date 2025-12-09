@@ -43,7 +43,7 @@ class K8SClusterServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def k8_s_cluster_service_create_kubernetes_template(self, body: 'ClusterIdKubernetestemplatesBody', cluster_id: 'str', **kwargs) -> 'V1KubernetesTemplate':  # noqa: E501
+    def k8_s_cluster_service_create_kubernetes_template(self, body: 'K8SClusterServiceCreateKubernetesTemplateBody', cluster_id: 'str', **kwargs) -> 'V1KubernetesTemplate':  # noqa: E501
         """k8_s_cluster_service_create_kubernetes_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,8 +52,8 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdKubernetestemplatesBody body: (required)
-        :param str cluster_id: (required)
+        :param K8SClusterServiceCreateKubernetesTemplateBody body: (required)
+        :param str cluster_id: Required (required)
         :return: V1KubernetesTemplate
                  If the method is called asynchronously,
                  returns the request thread.
@@ -65,7 +65,7 @@ class K8SClusterServiceApi(object):
             (data) = self.k8_s_cluster_service_create_kubernetes_template_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def k8_s_cluster_service_create_kubernetes_template_with_http_info(self, body: 'ClusterIdKubernetestemplatesBody', cluster_id: 'str', **kwargs) -> 'V1KubernetesTemplate':  # noqa: E501
+    def k8_s_cluster_service_create_kubernetes_template_with_http_info(self, body: 'K8SClusterServiceCreateKubernetesTemplateBody', cluster_id: 'str', **kwargs) -> 'V1KubernetesTemplate':  # noqa: E501
         """k8_s_cluster_service_create_kubernetes_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,8 +74,8 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdKubernetestemplatesBody body: (required)
-        :param str cluster_id: (required)
+        :param K8SClusterServiceCreateKubernetesTemplateBody body: (required)
+        :param str cluster_id: Required (required)
         :return: V1KubernetesTemplate
                  If the method is called asynchronously,
                  returns the request thread.
@@ -157,8 +157,8 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str cluster_id: (required)
-        :param str id: (required)
+        :param str cluster_id: Required (required)
+        :param str id: Required (required)
         :return: V1DeleteKubernetesTemplateResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -179,8 +179,8 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str cluster_id: (required)
-        :param str id: (required)
+        :param str cluster_id: Required (required)
+        :param str id: Required (required)
         :return: V1DeleteKubernetesTemplateResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -258,8 +258,8 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str cluster_id: (required)
-        :param str id: (required)
+        :param str cluster_id: Required (required)
+        :param str id: Required (required)
         :return: V1KubernetesTemplate
                  If the method is called asynchronously,
                  returns the request thread.
@@ -280,8 +280,8 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str cluster_id: (required)
-        :param str id: (required)
+        :param str cluster_id: Required (required)
+        :param str id: Required (required)
         :return: V1KubernetesTemplate
                  If the method is called asynchronously,
                  returns the request thread.
@@ -361,7 +361,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str node_name: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListNodeMetricsResponse
                  If the method is called asynchronously,
@@ -385,7 +385,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str node_name: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListNodeMetricsResponse
                  If the method is called asynchronously,
@@ -470,7 +470,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str namespace:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListAggregatedPodMetricsResponse
                  If the method is called asynchronously,
@@ -494,7 +494,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str namespace:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListAggregatedPodMetricsResponse
                  If the method is called asynchronously,
@@ -772,7 +772,7 @@ class K8SClusterServiceApi(object):
 
         :param async_req bool
         :param str cluster_id: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListClusterMetricsResponse
                  If the method is called asynchronously,
@@ -795,7 +795,7 @@ class K8SClusterServiceApi(object):
 
         :param async_req bool
         :param str cluster_id: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListClusterMetricsResponse
                  If the method is called asynchronously,
@@ -874,7 +874,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str namespace:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListClusterNamespaceMetricsResponse
                  If the method is called asynchronously,
@@ -898,7 +898,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str namespace:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListClusterNamespaceMetricsResponse
                  If the method is called asynchronously,
@@ -980,7 +980,7 @@ class K8SClusterServiceApi(object):
         :param str cluster_id: (required)
         :param str namespace:
         :param str user_id:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListClusterNamespaceUserMetricsResponse
                  If the method is called asynchronously,
@@ -1005,7 +1005,7 @@ class K8SClusterServiceApi(object):
         :param str cluster_id: (required)
         :param str namespace:
         :param str user_id:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListClusterNamespaceUserMetricsResponse
                  If the method is called asynchronously,
@@ -1089,7 +1089,7 @@ class K8SClusterServiceApi(object):
         :param str cluster_id: (required)
         :param str pod_id: (required)
         :param str container_id: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListContainerMetricsResponse
                  If the method is called asynchronously,
@@ -1114,7 +1114,7 @@ class K8SClusterServiceApi(object):
         :param str cluster_id: (required)
         :param str pod_id: (required)
         :param str container_id: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListContainerMetricsResponse
                  If the method is called asynchronously,
@@ -1206,7 +1206,7 @@ class K8SClusterServiceApi(object):
         :param str cluster_id: (required)
         :param str fstype:
         :param str mountpoint:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListFilesystemMetricsResponse
                  If the method is called asynchronously,
@@ -1231,7 +1231,7 @@ class K8SClusterServiceApi(object):
         :param str cluster_id: (required)
         :param str fstype:
         :param str mountpoint:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListFilesystemMetricsResponse
                  If the method is called asynchronously,
@@ -1315,7 +1315,7 @@ class K8SClusterServiceApi(object):
         :param str cluster_id: (required)
         :param str key:
         :param str value:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListGroupPodMetricsResponse
                  If the method is called asynchronously,
@@ -1340,7 +1340,7 @@ class K8SClusterServiceApi(object):
         :param str cluster_id: (required)
         :param str key:
         :param str value:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListGroupPodMetricsResponse
                  If the method is called asynchronously,
@@ -1424,7 +1424,7 @@ class K8SClusterServiceApi(object):
         :param str cluster_id: (required)
         :param str namespace:
         :param str user_id:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListKaiSchedulerQueuesMetricsResponse
                  If the method is called asynchronously,
@@ -1449,7 +1449,7 @@ class K8SClusterServiceApi(object):
         :param str cluster_id: (required)
         :param str namespace:
         :param str user_id:
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListKaiSchedulerQueuesMetricsResponse
                  If the method is called asynchronously,
@@ -1536,6 +1536,8 @@ class K8SClusterServiceApi(object):
         :param str user_id:
         :param str queue_name:
         :param bool deleted:
+        :param datetime historical_start: Date ranges for historical pods  Historical start time for the pods
+        :param datetime historical_end: Historical end time for the pods
         :return: V1ListKubernetesPodsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1562,12 +1564,14 @@ class K8SClusterServiceApi(object):
         :param str user_id:
         :param str queue_name:
         :param bool deleted:
+        :param datetime historical_start: Date ranges for historical pods  Historical start time for the pods
+        :param datetime historical_end: Historical end time for the pods
         :return: V1ListKubernetesPodsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['cluster_id', 'statuses_in', 'namespace', 'user_id', 'queue_name', 'deleted']  # noqa: E501
+        all_params = ['cluster_id', 'statuses_in', 'namespace', 'user_id', 'queue_name', 'deleted', 'historical_start', 'historical_end']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1605,6 +1609,10 @@ class K8SClusterServiceApi(object):
             query_params.append(('queueName', params['queue_name']))  # noqa: E501
         if 'deleted' in params:
             query_params.append(('deleted', params['deleted']))  # noqa: E501
+        if 'historical_start' in params:
+            query_params.append(('historicalStart', params['historical_start']))  # noqa: E501
+        if 'historical_end' in params:
+            query_params.append(('historicalEnd', params['historical_end']))  # noqa: E501
 
         header_params = {}
 
@@ -1739,7 +1747,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str node_name: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListNodeFileSystemMetricsResponse
                  If the method is called asynchronously,
@@ -1763,7 +1771,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str node_name: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListNodeFileSystemMetricsResponse
                  If the method is called asynchronously,
@@ -1848,7 +1856,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str node_name: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListNodeMetricsResponse
                  If the method is called asynchronously,
@@ -1872,7 +1880,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str node_name: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListNodeMetricsResponse
                  If the method is called asynchronously,
@@ -1957,7 +1965,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str pod_id: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListPodMetricsResponse
                  If the method is called asynchronously,
@@ -1981,7 +1989,7 @@ class K8SClusterServiceApi(object):
         :param async_req bool
         :param str cluster_id: (required)
         :param str pod_id: (required)
-        :param datetime start: Date range.
+        :param datetime start: Date range
         :param datetime end:
         :return: V1ListPodMetricsResponse
                  If the method is called asynchronously,
@@ -2055,7 +2063,7 @@ class K8SClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def k8_s_cluster_service_render_kubernetes_template(self, body: 'IdRenderBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1RenderKubernetesTemplateResponse':  # noqa: E501
+    def k8_s_cluster_service_render_kubernetes_template(self, body: 'K8SClusterServiceRenderKubernetesTemplateBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1RenderKubernetesTemplateResponse':  # noqa: E501
         """k8_s_cluster_service_render_kubernetes_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2064,9 +2072,9 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdRenderBody body: (required)
-        :param str cluster_id: (required)
-        :param str id: (required)
+        :param K8SClusterServiceRenderKubernetesTemplateBody body: (required)
+        :param str cluster_id: Required (required)
+        :param str id: Required (required)
         :return: V1RenderKubernetesTemplateResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2078,7 +2086,7 @@ class K8SClusterServiceApi(object):
             (data) = self.k8_s_cluster_service_render_kubernetes_template_with_http_info(body, cluster_id, id, **kwargs)  # noqa: E501
             return data
 
-    def k8_s_cluster_service_render_kubernetes_template_with_http_info(self, body: 'IdRenderBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1RenderKubernetesTemplateResponse':  # noqa: E501
+    def k8_s_cluster_service_render_kubernetes_template_with_http_info(self, body: 'K8SClusterServiceRenderKubernetesTemplateBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1RenderKubernetesTemplateResponse':  # noqa: E501
         """k8_s_cluster_service_render_kubernetes_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2087,9 +2095,9 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdRenderBody body: (required)
-        :param str cluster_id: (required)
-        :param str id: (required)
+        :param K8SClusterServiceRenderKubernetesTemplateBody body: (required)
+        :param str cluster_id: Required (required)
+        :param str id: Required (required)
         :return: V1RenderKubernetesTemplateResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2168,7 +2176,7 @@ class K8SClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def k8_s_cluster_service_report_k8_s_cluster_metrics(self, body: 'ClusterIdMetricsBody', cluster_id: 'str', **kwargs) -> 'V1ReportK8sClusterMetricsResponse':  # noqa: E501
+    def k8_s_cluster_service_report_k8_s_cluster_metrics(self, body: 'K8SClusterServiceReportK8SClusterMetricsBody', cluster_id: 'str', **kwargs) -> 'V1ReportK8sClusterMetricsResponse':  # noqa: E501
         """k8_s_cluster_service_report_k8_s_cluster_metrics  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2177,7 +2185,7 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdMetricsBody body: (required)
+        :param K8SClusterServiceReportK8SClusterMetricsBody body: (required)
         :param str cluster_id: (required)
         :return: V1ReportK8sClusterMetricsResponse
                  If the method is called asynchronously,
@@ -2190,7 +2198,7 @@ class K8SClusterServiceApi(object):
             (data) = self.k8_s_cluster_service_report_k8_s_cluster_metrics_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def k8_s_cluster_service_report_k8_s_cluster_metrics_with_http_info(self, body: 'ClusterIdMetricsBody', cluster_id: 'str', **kwargs) -> 'V1ReportK8sClusterMetricsResponse':  # noqa: E501
+    def k8_s_cluster_service_report_k8_s_cluster_metrics_with_http_info(self, body: 'K8SClusterServiceReportK8SClusterMetricsBody', cluster_id: 'str', **kwargs) -> 'V1ReportK8sClusterMetricsResponse':  # noqa: E501
         """k8_s_cluster_service_report_k8_s_cluster_metrics  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2199,7 +2207,7 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ClusterIdMetricsBody body: (required)
+        :param K8SClusterServiceReportK8SClusterMetricsBody body: (required)
         :param str cluster_id: (required)
         :return: V1ReportK8sClusterMetricsResponse
                  If the method is called asynchronously,
@@ -2273,7 +2281,7 @@ class K8SClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def k8_s_cluster_service_update_kubernetes_template(self, body: 'KubernetestemplatesIdBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1KubernetesTemplate':  # noqa: E501
+    def k8_s_cluster_service_update_kubernetes_template(self, body: 'K8SClusterServiceUpdateKubernetesTemplateBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1KubernetesTemplate':  # noqa: E501
         """k8_s_cluster_service_update_kubernetes_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2282,9 +2290,9 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param KubernetestemplatesIdBody body: (required)
-        :param str cluster_id: (required)
-        :param str id: (required)
+        :param K8SClusterServiceUpdateKubernetesTemplateBody body: (required)
+        :param str cluster_id: Required (required)
+        :param str id: Required (required)
         :return: V1KubernetesTemplate
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2296,7 +2304,7 @@ class K8SClusterServiceApi(object):
             (data) = self.k8_s_cluster_service_update_kubernetes_template_with_http_info(body, cluster_id, id, **kwargs)  # noqa: E501
             return data
 
-    def k8_s_cluster_service_update_kubernetes_template_with_http_info(self, body: 'KubernetestemplatesIdBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1KubernetesTemplate':  # noqa: E501
+    def k8_s_cluster_service_update_kubernetes_template_with_http_info(self, body: 'K8SClusterServiceUpdateKubernetesTemplateBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1KubernetesTemplate':  # noqa: E501
         """k8_s_cluster_service_update_kubernetes_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2305,9 +2313,9 @@ class K8SClusterServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param KubernetestemplatesIdBody body: (required)
-        :param str cluster_id: (required)
-        :param str id: (required)
+        :param K8SClusterServiceUpdateKubernetesTemplateBody body: (required)
+        :param str cluster_id: Required (required)
+        :param str id: Required (required)
         :return: V1KubernetesTemplate
                  If the method is called asynchronously,
                  returns the request thread.

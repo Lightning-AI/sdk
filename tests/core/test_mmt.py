@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.lightning_cloud.openapi import MultimachinejobsIdBody, V1JobSpec, V1MultiMachineJob
+from lightning_sdk.lightning_cloud.openapi import JobsServiceUpdateMultiMachineJobBody, V1JobSpec, V1MultiMachineJob
 from lightning_sdk.machine import Machine
 from lightning_sdk.mmt.v2 import _MMTV2
 from lightning_sdk.status import Status
@@ -312,7 +312,7 @@ def test_mmtv2_stop(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker)
     update_job_mock.assert_called_once_with(
         id="test-job-id",
         project_id="ts-abc001",
-        body=MultimachinejobsIdBody(desired_state="MultiMachineJob_STATE_STOP"),
+        body=JobsServiceUpdateMultiMachineJobBody(desired_state="MultiMachineJob_STATE_STOP"),
     )
 
 

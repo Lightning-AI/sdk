@@ -149,8 +149,8 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
-        :param str org_id:
+        :param str id: Required (required)
+        :param str org_id: Required
         :return: V1DeleteCloudSpaceEnvironmentTemplateResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -171,8 +171,8 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
-        :param str org_id:
+        :param str id: Required (required)
+        :param str org_id: Required
         :return: V1DeleteCloudSpaceEnvironmentTemplateResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -246,9 +246,9 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
+        :param str id: Required (required)
         :param str org_id:
-        :param str project_id:
+        :param str project_id: optional
         :return: V1CloudSpaceEnvironmentTemplate
                  If the method is called asynchronously,
                  returns the request thread.
@@ -269,9 +269,9 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
+        :param str id: Required (required)
         :param str org_id:
-        :param str project_id:
+        :param str project_id: optional
         :return: V1CloudSpaceEnvironmentTemplate
                  If the method is called asynchronously,
                  returns the request thread.
@@ -347,7 +347,7 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id:
+        :param str org_id: Required
         :param str page_token:
         :param int limit:
         :return: V1ListCloudSpaceEnvironmentTemplatesResponse
@@ -370,7 +370,7 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id:
+        :param str org_id: Required
         :param str page_token:
         :param int limit:
         :return: V1ListCloudSpaceEnvironmentTemplatesResponse
@@ -532,7 +532,7 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloud_space_environment_template_service_update_cloud_space_environment_template(self, body: 'Update', id: 'str', **kwargs) -> 'V1CloudSpaceEnvironmentTemplate':  # noqa: E501
+    def cloud_space_environment_template_service_update_cloud_space_environment_template(self, body: 'CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody', id: 'str', **kwargs) -> 'V1CloudSpaceEnvironmentTemplate':  # noqa: E501
         """cloud_space_environment_template_service_update_cloud_space_environment_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -541,7 +541,7 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param Update body: (required)
+        :param CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody body: (required)
         :param str id: (required)
         :return: V1CloudSpaceEnvironmentTemplate
                  If the method is called asynchronously,
@@ -554,7 +554,7 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
             (data) = self.cloud_space_environment_template_service_update_cloud_space_environment_template_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def cloud_space_environment_template_service_update_cloud_space_environment_template_with_http_info(self, body: 'Update', id: 'str', **kwargs) -> 'V1CloudSpaceEnvironmentTemplate':  # noqa: E501
+    def cloud_space_environment_template_service_update_cloud_space_environment_template_with_http_info(self, body: 'CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody', id: 'str', **kwargs) -> 'V1CloudSpaceEnvironmentTemplate':  # noqa: E501
         """cloud_space_environment_template_service_update_cloud_space_environment_template  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -563,7 +563,7 @@ class CloudSpaceEnvironmentTemplateServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param Update body: (required)
+        :param CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody body: (required)
         :param str id: (required)
         :return: V1CloudSpaceEnvironmentTemplate
                  If the method is called asynchronously,

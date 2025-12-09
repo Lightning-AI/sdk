@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING, List, Optional, Union
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.lightning_cloud.openapi.models import (
-    ProjectIdPipelinesBody,
-    ProjectIdSchedulesBody,
+    PipelinesServiceCreatePipelineBody,
+    SchedulesServiceCreateScheduleBody,
     V1DeletePipelineResponse,
     V1Pipeline,
     V1PipelineStep,
@@ -52,7 +52,7 @@ class PipelineApi:
         schedules: List["Schedule"],
         parent_pipeline_id: Optional[str],
     ) -> V1Pipeline:
-        body = ProjectIdPipelinesBody(
+        body = PipelinesServiceCreatePipelineBody(
             name=name,
             steps=steps,
             shared_filesystem=self._prepare_shared_filesystem(shared_filesystem, steps, teamspace),
@@ -69,7 +69,7 @@ class PipelineApi:
 
         if len(schedules):
             for schedule in schedules:
-                body = ProjectIdSchedulesBody(
+                body = SchedulesServiceCreateScheduleBody(
                     cron_expression=schedule.cron_expression,
                     display_name=schedule.name,
                     resource_id=pipeline.id,

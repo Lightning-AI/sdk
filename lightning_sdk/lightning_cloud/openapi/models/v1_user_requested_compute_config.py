@@ -267,6 +267,7 @@ class V1UserRequestedComputeConfig(object):
     def name(self) -> 'str':
         """Gets the name of this V1UserRequestedComputeConfig.  # noqa: E501
 
+        Can be instance type (t2.medium) or accelerator type 'gpu', 'gpu-fast-single', etc.  # noqa: E501
 
         :return: The name of this V1UserRequestedComputeConfig.  # noqa: E501
         :rtype: str
@@ -277,6 +278,7 @@ class V1UserRequestedComputeConfig(object):
     def name(self, name: 'str'):
         """Sets the name of this V1UserRequestedComputeConfig.
 
+        Can be instance type (t2.medium) or accelerator type 'gpu', 'gpu-fast-single', etc.  # noqa: E501
 
         :param name: The name of this V1UserRequestedComputeConfig.  # noqa: E501
         :type: str

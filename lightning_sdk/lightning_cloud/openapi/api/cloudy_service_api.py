@@ -221,7 +221,7 @@ class CloudyServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cloudy_service_update_user_cloudy_settings(self, body: 'UserUserIdBody', user_id: 'str', **kwargs) -> 'V1CloudySettings':  # noqa: E501
+    def cloudy_service_update_user_cloudy_settings(self, body: 'CloudyServiceUpdateUserCloudySettingsBody', user_id: 'str', **kwargs) -> 'V1CloudySettings':  # noqa: E501
         """cloudy_service_update_user_cloudy_settings  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -230,7 +230,7 @@ class CloudyServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UserUserIdBody body: (required)
+        :param CloudyServiceUpdateUserCloudySettingsBody body: (required)
         :param str user_id: (required)
         :return: V1CloudySettings
                  If the method is called asynchronously,
@@ -243,7 +243,7 @@ class CloudyServiceApi(object):
             (data) = self.cloudy_service_update_user_cloudy_settings_with_http_info(body, user_id, **kwargs)  # noqa: E501
             return data
 
-    def cloudy_service_update_user_cloudy_settings_with_http_info(self, body: 'UserUserIdBody', user_id: 'str', **kwargs) -> 'V1CloudySettings':  # noqa: E501
+    def cloudy_service_update_user_cloudy_settings_with_http_info(self, body: 'CloudyServiceUpdateUserCloudySettingsBody', user_id: 'str', **kwargs) -> 'V1CloudySettings':  # noqa: E501
         """cloudy_service_update_user_cloudy_settings  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -252,7 +252,7 @@ class CloudyServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UserUserIdBody body: (required)
+        :param CloudyServiceUpdateUserCloudySettingsBody body: (required)
         :param str user_id: (required)
         :return: V1CloudySettings
                  If the method is called asynchronously,

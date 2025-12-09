@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Union
 
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
-    SecretsIdBody1,
+    SecretServiceUpdateUserSecretBody,
     V1CloudSpace,
     V1CreateUserSecretRequest,
     V1GetUserResponse,
@@ -105,7 +105,7 @@ class UserApi:
 
     def _update_secret(self, secret_id: str, value: str) -> None:
         self._client.secret_service_update_user_secret(
-            body=SecretsIdBody1(value=value),
+            body=SecretServiceUpdateUserSecretBody(value=value),
             id=secret_id,
         )
 

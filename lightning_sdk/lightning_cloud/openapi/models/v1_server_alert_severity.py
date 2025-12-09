@@ -39,6 +39,7 @@ class V1ServerAlertSeverity(object):
     """
     ERROR = "SERVER_ALERT_SEVERITY_ERROR"
     WARNING = "SERVER_ALERT_SEVERITY_WARNING"
+    INFO = "SERVER_ALERT_SEVERITY_INFO"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

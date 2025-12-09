@@ -53,7 +53,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned apps will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemAppsResponse
                  If the method is called asynchronously,
@@ -76,7 +76,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned apps will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemAppsResponse
                  If the method is called asynchronously,
@@ -158,7 +158,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned cloudspaces will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemCloudSpacesResponse
                  If the method is called asynchronously,
@@ -181,7 +181,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned cloudspaces will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemCloudSpacesResponse
                  If the method is called asynchronously,
@@ -263,7 +263,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned datasets will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemDatasetsResponse
                  If the method is called asynchronously,
@@ -286,7 +286,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned datasets will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemDatasetsResponse
                  If the method is called asynchronously,
@@ -368,7 +368,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned jobs will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemJobsResponse
                  If the method is called asynchronously,
@@ -391,7 +391,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned jobs will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemJobsResponse
                  If the method is called asynchronously,
@@ -473,7 +473,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned jobs will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemMMTsResponse
                  If the method is called asynchronously,
@@ -496,7 +496,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned jobs will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemMMTsResponse
                  If the method is called asynchronously,
@@ -578,7 +578,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned jobs will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemSlurmJobsResponse
                  If the method is called asynchronously,
@@ -601,7 +601,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned jobs will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemSlurmJobsResponse
                  If the method is called asynchronously,
@@ -683,7 +683,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned jobs will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemSnowflakeResponse
                  If the method is called asynchronously,
@@ -706,7 +706,7 @@ class FileSystemServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str current_id: (required)
+        :param str current_id: ID of the current resource (e.g. job, cloudspace etc) the returned jobs will be mounted at (required)
         :param str cluster_id:
         :return: V1ListFilesystemSnowflakeResponse
                  If the method is called asynchronously,
@@ -787,7 +787,7 @@ class FileSystemServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: the project_id of the current server. (required)
         :return: V1ModifyFilesystemVolumeResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -808,7 +808,7 @@ class FileSystemServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: the project_id of the current server. (required)
         :return: V1ModifyFilesystemVolumeResponse
                  If the method is called asynchronously,
                  returns the request thread.

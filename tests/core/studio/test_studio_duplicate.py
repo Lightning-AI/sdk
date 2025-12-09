@@ -1,7 +1,7 @@
 from unittest import mock
 
 from lightning_sdk.lightning_cloud.openapi import (
-    ProjectIdCloudspacesBody,
+    CloudSpaceServiceCreateCloudSpaceBody,
     V1CloudSpace,
     V1LightningRun,
     V1ListCloudSpacesResponse,
@@ -67,7 +67,7 @@ def test_studio_duplicate_machine(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -173,7 +173,7 @@ def test_studio_duplicate_with_new_name(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,

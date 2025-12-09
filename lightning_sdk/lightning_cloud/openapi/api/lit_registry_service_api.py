@@ -43,7 +43,7 @@ class LitRegistryServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def lit_registry_service_create_lit_project_registry(self, body: 'ProjectIdLitregistryBody', project_id: 'str', **kwargs) -> 'V1LitRegistryProject':  # noqa: E501
+    def lit_registry_service_create_lit_project_registry(self, body: 'LitRegistryServiceCreateLitProjectRegistryBody', project_id: 'str', **kwargs) -> 'V1LitRegistryProject':  # noqa: E501
         """lit_registry_service_create_lit_project_registry  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class LitRegistryServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdLitregistryBody body: (required)
+        :param LitRegistryServiceCreateLitProjectRegistryBody body: (required)
         :param str project_id: The teamspace project_id (required)
         :return: V1LitRegistryProject
                  If the method is called asynchronously,
@@ -65,7 +65,7 @@ class LitRegistryServiceApi(object):
             (data) = self.lit_registry_service_create_lit_project_registry_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def lit_registry_service_create_lit_project_registry_with_http_info(self, body: 'ProjectIdLitregistryBody', project_id: 'str', **kwargs) -> 'V1LitRegistryProject':  # noqa: E501
+    def lit_registry_service_create_lit_project_registry_with_http_info(self, body: 'LitRegistryServiceCreateLitProjectRegistryBody', project_id: 'str', **kwargs) -> 'V1LitRegistryProject':  # noqa: E501
         """lit_registry_service_create_lit_project_registry  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,7 +74,7 @@ class LitRegistryServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdLitregistryBody body: (required)
+        :param LitRegistryServiceCreateLitProjectRegistryBody body: (required)
         :param str project_id: The teamspace project_id (required)
         :return: V1LitRegistryProject
                  If the method is called asynchronously,
@@ -798,7 +798,7 @@ class LitRegistryServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lit_registry_service_update_lit_repository_metadata(self, body: 'LitregistryLitRepoNameBody', project_id: 'str', lit_repo_name: 'str', **kwargs) -> 'V1UpdateLitRepositoryResponse':  # noqa: E501
+    def lit_registry_service_update_lit_repository_metadata(self, body: 'LitRegistryServiceUpdateLitRepositoryMetadataBody', project_id: 'str', lit_repo_name: 'str', **kwargs) -> 'V1UpdateLitRepositoryResponse':  # noqa: E501
         """lit_registry_service_update_lit_repository_metadata  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -807,7 +807,7 @@ class LitRegistryServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LitregistryLitRepoNameBody body: (required)
+        :param LitRegistryServiceUpdateLitRepositoryMetadataBody body: (required)
         :param str project_id: (required)
         :param str lit_repo_name: (required)
         :return: V1UpdateLitRepositoryResponse
@@ -821,7 +821,7 @@ class LitRegistryServiceApi(object):
             (data) = self.lit_registry_service_update_lit_repository_metadata_with_http_info(body, project_id, lit_repo_name, **kwargs)  # noqa: E501
             return data
 
-    def lit_registry_service_update_lit_repository_metadata_with_http_info(self, body: 'LitregistryLitRepoNameBody', project_id: 'str', lit_repo_name: 'str', **kwargs) -> 'V1UpdateLitRepositoryResponse':  # noqa: E501
+    def lit_registry_service_update_lit_repository_metadata_with_http_info(self, body: 'LitRegistryServiceUpdateLitRepositoryMetadataBody', project_id: 'str', lit_repo_name: 'str', **kwargs) -> 'V1UpdateLitRepositoryResponse':  # noqa: E501
         """lit_registry_service_update_lit_repository_metadata  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -830,7 +830,7 @@ class LitRegistryServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param LitregistryLitRepoNameBody body: (required)
+        :param LitRegistryServiceUpdateLitRepositoryMetadataBody body: (required)
         :param str project_id: (required)
         :param str lit_repo_name: (required)
         :return: V1UpdateLitRepositoryResponse

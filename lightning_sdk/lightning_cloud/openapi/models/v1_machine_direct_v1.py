@@ -43,25 +43,30 @@ class V1MachineDirectV1(object):
     swagger_types = {
         'primary_region': 'str',
         'regions': 'list[str]',
+        'setup_infiniband': 'bool',
         'tailscale_auth_key_secret_id': 'str'
     }
 
     attribute_map = {
         'primary_region': 'primaryRegion',
         'regions': 'regions',
+        'setup_infiniband': 'setupInfiniband',
         'tailscale_auth_key_secret_id': 'tailscaleAuthKeySecretId'
     }
 
-    def __init__(self, primary_region: 'str' =None, regions: 'list[str]' =None, tailscale_auth_key_secret_id: 'str' =None):  # noqa: E501
+    def __init__(self, primary_region: 'str' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, tailscale_auth_key_secret_id: 'str' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._primary_region = None
         self._regions = None
+        self._setup_infiniband = None
         self._tailscale_auth_key_secret_id = None
         self.discriminator = None
         if primary_region is not None:
             self.primary_region = primary_region
         if regions is not None:
             self.regions = regions
+        if setup_infiniband is not None:
+            self.setup_infiniband = setup_infiniband
         if tailscale_auth_key_secret_id is not None:
             self.tailscale_auth_key_secret_id = tailscale_auth_key_secret_id
 
@@ -106,6 +111,27 @@ class V1MachineDirectV1(object):
         """
 
         self._regions = regions
+
+    @property
+    def setup_infiniband(self) -> 'bool':
+        """Gets the setup_infiniband of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The setup_infiniband of this V1MachineDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._setup_infiniband
+
+    @setup_infiniband.setter
+    def setup_infiniband(self, setup_infiniband: 'bool'):
+        """Sets the setup_infiniband of this V1MachineDirectV1.
+
+
+        :param setup_infiniband: The setup_infiniband of this V1MachineDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._setup_infiniband = setup_infiniband
 
     @property
     def tailscale_auth_key_secret_id(self) -> 'str':

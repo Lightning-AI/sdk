@@ -43,7 +43,7 @@ class AssistantsServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def assistants_service_contact_assistant_owner(self, body: 'IdContactownerBody', id: 'str', **kwargs) -> 'V1ContactAssistantOwnerResponse':  # noqa: E501
+    def assistants_service_contact_assistant_owner(self, body: 'AssistantsServiceContactAssistantOwnerBody', id: 'str', **kwargs) -> 'V1ContactAssistantOwnerResponse':  # noqa: E501
         """assistants_service_contact_assistant_owner  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdContactownerBody body: (required)
+        :param AssistantsServiceContactAssistantOwnerBody body: (required)
         :param str id: (required)
         :return: V1ContactAssistantOwnerResponse
                  If the method is called asynchronously,
@@ -65,7 +65,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_contact_assistant_owner_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_contact_assistant_owner_with_http_info(self, body: 'IdContactownerBody', id: 'str', **kwargs) -> 'V1ContactAssistantOwnerResponse':  # noqa: E501
+    def assistants_service_contact_assistant_owner_with_http_info(self, body: 'AssistantsServiceContactAssistantOwnerBody', id: 'str', **kwargs) -> 'V1ContactAssistantOwnerResponse':  # noqa: E501
         """assistants_service_contact_assistant_owner  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,7 +74,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdContactownerBody body: (required)
+        :param AssistantsServiceContactAssistantOwnerBody body: (required)
         :param str id: (required)
         :return: V1ContactAssistantOwnerResponse
                  If the method is called asynchronously,
@@ -148,7 +148,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_create_assistant(self, body: 'ProjectIdAgentsBody', project_id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
+    def assistants_service_create_assistant(self, body: 'AssistantsServiceCreateAssistantBody', project_id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
         """assistants_service_create_assistant  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -157,8 +157,8 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdAgentsBody body: (required)
-        :param str project_id: (required)
+        :param AssistantsServiceCreateAssistantBody body: (required)
+        :param str project_id: Creates an assistant within a project, required if used with cloudspace (required)
         :return: V1Assistant
                  If the method is called asynchronously,
                  returns the request thread.
@@ -170,7 +170,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_create_assistant_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_create_assistant_with_http_info(self, body: 'ProjectIdAgentsBody', project_id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
+    def assistants_service_create_assistant_with_http_info(self, body: 'AssistantsServiceCreateAssistantBody', project_id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
         """assistants_service_create_assistant  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -179,8 +179,8 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdAgentsBody body: (required)
-        :param str project_id: (required)
+        :param AssistantsServiceCreateAssistantBody body: (required)
+        :param str project_id: Creates an assistant within a project, required if used with cloudspace (required)
         :return: V1Assistant
                  If the method is called asynchronously,
                  returns the request thread.
@@ -253,7 +253,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_create_assistant_managed_endpoint(self, body: 'ProjectIdAgentmanagedendpointsBody', project_id: 'str', **kwargs) -> 'V1CreateManagedEndpointResponse':  # noqa: E501
+    def assistants_service_create_assistant_managed_endpoint(self, body: 'AssistantsServiceCreateAssistantManagedEndpointBody', project_id: 'str', **kwargs) -> 'V1CreateManagedEndpointResponse':  # noqa: E501
         """assistants_service_create_assistant_managed_endpoint  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -262,7 +262,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdAgentmanagedendpointsBody body: (required)
+        :param AssistantsServiceCreateAssistantManagedEndpointBody body: (required)
         :param str project_id: (required)
         :return: V1CreateManagedEndpointResponse
                  If the method is called asynchronously,
@@ -275,7 +275,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_create_assistant_managed_endpoint_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_create_assistant_managed_endpoint_with_http_info(self, body: 'ProjectIdAgentmanagedendpointsBody', project_id: 'str', **kwargs) -> 'V1CreateManagedEndpointResponse':  # noqa: E501
+    def assistants_service_create_assistant_managed_endpoint_with_http_info(self, body: 'AssistantsServiceCreateAssistantManagedEndpointBody', project_id: 'str', **kwargs) -> 'V1CreateManagedEndpointResponse':  # noqa: E501
         """assistants_service_create_assistant_managed_endpoint  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -284,7 +284,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdAgentmanagedendpointsBody body: (required)
+        :param AssistantsServiceCreateAssistantManagedEndpointBody body: (required)
         :param str project_id: (required)
         :return: V1CreateManagedEndpointResponse
                  If the method is called asynchronously,
@@ -358,7 +358,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_create_conversation_message_action(self, body: 'MessageIdActionsBody', assistant_id: 'str', conversation_id: 'str', message_id: 'str', **kwargs) -> 'V1MessageAction':  # noqa: E501
+    def assistants_service_create_conversation_message_action(self, body: 'AssistantsServiceCreateConversationMessageActionBody', assistant_id: 'str', conversation_id: 'str', message_id: 'str', **kwargs) -> 'V1MessageAction':  # noqa: E501
         """assistants_service_create_conversation_message_action  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -367,7 +367,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MessageIdActionsBody body: (required)
+        :param AssistantsServiceCreateConversationMessageActionBody body: (required)
         :param str assistant_id: (required)
         :param str conversation_id: (required)
         :param str message_id: (required)
@@ -382,7 +382,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_create_conversation_message_action_with_http_info(body, assistant_id, conversation_id, message_id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_create_conversation_message_action_with_http_info(self, body: 'MessageIdActionsBody', assistant_id: 'str', conversation_id: 'str', message_id: 'str', **kwargs) -> 'V1MessageAction':  # noqa: E501
+    def assistants_service_create_conversation_message_action_with_http_info(self, body: 'AssistantsServiceCreateConversationMessageActionBody', assistant_id: 'str', conversation_id: 'str', message_id: 'str', **kwargs) -> 'V1MessageAction':  # noqa: E501
         """assistants_service_create_conversation_message_action  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -391,7 +391,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MessageIdActionsBody body: (required)
+        :param AssistantsServiceCreateConversationMessageActionBody body: (required)
         :param str assistant_id: (required)
         :param str conversation_id: (required)
         :param str message_id: (required)
@@ -479,7 +479,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_create_model_metrics(self, body: 'ModelsModelIdBody', model_id: 'str', **kwargs) -> 'V1CreateModelMetricsResponse':  # noqa: E501
+    def assistants_service_create_model_metrics(self, body: 'AssistantsServiceCreateModelMetricsBody', model_id: 'str', **kwargs) -> 'V1CreateModelMetricsResponse':  # noqa: E501
         """assistants_service_create_model_metrics  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -488,7 +488,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelsModelIdBody body: (required)
+        :param AssistantsServiceCreateModelMetricsBody body: (required)
         :param str model_id: (required)
         :return: V1CreateModelMetricsResponse
                  If the method is called asynchronously,
@@ -501,7 +501,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_create_model_metrics_with_http_info(body, model_id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_create_model_metrics_with_http_info(self, body: 'ModelsModelIdBody', model_id: 'str', **kwargs) -> 'V1CreateModelMetricsResponse':  # noqa: E501
+    def assistants_service_create_model_metrics_with_http_info(self, body: 'AssistantsServiceCreateModelMetricsBody', model_id: 'str', **kwargs) -> 'V1CreateModelMetricsResponse':  # noqa: E501
         """assistants_service_create_model_metrics  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -510,7 +510,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelsModelIdBody body: (required)
+        :param AssistantsServiceCreateModelMetricsBody body: (required)
         :param str model_id: (required)
         :return: V1CreateModelMetricsResponse
                  If the method is called asynchronously,
@@ -797,7 +797,7 @@ class AssistantsServiceApi(object):
         :param async_req bool
         :param str assistant_id: (required)
         :param str id: (required)
-        :param bool delete_data:
+        :param bool delete_data: Removes all data associated with the conversation
         :return: V1DeleteConversationResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -820,7 +820,7 @@ class AssistantsServiceApi(object):
         :param async_req bool
         :param str assistant_id: (required)
         :param str id: (required)
-        :param bool delete_data:
+        :param bool delete_data: Removes all data associated with the conversation
         :return: V1DeleteConversationResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -900,7 +900,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
+        :param str id: Assistant ID (required)
         :return: V1Assistant
                  If the method is called asynchronously,
                  returns the request thread.
@@ -921,7 +921,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
+        :param str id: Assistant ID (required)
         :return: V1Assistant
                  If the method is called asynchronously,
                  returns the request thread.
@@ -993,7 +993,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
+        :param str id: Assistant ID (required)
         :return: V1AssistantKnowledgeStatus
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1014,7 +1014,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
+        :param str id: Assistant ID (required)
         :return: V1AssistantKnowledgeStatus
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1886,14 +1886,14 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id:
-        :param str project_id:
-        :param str cloudspace_id:
-        :param bool published:
-        :param str internal_name:
-        :param str user_id:
-        :param bool cloudy_compatible:
-        :param bool model_assistants_only:
+        :param str org_id: Filter by org
+        :param str project_id: Filter by project
+        :param str cloudspace_id: Filter by cloudspace
+        :param bool published: Filter by public
+        :param str internal_name: Filter by internal assistant name
+        :param str user_id: Filter by user
+        :param bool cloudy_compatible: Filter by cloudy compatibility
+        :param bool model_assistants_only: get only assistants that are used as models, not regular assistants
         :return: V1ListAssistantsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1914,14 +1914,14 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id:
-        :param str project_id:
-        :param str cloudspace_id:
-        :param bool published:
-        :param str internal_name:
-        :param str user_id:
-        :param bool cloudy_compatible:
-        :param bool model_assistants_only:
+        :param str org_id: Filter by org
+        :param str project_id: Filter by project
+        :param str cloudspace_id: Filter by cloudspace
+        :param bool published: Filter by public
+        :param str internal_name: Filter by internal assistant name
+        :param str user_id: Filter by user
+        :param bool cloudy_compatible: Filter by cloudy compatibility
+        :param bool model_assistants_only: get only assistants that are used as models, not regular assistants
         :return: V1ListAssistantsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2122,7 +2122,7 @@ class AssistantsServiceApi(object):
         :param async_req bool
         :param str assistant_id: (required)
         :param str page_token:
-        :param bool filter_internal:
+        :param bool filter_internal: Filter internal conversations
         :return: V1ListConversationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2145,7 +2145,7 @@ class AssistantsServiceApi(object):
         :param async_req bool
         :param str assistant_id: (required)
         :param str page_token:
-        :param bool filter_internal:
+        :param bool filter_internal: Filter internal conversations
         :return: V1ListConversationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2301,7 +2301,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_start_conversation(self, body: 'AssistantIdConversationsBody', assistant_id: 'str', **kwargs) -> 'StreamResultOfV1ConversationResponseChunk':  # noqa: E501
+    def assistants_service_start_conversation(self, body: 'AssistantsServiceStartConversationBody', assistant_id: 'str', **kwargs) -> 'StreamResultOfV1ConversationResponseChunk':  # noqa: E501
         """assistants_service_start_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2310,7 +2310,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AssistantIdConversationsBody body: (required)
+        :param AssistantsServiceStartConversationBody body: (required)
         :param str assistant_id: (required)
         :return: StreamResultOfV1ConversationResponseChunk
                  If the method is called asynchronously,
@@ -2323,7 +2323,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_start_conversation_with_http_info(body, assistant_id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_start_conversation_with_http_info(self, body: 'AssistantIdConversationsBody', assistant_id: 'str', **kwargs) -> 'StreamResultOfV1ConversationResponseChunk':  # noqa: E501
+    def assistants_service_start_conversation_with_http_info(self, body: 'AssistantsServiceStartConversationBody', assistant_id: 'str', **kwargs) -> 'StreamResultOfV1ConversationResponseChunk':  # noqa: E501
         """assistants_service_start_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2332,7 +2332,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AssistantIdConversationsBody body: (required)
+        :param AssistantsServiceStartConversationBody body: (required)
         :param str assistant_id: (required)
         :return: StreamResultOfV1ConversationResponseChunk
                  If the method is called asynchronously,
@@ -2406,7 +2406,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_update_assistant(self, body: 'AgentsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
+    def assistants_service_update_assistant(self, body: 'AssistantsServiceUpdateAssistantBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
         """assistants_service_update_assistant  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2415,7 +2415,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AgentsIdBody body: (required)
+        :param AssistantsServiceUpdateAssistantBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1Assistant
@@ -2429,7 +2429,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_update_assistant_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_update_assistant_with_http_info(self, body: 'AgentsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
+    def assistants_service_update_assistant_with_http_info(self, body: 'AssistantsServiceUpdateAssistantBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Assistant':  # noqa: E501
         """assistants_service_update_assistant  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2438,7 +2438,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AgentsIdBody body: (required)
+        :param AssistantsServiceUpdateAssistantBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1Assistant
@@ -2519,7 +2519,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_update_assistant_managed_endpoint(self, body: 'AgentmanagedendpointsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ManagedEndpoint':  # noqa: E501
+    def assistants_service_update_assistant_managed_endpoint(self, body: 'AssistantsServiceUpdateAssistantManagedEndpointBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ManagedEndpoint':  # noqa: E501
         """assistants_service_update_assistant_managed_endpoint  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2528,7 +2528,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AgentmanagedendpointsIdBody body: (required)
+        :param AssistantsServiceUpdateAssistantManagedEndpointBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1ManagedEndpoint
@@ -2542,7 +2542,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_update_assistant_managed_endpoint_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_update_assistant_managed_endpoint_with_http_info(self, body: 'AgentmanagedendpointsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ManagedEndpoint':  # noqa: E501
+    def assistants_service_update_assistant_managed_endpoint_with_http_info(self, body: 'AssistantsServiceUpdateAssistantManagedEndpointBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ManagedEndpoint':  # noqa: E501
         """assistants_service_update_assistant_managed_endpoint  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2551,7 +2551,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AgentmanagedendpointsIdBody body: (required)
+        :param AssistantsServiceUpdateAssistantManagedEndpointBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1ManagedEndpoint
@@ -2632,7 +2632,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_update_assistant_managed_endpoint_model(self, body: 'ModelsIdBody', project_id: 'str', managed_endpoint_id: 'str', id: 'str', **kwargs) -> 'V1ManagedModel':  # noqa: E501
+    def assistants_service_update_assistant_managed_endpoint_model(self, body: 'AssistantsServiceUpdateAssistantManagedEndpointModelBody', project_id: 'str', managed_endpoint_id: 'str', id: 'str', **kwargs) -> 'V1ManagedModel':  # noqa: E501
         """assistants_service_update_assistant_managed_endpoint_model  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2641,7 +2641,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelsIdBody body: (required)
+        :param AssistantsServiceUpdateAssistantManagedEndpointModelBody body: (required)
         :param str project_id: (required)
         :param str managed_endpoint_id: (required)
         :param str id: (required)
@@ -2656,7 +2656,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_update_assistant_managed_endpoint_model_with_http_info(body, project_id, managed_endpoint_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_update_assistant_managed_endpoint_model_with_http_info(self, body: 'ModelsIdBody', project_id: 'str', managed_endpoint_id: 'str', id: 'str', **kwargs) -> 'V1ManagedModel':  # noqa: E501
+    def assistants_service_update_assistant_managed_endpoint_model_with_http_info(self, body: 'AssistantsServiceUpdateAssistantManagedEndpointModelBody', project_id: 'str', managed_endpoint_id: 'str', id: 'str', **kwargs) -> 'V1ManagedModel':  # noqa: E501
         """assistants_service_update_assistant_managed_endpoint_model  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2665,7 +2665,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelsIdBody body: (required)
+        :param AssistantsServiceUpdateAssistantManagedEndpointModelBody body: (required)
         :param str project_id: (required)
         :param str managed_endpoint_id: (required)
         :param str id: (required)
@@ -2753,7 +2753,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_update_conversation(self, body: 'ConversationsIdBody', assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
+    def assistants_service_update_conversation(self, body: 'AssistantsServiceUpdateConversationBody', assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
         """assistants_service_update_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2762,7 +2762,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ConversationsIdBody body: (required)
+        :param AssistantsServiceUpdateConversationBody body: (required)
         :param str assistant_id: (required)
         :param str id: (required)
         :return: V1Conversation
@@ -2776,7 +2776,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_update_conversation_with_http_info(body, assistant_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_update_conversation_with_http_info(self, body: 'ConversationsIdBody', assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
+    def assistants_service_update_conversation_with_http_info(self, body: 'AssistantsServiceUpdateConversationBody', assistant_id: 'str', id: 'str', **kwargs) -> 'V1Conversation':  # noqa: E501
         """assistants_service_update_conversation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2785,7 +2785,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ConversationsIdBody body: (required)
+        :param AssistantsServiceUpdateConversationBody body: (required)
         :param str assistant_id: (required)
         :param str id: (required)
         :return: V1Conversation
@@ -2866,7 +2866,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_update_conversation_like(self, body: 'ConversationsIdBody1', project_id: 'str', assistant_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationLikeResponse':  # noqa: E501
+    def assistants_service_update_conversation_like(self, body: 'AssistantsServiceUpdateConversationLikeBody', project_id: 'str', assistant_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationLikeResponse':  # noqa: E501
         """assistants_service_update_conversation_like  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2875,10 +2875,10 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ConversationsIdBody1 body: (required)
-        :param str project_id: (required)
-        :param str assistant_id: (required)
-        :param str id: (required)
+        :param AssistantsServiceUpdateConversationLikeBody body: (required)
+        :param str project_id: The project id of the message (required)
+        :param str assistant_id: The ID of the assistant (required)
+        :param str id: The ID of the conversation (required)
         :return: V1UpdateConversationLikeResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2890,7 +2890,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_update_conversation_like_with_http_info(body, project_id, assistant_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_update_conversation_like_with_http_info(self, body: 'ConversationsIdBody1', project_id: 'str', assistant_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationLikeResponse':  # noqa: E501
+    def assistants_service_update_conversation_like_with_http_info(self, body: 'AssistantsServiceUpdateConversationLikeBody', project_id: 'str', assistant_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationLikeResponse':  # noqa: E501
         """assistants_service_update_conversation_like  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2899,10 +2899,10 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ConversationsIdBody1 body: (required)
-        :param str project_id: (required)
-        :param str assistant_id: (required)
-        :param str id: (required)
+        :param AssistantsServiceUpdateConversationLikeBody body: (required)
+        :param str project_id: The project id of the message (required)
+        :param str assistant_id: The ID of the assistant (required)
+        :param str id: The ID of the conversation (required)
         :return: V1UpdateConversationLikeResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2987,7 +2987,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_update_conversation_message_content(self, body: 'IdContentBody', project_id: 'str', assistant_id: 'str', conversation_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationMessageContentResponse':  # noqa: E501
+    def assistants_service_update_conversation_message_content(self, body: 'AssistantsServiceUpdateConversationMessageContentBody', project_id: 'str', assistant_id: 'str', conversation_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationMessageContentResponse':  # noqa: E501
         """assistants_service_update_conversation_message_content  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2996,11 +2996,11 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdContentBody body: (required)
-        :param str project_id: (required)
-        :param str assistant_id: (required)
-        :param str conversation_id: (required)
-        :param str id: (required)
+        :param AssistantsServiceUpdateConversationMessageContentBody body: (required)
+        :param str project_id: The project id of the message (required)
+        :param str assistant_id: The ID of the assistant (required)
+        :param str conversation_id: The ID of the conversation (required)
+        :param str id: The ID of the message (required)
         :return: V1UpdateConversationMessageContentResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3012,7 +3012,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_update_conversation_message_content_with_http_info(body, project_id, assistant_id, conversation_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_update_conversation_message_content_with_http_info(self, body: 'IdContentBody', project_id: 'str', assistant_id: 'str', conversation_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationMessageContentResponse':  # noqa: E501
+    def assistants_service_update_conversation_message_content_with_http_info(self, body: 'AssistantsServiceUpdateConversationMessageContentBody', project_id: 'str', assistant_id: 'str', conversation_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationMessageContentResponse':  # noqa: E501
         """assistants_service_update_conversation_message_content  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3021,11 +3021,11 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdContentBody body: (required)
-        :param str project_id: (required)
-        :param str assistant_id: (required)
-        :param str conversation_id: (required)
-        :param str id: (required)
+        :param AssistantsServiceUpdateConversationMessageContentBody body: (required)
+        :param str project_id: The project id of the message (required)
+        :param str assistant_id: The ID of the assistant (required)
+        :param str conversation_id: The ID of the conversation (required)
+        :param str id: The ID of the message (required)
         :return: V1UpdateConversationMessageContentResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3116,7 +3116,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_update_conversation_message_like(self, body: 'MessagesIdBody', project_id: 'str', assistant_id: 'str', conversation_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationMessageLikeResponse':  # noqa: E501
+    def assistants_service_update_conversation_message_like(self, body: 'AssistantsServiceUpdateConversationMessageLikeBody', project_id: 'str', assistant_id: 'str', conversation_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationMessageLikeResponse':  # noqa: E501
         """assistants_service_update_conversation_message_like  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3125,11 +3125,11 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MessagesIdBody body: (required)
-        :param str project_id: (required)
-        :param str assistant_id: (required)
-        :param str conversation_id: (required)
-        :param str id: (required)
+        :param AssistantsServiceUpdateConversationMessageLikeBody body: (required)
+        :param str project_id: The project id of the message (required)
+        :param str assistant_id: The ID of the assistant (required)
+        :param str conversation_id: The ID of the conversation (required)
+        :param str id: The ID of the message (required)
         :return: V1UpdateConversationMessageLikeResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3141,7 +3141,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_update_conversation_message_like_with_http_info(body, project_id, assistant_id, conversation_id, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_update_conversation_message_like_with_http_info(self, body: 'MessagesIdBody', project_id: 'str', assistant_id: 'str', conversation_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationMessageLikeResponse':  # noqa: E501
+    def assistants_service_update_conversation_message_like_with_http_info(self, body: 'AssistantsServiceUpdateConversationMessageLikeBody', project_id: 'str', assistant_id: 'str', conversation_id: 'str', id: 'str', **kwargs) -> 'V1UpdateConversationMessageLikeResponse':  # noqa: E501
         """assistants_service_update_conversation_message_like  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3150,11 +3150,11 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MessagesIdBody body: (required)
-        :param str project_id: (required)
-        :param str assistant_id: (required)
-        :param str conversation_id: (required)
-        :param str id: (required)
+        :param AssistantsServiceUpdateConversationMessageLikeBody body: (required)
+        :param str project_id: The project id of the message (required)
+        :param str assistant_id: The ID of the assistant (required)
+        :param str conversation_id: The ID of the conversation (required)
+        :param str id: The ID of the message (required)
         :return: V1UpdateConversationMessageLikeResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3342,7 +3342,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_validate_assistant_status(self, body: 'object', id: 'str', **kwargs) -> 'V1ValidateAssistantStatusResponse':  # noqa: E501
+    def assistants_service_validate_assistant_status(self, body: 'AssistantsServiceValidateAssistantStatusBody', id: 'str', **kwargs) -> 'V1ValidateAssistantStatusResponse':  # noqa: E501
         """ValidateAssistantStatus validates the status of the assistant This is used to check if the assistant is online and ready to be used or not  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3351,7 +3351,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param AssistantsServiceValidateAssistantStatusBody body: (required)
         :param str id: (required)
         :return: V1ValidateAssistantStatusResponse
                  If the method is called asynchronously,
@@ -3364,7 +3364,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_validate_assistant_status_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_validate_assistant_status_with_http_info(self, body: 'object', id: 'str', **kwargs) -> 'V1ValidateAssistantStatusResponse':  # noqa: E501
+    def assistants_service_validate_assistant_status_with_http_info(self, body: 'AssistantsServiceValidateAssistantStatusBody', id: 'str', **kwargs) -> 'V1ValidateAssistantStatusResponse':  # noqa: E501
         """ValidateAssistantStatus validates the status of the assistant This is used to check if the assistant is online and ready to be used or not  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3373,7 +3373,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param AssistantsServiceValidateAssistantStatusBody body: (required)
         :param str id: (required)
         :return: V1ValidateAssistantStatusResponse
                  If the method is called asynchronously,
@@ -3447,7 +3447,7 @@ class AssistantsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def assistants_service_validate_managed_model(self, body: 'object', project_id: 'str', id: 'str', model_id: 'str', **kwargs) -> 'V1ValidateManagedModelResponse':  # noqa: E501
+    def assistants_service_validate_managed_model(self, body: 'AssistantsServiceValidateManagedModelBody', project_id: 'str', id: 'str', model_id: 'str', **kwargs) -> 'V1ValidateManagedModelResponse':  # noqa: E501
         """assistants_service_validate_managed_model  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3456,7 +3456,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param AssistantsServiceValidateManagedModelBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :param str model_id: (required)
@@ -3471,7 +3471,7 @@ class AssistantsServiceApi(object):
             (data) = self.assistants_service_validate_managed_model_with_http_info(body, project_id, id, model_id, **kwargs)  # noqa: E501
             return data
 
-    def assistants_service_validate_managed_model_with_http_info(self, body: 'object', project_id: 'str', id: 'str', model_id: 'str', **kwargs) -> 'V1ValidateManagedModelResponse':  # noqa: E501
+    def assistants_service_validate_managed_model_with_http_info(self, body: 'AssistantsServiceValidateManagedModelBody', project_id: 'str', id: 'str', model_id: 'str', **kwargs) -> 'V1ValidateManagedModelResponse':  # noqa: E501
         """assistants_service_validate_managed_model  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -3480,7 +3480,7 @@ class AssistantsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param AssistantsServiceValidateManagedModelBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :param str model_id: (required)

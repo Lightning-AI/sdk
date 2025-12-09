@@ -641,6 +641,7 @@ class V1Job(object):
     def server_error(self) -> 'str':
         """Gets the server_error of this V1Job.  # noqa: E501
 
+        If the job failed, the server error message  # noqa: E501
 
         :return: The server_error of this V1Job.  # noqa: E501
         :rtype: str
@@ -651,6 +652,7 @@ class V1Job(object):
     def server_error(self, server_error: 'str'):
         """Sets the server_error of this V1Job.
 
+        If the job failed, the server error message  # noqa: E501
 
         :param server_error: The server_error of this V1Job.  # noqa: E501
         :type: str
@@ -704,6 +706,7 @@ class V1Job(object):
     def state(self) -> 'str':
         """Gets the state of this V1Job.  # noqa: E501
 
+        pending, running, stopped, completed, failed  # noqa: E501
 
         :return: The state of this V1Job.  # noqa: E501
         :rtype: str
@@ -714,6 +717,7 @@ class V1Job(object):
     def state(self, state: 'str'):
         """Sets the state of this V1Job.
 
+        pending, running, stopped, completed, failed  # noqa: E501
 
         :param state: The state of this V1Job.  # noqa: E501
         :type: str
@@ -767,6 +771,7 @@ class V1Job(object):
     def total_cost(self) -> 'float':
         """Gets the total_cost of this V1Job.  # noqa: E501
 
+        The total cost of the job  # noqa: E501
 
         :return: The total_cost of this V1Job.  # noqa: E501
         :rtype: float
@@ -777,6 +782,7 @@ class V1Job(object):
     def total_cost(self, total_cost: 'float'):
         """Sets the total_cost of this V1Job.
 
+        The total cost of the job  # noqa: E501
 
         :param total_cost: The total_cost of this V1Job.  # noqa: E501
         :type: float

@@ -1,8 +1,8 @@
 from unittest import mock
 
 from lightning_sdk.lightning_cloud.openapi import (
+    CloudSpaceServiceCreateCloudSpaceBody,
     Externalv1CloudSpaceInstanceStatus,
-    ProjectIdCloudspacesBody,
     V1CloudSpace,
     V1CloudSpaceInstanceStartupStatus,
     V1GetCloudSpaceInstanceStatusResponse,
@@ -83,7 +83,7 @@ def test_run_plugin(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -195,7 +195,7 @@ def test_install_plugin(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,

@@ -43,7 +43,7 @@ class EndpointServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def endpoint_service_create_endpoint(self, body: 'ProjectIdEndpointsBody', project_id: 'str', **kwargs) -> 'V1Endpoint':  # noqa: E501
+    def endpoint_service_create_endpoint(self, body: 'EndpointServiceCreateEndpointBody', project_id: 'str', **kwargs) -> 'V1Endpoint':  # noqa: E501
         """endpoint_service_create_endpoint  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class EndpointServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdEndpointsBody body: (required)
+        :param EndpointServiceCreateEndpointBody body: (required)
         :param str project_id: (required)
         :return: V1Endpoint
                  If the method is called asynchronously,
@@ -65,7 +65,7 @@ class EndpointServiceApi(object):
             (data) = self.endpoint_service_create_endpoint_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def endpoint_service_create_endpoint_with_http_info(self, body: 'ProjectIdEndpointsBody', project_id: 'str', **kwargs) -> 'V1Endpoint':  # noqa: E501
+    def endpoint_service_create_endpoint_with_http_info(self, body: 'EndpointServiceCreateEndpointBody', project_id: 'str', **kwargs) -> 'V1Endpoint':  # noqa: E501
         """endpoint_service_create_endpoint  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,7 +74,7 @@ class EndpointServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdEndpointsBody body: (required)
+        :param EndpointServiceCreateEndpointBody body: (required)
         :param str project_id: (required)
         :return: V1Endpoint
                  If the method is called asynchronously,
@@ -482,7 +482,7 @@ class EndpointServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def endpoint_service_update_endpoint(self, body: 'EndpointsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Endpoint':  # noqa: E501
+    def endpoint_service_update_endpoint(self, body: 'EndpointServiceUpdateEndpointBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Endpoint':  # noqa: E501
         """endpoint_service_update_endpoint  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -491,7 +491,7 @@ class EndpointServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param EndpointsIdBody body: (required)
+        :param EndpointServiceUpdateEndpointBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1Endpoint
@@ -505,7 +505,7 @@ class EndpointServiceApi(object):
             (data) = self.endpoint_service_update_endpoint_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def endpoint_service_update_endpoint_with_http_info(self, body: 'EndpointsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Endpoint':  # noqa: E501
+    def endpoint_service_update_endpoint_with_http_info(self, body: 'EndpointServiceUpdateEndpointBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Endpoint':  # noqa: E501
         """endpoint_service_update_endpoint  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -514,7 +514,7 @@ class EndpointServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param EndpointsIdBody body: (required)
+        :param EndpointServiceUpdateEndpointBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1Endpoint

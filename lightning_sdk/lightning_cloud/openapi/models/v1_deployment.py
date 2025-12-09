@@ -214,6 +214,7 @@ class V1Deployment(object):
     def source(self) -> 'str':
         """Gets the source of this V1Deployment.  # noqa: E501
 
+        Source of deployment such as LitServe, LitModels etc.  # noqa: E501
 
         :return: The source of this V1Deployment.  # noqa: E501
         :rtype: str
@@ -224,6 +225,7 @@ class V1Deployment(object):
     def source(self, source: 'str'):
         """Sets the source of this V1Deployment.
 
+        Source of deployment such as LitServe, LitModels etc.  # noqa: E501
 
         :param source: The source of this V1Deployment.  # noqa: E501
         :type: str

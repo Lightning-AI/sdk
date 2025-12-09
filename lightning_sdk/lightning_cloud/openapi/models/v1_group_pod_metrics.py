@@ -547,6 +547,7 @@ class V1GroupPodMetrics(object):
     def gpus_util_avg(self) -> 'float':
         """Gets the gpus_util_avg of this V1GroupPodMetrics.  # noqa: E501
 
+        avg across all GPUs  # noqa: E501
 
         :return: The gpus_util_avg of this V1GroupPodMetrics.  # noqa: E501
         :rtype: float
@@ -557,6 +558,7 @@ class V1GroupPodMetrics(object):
     def gpus_util_avg(self, gpus_util_avg: 'float'):
         """Sets the gpus_util_avg of this V1GroupPodMetrics.
 
+        avg across all GPUs  # noqa: E501
 
         :param gpus_util_avg: The gpus_util_avg of this V1GroupPodMetrics.  # noqa: E501
         :type: float
@@ -1030,6 +1032,7 @@ class V1GroupPodMetrics(object):
     def ram_util_avg(self) -> 'float':
         """Gets the ram_util_avg of this V1GroupPodMetrics.  # noqa: E501
 
+        avg across pods  # noqa: E501
 
         :return: The ram_util_avg of this V1GroupPodMetrics.  # noqa: E501
         :rtype: float
@@ -1040,6 +1043,7 @@ class V1GroupPodMetrics(object):
     def ram_util_avg(self, ram_util_avg: 'float'):
         """Sets the ram_util_avg of this V1GroupPodMetrics.
 
+        avg across pods  # noqa: E501
 
         :param ram_util_avg: The ram_util_avg of this V1GroupPodMetrics.  # noqa: E501
         :type: float
@@ -1177,6 +1181,7 @@ class V1GroupPodMetrics(object):
     def vram_util_avg(self) -> 'float':
         """Gets the vram_util_avg of this V1GroupPodMetrics.  # noqa: E501
 
+        avg utilization %  # noqa: E501
 
         :return: The vram_util_avg of this V1GroupPodMetrics.  # noqa: E501
         :rtype: float
@@ -1187,6 +1192,7 @@ class V1GroupPodMetrics(object):
     def vram_util_avg(self, vram_util_avg: 'float'):
         """Sets the vram_util_avg of this V1GroupPodMetrics.
 
+        avg utilization %  # noqa: E501
 
         :param vram_util_avg: The vram_util_avg of this V1GroupPodMetrics.  # noqa: E501
         :type: float

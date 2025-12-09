@@ -43,7 +43,7 @@ class LightningappV2ServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def lightningapp_v2_service_create_lightningapp_from_gallery(self, body: 'ProjectIdGetappBody', project_id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def lightningapp_v2_service_create_lightningapp_from_gallery(self, body: 'LightningappV2ServiceCreateLightningappFromGalleryBody', project_id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """lightningapp_v2_service_create_lightningapp_from_gallery  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,8 +52,8 @@ class LightningappV2ServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdGetappBody body: (required)
-        :param str project_id: (required)
+        :param LightningappV2ServiceCreateLightningappFromGalleryBody body: (required)
+        :param str project_id: Project in which to create the app (required)
         :return: Externalv1LightningappInstance
                  If the method is called asynchronously,
                  returns the request thread.
@@ -65,7 +65,7 @@ class LightningappV2ServiceApi(object):
             (data) = self.lightningapp_v2_service_create_lightningapp_from_gallery_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def lightningapp_v2_service_create_lightningapp_from_gallery_with_http_info(self, body: 'ProjectIdGetappBody', project_id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def lightningapp_v2_service_create_lightningapp_from_gallery_with_http_info(self, body: 'LightningappV2ServiceCreateLightningappFromGalleryBody', project_id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """lightningapp_v2_service_create_lightningapp_from_gallery  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,8 +74,8 @@ class LightningappV2ServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdGetappBody body: (required)
-        :param str project_id: (required)
+        :param LightningappV2ServiceCreateLightningappFromGalleryBody body: (required)
+        :param str project_id: Project in which to create the app (required)
         :return: Externalv1LightningappInstance
                  If the method is called asynchronously,
                  returns the request thread.

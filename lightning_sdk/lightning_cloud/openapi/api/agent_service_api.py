@@ -43,7 +43,7 @@ class AgentServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def agent_service_agent_complete_part(self, body: 'object', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentCompletePartResponse':  # noqa: E501
+    def agent_service_agent_complete_part(self, body: 'AgentServiceAgentCompletePartBody', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentCompletePartResponse':  # noqa: E501
         """agent_service_agent_complete_part  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param AgentServiceAgentCompletePartBody body: (required)
         :param str id: (required)
         :param str upload_id: (required)
         :return: V1AgentCompletePartResponse
@@ -66,7 +66,7 @@ class AgentServiceApi(object):
             (data) = self.agent_service_agent_complete_part_with_http_info(body, id, upload_id, **kwargs)  # noqa: E501
             return data
 
-    def agent_service_agent_complete_part_with_http_info(self, body: 'object', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentCompletePartResponse':  # noqa: E501
+    def agent_service_agent_complete_part_with_http_info(self, body: 'AgentServiceAgentCompletePartBody', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentCompletePartResponse':  # noqa: E501
         """agent_service_agent_complete_part  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -75,7 +75,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param AgentServiceAgentCompletePartBody body: (required)
         :param str id: (required)
         :param str upload_id: (required)
         :return: V1AgentCompletePartResponse
@@ -156,7 +156,7 @@ class AgentServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def agent_service_agent_upload_part(self, body: 'MultipartuploadsUploadIdBody', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentUploadPartResponse':  # noqa: E501
+    def agent_service_agent_upload_part(self, body: 'AgentServiceAgentUploadPartBody', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentUploadPartResponse':  # noqa: E501
         """agent_service_agent_upload_part  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -165,7 +165,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MultipartuploadsUploadIdBody body: (required)
+        :param AgentServiceAgentUploadPartBody body: (required)
         :param str id: (required)
         :param str upload_id: (required)
         :return: V1AgentUploadPartResponse
@@ -179,7 +179,7 @@ class AgentServiceApi(object):
             (data) = self.agent_service_agent_upload_part_with_http_info(body, id, upload_id, **kwargs)  # noqa: E501
             return data
 
-    def agent_service_agent_upload_part_with_http_info(self, body: 'MultipartuploadsUploadIdBody', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentUploadPartResponse':  # noqa: E501
+    def agent_service_agent_upload_part_with_http_info(self, body: 'AgentServiceAgentUploadPartBody', id: 'str', upload_id: 'str', **kwargs) -> 'V1AgentUploadPartResponse':  # noqa: E501
         """agent_service_agent_upload_part  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -188,7 +188,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MultipartuploadsUploadIdBody body: (required)
+        :param AgentServiceAgentUploadPartBody body: (required)
         :param str id: (required)
         :param str upload_id: (required)
         :return: V1AgentUploadPartResponse
@@ -269,7 +269,7 @@ class AgentServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def agent_service_create_agent_multipart_upload(self, body: 'IdMultipartuploadsBody', id: 'str', **kwargs) -> 'V1CreateAgentMultipartUploadResponse':  # noqa: E501
+    def agent_service_create_agent_multipart_upload(self, body: 'AgentServiceCreateAgentMultipartUploadBody', id: 'str', **kwargs) -> 'V1CreateAgentMultipartUploadResponse':  # noqa: E501
         """agent_service_create_agent_multipart_upload  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -278,7 +278,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdMultipartuploadsBody body: (required)
+        :param AgentServiceCreateAgentMultipartUploadBody body: (required)
         :param str id: (required)
         :return: V1CreateAgentMultipartUploadResponse
                  If the method is called asynchronously,
@@ -291,7 +291,7 @@ class AgentServiceApi(object):
             (data) = self.agent_service_create_agent_multipart_upload_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def agent_service_create_agent_multipart_upload_with_http_info(self, body: 'IdMultipartuploadsBody', id: 'str', **kwargs) -> 'V1CreateAgentMultipartUploadResponse':  # noqa: E501
+    def agent_service_create_agent_multipart_upload_with_http_info(self, body: 'AgentServiceCreateAgentMultipartUploadBody', id: 'str', **kwargs) -> 'V1CreateAgentMultipartUploadResponse':  # noqa: E501
         """agent_service_create_agent_multipart_upload  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -300,7 +300,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdMultipartuploadsBody body: (required)
+        :param AgentServiceCreateAgentMultipartUploadBody body: (required)
         :param str id: (required)
         :return: V1CreateAgentMultipartUploadResponse
                  If the method is called asynchronously,
@@ -666,8 +666,8 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
-        :param str prefix:
+        :param str id: Job ID (required)
+        :param str prefix: Optional prefix for filtering
         :param str page_token:
         :param str page_size:
         :return: V1ListAgentJobArtifactsResponse
@@ -690,8 +690,8 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str id: (required)
-        :param str prefix:
+        :param str id: Job ID (required)
+        :param str prefix: Optional prefix for filtering
         :param str page_token:
         :param str page_size:
         :return: V1ListAgentJobArtifactsResponse
@@ -953,7 +953,7 @@ class AgentServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def agent_service_update_agent_job(self, body: 'JobsIdBody', id: 'str', **kwargs) -> 'V1AgentJob':  # noqa: E501
+    def agent_service_update_agent_job(self, body: 'AgentServiceUpdateAgentJobBody', id: 'str', **kwargs) -> 'V1AgentJob':  # noqa: E501
         """UpdateAgentJob is used to update a specific SLURM job for a SLURM agent. For updating SLURM Jobs for a user, please use the SLURMJobsUserService.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -962,7 +962,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobsIdBody body: (required)
+        :param AgentServiceUpdateAgentJobBody body: (required)
         :param str id: (required)
         :return: V1AgentJob
                  If the method is called asynchronously,
@@ -975,7 +975,7 @@ class AgentServiceApi(object):
             (data) = self.agent_service_update_agent_job_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def agent_service_update_agent_job_with_http_info(self, body: 'JobsIdBody', id: 'str', **kwargs) -> 'V1AgentJob':  # noqa: E501
+    def agent_service_update_agent_job_with_http_info(self, body: 'AgentServiceUpdateAgentJobBody', id: 'str', **kwargs) -> 'V1AgentJob':  # noqa: E501
         """UpdateAgentJob is used to update a specific SLURM job for a SLURM agent. For updating SLURM Jobs for a user, please use the SLURMJobsUserService.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -984,7 +984,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobsIdBody body: (required)
+        :param AgentServiceUpdateAgentJobBody body: (required)
         :param str id: (required)
         :return: V1AgentJob
                  If the method is called asynchronously,
@@ -1155,7 +1155,7 @@ class AgentServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def agent_service_upload_agent_job_artifact(self, body: 'IdUploadsBody', id: 'str', **kwargs) -> 'V1UploadAgentJobArtifactResponse':  # noqa: E501
+    def agent_service_upload_agent_job_artifact(self, body: 'AgentServiceUploadAgentJobArtifactBody', id: 'str', **kwargs) -> 'V1UploadAgentJobArtifactResponse':  # noqa: E501
         """agent_service_upload_agent_job_artifact  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1164,7 +1164,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdUploadsBody body: (required)
+        :param AgentServiceUploadAgentJobArtifactBody body: (required)
         :param str id: (required)
         :return: V1UploadAgentJobArtifactResponse
                  If the method is called asynchronously,
@@ -1177,7 +1177,7 @@ class AgentServiceApi(object):
             (data) = self.agent_service_upload_agent_job_artifact_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def agent_service_upload_agent_job_artifact_with_http_info(self, body: 'IdUploadsBody', id: 'str', **kwargs) -> 'V1UploadAgentJobArtifactResponse':  # noqa: E501
+    def agent_service_upload_agent_job_artifact_with_http_info(self, body: 'AgentServiceUploadAgentJobArtifactBody', id: 'str', **kwargs) -> 'V1UploadAgentJobArtifactResponse':  # noqa: E501
         """agent_service_upload_agent_job_artifact  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1186,7 +1186,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdUploadsBody body: (required)
+        :param AgentServiceUploadAgentJobArtifactBody body: (required)
         :param str id: (required)
         :return: V1UploadAgentJobArtifactResponse
                  If the method is called asynchronously,
@@ -1260,7 +1260,7 @@ class AgentServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def agent_service_upload_agent_job_output(self, body: 'IdOutputBody', id: 'str', **kwargs) -> 'V1UploadAgentJobOutputResponse':  # noqa: E501
+    def agent_service_upload_agent_job_output(self, body: 'AgentServiceUploadAgentJobOutputBody', id: 'str', **kwargs) -> 'V1UploadAgentJobOutputResponse':  # noqa: E501
         """TODO: rename to logs  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1269,7 +1269,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdOutputBody body: (required)
+        :param AgentServiceUploadAgentJobOutputBody body: (required)
         :param str id: (required)
         :return: V1UploadAgentJobOutputResponse
                  If the method is called asynchronously,
@@ -1282,7 +1282,7 @@ class AgentServiceApi(object):
             (data) = self.agent_service_upload_agent_job_output_with_http_info(body, id, **kwargs)  # noqa: E501
             return data
 
-    def agent_service_upload_agent_job_output_with_http_info(self, body: 'IdOutputBody', id: 'str', **kwargs) -> 'V1UploadAgentJobOutputResponse':  # noqa: E501
+    def agent_service_upload_agent_job_output_with_http_info(self, body: 'AgentServiceUploadAgentJobOutputBody', id: 'str', **kwargs) -> 'V1UploadAgentJobOutputResponse':  # noqa: E501
         """TODO: rename to logs  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1291,7 +1291,7 @@ class AgentServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdOutputBody body: (required)
+        :param AgentServiceUploadAgentJobOutputBody body: (required)
         :param str id: (required)
         :return: V1UploadAgentJobOutputResponse
                  If the method is called asynchronously,

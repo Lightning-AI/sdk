@@ -1,7 +1,13 @@
 import os
 from time import sleep, time
 from lightning_sdk.lightning_cloud import rest_client
-from lightning_sdk.lightning_cloud.openapi import Create, V1AwsDataConnection, V1S3FolderDataConnection, V1EfsConfig, V1GcpDataConnection, V1FilestoreDataConnection, V1DataConnectionTier, V1R2DataConnection
+from lightning_sdk.lightning_cloud.openapi.models.v1_s3_folder_data_connection import V1S3FolderDataConnection
+from lightning_sdk.lightning_cloud.openapi.models.v1_filestore_data_connection import V1FilestoreDataConnection
+from lightning_sdk.lightning_cloud.openapi.models.v1_efs_config import V1EfsConfig
+from lightning_sdk.lightning_cloud.openapi.models.v1_data_connection_tier import V1DataConnectionTier
+from lightning_sdk.lightning_cloud.openapi.models.v1_r2_data_connection import V1R2DataConnection
+from lightning_sdk.lightning_cloud.openapi.models.data_connection_service_create_data_connection_body import DataConnectionServiceCreateDataConnectionBody
+from lightning_sdk.lightning_cloud.openapi import V1AwsDataConnection, V1GcpDataConnection
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 import urllib3
 
@@ -17,7 +23,7 @@ def add_s3_connection(bucket_name: str, region: str = "us-east-1", create_timeou
     if any(d for d in data_connections if d.name == bucket_name):
         return
 
-    body = Create(
+    body = DataConnectionServiceCreateDataConnectionBody(
         name=bucket_name,
         create_index=True,
         cluster_id=cluster_id,
@@ -72,7 +78,7 @@ def create_s3_folder(folder_name: str, create_timeout: int = 15) -> None:
             return
 
     # If we get here, no matching folder was found, proceed with creation
-    body = Create(
+    body = DataConnectionServiceCreateDataConnectionBody(
         name=folder_name,
         create_resources=True,
         cluster_id=cluster_id,
@@ -127,7 +133,7 @@ def create_efs_folder(folder_name: str, region: str, create_timeout: int = 60) -
             return
 
     # If we get here, no matching folder was found, proceed with creation
-    body = Create(
+    body = DataConnectionServiceCreateDataConnectionBody(
         name=folder_name,
         create_resources=True,
         cluster_id=cluster_id,
@@ -181,7 +187,7 @@ def add_efs_connection(name: str, filesystem_id: str, region: str = "us-east-1",
     if any(d for d in data_connections if d.name == name):
         return
 
-    body = Create(
+    body = DataConnectionServiceCreateDataConnectionBody(
         name=name,
         create_resources=False,  # Don't create new EFS since we're connecting to existing one
         cluster_id=cluster_id,
@@ -244,7 +250,7 @@ def add_gcs_connection(connection_name: str, bucket_name: str, create_timeout: i
         if existing_connection_name == connection_name and isGCSConnection:
             return
 
-    body = Create(
+    body = DataConnectionServiceCreateDataConnectionBody(
         name=connection_name,
         create_index=True,
         cluster_id=cluster_id,
@@ -299,7 +305,7 @@ def create_filestore_folder(folder_name: str, region: str, capacity_gb: int = 10
             return
 
     # If we get here, no matching folder was found, proceed with creation
-    body = Create(
+    body = DataConnectionServiceCreateDataConnectionBody(
         name=folder_name,
         create_resources=True,
         cluster_id=cluster_id,
@@ -351,7 +357,7 @@ def create_cloud_agnostic_folder(folder_name: str, create_timeout: int = 30) -> 
             return
 
     # If we get here, no matching folder was found, proceed with creation
-    body = Create(
+    body = DataConnectionServiceCreateDataConnectionBody(
         name=folder_name,
         create_resources=True,
         r2=V1R2DataConnection(name=folder_name),

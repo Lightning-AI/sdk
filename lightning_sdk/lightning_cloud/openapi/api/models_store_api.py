@@ -43,7 +43,7 @@ class ModelsStoreApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def models_store_complete_model_upload(self, body: 'object', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CompleteModelUploadResponse':  # noqa: E501
+    def models_store_complete_model_upload(self, body: 'ModelsStoreCompleteModelUploadBody', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CompleteModelUploadResponse':  # noqa: E501
         """CompleteModelUpload marks the model upload as complete after all files have been uploaded. This marks the model as visible for list, delete, etc. operations  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param ModelsStoreCompleteModelUploadBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -67,7 +67,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_complete_model_upload_with_http_info(body, project_id, model_id, version, **kwargs)  # noqa: E501
             return data
 
-    def models_store_complete_model_upload_with_http_info(self, body: 'object', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CompleteModelUploadResponse':  # noqa: E501
+    def models_store_complete_model_upload_with_http_info(self, body: 'ModelsStoreCompleteModelUploadBody', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CompleteModelUploadResponse':  # noqa: E501
         """CompleteModelUpload marks the model upload as complete after all files have been uploaded. This marks the model as visible for list, delete, etc. operations  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -76,7 +76,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
+        :param ModelsStoreCompleteModelUploadBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -164,7 +164,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_complete_multi_part_upload(self, body: 'UploadIdCompleteBody1', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1CompleteMultiPartUploadResponse':  # noqa: E501
+    def models_store_complete_multi_part_upload(self, body: 'ModelsStoreCompleteMultiPartUploadBody', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1CompleteMultiPartUploadResponse':  # noqa: E501
         """CompleteMultiPartUpload marks the given file-parts as completed/uploaded. Once all parts of a file are completed, the file will materialize in S3 storage  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -173,7 +173,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadIdCompleteBody1 body: (required)
+        :param ModelsStoreCompleteMultiPartUploadBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -189,7 +189,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_complete_multi_part_upload_with_http_info(body, project_id, model_id, version, upload_id, **kwargs)  # noqa: E501
             return data
 
-    def models_store_complete_multi_part_upload_with_http_info(self, body: 'UploadIdCompleteBody1', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1CompleteMultiPartUploadResponse':  # noqa: E501
+    def models_store_complete_multi_part_upload_with_http_info(self, body: 'ModelsStoreCompleteMultiPartUploadBody', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1CompleteMultiPartUploadResponse':  # noqa: E501
         """CompleteMultiPartUpload marks the given file-parts as completed/uploaded. Once all parts of a file are completed, the file will materialize in S3 storage  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -198,7 +198,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadIdCompleteBody1 body: (required)
+        :param ModelsStoreCompleteMultiPartUploadBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -293,7 +293,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_create_model(self, body: 'ProjectIdModelsBody', project_id: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
+    def models_store_create_model(self, body: 'ModelsStoreCreateModelBody', project_id: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
         """CreateModel creates a new model.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -302,7 +302,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdModelsBody body: (required)
+        :param ModelsStoreCreateModelBody body: (required)
         :param str project_id: (required)
         :return: V1ModelVersionArchive
                  If the method is called asynchronously,
@@ -315,7 +315,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_create_model_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def models_store_create_model_with_http_info(self, body: 'ProjectIdModelsBody', project_id: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
+    def models_store_create_model_with_http_info(self, body: 'ModelsStoreCreateModelBody', project_id: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
         """CreateModel creates a new model.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -324,7 +324,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdModelsBody body: (required)
+        :param ModelsStoreCreateModelBody body: (required)
         :param str project_id: (required)
         :return: V1ModelVersionArchive
                  If the method is called asynchronously,
@@ -398,7 +398,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_create_model_version(self, body: 'ModelIdVersionsBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
+    def models_store_create_model_version(self, body: 'ModelsStoreCreateModelVersionBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
         """CreateModelVersion creates a new version of a model and marks the upload as incomplete. Files are expected to be uploaded using the multi-part upload APIs below, followed by a completion request after which the model will be fully visible (can list, delete etc.)  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -407,9 +407,9 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelIdVersionsBody body: (required)
+        :param ModelsStoreCreateModelVersionBody body: (required)
         :param str project_id: (required)
-        :param str model_id: (required)
+        :param str model_id: Unique ID of the model (required)
         :return: V1ModelVersionArchive
                  If the method is called asynchronously,
                  returns the request thread.
@@ -421,7 +421,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_create_model_version_with_http_info(body, project_id, model_id, **kwargs)  # noqa: E501
             return data
 
-    def models_store_create_model_version_with_http_info(self, body: 'ModelIdVersionsBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
+    def models_store_create_model_version_with_http_info(self, body: 'ModelsStoreCreateModelVersionBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
         """CreateModelVersion creates a new version of a model and marks the upload as incomplete. Files are expected to be uploaded using the multi-part upload APIs below, followed by a completion request after which the model will be fully visible (can list, delete etc.)  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -430,9 +430,9 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelIdVersionsBody body: (required)
+        :param ModelsStoreCreateModelVersionBody body: (required)
         :param str project_id: (required)
-        :param str model_id: (required)
+        :param str model_id: Unique ID of the model (required)
         :return: V1ModelVersionArchive
                  If the method is called asynchronously,
                  returns the request thread.
@@ -511,7 +511,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_create_multi_part_upload(self, body: 'VersionUploadsBody1', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CreateMultiPartUploadResponse':  # noqa: E501
+    def models_store_create_multi_part_upload(self, body: 'ModelsStoreCreateMultiPartUploadBody', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CreateMultiPartUploadResponse':  # noqa: E501
         """CreateMultiPartUpload initiates the multi-part upload of a file. Multiple requests can be sent to upload different files.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -520,7 +520,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionUploadsBody1 body: (required)
+        :param ModelsStoreCreateMultiPartUploadBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -535,7 +535,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_create_multi_part_upload_with_http_info(body, project_id, model_id, version, **kwargs)  # noqa: E501
             return data
 
-    def models_store_create_multi_part_upload_with_http_info(self, body: 'VersionUploadsBody1', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CreateMultiPartUploadResponse':  # noqa: E501
+    def models_store_create_multi_part_upload_with_http_info(self, body: 'ModelsStoreCreateMultiPartUploadBody', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1CreateMultiPartUploadResponse':  # noqa: E501
         """CreateMultiPartUpload initiates the multi-part upload of a file. Multiple requests can be sent to upload different files.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -544,7 +544,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionUploadsBody1 body: (required)
+        :param ModelsStoreCreateMultiPartUploadBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -1052,7 +1052,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_get_model_file_upload_urls(self, body: 'UploadIdPartsBody1', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1GetModelFileUploadUrlsResponse':  # noqa: E501
+    def models_store_get_model_file_upload_urls(self, body: 'ModelsStoreGetModelFileUploadUrlsBody', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1GetModelFileUploadUrlsResponse':  # noqa: E501
         """GetModelFileUploadUrls requests pre-signed URLs for a given number of file parts.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1061,7 +1061,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadIdPartsBody1 body: (required)
+        :param ModelsStoreGetModelFileUploadUrlsBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -1077,7 +1077,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_get_model_file_upload_urls_with_http_info(body, project_id, model_id, version, upload_id, **kwargs)  # noqa: E501
             return data
 
-    def models_store_get_model_file_upload_urls_with_http_info(self, body: 'UploadIdPartsBody1', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1GetModelFileUploadUrlsResponse':  # noqa: E501
+    def models_store_get_model_file_upload_urls_with_http_info(self, body: 'ModelsStoreGetModelFileUploadUrlsBody', project_id: 'str', model_id: 'str', version: 'str', upload_id: 'str', **kwargs) -> 'V1GetModelFileUploadUrlsResponse':  # noqa: E501
         """GetModelFileUploadUrls requests pre-signed URLs for a given number of file parts.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1086,7 +1086,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param UploadIdPartsBody1 body: (required)
+        :param ModelsStoreGetModelFileUploadUrlsBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -1827,7 +1827,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_set_model_default_version(self, body: 'VersionDefaultBody1', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1Model':  # noqa: E501
+    def models_store_set_model_default_version(self, body: 'ModelsStoreSetModelDefaultVersionBody', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1Model':  # noqa: E501
         """models_store_set_model_default_version  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1836,7 +1836,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionDefaultBody1 body: (required)
+        :param ModelsStoreSetModelDefaultVersionBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -1851,7 +1851,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_set_model_default_version_with_http_info(body, project_id, model_id, version, **kwargs)  # noqa: E501
             return data
 
-    def models_store_set_model_default_version_with_http_info(self, body: 'VersionDefaultBody1', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1Model':  # noqa: E501
+    def models_store_set_model_default_version_with_http_info(self, body: 'ModelsStoreSetModelDefaultVersionBody', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1Model':  # noqa: E501
         """models_store_set_model_default_version  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1860,7 +1860,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionDefaultBody1 body: (required)
+        :param ModelsStoreSetModelDefaultVersionBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -1948,7 +1948,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_update_model(self, body: 'ModelsModelIdBody1', project_id: 'str', model_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
+    def models_store_update_model(self, body: 'ModelsStoreUpdateModelBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
         """UpdateModel updates the model, in particular the model's name.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1957,7 +1957,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelsModelIdBody1 body: (required)
+        :param ModelsStoreUpdateModelBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :return: V1Model
@@ -1971,7 +1971,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_update_model_with_http_info(body, project_id, model_id, **kwargs)  # noqa: E501
             return data
 
-    def models_store_update_model_with_http_info(self, body: 'ModelsModelIdBody1', project_id: 'str', model_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
+    def models_store_update_model_with_http_info(self, body: 'ModelsStoreUpdateModelBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1Model':  # noqa: E501
         """UpdateModel updates the model, in particular the model's name.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1980,7 +1980,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelsModelIdBody1 body: (required)
+        :param ModelsStoreUpdateModelBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :return: V1Model
@@ -2061,7 +2061,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_update_model_version(self, body: 'VersionsVersionBody1', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
+    def models_store_update_model_version(self, body: 'ModelsStoreUpdateModelVersionBody', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
         """UpdateModelVersion updates the model version, in particular the model version's name.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2070,7 +2070,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionsVersionBody1 body: (required)
+        :param ModelsStoreUpdateModelVersionBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -2085,7 +2085,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_update_model_version_with_http_info(body, project_id, model_id, version, **kwargs)  # noqa: E501
             return data
 
-    def models_store_update_model_version_with_http_info(self, body: 'VersionsVersionBody1', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
+    def models_store_update_model_version_with_http_info(self, body: 'ModelsStoreUpdateModelVersionBody', project_id: 'str', model_id: 'str', version: 'str', **kwargs) -> 'V1ModelVersionArchive':  # noqa: E501
         """UpdateModelVersion updates the model version, in particular the model version's name.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2094,7 +2094,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param VersionsVersionBody1 body: (required)
+        :param ModelsStoreUpdateModelVersionBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :param str version: (required)
@@ -2182,7 +2182,7 @@ class ModelsStoreApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def models_store_update_model_visibility(self, body: 'ModelIdVisibilityBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1UpdateModelVisibilityResponse':  # noqa: E501
+    def models_store_update_model_visibility(self, body: 'ModelsStoreUpdateModelVisibilityBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1UpdateModelVisibilityResponse':  # noqa: E501
         """UpdateModelVisibility updates the model version, mainly switch between public and private  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2191,7 +2191,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelIdVisibilityBody body: (required)
+        :param ModelsStoreUpdateModelVisibilityBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :return: V1UpdateModelVisibilityResponse
@@ -2205,7 +2205,7 @@ class ModelsStoreApi(object):
             (data) = self.models_store_update_model_visibility_with_http_info(body, project_id, model_id, **kwargs)  # noqa: E501
             return data
 
-    def models_store_update_model_visibility_with_http_info(self, body: 'ModelIdVisibilityBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1UpdateModelVisibilityResponse':  # noqa: E501
+    def models_store_update_model_visibility_with_http_info(self, body: 'ModelsStoreUpdateModelVisibilityBody', project_id: 'str', model_id: 'str', **kwargs) -> 'V1UpdateModelVisibilityResponse':  # noqa: E501
         """UpdateModelVisibility updates the model version, mainly switch between public and private  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2214,7 +2214,7 @@ class ModelsStoreApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ModelIdVisibilityBody body: (required)
+        :param ModelsStoreUpdateModelVisibilityBody body: (required)
         :param str project_id: (required)
         :param str model_id: (required)
         :return: V1UpdateModelVisibilityResponse

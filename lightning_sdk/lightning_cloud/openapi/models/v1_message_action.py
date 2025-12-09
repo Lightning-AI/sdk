@@ -241,6 +241,7 @@ class V1MessageAction(object):
     def type(self) -> 'str':
         """Gets the type of this V1MessageAction.  # noqa: E501
 
+        eg: \"save\", \"run\", \"copy\"...  # noqa: E501
 
         :return: The type of this V1MessageAction.  # noqa: E501
         :rtype: str
@@ -251,6 +252,7 @@ class V1MessageAction(object):
     def type(self, type: 'str'):
         """Sets the type of this V1MessageAction.
 
+        eg: \"save\", \"run\", \"copy\"...  # noqa: E501
 
         :param type: The type of this V1MessageAction.  # noqa: E501
         :type: str

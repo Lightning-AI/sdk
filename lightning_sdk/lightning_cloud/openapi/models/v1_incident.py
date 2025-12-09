@@ -186,6 +186,7 @@ class V1Incident(object):
     def details(self) -> 'list[V1IncidentDetail]':
         """Gets the details of this V1Incident.  # noqa: E501
 
+        Free-form details about the incident, can be JSON of Kubernetes node, pod, logs for GPU, anything.  # noqa: E501
 
         :return: The details of this V1Incident.  # noqa: E501
         :rtype: list[V1IncidentDetail]
@@ -196,6 +197,7 @@ class V1Incident(object):
     def details(self, details: 'list[V1IncidentDetail]'):
         """Sets the details of this V1Incident.
 
+        Free-form details about the incident, can be JSON of Kubernetes node, pod, logs for GPU, anything.  # noqa: E501
 
         :param details: The details of this V1Incident.  # noqa: E501
         :type: list[V1IncidentDetail]

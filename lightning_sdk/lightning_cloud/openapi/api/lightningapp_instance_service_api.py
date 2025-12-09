@@ -1112,9 +1112,9 @@ class LightningappInstanceServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str page_token: Pagination.
+        :param str page_token: Pagination
         :param str limit:
-        :param list[str] user_ids: Filters.
+        :param list[str] user_ids: Filters
         :param str cluster_id:
         :param list[str] phase_in:
         :param list[str] phase_not_in:
@@ -1142,9 +1142,9 @@ class LightningappInstanceServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str page_token: Pagination.
+        :param str page_token: Pagination
         :param str limit:
-        :param list[str] user_ids: Filters.
+        :param list[str] user_ids: Filters
         :param str cluster_id:
         :param list[str] phase_in:
         :param list[str] phase_not_in:
@@ -1335,7 +1335,7 @@ class LightningappInstanceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lightningapp_instance_service_update_lightningapp_instance(self, body: 'AppinstancesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def lightningapp_instance_service_update_lightningapp_instance(self, body: 'LightningappInstanceServiceUpdateLightningappInstanceBody', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """lightningapp_instance_service_update_lightningapp_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1344,7 +1344,7 @@ class LightningappInstanceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AppinstancesIdBody body: (required)
+        :param LightningappInstanceServiceUpdateLightningappInstanceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: Externalv1LightningappInstance
@@ -1358,7 +1358,7 @@ class LightningappInstanceServiceApi(object):
             (data) = self.lightningapp_instance_service_update_lightningapp_instance_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def lightningapp_instance_service_update_lightningapp_instance_with_http_info(self, body: 'AppinstancesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def lightningapp_instance_service_update_lightningapp_instance_with_http_info(self, body: 'LightningappInstanceServiceUpdateLightningappInstanceBody', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """lightningapp_instance_service_update_lightningapp_instance  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1367,7 +1367,7 @@ class LightningappInstanceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AppinstancesIdBody body: (required)
+        :param LightningappInstanceServiceUpdateLightningappInstanceBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: Externalv1LightningappInstance
@@ -1448,7 +1448,7 @@ class LightningappInstanceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lightningapp_instance_service_update_lightningapp_instance_release(self, body: 'IdReleaseBody', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def lightningapp_instance_service_update_lightningapp_instance_release(self, body: 'LightningappInstanceServiceUpdateLightningappInstanceReleaseBody', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """lightningapp_instance_service_update_lightningapp_instance_release  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1457,7 +1457,7 @@ class LightningappInstanceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdReleaseBody body: (required)
+        :param LightningappInstanceServiceUpdateLightningappInstanceReleaseBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: Externalv1LightningappInstance
@@ -1471,7 +1471,7 @@ class LightningappInstanceServiceApi(object):
             (data) = self.lightningapp_instance_service_update_lightningapp_instance_release_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def lightningapp_instance_service_update_lightningapp_instance_release_with_http_info(self, body: 'IdReleaseBody', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
+    def lightningapp_instance_service_update_lightningapp_instance_release_with_http_info(self, body: 'LightningappInstanceServiceUpdateLightningappInstanceReleaseBody', project_id: 'str', id: 'str', **kwargs) -> 'Externalv1LightningappInstance':  # noqa: E501
         """lightningapp_instance_service_update_lightningapp_instance_release  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1480,7 +1480,7 @@ class LightningappInstanceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdReleaseBody body: (required)
+        :param LightningappInstanceServiceUpdateLightningappInstanceReleaseBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: Externalv1LightningappInstance
@@ -1561,7 +1561,7 @@ class LightningappInstanceServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def lightningapp_instance_service_upload_lightningapp_instance_artifact(self, body: 'IdArtifactsBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UploadLightningappInstanceArtifactResponse':  # noqa: E501
+    def lightningapp_instance_service_upload_lightningapp_instance_artifact(self, body: 'LightningappInstanceServiceUploadLightningappInstanceArtifactBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UploadLightningappInstanceArtifactResponse':  # noqa: E501
         """lightningapp_instance_service_upload_lightningapp_instance_artifact  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1570,7 +1570,7 @@ class LightningappInstanceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdArtifactsBody body: (required)
+        :param LightningappInstanceServiceUploadLightningappInstanceArtifactBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UploadLightningappInstanceArtifactResponse
@@ -1584,7 +1584,7 @@ class LightningappInstanceServiceApi(object):
             (data) = self.lightningapp_instance_service_upload_lightningapp_instance_artifact_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def lightningapp_instance_service_upload_lightningapp_instance_artifact_with_http_info(self, body: 'IdArtifactsBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UploadLightningappInstanceArtifactResponse':  # noqa: E501
+    def lightningapp_instance_service_upload_lightningapp_instance_artifact_with_http_info(self, body: 'LightningappInstanceServiceUploadLightningappInstanceArtifactBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UploadLightningappInstanceArtifactResponse':  # noqa: E501
         """lightningapp_instance_service_upload_lightningapp_instance_artifact  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1593,7 +1593,7 @@ class LightningappInstanceServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdArtifactsBody body: (required)
+        :param LightningappInstanceServiceUploadLightningappInstanceArtifactBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UploadLightningappInstanceArtifactResponse

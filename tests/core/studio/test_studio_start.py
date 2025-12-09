@@ -2,9 +2,9 @@ import os
 from unittest import mock
 
 from lightning_sdk.lightning_cloud.openapi import (
+    CloudSpaceServiceCreateCloudSpaceBody,
+    CloudSpaceServiceStartCloudSpaceInstanceBody,
     Externalv1CloudSpaceInstanceStatus,
-    IdStartBody,
-    ProjectIdCloudspacesBody,
     V1AWSDirectV1,
     V1CloudProvider,
     V1CloudSpace,
@@ -140,7 +140,7 @@ def test_studio_start(
     }
 
     def _create_cloudspace_side_effect(body, project_id, **kwargs):
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -340,7 +340,7 @@ def test_studio_start_on_demand_machine(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -544,7 +544,7 @@ def test_studio_start_interruptible_override(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -747,7 +747,7 @@ def test_studio_start_different_machine(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -846,7 +846,7 @@ def test_studio_start_different_machine(
 
     mock_start_instance.assert_called_once_with(
         mock.ANY,
-        IdStartBody(
+        CloudSpaceServiceStartCloudSpaceInstanceBody(
             compute_config=V1UserRequestedComputeConfig(
                 name="lit-t4-1",  # should be able to convert string "T4" to "lit-t4-1"
                 spot=True,
@@ -976,7 +976,7 @@ def test_studio_start_uses_current_studio_machine_when_inside_running_studio(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -1170,7 +1170,7 @@ def test_studio_start_ignores_stopped_current_studio_machine(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -1355,7 +1355,7 @@ def test_studio_start_explicit_machine_overrides_current_studio_machine(
     def _create_cloudspace_side_effect(*args, **kwargs):
         body = args[1] if len(args) > 1 else kwargs.get("body")
         project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,

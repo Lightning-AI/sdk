@@ -6,13 +6,13 @@ from unittest import mock
 import pytest
 
 from lightning_sdk.lightning_cloud.openapi import (
+    CloudSpaceServiceCreateCloudSpaceBody,
+    CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody,
     Externalv1CloudSpaceInstanceStatus,
     Externalv1Cluster,
     Externalv1LightningappInstance,
     Externalv1Lightningwork,
-    IdCodeconfigBody,
-    ProjectIdCloudspacesBody,
-    ProjectIdMultimachinejobsBody,
+    JobsServiceCreateMultiMachineJobBody,
     V1Assistant,
     V1AWSDirectV1,
     V1CloudProvider,
@@ -842,7 +842,7 @@ def internal_studio_init_mocker(mocker, internal_get_org_api_mocker, internal_te
     }
 
     def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -1099,7 +1099,7 @@ def internal_studio_delete_mocker(mocker, internal_get_org_api_mocker, internal_
     ]
 
     def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -1189,7 +1189,9 @@ def internal_studio_switch_mocker(mocker, internal_get_org_api_mocker, internal_
         machines[id] = requested_machines.pop(id)
         return mock.MagicMock()
 
-    def side_effect_update_instance_config(self, body: IdCodeconfigBody, project_id: str, id: str):
+    def side_effect_update_instance_config(
+        self, body: CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody, project_id: str, id: str
+    ):
         requested_machines[id] = body.compute_config
         requested_status["st-abc"] = "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
         return mock.MagicMock()
@@ -1621,7 +1623,7 @@ def internal_studio_init_plugin_mocker(mocker, internal_get_org_api_mocker, inte
     }
 
     def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
-        assert isinstance(body, ProjectIdCloudspacesBody)
+        assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
         cloudspace = V1CloudSpace(
             name=body.name,
             display_name=body.display_name,
@@ -1818,7 +1820,7 @@ def internal_job_run_mocker(mocker):
 
 @pytest.fixture()
 def internal_mmt_run_mocker(mocker):
-    def side_effect(self, body: ProjectIdMultimachinejobsBody, project_id):
+    def side_effect(self, body: JobsServiceCreateMultiMachineJobBody, project_id):
         from lightning_sdk.machine import Machine
 
         assert body.spec.command == "python my-file.py"

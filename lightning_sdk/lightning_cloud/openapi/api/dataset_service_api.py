@@ -43,7 +43,7 @@ class DatasetServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def dataset_service_create_dataset(self, body: 'ProjectIdDatasetsBody', project_id: 'str', **kwargs) -> 'V1Dataset':  # noqa: E501
+    def dataset_service_create_dataset(self, body: 'DatasetServiceCreateDatasetBody', project_id: 'str', **kwargs) -> 'V1Dataset':  # noqa: E501
         """dataset_service_create_dataset  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,7 +52,7 @@ class DatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdDatasetsBody body: (required)
+        :param DatasetServiceCreateDatasetBody body: (required)
         :param str project_id: (required)
         :return: V1Dataset
                  If the method is called asynchronously,
@@ -65,7 +65,7 @@ class DatasetServiceApi(object):
             (data) = self.dataset_service_create_dataset_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def dataset_service_create_dataset_with_http_info(self, body: 'ProjectIdDatasetsBody', project_id: 'str', **kwargs) -> 'V1Dataset':  # noqa: E501
+    def dataset_service_create_dataset_with_http_info(self, body: 'DatasetServiceCreateDatasetBody', project_id: 'str', **kwargs) -> 'V1Dataset':  # noqa: E501
         """dataset_service_create_dataset  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -74,7 +74,7 @@ class DatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdDatasetsBody body: (required)
+        :param DatasetServiceCreateDatasetBody body: (required)
         :param str project_id: (required)
         :return: V1Dataset
                  If the method is called asynchronously,
@@ -459,7 +459,7 @@ class DatasetServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def dataset_service_update_dataset(self, body: 'DatasetsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Dataset':  # noqa: E501
+    def dataset_service_update_dataset(self, body: 'DatasetServiceUpdateDatasetBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Dataset':  # noqa: E501
         """dataset_service_update_dataset  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -468,7 +468,7 @@ class DatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DatasetsIdBody body: (required)
+        :param DatasetServiceUpdateDatasetBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1Dataset
@@ -482,7 +482,7 @@ class DatasetServiceApi(object):
             (data) = self.dataset_service_update_dataset_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def dataset_service_update_dataset_with_http_info(self, body: 'DatasetsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Dataset':  # noqa: E501
+    def dataset_service_update_dataset_with_http_info(self, body: 'DatasetServiceUpdateDatasetBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Dataset':  # noqa: E501
         """dataset_service_update_dataset  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -491,7 +491,7 @@ class DatasetServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DatasetsIdBody body: (required)
+        :param DatasetServiceUpdateDatasetBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1Dataset

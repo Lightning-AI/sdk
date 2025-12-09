@@ -1,8 +1,8 @@
 from typing import List, Optional
 
 from lightning_sdk.lightning_cloud.openapi import (
-    AgentsIdBody,
-    EndpointsIdBody,
+    AssistantsServiceUpdateAssistantBody,
+    EndpointServiceUpdateEndpointBody,
     V1Assistant,
     V1Endpoint,
     V1PromptSuggestion,
@@ -46,7 +46,7 @@ class AgentApi:
     ) -> V1Assistant:
         """Update the agent with provided details."""
         agent = self.get_agent(agent_id)
-        body = AgentsIdBody(
+        body = AssistantsServiceUpdateAssistantBody(
             cloudspace_id=agent.cloudspace_id,
             cluster_id=agent.cluster_id,
             description=agent.description,
@@ -92,7 +92,7 @@ class AgentApi:
         """Update the agent endpoint with provided details."""
         endpoint = self._get_agent_endpoint(teampsace_id=teamspace_id, endpoint_id=endpoint_id)
 
-        body = EndpointsIdBody(
+        body = EndpointServiceUpdateEndpointBody(
             name=endpoint.name,
             openai=V1UpstreamOpenAI(api_key=endpoint.openai.api_key, base_url=endpoint.openai.base_url),
         )

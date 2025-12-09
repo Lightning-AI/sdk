@@ -46,7 +46,9 @@ class V1JobHealthCheckConfig(object):
         'http_get': 'V1HealthCheckHttpGet',
         'initial_delay_seconds': 'int',
         'interval_seconds': 'int',
-        'timeout_seconds': 'int'
+        'restart_policy': 'str',
+        'timeout_seconds': 'int',
+        'use_default_check': 'bool'
     }
 
     attribute_map = {
@@ -55,17 +57,21 @@ class V1JobHealthCheckConfig(object):
         'http_get': 'httpGet',
         'initial_delay_seconds': 'initialDelaySeconds',
         'interval_seconds': 'intervalSeconds',
-        'timeout_seconds': 'timeoutSeconds'
+        'restart_policy': 'restartPolicy',
+        'timeout_seconds': 'timeoutSeconds',
+        'use_default_check': 'useDefaultCheck'
     }
 
-    def __init__(self, _exec: 'V1HealthCheckExec' =None, failure_threshold: 'int' =None, http_get: 'V1HealthCheckHttpGet' =None, initial_delay_seconds: 'int' =None, interval_seconds: 'int' =None, timeout_seconds: 'int' =None):  # noqa: E501
+    def __init__(self, _exec: 'V1HealthCheckExec' =None, failure_threshold: 'int' =None, http_get: 'V1HealthCheckHttpGet' =None, initial_delay_seconds: 'int' =None, interval_seconds: 'int' =None, restart_policy: 'str' =None, timeout_seconds: 'int' =None, use_default_check: 'bool' =None):  # noqa: E501
         """V1JobHealthCheckConfig - a model defined in Swagger"""  # noqa: E501
         self.__exec = None
         self._failure_threshold = None
         self._http_get = None
         self._initial_delay_seconds = None
         self._interval_seconds = None
+        self._restart_policy = None
         self._timeout_seconds = None
+        self._use_default_check = None
         self.discriminator = None
         if _exec is not None:
             self._exec = _exec
@@ -77,8 +83,12 @@ class V1JobHealthCheckConfig(object):
             self.initial_delay_seconds = initial_delay_seconds
         if interval_seconds is not None:
             self.interval_seconds = interval_seconds
+        if restart_policy is not None:
+            self.restart_policy = restart_policy
         if timeout_seconds is not None:
             self.timeout_seconds = timeout_seconds
+        if use_default_check is not None:
+            self.use_default_check = use_default_check
 
     @property
     def _exec(self) -> 'V1HealthCheckExec':
@@ -186,6 +196,27 @@ class V1JobHealthCheckConfig(object):
         self._interval_seconds = interval_seconds
 
     @property
+    def restart_policy(self) -> 'str':
+        """Gets the restart_policy of this V1JobHealthCheckConfig.  # noqa: E501
+
+
+        :return: The restart_policy of this V1JobHealthCheckConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._restart_policy
+
+    @restart_policy.setter
+    def restart_policy(self, restart_policy: 'str'):
+        """Sets the restart_policy of this V1JobHealthCheckConfig.
+
+
+        :param restart_policy: The restart_policy of this V1JobHealthCheckConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._restart_policy = restart_policy
+
+    @property
     def timeout_seconds(self) -> 'int':
         """Gets the timeout_seconds of this V1JobHealthCheckConfig.  # noqa: E501
 
@@ -205,6 +236,27 @@ class V1JobHealthCheckConfig(object):
         """
 
         self._timeout_seconds = timeout_seconds
+
+    @property
+    def use_default_check(self) -> 'bool':
+        """Gets the use_default_check of this V1JobHealthCheckConfig.  # noqa: E501
+
+
+        :return: The use_default_check of this V1JobHealthCheckConfig.  # noqa: E501
+        :rtype: bool
+        """
+        return self._use_default_check
+
+    @use_default_check.setter
+    def use_default_check(self, use_default_check: 'bool'):
+        """Sets the use_default_check of this V1JobHealthCheckConfig.
+
+
+        :param use_default_check: The use_default_check of this V1JobHealthCheckConfig.  # noqa: E501
+        :type: bool
+        """
+
+        self._use_default_check = use_default_check
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

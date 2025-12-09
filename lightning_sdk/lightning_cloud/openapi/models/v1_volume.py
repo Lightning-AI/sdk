@@ -44,7 +44,9 @@ class V1Volume(object):
         'attached_at': 'datetime',
         'availability_zone': 'str',
         'detached_at': 'datetime',
+        'device_id': 'str',
         'encrypted': 'bool',
+        'ephemeral': 'bool',
         'iops': 'str',
         'metadata': 'V1Metadata',
         'path': 'str',
@@ -68,7 +70,9 @@ class V1Volume(object):
         'attached_at': 'attachedAt',
         'availability_zone': 'availabilityZone',
         'detached_at': 'detachedAt',
+        'device_id': 'deviceId',
         'encrypted': 'encrypted',
+        'ephemeral': 'ephemeral',
         'iops': 'iops',
         'metadata': 'metadata',
         'path': 'path',
@@ -88,12 +92,14 @@ class V1Volume(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, attached_at: 'datetime' =None, availability_zone: 'str' =None, detached_at: 'datetime' =None, encrypted: 'bool' =None, iops: 'str' =None, metadata: 'V1Metadata' =None, path: 'str' =None, provider: 'str' =None, provider_id: 'str' =None, region: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, retention_period: 'str' =None, server_id: 'str' =None, size_gb: 'str' =None, state: 'V1VolumeState' =None, subnet_id: 'str' =None, throughput: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, attached_at: 'datetime' =None, availability_zone: 'str' =None, detached_at: 'datetime' =None, device_id: 'str' =None, encrypted: 'bool' =None, ephemeral: 'bool' =None, iops: 'str' =None, metadata: 'V1Metadata' =None, path: 'str' =None, provider: 'str' =None, provider_id: 'str' =None, region: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, retention_period: 'str' =None, server_id: 'str' =None, size_gb: 'str' =None, state: 'V1VolumeState' =None, subnet_id: 'str' =None, throughput: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Volume - a model defined in Swagger"""  # noqa: E501
         self._attached_at = None
         self._availability_zone = None
         self._detached_at = None
+        self._device_id = None
         self._encrypted = None
+        self._ephemeral = None
         self._iops = None
         self._metadata = None
         self._path = None
@@ -118,8 +124,12 @@ class V1Volume(object):
             self.availability_zone = availability_zone
         if detached_at is not None:
             self.detached_at = detached_at
+        if device_id is not None:
+            self.device_id = device_id
         if encrypted is not None:
             self.encrypted = encrypted
+        if ephemeral is not None:
+            self.ephemeral = ephemeral
         if iops is not None:
             self.iops = iops
         if metadata is not None:
@@ -219,6 +229,27 @@ class V1Volume(object):
         self._detached_at = detached_at
 
     @property
+    def device_id(self) -> 'str':
+        """Gets the device_id of this V1Volume.  # noqa: E501
+
+
+        :return: The device_id of this V1Volume.  # noqa: E501
+        :rtype: str
+        """
+        return self._device_id
+
+    @device_id.setter
+    def device_id(self, device_id: 'str'):
+        """Sets the device_id of this V1Volume.
+
+
+        :param device_id: The device_id of this V1Volume.  # noqa: E501
+        :type: str
+        """
+
+        self._device_id = device_id
+
+    @property
     def encrypted(self) -> 'bool':
         """Gets the encrypted of this V1Volume.  # noqa: E501
 
@@ -238,6 +269,27 @@ class V1Volume(object):
         """
 
         self._encrypted = encrypted
+
+    @property
+    def ephemeral(self) -> 'bool':
+        """Gets the ephemeral of this V1Volume.  # noqa: E501
+
+
+        :return: The ephemeral of this V1Volume.  # noqa: E501
+        :rtype: bool
+        """
+        return self._ephemeral
+
+    @ephemeral.setter
+    def ephemeral(self, ephemeral: 'bool'):
+        """Sets the ephemeral of this V1Volume.
+
+
+        :param ephemeral: The ephemeral of this V1Volume.  # noqa: E501
+        :type: bool
+        """
+
+        self._ephemeral = ephemeral
 
     @property
     def iops(self) -> 'str':

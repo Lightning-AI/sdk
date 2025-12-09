@@ -43,7 +43,7 @@ class PipelinesServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def pipelines_service_create_child_pipeline(self, body: 'PipelinesIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
+    def pipelines_service_create_child_pipeline(self, body: 'PipelinesServiceCreateChildPipelineBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
         """pipelines_service_create_child_pipeline  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -52,9 +52,9 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param PipelinesIdBody1 body: (required)
-        :param str project_id: (required)
-        :param str id: (required)
+        :param PipelinesServiceCreateChildPipelineBody body: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1Pipeline
                  If the method is called asynchronously,
                  returns the request thread.
@@ -66,7 +66,7 @@ class PipelinesServiceApi(object):
             (data) = self.pipelines_service_create_child_pipeline_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def pipelines_service_create_child_pipeline_with_http_info(self, body: 'PipelinesIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
+    def pipelines_service_create_child_pipeline_with_http_info(self, body: 'PipelinesServiceCreateChildPipelineBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
         """pipelines_service_create_child_pipeline  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -75,9 +75,9 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param PipelinesIdBody1 body: (required)
-        :param str project_id: (required)
-        :param str id: (required)
+        :param PipelinesServiceCreateChildPipelineBody body: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1Pipeline
                  If the method is called asynchronously,
                  returns the request thread.
@@ -156,7 +156,7 @@ class PipelinesServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def pipelines_service_create_pipeline(self, body: 'ProjectIdPipelinesBody', project_id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
+    def pipelines_service_create_pipeline(self, body: 'PipelinesServiceCreatePipelineBody', project_id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
         """pipelines_service_create_pipeline  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -165,8 +165,8 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdPipelinesBody body: (required)
-        :param str project_id: (required)
+        :param PipelinesServiceCreatePipelineBody body: (required)
+        :param str project_id: Required (required)
         :return: V1Pipeline
                  If the method is called asynchronously,
                  returns the request thread.
@@ -178,7 +178,7 @@ class PipelinesServiceApi(object):
             (data) = self.pipelines_service_create_pipeline_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def pipelines_service_create_pipeline_with_http_info(self, body: 'ProjectIdPipelinesBody', project_id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
+    def pipelines_service_create_pipeline_with_http_info(self, body: 'PipelinesServiceCreatePipelineBody', project_id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
         """pipelines_service_create_pipeline  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -187,8 +187,8 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdPipelinesBody body: (required)
-        :param str project_id: (required)
+        :param PipelinesServiceCreatePipelineBody body: (required)
+        :param str project_id: Required (required)
         :return: V1Pipeline
                  If the method is called asynchronously,
                  returns the request thread.
@@ -270,8 +270,8 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1DeletePipelineResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -292,8 +292,8 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1DeletePipelineResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -371,8 +371,8 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1Pipeline
                  If the method is called asynchronously,
                  returns the request thread.
@@ -393,8 +393,8 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1Pipeline
                  If the method is called asynchronously,
                  returns the request thread.
@@ -472,8 +472,8 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str name: (required)
+        :param str project_id: Required (required)
+        :param str name: Required (required)
         :return: V1Pipeline
                  If the method is called asynchronously,
                  returns the request thread.
@@ -494,8 +494,8 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str name: (required)
+        :param str project_id: Required (required)
+        :param str name: Required (required)
         :return: V1Pipeline
                  If the method is called asynchronously,
                  returns the request thread.
@@ -573,12 +573,12 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str parent_pipeline_id:
         :param str original_pipeline_id:
         :param str page_token:
         :param int limit:
-        :param str state:
+        :param str state: For example, running, stopped, completed, failed
         :param bool standalone:
         :return: V1ListPipelinesResponse
                  If the method is called asynchronously,
@@ -600,12 +600,12 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str parent_pipeline_id:
         :param str original_pipeline_id:
         :param str page_token:
         :param int limit:
-        :param str state:
+        :param str state: For example, running, stopped, completed, failed
         :param bool standalone:
         :return: V1ListPipelinesResponse
                  If the method is called asynchronously,
@@ -681,7 +681,7 @@ class PipelinesServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def pipelines_service_update_pipeline(self, body: 'PipelinesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
+    def pipelines_service_update_pipeline(self, body: 'PipelinesServiceUpdatePipelineBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
         """pipelines_service_update_pipeline  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -690,9 +690,9 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param PipelinesIdBody body: (required)
-        :param str project_id: (required)
-        :param str id: (required)
+        :param PipelinesServiceUpdatePipelineBody body: (required)
+        :param str project_id: Required (required)
+        :param str id: Read only (required)
         :return: V1Pipeline
                  If the method is called asynchronously,
                  returns the request thread.
@@ -704,7 +704,7 @@ class PipelinesServiceApi(object):
             (data) = self.pipelines_service_update_pipeline_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def pipelines_service_update_pipeline_with_http_info(self, body: 'PipelinesIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
+    def pipelines_service_update_pipeline_with_http_info(self, body: 'PipelinesServiceUpdatePipelineBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Pipeline':  # noqa: E501
         """pipelines_service_update_pipeline  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -713,9 +713,9 @@ class PipelinesServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param PipelinesIdBody body: (required)
-        :param str project_id: (required)
-        :param str id: (required)
+        :param PipelinesServiceUpdatePipelineBody body: (required)
+        :param str project_id: Required (required)
+        :param str id: Read only (required)
         :return: V1Pipeline
                  If the method is called asynchronously,
                  returns the request thread.

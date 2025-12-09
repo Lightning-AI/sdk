@@ -52,8 +52,13 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
+        :param str name: Required
+        :param str payload:
+        :param datetime start:
+        :param datetime end:
+        :param int rank:
         :return: V1AddJobTimingResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -74,14 +79,19 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
+        :param str name: Required
+        :param str payload:
+        :param datetime start:
+        :param datetime end:
+        :param int rank:
         :return: V1AddJobTimingResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id']  # noqa: E501
+        all_params = ['project_id', 'id', 'name', 'payload', 'start', 'end', 'rank']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -114,6 +124,16 @@ class JobsServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'name' in params:
+            query_params.append(('name', params['name']))  # noqa: E501
+        if 'payload' in params:
+            query_params.append(('payload', params['payload']))  # noqa: E501
+        if 'start' in params:
+            query_params.append(('start', params['start']))  # noqa: E501
+        if 'end' in params:
+            query_params.append(('end', params['end']))  # noqa: E501
+        if 'rank' in params:
+            query_params.append(('rank', params['rank']))  # noqa: E501
 
         header_params = {}
 
@@ -144,7 +164,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_create_deployment(self, body: 'CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs', project_id: 'str', **kwargs) -> 'V1Deployment':  # noqa: E501
+    def jobs_service_create_deployment(self, body: 'JobsServiceCreateDeploymentBody', project_id: 'str', **kwargs) -> 'V1Deployment':  # noqa: E501
         """jobs_service_create_deployment  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -153,8 +173,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs body: (required)
-        :param str project_id: (required)
+        :param JobsServiceCreateDeploymentBody body: (required)
+        :param str project_id: Required (required)
         :return: V1Deployment
                  If the method is called asynchronously,
                  returns the request thread.
@@ -166,7 +186,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_create_deployment_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_create_deployment_with_http_info(self, body: 'CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs', project_id: 'str', **kwargs) -> 'V1Deployment':  # noqa: E501
+    def jobs_service_create_deployment_with_http_info(self, body: 'JobsServiceCreateDeploymentBody', project_id: 'str', **kwargs) -> 'V1Deployment':  # noqa: E501
         """jobs_service_create_deployment  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -175,8 +195,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param CreateDeploymentRequestDefinesASpecForTheJobThatAllowsForAutoscalingJobs body: (required)
-        :param str project_id: (required)
+        :param JobsServiceCreateDeploymentBody body: (required)
+        :param str project_id: Required (required)
         :return: V1Deployment
                  If the method is called asynchronously,
                  returns the request thread.
@@ -249,7 +269,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_create_deployment_alerting_policy(self, body: 'DeploymentIdAlertingpoliciesBody1', project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1DeploymentAlertingPolicy':  # noqa: E501
+    def jobs_service_create_deployment_alerting_policy(self, body: 'JobsServiceCreateDeploymentAlertingPolicyBody', project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1DeploymentAlertingPolicy':  # noqa: E501
         """CreateDeploymentAlertingPolicy creates a policy to monitor potential issues with deployment  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -258,7 +278,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DeploymentIdAlertingpoliciesBody1 body: (required)
+        :param JobsServiceCreateDeploymentAlertingPolicyBody body: (required)
         :param str project_id: (required)
         :param str deployment_id: (required)
         :return: V1DeploymentAlertingPolicy
@@ -272,7 +292,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_create_deployment_alerting_policy_with_http_info(body, project_id, deployment_id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_create_deployment_alerting_policy_with_http_info(self, body: 'DeploymentIdAlertingpoliciesBody1', project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1DeploymentAlertingPolicy':  # noqa: E501
+    def jobs_service_create_deployment_alerting_policy_with_http_info(self, body: 'JobsServiceCreateDeploymentAlertingPolicyBody', project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1DeploymentAlertingPolicy':  # noqa: E501
         """CreateDeploymentAlertingPolicy creates a policy to monitor potential issues with deployment  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -281,7 +301,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DeploymentIdAlertingpoliciesBody1 body: (required)
+        :param JobsServiceCreateDeploymentAlertingPolicyBody body: (required)
         :param str project_id: (required)
         :param str deployment_id: (required)
         :return: V1DeploymentAlertingPolicy
@@ -362,7 +382,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_create_job(self, body: 'ProjectIdJobsBody', project_id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
+    def jobs_service_create_job(self, body: 'JobsServiceCreateJobBody', project_id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
         """jobs_service_create_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -371,8 +391,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdJobsBody body: (required)
-        :param str project_id: (required)
+        :param JobsServiceCreateJobBody body: (required)
+        :param str project_id: Required (required)
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
@@ -384,7 +404,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_create_job_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_create_job_with_http_info(self, body: 'ProjectIdJobsBody', project_id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
+    def jobs_service_create_job_with_http_info(self, body: 'JobsServiceCreateJobBody', project_id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
         """jobs_service_create_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -393,8 +413,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdJobsBody body: (required)
-        :param str project_id: (required)
+        :param JobsServiceCreateJobBody body: (required)
+        :param str project_id: Required (required)
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
@@ -467,7 +487,112 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_create_multi_machine_job(self, body: 'ProjectIdMultimachinejobsBody', project_id: 'str', **kwargs) -> 'V1MultiMachineJob':  # noqa: E501
+    def jobs_service_create_job_index(self, project_id: 'str', id: 'str', **kwargs) -> 'V1RefreshIndexResponse':  # noqa: E501
+        """jobs_service_create_job_index  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_create_job_index(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str cluster_id:
+        :return: V1RefreshIndexResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_create_job_index_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_create_job_index_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_create_job_index_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1RefreshIndexResponse':  # noqa: E501
+        """jobs_service_create_job_index  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_create_job_index_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str cluster_id:
+        :return: V1RefreshIndexResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id', 'cluster_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_create_job_index" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_create_job_index`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `jobs_service_create_job_index`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'cluster_id' in params:
+            query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/jobs/{id}/index', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1RefreshIndexResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def jobs_service_create_multi_machine_job(self, body: 'JobsServiceCreateMultiMachineJobBody', project_id: 'str', **kwargs) -> 'V1MultiMachineJob':  # noqa: E501
         """MultiMachineJob  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -476,8 +601,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdMultimachinejobsBody body: (required)
-        :param str project_id: (required)
+        :param JobsServiceCreateMultiMachineJobBody body: (required)
+        :param str project_id: Required (required)
         :return: V1MultiMachineJob
                  If the method is called asynchronously,
                  returns the request thread.
@@ -489,7 +614,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_create_multi_machine_job_with_http_info(body, project_id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_create_multi_machine_job_with_http_info(self, body: 'ProjectIdMultimachinejobsBody', project_id: 'str', **kwargs) -> 'V1MultiMachineJob':  # noqa: E501
+    def jobs_service_create_multi_machine_job_with_http_info(self, body: 'JobsServiceCreateMultiMachineJobBody', project_id: 'str', **kwargs) -> 'V1MultiMachineJob':  # noqa: E501
         """MultiMachineJob  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -498,8 +623,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProjectIdMultimachinejobsBody body: (required)
-        :param str project_id: (required)
+        :param JobsServiceCreateMultiMachineJobBody body: (required)
+        :param str project_id: Required (required)
         :return: V1MultiMachineJob
                  If the method is called asynchronously,
                  returns the request thread.
@@ -581,7 +706,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :param bool delete_templates:
         :return: V1DeleteDeploymentResponse
@@ -604,7 +729,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :param bool delete_templates:
         :return: V1DeleteDeploymentResponse
@@ -795,9 +920,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str deployment_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str deployment_id: Required (required)
+        :param str id: Required (required)
         :return: V1DeleteDeploymentReleaseResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -818,9 +943,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str deployment_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str deployment_id: Required (required)
+        :param str id: Required (required)
         :return: V1DeleteDeploymentReleaseResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -904,7 +1029,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :param str cloudspace_id:
         :return: V1DeleteJobResponse
@@ -927,7 +1052,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :param str cloudspace_id:
         :return: V1DeleteJobResponse
@@ -1110,7 +1235,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :return: V1DeleteMultiMachineJobResponse
                  If the method is called asynchronously,
@@ -1132,7 +1257,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :return: V1DeleteMultiMachineJobResponse
                  If the method is called asynchronously,
@@ -1417,8 +1542,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1Deployment
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1439,8 +1564,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1Deployment
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1518,8 +1643,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str name: (required)
+        :param str project_id: Required (required)
+        :param str name: Required (required)
         :return: V1Deployment
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1540,8 +1665,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str name: (required)
+        :param str project_id: Required (required)
+        :param str name: Required (required)
         :return: V1Deployment
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1619,9 +1744,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_owner_name: (required)
-        :param str project_name: (required)
-        :param str deployment_name: (required)
+        :param str project_owner_name: Required (required)
+        :param str project_name: Required (required)
+        :param str deployment_name: Required (required)
         :return: V1Deployment
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1642,9 +1767,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_owner_name: (required)
-        :param str project_name: (required)
-        :param str deployment_name: (required)
+        :param str project_owner_name: Required (required)
+        :param str project_name: Required (required)
+        :param str deployment_name: Required (required)
         :return: V1Deployment
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1729,13 +1854,13 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param datetime start:
-        :param datetime end:
-        :param str path:
-        :param int status_code:
-        :param bool group_by_resource:
-        :param str resolution:
+        :param str id: Deployment ID (required)
+        :param datetime start: Optional to filter
+        :param datetime end: Optional to filter
+        :param str path: Optional to filter
+        :param int status_code: Optional to filter
+        :param bool group_by_resource: Whether the telemetry should grouped by resource
+        :param str resolution: Which time resolution to use
         :return: V1GetDeploymentRoutingTelemetryResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1757,13 +1882,13 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param datetime start:
-        :param datetime end:
-        :param str path:
-        :param int status_code:
-        :param bool group_by_resource:
-        :param str resolution:
+        :param str id: Deployment ID (required)
+        :param datetime start: Optional to filter
+        :param datetime end: Optional to filter
+        :param str path: Optional to filter
+        :param int status_code: Optional to filter
+        :param bool group_by_resource: Whether the telemetry should grouped by resource
+        :param str resolution: Which time resolution to use
         :return: V1GetDeploymentRoutingTelemetryResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1854,12 +1979,12 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param datetime start:
-        :param datetime end:
-        :param list[str] paths:
-        :param list[str] status_codes:
-        :param str resolution:
+        :param str id: Deployment ID (required)
+        :param datetime start: Optional to filter
+        :param datetime end: Optional to filter
+        :param list[str] paths: Optional to filter
+        :param list[str] status_codes: Optional to filter
+        :param str resolution: Which time resolution to use
         :return: V1GetDeploymentRoutingTelemetryAggregatedResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1881,12 +2006,12 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param datetime start:
-        :param datetime end:
-        :param list[str] paths:
-        :param list[str] status_codes:
-        :param str resolution:
+        :param str id: Deployment ID (required)
+        :param datetime start: Optional to filter
+        :param datetime end: Optional to filter
+        :param list[str] paths: Optional to filter
+        :param list[str] status_codes: Optional to filter
+        :param str resolution: Which time resolution to use
         :return: V1GetDeploymentRoutingTelemetryAggregatedResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1977,8 +2102,8 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param str request_id:
+        :param str id: Deployment ID (required)
+        :param str request_id: Request ID
         :return: V1GetDeploymentRoutingTelemetryContentResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2000,8 +2125,8 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param str request_id:
+        :param str id: Deployment ID (required)
+        :param str request_id: Request ID
         :return: V1GetDeploymentRoutingTelemetryContentResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2081,8 +2206,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1DeploymentStatus
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2103,8 +2228,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1DeploymentStatus
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2182,8 +2307,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :param str cloudspace_id:
         :return: V1Job
                  If the method is called asynchronously,
@@ -2205,8 +2330,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str id: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :param str cloudspace_id:
         :return: V1Job
                  If the method is called asynchronously,
@@ -2287,9 +2412,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_owner_name: (required)
-        :param str project_name: (required)
-        :param str job_name: (required)
+        :param str project_owner_name: Required (required)
+        :param str project_name: Required (required)
+        :param str job_name: Required (required)
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2310,9 +2435,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_owner_name: (required)
-        :param str project_name: (required)
-        :param str job_name: (required)
+        :param str project_owner_name: Required (required)
+        :param str project_name: Required (required)
+        :param str job_name: Required (required)
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2517,9 +2642,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id:
-        :param str project_id:
-        :param list[str] job_types:
+        :param str org_id: Optional, filter by org
+        :param str project_id: Optional, filter by project (jobs table total count)
+        :param list[str] job_types:  - JOB_TYPE_APP_INSTANCE: Lightning app instances  - JOB_TYPE_BATCH_JOB: Regular jobs  - JOB_TYPE_DEPLOYMENT: Deployments  - JOB_TYPE_PIPELINE: Pipelines  - JOB_TYPE_SLURM_JOB: Slurm jobs  - JOB_TYPE_MULTI_MACHINE_JOB: Multi-machine jobs  - JOB_TYPE_DEFAULT_JOBS: Default jobs (batch jobs, lightning apps, mmt, lit data, ...)
         :return: V1GetJobStatsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2540,9 +2665,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id:
-        :param str project_id:
-        :param list[str] job_types:
+        :param str org_id: Optional, filter by org
+        :param str project_id: Optional, filter by project (jobs table total count)
+        :param list[str] job_types:  - JOB_TYPE_APP_INSTANCE: Lightning app instances  - JOB_TYPE_BATCH_JOB: Regular jobs  - JOB_TYPE_DEPLOYMENT: Deployments  - JOB_TYPE_PIPELINE: Pipelines  - JOB_TYPE_SLURM_JOB: Slurm jobs  - JOB_TYPE_MULTI_MACHINE_JOB: Multi-machine jobs  - JOB_TYPE_DEFAULT_JOBS: Default jobs (batch jobs, lightning apps, mmt, lit data, ...)
         :return: V1GetJobStatsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2741,7 +2866,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :return: V1MultiMachineJob
                  If the method is called asynchronously,
@@ -2763,7 +2888,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :return: V1MultiMachineJob
                  If the method is called asynchronously,
@@ -2842,8 +2967,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str name: (required)
+        :param str project_id: Required (required)
+        :param str name: Required (required)
         :return: V1MultiMachineJob
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2864,8 +2989,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str name: (required)
+        :param str project_id: Required (required)
+        :param str name: Required (required)
         :return: V1MultiMachineJob
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2943,8 +3068,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id: (required)
-        :param str deployment_id: (required)
+        :param str org_id: Required (required)
+        :param str deployment_id: Required (required)
         :return: V1OrgDeploymentVisibility
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2965,8 +3090,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id: (required)
-        :param str deployment_id: (required)
+        :param str org_id: Required (required)
+        :param str deployment_id: Required (required)
         :return: V1OrgDeploymentVisibility
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3047,8 +3172,13 @@ class JobsServiceApi(object):
         :param str project_id:
         :param str page_token:
         :param int limit:
-        :param str sort_by:
-        :param str sort_order:
+        :param str search_query:
+        :param list[str] states:
+        :param list[str] job_types:  - JOB_TYPE_APP_INSTANCE: Lightning app instances  - JOB_TYPE_BATCH_JOB: Regular jobs  - JOB_TYPE_DEPLOYMENT: Deployments  - JOB_TYPE_PIPELINE: Pipelines  - JOB_TYPE_SLURM_JOB: Slurm jobs  - JOB_TYPE_MULTI_MACHINE_JOB: Multi-machine jobs  - JOB_TYPE_DEFAULT_JOBS: Default jobs (batch jobs, lightning apps, mmt, lit data, ...)
+        :param str org_id:
+        :param str user_id:
+        :param str sort_by: Column name to sort by
+        :param str sort_order: ascending or descending
         :return: V1ListAllJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3072,14 +3202,19 @@ class JobsServiceApi(object):
         :param str project_id:
         :param str page_token:
         :param int limit:
-        :param str sort_by:
-        :param str sort_order:
+        :param str search_query:
+        :param list[str] states:
+        :param list[str] job_types:  - JOB_TYPE_APP_INSTANCE: Lightning app instances  - JOB_TYPE_BATCH_JOB: Regular jobs  - JOB_TYPE_DEPLOYMENT: Deployments  - JOB_TYPE_PIPELINE: Pipelines  - JOB_TYPE_SLURM_JOB: Slurm jobs  - JOB_TYPE_MULTI_MACHINE_JOB: Multi-machine jobs  - JOB_TYPE_DEFAULT_JOBS: Default jobs (batch jobs, lightning apps, mmt, lit data, ...)
+        :param str org_id:
+        :param str user_id:
+        :param str sort_by: Column name to sort by
+        :param str sort_order: ascending or descending
         :return: V1ListAllJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'page_token', 'limit', 'sort_by', 'sort_order']  # noqa: E501
+        all_params = ['project_id', 'page_token', 'limit', 'search_query', 'states', 'job_types', 'org_id', 'user_id', 'sort_by', 'sort_order']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3106,6 +3241,18 @@ class JobsServiceApi(object):
             query_params.append(('pageToken', params['page_token']))  # noqa: E501
         if 'limit' in params:
             query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'search_query' in params:
+            query_params.append(('searchQuery', params['search_query']))  # noqa: E501
+        if 'states' in params:
+            query_params.append(('states', params['states']))  # noqa: E501
+            collection_formats['states'] = 'multi'  # noqa: E501
+        if 'job_types' in params:
+            query_params.append(('jobTypes', params['job_types']))  # noqa: E501
+            collection_formats['jobTypes'] = 'multi'  # noqa: E501
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'user_id' in params:
+            query_params.append(('userId', params['user_id']))  # noqa: E501
         if 'sort_by' in params:
             query_params.append(('sortBy', params['sort_by']))  # noqa: E501
         if 'sort_order' in params:
@@ -3352,8 +3499,8 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param str release_id:
+        :param str id: Deployment ID (required)
+        :param str release_id: Release ID
         :param str limit:
         :return: V1ListDeploymentEventsResponse
                  If the method is called asynchronously,
@@ -3376,8 +3523,8 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param str release_id:
+        :param str id: Deployment ID (required)
+        :param str release_id: Release ID
         :param str limit:
         :return: V1ListDeploymentEventsResponse
                  If the method is called asynchronously,
@@ -3460,8 +3607,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str deployment_id: (required)
+        :param str project_id: Required (required)
+        :param str deployment_id: Required (required)
         :param bool include_archived:
         :return: V1ListDeploymentReleasesResponse
                  If the method is called asynchronously,
@@ -3483,8 +3630,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
-        :param str deployment_id: (required)
+        :param str project_id: Required (required)
+        :param str deployment_id: Required (required)
         :param bool include_archived:
         :return: V1ListDeploymentReleasesResponse
                  If the method is called asynchronously,
@@ -3566,15 +3713,15 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param str first_request_id:
-        :param str last_request_id:
-        :param datetime start:
-        :param datetime end:
-        :param list[str] path:
-        :param list[int] status_code:
-        :param int limit:
-        :param bool filter_successful:
+        :param str id: Deployment ID (required)
+        :param str first_request_id: The first request id
+        :param str last_request_id: The last request id
+        :param datetime start: Optional to filter
+        :param datetime end: Optional to filter
+        :param list[str] path: Optional to filter
+        :param list[int] status_code: Optional to filter
+        :param int limit: Optional to filter
+        :param bool filter_successful: Optional to filter 200 status codes
         :return: V1GeListDeploymentRoutingTelemetryResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3596,15 +3743,15 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param str first_request_id:
-        :param str last_request_id:
-        :param datetime start:
-        :param datetime end:
-        :param list[str] path:
-        :param list[int] status_code:
-        :param int limit:
-        :param bool filter_successful:
+        :param str id: Deployment ID (required)
+        :param str first_request_id: The first request id
+        :param str last_request_id: The last request id
+        :param datetime start: Optional to filter
+        :param datetime end: Optional to filter
+        :param list[str] path: Optional to filter
+        :param list[int] status_code: Optional to filter
+        :param int limit: Optional to filter
+        :param bool filter_successful: Optional to filter 200 status codes
         :return: V1GeListDeploymentRoutingTelemetryResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3700,7 +3847,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str cloudspace_id:
         :param list[str] user_ids:
         :param bool standalone:
@@ -3724,7 +3871,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str cloudspace_id:
         :param list[str] user_ids:
         :param bool standalone:
@@ -3809,14 +3956,14 @@ class JobsServiceApi(object):
         :param list[str] project_ids:
         :param list[str] user_ids:
         :param str org_id:
-        :param str state:
-        :param list[str] job_types:
+        :param str state: For example, running, stopped, completed, failed
+        :param list[str] job_types:  - JOB_TYPE_APP_INSTANCE: Lightning app instances  - JOB_TYPE_BATCH_JOB: Regular jobs  - JOB_TYPE_DEPLOYMENT: Deployments  - JOB_TYPE_PIPELINE: Pipelines  - JOB_TYPE_SLURM_JOB: Slurm jobs  - JOB_TYPE_MULTI_MACHINE_JOB: Multi-machine jobs  - JOB_TYPE_DEFAULT_JOBS: Default jobs (batch jobs, lightning apps, mmt, lit data, ...)
         :param datetime end_time:
         :param str page_token:
         :param int limit:
         :param str cloudspace_id:
-        :param bool standalone: fields specific to deployments.
-        :param str parent_pipeline_id: fields specific to pipelines.
+        :param bool standalone: fields specific to deployments
+        :param str parent_pipeline_id: fields specific to pipelines
         :return: V1ListJobResourcesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3840,14 +3987,14 @@ class JobsServiceApi(object):
         :param list[str] project_ids:
         :param list[str] user_ids:
         :param str org_id:
-        :param str state:
-        :param list[str] job_types:
+        :param str state: For example, running, stopped, completed, failed
+        :param list[str] job_types:  - JOB_TYPE_APP_INSTANCE: Lightning app instances  - JOB_TYPE_BATCH_JOB: Regular jobs  - JOB_TYPE_DEPLOYMENT: Deployments  - JOB_TYPE_PIPELINE: Pipelines  - JOB_TYPE_SLURM_JOB: Slurm jobs  - JOB_TYPE_MULTI_MACHINE_JOB: Multi-machine jobs  - JOB_TYPE_DEFAULT_JOBS: Default jobs (batch jobs, lightning apps, mmt, lit data, ...)
         :param datetime end_time:
         :param str page_token:
         :param int limit:
         :param str cloudspace_id:
-        :param bool standalone: fields specific to deployments.
-        :param str parent_pipeline_id: fields specific to pipelines.
+        :param bool standalone: fields specific to deployments
+        :param str parent_pipeline_id: fields specific to pipelines
         :return: V1ListJobResourcesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3938,17 +4085,17 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str cloudspace_id:
         :param str user_id:
         :param str deployment_id:
         :param str multi_machine_job_id:
-        :param bool standalone: Whether to list standalone jobs, not part of a deployment or mmt.
+        :param bool standalone: Whether to list standalone jobs, not part of a deployment or mmt
         :param str page_token:
         :param int limit:
-        :param str state:
-        :param str sort_by:
-        :param str sort_order:
+        :param str state: For example, running, stopped, completed, failed
+        :param str sort_by: Column name to sort by
+        :param str sort_order: ascending or descending
         :return: V1ListJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3969,17 +4116,17 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str cloudspace_id:
         :param str user_id:
         :param str deployment_id:
         :param str multi_machine_job_id:
-        :param bool standalone: Whether to list standalone jobs, not part of a deployment or mmt.
+        :param bool standalone: Whether to list standalone jobs, not part of a deployment or mmt
         :param str page_token:
         :param int limit:
-        :param str state:
-        :param str sort_by:
-        :param str sort_order:
+        :param str state: For example, running, stopped, completed, failed
+        :param str sort_by: Column name to sort by
+        :param str sort_order: ascending or descending
         :return: V1ListJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -4072,8 +4219,8 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param str release_id:
+        :param str id: Deployment ID (required)
+        :param str release_id: Release ID
         :param str limit:
         :return: V1ListMultiMachineJobEventsResponse
                  If the method is called asynchronously,
@@ -4096,8 +4243,8 @@ class JobsServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
-        :param str id: (required)
-        :param str release_id:
+        :param str id: Deployment ID (required)
+        :param str release_id: Release ID
         :param str limit:
         :return: V1ListMultiMachineJobEventsResponse
                  If the method is called asynchronously,
@@ -4180,7 +4327,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str cloudspace_id:
         :param str user_id:
         :param bool standalone:
@@ -4204,7 +4351,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str project_id: Required (required)
         :param str cloudspace_id:
         :param str user_id:
         :param bool standalone:
@@ -4285,7 +4432,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id: (required)
+        :param str org_id: Required (required)
         :return: V1ListDeploymentsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -4306,7 +4453,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str org_id: (required)
+        :param str org_id: Required (required)
         :return: V1ListDeploymentsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -4369,7 +4516,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_report_deployment_routing_telemetry(self, body: 'JobIdReportroutingtelemetryBody', project_id: 'str', deployment_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportDeploymentRoutingTelemetryResponse':  # noqa: E501
+    def jobs_service_report_deployment_routing_telemetry(self, body: 'JobsServiceReportDeploymentRoutingTelemetryBody', project_id: 'str', deployment_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportDeploymentRoutingTelemetryResponse':  # noqa: E501
         """The tired proxy collects the requests sent to the resource and inform the CP  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4378,10 +4525,10 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobIdReportroutingtelemetryBody body: (required)
-        :param str project_id: (required)
-        :param str deployment_id: (required)
-        :param str job_id: (required)
+        :param JobsServiceReportDeploymentRoutingTelemetryBody body: (required)
+        :param str project_id: Required (required)
+        :param str deployment_id: Required (required)
+        :param str job_id: Required (required)
         :return: V1ReportDeploymentRoutingTelemetryResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -4393,7 +4540,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_report_deployment_routing_telemetry_with_http_info(body, project_id, deployment_id, job_id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_report_deployment_routing_telemetry_with_http_info(self, body: 'JobIdReportroutingtelemetryBody', project_id: 'str', deployment_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportDeploymentRoutingTelemetryResponse':  # noqa: E501
+    def jobs_service_report_deployment_routing_telemetry_with_http_info(self, body: 'JobsServiceReportDeploymentRoutingTelemetryBody', project_id: 'str', deployment_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportDeploymentRoutingTelemetryResponse':  # noqa: E501
         """The tired proxy collects the requests sent to the resource and inform the CP  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4402,10 +4549,10 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobIdReportroutingtelemetryBody body: (required)
-        :param str project_id: (required)
-        :param str deployment_id: (required)
-        :param str job_id: (required)
+        :param JobsServiceReportDeploymentRoutingTelemetryBody body: (required)
+        :param str project_id: Required (required)
+        :param str deployment_id: Required (required)
+        :param str job_id: Required (required)
         :return: V1ReportDeploymentRoutingTelemetryResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -4490,7 +4637,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_report_job_system_metrics(self, body: 'JobIdSystemmetricsBody', project_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportJobSystemMetricsResponse':  # noqa: E501
+    def jobs_service_report_job_system_metrics(self, body: 'JobsServiceReportJobSystemMetricsBody', project_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportJobSystemMetricsResponse':  # noqa: E501
         """ReportJobSystemMetrics is used by the tired proxy to report job system metrics back to the CP  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4499,7 +4646,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobIdSystemmetricsBody body: (required)
+        :param JobsServiceReportJobSystemMetricsBody body: (required)
         :param str project_id: (required)
         :param str job_id: (required)
         :return: V1ReportJobSystemMetricsResponse
@@ -4513,7 +4660,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_report_job_system_metrics_with_http_info(body, project_id, job_id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_report_job_system_metrics_with_http_info(self, body: 'JobIdSystemmetricsBody', project_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportJobSystemMetricsResponse':  # noqa: E501
+    def jobs_service_report_job_system_metrics_with_http_info(self, body: 'JobsServiceReportJobSystemMetricsBody', project_id: 'str', job_id: 'str', **kwargs) -> 'V1ReportJobSystemMetricsResponse':  # noqa: E501
         """ReportJobSystemMetrics is used by the tired proxy to report job system metrics back to the CP  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4522,7 +4669,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobIdSystemmetricsBody body: (required)
+        :param JobsServiceReportJobSystemMetricsBody body: (required)
         :param str project_id: (required)
         :param str job_id: (required)
         :return: V1ReportJobSystemMetricsResponse
@@ -4603,7 +4750,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_report_logs_activity(self, body: 'IdReportlogsactivityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ReportLogsActivityResponse':  # noqa: E501
+    def jobs_service_report_logs_activity(self, body: 'JobsServiceReportLogsActivityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ReportLogsActivityResponse':  # noqa: E501
         """The tired proxy collects the time at which the user logs started and inform the CP  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4612,8 +4759,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdReportlogsactivityBody body: (required)
-        :param str project_id: (required)
+        :param JobsServiceReportLogsActivityBody body: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :return: V1ReportLogsActivityResponse
                  If the method is called asynchronously,
@@ -4626,7 +4773,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_report_logs_activity_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_report_logs_activity_with_http_info(self, body: 'IdReportlogsactivityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ReportLogsActivityResponse':  # noqa: E501
+    def jobs_service_report_logs_activity_with_http_info(self, body: 'JobsServiceReportLogsActivityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ReportLogsActivityResponse':  # noqa: E501
         """The tired proxy collects the time at which the user logs started and inform the CP  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4635,8 +4782,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdReportlogsactivityBody body: (required)
-        :param str project_id: (required)
+        :param JobsServiceReportLogsActivityBody body: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :return: V1ReportLogsActivityResponse
                  If the method is called asynchronously,
@@ -4716,7 +4863,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_report_restart_timings(self, body: 'IdReportrestarttimingsBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ReportRestartTimingsResponse':  # noqa: E501
+    def jobs_service_report_restart_timings(self, body: 'JobsServiceReportRestartTimingsBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ReportRestartTimingsResponse':  # noqa: E501
         """The tired proxy collects the time at which the user logs started and inform the CP  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4725,8 +4872,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdReportrestarttimingsBody body: (required)
-        :param str project_id: (required)
+        :param JobsServiceReportRestartTimingsBody body: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :return: V1ReportRestartTimingsResponse
                  If the method is called asynchronously,
@@ -4739,7 +4886,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_report_restart_timings_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_report_restart_timings_with_http_info(self, body: 'IdReportrestarttimingsBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ReportRestartTimingsResponse':  # noqa: E501
+    def jobs_service_report_restart_timings_with_http_info(self, body: 'JobsServiceReportRestartTimingsBody', project_id: 'str', id: 'str', **kwargs) -> 'V1ReportRestartTimingsResponse':  # noqa: E501
         """The tired proxy collects the time at which the user logs started and inform the CP  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4748,8 +4895,8 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdReportrestarttimingsBody body: (required)
-        :param str project_id: (required)
+        :param JobsServiceReportRestartTimingsBody body: (required)
+        :param str project_id: Required (required)
         :param str id: (required)
         :return: V1ReportRestartTimingsResponse
                  If the method is called asynchronously,
@@ -4829,7 +4976,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_restore_deployment_release(self, body: 'object', project_id: 'str', deployment_id: 'str', id: 'str', **kwargs) -> 'V1RestoreDeploymentReleaseResponse':  # noqa: E501
+    def jobs_service_restore_deployment_release(self, body: 'JobsServiceRestoreDeploymentReleaseBody', project_id: 'str', deployment_id: 'str', id: 'str', **kwargs) -> 'V1RestoreDeploymentReleaseResponse':  # noqa: E501
         """jobs_service_restore_deployment_release  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4838,10 +4985,10 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
-        :param str project_id: (required)
-        :param str deployment_id: (required)
-        :param str id: (required)
+        :param JobsServiceRestoreDeploymentReleaseBody body: (required)
+        :param str project_id: Required (required)
+        :param str deployment_id: Required (required)
+        :param str id: Required (required)
         :return: V1RestoreDeploymentReleaseResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -4853,7 +5000,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_restore_deployment_release_with_http_info(body, project_id, deployment_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_restore_deployment_release_with_http_info(self, body: 'object', project_id: 'str', deployment_id: 'str', id: 'str', **kwargs) -> 'V1RestoreDeploymentReleaseResponse':  # noqa: E501
+    def jobs_service_restore_deployment_release_with_http_info(self, body: 'JobsServiceRestoreDeploymentReleaseBody', project_id: 'str', deployment_id: 'str', id: 'str', **kwargs) -> 'V1RestoreDeploymentReleaseResponse':  # noqa: E501
         """jobs_service_restore_deployment_release  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -4862,10 +5009,10 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param object body: (required)
-        :param str project_id: (required)
-        :param str deployment_id: (required)
-        :param str id: (required)
+        :param JobsServiceRestoreDeploymentReleaseBody body: (required)
+        :param str project_id: Required (required)
+        :param str deployment_id: Required (required)
+        :param str id: Required (required)
         :return: V1RestoreDeploymentReleaseResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -4966,7 +5113,7 @@ class JobsServiceApi(object):
         :param datetime until:
         :param str query:
         :param str page_size:
-        :param str page_token:
+        :param str page_token: When we add pagination
         :return: V1SearchJobLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -4994,7 +5141,7 @@ class JobsServiceApi(object):
         :param datetime until:
         :param str query:
         :param str page_size:
-        :param str page_token:
+        :param str page_token: When we add pagination
         :return: V1SearchJobLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -5071,7 +5218,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_update_deployment(self, body: 'DeploymentsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Deployment':  # noqa: E501
+    def jobs_service_update_deployment(self, body: 'JobsServiceUpdateDeploymentBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Deployment':  # noqa: E501
         """jobs_service_update_deployment  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5080,9 +5227,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DeploymentsIdBody body: (required)
-        :param str project_id: (required)
-        :param str id: (required)
+        :param JobsServiceUpdateDeploymentBody body: (required)
+        :param str project_id: Required (required)
+        :param str id: Read only (required)
         :return: V1Deployment
                  If the method is called asynchronously,
                  returns the request thread.
@@ -5094,7 +5241,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_update_deployment_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_update_deployment_with_http_info(self, body: 'DeploymentsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Deployment':  # noqa: E501
+    def jobs_service_update_deployment_with_http_info(self, body: 'JobsServiceUpdateDeploymentBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Deployment':  # noqa: E501
         """jobs_service_update_deployment  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5103,9 +5250,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DeploymentsIdBody body: (required)
-        :param str project_id: (required)
-        :param str id: (required)
+        :param JobsServiceUpdateDeploymentBody body: (required)
+        :param str project_id: Required (required)
+        :param str id: Read only (required)
         :return: V1Deployment
                  If the method is called asynchronously,
                  returns the request thread.
@@ -5184,7 +5331,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_update_deployment_alerting_event(self, body: 'AlertingeventsIdBody', project_id: 'str', deployment_id: 'str', id: 'str', **kwargs) -> 'V1DeploymentAlertingEvent':  # noqa: E501
+    def jobs_service_update_deployment_alerting_event(self, body: 'JobsServiceUpdateDeploymentAlertingEventBody', project_id: 'str', deployment_id: 'str', id: 'str', **kwargs) -> 'V1DeploymentAlertingEvent':  # noqa: E501
         """UpdateDeploymentAlertingEvent lists the deployment alert events  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5193,7 +5340,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AlertingeventsIdBody body: (required)
+        :param JobsServiceUpdateDeploymentAlertingEventBody body: (required)
         :param str project_id: (required)
         :param str deployment_id: (required)
         :param str id: (required)
@@ -5208,7 +5355,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_update_deployment_alerting_event_with_http_info(body, project_id, deployment_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_update_deployment_alerting_event_with_http_info(self, body: 'AlertingeventsIdBody', project_id: 'str', deployment_id: 'str', id: 'str', **kwargs) -> 'V1DeploymentAlertingEvent':  # noqa: E501
+    def jobs_service_update_deployment_alerting_event_with_http_info(self, body: 'JobsServiceUpdateDeploymentAlertingEventBody', project_id: 'str', deployment_id: 'str', id: 'str', **kwargs) -> 'V1DeploymentAlertingEvent':  # noqa: E501
         """UpdateDeploymentAlertingEvent lists the deployment alert events  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5217,7 +5364,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param AlertingeventsIdBody body: (required)
+        :param JobsServiceUpdateDeploymentAlertingEventBody body: (required)
         :param str project_id: (required)
         :param str deployment_id: (required)
         :param str id: (required)
@@ -5305,7 +5452,120 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_update_deployment_alerting_policy(self, body: 'DeploymentIdAlertingpoliciesBody', project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1DeploymentAlertingPolicy':  # noqa: E501
+    def jobs_service_update_deployment_alerting_events_bulk(self, body: 'JobsServiceUpdateDeploymentAlertingEventsBulkBody', project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1UpdateDeploymentAlertingEventsBulkResponse':  # noqa: E501
+        """UpdateDeploymentAlertingEvent updates a deployment alert read status  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_update_deployment_alerting_events_bulk(body, project_id, deployment_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param JobsServiceUpdateDeploymentAlertingEventsBulkBody body: (required)
+        :param str project_id: (required)
+        :param str deployment_id: (required)
+        :return: V1UpdateDeploymentAlertingEventsBulkResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_update_deployment_alerting_events_bulk_with_http_info(body, project_id, deployment_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_update_deployment_alerting_events_bulk_with_http_info(body, project_id, deployment_id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_update_deployment_alerting_events_bulk_with_http_info(self, body: 'JobsServiceUpdateDeploymentAlertingEventsBulkBody', project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1UpdateDeploymentAlertingEventsBulkResponse':  # noqa: E501
+        """UpdateDeploymentAlertingEvent updates a deployment alert read status  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_update_deployment_alerting_events_bulk_with_http_info(body, project_id, deployment_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param JobsServiceUpdateDeploymentAlertingEventsBulkBody body: (required)
+        :param str project_id: (required)
+        :param str deployment_id: (required)
+        :return: V1UpdateDeploymentAlertingEventsBulkResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id', 'deployment_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_update_deployment_alerting_events_bulk" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `jobs_service_update_deployment_alerting_events_bulk`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_update_deployment_alerting_events_bulk`")  # noqa: E501
+        # verify the required parameter 'deployment_id' is set
+        if ('deployment_id' not in params or
+                params['deployment_id'] is None):
+            raise ValueError("Missing the required parameter `deployment_id` when calling `jobs_service_update_deployment_alerting_events_bulk`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'deployment_id' in params:
+            path_params['deploymentId'] = params['deployment_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/deployments/{deploymentId}/alerting-events', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1UpdateDeploymentAlertingEventsBulkResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def jobs_service_update_deployment_alerting_policy(self, body: 'JobsServiceUpdateDeploymentAlertingPolicyBody', project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1DeploymentAlertingPolicy':  # noqa: E501
         """jobs_service_update_deployment_alerting_policy  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5314,7 +5574,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DeploymentIdAlertingpoliciesBody body: (required)
+        :param JobsServiceUpdateDeploymentAlertingPolicyBody body: (required)
         :param str project_id: (required)
         :param str deployment_id: (required)
         :return: V1DeploymentAlertingPolicy
@@ -5328,7 +5588,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_update_deployment_alerting_policy_with_http_info(body, project_id, deployment_id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_update_deployment_alerting_policy_with_http_info(self, body: 'DeploymentIdAlertingpoliciesBody', project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1DeploymentAlertingPolicy':  # noqa: E501
+    def jobs_service_update_deployment_alerting_policy_with_http_info(self, body: 'JobsServiceUpdateDeploymentAlertingPolicyBody', project_id: 'str', deployment_id: 'str', **kwargs) -> 'V1DeploymentAlertingPolicy':  # noqa: E501
         """jobs_service_update_deployment_alerting_policy  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5337,7 +5597,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DeploymentIdAlertingpoliciesBody body: (required)
+        :param JobsServiceUpdateDeploymentAlertingPolicyBody body: (required)
         :param str project_id: (required)
         :param str deployment_id: (required)
         :return: V1DeploymentAlertingPolicy
@@ -5418,7 +5678,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_update_deployment_visibility(self, body: 'IdVisibilityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateDeploymentVisibilityResponse':  # noqa: E501
+    def jobs_service_update_deployment_visibility(self, body: 'JobsServiceUpdateDeploymentVisibilityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateDeploymentVisibilityResponse':  # noqa: E501
         """UpdateDeploymentVisibility updates the deployment visibility, mainly switch between public and private  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5427,7 +5687,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdVisibilityBody body: (required)
+        :param JobsServiceUpdateDeploymentVisibilityBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateDeploymentVisibilityResponse
@@ -5441,7 +5701,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_update_deployment_visibility_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_update_deployment_visibility_with_http_info(self, body: 'IdVisibilityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateDeploymentVisibilityResponse':  # noqa: E501
+    def jobs_service_update_deployment_visibility_with_http_info(self, body: 'JobsServiceUpdateDeploymentVisibilityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateDeploymentVisibilityResponse':  # noqa: E501
         """UpdateDeploymentVisibility updates the deployment visibility, mainly switch between public and private  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5450,7 +5710,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdVisibilityBody body: (required)
+        :param JobsServiceUpdateDeploymentVisibilityBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateDeploymentVisibilityResponse
@@ -5531,7 +5791,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_update_job(self, body: 'JobsIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
+    def jobs_service_update_job(self, body: 'JobsServiceUpdateJobBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
         """jobs_service_update_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5540,9 +5800,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobsIdBody1 body: (required)
-        :param str project_id: (required)
-        :param str id: (required)
+        :param JobsServiceUpdateJobBody body: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
@@ -5554,7 +5814,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_update_job_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_update_job_with_http_info(self, body: 'JobsIdBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
+    def jobs_service_update_job_with_http_info(self, body: 'JobsServiceUpdateJobBody', project_id: 'str', id: 'str', **kwargs) -> 'V1Job':  # noqa: E501
         """jobs_service_update_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5563,9 +5823,9 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param JobsIdBody1 body: (required)
-        :param str project_id: (required)
-        :param str id: (required)
+        :param JobsServiceUpdateJobBody body: (required)
+        :param str project_id: Required (required)
+        :param str id: Required (required)
         :return: V1Job
                  If the method is called asynchronously,
                  returns the request thread.
@@ -5644,7 +5904,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_update_job_index(self, body: 'IdIndexBody3', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateIndexResponse':  # noqa: E501
+    def jobs_service_update_job_index(self, body: 'JobsServiceUpdateJobIndexBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateIndexResponse':  # noqa: E501
         """jobs_service_update_job_index  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5653,7 +5913,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdIndexBody3 body: (required)
+        :param JobsServiceUpdateJobIndexBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateIndexResponse
@@ -5667,7 +5927,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_update_job_index_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_update_job_index_with_http_info(self, body: 'IdIndexBody3', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateIndexResponse':  # noqa: E501
+    def jobs_service_update_job_index_with_http_info(self, body: 'JobsServiceUpdateJobIndexBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateIndexResponse':  # noqa: E501
         """jobs_service_update_job_index  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5676,7 +5936,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdIndexBody3 body: (required)
+        :param JobsServiceUpdateJobIndexBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateIndexResponse
@@ -5757,7 +6017,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_update_job_visibility(self, body: 'IdVisibilityBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateJobVisibilityResponse':  # noqa: E501
+    def jobs_service_update_job_visibility(self, body: 'JobsServiceUpdateJobVisibilityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateJobVisibilityResponse':  # noqa: E501
         """UpdateJobVisibility updates the jobs visibility, mainly switch between public and private  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5766,7 +6026,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdVisibilityBody1 body: (required)
+        :param JobsServiceUpdateJobVisibilityBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateJobVisibilityResponse
@@ -5780,7 +6040,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_update_job_visibility_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_update_job_visibility_with_http_info(self, body: 'IdVisibilityBody1', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateJobVisibilityResponse':  # noqa: E501
+    def jobs_service_update_job_visibility_with_http_info(self, body: 'JobsServiceUpdateJobVisibilityBody', project_id: 'str', id: 'str', **kwargs) -> 'V1UpdateJobVisibilityResponse':  # noqa: E501
         """UpdateJobVisibility updates the jobs visibility, mainly switch between public and private  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5789,7 +6049,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param IdVisibilityBody1 body: (required)
+        :param JobsServiceUpdateJobVisibilityBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1UpdateJobVisibilityResponse
@@ -5870,7 +6130,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_update_multi_machine_job(self, body: 'MultimachinejobsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1MultiMachineJob':  # noqa: E501
+    def jobs_service_update_multi_machine_job(self, body: 'JobsServiceUpdateMultiMachineJobBody', project_id: 'str', id: 'str', **kwargs) -> 'V1MultiMachineJob':  # noqa: E501
         """jobs_service_update_multi_machine_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5879,7 +6139,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MultimachinejobsIdBody body: (required)
+        :param JobsServiceUpdateMultiMachineJobBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1MultiMachineJob
@@ -5893,7 +6153,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_update_multi_machine_job_with_http_info(body, project_id, id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_update_multi_machine_job_with_http_info(self, body: 'MultimachinejobsIdBody', project_id: 'str', id: 'str', **kwargs) -> 'V1MultiMachineJob':  # noqa: E501
+    def jobs_service_update_multi_machine_job_with_http_info(self, body: 'JobsServiceUpdateMultiMachineJobBody', project_id: 'str', id: 'str', **kwargs) -> 'V1MultiMachineJob':  # noqa: E501
         """jobs_service_update_multi_machine_job  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5902,7 +6162,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MultimachinejobsIdBody body: (required)
+        :param JobsServiceUpdateMultiMachineJobBody body: (required)
         :param str project_id: (required)
         :param str id: (required)
         :return: V1MultiMachineJob
@@ -5983,7 +6243,7 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def jobs_service_update_org_deployment_visibility(self, body: 'DeploymentsDeploymentIdBody', org_id: 'str', deployment_id: 'str', **kwargs) -> 'V1OrgDeploymentVisibility':  # noqa: E501
+    def jobs_service_update_org_deployment_visibility(self, body: 'JobsServiceUpdateOrgDeploymentVisibilityBody', org_id: 'str', deployment_id: 'str', **kwargs) -> 'V1OrgDeploymentVisibility':  # noqa: E501
         """jobs_service_update_org_deployment_visibility  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -5992,7 +6252,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DeploymentsDeploymentIdBody body: (required)
+        :param JobsServiceUpdateOrgDeploymentVisibilityBody body: (required)
         :param str org_id: (required)
         :param str deployment_id: (required)
         :return: V1OrgDeploymentVisibility
@@ -6006,7 +6266,7 @@ class JobsServiceApi(object):
             (data) = self.jobs_service_update_org_deployment_visibility_with_http_info(body, org_id, deployment_id, **kwargs)  # noqa: E501
             return data
 
-    def jobs_service_update_org_deployment_visibility_with_http_info(self, body: 'DeploymentsDeploymentIdBody', org_id: 'str', deployment_id: 'str', **kwargs) -> 'V1OrgDeploymentVisibility':  # noqa: E501
+    def jobs_service_update_org_deployment_visibility_with_http_info(self, body: 'JobsServiceUpdateOrgDeploymentVisibilityBody', org_id: 'str', deployment_id: 'str', **kwargs) -> 'V1OrgDeploymentVisibility':  # noqa: E501
         """jobs_service_update_org_deployment_visibility  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -6015,7 +6275,7 @@ class JobsServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param DeploymentsDeploymentIdBody body: (required)
+        :param JobsServiceUpdateOrgDeploymentVisibilityBody body: (required)
         :param str org_id: (required)
         :param str deployment_id: (required)
         :return: V1OrgDeploymentVisibility

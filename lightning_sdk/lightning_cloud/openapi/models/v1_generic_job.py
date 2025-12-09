@@ -41,54 +41,90 @@ class V1GenericJob(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cloud_space_id': 'str',
         'cluster_id': 'str',
         'created_at': 'datetime',
         'id': 'str',
+        'message': 'str',
         'name': 'str',
         'project_id': 'str',
+        'spec': 'V1GenericJobSpec',
         'state': 'str',
         'type': 'str',
         'user_id': 'str'
     }
 
     attribute_map = {
+        'cloud_space_id': 'cloudSpaceId',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'id': 'id',
+        'message': 'message',
         'name': 'name',
         'project_id': 'projectId',
+        'spec': 'spec',
         'state': 'state',
         'type': 'type',
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, name: 'str' =None, project_id: 'str' =None, state: 'str' =None, type: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_space_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1GenericJobSpec' =None, state: 'str' =None, type: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1GenericJob - a model defined in Swagger"""  # noqa: E501
+        self._cloud_space_id = None
         self._cluster_id = None
         self._created_at = None
         self._id = None
+        self._message = None
         self._name = None
         self._project_id = None
+        self._spec = None
         self._state = None
         self._type = None
         self._user_id = None
         self.discriminator = None
+        if cloud_space_id is not None:
+            self.cloud_space_id = cloud_space_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
         if id is not None:
             self.id = id
+        if message is not None:
+            self.message = message
         if name is not None:
             self.name = name
         if project_id is not None:
             self.project_id = project_id
+        if spec is not None:
+            self.spec = spec
         if state is not None:
             self.state = state
         if type is not None:
             self.type = type
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def cloud_space_id(self) -> 'str':
+        """Gets the cloud_space_id of this V1GenericJob.  # noqa: E501
+
+
+        :return: The cloud_space_id of this V1GenericJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloud_space_id
+
+    @cloud_space_id.setter
+    def cloud_space_id(self, cloud_space_id: 'str'):
+        """Sets the cloud_space_id of this V1GenericJob.
+
+
+        :param cloud_space_id: The cloud_space_id of this V1GenericJob.  # noqa: E501
+        :type: str
+        """
+
+        self._cloud_space_id = cloud_space_id
 
     @property
     def cluster_id(self) -> 'str':
@@ -154,6 +190,27 @@ class V1GenericJob(object):
         self._id = id
 
     @property
+    def message(self) -> 'str':
+        """Gets the message of this V1GenericJob.  # noqa: E501
+
+
+        :return: The message of this V1GenericJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._message
+
+    @message.setter
+    def message(self, message: 'str'):
+        """Sets the message of this V1GenericJob.
+
+
+        :param message: The message of this V1GenericJob.  # noqa: E501
+        :type: str
+        """
+
+        self._message = message
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this V1GenericJob.  # noqa: E501
 
@@ -194,6 +251,27 @@ class V1GenericJob(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def spec(self) -> 'V1GenericJobSpec':
+        """Gets the spec of this V1GenericJob.  # noqa: E501
+
+
+        :return: The spec of this V1GenericJob.  # noqa: E501
+        :rtype: V1GenericJobSpec
+        """
+        return self._spec
+
+    @spec.setter
+    def spec(self, spec: 'V1GenericJobSpec'):
+        """Sets the spec of this V1GenericJob.
+
+
+        :param spec: The spec of this V1GenericJob.  # noqa: E501
+        :type: V1GenericJobSpec
+        """
+
+        self._spec = spec
 
     @property
     def state(self) -> 'str':

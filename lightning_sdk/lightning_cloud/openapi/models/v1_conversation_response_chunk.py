@@ -99,6 +99,7 @@ class V1ConversationResponseChunk(object):
     def choices(self) -> 'list[V1ResponseChoice]':
         """Gets the choices of this V1ConversationResponseChunk.  # noqa: E501
 
+        A list of chat completion choices. Can be more than one if n is greater than 1.  # noqa: E501
 
         :return: The choices of this V1ConversationResponseChunk.  # noqa: E501
         :rtype: list[V1ResponseChoice]
@@ -109,6 +110,7 @@ class V1ConversationResponseChunk(object):
     def choices(self, choices: 'list[V1ResponseChoice]'):
         """Sets the choices of this V1ConversationResponseChunk.
 
+        A list of chat completion choices. Can be more than one if n is greater than 1.  # noqa: E501
 
         :param choices: The choices of this V1ConversationResponseChunk.  # noqa: E501
         :type: list[V1ResponseChoice]

@@ -25,15 +25,18 @@ from lightning_sdk.api.utils import (
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
-    CloudspaceIdRunsBody,
-    CloudspacesIdBody,
+    AssistantsServiceCreateAssistantBody,
+    AssistantsServiceCreateAssistantManagedEndpointBody,
+    CloudSpaceServiceCreateCloudSpaceBody,
+    CloudSpaceServiceCreateLightningRunBody,
+    CloudSpaceServiceExecuteCommandInCloudSpaceBody,
+    CloudSpaceServiceForkCloudSpaceBody,
+    CloudSpaceServiceStartCloudSpaceInstanceBody,
+    CloudSpaceServiceUpdateCloudSpaceBody,
+    CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody,
+    CloudSpaceServiceUpdateCloudSpaceSleepConfigBody,
+    EndpointServiceCreateEndpointBody,
     Externalv1LightningappInstance,
-    IdCodeconfigBody,
-    IdExecuteBody1,
-    IdForkBody1,
-    IdSleepconfigBody,
-    IdStartBody,
-    ProjectIdCloudspacesBody,
     V1Assistant,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
@@ -41,27 +44,20 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpaceSourceType,
     V1CloudSpaceState,
     V1ClusterAccelerator,
+    V1Endpoint,
     V1EndpointType,
     V1EnvVar,
     V1GetCloudSpaceInstanceStatusResponse,
     V1GetLongRunningCommandInCloudSpaceResponse,
     V1LoginRequest,
+    V1ManagedEndpoint,
+    V1ManagedModel,
     V1Plugin,
     V1PluginsListResponse,
     V1UpstreamCloudSpace,
+    V1UpstreamManaged,
     V1UserRequestedComputeConfig,
 )
-from lightning_sdk.lightning_cloud.openapi.models import ProjectIdEndpointsBody
-from lightning_sdk.lightning_cloud.openapi.models.project_id_agentmanagedendpoints_body import (
-    ProjectIdAgentmanagedendpointsBody,
-)
-from lightning_sdk.lightning_cloud.openapi.models.project_id_agents_body import (
-    ProjectIdAgentsBody,
-)
-from lightning_sdk.lightning_cloud.openapi.models.v1_endpoint import V1Endpoint
-from lightning_sdk.lightning_cloud.openapi.models.v1_managed_endpoint import V1ManagedEndpoint
-from lightning_sdk.lightning_cloud.openapi.models.v1_managed_model import V1ManagedModel
-from lightning_sdk.lightning_cloud.openapi.models.v1_upstream_managed import V1UpstreamManaged
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
@@ -132,7 +128,7 @@ class StudioApi:
         cloud_space_environment_template_id: Optional[str] = None,
     ) -> V1CloudSpace:
         """Create a Studio with a given name in a given Teamspace on a possibly given cloud_account."""
-        body = ProjectIdCloudspacesBody(
+        body = CloudSpaceServiceCreateCloudSpaceBody(
             cluster_id=cloud_account,
             name=name,
             display_name=name,
@@ -144,7 +140,7 @@ class StudioApi:
         )
         studio = self._client.cloud_space_service_create_cloud_space(body, teamspace_id)
 
-        run_body = CloudspaceIdRunsBody(
+        run_body = CloudSpaceServiceCreateLightningRunBody(
             cluster_id=studio.cluster_id,
             local_source=True,
         )
@@ -187,7 +183,7 @@ class StudioApi:
         if max_runtime is not None:
             optional_kwargs_compute_body["requested_run_duration_seconds"] = str(max_runtime)
         self._client.cloud_space_service_start_cloud_space_instance(
-            IdStartBody(
+            CloudSpaceServiceStartCloudSpaceInstanceBody(
                 compute_config=V1UserRequestedComputeConfig(
                     name=_machine_to_compute_name(machine),
                     spot=interruptible,
@@ -223,7 +219,7 @@ class StudioApi:
         if max_runtime is not None:
             optional_kwargs_compute_body["requested_run_duration_seconds"] = str(max_runtime)
         self._client.cloud_space_service_start_cloud_space_instance(
-            IdStartBody(
+            CloudSpaceServiceStartCloudSpaceInstanceBody(
                 compute_config=V1UserRequestedComputeConfig(
                     name=_machine_to_compute_name(machine),
                     spot=interruptible,
@@ -272,7 +268,9 @@ class StudioApi:
         """Switches given Studio to a new machine type."""
         compute_name = _machine_to_compute_name(machine)
         # TODO: UI sends disk size here, maybe we need to also?
-        body = IdCodeconfigBody(compute_config=V1UserRequestedComputeConfig(name=compute_name, spot=interruptible))
+        body = CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody(
+            compute_config=V1UserRequestedComputeConfig(name=compute_name, spot=interruptible)
+        )
         if cloud_account:
             body.compute_config.cluster_override = cloud_account
         self._client.cloud_space_service_update_cloud_space_instance_config(
@@ -516,7 +514,7 @@ class StudioApi:
             timeout: wait for this many seconds for the command to finish.
         """
         response_submit = self._client.cloud_space_service_execute_command_in_cloud_space(
-            IdExecuteBody1("; ".join(commands), detached=True),
+            CloudSpaceServiceExecuteCommandInCloudSpaceBody("; ".join(commands), detached=True),
             project_id=teamspace_id,
             id=studio_id,
         )
@@ -556,7 +554,7 @@ class StudioApi:
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Tuple[str, int]:
         """Run given commands in a given Studio."""
         response_submit = self._client.cloud_space_service_execute_command_in_cloud_space(
-            IdExecuteBody1("; ".join(commands), detached=True),
+            CloudSpaceServiceExecuteCommandInCloudSpaceBody("; ".join(commands), detached=True),
             project_id=teamspace_id,
             id=studio_id,
         )
@@ -598,7 +596,7 @@ class StudioApi:
         idle_shutdown_seconds: Optional[int] = None,
     ) -> V1CloudSpaceInstanceConfig:
         """Update the autoshutdown time and behaviour of the given Studio."""
-        body = IdSleepconfigBody(
+        body = CloudSpaceServiceUpdateCloudSpaceSleepConfigBody(
             disable_auto_shutdown=not enabled if enabled is not None else None,
             idle_shutdown_seconds=idle_shutdown_seconds,
         )
@@ -629,7 +627,9 @@ class StudioApi:
             init_kwargs["org"] = OrgApi()._get_org_by_id(target_teamspace.owner_id).name
 
         new_cloudspace = self._client.cloud_space_service_fork_cloud_space(
-            IdForkBody1(target_project_id=target_teamspace_id, new_name=new_name), project_id=teamspace_id, id=studio_id
+            CloudSpaceServiceForkCloudSpaceBody(target_project_id=target_teamspace_id, new_name=new_name),
+            project_id=teamspace_id,
+            id=studio_id,
         )
 
         while self.get_studio_by_id(new_cloudspace.id, target_teamspace_id).state != V1CloudSpaceState.READY:
@@ -966,7 +966,7 @@ class StudioApi:
         """Starts a new port to the given Studio."""
         endpoint = self._client.endpoint_service_create_endpoint(
             project_id=teamspace_id,
-            body=ProjectIdEndpointsBody(
+            body=EndpointServiceCreateEndpointBody(
                 name=name,
                 ports=[str(port)],
                 cloudspace=V1UpstreamCloudSpace(
@@ -983,7 +983,7 @@ class StudioApi:
             org_id = target_teamspace.owner_id
         endpoint = self._client.endpoint_service_create_endpoint(
             project_id=teamspace_id,
-            body=ProjectIdEndpointsBody(
+            body=EndpointServiceCreateEndpointBody(
                 ports=[str(port)],
                 cloudspace=V1UpstreamCloudSpace(
                     cloudspace_id=studio_id,
@@ -994,7 +994,7 @@ class StudioApi:
         )
         valid_url = endpoint.urls[0]
         managed_endpoint = self._client.assistants_service_create_assistant_managed_endpoint(
-            body=ProjectIdAgentmanagedendpointsBody(
+            body=AssistantsServiceCreateAssistantManagedEndpointBody(
                 endpoint=V1ManagedEndpoint(
                     name=assistant_name,
                     base_url=valid_url + "/v1",
@@ -1009,7 +1009,7 @@ class StudioApi:
             project_id=teamspace_id,
         )
 
-        body = ProjectIdAgentsBody(
+        body = AssistantsServiceCreateAssistantBody(
             endpoint=V1Endpoint(
                 cloudspace=V1UpstreamCloudSpace(cloudspace_id=studio_id),
                 name=assistant_name,
@@ -1040,7 +1040,7 @@ class StudioApi:
         )
 
     def _update_cloudspace(self, studio: V1CloudSpace, teamspace_id: str, key: str, value: Any) -> None:
-        body = CloudspacesIdBody(
+        body = CloudSpaceServiceUpdateCloudSpaceBody(
             code_url=studio.code_url,
             data_connection_mounts=studio.data_connection_mounts,
             description=studio.description,
