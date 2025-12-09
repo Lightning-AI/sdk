@@ -242,6 +242,16 @@ def internal_teamspace_api_mocker(mocker):
         side_effect=side_effect,
         autospec=True,
     )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_list_project_cluster_bindings",
+        return_value=V1ListProjectClusterBindingsResponse(
+            clusters=[
+                V1ProjectClusterBinding(cluster_id="cluster-abc", cluster_name="cluster-abc"),
+            ]
+        ),
+        autospec=True,
+    )
     yield [mocker]
 
     mocker.resetall()

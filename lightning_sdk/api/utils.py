@@ -363,7 +363,7 @@ def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:
 
 
 def _resolve_teamspace_remote_path(path: str) -> str:
-    return f"/Uploads/{path.replace('/teamspace/studios/this_studio/', '')}"
+    return f"/Uploads/{path.replace('/teamspace/uploads/', '')}"
 
 
 _DOWNLOAD_REQUEST_CHUNK_SIZE = 10 * _BYTES_PER_MB

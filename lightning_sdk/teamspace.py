@@ -550,7 +550,6 @@ class Teamspace(metaclass=TrackCallsMeta):
             path=remote_path,
             target_path=file_path,
             teamspace_id=self._teamspace.id,
-            cloud_account=self.default_cloud_account,
         )
 
     def download_folder(self, remote_path: str, target_path: Optional[str] = None) -> None:

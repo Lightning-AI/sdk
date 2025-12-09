@@ -281,10 +281,32 @@ def test_upload_file(
 
 
 def test_download_file(tmpdir, internal_teamspace_api_mocker, internal_studio_api_login):
+    file_content = b"test file content"
+
+    mock_redirect_response = mock.Mock()
+    mock_redirect_response.status_code = 303
+    mock_redirect_response.headers = {"Location": "https://s3.amazonaws.com/signed-url-here"}
+
+    mock_s3_response = mock.Mock()
+    mock_s3_response.status_code = 200
+    mock_s3_response.headers = {"content-length": str(len(file_content))}
+    mock_s3_response.iter_content = lambda chunk_size: [file_content]
+
+    def get_side_effect(url, **kwargs):
+        if "artifacts/download" in url:
+            return mock_redirect_response
+        return mock_s3_response
+
     teamspace_api = TeamspaceApi()
 
-    filepath = os.path.join(tmpdir, "file1")
-    teamspace_api.download_file("file1", filepath, "ts-abc", "cluster-abc")
+    with mock.patch("requests.get", side_effect=get_side_effect):
+        teamspace_api = TeamspaceApi()
+        filepath = os.path.join(tmpdir, "file1")
+        teamspace_api.download_file("file1", filepath, "ts-abc")
+
+        assert os.path.exists(filepath)
+        with open(filepath, "rb") as f:
+            assert f.read() == file_content
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.requests")
@@ -299,8 +321,8 @@ def test_download_file_error(mock_requests, tmpdir, internal_teamspace_api_mocke
     mock_response.iter_content.return_value = []
     mock_requests.get.return_value = mock_response
 
-    with pytest.raises(FileNotFoundError, match=f"File {remote_path} not found"):
-        teamspace_api.download_file(remote_path, filepath, "ts-abc", "cluster-abc")
+    with pytest.raises(FileNotFoundError, match=f"The provided path does not exist in the teamspace: {remote_path}"):
+        teamspace_api.download_file(remote_path, filepath, "ts-abc")
 
 
 @mock.patch("lightning_sdk.api.teamspace_api._download_teamspace_files", autospec=True)

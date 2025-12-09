@@ -376,7 +376,6 @@ class TeamspaceApi:
         path: str,
         target_path: str,
         teamspace_id: str,
-        cloud_account: str,
         progress_bar: bool = True,
     ) -> None:
         """Downloads a given file in Teamspace drive to a target location."""
@@ -385,19 +384,32 @@ class TeamspaceApi:
         auth.authenticate()
         token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
 
-        query_params = {
-            "clusterId": cloud_account,
-            "key": _resolve_teamspace_remote_path(path),
-            "token": token,
-        }
+        cluster_ids = [ca.cluster_id for ca in self.list_cloud_accounts(teamspace_id)]
 
-        r = requests.get(
-            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
-            params=query_params,
-            stream=True,
-        )
-        if r.status_code == 404:
-            raise FileNotFoundError(f"File {path} not found")
+        found = False
+        for cluster_id in cluster_ids:
+            query_params = {
+                "clusterId": cluster_id,
+                "key": _resolve_teamspace_remote_path(path),
+                "token": token,
+            }
+
+            r = requests.get(
+                f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
+                params=query_params,
+                stream=True,
+                allow_redirects=False,
+            )
+
+            if r.status_code == 303:
+                redirect_url = r.headers.get("Location")
+                r = requests.get(redirect_url, stream=True)
+                found = True
+                break
+
+        if not found:
+            raise FileNotFoundError(f"The provided path does not exist in the teamspace: {path}")
+
         total_length = int(r.headers.get("content-length"))
 
         if progress_bar:
