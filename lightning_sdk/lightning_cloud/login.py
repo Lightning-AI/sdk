@@ -268,7 +268,7 @@ class Auth:
         self.save(user_id=user_id, api_key=api_key)
         logger.info("Successfully authenticated as a guest user.")
 
-        return self.auth_header
+        return self.authenticate()
 
     def token_login(self, token_key: str, save_token: bool = True) -> Optional[str]:
         """Performs token-based authentication.
