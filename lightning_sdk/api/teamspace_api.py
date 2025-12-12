@@ -47,6 +47,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UpstreamOpenAI,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.machine import Machine
 
 __all__ = ["TeamspaceApi"]
 
@@ -323,11 +324,47 @@ class TeamspaceApi:
         jobs = self._client.jobs_service_list_multi_machine_jobs(project_id=teamspace_id).multi_machine_jobs
         return apps, jobs
 
-    def list_machines(self, teamspace_id: str, cloud_account: str) -> List[V1ClusterAccelerator]:
-        response = self._client.cluster_service_list_project_cluster_accelerators(
-            project_id=teamspace_id, id=cloud_account
-        )
-        return response.accelerator
+    def list_machines(
+        self,
+        teamspace_id: str,
+        cloud_accounts: List[str],
+        machine: Optional[Machine] = None,
+        org_id: Optional[str] = None,
+    ) -> List[V1ClusterAccelerator]:
+        from lightning_sdk.api.cloud_account_api import CloudAccountApi
+
+        cloud_account_api = CloudAccountApi()
+        matched_accelerators = []
+        for ca in cloud_accounts:
+            try:
+                accelerators = cloud_account_api.list_cloud_account_accelerators(
+                    teamspace_id=teamspace_id,
+                    cloud_account_id=ca,
+                    org_id=org_id,
+                )
+                if not accelerators.accelerator:
+                    continue
+
+                if accelerators.accelerator:
+                    for cluster_machine in accelerators.accelerator:
+                        if not machine:
+                            matched_accelerators.append(cluster_machine)
+                            continue
+                        if (
+                            cluster_machine.resources.gpu == machine.accelerator_count
+                            or cluster_machine.resources.cpu == machine.accelerator_count
+                        ) and any(
+                            machine.family.lower() in s
+                            for s in (
+                                cluster_machine.slug,
+                                cluster_machine.slug_multi_cloud,
+                                cluster_machine.instance_id,
+                            )
+                        ):
+                            matched_accelerators.append(cluster_machine)
+            except Exception:
+                pass
+        return matched_accelerators
 
     def get_model(self, teamspace_id: str, model_id: Optional[str] = None, model_name: Optional[str] = None) -> V1Model:
         if model_id:

@@ -5,6 +5,7 @@ from unittest import mock
 
 import pytest
 
+from lightning_sdk import Machine
 from lightning_sdk.api.teamspace_api import TeamspaceApi
 from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
@@ -209,29 +210,90 @@ def test_create_delete_model_version():
     )
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
-def test_list_machines(mock_client):
-    mock_client().cluster_service_list_project_cluster_accelerators.return_value = (
-        V1ListProjectClusterAcceleratorsResponse(
-            accelerator=[
-                V1ClusterAccelerator(
-                    instance_id="instance-id",
-                    slug="t4-x-2",
-                    slug_multi_cloud="lit-t4-2",
-                    resources=V1Resources(cpu=4, gpu=2),
-                )
-            ]
-        )
+@mock.patch("lightning_sdk.api.cloud_account_api.CloudAccountApi")
+def test_list_machines(mock_cloud_account_api_class):
+    mock_cloud_account_api = mock.Mock()
+    mock_cloud_account_api_class.return_value = mock_cloud_account_api
+
+    mock_accelerators = V1ListProjectClusterAcceleratorsResponse(
+        accelerator=[
+            V1ClusterAccelerator(
+                instance_id="instance-id",
+                slug="t4-x-2",
+                slug_multi_cloud="lit-t4-2",
+                resources=V1Resources(cpu=4, gpu=2),
+            )
+        ]
     )
+    mock_cloud_account_api.list_cloud_account_accelerators.return_value = mock_accelerators
 
     teamspace_api = TeamspaceApi()
-    result = teamspace_api.list_machines("teamspace-id", "cloud-account")
+    result = teamspace_api.list_machines("teamspace-id", ["cloud-account"])
 
     assert len(result) == 1
     assert result[0].instance_id == "instance-id"
 
-    mock_client().cluster_service_list_project_cluster_accelerators.assert_called_once_with(
-        project_id="teamspace-id", id="cloud-account"
+    mock_cloud_account_api.list_cloud_account_accelerators.assert_called_once_with(
+        teamspace_id="teamspace-id", cloud_account_id="cloud-account", org_id=None
+    )
+
+
+@mock.patch("lightning_sdk.api.cloud_account_api.CloudAccountApi")
+def test_list_machines_with_specific_machine(mock_cloud_account_api_class):
+    mock_cloud_account_api = mock.Mock()
+    mock_cloud_account_api_class.return_value = mock_cloud_account_api
+
+    mock_accelerators = V1ListProjectClusterAcceleratorsResponse(
+        accelerator=[
+            V1ClusterAccelerator(
+                instance_id="h100-x-8",
+                slug="h100-x-8",
+                slug_multi_cloud="lit-h100-8",
+                resources=V1Resources(cpu=0, gpu=8),
+                family="H100",
+            ),
+            V1ClusterAccelerator(
+                instance_id="a100-x-8",
+                slug="a100-x-8",
+                slug_multi_cloud="lit-a100-8",
+                resources=V1Resources(cpu=0, gpu=8),
+                family="A100",
+            ),
+        ]
+    )
+
+    mock_cloud_account_api.list_cloud_account_accelerators.return_value = mock_accelerators
+
+    teamspace_api = TeamspaceApi()
+    teamspace_api.id = "ts-abc"
+
+    machine = Machine(
+        name="A100",
+        family="A100",
+        accelerator_count=8,
+        slug="a100-x-8",
+    )
+
+    result = teamspace_api.list_machines(
+        teamspace_id="ts-abc",
+        machine=machine,
+        cloud_accounts=["cluster-abc", "cluster-def"],
+        org_id="org-123",
+    )
+
+    assert len(result) == 2
+    assert all(r.resources.gpu == 8 for r in result)
+
+    assert mock_cloud_account_api.list_cloud_account_accelerators.call_count == 2
+    mock_cloud_account_api.list_cloud_account_accelerators.assert_any_call(
+        teamspace_id="ts-abc",
+        cloud_account_id="cluster-abc",
+        org_id="org-123",
+    )
+    mock_cloud_account_api.list_cloud_account_accelerators.assert_any_call(
+        teamspace_id="ts-abc",
+        cloud_account_id="cluster-def",
+        org_id="org-123",
     )
 
 
