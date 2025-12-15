@@ -92,6 +92,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
         max_runtime: Optional[int] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         reuse_snapshot: bool = True,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "_BaseJob":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -236,6 +237,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
             path_mappings=path_mappings,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
+            scratch_disks=scratch_disks,
         )
 
     @abstractmethod
@@ -257,6 +259,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "_BaseJob":
         """Submit a new job to the Lightning AI platform.
 

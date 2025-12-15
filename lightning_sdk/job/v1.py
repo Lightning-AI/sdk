@@ -55,6 +55,7 @@ class _JobV1(_BaseJob):
         interruptible: bool = False,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         reuse_snapshot: bool = True,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "_BaseJob":
         """Start a new async workload from your studio.
 
@@ -111,6 +112,7 @@ class _JobV1(_BaseJob):
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "_JobV1":
         """Submit a job to run on a machine.
 

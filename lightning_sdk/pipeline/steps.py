@@ -176,6 +176,7 @@ class JobStep:
         max_runtime: Optional[int] = None,
         wait_for: Union[str, List[str], None] = DEFAULT,
         reuse_snapshot: bool = True,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> None:
         self.name = name
         self.machine = machine or Machine.CPU
@@ -203,6 +204,7 @@ class JobStep:
         self.max_runtime = max_runtime
         self.wait_for = wait_for
         self.reuse_snapshot = reuse_snapshot
+        self.scratch_disks = scratch_disks
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -242,6 +244,7 @@ class JobStep:
             max_runtime=self.max_runtime,
             machine_image_version=machine_image_version,
             reuse_snapshot=self.reuse_snapshot,
+            scratch_disks=self.scratch_disks,
         )
 
         return V1PipelineStep(

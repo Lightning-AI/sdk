@@ -104,6 +104,7 @@ class Job(_BaseJob):
         artifacts_remote: Optional[str] = None,  # deprecated in terms of path_mappings
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         reuse_snapshot: bool = True,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "Job":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -172,6 +173,7 @@ class Job(_BaseJob):
             max_runtime=max_runtime,
             cluster=cluster,
             reuse_snapshot=reuse_snapshot,
+            scratch_disks=scratch_disks,
         )
         # required for typing with "Job"
         assert isinstance(ret_val, cls)
@@ -197,6 +199,7 @@ class Job(_BaseJob):
         artifacts_remote: Optional[str] = None,  # deprecated in terms of path_mappings
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "Job":
         """Submit a new job to the Lightning AI platform.
 
@@ -255,6 +258,7 @@ class Job(_BaseJob):
             artifacts_remote=artifacts_remote,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
+            scratch_disks=scratch_disks,
         )
         return self
 

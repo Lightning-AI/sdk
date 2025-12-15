@@ -186,6 +186,7 @@ def test_submit_job_v2_image(
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
+        scratch_disks=None,
     )
 
 
@@ -225,6 +226,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
+        scratch_disks=None,
     )
 
 
@@ -283,6 +285,68 @@ def test_submit_jobv2_error_cases(internal_studio_init_mocker):
             env={"key": "value"},
             interruptible=False,
             cloud_account=studio.cloud_account,
+        )
+
+    with pytest.raises(ValueError, match="scratch_disks are only supported within a studio job"):
+        job._submit(
+            machine=Machine.T4_X_4,
+            image="alpine:latest",
+            command="echo hello",
+            env={"key": "value"},
+            interruptible=False,
+            cloud_account=studio.cloud_account,
+            scratch_disks={"data": 100},
+        )
+
+    with pytest.raises(ValueError, match="scratch_disk size cannot exceed 50TiB"):
+        job._submit(
+            machine=Machine.T4_X_4,
+            studio=studio,
+            command="echo hello",
+            env={"key": "value"},
+            interruptible=False,
+            cloud_account=studio.cloud_account,
+            scratch_disks={"data": 50001},
+        )
+
+    with pytest.raises(ValueError, match="scratch_disk paths must be relative to /teamspaces/scratch"):
+        job._submit(
+            machine=Machine.T4_X_4,
+            studio=studio,
+            command="echo hello",
+            env={"key": "value"},
+            interruptible=False,
+            cloud_account=studio.cloud_account,
+            scratch_disks={"/data": 100},
+        )
+
+    with pytest.raises(ValueError, match="scratch_disk path cannot contain '..'"):
+        job._submit(
+            machine=Machine.T4_X_4,
+            studio=studio,
+            command="echo hello",
+            env={"key": "value"},
+            interruptible=False,
+            cloud_account=studio.cloud_account,
+            scratch_disks={"/teamspaces/scratch/../data": 100},
+        )
+
+    with pytest.raises(ValueError, match="scratch_disk may only contain up to 5 elements"):
+        job._submit(
+            machine=Machine.T4_X_4,
+            studio=studio,
+            command="echo hello",
+            env={"key": "value"},
+            interruptible=False,
+            cloud_account=studio.cloud_account,
+            scratch_disks={
+                "a": 100,
+                "b": 100,
+                "c": 100,
+                "d": 100,
+                "e": 100,
+                "f": 100,
+            },
         )
 
 
@@ -475,6 +539,7 @@ def test_submit_jobv2_studio_resolve(
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
+        scratch_disks=None,
     )
 
 
@@ -541,6 +606,7 @@ def test_submit_jobv2_studio_path(
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
+        scratch_disks=None,
     )
 
     job._internal_job._job = V1Job(
@@ -598,6 +664,7 @@ def test_submit_job_v2_image_from_studio(
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
+        scratch_disks=None,
     )
     assert keeping_alive_mock.call_count == 0
 

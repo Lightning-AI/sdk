@@ -1,3 +1,4 @@
+from pathlib import PurePath
 from typing import TYPE_CHECKING, Dict, Optional, Union
 
 from lightning_sdk.api.job_api import JobApiV2
@@ -54,6 +55,7 @@ class _JobV2(_BaseJob):
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
         reuse_snapshot: bool = True,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "_JobV2":
         """Submit a new job to the Lightning AI platform.
 
@@ -90,6 +92,11 @@ class _JobV2(_BaseJob):
                 Defaults to 3h
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+            scratch_disks: Dictionary of scratch disks to add to the job. The keys are the path that the disk
+                will be mounted to, relative to the /teamspaces/scratch directory. The values are the size of
+                the volume in GiB. For example, { "data": 100 } will add a 100GiB volume available under
+                /teamspaces/scratch/data.
+
         """
         # Command is required if Studio is provided to know what to run
         # Image is mutually exclusive with Studio
@@ -115,6 +122,30 @@ class _JobV2(_BaseJob):
             default_cloud_account=self._teamspace.default_cloud_account,
         )
 
+        if scratch_disks is not None and len(scratch_disks) > 0:
+            if studio is None:
+                raise ValueError("scratch_disks are only supported within a studio job")
+
+            if len(scratch_disks) > 5:
+                raise ValueError("scratch_disk may only contain up to 5 elements")
+
+            for path, size in scratch_disks.items():
+                if size > 50000:
+                    raise ValueError("scratch_disk size cannot exceed 50TiB")
+
+                path = PurePath(path)
+
+                if path.is_absolute():
+                    # For compatibility with Python 3.8, which doesn't provide
+                    # pathlib.PurePath.is_relative_to.
+                    try:
+                        path.relative_to("/teamspaces/scratch")
+                    except ValueError:
+                        raise ValueError("scratch_disk paths must be relative to /teamspaces/scratch") from None
+
+                if ".." in path.parts:
+                    raise ValueError("scratch_disk path cannot contain '..'")
+
         submitted = self._job_api.submit_job(
             name=self.name,
             command=command,
@@ -133,6 +164,7 @@ class _JobV2(_BaseJob):
             path_mappings=path_mappings,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
+            scratch_disks=scratch_disks,
         )
         self._job = submitted
         self._name = submitted.name

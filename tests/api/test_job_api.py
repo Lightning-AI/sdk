@@ -129,6 +129,7 @@ def test_job_v2_submit_job(mocker_auth):
         image_secret_ref="",
         entrypoint="sh -c",
         path_mappings=[],
+        volumes=[],
     )
     body = JobsServiceCreateJobBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
@@ -169,6 +170,7 @@ def test_job_v2_submit_job(mocker_auth):
             V1PathMapping(container_path="/output2", connection_name="data2", connection_path="some-other-path"),
             V1PathMapping(container_path="/output", connection_name="data", connection_path="some-path"),
         ],
+        volumes=[],
     )
     body = JobsServiceCreateJobBody(name="test-job", spec=spec)
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)

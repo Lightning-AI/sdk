@@ -30,6 +30,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LightningworkState,
     V1ListLightningworkResponse,
     V1UserRequestedComputeConfig,
+    V1Volume,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
@@ -253,7 +254,16 @@ class JobApiV2:
         artifacts_remote: Optional[str],  # deprecated in favor of path_mappings
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> V1Job:
+        if scratch_disks is not None:
+            sanitized_scratch_disks = {}
+            for k, v in scratch_disks.items():
+                sanitized_k = k if k.startswith("/teamspace/scratch/") else f"/teamspace/scratch/{k}"
+                sanitized_scratch_disks[sanitized_k] = v
+        else:
+            sanitized_scratch_disks = None
+
         body = self._create_job_body(
             name=name,
             command=command,
@@ -271,6 +281,7 @@ class JobApiV2:
             artifacts_remote=artifacts_remote,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
+            scratch_disks=sanitized_scratch_disks,
         )
 
         job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
@@ -295,6 +306,7 @@ class JobApiV2:
         reuse_snapshot: bool,
         max_runtime: Optional[int] = None,
         machine_image_version: Optional[str] = None,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> JobsServiceCreateJobBody:
         env_vars = []
         if env is not None:
@@ -316,6 +328,9 @@ class JobApiV2:
         if max_runtime:
             optional_spec_kwargs["requested_run_duration_seconds"] = str(max_runtime)
 
+        # don't do default dicts, as they'll be mutable. Create a fresh one here
+        scratch_disks = scratch_disks or {}
+
         spec = V1JobSpec(
             cloudspace_id=studio_id or "",
             cluster_id=cloud_account or "",
@@ -330,6 +345,7 @@ class JobApiV2:
             image_secret_ref=image_credentials or "",
             path_mappings=path_mappings_list,
             machine_image_version=machine_image_version,
+            volumes=[V1Volume(path=k, size_gb=v, ephemeral=True) for k, v in scratch_disks.items()],
             **optional_spec_kwargs,
         )
         return JobsServiceCreateJobBody(name=name, spec=spec)
