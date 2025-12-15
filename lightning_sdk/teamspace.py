@@ -11,7 +11,12 @@ import lightning_sdk
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import CloudAccountApi, TeamspaceApi
 from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
-from lightning_sdk.lightning_cloud.openapi import V1ClusterType, V1Model, V1ModelVersionArchive, V1ProjectClusterBinding
+from lightning_sdk.lightning_cloud.openapi import (
+    V1ClusterType,
+    V1Model,
+    V1ModelVersionArchive,
+    V1ProjectClusterBinding,
+)
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.models import UploadedModelInfo
 from lightning_sdk.organization import Organization
@@ -275,14 +280,48 @@ class Teamspace(metaclass=TrackCallsMeta):
 
         self._teamspace_api.set_secret(self.id, key, value)
 
-    def list_machines(self, cloud_account: Optional[str] = None) -> List[Machine]:
-        if cloud_account is None:
-            cloud_account = os.getenv("LIGHTNING_CLUSTER_ID") or self.default_cloud_account
+    def list_machines(self, cloud_account: Optional[str] = None, machine: Optional[str] = None) -> List[Machine]:
+        """List available machines across cloud accounts.
 
+        Args:
+            cloud_account: The cloud account from which to list available machines. If None, uses LIGHTNING_CLUSTER_ID
+                environment variable. If that's also None, queries all global cloud accounts.
+            machine: Specific machine name to filter by. If provided, only returns that
+                machine type. Must be a valid Machine enum value.
+
+        Returns:
+            List of available machines, excluding out-of-capacity machines.
+        """
         if cloud_account is None:
+            cloud_account = os.getenv("LIGHTNING_CLUSTER_ID", None)
+
+        # if cloud_account is not given as a paramter and as a env var, use global cloud_accounts
+        if cloud_account is None:
+            global_cloud_accounts = self._cloud_account_api.list_global_cloud_accounts(teamspace_id=self.id)
+            cloud_accounts = [cm.id for cm in global_cloud_accounts]
+        else:
+            cloud_accounts = [cloud_account]
+
+        if cloud_accounts is None:
             raise RuntimeError("Could not resolve cloud account")
 
-        cloud_machines = self._teamspace_api.list_machines(self.id, cloud_account=cloud_account)
+        if machine:
+            _machine_values = tuple(
+                [
+                    machine.name
+                    for machine in Machine.__dict__.values()
+                    if isinstance(machine, Machine) and machine._include_in_cli
+                ]
+            )
+            if machine not in _machine_values:
+                raise ValueError(f"Machine '{machine}' is not valid. Valid machines are: {_machine_values}")
+            machine = getattr(Machine, machine.upper(), Machine(machine, machine))
+
+        cloud_machines = self._teamspace_api.list_machines(
+            self.id, cloud_accounts=cloud_accounts, machine=machine, org_id=self._org.id
+        )
+        # filter out of capacity machines
+        cloud_machines = [cm for cm in cloud_machines if not cm.out_of_capacity]
         return [
             Machine(
                 name=cluster_machine.instance_id,
@@ -292,6 +331,7 @@ class Teamspace(metaclass=TrackCallsMeta):
                 accelerator_count=cluster_machine.resources.gpu or cluster_machine.resources.cpu,
                 cost=cluster_machine.cost,
                 interruptible_cost=cluster_machine.spot_price,
+                provider=cluster_machine.provider,
                 wait_time=float(cluster_machine.available_in_seconds) if cluster_machine.available_in_seconds else None,
                 interruptible_wait_time=float(cluster_machine.available_in_seconds_spot)
                 if cluster_machine.available_in_seconds_spot

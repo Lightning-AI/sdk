@@ -92,6 +92,7 @@ class Machine:
     accelerator_count: Optional[int] = None
     cost: Optional[float] = None
     interruptible_cost: Optional[float] = None
+    provider: Optional[str] = None
     wait_time: Optional[float] = None
     interruptible_wait_time: Optional[float] = None
     _include_in_cli: bool = True
