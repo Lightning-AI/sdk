@@ -309,7 +309,7 @@ def test_submit_jobv2_error_cases(internal_studio_init_mocker):
             scratch_disks={"data": 50001},
         )
 
-    with pytest.raises(ValueError, match="scratch_disk paths must be relative to /teamspaces/scratch"):
+    with pytest.raises(ValueError, match="scratch_disk paths must be relative to /teamspace/scratch"):
         job._submit(
             machine=Machine.T4_X_4,
             studio=studio,
@@ -328,7 +328,7 @@ def test_submit_jobv2_error_cases(internal_studio_init_mocker):
             env={"key": "value"},
             interruptible=False,
             cloud_account=studio.cloud_account,
-            scratch_disks={"/teamspaces/scratch/../data": 100},
+            scratch_disks={"/teamspace/scratch/../data": 100},
         )
 
     with pytest.raises(ValueError, match="scratch_disk may only contain up to 5 elements"):

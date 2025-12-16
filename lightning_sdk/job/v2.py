@@ -93,9 +93,9 @@ class _JobV2(_BaseJob):
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
             scratch_disks: Dictionary of scratch disks to add to the job. The keys are the path that the disk
-                will be mounted to, relative to the /teamspaces/scratch directory. The values are the size of
+                will be mounted to, relative to the /teamspace/scratch directory. The values are the size of
                 the volume in GiB. For example, { "data": 100 } will add a 100GiB volume available under
-                /teamspaces/scratch/data.
+                /teamspace/scratch/data.
 
         """
         # Command is required if Studio is provided to know what to run
@@ -139,9 +139,9 @@ class _JobV2(_BaseJob):
                     # For compatibility with Python 3.8, which doesn't provide
                     # pathlib.PurePath.is_relative_to.
                     try:
-                        path.relative_to("/teamspaces/scratch")
+                        path.relative_to("/teamspace/scratch")
                     except ValueError:
-                        raise ValueError("scratch_disk paths must be relative to /teamspaces/scratch") from None
+                        raise ValueError("scratch_disk paths must be relative to /teamspace/scratch") from None
 
                 if ".." in path.parts:
                     raise ValueError("scratch_disk path cannot contain '..'")
