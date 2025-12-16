@@ -411,12 +411,12 @@ class CustomPortPlugin(_Plugin):
         if name is None:
             name = _run_name("port")
 
-        return self._studio._studio_api.start_new_port(
+        return self._studio._studio_api.add_port(
             teamspace_id=self._studio._teamspace.id,
             studio_id=self._studio._studio.id,
             name=name,
             port=port,
-        )
+        ).urls[0]
 
 
 @runtime_checkable

@@ -164,9 +164,7 @@ def test_slurm_job(internal_studio_init_mocker, internal_studio_status_mocker, i
         plugin.run("", work_dir="")
 
 
-def test_custom_port(
-    internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_api_start_new_port_mocker
-):
+def test_custom_port(internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_api_add_port_mocker):
     studio = Studio("st-ghi", "ts-abc", "org-abc")
     plugin = CustomPortPlugin("custom-port", "", studio)
     url = plugin.run(port=8000)

@@ -2,7 +2,7 @@ import glob
 import os
 import threading
 import warnings
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Tuple, Union
 
 from tqdm.auto import tqdm
 
@@ -12,7 +12,7 @@ from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_no
 from lightning_sdk.base_studio import BaseStudio
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.exceptions import OutOfCapacityError
-from lightning_sdk.lightning_cloud.openapi import V1ClusterType
+from lightning_sdk.lightning_cloud.openapi import V1ClusterType, V1Endpoint
 from lightning_sdk.machine import DEFAULT_MACHINE, CloudProvider, Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.owner import Owner
@@ -706,6 +706,33 @@ class Studio(metaclass=TrackCallsMeta):
             env=env,
             interruptible=interruptible,
         )
+
+    def add_ports(self, ports: Union[int, List[int], Dict[str, int]]) -> List[V1Endpoint]:
+        """Add one or more ports to the studio and return their endpoints.
+
+        Args:
+            ports: Port to add. Can be:
+                - int: Single port (e.g., 8080)
+                - List[int]: Multiple ports ()
+                - dict[str, int]: Named ports (e.g., {"web": 8080})
+
+        Returns:
+            List of V1Endpoint objects. Access endpoint properties like:
+                - endpoint.name: Port name (None for unnamed ports)
+                - endpoint.ports: List of port numbers
+                - endpoint.urls: List of accessible URLs
+        """
+        if isinstance(ports, dict):
+            port_items = ports.items()
+        elif isinstance(ports, list):
+            port_items = ((None, port) for port in ports)
+        else:
+            port_items = [(None, ports)]
+
+        return [
+            self._studio_api.add_port(self._teamspace.id, self._studio.id, name=name, port=port)
+            for name, port in port_items
+        ]
 
     def create_assistant(self, name: str, port: int) -> None:
         assistant = self._studio_api.create_assistant(

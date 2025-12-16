@@ -962,9 +962,9 @@ class StudioApi:
             interruptible=interruptible,
         )
 
-    def start_new_port(self, teamspace_id: str, studio_id: str, name: str, port: int, auto_start: bool = False) -> str:
+    def add_port(self, teamspace_id: str, studio_id: str, name: str, port: int, auto_start: bool = False) -> V1Endpoint:
         """Starts a new port to the given Studio."""
-        endpoint = self._client.endpoint_service_create_endpoint(
+        return self._client.endpoint_service_create_endpoint(
             project_id=teamspace_id,
             body=EndpointServiceCreateEndpointBody(
                 name=name,
@@ -974,7 +974,6 @@ class StudioApi:
                 ),
             ),
         )
-        return endpoint.urls[0]
 
     def create_assistant(self, studio_id: str, teamspace_id: str, port: int, assistant_name: str) -> V1Assistant:
         target_teamspace = self._client.projects_service_get_project(teamspace_id)

@@ -1382,7 +1382,7 @@ def test_download_folder(mock_download, tmpdir):
     "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_create_endpoint",
     autospec=True,
 )
-def test_start_new_port(mock_create_endpoint):
+def test_add_ports(mock_create_endpoint):
     mock_create_endpoint.return_value = V1Endpoint(
         id="endpoint-id",
         name="endpoint-name",
@@ -1391,7 +1391,8 @@ def test_start_new_port(mock_create_endpoint):
 
     studio_api = StudioApi()
 
-    url = studio_api.start_new_port("st-abc", "ts-abc", "test", 8000)
+    endpoint = studio_api.add_port("st-abc", "ts-abc", "test", 8000)
+    url = endpoint.urls[0]
 
     assert url == "http://localhost:8000", "endpoint_service_create_endpoint returns [localhost:8000] for urls"
 

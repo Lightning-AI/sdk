@@ -1911,7 +1911,7 @@ def internal_studio_api_login(mocker):  # noqa: PT004 # todo
 
 
 @pytest.fixture()
-def internal_studio_api_start_new_port_mocker(mocker):  # todo
+def internal_studio_api_add_port_mocker(mocker):  # todo
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_create_endpoint",
         autospec=True,
