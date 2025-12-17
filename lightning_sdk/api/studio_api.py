@@ -975,6 +975,13 @@ class StudioApi:
             ),
         )
 
+    def list_ports(self, teamspace_id: str, studio_id: str) -> List[V1Endpoint]:
+        """List ports that are exposed in the Studio."""
+        return self._client.endpoint_service_list_endpoints(
+            project_id=teamspace_id,
+            cloudspace_id=studio_id,
+        ).endpoints
+
     def create_assistant(self, studio_id: str, teamspace_id: str, port: int, assistant_name: str) -> V1Assistant:
         target_teamspace = self._client.projects_service_get_project(teamspace_id)
         org_id = ""

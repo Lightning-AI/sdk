@@ -1731,3 +1731,40 @@ def test_machine_has_capacity(mock_get_machines, machine, accelerators, expected
     mock_get_machines.assert_called_once_with(
         mock.ANY, teamspace_id="ts-abc", cloud_account_id="cluster-abc", org_id="org-abc"
     )
+
+
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_list_endpoints",
+    autospec=True,
+)
+def test_list_ports(mock_list_endpoints):
+    """Test list_ports returns endpoints from the Studio."""
+    from lightning_sdk.lightning_cloud.openapi import V1ListEndpointsResponse
+
+    mock_endpoints = [
+        V1Endpoint(name="web", ports=[8080], urls=["https://example.com:8080"]),
+        V1Endpoint(name="api", ports=[3000], urls=["https://example.com:3000"]),
+        V1Endpoint(name=None, ports=[5000], urls=["https://example.com:5000"]),
+    ]
+
+    mock_list_endpoints.return_value = V1ListEndpointsResponse(endpoints=mock_endpoints)
+
+    studio_api = StudioApi()
+    endpoints = studio_api.list_ports(teamspace_id="ts-abc", studio_id="st-abc")
+
+    assert len(endpoints) == 3
+    assert endpoints[0].name == "web"
+    assert endpoints[0].ports == [8080]
+    assert endpoints[0].urls == ["https://example.com:8080"]
+    assert endpoints[1].name == "api"
+    assert endpoints[1].ports == [3000]
+    assert endpoints[1].urls == ["https://example.com:3000"]
+    assert endpoints[2].name is None
+    assert endpoints[2].ports == [5000]
+    assert endpoints[2].urls == ["https://example.com:5000"]
+
+    mock_list_endpoints.assert_called_once_with(
+        mock.ANY,
+        project_id="ts-abc",
+        cloudspace_id="st-abc",
+    )

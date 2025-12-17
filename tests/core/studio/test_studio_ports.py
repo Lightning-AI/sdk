@@ -11,6 +11,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1GetCloudSpaceInstanceStatusResponse,
     V1LightningRun,
     V1ListCloudSpacesResponse,
+    V1ListEndpointsResponse,
     V1Organization,
     V1Project,
     V1ProjectSettings,
@@ -163,3 +164,78 @@ def test_add_port(
         )
         assert matching_endpoint is not None, f"Expected endpoint with name={expected['name']}, port={expected['port']}"
         assert matching_endpoint.urls == [f"https://example.com:{expected['port']}"]
+
+
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_list_endpoints",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+    autospec=True,
+)
+@mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+def test_list_ports(
+    mock_get_teamspace,
+    mock_get_org,
+    mock_list_cloudspaces,
+    mock_get_status,
+    mock_list_endpoints,
+):
+    existing_studios = {
+        "st-ghi": V1CloudSpace(
+            name="st-ghi", display_name="st-ghi", cluster_id="c-abc", project_id="ts-abc", id="st-ghi"
+        ),
+    }
+
+    mock_get_teamspace.return_value = V1Project(
+        name="ts-abc",
+        display_name="ts-abc",
+        id="ts-abc",
+        project_settings=V1ProjectSettings(preferred_cluster="c-abc", start_studio_on_spot_instance=True),
+    )
+    mock_get_org.return_value = V1Organization(
+        display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
+    )
+    mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
+    mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
+        in_use=Externalv1CloudSpaceInstanceStatus(
+            phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING",
+            startup_status=V1CloudSpaceInstanceStartupStatus(
+                initial_restore_finished=True, top_up_restore_finished=True
+            ),
+        )
+    )
+
+    mock_list_endpoints.return_value = V1ListEndpointsResponse(
+        [
+            V1Endpoint(name="web", ports=[8080], urls=["https://example.com:8080"]),
+            V1Endpoint(name="api", ports=[3000], urls=["https://example.com:3000"]),
+            V1Endpoint(name=None, ports=[5000], urls=["https://example.com:5000"]),
+        ]
+    )
+
+    studio = Studio("st-ghi", "ts-abc", "org-abc")
+    endpoints = studio.list_ports()
+
+    assert len(endpoints) == 3
+    assert endpoints[0].name == "web"
+    assert endpoints[0].ports == [8080]
+    assert endpoints[0].urls == ["https://example.com:8080"]
+    assert endpoints[1].name == "api"
+    assert endpoints[1].ports == [3000]
+    assert endpoints[1].urls == ["https://example.com:3000"]
+    assert endpoints[2].name is None
+    assert endpoints[2].ports == [5000]
+    assert endpoints[2].urls == ["https://example.com:5000"]
+
+    mock_list_endpoints.assert_called_once_with(
+        mock.ANY,
+        project_id="ts-abc",
+        cloudspace_id="st-ghi",
+    )

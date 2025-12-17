@@ -734,6 +734,10 @@ class Studio(metaclass=TrackCallsMeta):
             for name, port in port_items
         ]
 
+    def list_ports(self) -> List[V1Endpoint]:
+        """List ports that are exposed in the Studio."""
+        return self._studio_api.list_ports(self._teamspace.id, self._studio.id)
+
     def create_assistant(self, name: str, port: int) -> None:
         assistant = self._studio_api.create_assistant(
             studio_id=self._studio.id, teamspace_id=self._teamspace.id, port=port, assistant_name=name
