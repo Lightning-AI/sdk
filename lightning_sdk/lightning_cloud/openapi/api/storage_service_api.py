@@ -871,6 +871,7 @@ class StorageServiceApi(object):
         :param bool include_download_url:
         :param str cluster_id:
         :param bool local_index: if true, fetch from the local index
+        :param bool include_folder_index: if true, include the folder index in the response
         :return: V1GetArtifactsPageResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -898,12 +899,13 @@ class StorageServiceApi(object):
         :param bool include_download_url:
         :param str cluster_id:
         :param bool local_index: if true, fetch from the local index
+        :param bool include_folder_index: if true, include the folder index in the response
         :return: V1GetArtifactsPageResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'page_number', 'prefix', 'include_download_url', 'cluster_id', 'local_index']  # noqa: E501
+        all_params = ['project_id', 'id', 'page_number', 'prefix', 'include_download_url', 'cluster_id', 'local_index', 'include_folder_index']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -942,6 +944,8 @@ class StorageServiceApi(object):
             query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
         if 'local_index' in params:
             query_params.append(('localIndex', params['local_index']))  # noqa: E501
+        if 'include_folder_index' in params:
+            query_params.append(('includeFolderIndex', params['include_folder_index']))  # noqa: E501
 
         header_params = {}
 

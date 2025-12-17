@@ -44,6 +44,7 @@ class V1NodeMetrics(object):
         'cpu_capacity_cores': 'float',
         'cpu_util': 'float',
         'filesystem': 'dict(str, V1FilesystemMetrics)',
+        'kubelet_failure': 'bool',
         'max_gpu_temp_recorded': 'float',
         'max_power_per_gpu': 'float',
         'mem_total': 'str',
@@ -70,6 +71,7 @@ class V1NodeMetrics(object):
         'cpu_capacity_cores': 'cpuCapacityCores',
         'cpu_util': 'cpuUtil',
         'filesystem': 'filesystem',
+        'kubelet_failure': 'kubeletFailure',
         'max_gpu_temp_recorded': 'maxGpuTempRecorded',
         'max_power_per_gpu': 'maxPowerPerGpu',
         'mem_total': 'memTotal',
@@ -92,11 +94,12 @@ class V1NodeMetrics(object):
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, max_gpu_temp_recorded: 'float' =None, max_power_per_gpu: 'float' =None, mem_total: 'str' =None, mem_util: 'float' =None, node_name: 'str' =None, num_unschedulable_gpus: 'int' =None, nvlink_rx_gib: 'dict(str, float)' =None, nvlink_tx_gib: 'dict(str, float)' =None, pcie_rx_gib: 'dict(str, float)' =None, pcie_tx_gib: 'dict(str, float)' =None, per_gpu_errors: 'dict(str, int)' =None, per_gpu_mem_free: 'dict(str, int)' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_power_usage_watts: 'dict(str, int)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, kubelet_failure: 'bool' =None, max_gpu_temp_recorded: 'float' =None, max_power_per_gpu: 'float' =None, mem_total: 'str' =None, mem_util: 'float' =None, node_name: 'str' =None, num_unschedulable_gpus: 'int' =None, nvlink_rx_gib: 'dict(str, float)' =None, nvlink_tx_gib: 'dict(str, float)' =None, pcie_rx_gib: 'dict(str, float)' =None, pcie_tx_gib: 'dict(str, float)' =None, per_gpu_errors: 'dict(str, int)' =None, per_gpu_mem_free: 'dict(str, int)' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_power_usage_watts: 'dict(str, int)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None, unschedulable: 'bool' =None):  # noqa: E501
         """V1NodeMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_capacity_cores = None
         self._cpu_util = None
         self._filesystem = None
+        self._kubelet_failure = None
         self._max_gpu_temp_recorded = None
         self._max_power_per_gpu = None
         self._mem_total = None
@@ -124,6 +127,8 @@ class V1NodeMetrics(object):
             self.cpu_util = cpu_util
         if filesystem is not None:
             self.filesystem = filesystem
+        if kubelet_failure is not None:
+            self.kubelet_failure = kubelet_failure
         if max_gpu_temp_recorded is not None:
             self.max_gpu_temp_recorded = max_gpu_temp_recorded
         if max_power_per_gpu is not None:
@@ -227,6 +232,27 @@ class V1NodeMetrics(object):
         """
 
         self._filesystem = filesystem
+
+    @property
+    def kubelet_failure(self) -> 'bool':
+        """Gets the kubelet_failure of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The kubelet_failure of this V1NodeMetrics.  # noqa: E501
+        :rtype: bool
+        """
+        return self._kubelet_failure
+
+    @kubelet_failure.setter
+    def kubelet_failure(self, kubelet_failure: 'bool'):
+        """Sets the kubelet_failure of this V1NodeMetrics.
+
+
+        :param kubelet_failure: The kubelet_failure of this V1NodeMetrics.  # noqa: E501
+        :type: bool
+        """
+
+        self._kubelet_failure = kubelet_failure
 
     @property
     def max_gpu_temp_recorded(self) -> 'float':

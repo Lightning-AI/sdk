@@ -46,6 +46,7 @@ class V1SearchUser(object):
         'email': 'str',
         'first_name': 'str',
         'id': 'str',
+        'internal': 'bool',
         'last_name': 'str',
         'organization': 'str',
         'picture_url': 'str',
@@ -61,6 +62,7 @@ class V1SearchUser(object):
         'email': 'email',
         'first_name': 'firstName',
         'id': 'id',
+        'internal': 'internal',
         'last_name': 'lastName',
         'organization': 'organization',
         'picture_url': 'pictureUrl',
@@ -70,13 +72,14 @@ class V1SearchUser(object):
         'website': 'website'
     }
 
-    def __init__(self, auth_provider: 'str' =None, country: 'str' =None, email: 'str' =None, first_name: 'str' =None, id: 'str' =None, last_name: 'str' =None, organization: 'str' =None, picture_url: 'str' =None, project_memberships: 'list[str]' =None, role: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, auth_provider: 'str' =None, country: 'str' =None, email: 'str' =None, first_name: 'str' =None, id: 'str' =None, internal: 'bool' =None, last_name: 'str' =None, organization: 'str' =None, picture_url: 'str' =None, project_memberships: 'list[str]' =None, role: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1SearchUser - a model defined in Swagger"""  # noqa: E501
         self._auth_provider = None
         self._country = None
         self._email = None
         self._first_name = None
         self._id = None
+        self._internal = None
         self._last_name = None
         self._organization = None
         self._picture_url = None
@@ -95,6 +98,8 @@ class V1SearchUser(object):
             self.first_name = first_name
         if id is not None:
             self.id = id
+        if internal is not None:
+            self.internal = internal
         if last_name is not None:
             self.last_name = last_name
         if organization is not None:
@@ -214,6 +219,27 @@ class V1SearchUser(object):
         """
 
         self._id = id
+
+    @property
+    def internal(self) -> 'bool':
+        """Gets the internal of this V1SearchUser.  # noqa: E501
+
+
+        :return: The internal of this V1SearchUser.  # noqa: E501
+        :rtype: bool
+        """
+        return self._internal
+
+    @internal.setter
+    def internal(self, internal: 'bool'):
+        """Sets the internal of this V1SearchUser.
+
+
+        :param internal: The internal of this V1SearchUser.  # noqa: E501
+        :type: bool
+        """
+
+        self._internal = internal
 
     @property
     def last_name(self) -> 'str':

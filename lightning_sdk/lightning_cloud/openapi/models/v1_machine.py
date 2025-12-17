@@ -60,6 +60,7 @@ class V1Machine(object):
         'resource_id': 'str',
         'resource_type': 'str',
         'resources': 'V1Resources',
+        'ssh_username': 'str',
         'status': 'str',
         'unschedulable': 'bool',
         'updated_at': 'datetime',
@@ -86,13 +87,14 @@ class V1Machine(object):
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'resources': 'resources',
+        'ssh_username': 'sshUsername',
         'status': 'status',
         'unschedulable': 'unschedulable',
         'updated_at': 'updatedAt',
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, address: 'str' =None, cloud_space_name: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, cloud_space_name: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._address = None
         self._cloud_space_name = None
@@ -113,6 +115,7 @@ class V1Machine(object):
         self._resource_id = None
         self._resource_type = None
         self._resources = None
+        self._ssh_username = None
         self._status = None
         self._unschedulable = None
         self._updated_at = None
@@ -156,6 +159,8 @@ class V1Machine(object):
             self.resource_type = resource_type
         if resources is not None:
             self.resources = resources
+        if ssh_username is not None:
+            self.ssh_username = ssh_username
         if status is not None:
             self.status = status
         if unschedulable is not None:
@@ -563,6 +568,27 @@ class V1Machine(object):
         """
 
         self._resources = resources
+
+    @property
+    def ssh_username(self) -> 'str':
+        """Gets the ssh_username of this V1Machine.  # noqa: E501
+
+
+        :return: The ssh_username of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._ssh_username
+
+    @ssh_username.setter
+    def ssh_username(self, ssh_username: 'str'):
+        """Sets the ssh_username of this V1Machine.
+
+
+        :param ssh_username: The ssh_username of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._ssh_username = ssh_username
 
     @property
     def status(self) -> 'str':

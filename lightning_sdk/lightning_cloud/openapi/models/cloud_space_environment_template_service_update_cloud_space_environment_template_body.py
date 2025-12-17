@@ -52,6 +52,7 @@ class CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBod
         'name': 'str',
         'org_id': 'str',
         'plugins': 'list[str]',
+        'ports': 'list[int]',
         'setup_script_text': 'str',
         'specialized_view': 'V1CloudSpaceSpecializedView'
     }
@@ -68,11 +69,12 @@ class CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBod
         'name': 'name',
         'org_id': 'orgId',
         'plugins': 'plugins',
+        'ports': 'ports',
         'setup_script_text': 'setupScriptText',
         'specialized_view': 'specializedView'
     }
 
-    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, description: 'str' =None, disabled: 'bool' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, icon: 'str' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, description: 'str' =None, disabled: 'bool' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, icon: 'str' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, ports: 'list[int]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
         """CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody - a model defined in Swagger"""  # noqa: E501
         self._allowed_machines = None
         self._default_machine = None
@@ -85,6 +87,7 @@ class CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBod
         self._name = None
         self._org_id = None
         self._plugins = None
+        self._ports = None
         self._setup_script_text = None
         self._specialized_view = None
         self.discriminator = None
@@ -110,6 +113,8 @@ class CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBod
             self.org_id = org_id
         if plugins is not None:
             self.plugins = plugins
+        if ports is not None:
+            self.ports = ports
         if setup_script_text is not None:
             self.setup_script_text = setup_script_text
         if specialized_view is not None:
@@ -345,6 +350,27 @@ class CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBod
         """
 
         self._plugins = plugins
+
+    @property
+    def ports(self) -> 'list[int]':
+        """Gets the ports of this CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody.  # noqa: E501
+
+
+        :return: The ports of this CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody.  # noqa: E501
+        :rtype: list[int]
+        """
+        return self._ports
+
+    @ports.setter
+    def ports(self, ports: 'list[int]'):
+        """Sets the ports of this CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody.
+
+
+        :param ports: The ports of this CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody.  # noqa: E501
+        :type: list[int]
+        """
+
+        self._ports = ports
 
     @property
     def setup_script_text(self) -> 'str':

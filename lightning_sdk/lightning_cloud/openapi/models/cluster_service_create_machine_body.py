@@ -42,6 +42,7 @@ class ClusterServiceCreateMachineBody(object):
     """
     swagger_types = {
         'address': 'str',
+        'ca_cert': 'str',
         'instance_type': 'str',
         'management_api_url': 'str',
         'name': 'str',
@@ -59,6 +60,7 @@ class ClusterServiceCreateMachineBody(object):
 
     attribute_map = {
         'address': 'address',
+        'ca_cert': 'caCert',
         'instance_type': 'instanceType',
         'management_api_url': 'managementApiUrl',
         'name': 'name',
@@ -74,9 +76,10 @@ class ClusterServiceCreateMachineBody(object):
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, address: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, ca_cert: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceCreateMachineBody - a model defined in Swagger"""  # noqa: E501
         self._address = None
+        self._ca_cert = None
         self._instance_type = None
         self._management_api_url = None
         self._name = None
@@ -93,6 +96,8 @@ class ClusterServiceCreateMachineBody(object):
         self.discriminator = None
         if address is not None:
             self.address = address
+        if ca_cert is not None:
+            self.ca_cert = ca_cert
         if instance_type is not None:
             self.instance_type = instance_type
         if management_api_url is not None:
@@ -140,6 +145,27 @@ class ClusterServiceCreateMachineBody(object):
         """
 
         self._address = address
+
+    @property
+    def ca_cert(self) -> 'str':
+        """Gets the ca_cert of this ClusterServiceCreateMachineBody.  # noqa: E501
+
+
+        :return: The ca_cert of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._ca_cert
+
+    @ca_cert.setter
+    def ca_cert(self, ca_cert: 'str'):
+        """Sets the ca_cert of this ClusterServiceCreateMachineBody.
+
+
+        :param ca_cert: The ca_cert of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._ca_cert = ca_cert
 
     @property
     def instance_type(self) -> 'str':

@@ -75,6 +75,7 @@ class V1GetUserResponse(object):
         'saw_forums_login_merge_dialog': 'bool',
         'saw_free_credits_notification': 'bool',
         'sb': 'bool',
+        'source': 'str',
         'status': 'Externalv1UserStatus',
         'storage_bytes': 'str',
         'storage_overuse_deletion_at': 'datetime',
@@ -120,6 +121,7 @@ class V1GetUserResponse(object):
         'saw_forums_login_merge_dialog': 'sawForumsLoginMergeDialog',
         'saw_free_credits_notification': 'sawFreeCreditsNotification',
         'sb': 'sb',
+        'source': 'source',
         'status': 'status',
         'storage_bytes': 'storageBytes',
         'storage_overuse_deletion_at': 'storageOveruseDeletionAt',
@@ -130,7 +132,7 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, source: 'str' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
@@ -166,6 +168,7 @@ class V1GetUserResponse(object):
         self._saw_forums_login_merge_dialog = None
         self._saw_free_credits_notification = None
         self._sb = None
+        self._source = None
         self._status = None
         self._storage_bytes = None
         self._storage_overuse_deletion_at = None
@@ -243,6 +246,8 @@ class V1GetUserResponse(object):
             self.saw_free_credits_notification = saw_free_credits_notification
         if sb is not None:
             self.sb = sb
+        if source is not None:
+            self.source = source
         if status is not None:
             self.status = status
         if storage_bytes is not None:
@@ -975,6 +980,27 @@ class V1GetUserResponse(object):
         """
 
         self._sb = sb
+
+    @property
+    def source(self) -> 'str':
+        """Gets the source of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The source of this V1GetUserResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._source
+
+    @source.setter
+    def source(self, source: 'str'):
+        """Sets the source of this V1GetUserResponse.
+
+
+        :param source: The source of this V1GetUserResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._source = source
 
     @property
     def status(self) -> 'Externalv1UserStatus':
