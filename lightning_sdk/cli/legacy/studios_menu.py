@@ -31,7 +31,14 @@ class _StudiosMenu:
             title = "Please select a Studio of the following studios:"
 
         return TerminalMenu(
-            [f"{s['teamspace']}/{s['name']}" for s in possible_studios], title=title, clear_menu_on_exit=True
+            [
+                f"{s['org']}/{s['teamspace']}/{s['name']}"
+                if s.get("org") is not None
+                else f"{s['teamspace']}/{s['name']}"
+                for s in possible_studios
+            ],
+            title=title,
+            clear_menu_on_exit=True,
         )
 
     @staticmethod

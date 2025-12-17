@@ -242,7 +242,8 @@ def _resolve_studio(studio: Optional[str]) -> Studio:
                     and (re.match(studio_name, st["name"]) or studio_name in st["name"]),
                     possible_studios,
                 )
-                if not len(possible_studios):
+                possible_studios = list(possible_studios)
+                if len(possible_studios) == 0:
                     raise ValueError(
                         f"Could not find Studio like '{studio}', please consider update your filtering pattern."
                     )
