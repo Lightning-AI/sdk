@@ -975,6 +975,25 @@ class StudioApi:
             ),
         )
 
+    def get_port_url(
+        self, teamspace_id: str, studio_id: str, port: Optional[int] = None, name: Optional[str] = None
+    ) -> str:
+        if port is None and name is None:
+            raise ValueError("Either 'port' or 'name' must be provided")
+
+        endpoints = self.list_ports(teamspace_id=teamspace_id, studio_id=studio_id)
+
+        for endpoint in endpoints:
+            if port is not None and port in endpoint.ports:
+                idx = endpoint.ports.index(port)
+                return endpoint.urls[idx]
+
+            if name is not None and endpoint.name == name:
+                return endpoint.urls[0] if endpoint.urls else None
+
+        identifier = f"port {port}" if port else f"name '{name}'"
+        raise ValueError(f"Endpoint with {identifier} not found")
+
     def list_ports(self, teamspace_id: str, studio_id: str) -> List[V1Endpoint]:
         """List ports that are exposed in the Studio."""
         return self._client.endpoint_service_list_endpoints(

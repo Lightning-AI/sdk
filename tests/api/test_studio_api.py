@@ -35,6 +35,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ListCloudSpacesResponse,
     V1ListClustersResponse,
     V1ListDefaultClusterAcceleratorsResponse,
+    V1ListEndpointsResponse,
     V1ListProjectClustersResponse,
     V1LoginResponse,
     V1Organization,
@@ -1739,7 +1740,6 @@ def test_machine_has_capacity(mock_get_machines, machine, accelerators, expected
 )
 def test_list_ports(mock_list_endpoints):
     """Test list_ports returns endpoints from the Studio."""
-    from lightning_sdk.lightning_cloud.openapi import V1ListEndpointsResponse
 
     mock_endpoints = [
         V1Endpoint(name="web", ports=[8080], urls=["https://example.com:8080"]),
@@ -1768,3 +1768,88 @@ def test_list_ports(mock_list_endpoints):
         project_id="ts-abc",
         cloudspace_id="st-abc",
     )
+
+
+@pytest.mark.parametrize(
+    ("port", "name", "endpoints", "expected_url", "should_raise", "error_match"),
+    [
+        (
+            8080,
+            None,
+            [
+                V1Endpoint(
+                    name="endpoint-1",
+                    ports=[8000, 8080, 9000],
+                    urls=["http://url-8000", "http://url-8080", "http://url-9000"],
+                )
+            ],
+            "http://url-8080",
+            False,
+            None,
+        ),
+        (
+            None,
+            "my-endpoint",
+            [
+                V1Endpoint(name="other-endpoint", ports=[8000], urls=["http://wrong"]),
+                V1Endpoint(name="my-endpoint", ports=[8080], urls=["http://correct"]),
+            ],
+            "http://correct",
+            False,
+            None,
+        ),
+        (
+            9999,
+            None,
+            [V1Endpoint(name="endpoint-1", ports=[8000], urls=["http://localhost:8000"])],
+            None,
+            True,
+            "Endpoint with port 9999 not found",
+        ),
+        (
+            None,
+            None,
+            [V1Endpoint(name="endpoint-1", ports=[8000], urls=["http://localhost:8000"])],
+            None,
+            True,
+            "Either 'port' or 'name' must be provided",
+        ),
+        (
+            8080,
+            None,
+            [
+                V1Endpoint(name="endpoint-1", ports=[8000], urls=["http://url-1"]),
+                V1Endpoint(name="endpoint-2", ports=[8080], urls=["http://url-2"]),
+                V1Endpoint(name="endpoint-3", ports=[9000], urls=["http://url-3"]),
+            ],
+            "http://url-2",
+            False,
+            None,
+        ),
+    ],
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_list_endpoints",
+    autospec=True,
+)
+def test_get_port_url(mock_list_endpoints, port, name, endpoints, expected_url, should_raise, error_match):
+    """Test get_port_url with various port and name scenarios."""
+    mock_list_endpoints.return_value = V1ListEndpointsResponse(endpoints=endpoints)
+
+    studio_api = StudioApi()
+
+    if should_raise:
+        with pytest.raises(ValueError, match=error_match):
+            studio_api.get_port_url(teamspace_id="ts-abc", studio_id="st-abc", port=port, name=name)
+    else:
+        result = studio_api.get_port_url(teamspace_id="ts-abc", studio_id="st-abc", port=port, name=name)
+        assert result == expected_url
+
+    if port is not None or name is not None:
+        mock_list_endpoints.assert_called_once_with(
+            mock.ANY,
+            project_id="ts-abc",
+            cloudspace_id="st-abc",
+        )
+    else:
+        mock_list_endpoints.assert_not_called()
