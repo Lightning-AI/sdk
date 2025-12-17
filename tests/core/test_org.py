@@ -62,3 +62,14 @@ def test_org_default_cloud_account(internal_get_org_api_mocker):
     org._org.preferred_cluster = ""
 
     assert org.default_cloud_account is None
+
+
+@mock.patch("lightning_sdk.teamspace.Teamspace.__init__", return_value=None)
+def test_org_create_teamspace(mock_teamspace_init, internal_get_org_api_mocker):
+    org = Organization("my-org-name")
+
+    with mock.patch.object(org._org_api, "create_teamspace") as mock_create:
+        org.create_teamspace("new-teamspace")
+
+    mock_create.assert_called_once_with("new-teamspace", org.id)
+    mock_teamspace_init.assert_called_once_with(name="new-teamspace", org=org)

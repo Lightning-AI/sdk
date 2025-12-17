@@ -1,8 +1,12 @@
-from typing import Dict, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from lightning_sdk.api import UserApi
 from lightning_sdk.owner import Owner
-from lightning_sdk.utils.resolve import _resolve_user_name
+from lightning_sdk.utils.resolve import _get_authed_user, _get_organizations_for_authed_user, _resolve_user_name
+
+if TYPE_CHECKING:
+    from lightning_sdk.organization import Organization
+    from lightning_sdk.teamspace import Teamspace
 
 
 class User(Owner):
@@ -54,6 +58,22 @@ class User(Owner):
             )
 
         self._user_api.set_secret(key, value)
+
+    def create_teamspace(self, name: str) -> "Teamspace":
+        from lightning_sdk.teamspace import Teamspace
+
+        if not _get_authed_user().id == self.id:
+            raise ValueError("Can only create teamspaces for currently authenticated user")
+
+        self._user_api.create_teamspace(name)
+        return Teamspace(name=name, user=self)
+
+    @property
+    def organizations(self) -> List["Organization"]:
+        if not _get_authed_user().id == self.id:
+            raise ValueError("Can only list organizations for currently authenticated user")
+
+        return _get_organizations_for_authed_user(user_api=self._user_api)
 
     def __repr__(self) -> str:
         """Returns reader friendly representation."""

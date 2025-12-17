@@ -2,6 +2,7 @@ import logging
 import os
 import warnings
 from contextlib import contextmanager
+from functools import lru_cache
 from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
@@ -222,25 +223,26 @@ def _resolve_teamspace(
     raise RuntimeError("Neither user nor org provided, but one of them needs to be provided")
 
 
-def _get_organizations_for_authed_user() -> List["Organization"]:
+def _get_organizations_for_authed_user(user_api: Optional[UserApi] = None) -> List["Organization"]:
     """Returns Organizations the current Authed user is a member of."""
     from lightning_sdk.organization import Organization
 
-    _orgs = UserApi()._get_organizations_for_authed_user()
+    _orgs = (user_api or UserApi())._get_organizations_for_authed_user()
     return [Organization(_org.name) for _org in _orgs]
 
 
-def _get_teamspace_names_for_authed_user() -> List[str]:
+def _get_teamspace_names_for_authed_user(user_api: Optional[UserApi] = None) -> List[str]:
     """Returns Teamspace's names the current Authed user is a member of."""
-    teamspaces = UserApi()._get_all_teamspace_memberships("")
+    teamspaces = (user_api or UserApi())._get_all_teamspace_memberships("")
     return sorted([ts.name for ts in teamspaces])
 
 
-def _get_authed_user() -> "User":
+@lru_cache(maxsize=1)
+def _get_authed_user(user_api: Optional[UserApi] = None, teamspace_api: Optional[TeamspaceApi] = None) -> "User":
     from lightning_sdk.user import User
 
-    user_id = TeamspaceApi()._get_authed_user_id()
-    _user = UserApi()._get_user_by_id(user_id)
+    user_id = (teamspace_api or TeamspaceApi())._get_authed_user_id()
+    _user = (user_api or UserApi())._get_user_by_id(user_id)
     return User(name=_user.username)
 
 

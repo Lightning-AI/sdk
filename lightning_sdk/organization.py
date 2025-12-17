@@ -1,8 +1,11 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from lightning_sdk.api import OrgApi
 from lightning_sdk.owner import Owner
 from lightning_sdk.utils.resolve import _resolve_org_name
+
+if TYPE_CHECKING:
+    from lightning_sdk.teamspace import Teamspace
 
 
 class Organization(Owner):
@@ -43,6 +46,12 @@ class Organization(Owner):
     @property
     def default_cloud_account(self) -> Optional[str]:
         return self._org.preferred_cluster or None
+
+    def create_teamspace(self, name: str) -> "Teamspace":
+        from lightning_sdk.teamspace import Teamspace
+
+        self._org_api.create_teamspace(name, self.id)
+        return Teamspace(name=name, org=self)
 
     def __repr__(self) -> str:
         """Returns reader friendly representation."""

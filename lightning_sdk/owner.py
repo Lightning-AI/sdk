@@ -24,6 +24,10 @@ class Owner(ABC, metaclass=TrackCallsABCMeta):
     def id(self) -> str:
         """The owner's ID."""
 
+    @abstractmethod
+    def create_teamspace(self, name: str) -> "Teamspace":
+        """Creates a new teamspace."""
+
     @property
     def teamspaces(self) -> List["Teamspace"]:
         """All teamspaces by this owner."""

@@ -152,3 +152,15 @@ def test_verify_secret_name(secret_name, expected):
     user_api = UserApi()
     result = user_api.verify_secret_name(secret_name)
     assert result == expected
+
+
+@mock.patch("lightning_sdk.api.user_api.LightningClient")
+def test_create_teamspace(mock_client):
+    user_api = UserApi()
+
+    user_api.create_teamspace("my-teamspace")
+
+    mock_client().projects_service_create_project.assert_called_once()
+    call_args = mock_client().projects_service_create_project.call_args
+    assert call_args[1]["body"].name == "my-teamspace"
+    assert call_args[1]["body"].display_name == "my-teamspace"

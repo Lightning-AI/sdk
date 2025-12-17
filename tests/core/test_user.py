@@ -85,3 +85,25 @@ def test_user_set_secret_invalid_name(internal_user_api_mocker):
         match="Secret keys must only contain alphanumeric characters and underscores and not begin with a number.",
     ):
         user.set_secret("123_INVALID", "secret_value")
+
+
+@mock.patch("lightning_sdk.teamspace.Teamspace.__init__", return_value=None)
+@mock.patch("lightning_sdk.user._get_authed_user")
+def test_user_create_teamspace(mock_get_authed_user, mock_teamspace_init, internal_user_api_mocker):
+    user = User("user-abc")
+    mock_get_authed_user.return_value.id = user.id
+
+    with mock.patch.object(user._user_api, "create_teamspace") as mock_create:
+        user.create_teamspace("new-teamspace")
+
+    mock_create.assert_called_once_with("new-teamspace")
+    mock_teamspace_init.assert_called_once_with(name="new-teamspace", user=user)
+
+
+@mock.patch("lightning_sdk.user._get_authed_user")
+def test_user_create_teamspace_not_authed_user(mock_get_authed_user, internal_user_api_mocker):
+    user = User("user-abc")
+    mock_get_authed_user.return_value.id = "different-user-id"
+
+    with pytest.raises(ValueError, match="Can only create teamspaces for currently authenticated user"):
+        user.create_teamspace("new-teamspace")

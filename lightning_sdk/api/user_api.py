@@ -5,6 +5,7 @@ from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     SecretServiceUpdateUserSecretBody,
     V1CloudSpace,
+    V1CreateProjectRequest,
     V1CreateUserSecretRequest,
     V1GetUserResponse,
     V1ListCloudSpacesResponse,
@@ -123,3 +124,7 @@ class UserApi:
         """
         pattern = r"^[A-Za-z_][A-Za-z0-9_]*$"
         return re.match(pattern, name) is not None
+
+    def create_teamspace(self, name: str) -> None:
+        """Creates a new teamspace."""
+        self._client.projects_service_create_project(body=V1CreateProjectRequest(name=name, display_name=name))
