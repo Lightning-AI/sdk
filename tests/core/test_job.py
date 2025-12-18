@@ -182,7 +182,7 @@ def test_submit_job_v2_image(
         cloud_account_auth=False,
         artifacts_local=artifacts_local,
         artifacts_remote=artifacts_remote,
-        entrypoint="sh -c",
+        entrypoint=None,
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
@@ -222,7 +222,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         cloud_account_auth=False,
         artifacts_local=None,
         artifacts_remote=None,
-        entrypoint="sh -c",
+        entrypoint=None,
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
@@ -245,6 +245,63 @@ def test_jobv2_run_arg_validation(internal_studio_init_mocker):
 
     with pytest.raises(ValueError, match="A job needs to have a name!"):
         _JobV2.run(None, Machine.CPU)
+
+
+def test_jobv2_run_entrypoint_validation(internal_studio_init_mocker):
+    """Test entrypoint validation logic for image jobs."""
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+
+    # Test that empty string entrypoint is converted to None (use container default)
+    submit_mock = mock.MagicMock()
+    with mock.patch.object(_JobV2, "_submit", submit_mock):
+        _JobV2.run(
+            "test-job",
+            Machine.CPU,
+            command="echo hello",
+            image="alpine:latest",
+            teamspace=studio.teamspace,
+            entrypoint="",
+        )
+        submit_mock.assert_called_once()
+        assert submit_mock.call_args.kwargs["entrypoint"] is None
+
+    # Test that when command is provided with default entrypoint, sh -c is used
+    submit_mock.reset_mock()
+    with mock.patch.object(_JobV2, "_submit", submit_mock):
+        _JobV2.run(
+            "test-job",
+            Machine.CPU,
+            command="echo hello",
+            image="alpine:latest",
+            teamspace=studio.teamspace,
+        )
+        submit_mock.assert_called_once()
+        assert submit_mock.call_args.kwargs["entrypoint"] == "sh -c"
+
+    # Test that no command with empty entrypoint uses container defaults
+    submit_mock.reset_mock()
+    with mock.patch.object(_JobV2, "_submit", submit_mock):
+        _JobV2.run(
+            "test-job",
+            Machine.CPU,
+            command=None,
+            image="alpine:latest",
+            teamspace=studio.teamspace,
+            entrypoint="",
+        )
+        submit_mock.assert_called_once()
+        assert submit_mock.call_args.kwargs["entrypoint"] is None
+        assert submit_mock.call_args.kwargs["command"] is None
+
+    # Test that studio jobs raise error when entrypoint is specified
+    with pytest.raises(ValueError, match="Specifying the entrypoint has no effect for jobs with Studio envs."):
+        _JobV2.run(
+            "test-job",
+            Machine.CPU,
+            command="echo hello",
+            studio=studio,
+            entrypoint="/bin/bash -c",
+        )
 
 
 def test_submit_jobv2_error_cases(internal_studio_init_mocker):
@@ -535,7 +592,7 @@ def test_submit_jobv2_studio_resolve(
         image_credentials=None,
         artifacts_local=None,
         artifacts_remote=None,
-        entrypoint="sh -c",
+        entrypoint=None,
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
@@ -602,7 +659,7 @@ def test_submit_jobv2_studio_path(
         image_credentials=None,
         artifacts_local=artifacts_source,
         artifacts_remote=artifacts_destination,
-        entrypoint="sh -c",
+        entrypoint="sh -c" if image else None,
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,

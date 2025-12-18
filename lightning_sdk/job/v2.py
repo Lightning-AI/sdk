@@ -49,7 +49,7 @@ class _JobV2(_BaseJob):
         cloud_provider: Optional[Union["CloudProvider", str]] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
-        entrypoint: str = "sh -c",
+        entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
@@ -74,6 +74,14 @@ class _JobV2(_BaseJob):
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
                 Required if the registry is part of a cloud provider (e.g. ECR).
+            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+                just runs the provided command in a standard shell if a command is provided.
+                If no command is provided, it will run the pre-defined entrypoint of the provided image.
+                To use the pre-defined entrypoint of the provided image with a specified command,
+                set this to an empty string.
+                Only applicable when submitting docker jobs.
+                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                Only applicable when submitting docker jobs.
             artifacts_local: The path of inside the docker container, you want to persist images from.
                 CAUTION: When setting this to "/", it will effectively erase your container.
                 Only supported for jobs with a docker image compute environment.

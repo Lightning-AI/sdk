@@ -53,7 +53,7 @@ class _MMTV1(_BaseMMT):
         cloud_provider: Optional[Union["CloudProvider", str]] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
-        entrypoint: str = "sh -c",
+        entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,
@@ -89,7 +89,10 @@ class _MMTV1(_BaseMMT):
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
             entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
-                just runs the provided command in a standard shell.
+                just runs the provided command in a standard shell if a command is provided.
+                If no command is provided, it will run the pre-defined entrypoint of the provided image.
+                To use the pre-defined entrypoint of the provided image with a specified command,
+                set this to an empty string.
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
                 Only applicable when submitting docker jobs.
             path_mappings: The mappings from data connection inside your container (not supported)

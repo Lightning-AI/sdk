@@ -69,7 +69,7 @@ class _BaseMMT(_BaseJob):
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
-        entrypoint: str = "sh -c",
+        entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
@@ -104,8 +104,10 @@ class _BaseMMT(_BaseJob):
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
                 Required if the registry is part of a cloud provider (e.g. ECR).
             entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
-                just runs the provided command in a standard shell.
-                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+                just runs the provided command in a standard shell if a command is provided.
+                If no command is provided, it will run the pre-defined entrypoint of the provided image.
+                To use the pre-defined entrypoint of the provided image with a specified command,
+                set this to an empty string.
                 Only applicable when submitting docker jobs.
             path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
                 represents the data-connection name and the path inside that connection.
@@ -173,7 +175,7 @@ class _BaseMMT(_BaseJob):
                     "Other jobs will automatically persist artifacts to the teamspace distributed filesystem."
                 )
 
-            if entrypoint != "sh -c":
+            if entrypoint is not None:
                 raise ValueError("Specifying the entrypoint has no effect for jobs with Studio envs.")
 
         else:
@@ -198,6 +200,20 @@ class _BaseMMT(_BaseJob):
                     "Artifact persistence requires exactly three arguments separated by colon of kind "
                     f"<CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>, got {artifacts_local}"
                 )
+
+            # command specified, so use the default entrypoint of sh -c
+            if command is not None and entrypoint is None:
+                entrypoint = "sh -c"
+
+            # entrypoint specifically set to empty string, so set to None here to fall back to the image entrypoint
+            elif entrypoint == "":  # noqa: SIM114
+                entrypoint = None
+
+            # entrypoint not specified, but also no command specified, so use the image entrypoint
+            elif entrypoint is None:
+                entrypoint = None
+
+            # all other cases, the entrypoint has been specifically set, so use it as is
 
         inst = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
         inst._submit(
@@ -235,7 +251,7 @@ class _BaseMMT(_BaseJob):
         cloud_provider: Optional[Union["CloudProvider", str]] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
-        entrypoint: str = "sh -c",
+        entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
@@ -260,8 +276,11 @@ class _BaseMMT(_BaseJob):
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
                 Required if the registry is part of a cloud provider (e.g. ECR).
-            entrypoint: The entrypoint of your docker container. Defaults to sh -c.
-                To use the pre-defined entrypoint of the provided image, set this to an empty string.
+            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+                just runs the provided command in a standard shell if a command is provided.
+                If no command is provided, it will run the pre-defined entrypoint of the provided image.
+                To use the pre-defined entrypoint of the provided image with a specified command,
+                set this to an empty string.
                 Only applicable when submitting docker jobs.
             path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
                 represents the data-connection name and the path inside that connection.

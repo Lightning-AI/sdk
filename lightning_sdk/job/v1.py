@@ -108,7 +108,7 @@ class _JobV1(_BaseJob):
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
-        entrypoint: str = "sh -c",
+        entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
@@ -127,7 +127,10 @@ class _JobV1(_BaseJob):
             image_credentials: The image credentials for the job (not supported).
             cloud_account_auth: Whether to use cloud account authentication for the job (not supported).
             entrypoint: The entrypoint of your docker container (not supported).
-                Defaults to `sh -c` which just runs the provided command in a standard shell.
+                Defaults to `sh -c` which just runs the provided command in a standard shell if a command is provided.
+                If no command is provided, it will run the pre-defined entrypoint of the provided image.
+                To use the pre-defined entrypoint of the provided image with a specified command,
+                set this to an empty string.
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
                 Only applicable when submitting docker jobs.
             path_mappings: The mappings from data connection inside your container (not supported)

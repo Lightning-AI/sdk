@@ -87,7 +87,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
-        entrypoint: str = "sh -c",
+        entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         cluster: Optional[str] = None,  # deprecated in favor of cloud_account
@@ -193,7 +193,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
                     "Other jobs will automatically persist artifacts to the teamspace distributed filesystem."
                 )
 
-            if entrypoint != "sh -c":
+            if entrypoint is not None:
                 raise ValueError("Specifying the entrypoint has no effect for jobs with Studio envs.")
 
         else:
@@ -218,6 +218,20 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
                     "Artifact persistence requires exactly three arguments separated by colon of kind "
                     f"<CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>, got {artifacts_local}"
                 )
+
+            # command specified, so use the default entrypoint of sh -c
+            if command is not None and entrypoint is None:
+                entrypoint = "sh -c"
+
+            # entrypoint specifically set to empty string, so set to None here to fall back to the image entrypoint
+            elif entrypoint == "":  # noqa: SIM114
+                entrypoint = None
+
+            # entrypoint not specified, but also no command specified, so use the image entrypoint
+            elif entrypoint is None:
+                entrypoint = None
+
+            # all other cases, the entrypoint has been specifically set, so use it as is
 
         inst = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
         return inst._submit(
@@ -255,7 +269,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
         cloud_account_auth: bool = False,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
-        entrypoint: str = "sh -c",
+        entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
@@ -292,7 +306,12 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
                 within it.
                 Note that the connection needs to be added to the teamspace already in order for it to be found.
                 Only supported for jobs with a docker image compute environment.
-            entrypoint: The entrypoint of your docker container. Defaults to sh -c.
+            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
+                just runs the provided command in a standard shell if a command is provided.
+                If no command is provided, it will run the pre-defined entrypoint of the provided image.
+                To use the pre-defined entrypoint of the provided image with a specified command,
+                set this to an empty string.
+                Only applicable when submitting docker jobs.
                 To use the pre-defined entrypoint of the provided image, set this to an empty string.
                 Only applicable when submitting docker jobs.
             max_runtime: the duration (in seconds) for which to allocate the machine.
