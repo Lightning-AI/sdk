@@ -46,15 +46,15 @@ class TestClustersMenu:
         expected_cluster = MagicMock(spec=Externalv1Cluster)
         expected_cluster.spec.cluster_type = V1ClusterType.BYOC
         expected_cluster.id = "cluster-2"
-        mock_cloud_account_api.get_cloud_account.return_value = expected_cluster
+        mock_cloud_account_api.get_cloud_account_non_org.return_value = expected_cluster
 
         self.mock_teamspace.default_cloud_account = "cluster-2"
         result = self.clusters_menu._resolve_cluster(self.mock_teamspace)
 
         assert result == "cluster-2"
 
-        mock_cloud_account_api.get_cloud_account.assert_called_once_with(
-            cloud_account_id="cluster-2", org_id=self.mock_teamspace.owner.id, teamspace_id=self.mock_teamspace.id
+        mock_cloud_account_api.get_cloud_account_non_org.assert_called_once_with(
+            cloud_account_id="cluster-2", teamspace_id=self.mock_teamspace.id
         )
 
     @patch("lightning_sdk.cli.legacy.clusters_menu.CloudAccountApi")
@@ -72,7 +72,7 @@ class TestClustersMenu:
         expected_cluster = MagicMock(spec=Externalv1Cluster)
         expected_cluster.spec.cluster_type = V1ClusterType.GLOBAL
         expected_cluster.id = "cluster-2"
-        mock_cloud_account_api.get_cloud_account.return_value = expected_cluster
+        mock_cloud_account_api.get_cloud_account_non_org.return_value = expected_cluster
 
         self.mock_teamspace.default_cloud_account = "cluster-2"
         result = self.clusters_menu._resolve_cluster(self.mock_teamspace)
@@ -81,8 +81,8 @@ class TestClustersMenu:
         # lightning saas storage backend.
         assert result is None
 
-        mock_cloud_account_api.get_cloud_account.assert_called_once_with(
-            cloud_account_id="cluster-2", org_id=self.mock_teamspace.owner.id, teamspace_id=self.mock_teamspace.id
+        mock_cloud_account_api.get_cloud_account_non_org.assert_called_once_with(
+            cloud_account_id="cluster-2", teamspace_id=self.mock_teamspace.id
         )
 
     @patch("lightning_sdk.cli.legacy.clusters_menu.TerminalMenu")
@@ -106,7 +106,7 @@ class TestClustersMenu:
         mock_cloud_account_api_class.return_value = mock_cloud_account_api
 
         expected_cluster = MagicMock(spec=Externalv1Cluster)
-        mock_cloud_account_api.get_cloud_account.return_value = expected_cluster
+        mock_cloud_account_api.get_cloud_account_non_org.return_value = expected_cluster
 
         self.clusters_menu._get_cluster_from_interactive_menu = MagicMock(return_value="cluster-2")
 
@@ -114,8 +114,8 @@ class TestClustersMenu:
         self.clusters_menu._get_cluster_from_interactive_menu.assert_called_once_with(
             possible_clusters=self.mock_teamspace.cloud_account_objs
         )
-        mock_cloud_account_api.get_cloud_account.assert_called_once_with(
-            cloud_account_id="cluster-2", org_id=self.mock_teamspace.owner.id, teamspace_id=self.mock_teamspace.id
+        mock_cloud_account_api.get_cloud_account_non_org.assert_called_once_with(
+            cloud_account_id="cluster-2", teamspace_id=self.mock_teamspace.id
         )
         mock_exit.assert_not_called()
 

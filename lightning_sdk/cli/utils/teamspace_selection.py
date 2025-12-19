@@ -51,6 +51,11 @@ class TeamspacesMenu:
         return TerminalMenu(possible_teamspaces, title=title, clear_menu_on_exit=True)
 
     def _get_possible_teamspaces(self, user: User) -> Dict[str, str]:
+        if self._owner is None:
+            from lightning_sdk.cli.utils.owner_selection import OwnerMenu
+
+            menu = OwnerMenu()
+            self._owner = menu()
         user_api = user._user_api
 
         memberships = user_api._get_all_teamspace_memberships(

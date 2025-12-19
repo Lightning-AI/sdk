@@ -546,12 +546,18 @@ def test_auth_run_server_confirm_browser_open(mock_auth_confirm, _, mock_authser
 @patch("lightning_sdk.cli.legacy.deploy._auth._get_authed_user")
 @patch("lightning_sdk.cli.legacy.deploy._auth.TeamspacesMenu")
 def test_select_teamspace_when_only_one_available(mock_ts_menu, mock_get_authed_user, mock_teamspace_cls):
-    mock_ts_menu.return_value._get_possible_teamspaces.return_value = {"id": {"name": "test-teamspace"}}
-    mock_get_authed_user.return_value = "user"
+    from lightning_sdk.user import User
+
+    mock_menu_instance = MagicMock()
+    mock_ts_menu.return_value = mock_menu_instance
+    mock_menu_instance._get_possible_teamspaces.return_value = {"id": "test-teamspace"}
+
+    mock_user_owner = MagicMock(spec=User)
+    mock_menu_instance._owner = mock_user_owner
 
     select_teamspace(teamspace=None, org="org", user="user")
     mock_ts_menu.return_value._get_possible_teamspaces.assert_called_once()
-    mock_teamspace_cls.assert_called_once_with(name="test-teamspace", org="org", user="user")
+    mock_teamspace_cls.assert_called_once_with(name="test-teamspace", org=None, user=mock_user_owner)
 
 
 @patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace")

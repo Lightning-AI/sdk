@@ -8,7 +8,7 @@ from urllib.parse import urlencode
 from rich.console import Console
 from rich.prompt import Confirm
 
-from lightning_sdk import Teamspace
+from lightning_sdk import Organization, Teamspace
 from lightning_sdk.api import UserApi
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud import env
@@ -74,13 +74,14 @@ def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
 def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
     if teamspace is None:
         menu = TeamspacesMenu()
-        possible_teamspaces = menu._get_possible_teamspaces(_get_authed_user())
+        auth_user = _get_authed_user()
+        possible_teamspaces = menu._get_possible_teamspaces(auth_user)
         if len(possible_teamspaces) == 1:
-            name = next(iter(possible_teamspaces.values()))["name"]
-            return Teamspace(name=name, org=org, user=user)
-
+            teamspace_name = next(iter(possible_teamspaces.values()))
+            if isinstance(menu._owner, Organization):
+                return Teamspace(name=teamspace_name, org=menu._owner, user=None)
+            return Teamspace(name=teamspace_name, org=None, user=menu._owner)
         return menu(teamspace)
-
     return _resolve_teamspace(teamspace=teamspace, org=org, user=user)
 
 

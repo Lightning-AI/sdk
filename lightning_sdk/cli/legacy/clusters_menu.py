@@ -32,8 +32,8 @@ class _ClustersMenu:
 
             cloud_account_api = CloudAccountApi()
 
-            resolved_cluster_obj = cloud_account_api.get_cloud_account(
-                cloud_account_id=selected_cluster_id, org_id=teamspace.owner.id, teamspace_id=teamspace.id
+            resolved_cluster_obj = cloud_account_api.get_cloud_account_non_org(
+                cloud_account_id=selected_cluster_id, teamspace_id=teamspace.id
             )
 
             return None if resolved_cluster_obj.spec.cluster_type == V1ClusterType.GLOBAL else resolved_cluster_obj.id
