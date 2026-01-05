@@ -10,6 +10,7 @@ def register_commands(group: click.Group) -> None:
     from lightning_sdk.cli.studio.create import create_studio
     from lightning_sdk.cli.studio.delete import delete_studio
     from lightning_sdk.cli.studio.list import list_studios
+    from lightning_sdk.cli.studio.ls import ls_studio
     from lightning_sdk.cli.studio.ssh import ssh_studio
     from lightning_sdk.cli.studio.start import start_studio
     from lightning_sdk.cli.studio.stop import stop_studio
@@ -24,3 +25,4 @@ def register_commands(group: click.Group) -> None:
     group.add_command(switch_studio)
     group.add_command(connect_studio)
     group.add_command(cp_studio_file)
+    group.add_command(ls_studio)

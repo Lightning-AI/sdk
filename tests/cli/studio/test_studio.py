@@ -20,6 +20,7 @@ Commands:
   create   Create a new Studio.
   delete   Delete a Studio.
   list     List Studios in a teamspace.
+  ls       List contents of a directory in Studio.
   ssh      SSH into a Studio.
   start    Start a Studio.
   stop     Stop a Studio.
