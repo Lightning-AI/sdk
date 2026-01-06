@@ -23,7 +23,6 @@ from lightning_sdk.lightning_cloud.openapi.api.git_credentials_service_api impor
 from lightning_sdk.lightning_cloud.openapi.api.incidents_service_api import IncidentsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.jobs_service_api import JobsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.k8_s_cluster_service_api import K8SClusterServiceApi
-from lightning_sdk.lightning_cloud.openapi.api.kubernetes_virtual_machine_service_api import KubernetesVirtualMachineServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api import LightningappInstanceServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningapp_v2_service_api import LightningappV2ServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.lightningwork_service_api import LightningworkServiceApi
@@ -49,4 +48,5 @@ from lightning_sdk.lightning_cloud.openapi.api.snowflake_service_api import Snow
 from lightning_sdk.lightning_cloud.openapi.api.storage_service_api import StorageServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.studio_jobs_service_api import StudioJobsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.user_service_api import UserServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.virtual_machine_service_api import VirtualMachineServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.volume_service_api import VolumeServiceApi

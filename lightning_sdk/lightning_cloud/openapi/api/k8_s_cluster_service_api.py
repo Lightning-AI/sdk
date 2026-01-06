@@ -1538,6 +1538,8 @@ class K8SClusterServiceApi(object):
         :param bool deleted:
         :param datetime historical_start: Date ranges for historical pods  Historical start time for the pods
         :param datetime historical_end: Historical end time for the pods
+        :param str page_token: Pagination
+        :param int limit:
         :return: V1ListKubernetesPodsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1566,12 +1568,14 @@ class K8SClusterServiceApi(object):
         :param bool deleted:
         :param datetime historical_start: Date ranges for historical pods  Historical start time for the pods
         :param datetime historical_end: Historical end time for the pods
+        :param str page_token: Pagination
+        :param int limit:
         :return: V1ListKubernetesPodsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['cluster_id', 'statuses_in', 'namespace', 'user_id', 'queue_name', 'deleted', 'historical_start', 'historical_end']  # noqa: E501
+        all_params = ['cluster_id', 'statuses_in', 'namespace', 'user_id', 'queue_name', 'deleted', 'historical_start', 'historical_end', 'page_token', 'limit']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1613,6 +1617,10 @@ class K8SClusterServiceApi(object):
             query_params.append(('historicalStart', params['historical_start']))  # noqa: E501
         if 'historical_end' in params:
             query_params.append(('historicalEnd', params['historical_end']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
 
         header_params = {}
 

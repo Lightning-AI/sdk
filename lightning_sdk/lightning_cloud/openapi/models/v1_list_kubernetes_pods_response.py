@@ -41,24 +41,55 @@ class V1ListKubernetesPodsResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'next_page_token': 'str',
         'pods': 'list[V1KubernetesPod]',
+        'previous_page_token': 'str',
         'status_in': 'list[str]'
     }
 
     attribute_map = {
+        'next_page_token': 'nextPageToken',
         'pods': 'pods',
+        'previous_page_token': 'previousPageToken',
         'status_in': 'statusIn'
     }
 
-    def __init__(self, pods: 'list[V1KubernetesPod]' =None, status_in: 'list[str]' =None):  # noqa: E501
+    def __init__(self, next_page_token: 'str' =None, pods: 'list[V1KubernetesPod]' =None, previous_page_token: 'str' =None, status_in: 'list[str]' =None):  # noqa: E501
         """V1ListKubernetesPodsResponse - a model defined in Swagger"""  # noqa: E501
+        self._next_page_token = None
         self._pods = None
+        self._previous_page_token = None
         self._status_in = None
         self.discriminator = None
+        if next_page_token is not None:
+            self.next_page_token = next_page_token
         if pods is not None:
             self.pods = pods
+        if previous_page_token is not None:
+            self.previous_page_token = previous_page_token
         if status_in is not None:
             self.status_in = status_in
+
+    @property
+    def next_page_token(self) -> 'str':
+        """Gets the next_page_token of this V1ListKubernetesPodsResponse.  # noqa: E501
+
+
+        :return: The next_page_token of this V1ListKubernetesPodsResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._next_page_token
+
+    @next_page_token.setter
+    def next_page_token(self, next_page_token: 'str'):
+        """Sets the next_page_token of this V1ListKubernetesPodsResponse.
+
+
+        :param next_page_token: The next_page_token of this V1ListKubernetesPodsResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._next_page_token = next_page_token
 
     @property
     def pods(self) -> 'list[V1KubernetesPod]':
@@ -80,6 +111,27 @@ class V1ListKubernetesPodsResponse(object):
         """
 
         self._pods = pods
+
+    @property
+    def previous_page_token(self) -> 'str':
+        """Gets the previous_page_token of this V1ListKubernetesPodsResponse.  # noqa: E501
+
+
+        :return: The previous_page_token of this V1ListKubernetesPodsResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._previous_page_token
+
+    @previous_page_token.setter
+    def previous_page_token(self, previous_page_token: 'str'):
+        """Sets the previous_page_token of this V1ListKubernetesPodsResponse.
+
+
+        :param previous_page_token: The previous_page_token of this V1ListKubernetesPodsResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._previous_page_token = previous_page_token
 
     @property
     def status_in(self) -> 'list[str]':

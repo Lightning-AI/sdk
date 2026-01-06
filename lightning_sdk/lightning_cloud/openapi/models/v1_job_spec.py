@@ -56,6 +56,7 @@ class V1JobSpec(object):
         'include_credentials': 'bool',
         'instance_name': 'str',
         'instance_type': 'str',
+        'machine_id': 'str',
         'machine_image_version': 'str',
         'modified_volume': 'bool',
         'path_mappings': 'list[V1PathMapping]',
@@ -91,6 +92,7 @@ class V1JobSpec(object):
         'include_credentials': 'includeCredentials',
         'instance_name': 'instanceName',
         'instance_type': 'instanceType',
+        'machine_id': 'machineId',
         'machine_image_version': 'machineImageVersion',
         'modified_volume': 'modifiedVolume',
         'path_mappings': 'pathMappings',
@@ -110,7 +112,7 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_image_version: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
@@ -127,6 +129,7 @@ class V1JobSpec(object):
         self._include_credentials = None
         self._instance_name = None
         self._instance_type = None
+        self._machine_id = None
         self._machine_image_version = None
         self._modified_volume = None
         self._path_mappings = None
@@ -175,6 +178,8 @@ class V1JobSpec(object):
             self.instance_name = instance_name
         if instance_type is not None:
             self.instance_type = instance_type
+        if machine_id is not None:
+            self.machine_id = machine_id
         if machine_image_version is not None:
             self.machine_image_version = machine_image_version
         if modified_volume is not None:
@@ -530,6 +535,27 @@ class V1JobSpec(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def machine_id(self) -> 'str':
+        """Gets the machine_id of this V1JobSpec.  # noqa: E501
+
+
+        :return: The machine_id of this V1JobSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._machine_id
+
+    @machine_id.setter
+    def machine_id(self, machine_id: 'str'):
+        """Sets the machine_id of this V1JobSpec.
+
+
+        :param machine_id: The machine_id of this V1JobSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._machine_id = machine_id
 
     @property
     def machine_image_version(self) -> 'str':
