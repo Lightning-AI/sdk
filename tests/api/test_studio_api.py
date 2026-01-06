@@ -1853,3 +1853,89 @@ def test_get_port_url(mock_list_endpoints, port, name, endpoints, expected_url, 
         )
     else:
         mock_list_endpoints.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("path", "path_info", "status_code", "should_raise", "error_match"),
+    [
+        (
+            "file.txt",
+            {"type": "file", "exists": True, "size": 1024},
+            204,
+            False,
+            None,
+        ),
+        # nested file
+        (
+            "folder/subfolder/data.csv",
+            {"type": "file", "exists": True, "size": 2048},
+            204,
+            False,
+            None,
+        ),
+        # remove directory
+        (
+            "my-folder",
+            {"type": "directory", "exists": True, "size": None},
+            None,
+            True,
+            "The path 'my-folder' is a directory. Only files can be removed.",
+        ),
+        # non-existent file
+        (
+            "nonexistent.txt",
+            {"type": "file", "exists": False, "size": None},
+            None,
+            True,
+            "The path 'nonexistent.txt' does not exist in the Studio.",
+        ),
+        # server error
+        (
+            "file.txt",
+            {"type": "file", "exists": True, "size": 1024},
+            500,
+            True,
+            "Failed to remove file 'file.txt' from the Studio. Status code: 500",
+        ),
+    ],
+)
+@mock.patch("requests.delete", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login",
+    autospec=True,
+)
+@mock.patch("lightning_sdk.api.studio_api.StudioApi.get_path_info", autospec=True)
+def test_remove(
+    mock_get_path_info, mock_login, mock_requests_delete, path, path_info, status_code, should_raise, error_match
+):
+    """Test remove method with various scenarios."""
+    mock_login.return_value = V1LoginResponse(token="test-token")
+    mock_get_path_info.return_value = path_info
+
+    if status_code is not None:
+        mock_response = mock.MagicMock()
+        mock_response.status_code = status_code
+        mock_response.text = "Error response text"
+        mock_requests_delete.return_value = mock_response
+
+    studio_api = StudioApi()
+
+    if should_raise:
+        with pytest.raises((IsADirectoryError, FileNotFoundError, RuntimeError), match=error_match):
+            studio_api.remove("st-abc", "ts-abc", path)
+    else:
+        result = studio_api.remove("st-abc", "ts-abc", path)
+
+        # None means success
+        assert result is None
+
+        mock_requests_delete.assert_called_once()
+        call_args = mock_requests_delete.call_args
+
+        assert f"/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/blobs/{path}" in call_args[0][0]
+
+        assert call_args[1]["params"]["token"] == "test-token"
+
+        assert call_args[1]["timeout"] == 30
+
+    mock_get_path_info.assert_called_once_with(mock.ANY, "st-abc", "ts-abc", path=path)

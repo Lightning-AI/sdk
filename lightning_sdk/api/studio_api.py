@@ -784,6 +784,33 @@ class StudioApi:
             progress_bar=progress_bar,
         )
 
+    def remove(self, studio_id: str, teamspace_id: str, path: str) -> None:
+        """Removes a given file from a Studio."""
+        # for now, we only support removing single files
+        info = self.get_path_info(studio_id, teamspace_id, path=path)
+        if not info["exists"]:
+            raise FileNotFoundError(f"The path '{path}' does not exist in the Studio.")
+        if info["type"] != "file":
+            raise IsADirectoryError(f"The path '{path}' is a directory. Only files can be removed.")
+
+        auth = Auth()
+        auth.authenticate()
+        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+        print("token", token)
+
+        query_params = {
+            "token": token,
+        }
+
+        client_host = self._client.api_client.configuration.host
+        url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}"
+
+        r = requests.delete(url, params=query_params, timeout=30)
+        print(r.status_code)
+        if r.status_code == 204:
+            return
+        raise RuntimeError(f"Failed to remove file '{path}' from the Studio. Status code: {r.status_code}")
+
     def install_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> str:
         """Installs the given plugin."""
         resp: V1Plugin = self._client.cloud_space_service_install_plugin(
