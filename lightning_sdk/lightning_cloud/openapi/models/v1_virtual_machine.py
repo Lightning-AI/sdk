@@ -44,7 +44,7 @@ class V1VirtualMachine(object):
         'cluster_id': 'str',
         'created_at': 'datetime',
         'deleted_at': 'datetime',
-        'deployment': 'V1Deployment',
+        'deployment_id': 'str',
         'id': 'str',
         'name': 'str',
         'node': 'str',
@@ -59,7 +59,7 @@ class V1VirtualMachine(object):
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'deleted_at': 'deletedAt',
-        'deployment': 'deployment',
+        'deployment_id': 'deploymentId',
         'id': 'id',
         'name': 'name',
         'node': 'node',
@@ -70,12 +70,12 @@ class V1VirtualMachine(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment: 'V1Deployment' =None, id: 'str' =None, name: 'str' =None, node: 'str' =None, project_id: 'str' =None, provider_config: 'V1VmProviderConfiguration' =None, state: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, id: 'str' =None, name: 'str' =None, node: 'str' =None, project_id: 'str' =None, provider_config: 'V1VmProviderConfiguration' =None, state: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1VirtualMachine - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
         self._deleted_at = None
-        self._deployment = None
+        self._deployment_id = None
         self._id = None
         self._name = None
         self._node = None
@@ -91,8 +91,8 @@ class V1VirtualMachine(object):
             self.created_at = created_at
         if deleted_at is not None:
             self.deleted_at = deleted_at
-        if deployment is not None:
-            self.deployment = deployment
+        if deployment_id is not None:
+            self.deployment_id = deployment_id
         if id is not None:
             self.id = id
         if name is not None:
@@ -174,25 +174,25 @@ class V1VirtualMachine(object):
         self._deleted_at = deleted_at
 
     @property
-    def deployment(self) -> 'V1Deployment':
-        """Gets the deployment of this V1VirtualMachine.  # noqa: E501
+    def deployment_id(self) -> 'str':
+        """Gets the deployment_id of this V1VirtualMachine.  # noqa: E501
 
 
-        :return: The deployment of this V1VirtualMachine.  # noqa: E501
-        :rtype: V1Deployment
+        :return: The deployment_id of this V1VirtualMachine.  # noqa: E501
+        :rtype: str
         """
-        return self._deployment
+        return self._deployment_id
 
-    @deployment.setter
-    def deployment(self, deployment: 'V1Deployment'):
-        """Sets the deployment of this V1VirtualMachine.
+    @deployment_id.setter
+    def deployment_id(self, deployment_id: 'str'):
+        """Sets the deployment_id of this V1VirtualMachine.
 
 
-        :param deployment: The deployment of this V1VirtualMachine.  # noqa: E501
-        :type: V1Deployment
+        :param deployment_id: The deployment_id of this V1VirtualMachine.  # noqa: E501
+        :type: str
         """
 
-        self._deployment = deployment
+        self._deployment_id = deployment_id
 
     @property
     def id(self) -> 'str':

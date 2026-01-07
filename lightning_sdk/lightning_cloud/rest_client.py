@@ -42,7 +42,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     K8SClusterServiceApi
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.lightning_cloud.source_code.logs_socket_api import LightningLogsSocketAPI
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +78,6 @@ def create_swagger_client(check_context: bool = True, with_auth: bool = True):
 
 
 class GridRestClient(
-    LightningLogsSocketAPI,
     LightningappInstanceServiceApi,
     LightningappV2ServiceApi,
     AuthServiceApi,

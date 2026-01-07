@@ -472,6 +472,7 @@ class K8SClusterServiceApi(object):
         :param str namespace:
         :param datetime start: Date range
         :param datetime end:
+        :param list[str] ids:
         :return: V1ListAggregatedPodMetricsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -496,12 +497,13 @@ class K8SClusterServiceApi(object):
         :param str namespace:
         :param datetime start: Date range
         :param datetime end:
+        :param list[str] ids:
         :return: V1ListAggregatedPodMetricsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['cluster_id', 'namespace', 'start', 'end']  # noqa: E501
+        all_params = ['cluster_id', 'namespace', 'start', 'end', 'ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -534,6 +536,9 @@ class K8SClusterServiceApi(object):
             query_params.append(('start', params['start']))  # noqa: E501
         if 'end' in params:
             query_params.append(('end', params['end']))  # noqa: E501
+        if 'ids' in params:
+            query_params.append(('ids', params['ids']))  # noqa: E501
+            collection_formats['ids'] = 'multi'  # noqa: E501
 
         header_params = {}
 
