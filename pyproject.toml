@@ -23,7 +23,6 @@ dependencies = [ # alphabetically sorted
     "fastapi", # for lightning-cloud
     "packaging", # for version checks
     "pandas", # for handling metrics
-    "pyjwt", # for lightning-cloud
     "pyyaml", # for config handling
     "requests", # for downloading files via urls
     "rich", # for nice printing
@@ -32,8 +31,6 @@ dependencies = [ # alphabetically sorted
     "tqdm", # for progressbars
     "urllib3<=2.5.0", # for downloading files via urls
     "uvicorn", # for login
-    "websocket-client", # for lightning-cloud logs
-    "wget", # for CLI
 ]
 
 dynamic = ["version"]
