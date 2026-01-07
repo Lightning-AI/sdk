@@ -25,10 +25,13 @@ def test_cp_help():
   lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>.
 
   Example:     lightning studio cp source.txt lit://<owner>/<my-
-  teamspace>/studios/<my-studio>/destination.txt
+  teamspace>/studios/<my-studio>/destination.txt     lightning studio cp -r
+  source_folder/ lit://<owner>/<my-teamspace>/studios/<my-
+  studio>/destination_folder/
 
 Options:
-  --help  Show this message and exit.
+  -r, --recursive  Copy directories recursively
+  --help           Show this message and exit.
 """
     )
 
@@ -124,6 +127,7 @@ def test_cp_upload_successful(tmp_path: Path):
         cp_upload(
             local_file_path=str(test_file),
             studio_file_path="lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt",
+            recursive=False,
         )
 
         mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
@@ -140,6 +144,7 @@ def test_cp_upload_successful(tmp_path: Path):
         cp_upload(
             local_file_path=str(test_dir),
             studio_file_path="lit://test-owner/test-teamspace/studios/test-studio/remote-dir/",
+            recursive=True,
         )
 
         mock_studio_instance.upload_folder.assert_called_once_with(str(test_dir), "remote-dir/")
@@ -656,3 +661,66 @@ def test_cp_upload_url_construction(tmp_path: Path):
         second_call_arg = str(mock_console.print.call_args_list[1][0][0])
         assert ":443" not in second_call_arg
         assert "https://lightning.ai/my-owner/my-teamspace/studios/my-studio" in second_call_arg
+
+
+def test_cp_upload_folder_without_recursive_flag_raises_error(tmp_path: Path):
+    """Test that uploading a folder without -r flag raises an error."""
+    test_dir = tmp_path / "test_folder"
+    test_dir.mkdir()
+    test_file = test_dir / "test_file.txt"
+    test_file.write_text("test content")
+
+    mock_parse_result = {
+        "studio": "test-studio",
+        "teamspace": "test-teamspace",
+        "owner": "test-owner",
+        "destination": "remote_folder/",
+    }
+
+    mock_selected_studio = MagicMock()
+    mock_selected_studio.name = "test-studio"
+    mock_selected_studio.teamspace.name = "test-teamspace"
+
+    with (
+        patch("lightning_sdk.cli.studio.cp.parse_studio_path", return_value=mock_parse_result),
+        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=mock_selected_studio),
+        patch("lightning_sdk.cli.studio.cp.Console"),
+        pytest.raises(ValueError, match="is a directory. Use -r flag to copy directories recursively"),
+    ):
+        cp_upload(
+            local_file_path=str(test_dir),
+            studio_file_path="lit://test-owner/test-teamspace/studios/test-studio/remote_folder/",
+            recursive=False,
+        )
+
+
+def test_cp_download_folder_without_recursive_flag_raises_error(tmp_path: Path):
+    """Test that downloading a folder without -r flag raises an error."""
+    test_file = tmp_path / "test_file.txt"
+
+    mock_parse_result = {
+        "studio": "test-studio",
+        "teamspace": "test-teamspace",
+        "owner": "test-owner",
+        "destination": "/remote_folder",
+    }
+
+    mock_selected_studio = MagicMock()
+    mock_selected_studio.name = "test-studio"
+    mock_selected_studio.teamspace.name = "test-teamspace"
+    mock_selected_studio._studio.id = "studio-id"
+    mock_selected_studio._teamspace.id = "teamspace-id"
+
+    mock_selected_studio._studio_api.get_path_info.return_value = {"exists": True, "type": "directory"}
+
+    with (
+        patch("lightning_sdk.cli.studio.cp.parse_studio_path", return_value=mock_parse_result),
+        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=mock_selected_studio),
+        patch("lightning_sdk.cli.studio.cp.Console"),
+        pytest.raises(ValueError, match="is a directory. Use -r flag to copy directories recursively"),
+    ):
+        cp_download(
+            studio_path="lit://test-owner/test-teamspace/studios/test-studio/remote_folder",
+            local_path=str(test_file),
+            recursive=False,
+        )

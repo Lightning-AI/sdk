@@ -14,7 +14,8 @@ from lightning_sdk.cli.utils.studio_filesystem import parse_studio_path, resolve
 @click.command("cp")
 @click.argument("source", nargs=1)
 @click.argument("destination", nargs=1)
-def cp_studio_file(source: str, destination: str, teamspace: Optional[str] = None) -> None:
+@click.option("-r", "--recursive", is_flag=True, help="Copy directories recursively")
+def cp_studio_file(source: str, destination: str, teamspace: Optional[str] = None, recursive: bool = False) -> None:
     """Copy a Studio file.
 
     SOURCE: Source file to copy from. For Studio files, use the format lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>.
@@ -23,27 +24,29 @@ def cp_studio_file(source: str, destination: str, teamspace: Optional[str] = Non
 
     Example:
         lightning studio cp source.txt lit://<owner>/<my-teamspace>/studios/<my-studio>/destination.txt
+        lightning studio cp -r source_folder/ lit://<owner>/<my-teamspace>/studios/<my-studio>/destination_folder/
 
     """
-    return cp_impl(source=source, destination=destination)
+    return cp_impl(source=source, destination=destination, recursive=recursive)
 
 
-def cp_impl(source: str, destination: str) -> None:
+def cp_impl(source: str, destination: str, recursive: bool = False) -> None:
     if "lit://" in source and "lit://" in destination:
         raise ValueError("Both source and destination cannot be Studio files.")
     elif "lit://" not in source and "lit://" not in destination:
         raise ValueError("Either source or destination must be a Studio file.")
     elif "lit://" in source:
         # Download from Studio to local
-        cp_download(studio_path=source, local_path=destination)
+        cp_download(studio_path=source, local_path=destination, recursive=recursive)
     else:
         # Upload from local to Studio
-        cp_upload(local_file_path=source, studio_file_path=destination)
+        cp_upload(local_file_path=source, studio_file_path=destination, recursive=recursive)
 
 
 def cp_upload(
     local_file_path: str,
     studio_file_path: str,
+    recursive: bool = False,
 ) -> None:
     console = Console()
     if not Path(local_file_path).exists():
@@ -57,6 +60,8 @@ def cp_upload(
     console.print(f"Uploading to {selected_studio.teamspace.name}/{selected_studio.name}")
 
     if Path(local_file_path).is_dir():
+        if not recursive:
+            raise ValueError(f"'{local_file_path}' is a directory. Use -r flag to copy directories recursively.")
         selected_studio.upload_folder(local_file_path, studio_path_result["destination"])
     else:
         if studio_file_path.endswith(("/", "\\")):
@@ -80,6 +85,7 @@ def cp_upload(
 def cp_download(
     studio_path: str,
     local_path: str,
+    recursive: bool = False,
 ) -> None:
     console = Console()
     studio_path_result = parse_studio_path(studio_path)
@@ -100,6 +106,10 @@ def cp_download(
 
     console.print(f"Downloading from {selected_studio.teamspace.name}/{selected_studio.name}")
     if path_info["type"] == "directory":
+        if not recursive:
+            raise ValueError(
+                f"'{studio_path_result['destination']}' is a directory. Use -r flag to copy directories recursively."
+            )
         folder_name = os.path.basename(studio_path_result["destination"].rstrip("/"))
         target_path = os.path.join(local_path, folder_name)
 
