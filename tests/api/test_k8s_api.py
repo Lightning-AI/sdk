@@ -1,7 +1,6 @@
 from datetime import datetime
 from unittest import mock
 
-import pandas as pd
 import pytest
 
 from lightning_sdk.api.k8s_api import K8sClusterApi, K8sClusterApiError
@@ -21,8 +20,8 @@ def test_get_billing_usage_with_empty_metrics():
 
     result = k8s_api.get_billing_usage()
 
-    assert isinstance(result, pd.DataFrame)
-    assert result.shape[0] == 0
+    assert isinstance(result, list)
+    assert len(result) == 0
 
     get_k8s_mock.assert_called_once_with("test")
 
@@ -37,9 +36,9 @@ def test_get_billing_usage_metrics_with_no_range():
 
     result = k8s_api.get_billing_usage()
 
-    assert isinstance(result, pd.DataFrame)
-    assert result.shape[0] == 2
-    assert result.iloc[0]["num_allocated_gpus"] == 6
+    assert isinstance(result, list)
+    assert len(result) == 2
+    assert result[0]["num_allocated_gpus"] == 6
 
     get_k8s_mock.assert_called_once_with("test")
 
@@ -54,10 +53,10 @@ def test_gets_calculates_metrics_with_start_and_end_dates():
     k8s_api._client.k8_s_cluster_service_list_cluster_metrics = get_k8s_mock
 
     result = k8s_api.get_billing_usage(start_date=start_date, end_date=end_date)
-    assert isinstance(result, pd.DataFrame)
-    assert result.shape[0] == 2
-    assert result.iloc[0]["num_allocated_gpus"] == 6.0
-    assert result.iloc[1]["num_allocated_gpus"] == 4.0
+    assert isinstance(result, list)
+    assert len(result) == 2
+    assert result[0]["num_allocated_gpus"] == 6.0
+    assert result[1]["num_allocated_gpus"] == 4.0
 
 
 def test_gets_calculates_metrics_with_only_start_date():
@@ -69,8 +68,8 @@ def test_gets_calculates_metrics_with_only_start_date():
     k8s_api._client.k8_s_cluster_service_list_cluster_metrics = get_k8s_mock
 
     result = k8s_api.get_billing_usage(start_date=date)
-    assert result.shape[0] == 1
-    assert result.iloc[0]["num_allocated_gpus"] == 4.0
+    assert len(result) == 1
+    assert result[0]["num_allocated_gpus"] == 4.0
     get_k8s_mock.assert_called_once_with("user-abc", start_date=date)
 
 
@@ -83,8 +82,8 @@ def test_gets_calculates_metrics_with_only_end_date():
     k8s_api._client.k8_s_cluster_service_list_cluster_metrics = get_k8s_mock
 
     result = k8s_api.get_billing_usage(end_date=date)
-    assert result.shape[0] == 1
-    assert result.iloc[0]["num_allocated_gpus"] == 6.0
+    assert len(result) == 1
+    assert result[0]["num_allocated_gpus"] == 6.0
     get_k8s_mock.assert_called_once_with("user-abc", end_date=date)
 
 
@@ -104,9 +103,9 @@ def test_get_billing_usage_metrics_print_to_stdout():
 
     k8s_api._client.k8_s_cluster_service_list_cluster_metrics = get_k8s_mock
 
-    with mock.patch("builtins.print") as mock_print:
+    with mock.patch("rich.console.Console.print") as mock_console_print:
         k8s_api.get_billing_usage(print_data=True)
-        mock_print.assert_called_once()
+        assert mock_console_print.call_count == 1  # Rich table print
 
     get_k8s_mock.assert_called_once_with("test")
 
@@ -137,10 +136,10 @@ def test_get_billing_usage_with_dates_get_folded_into_same_hour():
 
     result = k8s_api.get_billing_usage(print_data=True)
 
-    assert result.shape[0] == 2
-    assert result.iloc[0]["hour"] == pd.Timestamp("2025-11-19 12:00:00")
-    assert result.iloc[1]["hour"] == pd.Timestamp("2025-11-19 13:00:00")
+    assert len(result) == 2
+    assert result[0]["hour"] == datetime(2025, 11, 19, 12, 0, 0)
+    assert result[1]["hour"] == datetime(2025, 11, 19, 13, 0, 0)
     # The average between 6 and 10 is 8.0 meaning we properly folded the data
-    assert result.iloc[0]["num_allocated_gpus"] == 8.0
-    assert result.iloc[1]["num_allocated_gpus"] == 6.0
+    assert result[0]["num_allocated_gpus"] == 8.0
+    assert result[1]["num_allocated_gpus"] == 6.0
     get_k8s_mock.assert_called_once_with("test")

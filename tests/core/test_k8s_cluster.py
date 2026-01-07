@@ -1,8 +1,6 @@
 from datetime import datetime
 from unittest import mock
 
-import pandas as pd
-
 from lightning_sdk import K8sCluster
 from lightning_sdk.api.utils import to_iso_z
 from lightning_sdk.k8s_cluster import K8sUsageResponse
@@ -27,7 +25,7 @@ mock_cluster = [
 
 def test_get_billing_usage_with_empty_metrics():
     k8s_api = K8sCluster("test")
-    get_billing_usage_mock = mock.Mock(return_value=pd.DataFrame.from_records([]))
+    get_billing_usage_mock = mock.Mock(return_value=[])
 
     k8s_api._k8s_cluster.get_billing_usage = get_billing_usage_mock
 
@@ -41,7 +39,7 @@ def test_get_billing_usage_with_empty_metrics():
 
 def test_get_billing_usage_with_no_range():
     k8s_api = K8sCluster("test")
-    get_billing_usage_mock = mock.Mock(return_value=pd.DataFrame.from_records(mock_cluster))
+    get_billing_usage_mock = mock.Mock(return_value=mock_cluster)
 
     k8s_api._k8s_cluster.get_billing_usage = get_billing_usage_mock
 
@@ -57,7 +55,7 @@ def test_get_billing_usage_with_no_range():
 
 def test_get_billing_usage_with_only_start():
     k8s_api = K8sCluster("test")
-    get_billing_usage_mock = mock.Mock(return_value=pd.DataFrame.from_records([mock_cluster[1]]))
+    get_billing_usage_mock = mock.Mock(return_value=[mock_cluster[1]])
     date = datetime(2025, 11, 19, 12, 30)
 
     k8s_api._k8s_cluster.get_billing_usage = get_billing_usage_mock
@@ -75,7 +73,7 @@ def test_get_billing_usage_with_only_start():
 
 def test_get_billing_usage_with_only_end():
     k8s_api = K8sCluster("test")
-    get_billing_usage_mock = mock.Mock(return_value=pd.DataFrame.from_records([mock_cluster[0]]))
+    get_billing_usage_mock = mock.Mock(return_value=[mock_cluster[0]])
     date = datetime(2025, 11, 19, 12, 30)
 
     k8s_api._k8s_cluster.get_billing_usage = get_billing_usage_mock
@@ -93,7 +91,7 @@ def test_get_billing_usage_with_only_end():
 
 def test_get_billing_usage_with_date_range():
     k8s_api = K8sCluster("test")
-    get_billing_usage_mock = mock.Mock(return_value=pd.DataFrame.from_records(mock_cluster))
+    get_billing_usage_mock = mock.Mock(return_value=mock_cluster)
     start_date = datetime(2025, 11, 19, 10, 30)
     end_date = datetime(2025, 11, 19, 16, 30)
 

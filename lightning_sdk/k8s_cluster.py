@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional
-
-import pandas as pd
+from typing import Any, Dict, List, Optional
 
 from lightning_sdk.api.k8s_api import K8sClusterApi
 from lightning_sdk.api.utils import to_iso_z
@@ -34,25 +32,26 @@ class K8sCluster:
         self._cloud_account = cloud_account
         self._k8s_cluster = K8sClusterApi(cloud_account=cloud_account)
 
-    def _convert_to_k8s_usage_response(self, df: pd.DataFrame) -> K8sUsageResponse:
-        """Converts a DataFrame to K8sUsageResponse.
+    def _convert_to_k8s_usage_response(self, data: List[Dict[str, Any]]) -> K8sUsageResponse:
+        """Converts a list of usage data to K8sUsageResponse.
 
         Args:
-            df (pd.DataFrame): The DataFrame containing GPU usage data.
+            data (List[Dict[str, Any]]): The list of dictionaries containing GPU usage data.
 
         Returns:
             K8sUsageResponse: The converted response containing hourly usage and total usage.
         """
-        if df.empty:
+        if not data:
             return K8sUsageResponse(hours=[], total_usage=0.0)
-        # Convert each row of the DataFrame to HourlyUsage
+
+        # Convert each row to HourlyUsage
         hourly_usage_list: List[HourlyUsage] = [
             HourlyUsage(time=row["hour"], available_gpus=row["num_gpus"], billed_gpus=row["billed_gpus"])
-            for _, row in df.iterrows()
+            for row in data
         ]
 
         # Calculate total usage (sum of billed GPUs)
-        total_usage = df["billed_gpus"].sum()
+        total_usage = sum(row["billed_gpus"] for row in data)
 
         # Create and return the K8sUsageResponse
         return K8sUsageResponse(hours=hourly_usage_list, total_usage=total_usage)

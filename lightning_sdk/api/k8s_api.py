@@ -1,8 +1,8 @@
 import json
 import logging
-from typing import Any, Dict, TypedDict, Union
-
-import pandas as pd
+from collections import defaultdict
+from datetime import datetime
+from typing import Any, Dict, List, TypedDict
 
 from lightning_sdk.api.utils import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -63,42 +63,88 @@ class K8sClusterApi:
         except Exception:
             return str(e.reason)
 
-    def get_billing_usage(self, print_data: bool = False, **kwargs: Dict[str, Any]) -> Union[pd.DataFrame, pd.Series]:
+    def get_billing_usage(self, print_data: bool = False, **kwargs: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Gets the k8s usage metrics.
 
         Returns:
-            The k8s usage metrics as a DataFrame or Series.
+            The k8s usage metrics as a list of dictionaries.
         """
         try:
             response = self._client.k8_s_cluster_service_list_cluster_metrics(self.cloud_account, **kwargs)
             cluster_metrics = [entry.to_dict() for entry in response.cluster_metrics]
 
-            df = pd.DataFrame.from_records(cluster_metrics)
-            if df.empty:
-                return df
+            if not cluster_metrics:
+                return []
 
-            df["hour"] = pd.to_datetime(df["timestamp"]).dt.floor("h")
+            # Parse timestamps and floor to hour, then group by hour
+            hourly_data = defaultdict(lambda: {"allocated_gpus": [], "first_entry": None})
 
-            # Calculate the mean of num_allocated_gpus for each hour
-            aggregated = df.groupby("hour", as_index=False)["num_allocated_gpus"].mean()
-            # Merge the aggregated values back into the original DataFrame
-            df = df.merge(aggregated, on="hour", suffixes=("", "_mean"))
+            for entry in cluster_metrics:
+                # Parse timestamp and floor to hour
+                timestamp = entry["timestamp"]
+                if isinstance(timestamp, str):
+                    timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+                hour = timestamp.replace(minute=0, second=0, microsecond=0)
 
-            # Replace the original num_allocated_gpus with the mean values
-            df["num_allocated_gpus"] = df["num_allocated_gpus_mean"]
+                # Store allocated GPUs for averaging
+                hourly_data[hour]["allocated_gpus"].append(entry["num_allocated_gpus"])
 
-            # We group the data by hour and take the first occurrence to avoid duplicates
-            df = df.drop_duplicates(subset="hour", keep="first")
+                # Keep first entry for each hour (for other fields)
+                if hourly_data[hour]["first_entry"] is None:
+                    hourly_data[hour]["first_entry"] = entry
 
-            # Convert timestamp to hourly floor and rename columns
-            df["billed_gpus"] = df.apply(_calculate_billed_k8s_gpus, axis=1)
+            # Build result list with aggregated data
+            result = []
+            for hour, data in sorted(hourly_data.items()):
+                entry = data["first_entry"]
 
-            # Keep only the required columns
-            df = df[["hour", "num_gpus", "num_requested_gpus", "num_allocated_gpus", "billed_gpus"]]
+                # Calculate mean of allocated GPUs for this hour
+                mean_allocated_gpus = sum(data["allocated_gpus"]) / len(data["allocated_gpus"])
+
+                # Create row with mean allocated GPUs
+                row = {
+                    "hour": hour,
+                    "num_gpus": entry["num_gpus"],
+                    "num_requested_gpus": entry["num_requested_gpus"],
+                    "num_allocated_gpus": mean_allocated_gpus,
+                }
+
+                # Calculate billed GPUs
+                row["billed_gpus"] = _calculate_billed_k8s_gpus(
+                    {
+                        "num_allocated_gpus": mean_allocated_gpus,
+                        "num_requested_gpus": row["num_requested_gpus"],
+                        "num_gpus": row["num_gpus"],
+                    }
+                )
+
+                result.append(row)
+
             if print_data:
-                with pd.option_context("display.max_rows", None, "display.max_columns", None):
-                    print(df)
-            return df
+                # Print using rich table (local import)
+                from rich.console import Console
+                from rich.table import Table
+
+                table = Table(title="K8s Billing Usage")
+                table.add_column("Hour", style="cyan")
+                table.add_column("Available GPUs", justify="right", style="green")
+                table.add_column("Requested GPUs", justify="right", style="yellow")
+                table.add_column("Allocated GPUs (Avg)", justify="right", style="magenta")
+                table.add_column("Billed GPUs", justify="right", style="red")
+
+                for row in result:
+                    table.add_row(
+                        str(row["hour"]),
+                        str(row["num_gpus"]),
+                        str(row["num_requested_gpus"]),
+                        f"{row['num_allocated_gpus']:.2f}",
+                        str(row["billed_gpus"]),
+                    )
+
+                console = Console()
+                console.print(table)
+
+            return result
         except ApiException as e:
             msg = self._parse_request_failure_body(e)
             logger.error(f"Failed to retrieve Kubernetes usage data: {msg}")
