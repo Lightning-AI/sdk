@@ -12,7 +12,7 @@ def test_ls_help():
     result = subprocess.run("lightning studio ls --help", shell=True, capture_output=True, text=True)
     result_text = result.stdout + result.stderr
 
-    assert "Usage: lightning studio ls [OPTIONS] SOURCE" in result_text
+    assert "Usage: lightning studio ls [OPTIONS] PATH" in result_text
     assert "List contents of a directory in Studio." in result_text
     assert "lit://<owner>/<teamspace>/studios/<studio>/<directory-path>" in result_text
 
@@ -20,10 +20,10 @@ def test_ls_help():
 def test_ls_impl_local_path_raises_error():
     """Test that path without the prefix 'lit://' raises ValueError."""
     with pytest.raises(ValueError, match="Path must be a Studio path starting with 'lit://'."):
-        ls_impl(source="local/path")
+        ls_impl(path="local/path")
 
     with pytest.raises(ValueError, match="Path must be a Studio path starting with 'lit://'."):
-        ls_impl(source="local/lit://path")
+        ls_impl(path="local/lit://path")
 
 
 def test_ls_impl_nonexistent_path_raises_error():
@@ -48,7 +48,7 @@ def test_ls_impl_nonexistent_path_raises_error():
         patch("lightning_sdk.cli.studio.ls.resolve_studio", return_value=mock_selected_studio),
         pytest.raises(FileNotFoundError, match="The provided path does not exist in the studio"),
     ):
-        ls_impl(source="lit://test-owner/test-teamspace/studios/test-studio/nonexistent/path")
+        ls_impl(path="lit://test-owner/test-teamspace/studios/test-studio/nonexistent/path")
 
 
 def test_ls_impl_file_path_prints_filename(capsys):
@@ -76,7 +76,7 @@ def test_ls_impl_file_path_prints_filename(capsys):
         patch("lightning_sdk.cli.studio.ls.parse_studio_path", return_value=mock_parse_result),
         patch("lightning_sdk.cli.studio.ls.resolve_studio", return_value=mock_selected_studio),
     ):
-        ls_impl(source="lit://test-owner/test-teamspace/studios/test-studio/data/file.txt")
+        ls_impl(path="lit://test-owner/test-teamspace/studios/test-studio/data/file.txt")
 
         captured = capsys.readouterr()
         assert captured.out.strip() == "data/file.txt"
@@ -117,7 +117,7 @@ def test_ls_impl_directory_lists_contents(capsys):
         patch("lightning_sdk.cli.studio.ls.parse_studio_path", return_value=mock_parse_result),
         patch("lightning_sdk.cli.studio.ls.resolve_studio", return_value=mock_selected_studio),
     ):
-        ls_impl(source="lit://test-owner/test-teamspace/studios/test-studio/data")
+        ls_impl(path="lit://test-owner/test-teamspace/studios/test-studio/data")
 
         captured = capsys.readouterr()
         output_lines = captured.out.strip().split("\n")
@@ -162,7 +162,7 @@ def test_ls_impl_root_directory(capsys):
         patch("lightning_sdk.cli.studio.ls.parse_studio_path", return_value=mock_parse_result),
         patch("lightning_sdk.cli.studio.ls.resolve_studio", return_value=mock_selected_studio),
     ):
-        ls_impl(source="lit://test-owner/test-teamspace/studios/test-studio/")
+        ls_impl(path="lit://test-owner/test-teamspace/studios/test-studio/")
 
         captured = capsys.readouterr()
         output_lines = captured.out.strip().split("\n")
@@ -249,7 +249,7 @@ def test_ls_impl_nested_path(capsys):
         patch("lightning_sdk.cli.studio.ls.parse_studio_path", return_value=mock_parse_result),
         patch("lightning_sdk.cli.studio.ls.resolve_studio", return_value=mock_selected_studio),
     ):
-        ls_impl(source="lit://test-owner/test-teamspace/studios/test-studio/data/processed/2024")
+        ls_impl(path="lit://test-owner/test-teamspace/studios/test-studio/data/processed/2024")
 
         captured = capsys.readouterr()
         output_lines = captured.out.strip().split("\n")

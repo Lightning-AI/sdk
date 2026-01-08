@@ -6,25 +6,25 @@ from lightning_sdk.cli.utils.studio_filesystem import parse_studio_path, resolve
 
 
 @click.command("ls")
-@click.argument("source", nargs=1)
-def ls_studio(source: str) -> None:
+@click.argument("path", nargs=1)
+def ls_studio(path: str) -> None:
     """List contents of a directory in Studio.
 
-    Source: Studio directory path in the format
+    PATH: Studio path in the format
             lit://<owner>/<teamspace>/studios/<studio>/<directory-path>
 
     Example:
         lightning studio ls lit://<owner>/<my-teamspace>/studios/<my-studio>/data
 
     """
-    return ls_impl(source=source)
+    return ls_impl(path=path)
 
 
-def ls_impl(source: str) -> None:
-    if not source.startswith("lit://"):
+def ls_impl(path: str) -> None:
+    if not path.startswith("lit://"):
         raise ValueError("Path must be a Studio path starting with 'lit://'.")
 
-    studio_path_result = parse_studio_path(source)
+    studio_path_result = parse_studio_path(path)
     selected_studio = resolve_studio(
         studio_path_result["studio"], studio_path_result["teamspace"], studio_path_result["owner"]
     )

@@ -21,6 +21,7 @@ Commands:
   delete   Delete a Studio.
   list     List Studios in a teamspace.
   ls       List contents of a directory in Studio.
+  rm       Remove a Studio file or directory.
   ssh      SSH into a Studio.
   start    Start a Studio.
   stop     Stop a Studio.
