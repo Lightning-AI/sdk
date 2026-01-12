@@ -111,6 +111,9 @@ def cp_download(
                 f"'{studio_path_result['destination']}' is a directory. Use -r flag to copy directories recursively."
             )
         folder_name = os.path.basename(studio_path_result["destination"].rstrip("/"))
+        if folder_name == "":
+            # handle root directory case (e.g. lit://lightning-ai/gpt-oss/studios/manual-lime-ylu2/)
+            folder_name = selected_studio.name
         target_path = os.path.join(local_path, folder_name)
 
         selected_studio.download_folder(studio_path_result["destination"], target_path)

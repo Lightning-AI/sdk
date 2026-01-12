@@ -1,3 +1,4 @@
+import os
 import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -722,5 +723,74 @@ def test_cp_download_folder_without_recursive_flag_raises_error(tmp_path: Path):
         cp_download(
             studio_path="lit://test-owner/test-teamspace/studios/test-studio/remote_folder",
             local_path=str(test_file),
+            recursive=False,
+        )
+
+
+def test_cp_download_root_directory_with_recursive(tmp_path: Path):
+    """Test that downloading studio root directory with -r creates folder named after studio."""
+    local_dir = tmp_path / "test_output"
+    local_dir.mkdir()
+
+    mock_parse_result = {
+        "studio": "test-studio",
+        "teamspace": "test-teamspace",
+        "owner": "test-owner",
+        "destination": "",
+    }
+
+    mock_selected_studio = MagicMock()
+    mock_selected_studio.name = "test-studio"
+    mock_selected_studio.teamspace.name = "test-teamspace"
+    mock_selected_studio._studio.id = "studio-id"
+    mock_selected_studio._teamspace.id = "teamspace-id"
+    mock_selected_studio.download_folder = MagicMock()
+
+    mock_selected_studio._studio_api.get_path_info.return_value = {"exists": True, "type": "directory"}
+
+    with (
+        patch("lightning_sdk.cli.studio.cp.parse_studio_path", return_value=mock_parse_result),
+        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=mock_selected_studio),
+        patch("lightning_sdk.cli.studio.cp.Console"),
+    ):
+        cp_download(
+            studio_path="lit://test-owner/test-teamspace/studios/test-studio/",
+            local_path=str(local_dir),
+            recursive=True,
+        )
+
+        expected_target = os.path.join(str(local_dir), "test-studio")
+        mock_selected_studio.download_folder.assert_called_once_with("", expected_target)
+
+
+def test_cp_download_root_directory_without_recursive_fails(tmp_path: Path):
+    """Test that downloading studio root directory without -r flag raises an error."""
+    local_dir = tmp_path / "test_output"
+    local_dir.mkdir()
+
+    mock_parse_result = {
+        "studio": "test-studio",
+        "teamspace": "test-teamspace",
+        "owner": "test-owner",
+        "destination": "",
+    }
+
+    mock_selected_studio = MagicMock()
+    mock_selected_studio.name = "test-studio"
+    mock_selected_studio.teamspace.name = "test-teamspace"
+    mock_selected_studio._studio.id = "studio-id"
+    mock_selected_studio._teamspace.id = "teamspace-id"
+
+    mock_selected_studio._studio_api.get_path_info.return_value = {"exists": True, "type": "directory"}
+
+    with (
+        patch("lightning_sdk.cli.studio.cp.parse_studio_path", return_value=mock_parse_result),
+        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=mock_selected_studio),
+        patch("lightning_sdk.cli.studio.cp.Console"),
+        pytest.raises(ValueError, match="is a directory. Use -r flag to copy directories recursively"),
+    ):
+        cp_download(
+            studio_path="lit://lightning-ai/test-teamspace/studios/test-studio/",
+            local_path=str(local_dir),
             recursive=False,
         )
