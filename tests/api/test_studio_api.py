@@ -1734,6 +1734,124 @@ def test_machine_has_capacity(mock_get_machines, machine, accelerators, expected
     )
 
 
+@pytest.mark.parametrize(
+    ("machine", "accelerators", "expected_result"),
+    [
+        # GPU, machine supported
+        (
+            Machine.T4,
+            [
+                V1ClusterAccelerator(
+                    instance_id="g4dn.2xlarge",
+                    slug_multi_cloud="lit-t4-1",
+                    enabled=True,
+                    resources=V1Resources(gpu=1),
+                    family="T4",
+                    accelerator_type="GPU",
+                    out_of_capacity=False,
+                )
+            ],
+            True,
+        ),
+        # GPU, machine not supported (wrong count)
+        (
+            Machine.T4,
+            [
+                V1ClusterAccelerator(
+                    instance_id="g4dn.12xlarge",
+                    slug_multi_cloud="lit-t4-4",
+                    enabled=True,
+                    resources=V1Resources(gpu=4),
+                    family="T4",
+                    accelerator_type="GPU",
+                    out_of_capacity=False,
+                )
+            ],
+            False,
+        ),
+        # GPU, machine not supported (wrong family)
+        (
+            Machine.T4,
+            [
+                V1ClusterAccelerator(
+                    instance_id="g5.xlarge",
+                    slug_multi_cloud="lit-a10g-1",
+                    enabled=True,
+                    resources=V1Resources(gpu=1),
+                    family="A10G",
+                    accelerator_type="GPU",
+                    out_of_capacity=False,
+                )
+            ],
+            False,
+        ),
+        # CPU, machine supported
+        (
+            Machine.CPU,
+            [
+                V1ClusterAccelerator(
+                    instance_id="cpu-4",
+                    slug_multi_cloud="cpu-4",
+                    enabled=True,
+                    resources=V1Resources(cpu=4),
+                    family="CPU",
+                    accelerator_type="CPU",
+                    out_of_capacity=False,
+                )
+            ],
+            True,
+        ),
+        # CPU, machine not supported (wrong cpu count)
+        (
+            Machine.CPU,
+            [
+                V1ClusterAccelerator(
+                    instance_id="cpu-8",
+                    slug_multi_cloud="cpu-8",
+                    enabled=True,
+                    resources=V1Resources(cpu=8),
+                    family="CPU",
+                    accelerator_type="CPU",
+                    out_of_capacity=False,
+                )
+            ],
+            False,
+        ),
+        # out_of_capacity but still supported
+        (
+            Machine.T4,
+            [
+                V1ClusterAccelerator(
+                    instance_id="g4dn.2xlarge",
+                    slug_multi_cloud="lit-t4-1",
+                    enabled=True,
+                    resources=V1Resources(gpu=1),
+                    family="T4",
+                    accelerator_type="GPU",
+                    out_of_capacity=True,  # still supported, just out of capacity
+                )
+            ],
+            True,
+        ),
+    ],
+)
+@mock.patch(
+    "lightning_sdk.api.studio_api.StudioApi._get_machines_for_cloud_account",
+    autospec=True,
+)
+def test_machine_is_supported(mock_get_machines, machine, accelerators, expected_result):
+    """Test machine_is_supported method with various scenarios."""
+    mock_get_machines.return_value = accelerators
+    studio_api = StudioApi()
+    result = studio_api.machine_is_supported(
+        machine=machine, teamspace_id="ts-abc", cloud_account_id="cluster-abc", org_id="org-abc"
+    )
+    assert result == expected_result
+    mock_get_machines.assert_called_once_with(
+        mock.ANY, teamspace_id="ts-abc", cloud_account_id="cluster-abc", org_id="org-abc"
+    )
+
+
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_list_endpoints",
     autospec=True,

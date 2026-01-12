@@ -89,7 +89,12 @@ def list_cloudspaces_side_effect(existing_studios):
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch(
+    "lightning_sdk.api.studio_api.StudioApi.machine_is_supported",
+    autospec=True,
+)
 def test_studio_start(
+    mock_machine_is_supported,
     mock_get_teamspace,
     mock_get_org,
     mock_get_config,
@@ -216,6 +221,7 @@ def test_studio_start(
     mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
     mock_create_lightning_run.return_value = V1PluginsListResponse(plugins={})
     mock_create_cloudspace.return_value = V1PluginsListResponse(plugins={})
+    mock_machine_is_supported.return_value = True
 
     # Setup teamspace and org mocks
     mock_get_teamspace.return_value = V1Project(
@@ -909,7 +915,12 @@ def test_studio_start_different_machine(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch(
+    "lightning_sdk.api.studio_api.StudioApi.machine_is_supported",
+    autospec=True,
+)
 def test_studio_start_uses_current_studio_machine_when_inside_running_studio(
+    mock_machine_is_supported,
     mock_get_teamspace,
     mock_get_org,
     mock_get_cloud_space,
@@ -1053,6 +1064,7 @@ def test_studio_start_uses_current_studio_machine_when_inside_running_studio(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
     )
+    mock_machine_is_supported.return_value = True
 
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     assert studio.status == Status.Stopped
