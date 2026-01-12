@@ -30,10 +30,11 @@ def _log_command(message: str = "", duration: int = 0, error: Optional[str] = No
     body = V1CreateSDKCommandHistoryRequest(
         command=original_command,
         duration=duration,
-        message=f"VERSION: {__version__} | {message}",
+        message=f"{message}",
         project_id=None,
         severity=V1SDKCommandHistorySeverity.INFO,
         type=V1SDKCommandHistoryType.CLI,
+        version=__version__,
     )
 
     if error:

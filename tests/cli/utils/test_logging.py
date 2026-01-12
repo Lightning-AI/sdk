@@ -15,6 +15,7 @@ from unittest import mock
 import click
 import click.testing
 
+from lightning_sdk.__version__ import __version__
 from lightning_sdk.cli.utils.logging import (
     CommandLoggingGroup,
     _log_command,
@@ -49,10 +50,10 @@ class TestLogCommand:
         assert body.command == "lightning studio create"
         assert body.duration == 100
         assert "Test message" in body.message
-        assert "VERSION:" in body.message
         assert body.project_id is None
         assert body.severity == V1SDKCommandHistorySeverity.INFO
         assert body.type == V1SDKCommandHistoryType.CLI
+        assert body.version == __version__
 
     @mock.patch("lightning_sdk.cli.utils.logging.LightningClient")
     @mock.patch("lightning_sdk.cli.utils.logging.sys.argv", ["lightning", "studio", "list"])
@@ -112,7 +113,7 @@ class TestLogCommand:
         call_args = mock_client.s_dk_command_history_service_create_sdk_command_history.call_args
         body = call_args.kwargs["body"]
 
-        assert "VERSION:" in body.message
+        assert body.message == ""
         assert body.duration == 0
 
 

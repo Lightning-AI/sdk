@@ -22,7 +22,7 @@ def track_calls() -> Callable[..., any]:
             bound_args.apply_defaults()
 
             args_str = ", ".join(f"{k}: {v}" for k, v in bound_args.arguments.items() if k != "self")
-            message = f"VERSION: {__version__} | ARGS: {args_str} "
+            message = f"ARGS: {args_str} "
 
             body = V1CreateSDKCommandHistoryRequest(
                 command=func.__qualname__,
@@ -30,6 +30,7 @@ def track_calls() -> Callable[..., any]:
                 project_id=None,
                 severity=V1SDKCommandHistorySeverity.INFO,
                 type=V1SDKCommandHistoryType.SDK,
+                version=__version__,
             )
 
             try:
