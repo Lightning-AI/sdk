@@ -46,7 +46,8 @@ class V1CreateSDKCommandHistoryRequest(object):
         'message': 'str',
         'project_id': 'str',
         'severity': 'V1SDKCommandHistorySeverity',
-        'type': 'V1SDKCommandHistoryType'
+        'type': 'V1SDKCommandHistoryType',
+        'version': 'str'
     }
 
     attribute_map = {
@@ -55,10 +56,11 @@ class V1CreateSDKCommandHistoryRequest(object):
         'message': 'message',
         'project_id': 'projectId',
         'severity': 'severity',
-        'type': 'type'
+        'type': 'type',
+        'version': 'version'
     }
 
-    def __init__(self, command: 'str' =None, duration: 'int' =None, message: 'str' =None, project_id: 'str' =None, severity: 'V1SDKCommandHistorySeverity' =None, type: 'V1SDKCommandHistoryType' =None):  # noqa: E501
+    def __init__(self, command: 'str' =None, duration: 'int' =None, message: 'str' =None, project_id: 'str' =None, severity: 'V1SDKCommandHistorySeverity' =None, type: 'V1SDKCommandHistoryType' =None, version: 'str' =None):  # noqa: E501
         """V1CreateSDKCommandHistoryRequest - a model defined in Swagger"""  # noqa: E501
         self._command = None
         self._duration = None
@@ -66,6 +68,7 @@ class V1CreateSDKCommandHistoryRequest(object):
         self._project_id = None
         self._severity = None
         self._type = None
+        self._version = None
         self.discriminator = None
         if command is not None:
             self.command = command
@@ -79,6 +82,8 @@ class V1CreateSDKCommandHistoryRequest(object):
             self.severity = severity
         if type is not None:
             self.type = type
+        if version is not None:
+            self.version = version
 
     @property
     def command(self) -> 'str':
@@ -205,6 +210,27 @@ class V1CreateSDKCommandHistoryRequest(object):
         """
 
         self._type = type
+
+    @property
+    def version(self) -> 'str':
+        """Gets the version of this V1CreateSDKCommandHistoryRequest.  # noqa: E501
+
+
+        :return: The version of this V1CreateSDKCommandHistoryRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._version
+
+    @version.setter
+    def version(self, version: 'str'):
+        """Sets the version of this V1CreateSDKCommandHistoryRequest.
+
+
+        :param version: The version of this V1CreateSDKCommandHistoryRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._version = version
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

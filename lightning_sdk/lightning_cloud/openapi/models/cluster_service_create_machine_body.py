@@ -48,11 +48,13 @@ class ClusterServiceCreateMachineBody(object):
         'name': 'str',
         'org_id': 'str',
         'parent_cluster_id': 'str',
+        'private_address': 'str',
         'provider': 'str',
         'provider_instance_id': 'str',
         'provider_region': 'str',
         'provisioning_method': 'str',
         'resources': 'V1Resources',
+        'ssh_username': 'str',
         'tls_cert': 'str',
         'tls_key': 'str',
         'unschedulable': 'bool'
@@ -66,17 +68,19 @@ class ClusterServiceCreateMachineBody(object):
         'name': 'name',
         'org_id': 'orgId',
         'parent_cluster_id': 'parentClusterId',
+        'private_address': 'privateAddress',
         'provider': 'provider',
         'provider_instance_id': 'providerInstanceId',
         'provider_region': 'providerRegion',
         'provisioning_method': 'provisioningMethod',
         'resources': 'resources',
+        'ssh_username': 'sshUsername',
         'tls_cert': 'tlsCert',
         'tls_key': 'tlsKey',
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, address: 'str' =None, ca_cert: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, ca_cert: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceCreateMachineBody - a model defined in Swagger"""  # noqa: E501
         self._address = None
         self._ca_cert = None
@@ -85,11 +89,13 @@ class ClusterServiceCreateMachineBody(object):
         self._name = None
         self._org_id = None
         self._parent_cluster_id = None
+        self._private_address = None
         self._provider = None
         self._provider_instance_id = None
         self._provider_region = None
         self._provisioning_method = None
         self._resources = None
+        self._ssh_username = None
         self._tls_cert = None
         self._tls_key = None
         self._unschedulable = None
@@ -108,6 +114,8 @@ class ClusterServiceCreateMachineBody(object):
             self.org_id = org_id
         if parent_cluster_id is not None:
             self.parent_cluster_id = parent_cluster_id
+        if private_address is not None:
+            self.private_address = private_address
         if provider is not None:
             self.provider = provider
         if provider_instance_id is not None:
@@ -118,6 +126,8 @@ class ClusterServiceCreateMachineBody(object):
             self.provisioning_method = provisioning_method
         if resources is not None:
             self.resources = resources
+        if ssh_username is not None:
+            self.ssh_username = ssh_username
         if tls_cert is not None:
             self.tls_cert = tls_cert
         if tls_key is not None:
@@ -273,6 +283,27 @@ class ClusterServiceCreateMachineBody(object):
         self._parent_cluster_id = parent_cluster_id
 
     @property
+    def private_address(self) -> 'str':
+        """Gets the private_address of this ClusterServiceCreateMachineBody.  # noqa: E501
+
+
+        :return: The private_address of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._private_address
+
+    @private_address.setter
+    def private_address(self, private_address: 'str'):
+        """Sets the private_address of this ClusterServiceCreateMachineBody.
+
+
+        :param private_address: The private_address of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._private_address = private_address
+
+    @property
     def provider(self) -> 'str':
         """Gets the provider of this ClusterServiceCreateMachineBody.  # noqa: E501
 
@@ -376,6 +407,27 @@ class ClusterServiceCreateMachineBody(object):
         """
 
         self._resources = resources
+
+    @property
+    def ssh_username(self) -> 'str':
+        """Gets the ssh_username of this ClusterServiceCreateMachineBody.  # noqa: E501
+
+
+        :return: The ssh_username of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._ssh_username
+
+    @ssh_username.setter
+    def ssh_username(self, ssh_username: 'str'):
+        """Sets the ssh_username of this ClusterServiceCreateMachineBody.
+
+
+        :param ssh_username: The ssh_username of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._ssh_username = ssh_username
 
     @property
     def tls_cert(self) -> 'str':

@@ -43,23 +43,20 @@ class V1ListKubernetesPodsResponse(object):
     swagger_types = {
         'next_page_token': 'str',
         'pods': 'list[V1KubernetesPod]',
-        'previous_page_token': 'str',
-        'status_in': 'list[str]'
+        'previous_page_token': 'str'
     }
 
     attribute_map = {
         'next_page_token': 'nextPageToken',
         'pods': 'pods',
-        'previous_page_token': 'previousPageToken',
-        'status_in': 'statusIn'
+        'previous_page_token': 'previousPageToken'
     }
 
-    def __init__(self, next_page_token: 'str' =None, pods: 'list[V1KubernetesPod]' =None, previous_page_token: 'str' =None, status_in: 'list[str]' =None):  # noqa: E501
+    def __init__(self, next_page_token: 'str' =None, pods: 'list[V1KubernetesPod]' =None, previous_page_token: 'str' =None):  # noqa: E501
         """V1ListKubernetesPodsResponse - a model defined in Swagger"""  # noqa: E501
         self._next_page_token = None
         self._pods = None
         self._previous_page_token = None
-        self._status_in = None
         self.discriminator = None
         if next_page_token is not None:
             self.next_page_token = next_page_token
@@ -67,8 +64,6 @@ class V1ListKubernetesPodsResponse(object):
             self.pods = pods
         if previous_page_token is not None:
             self.previous_page_token = previous_page_token
-        if status_in is not None:
-            self.status_in = status_in
 
     @property
     def next_page_token(self) -> 'str':
@@ -132,27 +127,6 @@ class V1ListKubernetesPodsResponse(object):
         """
 
         self._previous_page_token = previous_page_token
-
-    @property
-    def status_in(self) -> 'list[str]':
-        """Gets the status_in of this V1ListKubernetesPodsResponse.  # noqa: E501
-
-
-        :return: The status_in of this V1ListKubernetesPodsResponse.  # noqa: E501
-        :rtype: list[str]
-        """
-        return self._status_in
-
-    @status_in.setter
-    def status_in(self, status_in: 'list[str]'):
-        """Sets the status_in of this V1ListKubernetesPodsResponse.
-
-
-        :param status_in: The status_in of this V1ListKubernetesPodsResponse.  # noqa: E501
-        :type: list[str]
-        """
-
-        self._status_in = status_in
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

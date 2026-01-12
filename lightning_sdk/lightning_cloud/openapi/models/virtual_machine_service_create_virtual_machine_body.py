@@ -41,241 +41,293 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'api_standard': 'str',
-        'apis': 'list[V1DeploymentAPI]',
-        'autoscaling': 'V1AutoscalingSpec',
-        'cloudspace_id': 'str',
-        'endpoint': 'V1Endpoint',
-        'from_litserve': 'bool',
-        'from_onboarding': 'bool',
+        'can_download_source_code': 'bool',
+        'cloud_space_environment_template_id': 'str',
+        'cloud_space_instance_cpu_image_override': 'str',
+        'cloud_space_instance_gpu_image_override': 'str',
+        'compute_name': 'str',
+        'data_connection_mounts': 'list[V1DataConnectionMount]',
+        'disable_secrets': 'bool',
+        'disk_size': 'str',
+        'display_name': 'str',
         'name': 'str',
-        'parameter_spec': 'V1ParameterizationSpec',
-        'parent_template_id': 'str',
-        'pipeline_reuse_deployment_between_runs': 'bool',
+        'plugins': 'list[str]',
         'project_id': 'str',
-        'recipients': 'V1DeploymentAlertingRecipients',
-        'replicas': 'int',
-        'spec': 'V1JobSpec',
-        'strategy': 'V1DeploymentStrategy'
+        'requested_run_duration_seconds': 'str',
+        'same_compute_on_resume': 'bool',
+        'sandbox': 'bool',
+        'seed_files': 'list[V1CloudSpaceSeedFile]',
+        'source': 'V1CloudSpaceSourceType',
+        'spot': 'bool'
     }
 
     attribute_map = {
-        'api_standard': 'apiStandard',
-        'apis': 'apis',
-        'autoscaling': 'autoscaling',
-        'cloudspace_id': 'cloudspaceId',
-        'endpoint': 'endpoint',
-        'from_litserve': 'fromLitserve',
-        'from_onboarding': 'fromOnboarding',
+        'can_download_source_code': 'canDownloadSourceCode',
+        'cloud_space_environment_template_id': 'cloudSpaceEnvironmentTemplateId',
+        'cloud_space_instance_cpu_image_override': 'cloudSpaceInstanceCpuImageOverride',
+        'cloud_space_instance_gpu_image_override': 'cloudSpaceInstanceGpuImageOverride',
+        'compute_name': 'computeName',
+        'data_connection_mounts': 'dataConnectionMounts',
+        'disable_secrets': 'disableSecrets',
+        'disk_size': 'diskSize',
+        'display_name': 'displayName',
         'name': 'name',
-        'parameter_spec': 'parameterSpec',
-        'parent_template_id': 'parentTemplateId',
-        'pipeline_reuse_deployment_between_runs': 'pipelineReuseDeploymentBetweenRuns',
+        'plugins': 'plugins',
         'project_id': 'projectId',
-        'recipients': 'recipients',
-        'replicas': 'replicas',
-        'spec': 'spec',
-        'strategy': 'strategy'
+        'requested_run_duration_seconds': 'requestedRunDurationSeconds',
+        'same_compute_on_resume': 'sameComputeOnResume',
+        'sandbox': 'sandbox',
+        'seed_files': 'seedFiles',
+        'source': 'source',
+        'spot': 'spot'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_secrets: 'bool' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, project_id: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, sandbox: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, source: 'V1CloudSpaceSourceType' =None, spot: 'bool' =None):  # noqa: E501
         """VirtualMachineServiceCreateVirtualMachineBody - a model defined in Swagger"""  # noqa: E501
-        self._api_standard = None
-        self._apis = None
-        self._autoscaling = None
-        self._cloudspace_id = None
-        self._endpoint = None
-        self._from_litserve = None
-        self._from_onboarding = None
+        self._can_download_source_code = None
+        self._cloud_space_environment_template_id = None
+        self._cloud_space_instance_cpu_image_override = None
+        self._cloud_space_instance_gpu_image_override = None
+        self._compute_name = None
+        self._data_connection_mounts = None
+        self._disable_secrets = None
+        self._disk_size = None
+        self._display_name = None
         self._name = None
-        self._parameter_spec = None
-        self._parent_template_id = None
-        self._pipeline_reuse_deployment_between_runs = None
+        self._plugins = None
         self._project_id = None
-        self._recipients = None
-        self._replicas = None
-        self._spec = None
-        self._strategy = None
+        self._requested_run_duration_seconds = None
+        self._same_compute_on_resume = None
+        self._sandbox = None
+        self._seed_files = None
+        self._source = None
+        self._spot = None
         self.discriminator = None
-        if api_standard is not None:
-            self.api_standard = api_standard
-        if apis is not None:
-            self.apis = apis
-        if autoscaling is not None:
-            self.autoscaling = autoscaling
-        if cloudspace_id is not None:
-            self.cloudspace_id = cloudspace_id
-        if endpoint is not None:
-            self.endpoint = endpoint
-        if from_litserve is not None:
-            self.from_litserve = from_litserve
-        if from_onboarding is not None:
-            self.from_onboarding = from_onboarding
+        if can_download_source_code is not None:
+            self.can_download_source_code = can_download_source_code
+        if cloud_space_environment_template_id is not None:
+            self.cloud_space_environment_template_id = cloud_space_environment_template_id
+        if cloud_space_instance_cpu_image_override is not None:
+            self.cloud_space_instance_cpu_image_override = cloud_space_instance_cpu_image_override
+        if cloud_space_instance_gpu_image_override is not None:
+            self.cloud_space_instance_gpu_image_override = cloud_space_instance_gpu_image_override
+        if compute_name is not None:
+            self.compute_name = compute_name
+        if data_connection_mounts is not None:
+            self.data_connection_mounts = data_connection_mounts
+        if disable_secrets is not None:
+            self.disable_secrets = disable_secrets
+        if disk_size is not None:
+            self.disk_size = disk_size
+        if display_name is not None:
+            self.display_name = display_name
         if name is not None:
             self.name = name
-        if parameter_spec is not None:
-            self.parameter_spec = parameter_spec
-        if parent_template_id is not None:
-            self.parent_template_id = parent_template_id
-        if pipeline_reuse_deployment_between_runs is not None:
-            self.pipeline_reuse_deployment_between_runs = pipeline_reuse_deployment_between_runs
+        if plugins is not None:
+            self.plugins = plugins
         if project_id is not None:
             self.project_id = project_id
-        if recipients is not None:
-            self.recipients = recipients
-        if replicas is not None:
-            self.replicas = replicas
-        if spec is not None:
-            self.spec = spec
-        if strategy is not None:
-            self.strategy = strategy
+        if requested_run_duration_seconds is not None:
+            self.requested_run_duration_seconds = requested_run_duration_seconds
+        if same_compute_on_resume is not None:
+            self.same_compute_on_resume = same_compute_on_resume
+        if sandbox is not None:
+            self.sandbox = sandbox
+        if seed_files is not None:
+            self.seed_files = seed_files
+        if source is not None:
+            self.source = source
+        if spot is not None:
+            self.spot = spot
 
     @property
-    def api_standard(self) -> 'str':
-        """Gets the api_standard of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def can_download_source_code(self) -> 'bool':
+        """Gets the can_download_source_code of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
 
-        :return: The api_standard of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._api_standard
-
-    @api_standard.setter
-    def api_standard(self, api_standard: 'str'):
-        """Sets the api_standard of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param api_standard: The api_standard of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: str
-        """
-
-        self._api_standard = api_standard
-
-    @property
-    def apis(self) -> 'list[V1DeploymentAPI]':
-        """Gets the apis of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The apis of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: list[V1DeploymentAPI]
-        """
-        return self._apis
-
-    @apis.setter
-    def apis(self, apis: 'list[V1DeploymentAPI]'):
-        """Sets the apis of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param apis: The apis of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: list[V1DeploymentAPI]
-        """
-
-        self._apis = apis
-
-    @property
-    def autoscaling(self) -> 'V1AutoscalingSpec':
-        """Gets the autoscaling of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The autoscaling of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: V1AutoscalingSpec
-        """
-        return self._autoscaling
-
-    @autoscaling.setter
-    def autoscaling(self, autoscaling: 'V1AutoscalingSpec'):
-        """Sets the autoscaling of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param autoscaling: The autoscaling of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: V1AutoscalingSpec
-        """
-
-        self._autoscaling = autoscaling
-
-    @property
-    def cloudspace_id(self) -> 'str':
-        """Gets the cloudspace_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The cloudspace_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._cloudspace_id
-
-    @cloudspace_id.setter
-    def cloudspace_id(self, cloudspace_id: 'str'):
-        """Sets the cloudspace_id of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param cloudspace_id: The cloudspace_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: str
-        """
-
-        self._cloudspace_id = cloudspace_id
-
-    @property
-    def endpoint(self) -> 'V1Endpoint':
-        """Gets the endpoint of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The endpoint of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: V1Endpoint
-        """
-        return self._endpoint
-
-    @endpoint.setter
-    def endpoint(self, endpoint: 'V1Endpoint'):
-        """Sets the endpoint of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param endpoint: The endpoint of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: V1Endpoint
-        """
-
-        self._endpoint = endpoint
-
-    @property
-    def from_litserve(self) -> 'bool':
-        """Gets the from_litserve of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The from_litserve of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :return: The can_download_source_code of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :rtype: bool
         """
-        return self._from_litserve
+        return self._can_download_source_code
 
-    @from_litserve.setter
-    def from_litserve(self, from_litserve: 'bool'):
-        """Sets the from_litserve of this VirtualMachineServiceCreateVirtualMachineBody.
+    @can_download_source_code.setter
+    def can_download_source_code(self, can_download_source_code: 'bool'):
+        """Sets the can_download_source_code of this VirtualMachineServiceCreateVirtualMachineBody.
 
 
-        :param from_litserve: The from_litserve of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :param can_download_source_code: The can_download_source_code of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :type: bool
         """
 
-        self._from_litserve = from_litserve
+        self._can_download_source_code = can_download_source_code
 
     @property
-    def from_onboarding(self) -> 'bool':
-        """Gets the from_onboarding of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def cloud_space_environment_template_id(self) -> 'str':
+        """Gets the cloud_space_environment_template_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
 
-        :return: The from_onboarding of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :return: The cloud_space_environment_template_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloud_space_environment_template_id
+
+    @cloud_space_environment_template_id.setter
+    def cloud_space_environment_template_id(self, cloud_space_environment_template_id: 'str'):
+        """Sets the cloud_space_environment_template_id of this VirtualMachineServiceCreateVirtualMachineBody.
+
+
+        :param cloud_space_environment_template_id: The cloud_space_environment_template_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cloud_space_environment_template_id = cloud_space_environment_template_id
+
+    @property
+    def cloud_space_instance_cpu_image_override(self) -> 'str':
+        """Gets the cloud_space_instance_cpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+
+        :return: The cloud_space_instance_cpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloud_space_instance_cpu_image_override
+
+    @cloud_space_instance_cpu_image_override.setter
+    def cloud_space_instance_cpu_image_override(self, cloud_space_instance_cpu_image_override: 'str'):
+        """Sets the cloud_space_instance_cpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.
+
+
+        :param cloud_space_instance_cpu_image_override: The cloud_space_instance_cpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cloud_space_instance_cpu_image_override = cloud_space_instance_cpu_image_override
+
+    @property
+    def cloud_space_instance_gpu_image_override(self) -> 'str':
+        """Gets the cloud_space_instance_gpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+
+        :return: The cloud_space_instance_gpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloud_space_instance_gpu_image_override
+
+    @cloud_space_instance_gpu_image_override.setter
+    def cloud_space_instance_gpu_image_override(self, cloud_space_instance_gpu_image_override: 'str'):
+        """Sets the cloud_space_instance_gpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.
+
+
+        :param cloud_space_instance_gpu_image_override: The cloud_space_instance_gpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cloud_space_instance_gpu_image_override = cloud_space_instance_gpu_image_override
+
+    @property
+    def compute_name(self) -> 'str':
+        """Gets the compute_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+
+        :return: The compute_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._compute_name
+
+    @compute_name.setter
+    def compute_name(self, compute_name: 'str'):
+        """Sets the compute_name of this VirtualMachineServiceCreateVirtualMachineBody.
+
+
+        :param compute_name: The compute_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._compute_name = compute_name
+
+    @property
+    def data_connection_mounts(self) -> 'list[V1DataConnectionMount]':
+        """Gets the data_connection_mounts of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+
+        :return: The data_connection_mounts of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: list[V1DataConnectionMount]
+        """
+        return self._data_connection_mounts
+
+    @data_connection_mounts.setter
+    def data_connection_mounts(self, data_connection_mounts: 'list[V1DataConnectionMount]'):
+        """Sets the data_connection_mounts of this VirtualMachineServiceCreateVirtualMachineBody.
+
+
+        :param data_connection_mounts: The data_connection_mounts of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: list[V1DataConnectionMount]
+        """
+
+        self._data_connection_mounts = data_connection_mounts
+
+    @property
+    def disable_secrets(self) -> 'bool':
+        """Gets the disable_secrets of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+
+        :return: The disable_secrets of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :rtype: bool
         """
-        return self._from_onboarding
+        return self._disable_secrets
 
-    @from_onboarding.setter
-    def from_onboarding(self, from_onboarding: 'bool'):
-        """Sets the from_onboarding of this VirtualMachineServiceCreateVirtualMachineBody.
+    @disable_secrets.setter
+    def disable_secrets(self, disable_secrets: 'bool'):
+        """Sets the disable_secrets of this VirtualMachineServiceCreateVirtualMachineBody.
 
 
-        :param from_onboarding: The from_onboarding of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :param disable_secrets: The disable_secrets of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :type: bool
         """
 
-        self._from_onboarding = from_onboarding
+        self._disable_secrets = disable_secrets
+
+    @property
+    def disk_size(self) -> 'str':
+        """Gets the disk_size of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+
+        :return: The disk_size of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._disk_size
+
+    @disk_size.setter
+    def disk_size(self, disk_size: 'str'):
+        """Sets the disk_size of this VirtualMachineServiceCreateVirtualMachineBody.
+
+
+        :param disk_size: The disk_size of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._disk_size = disk_size
+
+    @property
+    def display_name(self) -> 'str':
+        """Gets the display_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+
+        :return: The display_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, display_name: 'str'):
+        """Sets the display_name of this VirtualMachineServiceCreateVirtualMachineBody.
+
+
+        :param display_name: The display_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._display_name = display_name
 
     @property
     def name(self) -> 'str':
@@ -299,67 +351,25 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         self._name = name
 
     @property
-    def parameter_spec(self) -> 'V1ParameterizationSpec':
-        """Gets the parameter_spec of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def plugins(self) -> 'list[str]':
+        """Gets the plugins of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
 
-        :return: The parameter_spec of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: V1ParameterizationSpec
+        :return: The plugins of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: list[str]
         """
-        return self._parameter_spec
+        return self._plugins
 
-    @parameter_spec.setter
-    def parameter_spec(self, parameter_spec: 'V1ParameterizationSpec'):
-        """Sets the parameter_spec of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param parameter_spec: The parameter_spec of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: V1ParameterizationSpec
-        """
-
-        self._parameter_spec = parameter_spec
-
-    @property
-    def parent_template_id(self) -> 'str':
-        """Gets the parent_template_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    @plugins.setter
+    def plugins(self, plugins: 'list[str]'):
+        """Sets the plugins of this VirtualMachineServiceCreateVirtualMachineBody.
 
 
-        :return: The parent_template_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._parent_template_id
-
-    @parent_template_id.setter
-    def parent_template_id(self, parent_template_id: 'str'):
-        """Sets the parent_template_id of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param parent_template_id: The parent_template_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: str
+        :param plugins: The plugins of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: list[str]
         """
 
-        self._parent_template_id = parent_template_id
-
-    @property
-    def pipeline_reuse_deployment_between_runs(self) -> 'bool':
-        """Gets the pipeline_reuse_deployment_between_runs of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The pipeline_reuse_deployment_between_runs of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._pipeline_reuse_deployment_between_runs
-
-    @pipeline_reuse_deployment_between_runs.setter
-    def pipeline_reuse_deployment_between_runs(self, pipeline_reuse_deployment_between_runs: 'bool'):
-        """Sets the pipeline_reuse_deployment_between_runs of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param pipeline_reuse_deployment_between_runs: The pipeline_reuse_deployment_between_runs of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._pipeline_reuse_deployment_between_runs = pipeline_reuse_deployment_between_runs
+        self._plugins = plugins
 
     @property
     def project_id(self) -> 'str':
@@ -383,88 +393,130 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         self._project_id = project_id
 
     @property
-    def recipients(self) -> 'V1DeploymentAlertingRecipients':
-        """Gets the recipients of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def requested_run_duration_seconds(self) -> 'str':
+        """Gets the requested_run_duration_seconds of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
 
-        :return: The recipients of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: V1DeploymentAlertingRecipients
+        :return: The requested_run_duration_seconds of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: str
         """
-        return self._recipients
+        return self._requested_run_duration_seconds
 
-    @recipients.setter
-    def recipients(self, recipients: 'V1DeploymentAlertingRecipients'):
-        """Sets the recipients of this VirtualMachineServiceCreateVirtualMachineBody.
+    @requested_run_duration_seconds.setter
+    def requested_run_duration_seconds(self, requested_run_duration_seconds: 'str'):
+        """Sets the requested_run_duration_seconds of this VirtualMachineServiceCreateVirtualMachineBody.
 
 
-        :param recipients: The recipients of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: V1DeploymentAlertingRecipients
+        :param requested_run_duration_seconds: The requested_run_duration_seconds of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: str
         """
 
-        self._recipients = recipients
+        self._requested_run_duration_seconds = requested_run_duration_seconds
 
     @property
-    def replicas(self) -> 'int':
-        """Gets the replicas of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def same_compute_on_resume(self) -> 'bool':
+        """Gets the same_compute_on_resume of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
 
-        :return: The replicas of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: int
+        :return: The same_compute_on_resume of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: bool
         """
-        return self._replicas
+        return self._same_compute_on_resume
 
-    @replicas.setter
-    def replicas(self, replicas: 'int'):
-        """Sets the replicas of this VirtualMachineServiceCreateVirtualMachineBody.
+    @same_compute_on_resume.setter
+    def same_compute_on_resume(self, same_compute_on_resume: 'bool'):
+        """Sets the same_compute_on_resume of this VirtualMachineServiceCreateVirtualMachineBody.
 
 
-        :param replicas: The replicas of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: int
+        :param same_compute_on_resume: The same_compute_on_resume of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: bool
         """
 
-        self._replicas = replicas
+        self._same_compute_on_resume = same_compute_on_resume
 
     @property
-    def spec(self) -> 'V1JobSpec':
-        """Gets the spec of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def sandbox(self) -> 'bool':
+        """Gets the sandbox of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
 
-        :return: The spec of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: V1JobSpec
+        :return: The sandbox of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: bool
         """
-        return self._spec
+        return self._sandbox
 
-    @spec.setter
-    def spec(self, spec: 'V1JobSpec'):
-        """Sets the spec of this VirtualMachineServiceCreateVirtualMachineBody.
+    @sandbox.setter
+    def sandbox(self, sandbox: 'bool'):
+        """Sets the sandbox of this VirtualMachineServiceCreateVirtualMachineBody.
 
 
-        :param spec: The spec of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: V1JobSpec
+        :param sandbox: The sandbox of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: bool
         """
 
-        self._spec = spec
+        self._sandbox = sandbox
 
     @property
-    def strategy(self) -> 'V1DeploymentStrategy':
-        """Gets the strategy of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def seed_files(self) -> 'list[V1CloudSpaceSeedFile]':
+        """Gets the seed_files of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
 
-        :return: The strategy of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: V1DeploymentStrategy
+        :return: The seed_files of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: list[V1CloudSpaceSeedFile]
         """
-        return self._strategy
+        return self._seed_files
 
-    @strategy.setter
-    def strategy(self, strategy: 'V1DeploymentStrategy'):
-        """Sets the strategy of this VirtualMachineServiceCreateVirtualMachineBody.
+    @seed_files.setter
+    def seed_files(self, seed_files: 'list[V1CloudSpaceSeedFile]'):
+        """Sets the seed_files of this VirtualMachineServiceCreateVirtualMachineBody.
 
 
-        :param strategy: The strategy of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: V1DeploymentStrategy
+        :param seed_files: The seed_files of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: list[V1CloudSpaceSeedFile]
         """
 
-        self._strategy = strategy
+        self._seed_files = seed_files
+
+    @property
+    def source(self) -> 'V1CloudSpaceSourceType':
+        """Gets the source of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+
+        :return: The source of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: V1CloudSpaceSourceType
+        """
+        return self._source
+
+    @source.setter
+    def source(self, source: 'V1CloudSpaceSourceType'):
+        """Sets the source of this VirtualMachineServiceCreateVirtualMachineBody.
+
+
+        :param source: The source of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: V1CloudSpaceSourceType
+        """
+
+        self._source = source
+
+    @property
+    def spot(self) -> 'bool':
+        """Gets the spot of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+
+        :return: The spot of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._spot
+
+    @spot.setter
+    def spot(self, spot: 'bool'):
+        """Sets the spot of this VirtualMachineServiceCreateVirtualMachineBody.
+
+
+        :param spot: The spot of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._spot = spot
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -41,6 +41,7 @@ class V1MachineDirectV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cloud_hypervisor_user': 'str',
         'primary_region': 'str',
         'regions': 'list[str]',
         'setup_infiniband': 'bool',
@@ -48,19 +49,23 @@ class V1MachineDirectV1(object):
     }
 
     attribute_map = {
+        'cloud_hypervisor_user': 'cloudHypervisorUser',
         'primary_region': 'primaryRegion',
         'regions': 'regions',
         'setup_infiniband': 'setupInfiniband',
         'tailscale_auth_key_secret_id': 'tailscaleAuthKeySecretId'
     }
 
-    def __init__(self, primary_region: 'str' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, tailscale_auth_key_secret_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_hypervisor_user: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, tailscale_auth_key_secret_id: 'str' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
+        self._cloud_hypervisor_user = None
         self._primary_region = None
         self._regions = None
         self._setup_infiniband = None
         self._tailscale_auth_key_secret_id = None
         self.discriminator = None
+        if cloud_hypervisor_user is not None:
+            self.cloud_hypervisor_user = cloud_hypervisor_user
         if primary_region is not None:
             self.primary_region = primary_region
         if regions is not None:
@@ -69,6 +74,27 @@ class V1MachineDirectV1(object):
             self.setup_infiniband = setup_infiniband
         if tailscale_auth_key_secret_id is not None:
             self.tailscale_auth_key_secret_id = tailscale_auth_key_secret_id
+
+    @property
+    def cloud_hypervisor_user(self) -> 'str':
+        """Gets the cloud_hypervisor_user of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The cloud_hypervisor_user of this V1MachineDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloud_hypervisor_user
+
+    @cloud_hypervisor_user.setter
+    def cloud_hypervisor_user(self, cloud_hypervisor_user: 'str'):
+        """Sets the cloud_hypervisor_user of this V1MachineDirectV1.
+
+
+        :param cloud_hypervisor_user: The cloud_hypervisor_user of this V1MachineDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._cloud_hypervisor_user = cloud_hypervisor_user
 
     @property
     def primary_region(self) -> 'str':

@@ -41,6 +41,7 @@ class V1ExternalSearchUser(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'email': 'str',
         'first_name': 'str',
         'id': 'str',
         'internal': 'bool',
@@ -53,6 +54,7 @@ class V1ExternalSearchUser(object):
     }
 
     attribute_map = {
+        'email': 'email',
         'first_name': 'firstName',
         'id': 'id',
         'internal': 'internal',
@@ -64,8 +66,9 @@ class V1ExternalSearchUser(object):
         'username': 'username'
     }
 
-    def __init__(self, first_name: 'str' =None, id: 'str' =None, internal: 'bool' =None, last_name: 'str' =None, organization: 'str' =None, picture_url: 'str' =None, role: 'str' =None, sb: 'bool' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, email: 'str' =None, first_name: 'str' =None, id: 'str' =None, internal: 'bool' =None, last_name: 'str' =None, organization: 'str' =None, picture_url: 'str' =None, role: 'str' =None, sb: 'bool' =None, username: 'str' =None):  # noqa: E501
         """V1ExternalSearchUser - a model defined in Swagger"""  # noqa: E501
+        self._email = None
         self._first_name = None
         self._id = None
         self._internal = None
@@ -76,6 +79,8 @@ class V1ExternalSearchUser(object):
         self._sb = None
         self._username = None
         self.discriminator = None
+        if email is not None:
+            self.email = email
         if first_name is not None:
             self.first_name = first_name
         if id is not None:
@@ -94,6 +99,27 @@ class V1ExternalSearchUser(object):
             self.sb = sb
         if username is not None:
             self.username = username
+
+    @property
+    def email(self) -> 'str':
+        """Gets the email of this V1ExternalSearchUser.  # noqa: E501
+
+
+        :return: The email of this V1ExternalSearchUser.  # noqa: E501
+        :rtype: str
+        """
+        return self._email
+
+    @email.setter
+    def email(self, email: 'str'):
+        """Sets the email of this V1ExternalSearchUser.
+
+
+        :param email: The email of this V1ExternalSearchUser.  # noqa: E501
+        :type: str
+        """
+
+        self._email = email
 
     @property
     def first_name(self) -> 'str':

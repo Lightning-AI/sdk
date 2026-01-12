@@ -51,6 +51,7 @@ class V1Machine(object):
         'management_api_url': 'str',
         'name': 'str',
         'org_id': 'str',
+        'private_address': 'str',
         'project_id': 'str',
         'provider': 'str',
         'provider_instance_id': 'str',
@@ -78,6 +79,7 @@ class V1Machine(object):
         'management_api_url': 'managementApiUrl',
         'name': 'name',
         'org_id': 'orgId',
+        'private_address': 'privateAddress',
         'project_id': 'projectId',
         'provider': 'provider',
         'provider_instance_id': 'providerInstanceId',
@@ -94,7 +96,7 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, address: 'str' =None, cloud_space_name: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, cloud_space_name: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._address = None
         self._cloud_space_name = None
@@ -106,6 +108,7 @@ class V1Machine(object):
         self._management_api_url = None
         self._name = None
         self._org_id = None
+        self._private_address = None
         self._project_id = None
         self._provider = None
         self._provider_instance_id = None
@@ -141,6 +144,8 @@ class V1Machine(object):
             self.name = name
         if org_id is not None:
             self.org_id = org_id
+        if private_address is not None:
+            self.private_address = private_address
         if project_id is not None:
             self.project_id = project_id
         if provider is not None:
@@ -379,6 +384,27 @@ class V1Machine(object):
         """
 
         self._org_id = org_id
+
+    @property
+    def private_address(self) -> 'str':
+        """Gets the private_address of this V1Machine.  # noqa: E501
+
+
+        :return: The private_address of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._private_address
+
+    @private_address.setter
+    def private_address(self, private_address: 'str'):
+        """Sets the private_address of this V1Machine.
+
+
+        :param private_address: The private_address of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._private_address = private_address
 
     @property
     def project_id(self) -> 'str':

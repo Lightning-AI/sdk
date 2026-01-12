@@ -50,6 +50,7 @@ class V1KubernetesPod(object):
         'namespace': 'str',
         'node_name': 'str',
         'pod': 'str',
+        'pod_id': 'str',
         'preemption_event': 'V1PodPreemptionEvent',
         'priority': 'str',
         'queue_name': 'str',
@@ -66,13 +67,14 @@ class V1KubernetesPod(object):
         'namespace': 'namespace',
         'node_name': 'nodeName',
         'pod': 'pod',
+        'pod_id': 'podId',
         'preemption_event': 'preemptionEvent',
         'priority': 'priority',
         'queue_name': 'queueName',
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, id: 'str' =None, job_name: 'str' =None, name: 'str' =None, namespace: 'str' =None, node_name: 'str' =None, pod: 'str' =None, preemption_event: 'V1PodPreemptionEvent' =None, priority: 'str' =None, queue_name: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, id: 'str' =None, job_name: 'str' =None, name: 'str' =None, namespace: 'str' =None, node_name: 'str' =None, pod: 'str' =None, pod_id: 'str' =None, preemption_event: 'V1PodPreemptionEvent' =None, priority: 'str' =None, queue_name: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1KubernetesPod - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
@@ -83,6 +85,7 @@ class V1KubernetesPod(object):
         self._namespace = None
         self._node_name = None
         self._pod = None
+        self._pod_id = None
         self._preemption_event = None
         self._priority = None
         self._queue_name = None
@@ -106,6 +109,8 @@ class V1KubernetesPod(object):
             self.node_name = node_name
         if pod is not None:
             self.pod = pod
+        if pod_id is not None:
+            self.pod_id = pod_id
         if preemption_event is not None:
             self.preemption_event = preemption_event
         if priority is not None:
@@ -303,6 +308,27 @@ class V1KubernetesPod(object):
         """
 
         self._pod = pod
+
+    @property
+    def pod_id(self) -> 'str':
+        """Gets the pod_id of this V1KubernetesPod.  # noqa: E501
+
+
+        :return: The pod_id of this V1KubernetesPod.  # noqa: E501
+        :rtype: str
+        """
+        return self._pod_id
+
+    @pod_id.setter
+    def pod_id(self, pod_id: 'str'):
+        """Sets the pod_id of this V1KubernetesPod.
+
+
+        :param pod_id: The pod_id of this V1KubernetesPod.  # noqa: E501
+        :type: str
+        """
+
+        self._pod_id = pod_id
 
     @property
     def preemption_event(self) -> 'V1PodPreemptionEvent':

@@ -53,7 +53,7 @@ class VirtualMachineServiceApi(object):
 
         :param async_req bool
         :param VirtualMachineServiceCreateVirtualMachineBody body: (required)
-        :param str cluster_id: (required)
+        :param str cluster_id: In which Cluster you should create the CloudSpace (required)
         :return: V1VirtualMachine
                  If the method is called asynchronously,
                  returns the request thread.
@@ -75,7 +75,7 @@ class VirtualMachineServiceApi(object):
 
         :param async_req bool
         :param VirtualMachineServiceCreateVirtualMachineBody body: (required)
-        :param str cluster_id: (required)
+        :param str cluster_id: In which Cluster you should create the CloudSpace (required)
         :return: V1VirtualMachine
                  If the method is called asynchronously,
                  returns the request thread.

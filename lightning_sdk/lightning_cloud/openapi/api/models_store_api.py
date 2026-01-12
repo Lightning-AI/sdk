@@ -1741,6 +1741,8 @@ class ModelsStoreApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str name:
+        :param str page_token:
+        :param int limit:
         :return: V1ListModelsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1763,12 +1765,14 @@ class ModelsStoreApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str name:
+        :param str page_token:
+        :param int limit:
         :return: V1ListModelsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'name']  # noqa: E501
+        all_params = ['project_id', 'name', 'page_token', 'limit']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1797,6 +1801,10 @@ class ModelsStoreApi(object):
         query_params = []
         if 'name' in params:
             query_params.append(('name', params['name']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
 
         header_params = {}
 

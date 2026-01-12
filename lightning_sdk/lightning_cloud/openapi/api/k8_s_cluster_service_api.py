@@ -249,6 +249,212 @@ class K8SClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def k8_s_cluster_service_get_kubernetes_pod(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1GetKubernetesPodResponse':  # noqa: E501
+        """k8_s_cluster_service_get_kubernetes_pod  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_get_kubernetes_pod(cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :return: V1GetKubernetesPodResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_get_kubernetes_pod_with_http_info(cluster_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_get_kubernetes_pod_with_http_info(cluster_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_get_kubernetes_pod_with_http_info(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1GetKubernetesPodResponse':  # noqa: E501
+        """k8_s_cluster_service_get_kubernetes_pod  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_get_kubernetes_pod_with_http_info(cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :return: V1GetKubernetesPodResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_get_kubernetes_pod" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_get_kubernetes_pod`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `k8_s_cluster_service_get_kubernetes_pod`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/k8s-clusters/{clusterId}/kubernetes-pods/{id}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetKubernetesPodResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_get_kubernetes_pod_logs(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1GetKubernetesPodLogsResponse':  # noqa: E501
+        """k8_s_cluster_service_get_kubernetes_pod_logs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_get_kubernetes_pod_logs(cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :param str container_name:
+        :return: V1GetKubernetesPodLogsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_get_kubernetes_pod_logs_with_http_info(cluster_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_get_kubernetes_pod_logs_with_http_info(cluster_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_get_kubernetes_pod_logs_with_http_info(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1GetKubernetesPodLogsResponse':  # noqa: E501
+        """k8_s_cluster_service_get_kubernetes_pod_logs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_get_kubernetes_pod_logs_with_http_info(cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :param str container_name:
+        :return: V1GetKubernetesPodLogsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'id', 'container_name']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_get_kubernetes_pod_logs" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_get_kubernetes_pod_logs`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `k8_s_cluster_service_get_kubernetes_pod_logs`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'container_name' in params:
+            query_params.append(('containerName', params['container_name']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/k8s-clusters/{clusterId}/kubernetes-pods/{id}/page-logs', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetKubernetesPodLogsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def k8_s_cluster_service_get_kubernetes_template(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1KubernetesTemplate':  # noqa: E501
         """k8_s_cluster_service_get_kubernetes_template  # noqa: E501
 
@@ -1536,15 +1742,17 @@ class K8SClusterServiceApi(object):
 
         :param async_req bool
         :param str cluster_id: (required)
-        :param list[str] statuses_in:
+        :param str page_token:
+        :param int limit:
+        :param str search_query:
+        :param list[str] statuses:
+        :param bool deleted:
         :param str namespace:
         :param str user_id:
         :param str queue_name:
-        :param bool deleted:
-        :param datetime historical_start: Date ranges for historical pods  Historical start time for the pods
-        :param datetime historical_end: Historical end time for the pods
-        :param str page_token: Pagination
-        :param int limit:
+        :param str sort_order: ascending or descending
+        :param datetime start_time: Historical start time for the pods
+        :param datetime end_time: Historical end time for the pods
         :return: V1ListKubernetesPodsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1566,21 +1774,23 @@ class K8SClusterServiceApi(object):
 
         :param async_req bool
         :param str cluster_id: (required)
-        :param list[str] statuses_in:
+        :param str page_token:
+        :param int limit:
+        :param str search_query:
+        :param list[str] statuses:
+        :param bool deleted:
         :param str namespace:
         :param str user_id:
         :param str queue_name:
-        :param bool deleted:
-        :param datetime historical_start: Date ranges for historical pods  Historical start time for the pods
-        :param datetime historical_end: Historical end time for the pods
-        :param str page_token: Pagination
-        :param int limit:
+        :param str sort_order: ascending or descending
+        :param datetime start_time: Historical start time for the pods
+        :param datetime end_time: Historical end time for the pods
         :return: V1ListKubernetesPodsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['cluster_id', 'statuses_in', 'namespace', 'user_id', 'queue_name', 'deleted', 'historical_start', 'historical_end', 'page_token', 'limit']  # noqa: E501
+        all_params = ['cluster_id', 'page_token', 'limit', 'search_query', 'statuses', 'deleted', 'namespace', 'user_id', 'queue_name', 'sort_order', 'start_time', 'end_time']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1607,25 +1817,29 @@ class K8SClusterServiceApi(object):
             path_params['clusterId'] = params['cluster_id']  # noqa: E501
 
         query_params = []
-        if 'statuses_in' in params:
-            query_params.append(('statusesIn', params['statuses_in']))  # noqa: E501
-            collection_formats['statusesIn'] = 'multi'  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'search_query' in params:
+            query_params.append(('searchQuery', params['search_query']))  # noqa: E501
+        if 'statuses' in params:
+            query_params.append(('statuses', params['statuses']))  # noqa: E501
+            collection_formats['statuses'] = 'multi'  # noqa: E501
+        if 'deleted' in params:
+            query_params.append(('deleted', params['deleted']))  # noqa: E501
         if 'namespace' in params:
             query_params.append(('namespace', params['namespace']))  # noqa: E501
         if 'user_id' in params:
             query_params.append(('userId', params['user_id']))  # noqa: E501
         if 'queue_name' in params:
             query_params.append(('queueName', params['queue_name']))  # noqa: E501
-        if 'deleted' in params:
-            query_params.append(('deleted', params['deleted']))  # noqa: E501
-        if 'historical_start' in params:
-            query_params.append(('historicalStart', params['historical_start']))  # noqa: E501
-        if 'historical_end' in params:
-            query_params.append(('historicalEnd', params['historical_end']))  # noqa: E501
-        if 'page_token' in params:
-            query_params.append(('pageToken', params['page_token']))  # noqa: E501
-        if 'limit' in params:
-            query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
+        if 'start_time' in params:
+            query_params.append(('startTime', params['start_time']))  # noqa: E501
+        if 'end_time' in params:
+            query_params.append(('endTime', params['end_time']))  # noqa: E501
 
         header_params = {}
 
