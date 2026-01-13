@@ -1,7 +1,9 @@
+import concurrent
 import json
 import os
 import time
 import warnings
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from threading import Event, Thread
 from typing import Any, Dict, Generator, List, Mapping, Optional, Tuple, Union
@@ -12,10 +14,8 @@ from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
     _create_app,
-    _download_teamspace_files,
     _DummyBody,
     _DummyResponse,
-    _FileUploader,
     _machine_to_compute_name,
     _sanitize_studio_remote_path,
 )
@@ -751,14 +751,32 @@ class StudioApi:
         progress_bar: bool,
     ) -> None:
         """Uploads file to given remote path on the studio."""
-        _FileUploader(
-            client=self._client,
-            teamspace_id=teamspace_id,
-            cloud_account=cloud_account,
-            file_path=file_path,
-            remote_path=_sanitize_studio_remote_path(remote_path, studio_id),
-            progress_bar=progress_bar,
-        )()
+        token = self._authenticate_and_get_token()
+
+        query_params = {"token": token}
+        client_host = self._client.api_client.configuration.host
+        url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{remote_path}"
+
+        filesize = os.path.getsize(file_path)
+        with open(file_path, "rb") as f:
+            if progress_bar:
+                filesize = os.path.getsize(file_path)
+                with tqdm.wrapattr(
+                    f,
+                    "read",
+                    desc=f"Uploading {os.path.split(file_path)[1]}",
+                    total=filesize,
+                    unit="B",
+                    unit_scale=True,
+                    unit_divisor=1000,
+                ) as wrapped_file:
+                    r = requests.put(url, data=wrapped_file, params=query_params, timeout=30)
+            else:
+                r = requests.put(url, data=f, params=query_params, timeout=30)
+
+        if r.status_code == 200:
+            return
+        raise RuntimeError(f"Failed to upload file '{file_path}' to the Studio. Status code: {r.status_code}")
 
     def download_file(
         self,
@@ -780,7 +798,7 @@ class StudioApi:
         }
 
         r = requests.get(
-            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}",
             params=query_params,
             stream=True,
         )
@@ -807,6 +825,40 @@ class StudioApi:
                 f.write(chunk)
                 pbar_update(len(chunk))
 
+    def _download_single_studio_file(
+        self,
+        file_info: Dict,
+        base_path: str,
+        download_dir: Path,
+        studio_id: str,
+        teamspace_id: str,
+        token: str,
+        pbar: Optional[tqdm],
+    ) -> None:
+        """Download a single file from Studio with progress tracking."""
+        file_path = file_info["path"]
+
+        relative_path = file_path[len(base_path) :].lstrip("/") if base_path else file_path
+
+        local_file = download_dir / relative_path
+        local_file.parent.mkdir(parents=True, exist_ok=True)
+
+        query_params = {
+            "token": token,
+        }
+
+        r = requests.get(
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{file_path}",
+            params=query_params,
+            stream=True,
+        )
+
+        with open(str(local_file), "wb") as f:
+            for chunk in r.iter_content(chunk_size=4096 * 8):
+                f.write(chunk)
+                if pbar:
+                    pbar.update(len(chunk))
+
     def download_folder(
         self,
         path: str,
@@ -815,25 +867,60 @@ class StudioApi:
         teamspace_id: str,
         cloud_account: str,
         progress_bar: bool = True,
+        num_workers: Optional[int] = None,
     ) -> None:
         """Downloads a given folder from a Studio to a target location."""
         # TODO: implement resumable downloads
-        auth = Auth()
-        auth.authenticate()
 
-        prefix = _sanitize_studio_remote_path(path, studio_id)
-        # ensure we only download as a directory and not the entire prefix
-        if prefix.endswith("/") is False:
-            prefix = prefix + "/"
+        if num_workers is None:
+            num_workers = os.cpu_count() * 4
 
-        _download_teamspace_files(
-            client=self._client,
-            teamspace_id=teamspace_id,
-            cluster_id=cloud_account,
-            prefix=prefix,
-            download_dir=Path(target_path),
-            progress_bar=progress_bar,
-        )
+        # Normalize the path
+        path = path.strip("/")
+        download_dir = Path(target_path)
+        download_dir.mkdir(parents=True, exist_ok=True)
+
+        files = self.list_files(studio_id, teamspace_id, path)
+
+        if not files:
+            print(f"No files found in {path}")
+            return
+
+        token = self._authenticate_and_get_token()
+
+        total_size = sum(f.get("size", 0) for f in files)
+
+        pbar = None
+        if progress_bar:
+            pbar = tqdm(
+                desc="Downloading files",
+                total=total_size,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1000,
+                mininterval=1,
+            )
+
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            futures = [
+                executor.submit(
+                    self._download_single_studio_file,
+                    file_info,
+                    path,
+                    download_dir,
+                    studio_id,
+                    teamspace_id,
+                    token,
+                    pbar,
+                )
+                for file_info in files
+            ]
+            concurrent.futures.wait(futures)
+
+        if pbar:
+            pbar.set_description("Download complete")
+            pbar.refresh()
+            pbar.close()
 
     def remove_file(self, studio_id: str, teamspace_id: str, path: str) -> None:
         """Removes a file from a Studio."""

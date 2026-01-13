@@ -9,7 +9,6 @@ import pytest
 
 from lightning_sdk.api import studio_api as studio_api_module
 from lightning_sdk.api.studio_api import StudioApi
-from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
     CloudSpaceServiceCreateCloudSpaceBody,
     Externalv1CloudSpaceInstanceStatus,
@@ -1445,29 +1444,39 @@ def test_list_files(
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
-@mock.patch("lightning_sdk.api.studio_api._FileUploader", autospec=True)
+@mock.patch("requests.put")
+@mock.patch("lightning_sdk.api.studio_api.tqdm")
 def test_upload_file(
-    uploader_mock,
+    tqdm_mock,
+    requests_put_mock,
     tmpdir,
     progress_bar,
 ):
+    requests_put_mock.return_value.status_code = 200
+    tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
+
     studio_api = StudioApi()
+    studio_api._authenticate_and_get_token = mock.Mock(return_value="test-token-123")
 
     filepath = os.path.join(tmpdir, "file1")
     subprocess.run(f"truncate -s 40MB {filepath}".split(" "))
 
-    os.environ["LIGHTNING_MULTIPART_THRESHOLD"] = str(20 * _BYTES_PER_MB)
     studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar)
 
-    uploader_mock.assert_called_with(
-        client=mock.ANY,
-        file_path=filepath,
-        remote_path="/cloudspaces/st-abc/code/content/file1",
-        cloud_account="cluster-abc",
-        teamspace_id="ts-abc",
-        progress_bar=progress_bar,
-    )
-    uploader_mock.return_value.assert_called_with()  # .__call__()
+    assert requests_put_mock.call_count == 1
+    (url,) = requests_put_mock.call_args.args
+    params = requests_put_mock.call_args.kwargs["params"]
+
+    assert "st-abc" in url
+    assert "ts-abc" in url
+    assert "file1" in url
+    assert "token" in params
+
+    # Verify tqdm was used only if progress_bar is True
+    if progress_bar:
+        tqdm_mock.wrapattr.assert_called_once()
+    else:
+        tqdm_mock.wrapattr.assert_not_called()
 
 
 @mock.patch("requests.get", autospec=True)
@@ -1483,13 +1492,36 @@ def test_download_file(mock_login, mock_requests_get, tmpdir):
     studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
 
 
-@mock.patch("lightning_sdk.api.studio_api._download_teamspace_files", autospec=True)
-def test_download_folder(mock_download, tmpdir):
+@mock.patch("lightning_sdk.api.studio_api.concurrent.futures.wait")
+@mock.patch("lightning_sdk.api.studio_api.tqdm")
+@mock.patch("lightning_sdk.api.studio_api.ThreadPoolExecutor")
+def test_download_folder(mock_executor, mock_tqdm, mock_wait, tmpdir):
     studio_api = StudioApi()
+    studio_api._authenticate_and_get_token = mock.Mock(return_value="test-token-123")
 
-    filepath = os.path.join(tmpdir, "file1")
+    studio_api.list_files = mock.Mock(
+        return_value=[
+            {"path": "file1.txt", "size": 1000},
+            {"path": "file2.txt", "size": 2000},
+        ]
+    )
+
+    studio_api._download_single_studio_file = mock.Mock()
+
+    mock_future = mock.Mock()
+    mock_executor.return_value.__enter__.return_value.submit.return_value = mock_future
+    mock_wait.return_value = None
+
+    filepath = os.path.join(tmpdir, "download_folder")
     studio_api.download_folder("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
-    mock_download.assert_called_once()
+
+    studio_api.list_files.assert_called_once_with("st-abc", "ts-abc", "file1")
+
+    mock_executor.assert_called_once()
+
+    mock_tqdm.assert_called_once()
+    assert mock_tqdm.call_args.kwargs["desc"] == "Downloading files"
+    assert mock_tqdm.call_args.kwargs["total"] == 3000  # 1000 + 2000
 
 
 @mock.patch(

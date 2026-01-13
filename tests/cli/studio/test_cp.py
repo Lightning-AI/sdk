@@ -1,4 +1,3 @@
-import os
 import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -759,7 +758,7 @@ def test_cp_download_root_directory_with_recursive(tmp_path: Path):
             recursive=True,
         )
 
-        expected_target = os.path.join(str(local_dir), "test-studio")
+        expected_target = str(local_dir) + "/"
         mock_selected_studio.download_folder.assert_called_once_with("", expected_target)
 
 

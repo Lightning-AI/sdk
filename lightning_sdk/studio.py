@@ -613,11 +613,13 @@ class Studio(metaclass=TrackCallsMeta):
             progress_bar = tqdm(total=len(all_files), desc="Uploading files", unit="file")
         for local_file, remote_path in sorted(all_files, key=lambda p: p[1]):
             if progress_bar:
-                progress_bar.set_description(f"Uploading {local_file}")
+                progress_bar.set_description("Uploading files")
             self.upload_file(local_file, remote_path=remote_path, progress_bar=False)
             if progress_bar:
                 progress_bar.update(1)
         if progress_bar:
+            progress_bar.set_description("Upload complete")
+            progress_bar.refresh()
             progress_bar.close()
 
     def download_file(self, remote_path: str, file_path: Optional[str] = None) -> None:
