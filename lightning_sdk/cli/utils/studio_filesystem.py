@@ -40,8 +40,13 @@ def parse_studio_path(studio_path: str) -> StudioPathResult:
         # studio and destination
         path_parts = path_string.split("/")
 
-    if not path_parts or len(path_parts) < 2:
+    if not path_parts:
         raise ValueError("Invalid: Missing studio name.")
+
+    if len(path_parts) == 1:
+        raise ValueError(
+            "Invalid: Invalid studio path. To refer to the studio root, add a trailing '/' (e.g., 'lit://<owner>/<my-teamspace>/studios/<my-studio>/')"
+        )
 
     result["studio"] = path_parts[0]
     result["destination"] = "/".join(path_parts[1:])
