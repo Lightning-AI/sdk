@@ -661,10 +661,14 @@ class StudioApi:
         self.stop_keeping_alive(teamspace_id=teamspace_id, studio_id=studio_id)
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
 
-    def get_tree(self, studio_id: str, teamspace_id: str, path: str) -> None:
+    def _authenticate_and_get_token(self) -> str:
+        """Authenticate and return a token for API requests."""
         auth = Auth()
         auth.authenticate()
-        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+        return self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+
+    def get_tree(self, studio_id: str, teamspace_id: str, path: str) -> None:
+        token = self._authenticate_and_get_token()
 
         query_params = {
             "token": token,
@@ -703,6 +707,40 @@ class StudioApi:
         warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
         return {"exists": False, "type": None, "size": None}
 
+    def collect_files(self, studio_id: str, teamspace_id: str, current_path: str) -> List[Dict]:
+        files = []
+        tree = self.get_tree(studio_id, teamspace_id, path=current_path)
+        tree_items = tree.get("tree", [])
+
+        for item in tree_items:
+            item_name = item.get("path", "")
+            item_type = item.get("type")
+
+            full_path = f"{current_path}/{item_name}" if current_path else item_name
+
+            if item_type == "blob":
+                files.append(
+                    {
+                        "path": full_path,
+                        "size": item.get("size", 0),
+                    }
+                )
+            elif item_type == "tree":
+                nested_files = self.collect_files(studio_id, teamspace_id, full_path)
+                files.extend(nested_files)
+
+        return files
+
+    def list_files(
+        self,
+        studio_id: str,
+        teamspace_id: str,
+        path: str = "",
+    ) -> List[Dict]:
+        """Recursively list all files in a directory tree."""
+        path = path.strip("/")
+        return self.collect_files(studio_id, teamspace_id, path)
+
     def upload_file(
         self,
         studio_id: str,
@@ -733,9 +771,7 @@ class StudioApi:
     ) -> None:
         """Downloads a given file from a Studio to a target location."""
         # TODO: Update this endpoint to permit basic auth
-        auth = Auth()
-        auth.authenticate()
-        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+        token = self._authenticate_and_get_token()
 
         query_params = {
             "clusterId": cloud_account,
@@ -809,9 +845,7 @@ class StudioApi:
         if info["type"] != "file":
             raise IsADirectoryError(f"The path '{path}' is a directory. Use 'remove_folder()' to remove directories.")
 
-        auth = Auth()
-        auth.authenticate()
-        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+        token = self._authenticate_and_get_token()
 
         query_params = {"token": token}
         client_host = self._client.api_client.configuration.host
@@ -834,9 +868,7 @@ class StudioApi:
         if info["type"] == "file":
             raise ValueError(f"The path '{path}' is a file. Use 'remove_file()' to remove files.")
 
-        auth = Auth()
-        auth.authenticate()
-        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+        token = self._authenticate_and_get_token()
 
         query_params = {"token": token}
         client_host = self._client.api_client.configuration.host
