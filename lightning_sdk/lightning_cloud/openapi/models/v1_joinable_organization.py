@@ -49,6 +49,7 @@ class V1JoinableOrganization(object):
         'location': 'str',
         'member_count': 'str',
         'name': 'str',
+        'skip_phone_verification': 'bool',
         'twitter_username': 'str'
     }
 
@@ -61,10 +62,11 @@ class V1JoinableOrganization(object):
         'location': 'location',
         'member_count': 'memberCount',
         'name': 'name',
+        'skip_phone_verification': 'skipPhoneVerification',
         'twitter_username': 'twitterUsername'
     }
 
-    def __init__(self, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, id: 'str' =None, location: 'str' =None, member_count: 'str' =None, name: 'str' =None, twitter_username: 'str' =None):  # noqa: E501
+    def __init__(self, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, id: 'str' =None, location: 'str' =None, member_count: 'str' =None, name: 'str' =None, skip_phone_verification: 'bool' =None, twitter_username: 'str' =None):  # noqa: E501
         """V1JoinableOrganization - a model defined in Swagger"""  # noqa: E501
         self._description = None
         self._display_name = None
@@ -74,6 +76,7 @@ class V1JoinableOrganization(object):
         self._location = None
         self._member_count = None
         self._name = None
+        self._skip_phone_verification = None
         self._twitter_username = None
         self.discriminator = None
         if description is not None:
@@ -92,6 +95,8 @@ class V1JoinableOrganization(object):
             self.member_count = member_count
         if name is not None:
             self.name = name
+        if skip_phone_verification is not None:
+            self.skip_phone_verification = skip_phone_verification
         if twitter_username is not None:
             self.twitter_username = twitter_username
 
@@ -262,6 +267,27 @@ class V1JoinableOrganization(object):
         """
 
         self._name = name
+
+    @property
+    def skip_phone_verification(self) -> 'bool':
+        """Gets the skip_phone_verification of this V1JoinableOrganization.  # noqa: E501
+
+
+        :return: The skip_phone_verification of this V1JoinableOrganization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._skip_phone_verification
+
+    @skip_phone_verification.setter
+    def skip_phone_verification(self, skip_phone_verification: 'bool'):
+        """Sets the skip_phone_verification of this V1JoinableOrganization.
+
+
+        :param skip_phone_verification: The skip_phone_verification of this V1JoinableOrganization.  # noqa: E501
+        :type: bool
+        """
+
+        self._skip_phone_verification = skip_phone_verification
 
     @property
     def twitter_username(self) -> 'str':

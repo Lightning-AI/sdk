@@ -343,7 +343,7 @@ class ClusterServiceApi(object):
             collection_formats=collection_formats)
 
     def cluster_service_create_cluster_capacity_reservation(self, body: 'ClusterServiceCreateClusterCapacityReservationBody', project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1CreateClusterCapacityReservationResponse':  # noqa: E501
-        """cluster_service_create_cluster_capacity_reservation  # noqa: E501
+        """capacity reservation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
@@ -366,7 +366,7 @@ class ClusterServiceApi(object):
             return data
 
     def cluster_service_create_cluster_capacity_reservation_with_http_info(self, body: 'ClusterServiceCreateClusterCapacityReservationBody', project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1CreateClusterCapacityReservationResponse':  # noqa: E501
-        """cluster_service_create_cluster_capacity_reservation  # noqa: E501
+        """capacity reservation  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
@@ -2927,17 +2927,18 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def cluster_service_list_cluster_capacity_reservations(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListClusterCapacityReservationsResponse':  # noqa: E501
+    def cluster_service_list_cluster_capacity_reservations(self, org_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListClusterCapacityReservationsResponse':  # noqa: E501
         """cluster_service_list_cluster_capacity_reservations  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.cluster_service_list_cluster_capacity_reservations(project_id, cluster_id, async_req=True)
+        >>> thread = api.cluster_service_list_cluster_capacity_reservations(org_id, cluster_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str org_id: (required)
         :param str cluster_id: (required)
+        :param str project_id:
         :param datetime start_time:
         :param datetime end_time:
         :param bool available_only:
@@ -2949,22 +2950,23 @@ class ClusterServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.cluster_service_list_cluster_capacity_reservations_with_http_info(project_id, cluster_id, **kwargs)  # noqa: E501
+            return self.cluster_service_list_cluster_capacity_reservations_with_http_info(org_id, cluster_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.cluster_service_list_cluster_capacity_reservations_with_http_info(project_id, cluster_id, **kwargs)  # noqa: E501
+            (data) = self.cluster_service_list_cluster_capacity_reservations_with_http_info(org_id, cluster_id, **kwargs)  # noqa: E501
             return data
 
-    def cluster_service_list_cluster_capacity_reservations_with_http_info(self, project_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListClusterCapacityReservationsResponse':  # noqa: E501
+    def cluster_service_list_cluster_capacity_reservations_with_http_info(self, org_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListClusterCapacityReservationsResponse':  # noqa: E501
         """cluster_service_list_cluster_capacity_reservations  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.cluster_service_list_cluster_capacity_reservations_with_http_info(project_id, cluster_id, async_req=True)
+        >>> thread = api.cluster_service_list_cluster_capacity_reservations_with_http_info(org_id, cluster_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param str project_id: (required)
+        :param str org_id: (required)
         :param str cluster_id: (required)
+        :param str project_id:
         :param datetime start_time:
         :param datetime end_time:
         :param bool available_only:
@@ -2975,7 +2977,7 @@ class ClusterServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'start_time', 'end_time', 'available_only', 'from_aggregate', 'apparent_provider']  # noqa: E501
+        all_params = ['org_id', 'cluster_id', 'project_id', 'start_time', 'end_time', 'available_only', 'from_aggregate', 'apparent_provider']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2990,10 +2992,10 @@ class ClusterServiceApi(object):
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'project_id' is set
-        if ('project_id' not in params or
-                params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `cluster_service_list_cluster_capacity_reservations`")  # noqa: E501
+        # verify the required parameter 'org_id' is set
+        if ('org_id' not in params or
+                params['org_id'] is None):
+            raise ValueError("Missing the required parameter `org_id` when calling `cluster_service_list_cluster_capacity_reservations`")  # noqa: E501
         # verify the required parameter 'cluster_id' is set
         if ('cluster_id' not in params or
                 params['cluster_id'] is None):
@@ -3002,12 +3004,14 @@ class ClusterServiceApi(object):
         collection_formats = {}
 
         path_params = {}
-        if 'project_id' in params:
-            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'org_id' in params:
+            path_params['orgId'] = params['org_id']  # noqa: E501
         if 'cluster_id' in params:
             path_params['clusterId'] = params['cluster_id']  # noqa: E501
 
         query_params = []
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
         if 'start_time' in params:
             query_params.append(('startTime', params['start_time']))  # noqa: E501
         if 'end_time' in params:
@@ -3033,7 +3037,7 @@ class ClusterServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/clusters/{clusterId}/capacity-reservations', 'GET',
+            '/v1/orgs/{orgId}/clusters/{clusterId}/capacity-reservations', 'GET',
             path_params,
             query_params,
             header_params,

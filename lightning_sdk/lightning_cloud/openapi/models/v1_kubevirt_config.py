@@ -47,7 +47,9 @@ class V1KubevirtConfig(object):
         'node_count': 'int',
         'node_family': 'str',
         'provider': 'str',
+        'show_as_lightning': 'bool',
         'supported': 'bool',
+        'uuid': 'str',
         'vm_node_count': 'int'
     }
 
@@ -58,11 +60,13 @@ class V1KubevirtConfig(object):
         'node_count': 'nodeCount',
         'node_family': 'nodeFamily',
         'provider': 'provider',
+        'show_as_lightning': 'showAsLightning',
         'supported': 'supported',
+        'uuid': 'uuid',
         'vm_node_count': 'vmNodeCount'
     }
 
-    def __init__(self, api_key: 'str' =None, api_url: 'str' =None, k8s_node_count: 'int' =None, node_count: 'int' =None, node_family: 'str' =None, provider: 'str' =None, supported: 'bool' =None, vm_node_count: 'int' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, api_url: 'str' =None, k8s_node_count: 'int' =None, node_count: 'int' =None, node_family: 'str' =None, provider: 'str' =None, show_as_lightning: 'bool' =None, supported: 'bool' =None, uuid: 'str' =None, vm_node_count: 'int' =None):  # noqa: E501
         """V1KubevirtConfig - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._api_url = None
@@ -70,7 +74,9 @@ class V1KubevirtConfig(object):
         self._node_count = None
         self._node_family = None
         self._provider = None
+        self._show_as_lightning = None
         self._supported = None
+        self._uuid = None
         self._vm_node_count = None
         self.discriminator = None
         if api_key is not None:
@@ -85,8 +91,12 @@ class V1KubevirtConfig(object):
             self.node_family = node_family
         if provider is not None:
             self.provider = provider
+        if show_as_lightning is not None:
+            self.show_as_lightning = show_as_lightning
         if supported is not None:
             self.supported = supported
+        if uuid is not None:
+            self.uuid = uuid
         if vm_node_count is not None:
             self.vm_node_count = vm_node_count
 
@@ -217,6 +227,27 @@ class V1KubevirtConfig(object):
         self._provider = provider
 
     @property
+    def show_as_lightning(self) -> 'bool':
+        """Gets the show_as_lightning of this V1KubevirtConfig.  # noqa: E501
+
+
+        :return: The show_as_lightning of this V1KubevirtConfig.  # noqa: E501
+        :rtype: bool
+        """
+        return self._show_as_lightning
+
+    @show_as_lightning.setter
+    def show_as_lightning(self, show_as_lightning: 'bool'):
+        """Sets the show_as_lightning of this V1KubevirtConfig.
+
+
+        :param show_as_lightning: The show_as_lightning of this V1KubevirtConfig.  # noqa: E501
+        :type: bool
+        """
+
+        self._show_as_lightning = show_as_lightning
+
+    @property
     def supported(self) -> 'bool':
         """Gets the supported of this V1KubevirtConfig.  # noqa: E501
 
@@ -236,6 +267,27 @@ class V1KubevirtConfig(object):
         """
 
         self._supported = supported
+
+    @property
+    def uuid(self) -> 'str':
+        """Gets the uuid of this V1KubevirtConfig.  # noqa: E501
+
+
+        :return: The uuid of this V1KubevirtConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._uuid
+
+    @uuid.setter
+    def uuid(self, uuid: 'str'):
+        """Sets the uuid of this V1KubevirtConfig.
+
+
+        :param uuid: The uuid of this V1KubevirtConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._uuid = uuid
 
     @property
     def vm_node_count(self) -> 'int':

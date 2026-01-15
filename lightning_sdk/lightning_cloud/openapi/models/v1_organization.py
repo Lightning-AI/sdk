@@ -84,6 +84,7 @@ class V1Organization(object):
         'preferred_deployment_provider': 'str',
         'preferred_studio_provider': 'str',
         'show_model_apis_tab': 'bool',
+        'skip_phone_verification': 'bool',
         'start_studios_on_spot_instance': 'bool',
         'storage_overuse_bytes': 'str',
         'storage_overuse_deletion_at': 'datetime',
@@ -139,6 +140,7 @@ class V1Organization(object):
         'preferred_deployment_provider': 'preferredDeploymentProvider',
         'preferred_studio_provider': 'preferredStudioProvider',
         'show_model_apis_tab': 'showModelApisTab',
+        'skip_phone_verification': 'skipPhoneVerification',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
         'storage_overuse_bytes': 'storageOveruseBytes',
         'storage_overuse_deletion_at': 'storageOveruseDeletionAt',
@@ -150,7 +152,7 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
@@ -195,6 +197,7 @@ class V1Organization(object):
         self._preferred_deployment_provider = None
         self._preferred_studio_provider = None
         self._show_model_apis_tab = None
+        self._skip_phone_verification = None
         self._start_studios_on_spot_instance = None
         self._storage_overuse_bytes = None
         self._storage_overuse_deletion_at = None
@@ -291,6 +294,8 @@ class V1Organization(object):
             self.preferred_studio_provider = preferred_studio_provider
         if show_model_apis_tab is not None:
             self.show_model_apis_tab = show_model_apis_tab
+        if skip_phone_verification is not None:
+            self.skip_phone_verification = skip_phone_verification
         if start_studios_on_spot_instance is not None:
             self.start_studios_on_spot_instance = start_studios_on_spot_instance
         if storage_overuse_bytes is not None:
@@ -1214,6 +1219,27 @@ class V1Organization(object):
         """
 
         self._show_model_apis_tab = show_model_apis_tab
+
+    @property
+    def skip_phone_verification(self) -> 'bool':
+        """Gets the skip_phone_verification of this V1Organization.  # noqa: E501
+
+
+        :return: The skip_phone_verification of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._skip_phone_verification
+
+    @skip_phone_verification.setter
+    def skip_phone_verification(self, skip_phone_verification: 'bool'):
+        """Sets the skip_phone_verification of this V1Organization.
+
+
+        :param skip_phone_verification: The skip_phone_verification of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._skip_phone_verification = skip_phone_verification
 
     @property
     def start_studios_on_spot_instance(self) -> 'bool':

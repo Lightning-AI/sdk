@@ -45,7 +45,8 @@ class V1MachineDirectV1(object):
         'primary_region': 'str',
         'regions': 'list[str]',
         'setup_infiniband': 'bool',
-        'tailscale_auth_key_secret_id': 'str'
+        'tailscale_auth_key_secret_id': 'str',
+        'use_nvme_disks': 'bool'
     }
 
     attribute_map = {
@@ -53,16 +54,18 @@ class V1MachineDirectV1(object):
         'primary_region': 'primaryRegion',
         'regions': 'regions',
         'setup_infiniband': 'setupInfiniband',
-        'tailscale_auth_key_secret_id': 'tailscaleAuthKeySecretId'
+        'tailscale_auth_key_secret_id': 'tailscaleAuthKeySecretId',
+        'use_nvme_disks': 'useNvmeDisks'
     }
 
-    def __init__(self, cloud_hypervisor_user: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, tailscale_auth_key_secret_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_hypervisor_user: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, tailscale_auth_key_secret_id: 'str' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._cloud_hypervisor_user = None
         self._primary_region = None
         self._regions = None
         self._setup_infiniband = None
         self._tailscale_auth_key_secret_id = None
+        self._use_nvme_disks = None
         self.discriminator = None
         if cloud_hypervisor_user is not None:
             self.cloud_hypervisor_user = cloud_hypervisor_user
@@ -74,6 +77,8 @@ class V1MachineDirectV1(object):
             self.setup_infiniband = setup_infiniband
         if tailscale_auth_key_secret_id is not None:
             self.tailscale_auth_key_secret_id = tailscale_auth_key_secret_id
+        if use_nvme_disks is not None:
+            self.use_nvme_disks = use_nvme_disks
 
     @property
     def cloud_hypervisor_user(self) -> 'str':
@@ -179,6 +184,27 @@ class V1MachineDirectV1(object):
         """
 
         self._tailscale_auth_key_secret_id = tailscale_auth_key_secret_id
+
+    @property
+    def use_nvme_disks(self) -> 'bool':
+        """Gets the use_nvme_disks of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The use_nvme_disks of this V1MachineDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._use_nvme_disks
+
+    @use_nvme_disks.setter
+    def use_nvme_disks(self, use_nvme_disks: 'bool'):
+        """Sets the use_nvme_disks of this V1MachineDirectV1.
+
+
+        :param use_nvme_disks: The use_nvme_disks of this V1MachineDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._use_nvme_disks = use_nvme_disks
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

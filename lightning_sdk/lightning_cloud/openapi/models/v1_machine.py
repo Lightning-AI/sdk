@@ -42,10 +42,8 @@ class V1Machine(object):
     """
     swagger_types = {
         'address': 'str',
-        'cloud_space_name': 'str',
         'cluster_id': 'str',
         'created_at': 'datetime',
-        'display_name': 'str',
         'id': 'str',
         'instance_type': 'str',
         'management_api_url': 'str',
@@ -70,10 +68,8 @@ class V1Machine(object):
 
     attribute_map = {
         'address': 'address',
-        'cloud_space_name': 'cloudSpaceName',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
-        'display_name': 'displayName',
         'id': 'id',
         'instance_type': 'instanceType',
         'management_api_url': 'managementApiUrl',
@@ -96,13 +92,11 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, address: 'str' =None, cloud_space_name: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, display_name: 'str' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._address = None
-        self._cloud_space_name = None
         self._cluster_id = None
         self._created_at = None
-        self._display_name = None
         self._id = None
         self._instance_type = None
         self._management_api_url = None
@@ -126,14 +120,10 @@ class V1Machine(object):
         self.discriminator = None
         if address is not None:
             self.address = address
-        if cloud_space_name is not None:
-            self.cloud_space_name = cloud_space_name
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
-        if display_name is not None:
-            self.display_name = display_name
         if id is not None:
             self.id = id
         if instance_type is not None:
@@ -197,27 +187,6 @@ class V1Machine(object):
         self._address = address
 
     @property
-    def cloud_space_name(self) -> 'str':
-        """Gets the cloud_space_name of this V1Machine.  # noqa: E501
-
-
-        :return: The cloud_space_name of this V1Machine.  # noqa: E501
-        :rtype: str
-        """
-        return self._cloud_space_name
-
-    @cloud_space_name.setter
-    def cloud_space_name(self, cloud_space_name: 'str'):
-        """Sets the cloud_space_name of this V1Machine.
-
-
-        :param cloud_space_name: The cloud_space_name of this V1Machine.  # noqa: E501
-        :type: str
-        """
-
-        self._cloud_space_name = cloud_space_name
-
-    @property
     def cluster_id(self) -> 'str':
         """Gets the cluster_id of this V1Machine.  # noqa: E501
 
@@ -258,27 +227,6 @@ class V1Machine(object):
         """
 
         self._created_at = created_at
-
-    @property
-    def display_name(self) -> 'str':
-        """Gets the display_name of this V1Machine.  # noqa: E501
-
-
-        :return: The display_name of this V1Machine.  # noqa: E501
-        :rtype: str
-        """
-        return self._display_name
-
-    @display_name.setter
-    def display_name(self, display_name: 'str'):
-        """Sets the display_name of this V1Machine.
-
-
-        :param display_name: The display_name of this V1Machine.  # noqa: E501
-        :type: str
-        """
-
-        self._display_name = display_name
 
     @property
     def id(self) -> 'str':

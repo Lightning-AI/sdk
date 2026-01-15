@@ -42,8 +42,10 @@ class V1KubernetesDirectSettingsV1(object):
     """
     swagger_types = {
         'daily_usage_report': 'bool',
+        'disable_pods_collection': 'bool',
         'monthly_usage_report': 'bool',
         'nfs_storage_threshold': 'float',
+        'persist_pods_logs': 'bool',
         'slack_channel_id': 'str',
         'temperature_threshold': 'float',
         'weekly_usage_report': 'bool'
@@ -51,28 +53,36 @@ class V1KubernetesDirectSettingsV1(object):
 
     attribute_map = {
         'daily_usage_report': 'dailyUsageReport',
+        'disable_pods_collection': 'disablePodsCollection',
         'monthly_usage_report': 'monthlyUsageReport',
         'nfs_storage_threshold': 'nfsStorageThreshold',
+        'persist_pods_logs': 'persistPodsLogs',
         'slack_channel_id': 'slackChannelId',
         'temperature_threshold': 'temperatureThreshold',
         'weekly_usage_report': 'weeklyUsageReport'
     }
 
-    def __init__(self, daily_usage_report: 'bool' =None, monthly_usage_report: 'bool' =None, nfs_storage_threshold: 'float' =None, slack_channel_id: 'str' =None, temperature_threshold: 'float' =None, weekly_usage_report: 'bool' =None):  # noqa: E501
+    def __init__(self, daily_usage_report: 'bool' =None, disable_pods_collection: 'bool' =None, monthly_usage_report: 'bool' =None, nfs_storage_threshold: 'float' =None, persist_pods_logs: 'bool' =None, slack_channel_id: 'str' =None, temperature_threshold: 'float' =None, weekly_usage_report: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectSettingsV1 - a model defined in Swagger"""  # noqa: E501
         self._daily_usage_report = None
+        self._disable_pods_collection = None
         self._monthly_usage_report = None
         self._nfs_storage_threshold = None
+        self._persist_pods_logs = None
         self._slack_channel_id = None
         self._temperature_threshold = None
         self._weekly_usage_report = None
         self.discriminator = None
         if daily_usage_report is not None:
             self.daily_usage_report = daily_usage_report
+        if disable_pods_collection is not None:
+            self.disable_pods_collection = disable_pods_collection
         if monthly_usage_report is not None:
             self.monthly_usage_report = monthly_usage_report
         if nfs_storage_threshold is not None:
             self.nfs_storage_threshold = nfs_storage_threshold
+        if persist_pods_logs is not None:
+            self.persist_pods_logs = persist_pods_logs
         if slack_channel_id is not None:
             self.slack_channel_id = slack_channel_id
         if temperature_threshold is not None:
@@ -100,6 +110,27 @@ class V1KubernetesDirectSettingsV1(object):
         """
 
         self._daily_usage_report = daily_usage_report
+
+    @property
+    def disable_pods_collection(self) -> 'bool':
+        """Gets the disable_pods_collection of this V1KubernetesDirectSettingsV1.  # noqa: E501
+
+
+        :return: The disable_pods_collection of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_pods_collection
+
+    @disable_pods_collection.setter
+    def disable_pods_collection(self, disable_pods_collection: 'bool'):
+        """Sets the disable_pods_collection of this V1KubernetesDirectSettingsV1.
+
+
+        :param disable_pods_collection: The disable_pods_collection of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_pods_collection = disable_pods_collection
 
     @property
     def monthly_usage_report(self) -> 'bool':
@@ -142,6 +173,27 @@ class V1KubernetesDirectSettingsV1(object):
         """
 
         self._nfs_storage_threshold = nfs_storage_threshold
+
+    @property
+    def persist_pods_logs(self) -> 'bool':
+        """Gets the persist_pods_logs of this V1KubernetesDirectSettingsV1.  # noqa: E501
+
+
+        :return: The persist_pods_logs of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._persist_pods_logs
+
+    @persist_pods_logs.setter
+    def persist_pods_logs(self, persist_pods_logs: 'bool'):
+        """Sets the persist_pods_logs of this V1KubernetesDirectSettingsV1.
+
+
+        :param persist_pods_logs: The persist_pods_logs of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._persist_pods_logs = persist_pods_logs
 
     @property
     def slack_channel_id(self) -> 'str':
