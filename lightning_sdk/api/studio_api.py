@@ -667,12 +667,15 @@ class StudioApi:
         auth.authenticate()
         return self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
 
-    def get_tree(self, studio_id: str, teamspace_id: str, path: str) -> None:
+    def get_tree(self, studio_id: str, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:
         token = self._authenticate_and_get_token()
 
-        query_params = {
-            "token": token,
-        }
+        if query_params is None:
+            query_params = {
+                "token": token,
+            }
+        else:
+            query_params["token"] = token
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/trees/{path}",
             params=query_params,
@@ -707,30 +710,6 @@ class StudioApi:
         warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
         return {"exists": False, "type": None, "size": None}
 
-    def collect_files(self, studio_id: str, teamspace_id: str, current_path: str) -> List[Dict]:
-        files = []
-        tree = self.get_tree(studio_id, teamspace_id, path=current_path)
-        tree_items = tree.get("tree", [])
-
-        for item in tree_items:
-            item_name = item.get("path", "")
-            item_type = item.get("type")
-
-            full_path = f"{current_path}/{item_name}" if current_path else item_name
-
-            if item_type == "blob":
-                files.append(
-                    {
-                        "path": full_path,
-                        "size": item.get("size", 0),
-                    }
-                )
-            elif item_type == "tree":
-                nested_files = self.collect_files(studio_id, teamspace_id, full_path)
-                files.extend(nested_files)
-
-        return files
-
     def list_files(
         self,
         studio_id: str,
@@ -739,7 +718,7 @@ class StudioApi:
     ) -> List[Dict]:
         """Recursively list all files in a directory tree."""
         path = path.strip("/")
-        return self.collect_files(studio_id, teamspace_id, path)
+        return self.get_tree(studio_id, teamspace_id, path, query_params={"recursive": "true"}).get("tree", [])
 
     def upload_file(
         self,
@@ -836,12 +815,11 @@ class StudioApi:
         pbar: Optional[tqdm],
     ) -> None:
         """Download a single file from Studio with progress tracking."""
-        file_path = file_info["path"]
-
-        relative_path = file_path[len(base_path) :].lstrip("/") if base_path else file_path
-
+        relative_path = file_info["path"].lstrip("/")
         local_file = download_dir / relative_path
         local_file.parent.mkdir(parents=True, exist_ok=True)
+
+        file_path = os.path.join(base_path, relative_path) if base_path else relative_path
 
         query_params = {
             "token": token,

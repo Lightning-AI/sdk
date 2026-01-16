@@ -1331,76 +1331,61 @@ def test_get_path_info(mock_login, mock_requests_get, path, tree_response, expec
 
 
 @pytest.mark.parametrize(
-    ("path", "mock_responses", "expected_files", "expected_call_count", "expected_paths"),
+    ("path", "mock_response", "expected_files"),
     [
         # nested directories with multiple levels
         (
             "my-folder",
+            {
+                "tree": [
+                    {"path": "file1.txt", "type": "blob"},
+                    {"path": "folder1/nested.txt", "type": "blob", "size": 999},
+                    {"path": "folder1/subfolder/deep.txt", "type": "blob", "size": 111},
+                    {"path": "file2.py", "type": "blob"},
+                ],
+                "truncated": False,
+            },
             [
-                {
-                    "tree": [
-                        {"path": "file1.txt", "type": "blob", "size": 1234},
-                        {"path": "folder1", "type": "tree"},
-                        {"path": "file2.py", "type": "blob", "size": 5678},
-                    ],
-                    "truncated": False,
-                },
-                {
-                    "tree": [
-                        {"path": "nested.txt", "type": "blob", "size": 999},
-                        {"path": "subfolder", "type": "tree"},
-                    ],
-                    "truncated": False,
-                },
-                {
-                    "tree": [
-                        {"path": "deep.txt", "type": "blob", "size": 111},
-                    ],
-                    "truncated": False,
-                },
-            ],
-            [
-                {"path": "my-folder/file1.txt", "size": 1234},
-                {"path": "my-folder/file2.py", "size": 5678},
-                {"path": "my-folder/folder1/nested.txt", "size": 999},
-                {"path": "my-folder/folder1/subfolder/deep.txt", "size": 111},
-            ],
-            3,
-            [
-                "/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/my-folder",
-                "/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/my-folder/folder1",
-                "/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/my-folder/folder1/subfolder",
+                {"path": "file1.txt", "type": "blob"},
+                {"path": "folder1/nested.txt", "type": "blob", "size": 999},
+                {"path": "folder1/subfolder/deep.txt", "type": "blob", "size": 111},
+                {"path": "file2.py", "type": "blob"},
             ],
         ),
         # empty directory
         (
             "empty-folder",
-            [
-                {
-                    "tree": [],
-                    "truncated": False,
-                },
-            ],
+            {
+                "tree": [],
+                "truncated": False,
+            },
             [],
-            1,
-            ["/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/empty-folder"],
         ),
         # root path (empty string)
         (
             "",
+            {
+                "tree": [
+                    {"path": "root-file.txt", "type": "blob", "size": 100},
+                ],
+                "truncated": False,
+            },
             [
-                {
-                    "tree": [
-                        {"path": "root-file.txt", "type": "blob", "size": 100},
-                    ],
-                    "truncated": False,
-                },
+                {"path": "root-file.txt", "type": "blob", "size": 100},
             ],
+        ),
+        # path with leading/trailing slashes
+        (
+            "/my-folder/",
+            {
+                "tree": [
+                    {"path": "file.txt", "type": "blob"},
+                ],
+                "truncated": False,
+            },
             [
-                {"path": "root-file.txt", "size": 100},
+                {"path": "file.txt", "type": "blob"},
             ],
-            1,
-            ["/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/"],
         ),
     ],
 )
@@ -1412,35 +1397,36 @@ def test_list_files(
     mock_login,
     mock_requests_get,
     path,
-    mock_responses,
+    mock_response,
     expected_files,
-    expected_call_count,
-    expected_paths,
 ):
-    """Test list_files recursively retrieves all files from a directory tree."""
+    """Test that list_files correctly calls get_tree with recursive=true."""
     mock_login.return_value = V1LoginResponse(token="test-token")
 
-    mock_response_objects = []
-    for response_data in mock_responses:
-        mock_response = mock.MagicMock()
-        mock_response.json.return_value = response_data
-        mock_response_objects.append(mock_response)
-
-    mock_requests_get.side_effect = mock_response_objects
-
     studio_api = StudioApi()
-    result = studio_api.list_files("st-abc", "ts-abc", path)
+    studio_api = StudioApi()
+    mock_response_obj = mock.MagicMock()
+    mock_response_obj.json.return_value = mock_response
+    mock_requests_get.return_value = mock_response_obj
 
-    assert sorted(result, key=lambda x: x["path"]) == sorted(expected_files, key=lambda x: x["path"])
+    result = studio_api.list_files(
+        studio_id="st-abc",
+        teamspace_id="ts-abc",
+        path=path,
+    )
 
-    assert mock_requests_get.call_count == expected_call_count
+    assert mock_requests_get.call_count == 1
+    call_args = mock_requests_get.call_args
 
-    call_args_list = [call[0][0] for call in mock_requests_get.call_args_list]
-    for expected_path, actual_call in zip(expected_paths, call_args_list):
-        assert expected_path in actual_call
+    # get_tree
+    host = studio_api._client.api_client.configuration.host
+    expected_url = f"{host}/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/{path.strip('/')}"
+    assert call_args[0][0] == expected_url
 
-    for call in mock_requests_get.call_args_list:
-        assert call[1]["params"] == {"token": "test-token"}
+    # recursive
+    assert call_args[1]["params"]["recursive"] == "true"
+
+    assert result == expected_files
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
