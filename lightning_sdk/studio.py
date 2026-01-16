@@ -341,7 +341,7 @@ class Studio(metaclass=TrackCallsMeta):
             if new_machine != self.machine:
                 raise RuntimeError(
                     f"Requested to start {self._cls_name} on {new_machine}, "
-                    "but {self._cls_name} is already running on {self.machine}."
+                    f"but {self._cls_name} is already running on {self.machine}."
                     " Consider switching instead!"
                 )
             _logger.info(f"{self._cls_name} {self.name} is already running")
