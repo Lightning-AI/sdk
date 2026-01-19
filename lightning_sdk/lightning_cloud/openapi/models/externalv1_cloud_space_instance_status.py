@@ -44,6 +44,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'alerts': 'list[V1ServerAlert]',
         'app_url': 'str',
         'bytes_to_sync': 'str',
+        'capacity_reservation_id': 'str',
         'cloud_space_id': 'str',
         'cloud_space_instance_id': 'str',
         'cluster_id': 'str',
@@ -81,6 +82,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'alerts': 'alerts',
         'app_url': 'appUrl',
         'bytes_to_sync': 'bytesToSync',
+        'capacity_reservation_id': 'capacityReservationId',
         'cloud_space_id': 'cloudSpaceId',
         'cloud_space_instance_id': 'cloudSpaceInstanceId',
         'cluster_id': 'clusterId',
@@ -114,11 +116,12 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, cluster_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, private_ip_address: 'str' =None, public_ip_address: 'str' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, transfer_metadata: 'V1CloudSpaceTransferMetadata' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, capacity_reservation_id: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, cluster_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, private_ip_address: 'str' =None, public_ip_address: 'str' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, transfer_metadata: 'V1CloudSpaceTransferMetadata' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._alerts = None
         self._app_url = None
         self._bytes_to_sync = None
+        self._capacity_reservation_id = None
         self._cloud_space_id = None
         self._cloud_space_instance_id = None
         self._cluster_id = None
@@ -157,6 +160,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.app_url = app_url
         if bytes_to_sync is not None:
             self.bytes_to_sync = bytes_to_sync
+        if capacity_reservation_id is not None:
+            self.capacity_reservation_id = capacity_reservation_id
         if cloud_space_id is not None:
             self.cloud_space_id = cloud_space_id
         if cloud_space_instance_id is not None:
@@ -282,6 +287,27 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._bytes_to_sync = bytes_to_sync
+
+    @property
+    def capacity_reservation_id(self) -> 'str':
+        """Gets the capacity_reservation_id of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The capacity_reservation_id of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._capacity_reservation_id
+
+    @capacity_reservation_id.setter
+    def capacity_reservation_id(self, capacity_reservation_id: 'str'):
+        """Sets the capacity_reservation_id of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param capacity_reservation_id: The capacity_reservation_id of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._capacity_reservation_id = capacity_reservation_id
 
     @property
     def cloud_space_id(self) -> 'str':

@@ -47,6 +47,8 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
         'full_cloud_provider_reservation_string': 'str',
         'instance_type': 'str',
         'match_pattern': 'str',
+        'num_instances': 'int',
+        'populate_from_cloud_provider': 'bool',
         'region': 'str',
         'start_time': 'datetime',
         'zone': 'str'
@@ -59,12 +61,14 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
         'full_cloud_provider_reservation_string': 'fullCloudProviderReservationString',
         'instance_type': 'instanceType',
         'match_pattern': 'matchPattern',
+        'num_instances': 'numInstances',
+        'populate_from_cloud_provider': 'populateFromCloudProvider',
         'region': 'region',
         'start_time': 'startTime',
         'zone': 'zone'
     }
 
-    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'int' =None, populate_from_cloud_provider: 'bool' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
         """ClusterServiceCreateClusterCapacityReservationBody - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_type = None
         self._cloud_provider_capacity_reservation_id = None
@@ -72,6 +76,8 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
         self._full_cloud_provider_reservation_string = None
         self._instance_type = None
         self._match_pattern = None
+        self._num_instances = None
+        self._populate_from_cloud_provider = None
         self._region = None
         self._start_time = None
         self._zone = None
@@ -88,6 +94,10 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
             self.instance_type = instance_type
         if match_pattern is not None:
             self.match_pattern = match_pattern
+        if num_instances is not None:
+            self.num_instances = num_instances
+        if populate_from_cloud_provider is not None:
+            self.populate_from_cloud_provider = populate_from_cloud_provider
         if region is not None:
             self.region = region
         if start_time is not None:
@@ -220,6 +230,48 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
         """
 
         self._match_pattern = match_pattern
+
+    @property
+    def num_instances(self) -> 'int':
+        """Gets the num_instances of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+
+
+        :return: The num_instances of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_instances
+
+    @num_instances.setter
+    def num_instances(self, num_instances: 'int'):
+        """Sets the num_instances of this ClusterServiceCreateClusterCapacityReservationBody.
+
+
+        :param num_instances: The num_instances of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+        :type: int
+        """
+
+        self._num_instances = num_instances
+
+    @property
+    def populate_from_cloud_provider(self) -> 'bool':
+        """Gets the populate_from_cloud_provider of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+
+
+        :return: The populate_from_cloud_provider of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._populate_from_cloud_provider
+
+    @populate_from_cloud_provider.setter
+    def populate_from_cloud_provider(self, populate_from_cloud_provider: 'bool'):
+        """Sets the populate_from_cloud_provider of this ClusterServiceCreateClusterCapacityReservationBody.
+
+
+        :param populate_from_cloud_provider: The populate_from_cloud_provider of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._populate_from_cloud_provider = populate_from_cloud_provider
 
     @property
     def region(self) -> 'str':

@@ -2942,6 +2942,8 @@ class ClusterServiceApi(object):
         :param datetime start_time:
         :param datetime end_time:
         :param bool available_only:
+        :param bool include_all:
+        :param bool find_used_by: whether to find which cloudspace_ids and jobs_ids are using the reservations
         :param bool from_aggregate:
         :param str apparent_provider: only required if from aggregate, storage.providertype (eg `lightningaggregate`)
         :return: V1ListClusterCapacityReservationsResponse
@@ -2970,6 +2972,8 @@ class ClusterServiceApi(object):
         :param datetime start_time:
         :param datetime end_time:
         :param bool available_only:
+        :param bool include_all:
+        :param bool find_used_by: whether to find which cloudspace_ids and jobs_ids are using the reservations
         :param bool from_aggregate:
         :param str apparent_provider: only required if from aggregate, storage.providertype (eg `lightningaggregate`)
         :return: V1ListClusterCapacityReservationsResponse
@@ -2977,7 +2981,7 @@ class ClusterServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'cluster_id', 'project_id', 'start_time', 'end_time', 'available_only', 'from_aggregate', 'apparent_provider']  # noqa: E501
+        all_params = ['org_id', 'cluster_id', 'project_id', 'start_time', 'end_time', 'available_only', 'include_all', 'find_used_by', 'from_aggregate', 'apparent_provider']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3018,6 +3022,10 @@ class ClusterServiceApi(object):
             query_params.append(('endTime', params['end_time']))  # noqa: E501
         if 'available_only' in params:
             query_params.append(('availableOnly', params['available_only']))  # noqa: E501
+        if 'include_all' in params:
+            query_params.append(('includeAll', params['include_all']))  # noqa: E501
+        if 'find_used_by' in params:
+            query_params.append(('findUsedBy', params['find_used_by']))  # noqa: E501
         if 'from_aggregate' in params:
             query_params.append(('fromAggregate', params['from_aggregate']))  # noqa: E501
         if 'apparent_provider' in params:

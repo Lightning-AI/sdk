@@ -57,6 +57,7 @@ class V1ClusterCapacityReservation(object):
         'project_id': 'str',
         'region': 'str',
         'start_time': 'datetime',
+        'used_by': 'list[V1CapacityReservationUsedBy]',
         'zone': 'str'
     }
 
@@ -77,10 +78,11 @@ class V1ClusterCapacityReservation(object):
         'project_id': 'projectId',
         'region': 'region',
         'start_time': 'startTime',
+        'used_by': 'usedBy',
         'zone': 'zone'
     }
 
-    def __init__(self, aggregate_availability: 'str' =None, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, in_use: 'str' =None, in_use_aggregate: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, node_group_name: 'str' =None, num_instances: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
+    def __init__(self, aggregate_availability: 'str' =None, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, in_use: 'str' =None, in_use_aggregate: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, node_group_name: 'str' =None, num_instances: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, used_by: 'list[V1CapacityReservationUsedBy]' =None, zone: 'str' =None):  # noqa: E501
         """V1ClusterCapacityReservation - a model defined in Swagger"""  # noqa: E501
         self._aggregate_availability = None
         self._capacity_reservation_type = None
@@ -98,6 +100,7 @@ class V1ClusterCapacityReservation(object):
         self._project_id = None
         self._region = None
         self._start_time = None
+        self._used_by = None
         self._zone = None
         self.discriminator = None
         if aggregate_availability is not None:
@@ -132,6 +135,8 @@ class V1ClusterCapacityReservation(object):
             self.region = region
         if start_time is not None:
             self.start_time = start_time
+        if used_by is not None:
+            self.used_by = used_by
         if zone is not None:
             self.zone = zone
 
@@ -470,6 +475,27 @@ class V1ClusterCapacityReservation(object):
         """
 
         self._start_time = start_time
+
+    @property
+    def used_by(self) -> 'list[V1CapacityReservationUsedBy]':
+        """Gets the used_by of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The used_by of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: list[V1CapacityReservationUsedBy]
+        """
+        return self._used_by
+
+    @used_by.setter
+    def used_by(self, used_by: 'list[V1CapacityReservationUsedBy]'):
+        """Sets the used_by of this V1ClusterCapacityReservation.
+
+
+        :param used_by: The used_by of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: list[V1CapacityReservationUsedBy]
+        """
+
+        self._used_by = used_by
 
     @property
     def zone(self) -> 'str':
