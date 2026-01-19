@@ -556,7 +556,7 @@ class Studio(metaclass=TrackCallsMeta):
         if status != Status.Running:
             raise RuntimeError(
                 f"Cannot run a command in a {self._cls_name} that is not running. "
-                "{self._cls_name} {self.name} is {status}."
+                f"{self._cls_name} {self.name} is {status}."
             )
         output, exit_code = self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)
         output = output.strip()
