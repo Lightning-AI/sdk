@@ -51,6 +51,15 @@ def run() -> None:
 )
 @click.option("--user", default=None, help="The user owning the teamspace (if any). Defaults to the current user.")
 @click.option(
+    "--cloud-provider",
+    "--cloud_provider",
+    default=None,
+    help=(
+        "The provider to create the studio on. If set, must be in agreement with the provider from the "
+        "cloud_account (if specified)."
+    ),
+)
+@click.option(
     "--cloud-account",
     "--cloud_account",
     default=None,
@@ -141,6 +150,7 @@ def job(
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
     user: Optional[str] = None,
+    cloud_provider: Optional[str] = None,
     cloud_account: Optional[str] = None,
     env: Sequence[str] = (),
     interruptible: bool = False,
@@ -184,6 +194,7 @@ def job(
         teamspace=resolved_teamspace,
         org=org,
         user=user,
+        cloud_provider=cloud_provider,
         cloud_account=cloud_account,
         env=env_dict,
         interruptible=interruptible,

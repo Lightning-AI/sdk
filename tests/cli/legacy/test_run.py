@@ -57,6 +57,10 @@ Options:
                                   any). Defaults to the current organization.
   --user TEXT                     The user owning the teamspace (if any).
                                   Defaults to the current user.
+  --cloud-provider, --cloud_provider TEXT
+                                  The provider to create the studio on. If
+                                  set, must be in agreement with the provider
+                                  from the cloud_account (if specified).
   --cloud-account, --cloud_account TEXT
                                   The cloud account to run the job on.
                                   Defaults to the studio cloud account if

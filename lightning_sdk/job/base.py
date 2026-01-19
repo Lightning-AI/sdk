@@ -201,7 +201,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
                 raise RuntimeError(
                     "image and studio are mutually exclusive as both define the environment to run the job in"
                 )
-            if cloud_account is None and in_studio():
+            if cloud_account is None and cloud_provider is None and in_studio():
                 try:
                     with skip_studio_setup():
                         resolve_studio = Studio(teamspace=teamspace, user=user, org=org)

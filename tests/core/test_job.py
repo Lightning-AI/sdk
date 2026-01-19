@@ -726,6 +726,52 @@ def test_submit_job_v2_image_from_studio(
     assert keeping_alive_mock.call_count == 0
 
 
+@mock.patch("lightning_sdk.studio._internal_status_to_external_status", return_value=Status.Running)
+def test_run_job_with_cloud_provider(
+    mock_in_studio,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_job_get_cloudspace_mocker,
+    job_api_get_job_by_name_mocker,
+):
+    from lightning_sdk.job.job import Job
+    from lightning_sdk.job.v2 import _JobV2
+
+    submit_mock = mock.MagicMock()
+    _JobV2._submit = submit_mock
+
+    Job.run(
+        "test-job",
+        machine=Machine.CPU,
+        command="echo hello",
+        image="nginx",
+        teamspace="ts-abc",
+        org="org-abc",
+        cloud_provider="nebius",  # providing cloud_provider
+        cloud_account=None,
+    )
+
+    submit_mock.assert_called_once_with(
+        command="echo hello",
+        cloud_account=None,  # cloud_account still None
+        cloud_provider="nebius",  # cloud_provider matches
+        env=None,
+        image="nginx",
+        interruptible=False,
+        machine=Machine.CPU,
+        studio=None,
+        cloud_account_auth=False,
+        image_credentials=None,
+        artifacts_local=None,
+        artifacts_remote=None,
+        entrypoint="sh -c",
+        path_mappings=None,
+        max_runtime=None,
+        reuse_snapshot=True,
+        scratch_disks=None,
+    )
+
+
 def test_job_logs_v2(
     internal_job_logs_mocker,
     job_api_get_job_by_name_mocker,
