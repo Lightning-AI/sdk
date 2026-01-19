@@ -10,7 +10,6 @@ from lightning_sdk.api.utils import (
     _download_model_files,
     _download_teamspace_files,
     _DummyBody,
-    _FileUploader,
     _get_model_version,
     _ModelFileUploader,
     _resolve_teamspace_remote_path,
@@ -401,14 +400,34 @@ class TeamspaceApi:
         progress_bar: bool,
     ) -> None:
         """Uploads file to given remote path in the Teamspace drive."""
-        _FileUploader(
-            client=self._client,
-            teamspace_id=teamspace_id,
-            cloud_account=cloud_account,
-            file_path=file_path,
-            remote_path=_resolve_teamspace_remote_path(remote_path),
-            progress_bar=progress_bar,
-        )()
+        auth = Auth()
+        auth.authenticate()
+        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+
+        query_params = {"token": token, "clusterId": cloud_account}
+        client_host = self._client.api_client.configuration.host
+        url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/uploads/blobs/{remote_path}"
+
+        filesize = os.path.getsize(file_path)
+        with open(file_path, "rb") as f:
+            if progress_bar:
+                filesize = os.path.getsize(file_path)
+                with tqdm.wrapattr(
+                    f,
+                    "read",
+                    desc=f"Uploading {os.path.split(file_path)[1]}",
+                    total=filesize,
+                    unit="B",
+                    unit_scale=True,
+                    unit_divisor=1000,
+                ) as wrapped_file:
+                    r = requests.put(url, data=wrapped_file, params=query_params, timeout=30)
+            else:
+                r = requests.put(url, data=f, params=query_params, timeout=30)
+
+        if r.status_code == 200:
+            return
+        raise RuntimeError(f"Failed to upload file '{file_path}' to the Teamspace drive. Status code: {r.status_code}")
 
     def download_file(
         self,

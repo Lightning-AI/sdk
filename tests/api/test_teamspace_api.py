@@ -7,7 +7,6 @@ import pytest
 
 from lightning_sdk import Machine
 from lightning_sdk.api.teamspace_api import TeamspaceApi
-from lightning_sdk.api.utils import _BYTES_PER_MB
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCreateModelBody,
     ModelsStoreCreateModelVersionBody,
@@ -319,29 +318,47 @@ def test_get_model_errors(internal_teamspace_api_mocker):
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
-@mock.patch("lightning_sdk.api.teamspace_api._FileUploader")
+@mock.patch("requests.put")
+@mock.patch("lightning_sdk.api.teamspace_api.tqdm")
+@mock.patch("lightning_sdk.api.teamspace_api.Auth")
 def test_upload_file(
-    uploader_mock,
+    auth_mock,
+    tqdm_mock,
+    requests_put_mock,
     tmpdir,
     progress_bar,
 ):
+    requests_put_mock.return_value.status_code = 200
+    tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
+
+    auth_instance = auth_mock.return_value
+    auth_instance.api_key = "test-api-key"
+
     teamspace_api = TeamspaceApi()
+
+    # Mock the entire _client object
+    teamspace_api._client = mock.Mock()
+    teamspace_api._client.auth_service_login.return_value = mock.Mock(token="test-token")
+    teamspace_api._client.api_client.configuration.host = "https://api.example.com"
 
     filepath = os.path.join(tmpdir, "file1")
     subprocess.run(f"truncate -s 40MB {filepath}".split(" "))
 
-    os.environ["LIGHTNING_MULTIPART_THRESHOLD"] = str(20 * _BYTES_PER_MB)
     teamspace_api.upload_file("ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar)
 
-    uploader_mock.assert_called_with(
-        client=mock.ANY,
-        file_path=filepath,
-        remote_path="/Uploads/file1",
-        cloud_account="cluster-abc",
-        teamspace_id="ts-abc",
-        progress_bar=progress_bar,
-    )
-    uploader_mock().assert_called_with()  # .__call__()
+    assert requests_put_mock.call_count == 1
+    (url,) = requests_put_mock.call_args.args
+    params = requests_put_mock.call_args.kwargs["params"]
+
+    assert "ts-abc" in url
+    assert "file1" in url
+    assert "token" in params
+
+    # Verify tqdm was used only if progress_bar is True
+    if progress_bar:
+        tqdm_mock.wrapattr.assert_called_once()
+    else:
+        tqdm_mock.wrapattr.assert_not_called()
 
 
 def test_download_file(tmpdir, internal_teamspace_api_mocker, internal_studio_api_login):
