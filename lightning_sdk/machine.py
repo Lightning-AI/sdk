@@ -162,12 +162,12 @@ Machine.CPU_X_4 = Machine(name="CPU_X_4", slug="cpu-4", family="CPU", accelerato
 Machine.CPU_X_8 = Machine(name="CPU_X_8", slug="cpu-8", family="CPU", accelerator_count=8)
 Machine.CPU_X_16 = Machine(name="CPU_X_16", slug="cpu-16", family="CPU", accelerator_count=16)
 # available data-prep (big disk) machines
-Machine.DATA_PREP = Machine(name="DATA_PREP", slug="data-prep-mid", family="DATA_PREP", accelerator_count=32)
+Machine.DATA_PREP = Machine(name="DATA_PREP", slug="data-prep-mid", family="DATA-PREP", accelerator_count=32)
 Machine.DATA_PREP_MAX = Machine(
-    name="DATA_PREP_MAX", slug="data-prep-max-large", family="DATA_PREP", accelerator_count=64
+    name="DATA_PREP_MAX", slug="data-prep-max-large", family="DATA-PREP", accelerator_count=64
 )
 Machine.DATA_PREP_ULTRA = Machine(
-    name="DATA_PREP_ULTRA", slug="data-prep-ultra-extra-large", family="DATA_PREP", accelerator_count=96
+    name="DATA_PREP_ULTRA", slug="data-prep-ultra-extra-large", family="DATA-PREP", accelerator_count=96
 )
 
 # GPU machines
