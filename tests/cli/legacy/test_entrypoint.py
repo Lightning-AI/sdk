@@ -21,6 +21,7 @@ Commands:
   config       Manage Lightning SDK and CLI configuration.
   configure    Configure access to resources on the Lightning AI platform.
   connect      Connect to lightning products.
+  cp           Copy files between local filesystem, Studios, and...
   create       Create new resources on the Lightning AI platform.
   delete       Delete resources on the Lightning AI platform.
   deploy       Deploy a LitServe model.
@@ -63,6 +64,7 @@ Commands:
   config       Manage Lightning SDK and CLI configuration.
   configure    Configure access to resources on the Lightning AI platform.
   connect      Connect to lightning products.
+  cp           Copy files between local filesystem, Studios, and...
   create       Create new resources on the Lightning AI platform.
   delete       Delete resources on the Lightning AI platform.
   deploy       Deploy a LitServe model.

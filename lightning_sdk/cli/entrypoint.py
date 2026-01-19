@@ -12,6 +12,7 @@ from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.groups import (
     base_studio,
     config,
+    cp,
     # job,
     license,
     # mmt,
@@ -77,6 +78,7 @@ main_cli.add_command(studio)
 main_cli.add_command(vm)
 main_cli.add_command(base_studio)
 main_cli.add_command(license)
+main_cli.add_command(cp)
 
 if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
     #### LEGACY COMMANDS ####

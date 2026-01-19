@@ -150,6 +150,8 @@ unfixable = ["F401"]
     "E501",  # Line too long (122 > 120 characters)
 ]
 
+"lightning_sdk/cli/groups.py" = ["D301"]
+
 [tool.ruff.pydocstyle]
 # Use Google-style docstrings.
 convention = "google"
