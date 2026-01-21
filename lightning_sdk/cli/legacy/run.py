@@ -105,7 +105,7 @@ def run() -> None:
 )
 @click.option(
     "--entrypoint",
-    default="sh -c",
+    default=None,
     show_default=True,
     help=(
         "The entrypoint of your docker container. "
@@ -300,7 +300,7 @@ def job(
 )
 @click.option(
     "--entrypoint",
-    default="sh -c",
+    default=None,
     show_default=True,
     help=(
         "The entrypoint of your docker container. "

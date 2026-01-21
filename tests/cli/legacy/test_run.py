@@ -1,3 +1,4 @@
+import os
 import subprocess
 from typing import Dict
 
@@ -7,7 +8,9 @@ from lightning_sdk.cli.legacy.run import _resolve_envs, _resolve_path_mapping
 
 
 def test_run_help():
-    result = subprocess.run("lightning run --help", shell=True, capture_output=True, text=True)
+    env = os.environ.copy()
+    env["COLUMNS"] = "80"
+    result = subprocess.run("lightning run --help", shell=True, capture_output=True, text=True, env=env)
     result_text = result.stdout + result.stderr
 
     assert (
@@ -27,7 +30,9 @@ Commands:
 
 
 def test_job_help():
-    result = subprocess.run("lightning run job --help", shell=True, capture_output=True, text=True)
+    env = os.environ.copy()
+    env["COLUMNS"] = "80"
+    result = subprocess.run("lightning run job --help", shell=True, capture_output=True, text=True, env=env)
     result_text = result.stdout + result.stderr
 
     assert (
@@ -88,7 +93,7 @@ Options:
                                   standard shell. To use the pre-defined
                                   entrypoint of the provided image, set this
                                   to an empty string. Only applicable when
-                                  submitting docker jobs.  [default: sh -c]
+                                  submitting docker jobs.
   --path-mapping, --path_mapping TEXT
                                   Maps path inside of containers to paths
                                   inside data-connections. Should be of form <
@@ -114,7 +119,9 @@ Options:
 
 
 def test_mmt_help():
-    result = subprocess.run("lightning run mmt --help", shell=True, capture_output=True, text=True)
+    env = os.environ.copy()
+    env["COLUMNS"] = "80"
+    result = subprocess.run("lightning run mmt --help", shell=True, capture_output=True, text=True, env=env)
     result_text = result.stdout + result.stderr
 
     assert (
@@ -174,7 +181,7 @@ Options:
                                   standard shell. To use the pre-defined
                                   entrypoint of the provided image, set this
                                   to an empty string. Only applicable when
-                                  submitting docker jobs.  [default: sh -c]
+                                  submitting docker jobs.
   --path-mapping, --path_mapping TEXT
                                   Maps path inside of containers to paths
                                   inside data-connections. Should be of form <
