@@ -48,6 +48,8 @@ class V1KubernetesDirectV1(object):
         'grafana_namespace': 'str',
         'grafana_service_name': 'str',
         'grafana_service_port': 'str',
+        'incident_alert_notifications': 'list[V1K8sIncidentSetting]',
+        'incident_auto_cordon': 'list[V1K8sIncidentSetting]',
         'incident_historical_scan_complete': 'bool',
         'incident_slack_notifiers': 'list[V1SlackNotifier]',
         'kubeconfig': 'str',
@@ -66,6 +68,8 @@ class V1KubernetesDirectV1(object):
         'grafana_namespace': 'grafanaNamespace',
         'grafana_service_name': 'grafanaServiceName',
         'grafana_service_port': 'grafanaServicePort',
+        'incident_alert_notifications': 'incidentAlertNotifications',
+        'incident_auto_cordon': 'incidentAutoCordon',
         'incident_historical_scan_complete': 'incidentHistoricalScanComplete',
         'incident_slack_notifiers': 'incidentSlackNotifiers',
         'kubeconfig': 'kubeconfig',
@@ -76,7 +80,7 @@ class V1KubernetesDirectV1(object):
         'skip_user_label_injection': 'skipUserLabelInjection'
     }
 
-    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, container_registry_integration: 'V1ContainerRegistryIntegration' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_historical_scan_complete: 'bool' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
+    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, container_registry_integration: 'V1ContainerRegistryIntegration' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._automate_agent_installation = None
         self._aws = None
@@ -85,6 +89,8 @@ class V1KubernetesDirectV1(object):
         self._grafana_namespace = None
         self._grafana_service_name = None
         self._grafana_service_port = None
+        self._incident_alert_notifications = None
+        self._incident_auto_cordon = None
         self._incident_historical_scan_complete = None
         self._incident_slack_notifiers = None
         self._kubeconfig = None
@@ -108,6 +114,10 @@ class V1KubernetesDirectV1(object):
             self.grafana_service_name = grafana_service_name
         if grafana_service_port is not None:
             self.grafana_service_port = grafana_service_port
+        if incident_alert_notifications is not None:
+            self.incident_alert_notifications = incident_alert_notifications
+        if incident_auto_cordon is not None:
+            self.incident_auto_cordon = incident_auto_cordon
         if incident_historical_scan_complete is not None:
             self.incident_historical_scan_complete = incident_historical_scan_complete
         if incident_slack_notifiers is not None:
@@ -271,6 +281,48 @@ class V1KubernetesDirectV1(object):
         """
 
         self._grafana_service_port = grafana_service_port
+
+    @property
+    def incident_alert_notifications(self) -> 'list[V1K8sIncidentSetting]':
+        """Gets the incident_alert_notifications of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The incident_alert_notifications of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: list[V1K8sIncidentSetting]
+        """
+        return self._incident_alert_notifications
+
+    @incident_alert_notifications.setter
+    def incident_alert_notifications(self, incident_alert_notifications: 'list[V1K8sIncidentSetting]'):
+        """Sets the incident_alert_notifications of this V1KubernetesDirectV1.
+
+
+        :param incident_alert_notifications: The incident_alert_notifications of this V1KubernetesDirectV1.  # noqa: E501
+        :type: list[V1K8sIncidentSetting]
+        """
+
+        self._incident_alert_notifications = incident_alert_notifications
+
+    @property
+    def incident_auto_cordon(self) -> 'list[V1K8sIncidentSetting]':
+        """Gets the incident_auto_cordon of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The incident_auto_cordon of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: list[V1K8sIncidentSetting]
+        """
+        return self._incident_auto_cordon
+
+    @incident_auto_cordon.setter
+    def incident_auto_cordon(self, incident_auto_cordon: 'list[V1K8sIncidentSetting]'):
+        """Sets the incident_auto_cordon of this V1KubernetesDirectV1.
+
+
+        :param incident_auto_cordon: The incident_auto_cordon of this V1KubernetesDirectV1.  # noqa: E501
+        :type: list[V1K8sIncidentSetting]
+        """
+
+        self._incident_auto_cordon = incident_auto_cordon
 
     @property
     def incident_historical_scan_complete(self) -> 'bool':

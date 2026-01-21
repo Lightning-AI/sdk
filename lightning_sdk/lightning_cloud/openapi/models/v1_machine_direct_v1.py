@@ -45,6 +45,7 @@ class V1MachineDirectV1(object):
         'primary_region': 'str',
         'regions': 'list[str]',
         'setup_infiniband': 'bool',
+        'storage_overcommit_factor': 'float',
         'tailscale_auth_key_secret_id': 'str',
         'use_nvme_disks': 'bool'
     }
@@ -54,16 +55,18 @@ class V1MachineDirectV1(object):
         'primary_region': 'primaryRegion',
         'regions': 'regions',
         'setup_infiniband': 'setupInfiniband',
+        'storage_overcommit_factor': 'storageOvercommitFactor',
         'tailscale_auth_key_secret_id': 'tailscaleAuthKeySecretId',
         'use_nvme_disks': 'useNvmeDisks'
     }
 
-    def __init__(self, cloud_hypervisor_user: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, tailscale_auth_key_secret_id: 'str' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
+    def __init__(self, cloud_hypervisor_user: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._cloud_hypervisor_user = None
         self._primary_region = None
         self._regions = None
         self._setup_infiniband = None
+        self._storage_overcommit_factor = None
         self._tailscale_auth_key_secret_id = None
         self._use_nvme_disks = None
         self.discriminator = None
@@ -75,6 +78,8 @@ class V1MachineDirectV1(object):
             self.regions = regions
         if setup_infiniband is not None:
             self.setup_infiniband = setup_infiniband
+        if storage_overcommit_factor is not None:
+            self.storage_overcommit_factor = storage_overcommit_factor
         if tailscale_auth_key_secret_id is not None:
             self.tailscale_auth_key_secret_id = tailscale_auth_key_secret_id
         if use_nvme_disks is not None:
@@ -163,6 +168,27 @@ class V1MachineDirectV1(object):
         """
 
         self._setup_infiniband = setup_infiniband
+
+    @property
+    def storage_overcommit_factor(self) -> 'float':
+        """Gets the storage_overcommit_factor of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The storage_overcommit_factor of this V1MachineDirectV1.  # noqa: E501
+        :rtype: float
+        """
+        return self._storage_overcommit_factor
+
+    @storage_overcommit_factor.setter
+    def storage_overcommit_factor(self, storage_overcommit_factor: 'float'):
+        """Sets the storage_overcommit_factor of this V1MachineDirectV1.
+
+
+        :param storage_overcommit_factor: The storage_overcommit_factor of this V1MachineDirectV1.  # noqa: E501
+        :type: float
+        """
+
+        self._storage_overcommit_factor = storage_overcommit_factor
 
     @property
     def tailscale_auth_key_secret_id(self) -> 'str':

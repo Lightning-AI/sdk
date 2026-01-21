@@ -41,7 +41,6 @@ class V1ClusterSpec(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'ai_pod_v1': 'V1AiPodV1',
         'auth_token': 'str',
         'available_accelerators': 'list[str]',
         'aws_v1': 'V1AWSDirectV1',
@@ -50,6 +49,7 @@ class V1ClusterSpec(object):
         'cluster_type': 'V1ClusterType',
         'compute_cluster_ids': 'list[str]',
         'compute_cluster_request': 'V1ComputeClusterRequest',
+        'cudo_v1': 'V1CudoDirectV1',
         'deletion_options': 'V1ClusterDeletionOptions',
         'desired_state': 'V1ClusterState',
         'domain': 'str',
@@ -68,6 +68,7 @@ class V1ClusterSpec(object):
         'overprovisioning': 'list[V1InstanceOverprovisioningSpec]',
         'parent_cluster_id': 'str',
         'parent_cluster_type': 'str',
+        'partitioning_enabled': 'bool',
         'pause_automation': 'bool',
         'reservation_details': 'V1ReservationDetails',
         'reserved_capacity_provider': 'bool',
@@ -83,7 +84,6 @@ class V1ClusterSpec(object):
     }
 
     attribute_map = {
-        'ai_pod_v1': 'aiPodV1',
         'auth_token': 'authToken',
         'available_accelerators': 'availableAccelerators',
         'aws_v1': 'awsV1',
@@ -92,6 +92,7 @@ class V1ClusterSpec(object):
         'cluster_type': 'clusterType',
         'compute_cluster_ids': 'computeClusterIds',
         'compute_cluster_request': 'computeClusterRequest',
+        'cudo_v1': 'cudoV1',
         'deletion_options': 'deletionOptions',
         'desired_state': 'desiredState',
         'domain': 'domain',
@@ -110,6 +111,7 @@ class V1ClusterSpec(object):
         'overprovisioning': 'overprovisioning',
         'parent_cluster_id': 'parentClusterId',
         'parent_cluster_type': 'parentClusterType',
+        'partitioning_enabled': 'partitioningEnabled',
         'pause_automation': 'pauseAutomation',
         'reservation_details': 'reservationDetails',
         'reserved_capacity_provider': 'reservedCapacityProvider',
@@ -124,9 +126,8 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, ai_pod_v1: 'V1AiPodV1' =None, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, cudo_v1: 'V1CudoDirectV1' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, partitioning_enabled: 'bool' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
-        self._ai_pod_v1 = None
         self._auth_token = None
         self._available_accelerators = None
         self._aws_v1 = None
@@ -135,6 +136,7 @@ class V1ClusterSpec(object):
         self._cluster_type = None
         self._compute_cluster_ids = None
         self._compute_cluster_request = None
+        self._cudo_v1 = None
         self._deletion_options = None
         self._desired_state = None
         self._domain = None
@@ -153,6 +155,7 @@ class V1ClusterSpec(object):
         self._overprovisioning = None
         self._parent_cluster_id = None
         self._parent_cluster_type = None
+        self._partitioning_enabled = None
         self._pause_automation = None
         self._reservation_details = None
         self._reserved_capacity_provider = None
@@ -166,8 +169,6 @@ class V1ClusterSpec(object):
         self._voltage_park_v1 = None
         self._vultr_v1 = None
         self.discriminator = None
-        if ai_pod_v1 is not None:
-            self.ai_pod_v1 = ai_pod_v1
         if auth_token is not None:
             self.auth_token = auth_token
         if available_accelerators is not None:
@@ -184,6 +185,8 @@ class V1ClusterSpec(object):
             self.compute_cluster_ids = compute_cluster_ids
         if compute_cluster_request is not None:
             self.compute_cluster_request = compute_cluster_request
+        if cudo_v1 is not None:
+            self.cudo_v1 = cudo_v1
         if deletion_options is not None:
             self.deletion_options = deletion_options
         if desired_state is not None:
@@ -220,6 +223,8 @@ class V1ClusterSpec(object):
             self.parent_cluster_id = parent_cluster_id
         if parent_cluster_type is not None:
             self.parent_cluster_type = parent_cluster_type
+        if partitioning_enabled is not None:
+            self.partitioning_enabled = partitioning_enabled
         if pause_automation is not None:
             self.pause_automation = pause_automation
         if reservation_details is not None:
@@ -244,27 +249,6 @@ class V1ClusterSpec(object):
             self.voltage_park_v1 = voltage_park_v1
         if vultr_v1 is not None:
             self.vultr_v1 = vultr_v1
-
-    @property
-    def ai_pod_v1(self) -> 'V1AiPodV1':
-        """Gets the ai_pod_v1 of this V1ClusterSpec.  # noqa: E501
-
-
-        :return: The ai_pod_v1 of this V1ClusterSpec.  # noqa: E501
-        :rtype: V1AiPodV1
-        """
-        return self._ai_pod_v1
-
-    @ai_pod_v1.setter
-    def ai_pod_v1(self, ai_pod_v1: 'V1AiPodV1'):
-        """Sets the ai_pod_v1 of this V1ClusterSpec.
-
-
-        :param ai_pod_v1: The ai_pod_v1 of this V1ClusterSpec.  # noqa: E501
-        :type: V1AiPodV1
-        """
-
-        self._ai_pod_v1 = ai_pod_v1
 
     @property
     def auth_token(self) -> 'str':
@@ -433,6 +417,27 @@ class V1ClusterSpec(object):
         """
 
         self._compute_cluster_request = compute_cluster_request
+
+    @property
+    def cudo_v1(self) -> 'V1CudoDirectV1':
+        """Gets the cudo_v1 of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The cudo_v1 of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1CudoDirectV1
+        """
+        return self._cudo_v1
+
+    @cudo_v1.setter
+    def cudo_v1(self, cudo_v1: 'V1CudoDirectV1'):
+        """Sets the cudo_v1 of this V1ClusterSpec.
+
+
+        :param cudo_v1: The cudo_v1 of this V1ClusterSpec.  # noqa: E501
+        :type: V1CudoDirectV1
+        """
+
+        self._cudo_v1 = cudo_v1
 
     @property
     def deletion_options(self) -> 'V1ClusterDeletionOptions':
@@ -813,6 +818,27 @@ class V1ClusterSpec(object):
         """
 
         self._parent_cluster_type = parent_cluster_type
+
+    @property
+    def partitioning_enabled(self) -> 'bool':
+        """Gets the partitioning_enabled of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The partitioning_enabled of this V1ClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._partitioning_enabled
+
+    @partitioning_enabled.setter
+    def partitioning_enabled(self, partitioning_enabled: 'bool'):
+        """Sets the partitioning_enabled of this V1ClusterSpec.
+
+
+        :param partitioning_enabled: The partitioning_enabled of this V1ClusterSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._partitioning_enabled = partitioning_enabled
 
     @property
     def pause_automation(self) -> 'bool':

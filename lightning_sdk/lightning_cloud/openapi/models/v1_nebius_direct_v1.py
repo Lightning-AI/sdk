@@ -43,20 +43,23 @@ class V1NebiusDirectV1(object):
     swagger_types = {
         'primary_region': 'str',
         'regions': 'list[str]',
-        'subnet_cidr_ranges': 'list[str]'
+        'subnet_cidr_ranges': 'list[str]',
+        'tenant_credentials': 'list[V1TenantCredentials]'
     }
 
     attribute_map = {
         'primary_region': 'primaryRegion',
         'regions': 'regions',
-        'subnet_cidr_ranges': 'subnetCidrRanges'
+        'subnet_cidr_ranges': 'subnetCidrRanges',
+        'tenant_credentials': 'tenantCredentials'
     }
 
-    def __init__(self, primary_region: 'str' =None, regions: 'list[str]' =None, subnet_cidr_ranges: 'list[str]' =None):  # noqa: E501
+    def __init__(self, primary_region: 'str' =None, regions: 'list[str]' =None, subnet_cidr_ranges: 'list[str]' =None, tenant_credentials: 'list[V1TenantCredentials]' =None):  # noqa: E501
         """V1NebiusDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._primary_region = None
         self._regions = None
         self._subnet_cidr_ranges = None
+        self._tenant_credentials = None
         self.discriminator = None
         if primary_region is not None:
             self.primary_region = primary_region
@@ -64,6 +67,8 @@ class V1NebiusDirectV1(object):
             self.regions = regions
         if subnet_cidr_ranges is not None:
             self.subnet_cidr_ranges = subnet_cidr_ranges
+        if tenant_credentials is not None:
+            self.tenant_credentials = tenant_credentials
 
     @property
     def primary_region(self) -> 'str':
@@ -127,6 +132,27 @@ class V1NebiusDirectV1(object):
         """
 
         self._subnet_cidr_ranges = subnet_cidr_ranges
+
+    @property
+    def tenant_credentials(self) -> 'list[V1TenantCredentials]':
+        """Gets the tenant_credentials of this V1NebiusDirectV1.  # noqa: E501
+
+
+        :return: The tenant_credentials of this V1NebiusDirectV1.  # noqa: E501
+        :rtype: list[V1TenantCredentials]
+        """
+        return self._tenant_credentials
+
+    @tenant_credentials.setter
+    def tenant_credentials(self, tenant_credentials: 'list[V1TenantCredentials]'):
+        """Sets the tenant_credentials of this V1NebiusDirectV1.
+
+
+        :param tenant_credentials: The tenant_credentials of this V1NebiusDirectV1.  # noqa: E501
+        :type: list[V1TenantCredentials]
+        """
+
+        self._tenant_credentials = tenant_credentials
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

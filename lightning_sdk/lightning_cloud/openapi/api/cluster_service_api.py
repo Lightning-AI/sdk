@@ -2942,6 +2942,9 @@ class ClusterServiceApi(object):
         :param datetime start_time:
         :param datetime end_time:
         :param bool available_only:
+        :param str region:
+        :param str zone:
+        :param str instance_type:
         :param bool include_all:
         :param bool find_used_by: whether to find which cloudspace_ids and jobs_ids are using the reservations
         :param bool from_aggregate:
@@ -2972,6 +2975,9 @@ class ClusterServiceApi(object):
         :param datetime start_time:
         :param datetime end_time:
         :param bool available_only:
+        :param str region:
+        :param str zone:
+        :param str instance_type:
         :param bool include_all:
         :param bool find_used_by: whether to find which cloudspace_ids and jobs_ids are using the reservations
         :param bool from_aggregate:
@@ -2981,7 +2987,7 @@ class ClusterServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'cluster_id', 'project_id', 'start_time', 'end_time', 'available_only', 'include_all', 'find_used_by', 'from_aggregate', 'apparent_provider']  # noqa: E501
+        all_params = ['org_id', 'cluster_id', 'project_id', 'start_time', 'end_time', 'available_only', 'region', 'zone', 'instance_type', 'include_all', 'find_used_by', 'from_aggregate', 'apparent_provider']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3022,6 +3028,12 @@ class ClusterServiceApi(object):
             query_params.append(('endTime', params['end_time']))  # noqa: E501
         if 'available_only' in params:
             query_params.append(('availableOnly', params['available_only']))  # noqa: E501
+        if 'region' in params:
+            query_params.append(('region', params['region']))  # noqa: E501
+        if 'zone' in params:
+            query_params.append(('zone', params['zone']))  # noqa: E501
+        if 'instance_type' in params:
+            query_params.append(('instanceType', params['instance_type']))  # noqa: E501
         if 'include_all' in params:
             query_params.append(('includeAll', params['include_all']))  # noqa: E501
         if 'find_used_by' in params:
