@@ -42,6 +42,7 @@ class V1MachineDirectV1(object):
     """
     swagger_types = {
         'cloud_hypervisor_user': 'str',
+        'extra_setup_commands': 'list[str]',
         'primary_region': 'str',
         'regions': 'list[str]',
         'setup_infiniband': 'bool',
@@ -52,6 +53,7 @@ class V1MachineDirectV1(object):
 
     attribute_map = {
         'cloud_hypervisor_user': 'cloudHypervisorUser',
+        'extra_setup_commands': 'extraSetupCommands',
         'primary_region': 'primaryRegion',
         'regions': 'regions',
         'setup_infiniband': 'setupInfiniband',
@@ -60,9 +62,10 @@ class V1MachineDirectV1(object):
         'use_nvme_disks': 'useNvmeDisks'
     }
 
-    def __init__(self, cloud_hypervisor_user: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
+    def __init__(self, cloud_hypervisor_user: 'str' =None, extra_setup_commands: 'list[str]' =None, primary_region: 'str' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._cloud_hypervisor_user = None
+        self._extra_setup_commands = None
         self._primary_region = None
         self._regions = None
         self._setup_infiniband = None
@@ -72,6 +75,8 @@ class V1MachineDirectV1(object):
         self.discriminator = None
         if cloud_hypervisor_user is not None:
             self.cloud_hypervisor_user = cloud_hypervisor_user
+        if extra_setup_commands is not None:
+            self.extra_setup_commands = extra_setup_commands
         if primary_region is not None:
             self.primary_region = primary_region
         if regions is not None:
@@ -105,6 +110,27 @@ class V1MachineDirectV1(object):
         """
 
         self._cloud_hypervisor_user = cloud_hypervisor_user
+
+    @property
+    def extra_setup_commands(self) -> 'list[str]':
+        """Gets the extra_setup_commands of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The extra_setup_commands of this V1MachineDirectV1.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._extra_setup_commands
+
+    @extra_setup_commands.setter
+    def extra_setup_commands(self, extra_setup_commands: 'list[str]'):
+        """Sets the extra_setup_commands of this V1MachineDirectV1.
+
+
+        :param extra_setup_commands: The extra_setup_commands of this V1MachineDirectV1.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._extra_setup_commands = extra_setup_commands
 
     @property
     def primary_region(self) -> 'str':
