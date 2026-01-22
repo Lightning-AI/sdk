@@ -1,5 +1,6 @@
 import os
 import re
+import warnings
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -390,6 +391,60 @@ class TeamspaceApi:
             model_id = self.get_model(teamspace_id=teamspace_id, model_name=model_name).id
         response = self.models_api.models_store_list_model_versions(project_id=teamspace_id, model_id=model_id)
         return response.versions
+
+    def get_uploads_tree(self, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:
+        auth = Auth()
+        auth.authenticate()
+        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+
+        if query_params is None:
+            query_params = {
+                "token": token,
+            }
+        else:
+            query_params["token"] = token
+        r = requests.get(
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/uploads/trees/{path}",
+            params=query_params,
+        )
+        return r.json()
+
+    def get_path_info(self, teamspace_id: str, path: str = "") -> dict:
+        path = path.strip("/")
+
+        if "/" in path:
+            parent_path = path.rsplit("/", 1)[0]
+            target_name = path.rsplit("/", 1)[1]
+        else:
+            if path == "":
+                # root directory
+                return {"exists": True, "type": "directory", "size": None}
+            parent_path = ""
+            target_name = path
+
+        tree = self.get_uploads_tree(teamspace_id, path=parent_path)
+        tree_items = tree.get("tree", [])
+        for item in tree_items:
+            item_name = item.get("path", "")
+            if item_name == target_name:
+                item_type = item.get("type")
+                # if type == "blob" it's a file, if "tree" it's a directory
+                return {
+                    "exists": True,
+                    "type": "file" if item_type == "blob" else "directory",
+                    "size": item.get("size", 0) if item_type == "blob" else None,
+                }
+        warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
+        return {"exists": False, "type": None, "size": None}
+
+    def list_files(
+        self,
+        teamspace_id: str,
+        path: str = "",
+    ) -> List[Dict]:
+        """Recursively list all files in a directory tree."""
+        path = path.strip("/")
+        return self.get_uploads_tree(teamspace_id, path, query_params={"recursive": "true"}).get("tree", [])
 
     def upload_file(
         self,

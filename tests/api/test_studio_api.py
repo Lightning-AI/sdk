@@ -1404,7 +1404,6 @@ def test_list_files(
     mock_login.return_value = V1LoginResponse(token="test-token")
 
     studio_api = StudioApi()
-    studio_api = StudioApi()
     mock_response_obj = mock.MagicMock()
     mock_response_obj.json.return_value = mock_response
     mock_requests_get.return_value = mock_response_obj

@@ -1,5 +1,6 @@
 import os
 import subprocess
+import warnings
 from pathlib import Path
 from unittest import mock
 
@@ -13,6 +14,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
     V1ClusterAccelerator,
     V1ListProjectClusterAcceleratorsResponse,
+    V1LoginResponse,
     V1Project,
     V1ProjectClusterBinding,
     V1Resources,
@@ -315,6 +317,224 @@ def test_get_model_errors(internal_teamspace_api_mocker):
     )
     with pytest.raises(RuntimeError, match="Model name 'model-name' is not a unique with this teamspace."):
         teamspace_api.get_model("xyz", model_name="model-name")
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
+)
+def test_get_uploads_tree(mock_login, mock_requests_get):
+    """Test get_uploads_tree retrieves directory structure from teamspace drive."""
+    mock_login.return_value = V1LoginResponse(token="test-token")
+
+    mock_response = mock.MagicMock()
+    mock_response.json.return_value = {
+        "tree": [
+            {"path": "file1.txt", "type": "blob", "size": 1234},
+            {"path": "folder1", "type": "tree"},
+            {"path": "file2.py", "type": "blob", "size": 5678},
+        ],
+        "truncated": False,
+    }
+    mock_requests_get.return_value = mock_response
+
+    teamspace_api = TeamspaceApi()
+
+    result = teamspace_api.get_uploads_tree("ts-abc", "my-folder/")
+
+    assert result == {
+        "tree": [
+            {"path": "file1.txt", "type": "blob", "size": 1234},
+            {"path": "folder1", "type": "tree"},
+            {"path": "file2.py", "type": "blob", "size": 5678},
+        ],
+        "truncated": False,
+    }
+
+    mock_requests_get.assert_called_once()
+    call_args = mock_requests_get.call_args
+
+    assert "/v1/projects/ts-abc/artifacts/uploads/trees/my-folder/" in call_args[0][0]
+    assert call_args[1]["params"] == {"token": "test-token"}
+    mock_login.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    ("path", "tree_response", "expected_result"),
+    [
+        (
+            "",
+            None,
+            {"exists": True, "type": "directory", "size": None},
+        ),
+        # file exists
+        (
+            "test.txt",
+            {"tree": [{"path": "test.txt", "type": "blob", "size": 1024}]},
+            {"exists": True, "type": "file", "size": 1024},
+        ),
+        # directory exists
+        (
+            "test-dir",
+            {"tree": [{"path": "test-dir", "type": "tree"}]},
+            {"exists": True, "type": "directory", "size": None},
+        ),
+        # Test case 3: File does not exist (empty tree)
+        (
+            "nonexistent.txt",
+            {"tree": []},
+            {"exists": False, "type": None, "size": None},
+        ),
+        # nested file
+        (
+            "path/to/data.csv",
+            {"tree": [{"path": "data.csv", "type": "blob", "size": 2048}]},
+            {"exists": True, "type": "file", "size": 2048},
+        ),
+        # nested directory
+        (
+            "path/to/subfolder",
+            {"tree": [{"path": "subfolder", "type": "tree"}]},
+            {"exists": True, "type": "directory", "size": None},
+        ),
+    ],
+)
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login",
+    autospec=True,
+)
+def test_get_path_info(mock_login, mock_requests_get, path, tree_response, expected_result):
+    from lightning_sdk.lightning_cloud.openapi import V1LoginResponse
+
+    mock_login.return_value = V1LoginResponse(token="test-token")
+
+    mock_response = mock.MagicMock()
+    mock_response.json.return_value = tree_response
+    mock_requests_get.return_value = mock_response
+
+    teamspace_api = TeamspaceApi()
+
+    if not expected_result["exists"]:
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = teamspace_api.get_path_info("ts-abc", path)
+
+            # Check warning was raised
+            assert len(w) == 1
+            assert "may be empty" in str(w[0].message)
+    else:
+        result = teamspace_api.get_path_info("ts-abc", path)
+
+    assert result == expected_result
+
+    if path.strip("/") == "":
+        mock_requests_get.assert_not_called()
+    else:
+        if "/" in path:
+            expected_parent = path.rsplit("/", 1)[0]
+            assert expected_parent in mock_requests_get.call_args[0][0]
+        else:
+            # root level should include /trees/
+            call_url = mock_requests_get.call_args[0][0]
+            assert "/trees/" in call_url
+
+
+@pytest.mark.parametrize(
+    ("path", "mock_response", "expected_files"),
+    [
+        # nested directories with multiple levels
+        (
+            "my-folder",
+            {
+                "tree": [
+                    {"path": "file1.txt", "type": "blob"},
+                    {"path": "folder1/nested.txt", "type": "blob", "size": 999},
+                    {"path": "folder1/subfolder/deep.txt", "type": "blob", "size": 111},
+                    {"path": "file2.py", "type": "blob"},
+                ],
+                "truncated": False,
+            },
+            [
+                {"path": "file1.txt", "type": "blob"},
+                {"path": "folder1/nested.txt", "type": "blob", "size": 999},
+                {"path": "folder1/subfolder/deep.txt", "type": "blob", "size": 111},
+                {"path": "file2.py", "type": "blob"},
+            ],
+        ),
+        # empty directory
+        (
+            "empty-folder",
+            {
+                "tree": [],
+                "truncated": False,
+            },
+            [],
+        ),
+        # root path (empty string)
+        (
+            "",
+            {
+                "tree": [
+                    {"path": "root-file.txt", "type": "blob", "size": 100},
+                ],
+                "truncated": False,
+            },
+            [
+                {"path": "root-file.txt", "type": "blob", "size": 100},
+            ],
+        ),
+        # path with leading/trailing slashes
+        (
+            "/my-folder/",
+            {
+                "tree": [
+                    {"path": "file.txt", "type": "blob"},
+                ],
+                "truncated": False,
+            },
+            [
+                {"path": "file.txt", "type": "blob"},
+            ],
+        ),
+    ],
+)
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
+)
+def test_list_files(
+    mock_login,
+    mock_requests_get,
+    path,
+    mock_response,
+    expected_files,
+):
+    """Test that list_files correctly calls get_uploads_tree with recursive=true."""
+    mock_login.return_value = V1LoginResponse(token="test-token")
+
+    teamspace_api = TeamspaceApi()
+    mock_response_obj = mock.MagicMock()
+    mock_response_obj.json.return_value = mock_response
+    mock_requests_get.return_value = mock_response_obj
+
+    result = teamspace_api.list_files(
+        teamspace_id="ts-abc",
+        path=path,
+    )
+
+    assert mock_requests_get.call_count == 1
+    call_args = mock_requests_get.call_args
+
+    # get_uploads_tree
+    host = teamspace_api._client.api_client.configuration.host
+    expected_url = f"{host}/v1/projects/ts-abc/artifacts/uploads/trees/{path.strip('/')}"
+    assert call_args[0][0] == expected_url
+
+    # recursive
+    assert call_args[1]["params"]["recursive"] == "true"
+
+    assert result == expected_files
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
