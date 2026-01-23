@@ -13,6 +13,7 @@ import requests
 from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
+    _authenticate_and_get_token,
     _create_app,
     _DummyBody,
     _DummyResponse,
@@ -23,7 +24,6 @@ from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
 )
 from lightning_sdk.constants import _LIGHTNING_DEBUG
-from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     AssistantsServiceCreateAssistantBody,
     AssistantsServiceCreateAssistantManagedEndpointBody,
@@ -49,7 +49,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1EnvVar,
     V1GetCloudSpaceInstanceStatusResponse,
     V1GetLongRunningCommandInCloudSpaceResponse,
-    V1LoginRequest,
     V1ManagedEndpoint,
     V1ManagedModel,
     V1Plugin,
@@ -661,14 +660,8 @@ class StudioApi:
         self.stop_keeping_alive(teamspace_id=teamspace_id, studio_id=studio_id)
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
 
-    def _authenticate_and_get_token(self) -> str:
-        """Authenticate and return a token for API requests."""
-        auth = Auth()
-        auth.authenticate()
-        return self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
-
     def get_tree(self, studio_id: str, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:
-        token = self._authenticate_and_get_token()
+        token = _authenticate_and_get_token(self._client)
 
         if query_params is None:
             query_params = {
@@ -730,7 +723,7 @@ class StudioApi:
         progress_bar: bool,
     ) -> None:
         """Uploads file to given remote path on the studio."""
-        token = self._authenticate_and_get_token()
+        token = _authenticate_and_get_token(self._client)
 
         query_params = {"token": token}
         client_host = self._client.api_client.configuration.host
@@ -768,7 +761,7 @@ class StudioApi:
     ) -> None:
         """Downloads a given file from a Studio to a target location."""
         # TODO: Update this endpoint to permit basic auth
-        token = self._authenticate_and_get_token()
+        token = _authenticate_and_get_token(self._client)
 
         query_params = {
             "clusterId": cloud_account,
@@ -864,7 +857,7 @@ class StudioApi:
             print(f"No files found in {path}")
             return
 
-        token = self._authenticate_and_get_token()
+        token = _authenticate_and_get_token(self._client)
 
         total_size = sum(f.get("size", 0) for f in files)
 
@@ -910,7 +903,7 @@ class StudioApi:
         if info["type"] != "file":
             raise IsADirectoryError(f"The path '{path}' is a directory. Use 'remove_folder()' to remove directories.")
 
-        token = self._authenticate_and_get_token()
+        token = _authenticate_and_get_token(self._client)
 
         query_params = {"token": token}
         client_host = self._client.api_client.configuration.host
@@ -933,7 +926,7 @@ class StudioApi:
         if info["type"] == "file":
             raise ValueError(f"The path '{path}' is a file. Use 'remove_file()' to remove files.")
 
-        token = self._authenticate_and_get_token()
+        token = _authenticate_and_get_token(self._client)
 
         query_params = {"token": token}
         client_host = self._client.api_client.configuration.host

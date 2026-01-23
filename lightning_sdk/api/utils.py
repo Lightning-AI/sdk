@@ -15,6 +15,7 @@ import requests
 from tqdm.auto import tqdm
 
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__, _LIGHTNING_DEBUG
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     CloudSpaceServiceApi,
     CloudSpaceServiceCreateCloudSpaceAppInstanceBody,
@@ -29,6 +30,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     StorageServiceUploadProjectArtifactPartsBody,
     V1CompletedPart,
     V1CompleteUpload,
+    V1LoginRequest,
     V1PathMapping,
     V1PresignedUrl,
     V1SignedUrl,
@@ -816,3 +818,9 @@ def to_iso_z(dt: datetime) -> str:
         dt = dt.replace(tzinfo=timezone.utc)
         return dt.astimezone(timezone.utc).isoformat(timespec="milliseconds")
     return dt.isoformat(timespec="milliseconds")
+
+
+def _authenticate_and_get_token(client: Any) -> str:
+    auth = Auth()
+    auth.authenticate()
+    return client.auth_service_login(V1LoginRequest(auth.api_key)).token

@@ -1,6 +1,8 @@
+import concurrent
 import os
 import re
 import warnings
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -8,12 +10,11 @@ import requests
 from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import (
+    _authenticate_and_get_token,
     _download_model_files,
-    _download_teamspace_files,
     _DummyBody,
     _get_model_version,
     _ModelFileUploader,
-    _resolve_teamspace_remote_path,
 )
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
@@ -33,7 +34,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ExternalCluster,
     V1GCSFolderDataConnection,
     V1Job,
-    V1LoginRequest,
     V1Model,
     V1ModelVersionArchive,
     V1MultiMachineJob,
@@ -393,9 +393,7 @@ class TeamspaceApi:
         return response.versions
 
     def get_uploads_tree(self, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:
-        auth = Auth()
-        auth.authenticate()
-        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+        token = _authenticate_and_get_token(self._client)
 
         if query_params is None:
             query_params = {
@@ -437,12 +435,12 @@ class TeamspaceApi:
         warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
         return {"exists": False, "type": None, "size": None}
 
-    def list_files(
+    def list_uploads_files(
         self,
         teamspace_id: str,
         path: str = "",
     ) -> List[Dict]:
-        """Recursively list all files in a directory tree."""
+        """Recursively list all files in a /Uploads/ directory tree."""
         path = path.strip("/")
         return self.get_uploads_tree(teamspace_id, path, query_params={"recursive": "true"}).get("tree", [])
 
@@ -454,10 +452,8 @@ class TeamspaceApi:
         remote_path: str,
         progress_bar: bool,
     ) -> None:
-        """Uploads file to given remote path in the Teamspace drive."""
-        auth = Auth()
-        auth.authenticate()
-        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+        """Uploads file to given remote path in the Teamspace drive /Uploads/."""
+        token = _authenticate_and_get_token(self._client)
 
         query_params = {"token": token, "clusterId": cloud_account}
         client_host = self._client.api_client.configuration.host
@@ -489,37 +485,25 @@ class TeamspaceApi:
         path: str,
         target_path: str,
         teamspace_id: str,
+        cloud_account: Optional[str] = None,
         progress_bar: bool = True,
     ) -> None:
-        """Downloads a given file in Teamspace drive to a target location."""
+        """Downloads a given file in Teamspace drive /Uploads/ to a target location."""
         # TODO: Update this endpoint to permit basic auth
-        auth = Auth()
-        auth.authenticate()
-        token = self._client.auth_service_login(V1LoginRequest(auth.api_key)).token
+        token = _authenticate_and_get_token(self._client)
 
-        cluster_ids = [ca.cluster_id for ca in self.list_cloud_accounts(teamspace_id)]
+        query_params = {
+            "token": token,
+        }
 
-        found = False
-        for cluster_id in cluster_ids:
-            query_params = {
-                "clusterId": cluster_id,
-                "key": _resolve_teamspace_remote_path(path),
-                "token": token,
-            }
+        if cloud_account:
+            query_params["clusterId"] = cloud_account
 
-            r = requests.get(
-                f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/download",
-                params=query_params,
-                stream=True,
-            )
-
-            if r.status_code == 200:
-                found = True
-                break
-
-        if not found:
-            raise FileNotFoundError(f"The provided path does not exist in the teamspace: {path}")
-
+        r = requests.get(
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/uploads/blobs/{path}",
+            params=query_params,
+            stream=True,
+        )
         total_length = int(r.headers.get("content-length"))
 
         if progress_bar:
@@ -543,33 +527,101 @@ class TeamspaceApi:
                 f.write(chunk)
                 pbar_update(len(chunk))
 
+    def _download_single_file(
+        self,
+        file_info: Dict,
+        base_path: str,
+        download_dir: Path,
+        teamspace_id: str,
+        token: str,
+        cloud_account: Optional[str] = None,
+        pbar: Optional[tqdm] = True,
+    ) -> None:
+        """Download a single file from Teamspace drive /Uploads/ with progress tracking."""
+        relative_path = file_info["path"].lstrip("/")
+        local_file = download_dir / relative_path
+        local_file.parent.mkdir(parents=True, exist_ok=True)
+
+        file_path = os.path.join(base_path, relative_path) if base_path else relative_path
+
+        query_params = {
+            "token": token,
+        }
+        if cloud_account:
+            query_params["clusterId"] = cloud_account
+
+        r = requests.get(
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/uploads/blobs/{file_path}",
+            params=query_params,
+            stream=True,
+        )
+
+        with open(str(local_file), "wb") as f:
+            for chunk in r.iter_content(chunk_size=4096 * 8):
+                f.write(chunk)
+                if pbar:
+                    pbar.update(len(chunk))
+
     def download_folder(
         self,
         path: str,
         target_path: str,
         teamspace_id: str,
-        cloud_account: str,
+        cloud_account: Optional[str] = None,
         progress_bar: bool = True,
+        num_workers: Optional[int] = None,
     ) -> None:
-        """Downloads a given folder from Teamspace drive to a target location."""
+        """Downloads a given folder from Teamspace drive /Uploads/ to a target location."""
         # TODO: Update this endpoint to permit basic auth
-        auth = Auth()
-        auth.authenticate()
+        if num_workers is None:
+            num_workers = os.cpu_count() * 4
 
-        prefix = _resolve_teamspace_remote_path(path)
+        # Normalize the path
+        path = path.strip("/")
+        download_dir = Path(target_path)
+        download_dir.mkdir(parents=True, exist_ok=True)
 
-        # ensure we only download as a directory and not the entire prefix
-        if prefix.endswith("/") is False:
-            prefix = prefix + "/"
+        files = self.list_uploads_files(teamspace_id, path)
 
-        _download_teamspace_files(
-            client=self._client,
-            teamspace_id=teamspace_id,
-            cluster_id=cloud_account,
-            prefix=prefix,
-            download_dir=Path(target_path),
-            progress_bar=progress_bar,
-        )
+        if not files:
+            print(f"No files found in {path}")
+            return
+
+        token = _authenticate_and_get_token(self._client)
+
+        total_size = sum(f.get("size", 0) for f in files)
+
+        pbar = None
+        if progress_bar:
+            pbar = tqdm(
+                desc="Downloading files",
+                total=total_size,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1000,
+                mininterval=1,
+            )
+
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            futures = [
+                executor.submit(
+                    self._download_single_file,
+                    file_info,
+                    path,
+                    download_dir,
+                    teamspace_id,
+                    token,
+                    cloud_account,
+                    pbar,
+                )
+                for file_info in files
+            ]
+            concurrent.futures.wait(futures)
+
+        if pbar:
+            pbar.set_description("Download complete")
+            pbar.refresh()
+            pbar.close()
 
     def get_secrets(self, teamspace_id: str) -> Dict[str, str]:
         """Get all secrets for a teamspace."""

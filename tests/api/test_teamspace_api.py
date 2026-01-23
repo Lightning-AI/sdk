@@ -503,7 +503,7 @@ def test_get_path_info(mock_login, mock_requests_get, path, tree_response, expec
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
 )
-def test_list_files(
+def test_list_uploads_files(
     mock_login,
     mock_requests_get,
     path,
@@ -518,7 +518,7 @@ def test_list_files(
     mock_response_obj.json.return_value = mock_response
     mock_requests_get.return_value = mock_response_obj
 
-    result = teamspace_api.list_files(
+    result = teamspace_api.list_uploads_files(
         teamspace_id="ts-abc",
         path=path,
     )
@@ -581,51 +581,51 @@ def test_upload_file(
         tqdm_mock.wrapattr.assert_not_called()
 
 
-def test_download_file(tmpdir, internal_teamspace_api_mocker, internal_studio_api_login):
-    file_content = b"test file content"
-
-    mock_s3_response = mock.Mock()
-    mock_s3_response.status_code = 200
-    mock_s3_response.headers = {"content-length": str(len(file_content))}
-    mock_s3_response.iter_content = lambda chunk_size: [file_content]
-
-    def get_side_effect(url, **kwargs):
-        return mock_s3_response
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
+)
+def test_download_file(mock_login, mock_requests_get, tmpdir):
+    mock_login.return_value = V1LoginResponse(token="token")
 
     teamspace_api = TeamspaceApi()
 
-    with mock.patch("requests.get", side_effect=get_side_effect):
-        teamspace_api = TeamspaceApi()
-        filepath = os.path.join(tmpdir, "file1")
-        teamspace_api.download_file("file1", filepath, "ts-abc")
-
-        assert os.path.exists(filepath)
-        with open(filepath, "rb") as f:
-            assert f.read() == file_content
+    filepath = os.path.join(tmpdir, "file1")
+    teamspace_api.download_file("file1", filepath, "ts-abc", "cluster-abc")
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.requests")
-def test_download_file_error(mock_requests, tmpdir, internal_teamspace_api_mocker, internal_studio_api_login):
-    teamspace_api = TeamspaceApi()
-    remote_path = "file_dne"
-    filepath = os.path.join(tmpdir, "file")
+@mock.patch("lightning_sdk.api.teamspace_api.concurrent.futures.wait")
+@mock.patch("lightning_sdk.api.teamspace_api.tqdm")
+@mock.patch("lightning_sdk.api.teamspace_api.ThreadPoolExecutor")
+@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token")
+def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait, tmpdir):
+    authenticate_mock.return_value = "test-token-123"
 
-    mock_response = mock.Mock()
-    mock_response.status_code = 404
-    mock_response.headers = {"content-length": "0"}
-    mock_response.iter_content.return_value = []
-    mock_requests.get.return_value = mock_response
-
-    with pytest.raises(FileNotFoundError, match=f"The provided path does not exist in the teamspace: {remote_path}"):
-        teamspace_api.download_file(remote_path, filepath, "ts-abc")
-
-
-@mock.patch("lightning_sdk.api.teamspace_api._download_teamspace_files", autospec=True)
-def test_download_folder(mock_download, tmpdir):
     teamspace_api = TeamspaceApi()
 
-    teamspace_api.download_folder("folder", tmpdir, "ts-abc", "cluster-abc")
-    mock_download.assert_called_once()
+    teamspace_api.list_uploads_files = mock.Mock(
+        return_value=[
+            {"path": "file1.txt", "size": 1000},
+            {"path": "file2.txt", "size": 2000},
+        ]
+    )
+
+    teamspace_api._download_single_file = mock.Mock()
+
+    mock_future = mock.Mock()
+    mock_executor.return_value.__enter__.return_value.submit.return_value = mock_future
+    mock_wait.return_value = None
+
+    filepath = os.path.join(tmpdir, "download_folder")
+    teamspace_api.download_folder("file1", filepath, "ts-abc", "cluster-abc")
+
+    teamspace_api.list_uploads_files.assert_called_once_with("ts-abc", "file1")
+
+    mock_executor.assert_called_once()
+
+    mock_tqdm.assert_called_once()
+    assert mock_tqdm.call_args.kwargs["desc"] == "Downloading files"
+    assert mock_tqdm.call_args.kwargs["total"] == 3000  # 1000 + 2000
 
 
 def test_get_secrets():

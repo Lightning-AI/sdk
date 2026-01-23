@@ -1431,7 +1431,9 @@ def test_list_files(
 @pytest.mark.parametrize("progress_bar", [True, False])
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.studio_api.tqdm")
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
 def test_upload_file(
+    authenticate_mock,
     tqdm_mock,
     requests_put_mock,
     tmpdir,
@@ -1439,9 +1441,9 @@ def test_upload_file(
 ):
     requests_put_mock.return_value.status_code = 200
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
+    authenticate_mock.return_value = "test-token-123"
 
     studio_api = StudioApi()
-    studio_api._authenticate_and_get_token = mock.Mock(return_value="test-token-123")
 
     filepath = os.path.join(tmpdir, "file1")
     subprocess.run(f"truncate -s 40MB {filepath}".split(" "))
@@ -1480,9 +1482,11 @@ def test_download_file(mock_login, mock_requests_get, tmpdir):
 @mock.patch("lightning_sdk.api.studio_api.concurrent.futures.wait")
 @mock.patch("lightning_sdk.api.studio_api.tqdm")
 @mock.patch("lightning_sdk.api.studio_api.ThreadPoolExecutor")
-def test_download_folder(mock_executor, mock_tqdm, mock_wait, tmpdir):
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
+def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait, tmpdir):
+    authenticate_mock.return_value = "test-token-123"
+
     studio_api = StudioApi()
-    studio_api._authenticate_and_get_token = mock.Mock(return_value="test-token-123")
 
     studio_api.list_files = mock.Mock(
         return_value=[

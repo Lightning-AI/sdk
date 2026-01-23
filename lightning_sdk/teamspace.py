@@ -581,7 +581,9 @@ class Teamspace(metaclass=TrackCallsMeta):
         if progress_bar:
             progress_bar.close()
 
-    def download_file(self, remote_path: str, file_path: Optional[str] = None) -> None:
+    def download_file(
+        self, remote_path: str, file_path: Optional[str] = None, cloud_account: Optional[str] = None
+    ) -> None:
         """Downloads a given file in Teamspace drive to a target location."""
         if file_path is None:
             file_path = remote_path
@@ -590,9 +592,12 @@ class Teamspace(metaclass=TrackCallsMeta):
             path=remote_path,
             target_path=file_path,
             teamspace_id=self._teamspace.id,
+            cloud_account=cloud_account,
         )
 
-    def download_folder(self, remote_path: str, target_path: Optional[str] = None) -> None:
+    def download_folder(
+        self, remote_path: str, target_path: Optional[str] = None, cloud_account: Optional[str] = None
+    ) -> None:
         """Downloads a folder in the Teamspace drive to a given target path."""
         if target_path is None:
             target_path = remote_path
@@ -601,7 +606,7 @@ class Teamspace(metaclass=TrackCallsMeta):
             path=remote_path,
             target_path=target_path,
             teamspace_id=self._teamspace.id,
-            cloud_account=self.default_cloud_account,
+            cloud_account=cloud_account,
         )
 
     def new_folder(
