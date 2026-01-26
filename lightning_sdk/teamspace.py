@@ -539,21 +539,37 @@ class Teamspace(metaclass=TrackCallsMeta):
         return self._teamspace_api.list_model_versions(teamspace_id=self.id, model_name=name)
 
     def upload_file(
-        self, file_path: Union[Path, str], remote_path: Optional[str] = None, progress_bar: bool = True
+        self,
+        file_path: Union[Path, str],
+        remote_path: Optional[str] = None,
+        progress_bar: bool = True,
+        cloud_account: Optional[str] = None,
     ) -> None:
         """Uploads file to given remote path in the Teamspace drive."""
         if remote_path is None:
             remote_path = os.path.split(file_path)[1]
 
+        if cloud_account is None:
+            warnings.warn(
+                f"No cloud account specified. Using teamspace default cloud account: {self.default_cloud_account}."
+            )
+            cloud_account = self.default_cloud_account
+
         self._teamspace_api.upload_file(
             teamspace_id=self._teamspace.id,
-            cloud_account=self.default_cloud_account,
+            cloud_account=cloud_account,
             file_path=file_path,
             remote_path=os.path.normpath(remote_path),
             progress_bar=progress_bar,
         )
 
-    def upload_folder(self, folder_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
+    def upload_folder(
+        self,
+        folder_path: str,
+        remote_path: Optional[str] = None,
+        progress_bar: bool = True,
+        cloud_account: Optional[str] = None,
+    ) -> None:
         """Uploads a given folder to a remote path in the Teamspace drive."""
         if folder_path is None:
             raise ValueError("Cannot upload a folder that is None.")
@@ -575,7 +591,7 @@ class Teamspace(metaclass=TrackCallsMeta):
         for local_file, remote_path in sorted(all_files, key=lambda p: p[1]):
             if progress_bar:
                 progress_bar.set_description(f"Uploading {local_file}")
-            self.upload_file(local_file, remote_path=remote_path, progress_bar=False)
+            self.upload_file(local_file, remote_path=remote_path, progress_bar=False, cloud_account=cloud_account)
             if progress_bar:
                 progress_bar.update(1)
         if progress_bar:

@@ -2,7 +2,7 @@
 
 import click
 
-from lightning_sdk.cli.utils.studio_filesystem import parse_studio_path, resolve_studio
+from lightning_sdk.cli.utils.filesystem import parse_studio_path, resolve_studio
 
 
 @click.command("ls")

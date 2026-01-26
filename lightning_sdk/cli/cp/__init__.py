@@ -4,6 +4,8 @@ from typing import Any, Literal, Optional
 
 import click
 
+from lightning_sdk.cli.cp.teamspace_uploads import cp_download as teamspace_uploads_cp_download
+from lightning_sdk.cli.cp.teamspace_uploads import cp_upload as teamspace_uploads_cp_upload
 from lightning_sdk.cli.studio.cp import cp_download as studio_cp_download
 from lightning_sdk.cli.studio.cp import cp_upload as studio_cp_upload
 
@@ -17,7 +19,7 @@ def parse_lit_url(url: str) -> tuple[str, list[str], Literal["studios", "uploads
 
     if path[2] == "studios":
         resource_type = "studios"
-    elif "uploads" in path[3]:
+    elif path[2] == "uploads":
         resource_type = "uploads"
     else:
         raise ValueError("URL must contain either 'studios' or 'uploads'")
@@ -39,12 +41,16 @@ def route_cp_operation(source: str, destination: str, **options: Any) -> None:
     if source_is_lit:
         resource_type = parse_lit_url(source)
         if resource_type == "studios":
-            return studio_cp_download(source, destination, options)
+            return studio_cp_download(source, destination, options.get("recursive", False))
+        if resource_type == "uploads":
+            return teamspace_uploads_cp_download(source, destination, options)
         raise ValueError(f"Resource type: {resource_type} is not supported")
     else:
         resource_type = parse_lit_url(destination)
         if resource_type == "studios":
-            return studio_cp_upload(source, destination, options)
+            return studio_cp_upload(source, destination, options.get("recursive", False))
+        if resource_type == "uploads":
+            return teamspace_uploads_cp_upload(source, destination, options)
         raise ValueError(f"Resource type: {resource_type} is not supported")
 
 
@@ -52,13 +58,10 @@ def register_commands(command: click.Command) -> None:
     """Register cp command callback."""
 
     def new_callback(source: str, destination: Optional[str], recursive: bool, **kwargs: Any) -> None:
-        try:
-            route_cp_operation(
-                source=source,
-                destination=destination,
-                recursive=recursive,
-            )
-        except Exception:
-            raise
+        route_cp_operation(
+            source=source,
+            destination=destination,
+            recursive=recursive,
+        )
 
     command.callback = new_callback

@@ -8,7 +8,7 @@ import click
 from rich.console import Console
 
 from lightning_sdk.api.utils import _get_cloud_url
-from lightning_sdk.cli.utils.studio_filesystem import parse_studio_path, resolve_studio
+from lightning_sdk.cli.utils.filesystem import parse_studio_path, resolve_studio
 
 
 @click.command("cp")
@@ -111,10 +111,13 @@ def cp_download(
                 f"'{studio_path_result['destination']}' is a directory. Use -r flag to copy directories recursively."
             )
         folder_name = os.path.basename(studio_path_result["destination"].rstrip("/"))
-        if folder_name == "" and local_path in ("./", "."):
-            # handle root directory case (e.g. lit://lightning-ai/gpt-oss/studios/manual-lime-ylu2/)
-            folder_name = selected_studio.name
-        target_path = os.path.join(local_path, folder_name)
+        if local_path in ("./", "."):
+            if folder_name == "":
+                # handle root directory case (e.g. lit://lightning-ai/gpt-oss/studios/manual-lime-ylu2/)
+                folder_name = selected_studio.name
+            target_path = os.path.join(local_path, folder_name)
+        else:
+            target_path = local_path
 
         selected_studio.download_folder(studio_path_result["destination"], target_path)
         console.print(f"See your folder at {target_path}")

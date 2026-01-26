@@ -120,9 +120,9 @@ def test_cp_upload_successful(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_upload(
             local_file_path=str(test_file),
@@ -137,9 +137,9 @@ def test_cp_upload_successful(tmp_path: Path):
     test_dir_file.write_text("test content")
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_upload(
             local_file_path=str(test_dir),
@@ -169,9 +169,9 @@ def test_cp_download_successful(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_download(
             studio_path="lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt",
@@ -201,9 +201,9 @@ def test_cp_upload_without_teamspace(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_upload(
             local_file_path=str(test_file),
@@ -233,9 +233,9 @@ def test_cp_download_without_teamspace(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_download(
             studio_path="lit://test-studio/remote_file.txt",
@@ -267,9 +267,9 @@ def test_cp_studio_file_upload_integration(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         result = runner.invoke(
             cp_studio_file, [str(test_file), "lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt"]
@@ -299,9 +299,9 @@ def test_cp_studio_file_download_integration(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         result = runner.invoke(
             cp_studio_file, ["lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt", str(test_file)]
@@ -325,9 +325,9 @@ def test_resolve_studio_with_teamspace():
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         result = resolve_studio(studio_name="test-studio", teamspace="test-teamspace", owner="test-owner")
 
@@ -351,9 +351,9 @@ def test_resolve_studio_without_teamspace():
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         result = resolve_studio(studio_name="test-studio", teamspace=None, owner=None)
 
@@ -383,9 +383,9 @@ def test_cp_upload_with_nested_path(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_upload(
             local_file_path=str(test_file),
@@ -415,9 +415,9 @@ def test_cp_download_with_nested_path(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_download(
             studio_path="lit://test-studio/folder/subfolder/remote_file.txt",
@@ -447,9 +447,9 @@ def test_cp_impl_dispatches_to_upload(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_impl(source=str(test_file), destination="lit://test-studio/remote_file.txt")
 
@@ -476,9 +476,9 @@ def test_cp_impl_dispatches_to_download(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_impl(source="lit://test-studio/remote_file.txt", destination=str(test_file))
 
@@ -501,9 +501,9 @@ def test_cp_impl_dispatches_to_download(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_impl(source="lit://test-studio/remote_file.txt", destination=str(test_file))
 
@@ -532,9 +532,9 @@ def test_cp_upload_prints_correct_messages(tmp_path: Path):
     mock_console = MagicMock()
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
         patch("lightning_sdk.cli.studio.cp.Console", return_value=mock_console),
     ):
         cp_upload(
@@ -575,9 +575,9 @@ def test_cp_download_prints_correct_messages(tmp_path: Path):
     mock_console = MagicMock()
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
         patch("lightning_sdk.cli.studio.cp.Console", return_value=mock_console),
     ):
         cp_download(
@@ -614,9 +614,9 @@ def test_cp_studio_file_with_special_characters_in_filename(tmp_path: Path):
     mock_studio_menu.return_value = mock_studio_instance
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
     ):
         cp_upload(
             local_file_path=str(test_file),
@@ -648,9 +648,9 @@ def test_cp_upload_url_construction(tmp_path: Path):
     mock_console = MagicMock()
 
     with (
-        patch("lightning_sdk.cli.utils.studio_filesystem.OwnerMenu", return_value=mock_owner_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.studio_filesystem.StudiosMenu", return_value=mock_studio_menu),
+        patch("lightning_sdk.cli.utils.filesystem.OwnerMenu", return_value=mock_owner_menu),
+        patch("lightning_sdk.cli.utils.filesystem.TeamspacesMenu", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.StudiosMenu", return_value=mock_studio_menu),
         patch("lightning_sdk.cli.studio.cp.Console", return_value=mock_console),
     ):
         cp_upload(
@@ -758,7 +758,7 @@ def test_cp_download_root_directory_with_recursive(tmp_path: Path):
             recursive=True,
         )
 
-        expected_target = str(local_dir) + "/"
+        expected_target = str(local_dir)
         mock_selected_studio.download_folder.assert_called_once_with("", expected_target)
 
 
