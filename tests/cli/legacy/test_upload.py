@@ -21,8 +21,8 @@ Options:
 
 Commands:
   container  Upload a container to Lightning AI's container registry.
-  file       Upload a file to a Studio.
-  folder     Upload a folder to a Studio.
+  file       [DEPRECATED] Use 'lightning studio cp' instead.
+  folder     [DEPRECATED] Use 'lightning studio cp -r' instead.
   model      Upload a model a teamspace.
 """
     )
@@ -59,54 +59,18 @@ def test_file_help():
     result = subprocess.run("lightning upload file --help", shell=True, capture_output=True, text=True)
     result_text = result.stdout + result.stderr
 
-    assert (
-        result_text
-        == """Usage: lightning upload file [OPTIONS] PATH
-
-  Upload a file to a Studio.
-
-Options:
-  --studio TEXT                   The name of the studio to upload to. Will
-                                  show a menu for selection if not specified.
-                                  If provided, should be in the form of
-                                  <TEAMSPACE-NAME>/<STUDIO-NAME>
-  --remote-path, --remote_path TEXT
-                                  The path where the uploaded file should
-                                  appear on your Studio. Has to be within your
-                                  Studio's home directory and will be relative
-                                  to that. If not specified, will use the name
-                                  of the file you want to upload and place it
-                                  in your home directory.
-  --help                          Show this message and exit.
-"""
-    )
+    assert result.returncode != 0
+    assert "Use 'lightning studio cp' instead" in result_text
+    assert "DeprecatedError" in result_text
 
 
 def test_folder_help():
     result = subprocess.run("lightning upload folder --help", shell=True, capture_output=True, text=True)
     result_text = result.stdout + result.stderr
 
-    assert (
-        result_text
-        == """Usage: lightning upload folder [OPTIONS] PATH
-
-  Upload a folder to a Studio.
-
-Options:
-  --studio TEXT                   The name of the studio to upload to. Will
-                                  show a menu for selection if not specified.
-                                  If provided, should be in the form of
-                                  <TEAMSPACE-NAME>/<STUDIO-NAME>
-  --remote-path, --remote_path TEXT
-                                  The path where the uploaded file should
-                                  appear on your Studio. Has to be within your
-                                  Studio's home directory and will be relative
-                                  to that. If not specified, will use the name
-                                  of the folder you want to upload and place
-                                  it in your home directory.
-  --help                          Show this message and exit.
-"""
-    )
+    assert result.returncode != 0
+    assert "Use 'lightning studio cp -r' instead" in result_text
+    assert "DeprecatedError" in result_text
 
 
 def test_model_help():

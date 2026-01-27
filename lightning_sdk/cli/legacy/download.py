@@ -12,6 +12,7 @@ from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
+from lightning_sdk.exceptions import DeprecatedCommand, DeprecatedError
 from lightning_sdk.models import download_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user
@@ -63,134 +64,64 @@ def model(name: str, download_dir: str = ".") -> None:
     )
 
 
-@download.command(name="folder")
-@click.argument("path")
+@download.command(
+    name="folder",
+    cls=DeprecatedCommand,
+    message="Studio downloads via 'lightning download folder' are deprecated. Use 'lightning studio cp -r' instead.",
+)
+@click.argument("path", required=False, nargs=-1)
 @click.option(
     "--studio",
     default=None,
-    help=(
-        "The name of the studio to download from. "
-        "Will show a menu with user's owned studios for selection if not specified. "
-        "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names are case-sensitive. "
-        "The teamspace and studio names can be regular expressions to match, "
-        "a menu filtered studios will be shown for final selection."
-    ),
+    hidden=True,
 )
 @click.option(
     "--teamspace",
     default=None,
-    help="The teamspace the drive folder is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.",
+    hidden=True,
 )
 @click.option(
     "--local-path",
     "--local_path",
-    default=".",
-    type=click.Path(file_okay=False, dir_okay=True),
-    help="The path to the directory you want to download the folder to.",
+    default=None,
+    hidden=True,
 )
 def folder(
     path: str = "", studio: Optional[str] = None, teamspace: Optional[str] = None, local_path: str = "."
 ) -> None:
-    """Download a folder from a Studio or a Teamspace drive folder.
-
-    Example:
-      lightning download folder PATH
-
-    PATH: The relative path within the Studio or drive folder you want to download.
-    Defaults to the entire Studio or drive folder.
-    """
-    local_path = Path(local_path)
-    if not local_path.is_dir():
-        raise NotADirectoryError(f"'{local_path}' is not a directory")
-
-    if studio and teamspace:
-        raise ValueError("Either --studio or --teamspace must be provided, not both")
-
-    if studio:
-        path = _expand_remote_path(path)
-        resolved_downloader = _resolve_studio(studio)
-    elif teamspace:
-        menu = TeamspacesMenu()
-        resolved_downloader = menu(teamspace)
-    else:
-        raise ValueError("Either --studio or --teamspace must be provided")
-
-    if not path:
-        local_path /= resolved_downloader.name
-        path = ""
-
-    try:
-        if not path and teamspace:
-            raise FileNotFoundError()
-        resolved_downloader.download_folder(remote_path=path, target_path=str(local_path))
-    except Exception as e:
-        raise StudioCliError(
-            f"Could not download the folder from the given Studio {studio} or Teamspace {teamspace}. "
-            "Please contact Lightning AI directly to resolve this issue."
-        ) from e
+    """[DEPRECATED] Use 'lightning studio cp -r' instead."""
+    raise DeprecatedError(
+        "Studio downloads via 'lightning download folder' are deprecated. Use 'lightning studio cp -r' instead."
+    )
 
 
-@download.command(name="file")
-@click.argument("path")
+@download.command(
+    name="file",
+    cls=DeprecatedCommand,
+    message="Studio downloads via 'lightning download file' are deprecated. Use 'lightning studio cp' instead.",
+)
+@click.argument("path", required=False, nargs=-1)
 @click.option(
     "--studio",
     default=None,
-    help=(
-        "The name of the studio to download from. "
-        "Will show a menu with user's owned studios for selection if not specified. "
-        "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME> where the names are case-sensitive. "
-        "The teamspace and studio names can be regular expressions to match, "
-        "a menu filtered studios will be shown for final selection."
-    ),
+    hidden=True,
 )
 @click.option(
     "--teamspace",
     default=None,
-    help="The teamspace the file is part of. Should be of format <OWNER>/<TEAMSPACE_NAME>.",
+    hidden=True,
 )
 @click.option(
     "--local-path",
     "--local_path",
-    default=".",
-    type=click.Path(file_okay=False, dir_okay=True),
-    help="The path to the directory you want to download the file to.",
+    default=None,
+    hidden=True,
 )
 def file(path: str = "", studio: Optional[str] = None, teamspace: Optional[str] = None, local_path: str = ".") -> None:
-    """Download a file from a Studio or Teamspace drive file.
-
-    Example:
-      lightning download file PATH
-
-    PATH: The relative path to the file within the Studio or Teamspace drive file you want to download.
-    """
-    local_path = Path(local_path)
-    if not local_path.is_dir():
-        raise NotADirectoryError(f"'{local_path}' is not a directory")
-
-    if studio and teamspace:
-        raise ValueError("Either --studio or --teamspace must be provided, not both")
-
-    if studio:
-        resolved_downloader = _resolve_studio(studio)
-    elif teamspace:
-        menu = TeamspacesMenu()
-        resolved_downloader = menu(teamspace)
-    else:
-        raise ValueError("Either --studio or --teamspace must be provided")
-
-    if not path:
-        local_path /= resolved_downloader.name
-        path = ""
-
-    try:
-        if not path:
-            raise FileNotFoundError()
-        resolved_downloader.download_file(remote_path=path, file_path=str(local_path / os.path.basename(path)))
-    except Exception as e:
-        raise StudioCliError(
-            f"Could not download the file from the given Studio {studio} or Teamspace {teamspace}. "
-            "Please contact Lightning AI directly to resolve this issue."
-        ) from e
+    """[DEPRECATED] Use 'lightning studio cp' instead."""
+    raise DeprecatedError(
+        "Studio downloads via 'lightning download file' are deprecated. Use 'lightning studio cp' instead."
+    )
 
 
 @download.command(name="container")

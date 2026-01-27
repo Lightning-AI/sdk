@@ -19,8 +19,8 @@ Options:
 
 Commands:
   container  Download a docker container from a teamspace.
-  file       Download a file from a Studio or Teamspace drive file.
-  folder     Download a folder from a Studio or a Teamspace drive folder.
+  file       [DEPRECATED] Use 'lightning studio cp' instead.
+  folder     [DEPRECATED] Use 'lightning studio cp -r' instead.
   license    Download license for specific products/packages.
   licenses   Download licenses for all user's products/packages.
   model      Download a model from a teamspace.
@@ -59,71 +59,18 @@ def test_file_help():
     result = subprocess.run("lightning download file --help", shell=True, capture_output=True, text=True)
     result_text = result.stdout + result.stderr
 
-    assert (
-        result_text
-        == """Usage: lightning download file [OPTIONS] PATH
-
-  Download a file from a Studio or Teamspace drive file.
-
-  Example:   lightning download file PATH
-
-  PATH: The relative path to the file within the Studio or Teamspace drive
-  file you want to download.
-
-Options:
-  --studio TEXT                   The name of the studio to download from.
-                                  Will show a menu with user's owned studios
-                                  for selection if not specified. If provided,
-                                  should be in the form of <TEAMSPACE-
-                                  NAME>/<STUDIO-NAME> where the names are
-                                  case-sensitive. The teamspace and studio
-                                  names can be regular expressions to match, a
-                                  menu filtered studios will be shown for
-                                  final selection.
-  --teamspace TEXT                The teamspace the file is part of. Should be
-                                  of format <OWNER>/<TEAMSPACE_NAME>.
-  --local-path, --local_path DIRECTORY
-                                  The path to the directory you want to
-                                  download the file to.
-  --help                          Show this message and exit.
-"""
-    )
+    assert result.returncode != 0
+    assert "Use 'lightning studio cp' instead" in result_text
+    assert "DeprecatedError" in result_text
 
 
 def test_folder_help():
     result = subprocess.run("lightning download folder --help", shell=True, capture_output=True, text=True)
     result_text = result.stdout + result.stderr
 
-    assert (
-        result_text
-        == """Usage: lightning download folder [OPTIONS] PATH
-
-  Download a folder from a Studio or a Teamspace drive folder.
-
-  Example:   lightning download folder PATH
-
-  PATH: The relative path within the Studio or drive folder you want to
-  download. Defaults to the entire Studio or drive folder.
-
-Options:
-  --studio TEXT                   The name of the studio to download from.
-                                  Will show a menu with user's owned studios
-                                  for selection if not specified. If provided,
-                                  should be in the form of <TEAMSPACE-
-                                  NAME>/<STUDIO-NAME> where the names are
-                                  case-sensitive. The teamspace and studio
-                                  names can be regular expressions to match, a
-                                  menu filtered studios will be shown for
-                                  final selection.
-  --teamspace TEXT                The teamspace the drive folder is part of.
-                                  Should be of format
-                                  <OWNER>/<TEAMSPACE_NAME>.
-  --local-path, --local_path DIRECTORY
-                                  The path to the directory you want to
-                                  download the folder to.
-  --help                          Show this message and exit.
-"""
-    )
+    assert result.returncode != 0
+    assert "Use 'lightning studio cp -r' instead" in result_text
+    assert "DeprecatedError" in result_text
 
 
 def test_model_help():

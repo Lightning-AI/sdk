@@ -18,6 +18,7 @@ from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.constants import _LIGHTNING_DEBUG
+from lightning_sdk.exceptions import DeprecatedCommand, DeprecatedError
 from lightning_sdk.models import upload_model as _upload_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user
@@ -54,56 +55,48 @@ def model(name: str, path: str = ".", cloud_account: Optional[str] = None) -> No
     _upload_model(name, path, cloud_account=cloud_account)
 
 
-@upload.command("folder")
-@click.argument("path", type=click.Path(exists=True))
-@click.option(
-    "--studio",
-    default=None,
-    help=(
-        "The name of the studio to upload to. "
-        "Will show a menu for selection if not specified. "
-        "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>"
-    ),
+@upload.command(
+    name="folder",
+    cls=DeprecatedCommand,
+    message="Studio uploads via 'lightning upload folder' are deprecated. Use 'lightning studio cp -r' instead.",
 )
+@click.argument("path", type=click.Path(), required=False, nargs=-1)
+@click.option("--studio", default=None, hidden=True)
 @click.option(
     "--remote-path",
     "--remote_path",
     default=None,
-    help=(
-        "The path where the uploaded file should appear on your Studio. "
-        "Has to be within your Studio's home directory and will be relative to that. "
-        "If not specified, will use the name of the folder you want to upload and place it in your home directory."
-    ),
+    hidden=True,
 )
 def folder(path: str, studio: Optional[str], remote_path: Optional[str]) -> None:
-    """Upload a folder to a Studio."""
-    _folder(path=path, studio=studio, remote_path=remote_path)
+    """[DEPRECATED] Use 'lightning studio cp -r' instead."""
+    raise DeprecatedError(
+        "Studio uploads via 'lightning upload folder' are deprecated. Use 'lightning studio cp -r' instead."
+    )
 
 
-@upload.command("file")
-@click.argument("path", type=click.Path(exists=True))
+@upload.command(
+    name="file",
+    cls=DeprecatedCommand,
+    message="Studio uploads via 'lightning upload file' are deprecated. Use 'lightning studio cp' instead.",
+)
+@click.argument("path", type=click.Path(), required=False, nargs=-1)
 @click.option(
     "--studio",
     default=None,
-    help=(
-        "The name of the studio to upload to. "
-        "Will show a menu for selection if not specified. "
-        "If provided, should be in the form of <TEAMSPACE-NAME>/<STUDIO-NAME>"
-    ),
+    hidden=True,
 )
 @click.option(
     "--remote-path",
     "--remote_path",
     default=None,
-    help=(
-        "The path where the uploaded file should appear on your Studio. "
-        "Has to be within your Studio's home directory and will be relative to that. "
-        "If not specified, will use the name of the file you want to upload and place it in your home directory."
-    ),
+    hidden=True,
 )
 def file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = None) -> None:
-    """Upload a file to a Studio."""
-    _file(path=path, studio=studio, remote_path=remote_path)
+    """[DEPRECATED] Use 'lightning studio cp' instead."""
+    raise DeprecatedError(
+        "Studio uploads via 'lightning upload file' are deprecated. Use 'lightning studio cp' instead."
+    )
 
 
 @upload.command("container")
