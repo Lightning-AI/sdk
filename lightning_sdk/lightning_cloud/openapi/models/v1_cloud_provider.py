@@ -53,6 +53,7 @@ class V1CloudProvider(object):
     MACHINE = "MACHINE"
     LIGHTNING_ELASTIC_CLUSTER_AGGREGATE = "LIGHTNING_ELASTIC_CLUSTER_AGGREGATE"
     CUDO = "CUDO"
+    MITHRIL = "MITHRIL"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

@@ -43,7 +43,6 @@ class V1KubernetesDirectV1(object):
     swagger_types = {
         'automate_agent_installation': 'bool',
         'aws': 'V1KubernetesAWSConfig',
-        'container_registry_integration': 'V1ContainerRegistryIntegration',
         'grafana_dashboard_url': 'str',
         'grafana_namespace': 'str',
         'grafana_service_name': 'str',
@@ -63,7 +62,6 @@ class V1KubernetesDirectV1(object):
     attribute_map = {
         'automate_agent_installation': 'automateAgentInstallation',
         'aws': 'aws',
-        'container_registry_integration': 'containerRegistryIntegration',
         'grafana_dashboard_url': 'grafanaDashboardUrl',
         'grafana_namespace': 'grafanaNamespace',
         'grafana_service_name': 'grafanaServiceName',
@@ -80,11 +78,10 @@ class V1KubernetesDirectV1(object):
         'skip_user_label_injection': 'skipUserLabelInjection'
     }
 
-    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, container_registry_integration: 'V1ContainerRegistryIntegration' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
+    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._automate_agent_installation = None
         self._aws = None
-        self._container_registry_integration = None
         self._grafana_dashboard_url = None
         self._grafana_namespace = None
         self._grafana_service_name = None
@@ -104,8 +101,6 @@ class V1KubernetesDirectV1(object):
             self.automate_agent_installation = automate_agent_installation
         if aws is not None:
             self.aws = aws
-        if container_registry_integration is not None:
-            self.container_registry_integration = container_registry_integration
         if grafana_dashboard_url is not None:
             self.grafana_dashboard_url = grafana_dashboard_url
         if grafana_namespace is not None:
@@ -176,27 +171,6 @@ class V1KubernetesDirectV1(object):
         """
 
         self._aws = aws
-
-    @property
-    def container_registry_integration(self) -> 'V1ContainerRegistryIntegration':
-        """Gets the container_registry_integration of this V1KubernetesDirectV1.  # noqa: E501
-
-
-        :return: The container_registry_integration of this V1KubernetesDirectV1.  # noqa: E501
-        :rtype: V1ContainerRegistryIntegration
-        """
-        return self._container_registry_integration
-
-    @container_registry_integration.setter
-    def container_registry_integration(self, container_registry_integration: 'V1ContainerRegistryIntegration'):
-        """Sets the container_registry_integration of this V1KubernetesDirectV1.
-
-
-        :param container_registry_integration: The container_registry_integration of this V1KubernetesDirectV1.  # noqa: E501
-        :type: V1ContainerRegistryIntegration
-        """
-
-        self._container_registry_integration = container_registry_integration
 
     @property
     def grafana_dashboard_url(self) -> 'str':

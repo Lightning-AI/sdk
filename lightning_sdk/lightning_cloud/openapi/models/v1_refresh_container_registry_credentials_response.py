@@ -41,40 +41,14 @@ class V1RefreshContainerRegistryCredentialsResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'refreshed_at': 'datetime'
     }
 
     attribute_map = {
-        'refreshed_at': 'refreshedAt'
     }
 
-    def __init__(self, refreshed_at: 'datetime' =None):  # noqa: E501
+    def __init__(self):  # noqa: E501
         """V1RefreshContainerRegistryCredentialsResponse - a model defined in Swagger"""  # noqa: E501
-        self._refreshed_at = None
         self.discriminator = None
-        if refreshed_at is not None:
-            self.refreshed_at = refreshed_at
-
-    @property
-    def refreshed_at(self) -> 'datetime':
-        """Gets the refreshed_at of this V1RefreshContainerRegistryCredentialsResponse.  # noqa: E501
-
-
-        :return: The refreshed_at of this V1RefreshContainerRegistryCredentialsResponse.  # noqa: E501
-        :rtype: datetime
-        """
-        return self._refreshed_at
-
-    @refreshed_at.setter
-    def refreshed_at(self, refreshed_at: 'datetime'):
-        """Sets the refreshed_at of this V1RefreshContainerRegistryCredentialsResponse.
-
-
-        :param refreshed_at: The refreshed_at of this V1RefreshContainerRegistryCredentialsResponse.  # noqa: E501
-        :type: datetime
-        """
-
-        self._refreshed_at = refreshed_at
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

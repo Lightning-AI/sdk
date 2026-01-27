@@ -463,12 +463,12 @@ class FileSystemServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def file_system_service_list_filesystem_mmts(self, project_id: 'str', current_id: 'str', **kwargs) -> 'V1ListFilesystemMMTsResponse':  # noqa: E501
-        """file_system_service_list_filesystem_mmts  # noqa: E501
+    def file_system_service_list_filesystem_mm_ts(self, project_id: 'str', current_id: 'str', **kwargs) -> 'V1ListFilesystemMMTsResponse':  # noqa: E501
+        """file_system_service_list_filesystem_mm_ts  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.file_system_service_list_filesystem_mmts(project_id, current_id, async_req=True)
+        >>> thread = api.file_system_service_list_filesystem_mm_ts(project_id, current_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -481,17 +481,17 @@ class FileSystemServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.file_system_service_list_filesystem_mmts_with_http_info(project_id, current_id, **kwargs)  # noqa: E501
+            return self.file_system_service_list_filesystem_mm_ts_with_http_info(project_id, current_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.file_system_service_list_filesystem_mmts_with_http_info(project_id, current_id, **kwargs)  # noqa: E501
+            (data) = self.file_system_service_list_filesystem_mm_ts_with_http_info(project_id, current_id, **kwargs)  # noqa: E501
             return data
 
-    def file_system_service_list_filesystem_mmts_with_http_info(self, project_id: 'str', current_id: 'str', **kwargs) -> 'V1ListFilesystemMMTsResponse':  # noqa: E501
-        """file_system_service_list_filesystem_mmts  # noqa: E501
+    def file_system_service_list_filesystem_mm_ts_with_http_info(self, project_id: 'str', current_id: 'str', **kwargs) -> 'V1ListFilesystemMMTsResponse':  # noqa: E501
+        """file_system_service_list_filesystem_mm_ts  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.file_system_service_list_filesystem_mmts_with_http_info(project_id, current_id, async_req=True)
+        >>> thread = api.file_system_service_list_filesystem_mm_ts_with_http_info(project_id, current_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -514,18 +514,18 @@ class FileSystemServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method file_system_service_list_filesystem_mmts" % key
+                    " to method file_system_service_list_filesystem_mm_ts" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'project_id' is set
         if ('project_id' not in params or
                 params['project_id'] is None):
-            raise ValueError("Missing the required parameter `project_id` when calling `file_system_service_list_filesystem_mmts`")  # noqa: E501
+            raise ValueError("Missing the required parameter `project_id` when calling `file_system_service_list_filesystem_mm_ts`")  # noqa: E501
         # verify the required parameter 'current_id' is set
         if ('current_id' not in params or
                 params['current_id'] is None):
-            raise ValueError("Missing the required parameter `current_id` when calling `file_system_service_list_filesystem_mmts`")  # noqa: E501
+            raise ValueError("Missing the required parameter `current_id` when calling `file_system_service_list_filesystem_mm_ts`")  # noqa: E501
 
         collection_formats = {}
 

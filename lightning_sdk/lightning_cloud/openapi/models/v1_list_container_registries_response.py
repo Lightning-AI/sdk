@@ -41,14 +41,14 @@ class V1ListContainerRegistriesResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'registries': 'list[V1ContainerRegistryInfo]'
+        'registries': 'list[V1ContainerRegistry]'
     }
 
     attribute_map = {
         'registries': 'registries'
     }
 
-    def __init__(self, registries: 'list[V1ContainerRegistryInfo]' =None):  # noqa: E501
+    def __init__(self, registries: 'list[V1ContainerRegistry]' =None):  # noqa: E501
         """V1ListContainerRegistriesResponse - a model defined in Swagger"""  # noqa: E501
         self._registries = None
         self.discriminator = None
@@ -56,22 +56,22 @@ class V1ListContainerRegistriesResponse(object):
             self.registries = registries
 
     @property
-    def registries(self) -> 'list[V1ContainerRegistryInfo]':
+    def registries(self) -> 'list[V1ContainerRegistry]':
         """Gets the registries of this V1ListContainerRegistriesResponse.  # noqa: E501
 
 
         :return: The registries of this V1ListContainerRegistriesResponse.  # noqa: E501
-        :rtype: list[V1ContainerRegistryInfo]
+        :rtype: list[V1ContainerRegistry]
         """
         return self._registries
 
     @registries.setter
-    def registries(self, registries: 'list[V1ContainerRegistryInfo]'):
+    def registries(self, registries: 'list[V1ContainerRegistry]'):
         """Sets the registries of this V1ListContainerRegistriesResponse.
 
 
         :param registries: The registries of this V1ListContainerRegistriesResponse.  # noqa: E501
-        :type: list[V1ContainerRegistryInfo]
+        :type: list[V1ContainerRegistry]
         """
 
         self._registries = registries

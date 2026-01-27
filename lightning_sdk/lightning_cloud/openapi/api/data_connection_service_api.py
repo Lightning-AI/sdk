@@ -367,6 +367,7 @@ class DataConnectionServiceApi(object):
         :param str cluster_id:
         :param bool local_index: if true, fetch from the local index
         :param bool include_folder_index: if true, include the folder index in the response
+        :param bool only_direct_children: if true, only include direct children of the prefix
         :return: V1GetArtifactsPageResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -395,12 +396,13 @@ class DataConnectionServiceApi(object):
         :param str cluster_id:
         :param bool local_index: if true, fetch from the local index
         :param bool include_folder_index: if true, include the folder index in the response
+        :param bool only_direct_children: if true, only include direct children of the prefix
         :return: V1GetArtifactsPageResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'page_number', 'prefix', 'include_download_url', 'cluster_id', 'local_index', 'include_folder_index']  # noqa: E501
+        all_params = ['project_id', 'id', 'page_number', 'prefix', 'include_download_url', 'cluster_id', 'local_index', 'include_folder_index', 'only_direct_children']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -445,6 +447,8 @@ class DataConnectionServiceApi(object):
             query_params.append(('localIndex', params['local_index']))  # noqa: E501
         if 'include_folder_index' in params:
             query_params.append(('includeFolderIndex', params['include_folder_index']))  # noqa: E501
+        if 'only_direct_children' in params:
+            query_params.append(('onlyDirectChildren', params['only_direct_children']))  # noqa: E501
 
         header_params = {}
 

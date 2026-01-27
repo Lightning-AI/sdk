@@ -41,6 +41,7 @@ class V1Job(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'capacity_reservation_id': 'str',
         'created_at': 'datetime',
         'deleted_at': 'datetime',
         'deployment_id': 'str',
@@ -77,6 +78,7 @@ class V1Job(object):
     }
 
     attribute_map = {
+        'capacity_reservation_id': 'capacityReservationId',
         'created_at': 'createdAt',
         'deleted_at': 'deletedAt',
         'deployment_id': 'deploymentId',
@@ -112,8 +114,9 @@ class V1Job(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, private_ip_address: 'str' =None, project_id: 'str' =None, public_ip_address: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, private_ip_address: 'str' =None, project_id: 'str' =None, public_ip_address: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
+        self._capacity_reservation_id = None
         self._created_at = None
         self._deleted_at = None
         self._deployment_id = None
@@ -148,6 +151,8 @@ class V1Job(object):
         self._user_logs_started_at = None
         self._visibility = None
         self.discriminator = None
+        if capacity_reservation_id is not None:
+            self.capacity_reservation_id = capacity_reservation_id
         if created_at is not None:
             self.created_at = created_at
         if deleted_at is not None:
@@ -214,6 +219,27 @@ class V1Job(object):
             self.user_logs_started_at = user_logs_started_at
         if visibility is not None:
             self.visibility = visibility
+
+    @property
+    def capacity_reservation_id(self) -> 'str':
+        """Gets the capacity_reservation_id of this V1Job.  # noqa: E501
+
+
+        :return: The capacity_reservation_id of this V1Job.  # noqa: E501
+        :rtype: str
+        """
+        return self._capacity_reservation_id
+
+    @capacity_reservation_id.setter
+    def capacity_reservation_id(self, capacity_reservation_id: 'str'):
+        """Sets the capacity_reservation_id of this V1Job.
+
+
+        :param capacity_reservation_id: The capacity_reservation_id of this V1Job.  # noqa: E501
+        :type: str
+        """
+
+        self._capacity_reservation_id = capacity_reservation_id
 
     @property
     def created_at(self) -> 'datetime':

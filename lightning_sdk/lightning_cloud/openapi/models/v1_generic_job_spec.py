@@ -42,8 +42,11 @@ class V1GenericJobSpec(object):
     """
     swagger_types = {
         'image': 'str',
+        'instance_type': 'str',
         'lock_out': 'bool',
         'managed': 'bool',
+        'num_instances': 'int',
+        'reserved': 'bool',
         'service_id': 'str',
         'spot': 'bool',
         'template_id': 'str'
@@ -51,28 +54,40 @@ class V1GenericJobSpec(object):
 
     attribute_map = {
         'image': 'image',
+        'instance_type': 'instanceType',
         'lock_out': 'lockOut',
         'managed': 'managed',
+        'num_instances': 'numInstances',
+        'reserved': 'reserved',
         'service_id': 'serviceId',
         'spot': 'spot',
         'template_id': 'templateId'
     }
 
-    def __init__(self, image: 'str' =None, lock_out: 'bool' =None, managed: 'bool' =None, service_id: 'str' =None, spot: 'bool' =None, template_id: 'str' =None):  # noqa: E501
+    def __init__(self, image: 'str' =None, instance_type: 'str' =None, lock_out: 'bool' =None, managed: 'bool' =None, num_instances: 'int' =None, reserved: 'bool' =None, service_id: 'str' =None, spot: 'bool' =None, template_id: 'str' =None):  # noqa: E501
         """V1GenericJobSpec - a model defined in Swagger"""  # noqa: E501
         self._image = None
+        self._instance_type = None
         self._lock_out = None
         self._managed = None
+        self._num_instances = None
+        self._reserved = None
         self._service_id = None
         self._spot = None
         self._template_id = None
         self.discriminator = None
         if image is not None:
             self.image = image
+        if instance_type is not None:
+            self.instance_type = instance_type
         if lock_out is not None:
             self.lock_out = lock_out
         if managed is not None:
             self.managed = managed
+        if num_instances is not None:
+            self.num_instances = num_instances
+        if reserved is not None:
+            self.reserved = reserved
         if service_id is not None:
             self.service_id = service_id
         if spot is not None:
@@ -100,6 +115,27 @@ class V1GenericJobSpec(object):
         """
 
         self._image = image
+
+    @property
+    def instance_type(self) -> 'str':
+        """Gets the instance_type of this V1GenericJobSpec.  # noqa: E501
+
+
+        :return: The instance_type of this V1GenericJobSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._instance_type
+
+    @instance_type.setter
+    def instance_type(self, instance_type: 'str'):
+        """Sets the instance_type of this V1GenericJobSpec.
+
+
+        :param instance_type: The instance_type of this V1GenericJobSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._instance_type = instance_type
 
     @property
     def lock_out(self) -> 'bool':
@@ -142,6 +178,48 @@ class V1GenericJobSpec(object):
         """
 
         self._managed = managed
+
+    @property
+    def num_instances(self) -> 'int':
+        """Gets the num_instances of this V1GenericJobSpec.  # noqa: E501
+
+
+        :return: The num_instances of this V1GenericJobSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._num_instances
+
+    @num_instances.setter
+    def num_instances(self, num_instances: 'int'):
+        """Sets the num_instances of this V1GenericJobSpec.
+
+
+        :param num_instances: The num_instances of this V1GenericJobSpec.  # noqa: E501
+        :type: int
+        """
+
+        self._num_instances = num_instances
+
+    @property
+    def reserved(self) -> 'bool':
+        """Gets the reserved of this V1GenericJobSpec.  # noqa: E501
+
+
+        :return: The reserved of this V1GenericJobSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._reserved
+
+    @reserved.setter
+    def reserved(self, reserved: 'bool'):
+        """Sets the reserved of this V1GenericJobSpec.
+
+
+        :param reserved: The reserved of this V1GenericJobSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._reserved = reserved
 
     @property
     def service_id(self) -> 'str':
