@@ -581,6 +581,76 @@ def test_upload_file(
         tqdm_mock.wrapattr.assert_not_called()
 
 
+@pytest.mark.parametrize("progress_bar", [True, False])
+@mock.patch("requests.put")
+@mock.patch("lightning_sdk.api.teamspace_api.tqdm")
+@mock.patch("lightning_sdk.api.teamspace_api.Auth")
+def test_upload_file_with_headers(
+    auth_mock,
+    tqdm_mock,
+    requests_put_mock,
+    tmpdir,
+    progress_bar,
+):
+    """Test that custom headers are passed to requests.put when uploading files."""
+    requests_put_mock.return_value.status_code = 200
+    tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
+
+    auth_instance = auth_mock.return_value
+    auth_instance.api_key = "test-api-key"
+
+    teamspace_api = TeamspaceApi()
+
+    # Mock the entire _client object
+    teamspace_api._client = mock.Mock()
+    teamspace_api._client.auth_service_login.return_value = mock.Mock(token="test-token")
+    teamspace_api._client.api_client.configuration.host = "https://api.example.com"
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
+
+    custom_headers = {"Content-Type": "image/png"}
+    teamspace_api.upload_file(
+        "ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar, headers=custom_headers
+    )
+
+    assert requests_put_mock.call_count == 1
+    headers = requests_put_mock.call_args.kwargs["headers"]
+
+    assert headers == custom_headers
+    assert headers["Content-Type"] == "image/png"
+
+
+@mock.patch("requests.put")
+@mock.patch("lightning_sdk.api.teamspace_api.Auth")
+def test_upload_file_without_headers(
+    auth_mock,
+    requests_put_mock,
+    tmpdir,
+):
+    """Test that headers is None by default when not provided."""
+    requests_put_mock.return_value.status_code = 200
+
+    auth_instance = auth_mock.return_value
+    auth_instance.api_key = "test-api-key"
+
+    teamspace_api = TeamspaceApi()
+
+    teamspace_api._client = mock.Mock()
+    teamspace_api._client.auth_service_login.return_value = mock.Mock(token="test-token")
+    teamspace_api._client.api_client.configuration.host = "https://api.example.com"
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
+
+    teamspace_api.upload_file("ts-abc", "cluster-abc", filepath, "file1", progress_bar=False)
+
+    assert requests_put_mock.call_count == 1
+    headers = requests_put_mock.call_args.kwargs["headers"]
+
+    assert headers is None
+
+
 @mock.patch("requests.get", autospec=True)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True

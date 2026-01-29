@@ -451,6 +451,7 @@ class TeamspaceApi:
         file_path: str,
         remote_path: str,
         progress_bar: bool,
+        headers: Optional[Dict[str, str]] = None,
     ) -> None:
         """Uploads file to given remote path in the Teamspace drive /Uploads/."""
         token = _authenticate_and_get_token(self._client)
@@ -472,9 +473,9 @@ class TeamspaceApi:
                     unit_scale=True,
                     unit_divisor=1000,
                 ) as wrapped_file:
-                    r = requests.put(url, data=wrapped_file, params=query_params, timeout=30)
+                    r = requests.put(url, data=wrapped_file, params=query_params, timeout=30, headers=headers)
             else:
-                r = requests.put(url, data=f, params=query_params, timeout=30)
+                r = requests.put(url, data=f, params=query_params, timeout=30, headers=headers)
 
         if r.status_code == 200:
             return
