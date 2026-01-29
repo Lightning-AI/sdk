@@ -43,6 +43,7 @@ class V1SlackNotifier(object):
     swagger_types = {
         'api_key': 'str',
         'channel_id': 'str',
+        'notify_on_ready_for_maintenance': 'bool',
         'type': 'V1SlackNotifierType',
         'url': 'str'
     }
@@ -50,14 +51,16 @@ class V1SlackNotifier(object):
     attribute_map = {
         'api_key': 'apiKey',
         'channel_id': 'channelId',
+        'notify_on_ready_for_maintenance': 'notifyOnReadyForMaintenance',
         'type': 'type',
         'url': 'url'
     }
 
-    def __init__(self, api_key: 'str' =None, channel_id: 'str' =None, type: 'V1SlackNotifierType' =None, url: 'str' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, channel_id: 'str' =None, notify_on_ready_for_maintenance: 'bool' =None, type: 'V1SlackNotifierType' =None, url: 'str' =None):  # noqa: E501
         """V1SlackNotifier - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._channel_id = None
+        self._notify_on_ready_for_maintenance = None
         self._type = None
         self._url = None
         self.discriminator = None
@@ -65,6 +68,8 @@ class V1SlackNotifier(object):
             self.api_key = api_key
         if channel_id is not None:
             self.channel_id = channel_id
+        if notify_on_ready_for_maintenance is not None:
+            self.notify_on_ready_for_maintenance = notify_on_ready_for_maintenance
         if type is not None:
             self.type = type
         if url is not None:
@@ -111,6 +116,27 @@ class V1SlackNotifier(object):
         """
 
         self._channel_id = channel_id
+
+    @property
+    def notify_on_ready_for_maintenance(self) -> 'bool':
+        """Gets the notify_on_ready_for_maintenance of this V1SlackNotifier.  # noqa: E501
+
+
+        :return: The notify_on_ready_for_maintenance of this V1SlackNotifier.  # noqa: E501
+        :rtype: bool
+        """
+        return self._notify_on_ready_for_maintenance
+
+    @notify_on_ready_for_maintenance.setter
+    def notify_on_ready_for_maintenance(self, notify_on_ready_for_maintenance: 'bool'):
+        """Sets the notify_on_ready_for_maintenance of this V1SlackNotifier.
+
+
+        :param notify_on_ready_for_maintenance: The notify_on_ready_for_maintenance of this V1SlackNotifier.  # noqa: E501
+        :type: bool
+        """
+
+        self._notify_on_ready_for_maintenance = notify_on_ready_for_maintenance
 
     @property
     def type(self) -> 'V1SlackNotifierType':
