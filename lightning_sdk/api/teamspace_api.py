@@ -458,7 +458,7 @@ class TeamspaceApi:
 
         query_params = {"token": token, "clusterId": cloud_account}
         client_host = self._client.api_client.configuration.host
-        url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/uploads/blobs/{remote_path}"
+        url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path}"
 
         filesize = os.path.getsize(file_path)
         with open(file_path, "rb") as f:

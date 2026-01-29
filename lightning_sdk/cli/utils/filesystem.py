@@ -1,4 +1,5 @@
-from typing import Optional, TypedDict
+import os
+from typing import Any, Optional, TypedDict
 
 from lightning_sdk.cli.utils.owner_selection import OwnerMenu
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
@@ -12,6 +13,10 @@ class PathResult(TypedDict):
     teamspace: Optional[str]
     studio: Optional[str]
     destination: Optional[str]
+
+
+def path_join(*args: Any) -> str:
+    return os.path.join(*args).replace("\\", "/")
 
 
 def parse_studio_path(studio_path: str) -> PathResult:

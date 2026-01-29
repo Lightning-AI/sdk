@@ -4,7 +4,7 @@ from pathlib import Path
 from rich.console import Console
 
 from lightning_sdk.api.utils import _get_cloud_url
-from lightning_sdk.cli.utils.filesystem import parse_teamspace_uploads_path, resolve_teamspace
+from lightning_sdk.cli.utils.filesystem import parse_teamspace_uploads_path, path_join, resolve_teamspace
 
 
 def cp_upload(
@@ -20,6 +20,8 @@ def cp_upload(
 
     teamspace_path_result = parse_teamspace_uploads_path(teamspace_path)
 
+    teamspace_path_result["destination"] = path_join("Uploads", teamspace_path_result["destination"])
+
     selected_teamspace = resolve_teamspace(teamspace_path_result["teamspace"], teamspace_path_result["owner"])
     console.print(f"Uploading to {selected_teamspace.owner.name}/{selected_teamspace.name}")
 
@@ -33,7 +35,7 @@ def cp_upload(
         if teamspace_path.endswith(("/", "\\")):
             # if destination ends with / or \, treat it as a directory
             file_name = os.path.basename(local_file_path)
-            teamspace_path_result["destination"] = os.path.join(teamspace_path_result["destination"], file_name)
+            teamspace_path_result["destination"] = path_join(teamspace_path_result["destination"], file_name)
         selected_teamspace.upload_file(
             local_file_path, teamspace_path_result["destination"], cloud_account=cloud_account
         )
