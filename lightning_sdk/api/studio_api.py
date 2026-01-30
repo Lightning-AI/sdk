@@ -13,10 +13,12 @@ import requests
 from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
+    _MAX_SIZE_MULTI_PART_CHUNK,
     _authenticate_and_get_token,
     _create_app,
     _DummyBody,
     _DummyResponse,
+    _FileUploader,
     _machine_to_compute_name,
     _sanitize_studio_remote_path,
     _SinglePartFileUploader,
@@ -723,20 +725,36 @@ class StudioApi:
         remote_path: str,
         progress_bar: bool,
     ) -> None:
-        """Uploads file to given remote path on the studio."""
-        token = _authenticate_and_get_token(self._client)
+        """Uploads file to given remote path in the studio.
 
-        query_params = {"token": token}
-        client_host = self._client.api_client.configuration.host
-        url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{remote_path}"
+        Uses single-part upload for files <= 5MB, multipart upload for larger files.
+        """
+        file_size = os.path.getsize(file_path)
+        multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
 
-        _SinglePartFileUploader(
-            client=self._client,
-            file_path=file_path,
-            url=url,
-            query_params=query_params,
-            progress_bar=progress_bar,
-        )()
+        if file_size <= multipart_threshold:
+            token = _authenticate_and_get_token(self._client)
+
+            query_params = {"token": token}
+            client_host = self._client.api_client.configuration.host
+            url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{remote_path}"
+
+            _SinglePartFileUploader(
+                client=self._client,
+                file_path=file_path,
+                url=url,
+                query_params=query_params,
+                progress_bar=progress_bar,
+            )()
+        else:
+            _FileUploader(
+                client=self._client,
+                teamspace_id=teamspace_id,
+                cloud_account=cloud_account,
+                file_path=file_path,
+                remote_path=_sanitize_studio_remote_path(remote_path, studio_id),
+                progress_bar=progress_bar,
+            )()
 
     def download_file(
         self,
