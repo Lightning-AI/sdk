@@ -1430,7 +1430,7 @@ def test_list_files(
 
 @pytest.mark.parametrize("progress_bar", [True, False])
 @mock.patch("requests.put")
-@mock.patch("lightning_sdk.api.studio_api.tqdm")
+@mock.patch("lightning_sdk.api.utils.tqdm")
 @mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
 def test_upload_file(
     authenticate_mock,

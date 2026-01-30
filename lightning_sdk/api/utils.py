@@ -59,6 +59,66 @@ _MAX_BATCH_SIZE = 50
 _MAX_WORKERS = 10
 
 
+class _SinglePartFileUploader:
+    """A class handling upload files to studio and teamspace drive with new endpoint."""
+
+    def __init__(
+        self,
+        client: LightningClient,
+        file_path: str,
+        url: str,
+        query_params: Dict[str, str],
+        progress_bar: bool,
+        headers: Optional[Dict[str, str]] = None,
+    ) -> None:
+        self.client = client
+        self.local_path = file_path
+        self.url = url
+        self.query_params = query_params
+        self.headers = headers
+        self.filesize = os.path.getsize(file_path)
+
+        if progress_bar:
+            self.progress_bar = tqdm(
+                desc=f"Uploading {os.path.split(file_path)[1]}",
+                total=self.filesize,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1000,
+                position=-1,
+                mininterval=1,
+            )
+        else:
+            self.progress_bar = None
+
+    def __call__(self) -> None:
+        self._upload_with_retry()
+
+    @backoff.on_exception(
+        backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=10
+    )
+    def _upload_with_retry(self) -> None:
+        with open(self.local_path, "rb") as f:
+            if self.progress_bar is not None:
+                with tqdm.wrapattr(
+                    f,
+                    "read",
+                    desc=f"Uploading {os.path.split(self.local_path)[1]}",
+                    total=self.filesize,
+                    unit="B",
+                    unit_scale=True,
+                    unit_divisor=1000,
+                ) as wrapped_file:
+                    r = requests.put(
+                        self.url, data=wrapped_file, params=self.query_params, timeout=30, headers=self.headers
+                    )
+            else:
+                r = requests.put(self.url, data=f, params=self.query_params, timeout=30, headers=self.headers)
+
+        if r.status_code != 200:
+            raise RuntimeError(f"Failed to upload file '{self.local_path}'. Status code: {r.status_code}")
+
+
 class _FileUploader:
     """A class handling the upload to studios.
 

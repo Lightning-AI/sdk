@@ -15,6 +15,7 @@ from lightning_sdk.api.utils import (
     _DummyBody,
     _get_model_version,
     _ModelFileUploader,
+    _SinglePartFileUploader,
 )
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
@@ -460,26 +461,14 @@ class TeamspaceApi:
         client_host = self._client.api_client.configuration.host
         url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path}"
 
-        filesize = os.path.getsize(file_path)
-        with open(file_path, "rb") as f:
-            if progress_bar:
-                filesize = os.path.getsize(file_path)
-                with tqdm.wrapattr(
-                    f,
-                    "read",
-                    desc=f"Uploading {os.path.split(file_path)[1]}",
-                    total=filesize,
-                    unit="B",
-                    unit_scale=True,
-                    unit_divisor=1000,
-                ) as wrapped_file:
-                    r = requests.put(url, data=wrapped_file, params=query_params, timeout=30, headers=headers)
-            else:
-                r = requests.put(url, data=f, params=query_params, timeout=30, headers=headers)
-
-        if r.status_code == 200:
-            return
-        raise RuntimeError(f"Failed to upload file '{file_path}' to the Teamspace drive. Status code: {r.status_code}")
+        _SinglePartFileUploader(
+            client=self._client,
+            file_path=file_path,
+            url=url,
+            query_params=query_params,
+            progress_bar=progress_bar,
+            headers=headers,
+        )()
 
     def download_file(
         self,

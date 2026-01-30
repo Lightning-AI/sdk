@@ -19,6 +19,7 @@ from lightning_sdk.api.utils import (
     _DummyResponse,
     _machine_to_compute_name,
     _sanitize_studio_remote_path,
+    _SinglePartFileUploader,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
@@ -729,26 +730,13 @@ class StudioApi:
         client_host = self._client.api_client.configuration.host
         url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{remote_path}"
 
-        filesize = os.path.getsize(file_path)
-        with open(file_path, "rb") as f:
-            if progress_bar:
-                filesize = os.path.getsize(file_path)
-                with tqdm.wrapattr(
-                    f,
-                    "read",
-                    desc=f"Uploading {os.path.split(file_path)[1]}",
-                    total=filesize,
-                    unit="B",
-                    unit_scale=True,
-                    unit_divisor=1000,
-                ) as wrapped_file:
-                    r = requests.put(url, data=wrapped_file, params=query_params, timeout=30)
-            else:
-                r = requests.put(url, data=f, params=query_params, timeout=30)
-
-        if r.status_code == 200:
-            return
-        raise RuntimeError(f"Failed to upload file '{file_path}' to the Studio. Status code: {r.status_code}")
+        _SinglePartFileUploader(
+            client=self._client,
+            file_path=file_path,
+            url=url,
+            query_params=query_params,
+            progress_bar=progress_bar,
+        )()
 
     def download_file(
         self,

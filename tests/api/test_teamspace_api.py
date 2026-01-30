@@ -539,7 +539,7 @@ def test_list_uploads_files(
 
 @pytest.mark.parametrize("progress_bar", [True, False])
 @mock.patch("requests.put")
-@mock.patch("lightning_sdk.api.teamspace_api.tqdm")
+@mock.patch("lightning_sdk.api.utils.tqdm")
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
 def test_upload_file(
     auth_mock,
