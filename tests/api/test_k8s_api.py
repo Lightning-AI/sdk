@@ -11,6 +11,11 @@ mock_cluster = [
     {"timestamp": datetime(2025, 11, 19, 13), "num_allocated_gpus": 4, "num_requested_gpus": 4, "num_gpus": 8},
 ]
 
+mock_cluster_metrics_error = [
+    {"timestamp": datetime(2025, 11, 19, 12), "num_allocated_gpus": 12, "num_requested_gpus": 8, "num_gpus": 8},
+    {"timestamp": datetime(2025, 11, 19, 13), "num_allocated_gpus": 16, "num_requested_gpus": 8, "num_gpus": 8},
+]
+
 
 def test_get_billing_usage_with_empty_metrics():
     k8s_api = K8sClusterApi("test")
@@ -140,6 +145,26 @@ def test_get_billing_usage_with_dates_get_folded_into_same_hour():
     assert result[0]["hour"] == datetime(2025, 11, 19, 12, 0, 0)
     assert result[1]["hour"] == datetime(2025, 11, 19, 13, 0, 0)
     # The average between 6 and 10 is 8.0 meaning we properly folded the data
-    assert result[0]["num_allocated_gpus"] == 8.0
+    assert result[0]["num_allocated_gpus"] == 7.0
     assert result[1]["num_allocated_gpus"] == 6.0
+    get_k8s_mock.assert_called_once_with("test")
+
+
+def test_get_billing_usage_metrics_with_max_gpus_safety_check():
+    k8s_api = K8sClusterApi("test")
+    get_k8s_mock = mock.Mock(
+        return_value=V1ListClusterMetricsResponse(
+            cluster_metrics=[V1ClusterMetrics(**data) for data in mock_cluster_metrics_error]
+        )
+    )
+
+    k8s_api._client.k8_s_cluster_service_list_cluster_metrics = get_k8s_mock
+
+    result = k8s_api.get_billing_usage()
+
+    assert isinstance(result, list)
+    assert len(result) == 2
+    assert result[0]["num_allocated_gpus"] == 8
+    assert result[0]["num_allocated_gpus"] == 8
+
     get_k8s_mock.assert_called_once_with("test")

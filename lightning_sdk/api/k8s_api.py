@@ -86,8 +86,14 @@ class K8sClusterApi:
                     timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
                 hour = timestamp.replace(minute=0, second=0, microsecond=0)
 
+                # allocated GPUs cannot exceed total number of gpus
+                num_gpus = entry["num_gpus"]
+                allocated_gpus = entry["num_allocated_gpus"]
+                if allocated_gpus > num_gpus:
+                    allocated_gpus = num_gpus
+
                 # Store allocated GPUs for averaging
-                hourly_data[hour]["allocated_gpus"].append(entry["num_allocated_gpus"])
+                hourly_data[hour]["allocated_gpus"].append(allocated_gpus)
 
                 # Keep first entry for each hour (for other fields)
                 if hourly_data[hour]["first_entry"] is None:
