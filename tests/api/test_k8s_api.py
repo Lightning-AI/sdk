@@ -12,7 +12,7 @@ mock_cluster = [
 ]
 
 mock_cluster_metrics_error = [
-    {"timestamp": datetime(2025, 11, 19, 12), "num_allocated_gpus": 12, "num_requested_gpus": 8, "num_gpus": 8},
+    {"timestamp": datetime(2025, 11, 19, 12), "num_allocated_gpus": 12, "num_requested_gpus": 6, "num_gpus": 8},
     {"timestamp": datetime(2025, 11, 19, 13), "num_allocated_gpus": 16, "num_requested_gpus": 8, "num_gpus": 8},
 ]
 
@@ -145,7 +145,7 @@ def test_get_billing_usage_with_dates_get_folded_into_same_hour():
     assert result[0]["hour"] == datetime(2025, 11, 19, 12, 0, 0)
     assert result[1]["hour"] == datetime(2025, 11, 19, 13, 0, 0)
     # The average between 6 and 10 is 8.0 meaning we properly folded the data
-    assert result[0]["num_allocated_gpus"] == 7.0
+    assert result[0]["num_allocated_gpus"] == 8.0
     assert result[1]["num_allocated_gpus"] == 6.0
     get_k8s_mock.assert_called_once_with("test")
 
@@ -164,7 +164,7 @@ def test_get_billing_usage_metrics_with_max_gpus_safety_check():
 
     assert isinstance(result, list)
     assert len(result) == 2
-    assert result[0]["num_allocated_gpus"] == 8
-    assert result[0]["num_allocated_gpus"] == 8
+    assert result[0]["num_allocated_gpus"] == 6
+    assert result[1]["num_allocated_gpus"] == 8
 
     get_k8s_mock.assert_called_once_with("test")

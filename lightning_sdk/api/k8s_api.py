@@ -90,7 +90,7 @@ class K8sClusterApi:
                 num_gpus = entry["num_gpus"]
                 allocated_gpus = entry["num_allocated_gpus"]
                 if allocated_gpus > num_gpus:
-                    allocated_gpus = num_gpus
+                    allocated_gpus = entry["num_requested_gpus"]
 
                 # Store allocated GPUs for averaging
                 hourly_data[hour]["allocated_gpus"].append(allocated_gpus)
