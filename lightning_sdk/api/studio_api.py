@@ -779,10 +779,15 @@ class StudioApi:
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}",
             params=query_params,
             stream=True,
+            allow_redirects=True,
         )
-        total_length = int(r.headers.get("content-length"))
 
-        if progress_bar:
+        if r.status_code != 200:
+            raise RuntimeError(f"Failed to download file: {r.status_code}")
+
+        total_length = int(r.headers.get("content-length", 0))
+
+        if progress_bar and total_length > 0:
             pbar = tqdm(
                 desc=f"Downloading {os.path.split(path)[1]}",
                 total=total_length,

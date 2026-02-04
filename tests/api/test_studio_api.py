@@ -1489,11 +1489,36 @@ def test_upload_file(
 )
 def test_download_file(mock_login, mock_requests_get, tmpdir):
     mock_login.return_value = V1LoginResponse(token="token")
+    mock_response = mock.Mock()
+    mock_response.status_code = 200
+    mock_response.headers = {"content-length": "1024"}
+    mock_response.iter_content = mock.Mock(return_value=[b"data" * 256])
+    mock_requests_get.return_value = mock_response
 
     studio_api = StudioApi()
 
     filepath = os.path.join(tmpdir, "file1")
     studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
+)
+def test_download_file_non_200_status(mock_login, mock_requests_get, tmpdir):
+    mock_login.return_value = V1LoginResponse(token="token")
+
+    mock_response = mock.Mock()
+    mock_response.status_code = 404
+    mock_requests_get.return_value = mock_response
+
+    studio_api = StudioApi()
+    filepath = os.path.join(tmpdir, "file1")
+
+    with pytest.raises(RuntimeError, match="Failed to download file: 404"):
+        studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
+
+    assert not os.path.exists(filepath)
 
 
 @mock.patch("lightning_sdk.api.studio_api.concurrent.futures.wait")
