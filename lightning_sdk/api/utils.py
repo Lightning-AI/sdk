@@ -70,6 +70,7 @@ class _SinglePartFileUploader:
         query_params: Dict[str, str],
         progress_bar: bool,
         headers: Optional[Dict[str, str]] = None,
+        notify_completion: bool = False,
     ) -> None:
         self.client = client
         self.local_path = file_path
@@ -77,6 +78,7 @@ class _SinglePartFileUploader:
         self.query_params = query_params
         self.headers = headers
         self.filesize = os.path.getsize(file_path)
+        self.notify_completion = notify_completion
 
         if progress_bar:
             self.progress_bar = tqdm(
@@ -93,6 +95,8 @@ class _SinglePartFileUploader:
 
     def __call__(self) -> None:
         self._upload_with_retry()
+        if self.notify_completion:
+            self._notify_completion()
 
     @backoff.on_exception(
         backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=10
@@ -117,6 +121,18 @@ class _SinglePartFileUploader:
 
         if r.status_code != 200:
             raise RuntimeError(f"Failed to upload file '{self.local_path}'. Status code: {r.status_code}")
+
+    @backoff.on_exception(
+        backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=3
+    )
+    def _notify_completion(self) -> None:
+        """Notify the server that the upload is complete to trigger sidecar notification."""
+        complete_url = f"{self.url}/complete"
+        r = requests.post(complete_url, params=self.query_params, timeout=10)
+        if r.status_code not in (200, 204):
+            raise RuntimeError(
+                f"Failed to notify upload completion for '{self.local_path}'. Status code: {r.status_code}"
+            )
 
 
 class _FileUploader:

@@ -1431,6 +1431,7 @@ def test_list_files(
 @pytest.mark.parametrize("progress_bar", [True, False])
 @pytest.mark.parametrize("file_size_mb", [4, 200])  # 4MB for single-part, 100MB for multipart
 @mock.patch("lightning_sdk.api.studio_api._FileUploader")
+@mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.utils.tqdm")
 @mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
@@ -1438,12 +1439,14 @@ def test_upload_file(
     authenticate_mock,
     tqdm_mock,
     requests_put_mock,
+    requests_post_mock,
     file_uploader_mock,
     tmpdir,
     progress_bar,
     file_size_mb,
 ):
     requests_put_mock.return_value.status_code = 200
+    requests_post_mock.return_value.status_code = 200
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
     authenticate_mock.return_value = "test-token-123"
 

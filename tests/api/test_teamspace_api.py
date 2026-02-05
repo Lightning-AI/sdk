@@ -540,6 +540,7 @@ def test_list_uploads_files(
 @pytest.mark.parametrize("progress_bar", [True, False])
 @pytest.mark.parametrize("file_size_mb", [4, 200])  # 4MB for single-part, 100MB for multipart
 @mock.patch("lightning_sdk.api.teamspace_api._FileUploader")
+@mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.utils.tqdm")
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
@@ -547,12 +548,14 @@ def test_upload_file(
     auth_mock,
     tqdm_mock,
     requests_put_mock,
+    requests_post_mock,
     file_uploader_mock,
     tmpdir,
     progress_bar,
     file_size_mb,
 ):
     requests_put_mock.return_value.status_code = 200
+    requests_post_mock.return_value.status_code = 200
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
     auth_instance = auth_mock.return_value
     auth_instance.api_key = "test-api-key"
@@ -597,6 +600,7 @@ def test_upload_file(
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
+@mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.teamspace_api.tqdm")
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
@@ -604,11 +608,13 @@ def test_upload_file_with_headers(
     auth_mock,
     tqdm_mock,
     requests_put_mock,
+    requests_post_mock,
     tmpdir,
     progress_bar,
 ):
     """Test that custom headers are passed to requests.put when uploading files."""
     requests_put_mock.return_value.status_code = 200
+    requests_post_mock.return_value.status_code = 200
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
 
     auth_instance = auth_mock.return_value
@@ -636,15 +642,18 @@ def test_upload_file_with_headers(
     assert headers["Content-Type"] == "image/png"
 
 
+@mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
 def test_upload_file_without_headers(
     auth_mock,
     requests_put_mock,
+    requests_post_mock,
     tmpdir,
 ):
     """Test that headers is None by default when not provided."""
     requests_put_mock.return_value.status_code = 200
+    requests_post_mock.return_value.status_code = 200
 
     auth_instance = auth_mock.return_value
     auth_instance.api_key = "test-api-key"

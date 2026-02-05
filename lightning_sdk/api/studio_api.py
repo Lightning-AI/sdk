@@ -745,6 +745,7 @@ class StudioApi:
                 url=url,
                 query_params=query_params,
                 progress_bar=progress_bar,
+                notify_completion=True,
             )()
         else:
             _FileUploader(
