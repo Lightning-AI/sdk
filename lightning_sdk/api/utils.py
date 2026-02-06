@@ -79,19 +79,7 @@ class _SinglePartFileUploader:
         self.headers = headers
         self.filesize = os.path.getsize(file_path)
         self.notify_completion = notify_completion
-
-        if progress_bar:
-            self.progress_bar = tqdm(
-                desc=f"Uploading {os.path.split(file_path)[1]}",
-                total=self.filesize,
-                unit="B",
-                unit_scale=True,
-                unit_divisor=1000,
-                position=-1,
-                mininterval=1,
-            )
-        else:
-            self.progress_bar = None
+        self.show_progress = progress_bar
 
     def __call__(self) -> None:
         self._upload_with_retry()
@@ -103,7 +91,7 @@ class _SinglePartFileUploader:
     )
     def _upload_with_retry(self) -> None:
         with open(self.local_path, "rb") as f:
-            if self.progress_bar is not None:
+            if self.show_progress:
                 with tqdm.wrapattr(
                     f,
                     "read",
