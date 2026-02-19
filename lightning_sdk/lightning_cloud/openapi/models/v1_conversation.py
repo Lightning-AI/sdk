@@ -42,6 +42,7 @@ class V1Conversation(object):
     """
     swagger_types = {
         'assistant_id': 'str',
+        'assistant_name': 'str',
         'created_at': 'datetime',
         'goal': 'str',
         'id': 'str',
@@ -56,6 +57,7 @@ class V1Conversation(object):
 
     attribute_map = {
         'assistant_id': 'assistantId',
+        'assistant_name': 'assistantName',
         'created_at': 'createdAt',
         'goal': 'goal',
         'id': 'id',
@@ -68,9 +70,10 @@ class V1Conversation(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, assistant_id: 'str' =None, created_at: 'datetime' =None, goal: 'str' =None, id: 'str' =None, like: 'V1LikeStatus' =None, messages: 'list[V1Message]' =None, name: 'str' =None, project_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, assistant_id: 'str' =None, assistant_name: 'str' =None, created_at: 'datetime' =None, goal: 'str' =None, id: 'str' =None, like: 'V1LikeStatus' =None, messages: 'list[V1Message]' =None, name: 'str' =None, project_id: 'str' =None, title: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Conversation - a model defined in Swagger"""  # noqa: E501
         self._assistant_id = None
+        self._assistant_name = None
         self._created_at = None
         self._goal = None
         self._id = None
@@ -84,6 +87,8 @@ class V1Conversation(object):
         self.discriminator = None
         if assistant_id is not None:
             self.assistant_id = assistant_id
+        if assistant_name is not None:
+            self.assistant_name = assistant_name
         if created_at is not None:
             self.created_at = created_at
         if goal is not None:
@@ -125,6 +130,27 @@ class V1Conversation(object):
         """
 
         self._assistant_id = assistant_id
+
+    @property
+    def assistant_name(self) -> 'str':
+        """Gets the assistant_name of this V1Conversation.  # noqa: E501
+
+
+        :return: The assistant_name of this V1Conversation.  # noqa: E501
+        :rtype: str
+        """
+        return self._assistant_name
+
+    @assistant_name.setter
+    def assistant_name(self, assistant_name: 'str'):
+        """Sets the assistant_name of this V1Conversation.
+
+
+        :param assistant_name: The assistant_name of this V1Conversation.  # noqa: E501
+        :type: str
+        """
+
+        self._assistant_name = assistant_name
 
     @property
     def created_at(self) -> 'datetime':

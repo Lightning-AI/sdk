@@ -42,6 +42,7 @@ class V1Message(object):
     """
     swagger_types = {
         'account_id': 'str',
+        'account_owner_type': 'V1AccountType',
         'assistant_id': 'str',
         'author': 'V1MessageAuthor',
         'completion_tokens': 'str',
@@ -62,6 +63,7 @@ class V1Message(object):
 
     attribute_map = {
         'account_id': 'accountId',
+        'account_owner_type': 'accountOwnerType',
         'assistant_id': 'assistantId',
         'author': 'author',
         'completion_tokens': 'completionTokens',
@@ -80,9 +82,10 @@ class V1Message(object):
         'throughput': 'throughput'
     }
 
-    def __init__(self, account_id: 'str' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, like: 'V1LikeStatus' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, account_owner_type: 'V1AccountType' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, like: 'V1LikeStatus' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
+        self._account_owner_type = None
         self._assistant_id = None
         self._author = None
         self._completion_tokens = None
@@ -102,6 +105,8 @@ class V1Message(object):
         self.discriminator = None
         if account_id is not None:
             self.account_id = account_id
+        if account_owner_type is not None:
+            self.account_owner_type = account_owner_type
         if assistant_id is not None:
             self.assistant_id = assistant_id
         if author is not None:
@@ -155,6 +160,27 @@ class V1Message(object):
         """
 
         self._account_id = account_id
+
+    @property
+    def account_owner_type(self) -> 'V1AccountType':
+        """Gets the account_owner_type of this V1Message.  # noqa: E501
+
+
+        :return: The account_owner_type of this V1Message.  # noqa: E501
+        :rtype: V1AccountType
+        """
+        return self._account_owner_type
+
+    @account_owner_type.setter
+    def account_owner_type(self, account_owner_type: 'V1AccountType'):
+        """Sets the account_owner_type of this V1Message.
+
+
+        :param account_owner_type: The account_owner_type of this V1Message.  # noqa: E501
+        :type: V1AccountType
+        """
+
+        self._account_owner_type = account_owner_type
 
     @property
     def assistant_id(self) -> 'str':

@@ -50,6 +50,7 @@ class V1KubernetesDirectV1(object):
         'incident_alert_notifications': 'list[V1K8sIncidentSetting]',
         'incident_auto_cordon': 'list[V1K8sIncidentSetting]',
         'incident_historical_scan_complete': 'bool',
+        'incident_notification_namespaces': 'list[str]',
         'incident_slack_notifiers': 'list[V1SlackNotifier]',
         'kubeconfig': 'str',
         'kubeconfig_elevated': 'str',
@@ -69,6 +70,7 @@ class V1KubernetesDirectV1(object):
         'incident_alert_notifications': 'incidentAlertNotifications',
         'incident_auto_cordon': 'incidentAutoCordon',
         'incident_historical_scan_complete': 'incidentHistoricalScanComplete',
+        'incident_notification_namespaces': 'incidentNotificationNamespaces',
         'incident_slack_notifiers': 'incidentSlackNotifiers',
         'kubeconfig': 'kubeconfig',
         'kubeconfig_elevated': 'kubeconfigElevated',
@@ -78,7 +80,7 @@ class V1KubernetesDirectV1(object):
         'skip_user_label_injection': 'skipUserLabelInjection'
     }
 
-    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
+    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._automate_agent_installation = None
         self._aws = None
@@ -89,6 +91,7 @@ class V1KubernetesDirectV1(object):
         self._incident_alert_notifications = None
         self._incident_auto_cordon = None
         self._incident_historical_scan_complete = None
+        self._incident_notification_namespaces = None
         self._incident_slack_notifiers = None
         self._kubeconfig = None
         self._kubeconfig_elevated = None
@@ -115,6 +118,8 @@ class V1KubernetesDirectV1(object):
             self.incident_auto_cordon = incident_auto_cordon
         if incident_historical_scan_complete is not None:
             self.incident_historical_scan_complete = incident_historical_scan_complete
+        if incident_notification_namespaces is not None:
+            self.incident_notification_namespaces = incident_notification_namespaces
         if incident_slack_notifiers is not None:
             self.incident_slack_notifiers = incident_slack_notifiers
         if kubeconfig is not None:
@@ -318,6 +323,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._incident_historical_scan_complete = incident_historical_scan_complete
+
+    @property
+    def incident_notification_namespaces(self) -> 'list[str]':
+        """Gets the incident_notification_namespaces of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The incident_notification_namespaces of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._incident_notification_namespaces
+
+    @incident_notification_namespaces.setter
+    def incident_notification_namespaces(self, incident_notification_namespaces: 'list[str]'):
+        """Sets the incident_notification_namespaces of this V1KubernetesDirectV1.
+
+
+        :param incident_notification_namespaces: The incident_notification_namespaces of this V1KubernetesDirectV1.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._incident_notification_namespaces = incident_notification_namespaces
 
     @property
     def incident_slack_notifiers(self) -> 'list[V1SlackNotifier]':

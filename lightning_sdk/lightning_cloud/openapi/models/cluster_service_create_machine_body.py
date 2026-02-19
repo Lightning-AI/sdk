@@ -43,6 +43,7 @@ class ClusterServiceCreateMachineBody(object):
     swagger_types = {
         'address': 'str',
         'ca_cert': 'str',
+        'id': 'str',
         'instance_type': 'str',
         'management_api_url': 'str',
         'name': 'str',
@@ -54,6 +55,7 @@ class ClusterServiceCreateMachineBody(object):
         'provider_region': 'str',
         'provisioning_method': 'str',
         'resources': 'V1Resources',
+        'ssh_port': 'int',
         'ssh_username': 'str',
         'tls_cert': 'str',
         'tls_key': 'str',
@@ -63,6 +65,7 @@ class ClusterServiceCreateMachineBody(object):
     attribute_map = {
         'address': 'address',
         'ca_cert': 'caCert',
+        'id': 'id',
         'instance_type': 'instanceType',
         'management_api_url': 'managementApiUrl',
         'name': 'name',
@@ -74,16 +77,18 @@ class ClusterServiceCreateMachineBody(object):
         'provider_region': 'providerRegion',
         'provisioning_method': 'provisioningMethod',
         'resources': 'resources',
+        'ssh_port': 'sshPort',
         'ssh_username': 'sshUsername',
         'tls_cert': 'tlsCert',
         'tls_key': 'tlsKey',
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, address: 'str' =None, ca_cert: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, ca_cert: 'str' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceCreateMachineBody - a model defined in Swagger"""  # noqa: E501
         self._address = None
         self._ca_cert = None
+        self._id = None
         self._instance_type = None
         self._management_api_url = None
         self._name = None
@@ -95,6 +100,7 @@ class ClusterServiceCreateMachineBody(object):
         self._provider_region = None
         self._provisioning_method = None
         self._resources = None
+        self._ssh_port = None
         self._ssh_username = None
         self._tls_cert = None
         self._tls_key = None
@@ -104,6 +110,8 @@ class ClusterServiceCreateMachineBody(object):
             self.address = address
         if ca_cert is not None:
             self.ca_cert = ca_cert
+        if id is not None:
+            self.id = id
         if instance_type is not None:
             self.instance_type = instance_type
         if management_api_url is not None:
@@ -126,6 +134,8 @@ class ClusterServiceCreateMachineBody(object):
             self.provisioning_method = provisioning_method
         if resources is not None:
             self.resources = resources
+        if ssh_port is not None:
+            self.ssh_port = ssh_port
         if ssh_username is not None:
             self.ssh_username = ssh_username
         if tls_cert is not None:
@@ -176,6 +186,27 @@ class ClusterServiceCreateMachineBody(object):
         """
 
         self._ca_cert = ca_cert
+
+    @property
+    def id(self) -> 'str':
+        """Gets the id of this ClusterServiceCreateMachineBody.  # noqa: E501
+
+
+        :return: The id of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: 'str'):
+        """Sets the id of this ClusterServiceCreateMachineBody.
+
+
+        :param id: The id of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._id = id
 
     @property
     def instance_type(self) -> 'str':
@@ -407,6 +438,27 @@ class ClusterServiceCreateMachineBody(object):
         """
 
         self._resources = resources
+
+    @property
+    def ssh_port(self) -> 'int':
+        """Gets the ssh_port of this ClusterServiceCreateMachineBody.  # noqa: E501
+
+
+        :return: The ssh_port of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :rtype: int
+        """
+        return self._ssh_port
+
+    @ssh_port.setter
+    def ssh_port(self, ssh_port: 'int'):
+        """Sets the ssh_port of this ClusterServiceCreateMachineBody.
+
+
+        :param ssh_port: The ssh_port of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :type: int
+        """
+
+        self._ssh_port = ssh_port
 
     @property
     def ssh_username(self) -> 'str':

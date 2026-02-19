@@ -43,20 +43,23 @@ class V1CudoDirectV1(object):
     swagger_types = {
         'primary_region': 'str',
         'project_id': 'str',
-        'regions': 'list[str]'
+        'regions': 'list[str]',
+        'show_as_lightning': 'bool'
     }
 
     attribute_map = {
         'primary_region': 'primaryRegion',
         'project_id': 'projectId',
-        'regions': 'regions'
+        'regions': 'regions',
+        'show_as_lightning': 'showAsLightning'
     }
 
-    def __init__(self, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None):  # noqa: E501
+    def __init__(self, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, show_as_lightning: 'bool' =None):  # noqa: E501
         """V1CudoDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._primary_region = None
         self._project_id = None
         self._regions = None
+        self._show_as_lightning = None
         self.discriminator = None
         if primary_region is not None:
             self.primary_region = primary_region
@@ -64,6 +67,8 @@ class V1CudoDirectV1(object):
             self.project_id = project_id
         if regions is not None:
             self.regions = regions
+        if show_as_lightning is not None:
+            self.show_as_lightning = show_as_lightning
 
     @property
     def primary_region(self) -> 'str':
@@ -127,6 +132,27 @@ class V1CudoDirectV1(object):
         """
 
         self._regions = regions
+
+    @property
+    def show_as_lightning(self) -> 'bool':
+        """Gets the show_as_lightning of this V1CudoDirectV1.  # noqa: E501
+
+
+        :return: The show_as_lightning of this V1CudoDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._show_as_lightning
+
+    @show_as_lightning.setter
+    def show_as_lightning(self, show_as_lightning: 'bool'):
+        """Sets the show_as_lightning of this V1CudoDirectV1.
+
+
+        :param show_as_lightning: The show_as_lightning of this V1CudoDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._show_as_lightning = show_as_lightning
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

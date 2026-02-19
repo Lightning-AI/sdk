@@ -41,19 +41,50 @@ class JobsServiceReportJobSystemMetricsBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'metrics': 'list[V1SystemMetrics]'
+        'machine_id': 'str',
+        'metrics': 'list[V1SystemMetrics]',
+        'org_id': 'str'
     }
 
     attribute_map = {
-        'metrics': 'metrics'
+        'machine_id': 'machineId',
+        'metrics': 'metrics',
+        'org_id': 'orgId'
     }
 
-    def __init__(self, metrics: 'list[V1SystemMetrics]' =None):  # noqa: E501
+    def __init__(self, machine_id: 'str' =None, metrics: 'list[V1SystemMetrics]' =None, org_id: 'str' =None):  # noqa: E501
         """JobsServiceReportJobSystemMetricsBody - a model defined in Swagger"""  # noqa: E501
+        self._machine_id = None
         self._metrics = None
+        self._org_id = None
         self.discriminator = None
+        if machine_id is not None:
+            self.machine_id = machine_id
         if metrics is not None:
             self.metrics = metrics
+        if org_id is not None:
+            self.org_id = org_id
+
+    @property
+    def machine_id(self) -> 'str':
+        """Gets the machine_id of this JobsServiceReportJobSystemMetricsBody.  # noqa: E501
+
+
+        :return: The machine_id of this JobsServiceReportJobSystemMetricsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._machine_id
+
+    @machine_id.setter
+    def machine_id(self, machine_id: 'str'):
+        """Sets the machine_id of this JobsServiceReportJobSystemMetricsBody.
+
+
+        :param machine_id: The machine_id of this JobsServiceReportJobSystemMetricsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._machine_id = machine_id
 
     @property
     def metrics(self) -> 'list[V1SystemMetrics]':
@@ -75,6 +106,27 @@ class JobsServiceReportJobSystemMetricsBody(object):
         """
 
         self._metrics = metrics
+
+    @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this JobsServiceReportJobSystemMetricsBody.  # noqa: E501
+
+
+        :return: The org_id of this JobsServiceReportJobSystemMetricsBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this JobsServiceReportJobSystemMetricsBody.
+
+
+        :param org_id: The org_id of this JobsServiceReportJobSystemMetricsBody.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

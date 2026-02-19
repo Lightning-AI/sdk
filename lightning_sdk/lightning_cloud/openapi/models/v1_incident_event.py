@@ -51,6 +51,7 @@ class V1IncidentEvent(object):
         'message': 'str',
         'multiple_event': 'bool',
         'notified': 'bool',
+        'notify_slack_ts': 'str',
         'previous_value': 'float',
         'project_id': 'str',
         'resource': 'str',
@@ -73,6 +74,7 @@ class V1IncidentEvent(object):
         'message': 'message',
         'multiple_event': 'multipleEvent',
         'notified': 'notified',
+        'notify_slack_ts': 'notifySlackTs',
         'previous_value': 'previousValue',
         'project_id': 'projectId',
         'resource': 'resource',
@@ -84,7 +86,7 @@ class V1IncidentEvent(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, closing: 'bool' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, current_value: 'float' =None, id: 'str' =None, incident_id: 'str' =None, k8s: 'V1K8sIncidentIndexes' =None, message: 'str' =None, multiple_event: 'bool' =None, notified: 'bool' =None, previous_value: 'float' =None, project_id: 'str' =None, resource: 'str' =None, severity: 'V1IncidentSeverity' =None, threshold: 'float' =None, timestamp: 'datetime' =None, title: 'str' =None, type: 'V1IncidentType' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, closing: 'bool' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, current_value: 'float' =None, id: 'str' =None, incident_id: 'str' =None, k8s: 'V1K8sIncidentIndexes' =None, message: 'str' =None, multiple_event: 'bool' =None, notified: 'bool' =None, notify_slack_ts: 'str' =None, previous_value: 'float' =None, project_id: 'str' =None, resource: 'str' =None, severity: 'V1IncidentSeverity' =None, threshold: 'float' =None, timestamp: 'datetime' =None, title: 'str' =None, type: 'V1IncidentType' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1IncidentEvent - a model defined in Swagger"""  # noqa: E501
         self._closing = None
         self._cluster_id = None
@@ -96,6 +98,7 @@ class V1IncidentEvent(object):
         self._message = None
         self._multiple_event = None
         self._notified = None
+        self._notify_slack_ts = None
         self._previous_value = None
         self._project_id = None
         self._resource = None
@@ -126,6 +129,8 @@ class V1IncidentEvent(object):
             self.multiple_event = multiple_event
         if notified is not None:
             self.notified = notified
+        if notify_slack_ts is not None:
+            self.notify_slack_ts = notify_slack_ts
         if previous_value is not None:
             self.previous_value = previous_value
         if project_id is not None:
@@ -354,6 +359,27 @@ class V1IncidentEvent(object):
         """
 
         self._notified = notified
+
+    @property
+    def notify_slack_ts(self) -> 'str':
+        """Gets the notify_slack_ts of this V1IncidentEvent.  # noqa: E501
+
+
+        :return: The notify_slack_ts of this V1IncidentEvent.  # noqa: E501
+        :rtype: str
+        """
+        return self._notify_slack_ts
+
+    @notify_slack_ts.setter
+    def notify_slack_ts(self, notify_slack_ts: 'str'):
+        """Sets the notify_slack_ts of this V1IncidentEvent.
+
+
+        :param notify_slack_ts: The notify_slack_ts of this V1IncidentEvent.  # noqa: E501
+        :type: str
+        """
+
+        self._notify_slack_ts = notify_slack_ts
 
     @property
     def previous_value(self) -> 'float':

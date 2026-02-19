@@ -46,7 +46,8 @@ class V1CloudSpaceInstanceConfig(object):
         'disable_auto_shutdown': 'bool',
         'ide': 'str',
         'idle_shutdown_seconds': 'int',
-        'publish_with_compute_name': 'str'
+        'publish_with_compute_name': 'str',
+        'tutorial_shown': 'bool'
     }
 
     attribute_map = {
@@ -55,10 +56,11 @@ class V1CloudSpaceInstanceConfig(object):
         'disable_auto_shutdown': 'disableAutoShutdown',
         'ide': 'ide',
         'idle_shutdown_seconds': 'idleShutdownSeconds',
-        'publish_with_compute_name': 'publishWithComputeName'
+        'publish_with_compute_name': 'publishWithComputeName',
+        'tutorial_shown': 'tutorialShown'
     }
 
-    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, ide: 'str' =None, idle_shutdown_seconds: 'int' =None, publish_with_compute_name: 'str' =None):  # noqa: E501
+    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, ide: 'str' =None, idle_shutdown_seconds: 'int' =None, publish_with_compute_name: 'str' =None, tutorial_shown: 'bool' =None):  # noqa: E501
         """V1CloudSpaceInstanceConfig - a model defined in Swagger"""  # noqa: E501
         self._compute_config = None
         self._data_connection_mounts = None
@@ -66,6 +68,7 @@ class V1CloudSpaceInstanceConfig(object):
         self._ide = None
         self._idle_shutdown_seconds = None
         self._publish_with_compute_name = None
+        self._tutorial_shown = None
         self.discriminator = None
         if compute_config is not None:
             self.compute_config = compute_config
@@ -79,6 +82,8 @@ class V1CloudSpaceInstanceConfig(object):
             self.idle_shutdown_seconds = idle_shutdown_seconds
         if publish_with_compute_name is not None:
             self.publish_with_compute_name = publish_with_compute_name
+        if tutorial_shown is not None:
+            self.tutorial_shown = tutorial_shown
 
     @property
     def compute_config(self) -> 'V1UserRequestedComputeConfig':
@@ -205,6 +210,27 @@ class V1CloudSpaceInstanceConfig(object):
         """
 
         self._publish_with_compute_name = publish_with_compute_name
+
+    @property
+    def tutorial_shown(self) -> 'bool':
+        """Gets the tutorial_shown of this V1CloudSpaceInstanceConfig.  # noqa: E501
+
+
+        :return: The tutorial_shown of this V1CloudSpaceInstanceConfig.  # noqa: E501
+        :rtype: bool
+        """
+        return self._tutorial_shown
+
+    @tutorial_shown.setter
+    def tutorial_shown(self, tutorial_shown: 'bool'):
+        """Sets the tutorial_shown of this V1CloudSpaceInstanceConfig.
+
+
+        :param tutorial_shown: The tutorial_shown of this V1CloudSpaceInstanceConfig.  # noqa: E501
+        :type: bool
+        """
+
+        self._tutorial_shown = tutorial_shown
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

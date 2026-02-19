@@ -41,29 +41,55 @@ class V1AWSClusterCredentials(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'endpoint_url': 'str',
         'key_id': 'str',
         'secret': 'str',
         'token': 'str'
     }
 
     attribute_map = {
+        'endpoint_url': 'endpointUrl',
         'key_id': 'keyId',
         'secret': 'secret',
         'token': 'token'
     }
 
-    def __init__(self, key_id: 'str' =None, secret: 'str' =None, token: 'str' =None):  # noqa: E501
+    def __init__(self, endpoint_url: 'str' =None, key_id: 'str' =None, secret: 'str' =None, token: 'str' =None):  # noqa: E501
         """V1AWSClusterCredentials - a model defined in Swagger"""  # noqa: E501
+        self._endpoint_url = None
         self._key_id = None
         self._secret = None
         self._token = None
         self.discriminator = None
+        if endpoint_url is not None:
+            self.endpoint_url = endpoint_url
         if key_id is not None:
             self.key_id = key_id
         if secret is not None:
             self.secret = secret
         if token is not None:
             self.token = token
+
+    @property
+    def endpoint_url(self) -> 'str':
+        """Gets the endpoint_url of this V1AWSClusterCredentials.  # noqa: E501
+
+
+        :return: The endpoint_url of this V1AWSClusterCredentials.  # noqa: E501
+        :rtype: str
+        """
+        return self._endpoint_url
+
+    @endpoint_url.setter
+    def endpoint_url(self, endpoint_url: 'str'):
+        """Sets the endpoint_url of this V1AWSClusterCredentials.
+
+
+        :param endpoint_url: The endpoint_url of this V1AWSClusterCredentials.  # noqa: E501
+        :type: str
+        """
+
+        self._endpoint_url = endpoint_url
 
     @property
     def key_id(self) -> 'str':

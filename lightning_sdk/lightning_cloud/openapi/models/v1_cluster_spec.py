@@ -77,6 +77,7 @@ class V1ClusterSpec(object):
         'security_options': 'V1ClusterSecurityOptions',
         'slurm_v1': 'V1SlurmV1',
         'tagging_options': 'V1ClusterTaggingOptions',
+        'thunder_cat_v1': 'V1ThunderCatDirectV1',
         'unavailability_spikes_detection_enabled': 'bool',
         'user_id': 'str',
         'vibe_coding_enabled': 'bool',
@@ -121,6 +122,7 @@ class V1ClusterSpec(object):
         'security_options': 'securityOptions',
         'slurm_v1': 'slurmV1',
         'tagging_options': 'taggingOptions',
+        'thunder_cat_v1': 'thunderCatV1',
         'unavailability_spikes_detection_enabled': 'unavailabilitySpikesDetectionEnabled',
         'user_id': 'userId',
         'vibe_coding_enabled': 'vibeCodingEnabled',
@@ -128,7 +130,7 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, cudo_v1: 'V1CudoDirectV1' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, mithril_v1: 'V1MithrilDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, partitioning_enabled: 'bool' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, cudo_v1: 'V1CudoDirectV1' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, mithril_v1: 'V1MithrilDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, partitioning_enabled: 'bool' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, thunder_cat_v1: 'V1ThunderCatDirectV1' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_accelerators = None
@@ -166,6 +168,7 @@ class V1ClusterSpec(object):
         self._security_options = None
         self._slurm_v1 = None
         self._tagging_options = None
+        self._thunder_cat_v1 = None
         self._unavailability_spikes_detection_enabled = None
         self._user_id = None
         self._vibe_coding_enabled = None
@@ -244,6 +247,8 @@ class V1ClusterSpec(object):
             self.slurm_v1 = slurm_v1
         if tagging_options is not None:
             self.tagging_options = tagging_options
+        if thunder_cat_v1 is not None:
+            self.thunder_cat_v1 = thunder_cat_v1
         if unavailability_spikes_detection_enabled is not None:
             self.unavailability_spikes_detection_enabled = unavailability_spikes_detection_enabled
         if user_id is not None:
@@ -1012,6 +1017,27 @@ class V1ClusterSpec(object):
         """
 
         self._tagging_options = tagging_options
+
+    @property
+    def thunder_cat_v1(self) -> 'V1ThunderCatDirectV1':
+        """Gets the thunder_cat_v1 of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The thunder_cat_v1 of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1ThunderCatDirectV1
+        """
+        return self._thunder_cat_v1
+
+    @thunder_cat_v1.setter
+    def thunder_cat_v1(self, thunder_cat_v1: 'V1ThunderCatDirectV1'):
+        """Sets the thunder_cat_v1 of this V1ClusterSpec.
+
+
+        :param thunder_cat_v1: The thunder_cat_v1 of this V1ClusterSpec.  # noqa: E501
+        :type: V1ThunderCatDirectV1
+        """
+
+        self._thunder_cat_v1 = thunder_cat_v1
 
     @property
     def unavailability_spikes_detection_enabled(self) -> 'bool':

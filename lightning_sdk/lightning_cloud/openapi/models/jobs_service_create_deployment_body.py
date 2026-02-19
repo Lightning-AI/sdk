@@ -55,6 +55,7 @@ class JobsServiceCreateDeploymentBody(object):
         'pipeline_reuse_deployment_between_runs': 'bool',
         'recipients': 'V1DeploymentAlertingRecipients',
         'replicas': 'int',
+        'reuse_servers': 'bool',
         'spec': 'V1JobSpec',
         'strategy': 'V1DeploymentStrategy'
     }
@@ -74,11 +75,12 @@ class JobsServiceCreateDeploymentBody(object):
         'pipeline_reuse_deployment_between_runs': 'pipelineReuseDeploymentBetweenRuns',
         'recipients': 'recipients',
         'replicas': 'replicas',
+        'reuse_servers': 'reuseServers',
         'spec': 'spec',
         'strategy': 'strategy'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, recipients: 'V1DeploymentAlertingRecipients' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, recipients: 'V1DeploymentAlertingRecipients' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """JobsServiceCreateDeploymentBody - a model defined in Swagger"""  # noqa: E501
         self._api_standard = None
         self._apis = None
@@ -94,6 +96,7 @@ class JobsServiceCreateDeploymentBody(object):
         self._pipeline_reuse_deployment_between_runs = None
         self._recipients = None
         self._replicas = None
+        self._reuse_servers = None
         self._spec = None
         self._strategy = None
         self.discriminator = None
@@ -125,6 +128,8 @@ class JobsServiceCreateDeploymentBody(object):
             self.recipients = recipients
         if replicas is not None:
             self.replicas = replicas
+        if reuse_servers is not None:
+            self.reuse_servers = reuse_servers
         if spec is not None:
             self.spec = spec
         if strategy is not None:
@@ -423,6 +428,27 @@ class JobsServiceCreateDeploymentBody(object):
         """
 
         self._replicas = replicas
+
+    @property
+    def reuse_servers(self) -> 'bool':
+        """Gets the reuse_servers of this JobsServiceCreateDeploymentBody.  # noqa: E501
+
+
+        :return: The reuse_servers of this JobsServiceCreateDeploymentBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._reuse_servers
+
+    @reuse_servers.setter
+    def reuse_servers(self, reuse_servers: 'bool'):
+        """Sets the reuse_servers of this JobsServiceCreateDeploymentBody.
+
+
+        :param reuse_servers: The reuse_servers of this JobsServiceCreateDeploymentBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._reuse_servers = reuse_servers
 
     @property
     def spec(self) -> 'V1JobSpec':

@@ -42,6 +42,7 @@ class AssistantsServiceStartConversationBody(object):
     """
     swagger_types = {
         'auto_name': 'bool',
+        'billing_acount_id': 'str',
         'billing_project_id': 'str',
         'conversation_id': 'str',
         'ephemeral': 'bool',
@@ -50,6 +51,7 @@ class AssistantsServiceStartConversationBody(object):
         'message': 'V1Message',
         'metadata': 'dict(str, str)',
         'name': 'str',
+        'org_id': 'str',
         'parent_conversation_id': 'str',
         'parent_message_id': 'str',
         'reasoning_effort': 'str',
@@ -62,6 +64,7 @@ class AssistantsServiceStartConversationBody(object):
 
     attribute_map = {
         'auto_name': 'autoName',
+        'billing_acount_id': 'billingAcountId',
         'billing_project_id': 'billingProjectId',
         'conversation_id': 'conversationId',
         'ephemeral': 'ephemeral',
@@ -70,6 +73,7 @@ class AssistantsServiceStartConversationBody(object):
         'message': 'message',
         'metadata': 'metadata',
         'name': 'name',
+        'org_id': 'orgId',
         'parent_conversation_id': 'parentConversationId',
         'parent_message_id': 'parentMessageId',
         'reasoning_effort': 'reasoningEffort',
@@ -80,9 +84,10 @@ class AssistantsServiceStartConversationBody(object):
         'tools': 'tools'
     }
 
-    def __init__(self, auto_name: 'bool' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_completion_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, sent_at: 'datetime' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None, tools: 'list[V1Tool]' =None):  # noqa: E501
+    def __init__(self, auto_name: 'bool' =None, billing_acount_id: 'str' =None, billing_project_id: 'str' =None, conversation_id: 'str' =None, ephemeral: 'bool' =None, internal_conversation: 'bool' =None, max_completion_tokens: 'str' =None, message: 'V1Message' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, org_id: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, reasoning_effort: 'str' =None, sent_at: 'datetime' =None, store: 'bool' =None, stream: 'bool' =None, system_prompt: 'str' =None, tools: 'list[V1Tool]' =None):  # noqa: E501
         """AssistantsServiceStartConversationBody - a model defined in Swagger"""  # noqa: E501
         self._auto_name = None
+        self._billing_acount_id = None
         self._billing_project_id = None
         self._conversation_id = None
         self._ephemeral = None
@@ -91,6 +96,7 @@ class AssistantsServiceStartConversationBody(object):
         self._message = None
         self._metadata = None
         self._name = None
+        self._org_id = None
         self._parent_conversation_id = None
         self._parent_message_id = None
         self._reasoning_effort = None
@@ -102,6 +108,8 @@ class AssistantsServiceStartConversationBody(object):
         self.discriminator = None
         if auto_name is not None:
             self.auto_name = auto_name
+        if billing_acount_id is not None:
+            self.billing_acount_id = billing_acount_id
         if billing_project_id is not None:
             self.billing_project_id = billing_project_id
         if conversation_id is not None:
@@ -118,6 +126,8 @@ class AssistantsServiceStartConversationBody(object):
             self.metadata = metadata
         if name is not None:
             self.name = name
+        if org_id is not None:
+            self.org_id = org_id
         if parent_conversation_id is not None:
             self.parent_conversation_id = parent_conversation_id
         if parent_message_id is not None:
@@ -155,6 +165,27 @@ class AssistantsServiceStartConversationBody(object):
         """
 
         self._auto_name = auto_name
+
+    @property
+    def billing_acount_id(self) -> 'str':
+        """Gets the billing_acount_id of this AssistantsServiceStartConversationBody.  # noqa: E501
+
+
+        :return: The billing_acount_id of this AssistantsServiceStartConversationBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._billing_acount_id
+
+    @billing_acount_id.setter
+    def billing_acount_id(self, billing_acount_id: 'str'):
+        """Sets the billing_acount_id of this AssistantsServiceStartConversationBody.
+
+
+        :param billing_acount_id: The billing_acount_id of this AssistantsServiceStartConversationBody.  # noqa: E501
+        :type: str
+        """
+
+        self._billing_acount_id = billing_acount_id
 
     @property
     def billing_project_id(self) -> 'str':
@@ -323,6 +354,27 @@ class AssistantsServiceStartConversationBody(object):
         """
 
         self._name = name
+
+    @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this AssistantsServiceStartConversationBody.  # noqa: E501
+
+
+        :return: The org_id of this AssistantsServiceStartConversationBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this AssistantsServiceStartConversationBody.
+
+
+        :param org_id: The org_id of this AssistantsServiceStartConversationBody.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
 
     @property
     def parent_conversation_id(self) -> 'str':

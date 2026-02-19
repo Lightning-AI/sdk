@@ -41,28 +41,28 @@ class ContainerRegistryServiceCreateContainerRegistryBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'org_id': 'str',
+        'cluster_id': 'str',
         'provider': 'ContainerRegistryProvider',
         'scopes': 'V1ContainerRegistryScopes',
         'url': 'str'
     }
 
     attribute_map = {
-        'org_id': 'orgId',
+        'cluster_id': 'clusterId',
         'provider': 'provider',
         'scopes': 'scopes',
         'url': 'url'
     }
 
-    def __init__(self, org_id: 'str' =None, provider: 'ContainerRegistryProvider' =None, scopes: 'V1ContainerRegistryScopes' =None, url: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, provider: 'ContainerRegistryProvider' =None, scopes: 'V1ContainerRegistryScopes' =None, url: 'str' =None):  # noqa: E501
         """ContainerRegistryServiceCreateContainerRegistryBody - a model defined in Swagger"""  # noqa: E501
-        self._org_id = None
+        self._cluster_id = None
         self._provider = None
         self._scopes = None
         self._url = None
         self.discriminator = None
-        if org_id is not None:
-            self.org_id = org_id
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if provider is not None:
             self.provider = provider
         if scopes is not None:
@@ -71,25 +71,25 @@ class ContainerRegistryServiceCreateContainerRegistryBody(object):
             self.url = url
 
     @property
-    def org_id(self) -> 'str':
-        """Gets the org_id of this ContainerRegistryServiceCreateContainerRegistryBody.  # noqa: E501
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this ContainerRegistryServiceCreateContainerRegistryBody.  # noqa: E501
 
 
-        :return: The org_id of this ContainerRegistryServiceCreateContainerRegistryBody.  # noqa: E501
+        :return: The cluster_id of this ContainerRegistryServiceCreateContainerRegistryBody.  # noqa: E501
         :rtype: str
         """
-        return self._org_id
+        return self._cluster_id
 
-    @org_id.setter
-    def org_id(self, org_id: 'str'):
-        """Sets the org_id of this ContainerRegistryServiceCreateContainerRegistryBody.
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this ContainerRegistryServiceCreateContainerRegistryBody.
 
 
-        :param org_id: The org_id of this ContainerRegistryServiceCreateContainerRegistryBody.  # noqa: E501
+        :param cluster_id: The cluster_id of this ContainerRegistryServiceCreateContainerRegistryBody.  # noqa: E501
         :type: str
         """
 
-        self._org_id = org_id
+        self._cluster_id = cluster_id
 
     @property
     def provider(self) -> 'ContainerRegistryProvider':

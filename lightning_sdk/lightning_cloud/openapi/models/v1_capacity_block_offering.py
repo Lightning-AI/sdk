@@ -48,6 +48,7 @@ class V1CapacityBlockOffering(object):
         'fee': 'float',
         'instance_count': 'int',
         'instance_type': 'str',
+        'machine_id': 'str',
         'provider_fee': 'float',
         'region': 'str',
         'regions_without_quota': 'list[str]',
@@ -63,6 +64,7 @@ class V1CapacityBlockOffering(object):
         'fee': 'fee',
         'instance_count': 'instanceCount',
         'instance_type': 'instanceType',
+        'machine_id': 'machineId',
         'provider_fee': 'providerFee',
         'region': 'region',
         'regions_without_quota': 'regionsWithoutQuota',
@@ -70,7 +72,7 @@ class V1CapacityBlockOffering(object):
         'upfront_fee': 'upfrontFee'
     }
 
-    def __init__(self, capacity_block_duration_hours: 'int' =None, capacity_block_offering_id: 'str' =None, currency_code: 'str' =None, end_date: 'datetime' =None, fee: 'float' =None, instance_count: 'int' =None, instance_type: 'str' =None, provider_fee: 'float' =None, region: 'str' =None, regions_without_quota: 'list[str]' =None, start_date: 'datetime' =None, upfront_fee: 'float' =None):  # noqa: E501
+    def __init__(self, capacity_block_duration_hours: 'int' =None, capacity_block_offering_id: 'str' =None, currency_code: 'str' =None, end_date: 'datetime' =None, fee: 'float' =None, instance_count: 'int' =None, instance_type: 'str' =None, machine_id: 'str' =None, provider_fee: 'float' =None, region: 'str' =None, regions_without_quota: 'list[str]' =None, start_date: 'datetime' =None, upfront_fee: 'float' =None):  # noqa: E501
         """V1CapacityBlockOffering - a model defined in Swagger"""  # noqa: E501
         self._capacity_block_duration_hours = None
         self._capacity_block_offering_id = None
@@ -79,6 +81,7 @@ class V1CapacityBlockOffering(object):
         self._fee = None
         self._instance_count = None
         self._instance_type = None
+        self._machine_id = None
         self._provider_fee = None
         self._region = None
         self._regions_without_quota = None
@@ -99,6 +102,8 @@ class V1CapacityBlockOffering(object):
             self.instance_count = instance_count
         if instance_type is not None:
             self.instance_type = instance_type
+        if machine_id is not None:
+            self.machine_id = machine_id
         if provider_fee is not None:
             self.provider_fee = provider_fee
         if region is not None:
@@ -256,6 +261,27 @@ class V1CapacityBlockOffering(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def machine_id(self) -> 'str':
+        """Gets the machine_id of this V1CapacityBlockOffering.  # noqa: E501
+
+
+        :return: The machine_id of this V1CapacityBlockOffering.  # noqa: E501
+        :rtype: str
+        """
+        return self._machine_id
+
+    @machine_id.setter
+    def machine_id(self, machine_id: 'str'):
+        """Sets the machine_id of this V1CapacityBlockOffering.
+
+
+        :param machine_id: The machine_id of this V1CapacityBlockOffering.  # noqa: E501
+        :type: str
+        """
+
+        self._machine_id = machine_id
 
     @property
     def provider_fee(self) -> 'float':

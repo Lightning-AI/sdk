@@ -41,9 +41,11 @@ class V1MachineDirectV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'access_mode': 'str',
         'cloud_hypervisor_user': 'str',
         'extra_setup_commands': 'list[str]',
         'primary_region': 'str',
+        'private_networking': 'bool',
         'regions': 'list[str]',
         'setup_infiniband': 'bool',
         'storage_overcommit_factor': 'float',
@@ -52,9 +54,11 @@ class V1MachineDirectV1(object):
     }
 
     attribute_map = {
+        'access_mode': 'accessMode',
         'cloud_hypervisor_user': 'cloudHypervisorUser',
         'extra_setup_commands': 'extraSetupCommands',
         'primary_region': 'primaryRegion',
+        'private_networking': 'privateNetworking',
         'regions': 'regions',
         'setup_infiniband': 'setupInfiniband',
         'storage_overcommit_factor': 'storageOvercommitFactor',
@@ -62,23 +66,29 @@ class V1MachineDirectV1(object):
         'use_nvme_disks': 'useNvmeDisks'
     }
 
-    def __init__(self, cloud_hypervisor_user: 'str' =None, extra_setup_commands: 'list[str]' =None, primary_region: 'str' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
+    def __init__(self, access_mode: 'str' =None, cloud_hypervisor_user: 'str' =None, extra_setup_commands: 'list[str]' =None, primary_region: 'str' =None, private_networking: 'bool' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
+        self._access_mode = None
         self._cloud_hypervisor_user = None
         self._extra_setup_commands = None
         self._primary_region = None
+        self._private_networking = None
         self._regions = None
         self._setup_infiniband = None
         self._storage_overcommit_factor = None
         self._tailscale_auth_key_secret_id = None
         self._use_nvme_disks = None
         self.discriminator = None
+        if access_mode is not None:
+            self.access_mode = access_mode
         if cloud_hypervisor_user is not None:
             self.cloud_hypervisor_user = cloud_hypervisor_user
         if extra_setup_commands is not None:
             self.extra_setup_commands = extra_setup_commands
         if primary_region is not None:
             self.primary_region = primary_region
+        if private_networking is not None:
+            self.private_networking = private_networking
         if regions is not None:
             self.regions = regions
         if setup_infiniband is not None:
@@ -89,6 +99,27 @@ class V1MachineDirectV1(object):
             self.tailscale_auth_key_secret_id = tailscale_auth_key_secret_id
         if use_nvme_disks is not None:
             self.use_nvme_disks = use_nvme_disks
+
+    @property
+    def access_mode(self) -> 'str':
+        """Gets the access_mode of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The access_mode of this V1MachineDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._access_mode
+
+    @access_mode.setter
+    def access_mode(self, access_mode: 'str'):
+        """Sets the access_mode of this V1MachineDirectV1.
+
+
+        :param access_mode: The access_mode of this V1MachineDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._access_mode = access_mode
 
     @property
     def cloud_hypervisor_user(self) -> 'str':
@@ -152,6 +183,27 @@ class V1MachineDirectV1(object):
         """
 
         self._primary_region = primary_region
+
+    @property
+    def private_networking(self) -> 'bool':
+        """Gets the private_networking of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The private_networking of this V1MachineDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._private_networking
+
+    @private_networking.setter
+    def private_networking(self, private_networking: 'bool'):
+        """Sets the private_networking of this V1MachineDirectV1.
+
+
+        :param private_networking: The private_networking of this V1MachineDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._private_networking = private_networking
 
     @property
     def regions(self) -> 'list[str]':

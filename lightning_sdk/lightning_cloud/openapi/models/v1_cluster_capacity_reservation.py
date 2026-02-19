@@ -51,12 +51,14 @@ class V1ClusterCapacityReservation(object):
         'in_use': 'str',
         'in_use_aggregate': 'str',
         'instance_type': 'str',
+        'machine_id': 'str',
         'match_pattern': 'str',
         'node_group_name': 'str',
         'num_instances': 'str',
         'org_id': 'str',
         'project_id': 'str',
         'region': 'str',
+        'resources': 'V1Resources',
         'start_time': 'datetime',
         'used_by': 'list[V1CapacityReservationUsedBy]',
         'zone': 'str'
@@ -73,18 +75,20 @@ class V1ClusterCapacityReservation(object):
         'in_use': 'inUse',
         'in_use_aggregate': 'inUseAggregate',
         'instance_type': 'instanceType',
+        'machine_id': 'machineId',
         'match_pattern': 'matchPattern',
         'node_group_name': 'nodeGroupName',
         'num_instances': 'numInstances',
         'org_id': 'orgId',
         'project_id': 'projectId',
         'region': 'region',
+        'resources': 'resources',
         'start_time': 'startTime',
         'used_by': 'usedBy',
         'zone': 'zone'
     }
 
-    def __init__(self, aggregate_availability: 'str' =None, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, in_use: 'str' =None, in_use_aggregate: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, node_group_name: 'str' =None, num_instances: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, used_by: 'list[V1CapacityReservationUsedBy]' =None, zone: 'str' =None):  # noqa: E501
+    def __init__(self, aggregate_availability: 'str' =None, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, id: 'str' =None, in_use: 'str' =None, in_use_aggregate: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, match_pattern: 'str' =None, node_group_name: 'str' =None, num_instances: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, region: 'str' =None, resources: 'V1Resources' =None, start_time: 'datetime' =None, used_by: 'list[V1CapacityReservationUsedBy]' =None, zone: 'str' =None):  # noqa: E501
         """V1ClusterCapacityReservation - a model defined in Swagger"""  # noqa: E501
         self._aggregate_availability = None
         self._capacity_reservation_type = None
@@ -96,12 +100,14 @@ class V1ClusterCapacityReservation(object):
         self._in_use = None
         self._in_use_aggregate = None
         self._instance_type = None
+        self._machine_id = None
         self._match_pattern = None
         self._node_group_name = None
         self._num_instances = None
         self._org_id = None
         self._project_id = None
         self._region = None
+        self._resources = None
         self._start_time = None
         self._used_by = None
         self._zone = None
@@ -126,6 +132,8 @@ class V1ClusterCapacityReservation(object):
             self.in_use_aggregate = in_use_aggregate
         if instance_type is not None:
             self.instance_type = instance_type
+        if machine_id is not None:
+            self.machine_id = machine_id
         if match_pattern is not None:
             self.match_pattern = match_pattern
         if node_group_name is not None:
@@ -138,6 +146,8 @@ class V1ClusterCapacityReservation(object):
             self.project_id = project_id
         if region is not None:
             self.region = region
+        if resources is not None:
+            self.resources = resources
         if start_time is not None:
             self.start_time = start_time
         if used_by is not None:
@@ -356,6 +366,27 @@ class V1ClusterCapacityReservation(object):
         self._instance_type = instance_type
 
     @property
+    def machine_id(self) -> 'str':
+        """Gets the machine_id of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The machine_id of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: str
+        """
+        return self._machine_id
+
+    @machine_id.setter
+    def machine_id(self, machine_id: 'str'):
+        """Sets the machine_id of this V1ClusterCapacityReservation.
+
+
+        :param machine_id: The machine_id of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: str
+        """
+
+        self._machine_id = machine_id
+
+    @property
     def match_pattern(self) -> 'str':
         """Gets the match_pattern of this V1ClusterCapacityReservation.  # noqa: E501
 
@@ -480,6 +511,27 @@ class V1ClusterCapacityReservation(object):
         """
 
         self._region = region
+
+    @property
+    def resources(self) -> 'V1Resources':
+        """Gets the resources of this V1ClusterCapacityReservation.  # noqa: E501
+
+
+        :return: The resources of this V1ClusterCapacityReservation.  # noqa: E501
+        :rtype: V1Resources
+        """
+        return self._resources
+
+    @resources.setter
+    def resources(self, resources: 'V1Resources'):
+        """Sets the resources of this V1ClusterCapacityReservation.
+
+
+        :param resources: The resources of this V1ClusterCapacityReservation.  # noqa: E501
+        :type: V1Resources
+        """
+
+        self._resources = resources
 
     @property
     def start_time(self) -> 'datetime':

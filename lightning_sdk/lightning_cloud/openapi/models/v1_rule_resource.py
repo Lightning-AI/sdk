@@ -80,6 +80,7 @@ class V1RuleResource(object):
     KUBERNETESCLUSTER = "kubernetesCluster"
     STORAGETRANSFER = "storageTransfer"
     LITDATASET = "litDataset"
+    UPLOAD = "upload"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

@@ -41,40 +41,66 @@ class V1ContainerRegistryConfig(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'ecr': 'ContainerRegistryConfigECR'
+        'refresh': 'ContainerRegistryConfigRefreshConfig',
+        'strategy': 'ContainerRegistryConfigStrategy'
     }
 
     attribute_map = {
-        'ecr': 'ecr'
+        'refresh': 'refresh',
+        'strategy': 'strategy'
     }
 
-    def __init__(self, ecr: 'ContainerRegistryConfigECR' =None):  # noqa: E501
+    def __init__(self, refresh: 'ContainerRegistryConfigRefreshConfig' =None, strategy: 'ContainerRegistryConfigStrategy' =None):  # noqa: E501
         """V1ContainerRegistryConfig - a model defined in Swagger"""  # noqa: E501
-        self._ecr = None
+        self._refresh = None
+        self._strategy = None
         self.discriminator = None
-        if ecr is not None:
-            self.ecr = ecr
+        if refresh is not None:
+            self.refresh = refresh
+        if strategy is not None:
+            self.strategy = strategy
 
     @property
-    def ecr(self) -> 'ContainerRegistryConfigECR':
-        """Gets the ecr of this V1ContainerRegistryConfig.  # noqa: E501
+    def refresh(self) -> 'ContainerRegistryConfigRefreshConfig':
+        """Gets the refresh of this V1ContainerRegistryConfig.  # noqa: E501
 
 
-        :return: The ecr of this V1ContainerRegistryConfig.  # noqa: E501
-        :rtype: ContainerRegistryConfigECR
+        :return: The refresh of this V1ContainerRegistryConfig.  # noqa: E501
+        :rtype: ContainerRegistryConfigRefreshConfig
         """
-        return self._ecr
+        return self._refresh
 
-    @ecr.setter
-    def ecr(self, ecr: 'ContainerRegistryConfigECR'):
-        """Sets the ecr of this V1ContainerRegistryConfig.
+    @refresh.setter
+    def refresh(self, refresh: 'ContainerRegistryConfigRefreshConfig'):
+        """Sets the refresh of this V1ContainerRegistryConfig.
 
 
-        :param ecr: The ecr of this V1ContainerRegistryConfig.  # noqa: E501
-        :type: ContainerRegistryConfigECR
+        :param refresh: The refresh of this V1ContainerRegistryConfig.  # noqa: E501
+        :type: ContainerRegistryConfigRefreshConfig
         """
 
-        self._ecr = ecr
+        self._refresh = refresh
+
+    @property
+    def strategy(self) -> 'ContainerRegistryConfigStrategy':
+        """Gets the strategy of this V1ContainerRegistryConfig.  # noqa: E501
+
+
+        :return: The strategy of this V1ContainerRegistryConfig.  # noqa: E501
+        :rtype: ContainerRegistryConfigStrategy
+        """
+        return self._strategy
+
+    @strategy.setter
+    def strategy(self, strategy: 'ContainerRegistryConfigStrategy'):
+        """Sets the strategy of this V1ContainerRegistryConfig.
+
+
+        :param strategy: The strategy of this V1ContainerRegistryConfig.  # noqa: E501
+        :type: ContainerRegistryConfigStrategy
+        """
+
+        self._strategy = strategy
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
