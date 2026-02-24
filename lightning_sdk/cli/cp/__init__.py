@@ -21,8 +21,15 @@ def parse_lit_url(url: str) -> tuple[str, list[str], Literal["studios", "uploads
         resource_type = "studios"
     elif path[2] == "uploads":
         resource_type = "uploads"
+    elif path[2] == "s3_folders":
+        resource_type = "s3_folders"
+    elif path[2] == "lightning_storage":
+        resource_type = "lightning_storage"
     else:
-        raise ValueError("URL must contain either 'studios' or 'uploads'")
+        raise ValueError(
+            "URL must contain one of the following resource types: \
+'studios', 'uploads', 's3_folders', 'lightning_storage'"
+        )
 
     return resource_type
 
