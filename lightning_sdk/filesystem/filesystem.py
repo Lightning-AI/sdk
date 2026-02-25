@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import List
+from typing import Generator, List, Tuple
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.cli.utils.filesystem import resolve_teamspace
@@ -25,6 +25,33 @@ class Filesystem(metaclass=TrackCallsMeta):
             teamspace_id=selected_teamspace.id, path=path_result["destination"], recursive=False
         )
         return [os.path.basename(item["path"]) for item in output]
+
+    def walk(self, url: str) -> Generator[Tuple[str, List[str], List[str]], None, None]:
+        path_result = parse_lit_url(url)
+        selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
+        output = self._filesystem_api.list_files(
+            teamspace_id=selected_teamspace.id, path=path_result["destination"], recursive=True
+        )
+
+        dirs: dict[str, list[str]] = {}
+        files: dict[str, list[str]] = {}
+
+        for entry in output:
+            parent = os.path.dirname(entry["path"])
+            name = os.path.basename(entry["path"])
+            files.setdefault(parent, []).append(name)
+
+            parts = parent.split("/")
+            for i in range(1, len(parts) + 1):
+                dirpath = "/".join(parts[:i])
+                dirs.setdefault(dirpath, [])
+                if i < len(parts):
+                    child = parts[i]
+                    if child not in dirs[dirpath]:
+                        dirs[dirpath].append(child)
+
+        for dirpath in sorted(dirs):
+            yield dirpath, dirs[dirpath], files.get(dirpath, [])
 
     def copy(
         self,
