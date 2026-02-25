@@ -57,6 +57,7 @@ class Filesystem(metaclass=TrackCallsMeta):
         self,
         source: str,
         destination: str,
+        recursive: bool = False,
         progress_bar: bool = True,
     ) -> None:
         source_is_lit = source.startswith("lit://")
@@ -69,13 +70,51 @@ class Filesystem(metaclass=TrackCallsMeta):
             raise ValueError("At least one path must be a lit://")
 
         path_result = parse_lit_url(source if source_is_lit else destination)
+        local_path = destination if source_is_lit else source
 
         selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
         if source_is_lit:
             # download
-            self._filesystem_api.download_file(
-                path_result["destination"], destination, selected_teamspace.id, progress_bar
-            )
+            remote_path = path_result["destination"]
+            parent = os.path.dirname(remote_path.strip("/"))
+            entries = self._filesystem_api.list_files(selected_teamspace.id, parent, recursive=False)
+            found = False
+            is_directory = False
+
+            for entry in entries:
+                if os.path.basename(remote_path.strip("/")).strip("/") == os.path.basename(entry["path"]).strip("/"):
+                    found = True
+                    is_directory = entry.get("type") == "tree"
+                    break
+
+            if not found:
+                raise ValueError(f"File {remote_path} does not exist in teamspace {selected_teamspace.name}")
+
+            if is_directory:
+                if not recursive:
+                    raise ValueError(
+                        f"'{remote_path}' is a directory. Use recursive=True to copy directories recursively."
+                    )
+                local_folder_name = os.path.basename(remote_path.rstrip("/"))
+                if local_path in ("./", "."):
+                    if local_folder_name == "":
+                        local_folder_name = f"{selected_teamspace.name}_downloads"
+                    target_path = os.path.join(local_path, local_folder_name)
+                else:
+                    target_path = local_path
+                self._filesystem_api.download_folder(
+                    path_result["destination"], target_path, selected_teamspace.id, progress_bar
+                )
+            else:
+                if os.path.isdir(local_path) or local_path.endswith(("/", "\\")):
+                    # if local_path ends with / or \ or is a directory, treat it as a directory
+                    file_name = os.path.basename(path_result["destination"])
+                    target_path = os.path.join(local_path, file_name)
+                else:
+                    target_path = local_path
+                self._filesystem_api.download_file(
+                    path_result["destination"], target_path, selected_teamspace.id, progress_bar
+                )
         else:
             # upload
             raise NotImplementedError("Filesystem upload is not implemented.")

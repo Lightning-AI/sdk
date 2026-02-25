@@ -26,6 +26,37 @@ def test_download_file(mock_login, mock_requests_get, tmpdir):
     filesystem_api.download_file("file1", filepath, "ts-abc")
 
 
+@mock.patch("lightning_sdk.api.filesystem_api.concurrent.futures.wait")
+@mock.patch("lightning_sdk.api.filesystem_api.tqdm")
+@mock.patch("lightning_sdk.api.filesystem_api.ThreadPoolExecutor")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token")
+def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait, tmpdir):
+    authenticate_mock.return_value = "test-token-123"
+    filesystem_api = FilesystemApi()
+
+    filesystem_api.list_files = mock.Mock(
+        return_value=[
+            {"type": "blob", "path": "file1.txt", "size": 1000},
+            {"type": "blob", "path": "file2.txt", "size": 2000},
+        ]
+    )
+
+    filesystem_api._download_single_file = mock.Mock()
+
+    mock_future = mock.Mock()
+    mock_executor.return_value.__enter__.return_value.submit.return_value = mock_future
+    mock_wait.return_value = None
+
+    filepath = os.path.join(tmpdir, "download_folder")
+    filesystem_api.download_folder("file1", filepath, "ts-abc")
+
+    filesystem_api.list_files.assert_called_once_with("ts-abc", "file1", recursive=True)
+    mock_executor.assert_called_once()
+    mock_tqdm.assert_called_once()
+    assert mock_tqdm.call_args.kwargs["desc"] == "Downloading files"
+    assert mock_tqdm.call_args.kwargs["total"] == 3000  # 1000 + 2000
+
+
 @mock.patch("requests.get", autospec=True)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True

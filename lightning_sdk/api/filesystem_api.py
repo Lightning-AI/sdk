@@ -1,5 +1,8 @@
+import concurrent
 import os
-from typing import Dict, List
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+from typing import Dict, List, Optional
 
 import requests
 from tqdm.auto import tqdm
@@ -31,41 +34,94 @@ class FilesystemApi:
         return r.json().get("tree", [])
 
     def download_file(self, path: str, target_path: str, teamspace_id: str, progress_bar: bool = True) -> None:
-        token = _authenticate_and_get_token(self._client)
+        self._download_single_file(path, Path(target_path), teamspace_id, self._token, progress_bar=progress_bar)
 
-        query_params = {
-            "token": token,
-        }
-
+    def _download_single_file(
+        self,
+        remote_path: str,
+        local_path: Path,
+        teamspace_id: str,
+        token: str,
+        pbar: Optional[tqdm] = None,
+        progress_bar: bool = False,
+    ) -> None:
         r = requests.get(
-            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{path}",
-            params=query_params,
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path}",
+            params={"token": token},
             stream=True,
             allow_redirects=True,
         )
-
         if r.status_code != 200:
-            raise RuntimeError(f"Failed to download file: {r.status_code}")
+            raise RuntimeError(f"Failed to download {remote_path!r}: {r.status_code}")
 
-        total_length = int(r.headers.get("content-length", 0))
+        owned_pbar = None
+        if pbar is None and progress_bar:
+            total_length = int(r.headers.get("content-length", 0))
+            if total_length > 0:
+                owned_pbar = tqdm(
+                    desc=f"Downloading {os.path.split(remote_path)[1]}",
+                    total=total_length,
+                    unit="B",
+                    unit_scale=True,
+                    unit_divisor=1000,
+                )
+                pbar = owned_pbar
 
-        if progress_bar and total_length > 0:
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(local_path, "wb") as f:
+            for chunk in r.iter_content(chunk_size=4096 * 8):
+                f.write(chunk)
+                if pbar is not None:
+                    pbar.update(len(chunk))
+
+        if owned_pbar is not None:
+            owned_pbar.close()
+
+    def download_folder(
+        self,
+        path: str,
+        target_path: str,
+        teamspace_id: str,
+        progress_bar: bool = True,
+        num_workers: Optional[int] = None,
+    ) -> None:
+        path = path.strip("/")
+        entries = self.list_files(teamspace_id, path, recursive=True)
+        total_size = sum(f.get("size", 0) for f in entries)
+        files = [e for e in entries if e.get("type") == "blob"]
+
+        if num_workers is None:
+            num_workers = os.cpu_count() * 4
+
+        download_dir = Path(target_path)
+        download_dir.mkdir(parents=True, exist_ok=True)
+
+        pbar = None
+        if progress_bar:
             pbar = tqdm(
-                desc=f"Downloading {os.path.split(path)[1]}",
-                total=total_length,
+                desc="Downloading files",
+                total=total_size,
                 unit="B",
                 unit_scale=True,
                 unit_divisor=1000,
+                mininterval=1,
             )
 
-            pbar_update = pbar.update
-        else:
-            pbar_update = lambda x: None
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            futures = [
+                executor.submit(
+                    self._download_single_file,
+                    f"{path}/{entry['path']}",
+                    download_dir / entry["path"],
+                    teamspace_id,
+                    self._token,
+                    pbar,
+                )
+                for entry in files
+            ]
+            concurrent.futures.wait(futures)
 
-        target_dir = os.path.split(target_path)[0]
-        if target_dir:
-            os.makedirs(target_dir, exist_ok=True)
-        with open(target_path, "wb") as f:
-            for chunk in r.iter_content(chunk_size=4096 * 8):
-                f.write(chunk)
-                pbar_update(len(chunk))
+        if pbar:
+            pbar.set_description("Download complete")
+            pbar.refresh()
+            pbar.close()
