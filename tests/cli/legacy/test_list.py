@@ -41,7 +41,10 @@ Options:
                                   menu.
   --cloud-account, --cloud_account TEXT
                                   The name of the cloud account where
-                                  containers are stored in.
+                                  containers are stored in. If not provided,
+                                  will use teamspace's default cloud
+                                  accountuse 'lightning-cloud' to specify
+                                  Lightning AI's default cloud account.
   --help                          Show this message and exit.
 """
     )

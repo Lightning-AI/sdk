@@ -237,7 +237,11 @@ def mmts(
     "--cloud-account",
     "--cloud_account",  # The UI will present the above variant, using this as a secondary to be consistent w/ models
     default=None,
-    help="The name of the cloud account where containers are stored in.",
+    help=(
+        "The name of the cloud account where containers are stored in."
+        " If not provided, will use teamspace's default cloud account"
+        "use 'lightning-cloud' to specify Lightning AI's default cloud account."
+    ),
 )
 def containers(teamspace: Optional[str] = None, cloud_account: Optional[str] = None) -> None:
     """Display the list of available containers."""
@@ -248,6 +252,8 @@ def containers(teamspace: Optional[str] = None, cloud_account: Optional[str] = N
 
     if not cloud_account:
         cloud_account = clusters_menu._resolve_cluster(resolved_teamspace)
+    if cloud_account == "lightning-cloud":
+        cloud_account = None
 
     result = api.list_containers(
         teamspace=resolved_teamspace.name, org=resolved_teamspace.owner.name, cloud_account=cloud_account
