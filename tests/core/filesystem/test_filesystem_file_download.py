@@ -149,13 +149,15 @@ def test_copy_download_passes_token_in_query_params(
     assert kwargs["allow_redirects"] is True
 
 
-def test_copy_raises_when_both_paths_are_lit():
+@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+def test_copy_raises_when_both_paths_are_lit(mock_client_cls):
     fs = Filesystem()
     with pytest.raises(ValueError, match="Cannot copy between two remote URLs"):
         fs.copy("lit://org/ts/file.txt", "lit://org/ts/other.txt")
 
 
-def test_copy_raises_when_neither_path_is_lit():
+@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+def test_copy_raises_when_neither_path_is_lit(mock_client_cls):
     fs = Filesystem()
     with pytest.raises(ValueError, match="At least one path must be a lit://"):
         fs.copy("local/file.txt", "other/file.txt")

@@ -1,4 +1,5 @@
 import os
+from typing import Dict, List
 
 import requests
 from tqdm.auto import tqdm
@@ -12,6 +13,22 @@ from lightning_sdk.lightning_cloud.rest_client import LightningClient
 class FilesystemApi:
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=7)
+        self._token = _authenticate_and_get_token(self._client)
+
+    def list_files(self, teamspace_id: str, path: str, recursive: bool = False) -> List[Dict]:
+        path = path.strip("/")
+        query_params = {"recursive": "false"}
+        if recursive:
+            query_params["recursive"] = "true"
+
+        query_params["token"] = self._token
+        r = requests.get(
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
+            params=query_params,
+        )
+        if r.status_code != 200:
+            raise RuntimeError(f"Failed to list files: {r.status_code}")
+        return r.json().get("tree", [])
 
     def download_file(self, path: str, target_path: str, teamspace_id: str, progress_bar: bool = True) -> None:
         token = _authenticate_and_get_token(self._client)

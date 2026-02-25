@@ -1,4 +1,6 @@
 import logging
+import os
+from typing import List
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.cli.utils.filesystem import resolve_teamspace
@@ -15,6 +17,14 @@ class Filesystem(metaclass=TrackCallsMeta):
         self,
     ) -> None:
         self._filesystem_api = FilesystemApi()
+
+    def listdir(self, uri: str) -> List[str]:
+        path_result = parse_lit_url(uri)
+        selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
+        output = self._filesystem_api.list_files(
+            teamspace_id=selected_teamspace.id, path=path_result["destination"], recursive=False
+        )
+        return [os.path.basename(item["path"]) for item in output]
 
     def copy(
         self,
