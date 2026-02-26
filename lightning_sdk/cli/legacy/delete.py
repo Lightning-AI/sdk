@@ -6,6 +6,7 @@ from rich.console import Console
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
+from lightning_sdk.deployment import Deployment
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.studio import Studio
@@ -129,3 +130,34 @@ def studio(name: str, teamspace: Optional[str] = None) -> None:
 
     studio.delete()
     Console().print("Studio successfully deleted")
+
+
+@delete.command(name="deployment")
+@click.argument("name")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=(
+        "The teamspace to delete the deployment from. "
+        "Should be specified as {owner}/{name} "
+        "If not provided, can be selected in an interactive menu."
+    ),
+)
+def deployment(name: str, teamspace: Optional[str] = None) -> None:
+    """Delete an existing deployment.
+
+    Example:
+      lightning delete deployment NAME
+
+    NAME: the name of the deployment to delete
+    """
+    api = Deployment(
+        name=name,
+        teamspace=teamspace,
+    )
+
+    try:
+        api.delete()
+        Console().print(f"Deployment {name} deleted successfully.")
+    except Exception as e:
+        raise StudioCliError(f"Could not delete deployment {name} from project {teamspace}: {e}") from None

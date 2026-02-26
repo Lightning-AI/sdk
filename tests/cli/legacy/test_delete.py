@@ -15,10 +15,11 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  container  Delete the docker container NAME.
-  job        Delete a job.
-  mmt        Delete a multi-machine job.
-  studio     Delete an existing studio.
+  container   Delete the docker container NAME.
+  deployment  Delete an existing deployment.
+  job         Delete a job.
+  mmt         Delete a multi-machine job.
+  studio      Delete an existing studio.
 """
     )
 
@@ -104,6 +105,29 @@ def test_studio_help():
 
 Options:
   --teamspace TEXT  The teamspace to delete the studio from. Should be
+                    specified as {owner}/{name} If not provided, can be
+                    selected in an interactive menu.
+  --help            Show this message and exit.
+"""
+    )
+
+
+def test_deployment_help():
+    result = subprocess.run("lightning delete deployment --help", shell=True, capture_output=True, text=True)
+    result_text = result.stdout + result.stderr
+
+    assert (
+        result_text
+        == """Usage: lightning delete deployment [OPTIONS] NAME
+
+  Delete an existing deployment.
+
+  Example:   lightning delete deployment NAME
+
+  NAME: the name of the deployment to delete
+
+Options:
+  --teamspace TEXT  The teamspace to delete the deployment from. Should be
                     specified as {owner}/{name} If not provided, can be
                     selected in an interactive menu.
   --help            Show this message and exit.
