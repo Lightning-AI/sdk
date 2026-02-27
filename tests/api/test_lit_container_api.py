@@ -1,6 +1,8 @@
 from unittest.mock import MagicMock
 
-from lightning_sdk.api.lit_container_api import LCRAuthFailedError, retry_on_lcr_auth_failure
+import pytest
+
+from lightning_sdk.api.lit_container_api import LCRAuthFailedError, LitContainerApi, retry_on_lcr_auth_failure
 
 
 def test_retry_on_lcr_auth_failure_generator():
@@ -36,3 +38,27 @@ def test_retry_on_lcr_auth_failure():
     api.authenticate = MagicMock(return_value=True)
     assert api._gen_fn() == 2
     api.authenticate.assert_called_once()
+
+
+def test_delete_container_by_digest():
+    api = LitContainerApi()
+    api._client = MagicMock()
+
+    api.delete_container_by_digest("proj-123", "nginx", "sha256:abc123")
+
+    api._client.lit_registry_service_delete_lit_registry_repository_image_artifact_version_by_digest.assert_called_once_with(
+        "proj-123", "nginx", "sha256:abc123"
+    )
+
+
+def test_delete_container_by_digest_raises_on_error():
+    api = LitContainerApi()
+    api._client = MagicMock()
+    api._client.lit_registry_service_delete_lit_registry_repository_image_artifact_version_by_digest.side_effect = (
+        Exception("not found")
+    )
+
+    with pytest.raises(
+        ValueError, match="Could not delete digest sha256:abc123 of container nginx from project proj-123"
+    ):
+        api.delete_container_by_digest("proj-123", "nginx", "sha256:abc123")

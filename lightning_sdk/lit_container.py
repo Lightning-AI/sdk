@@ -57,7 +57,12 @@ class LitContainer:
         return table
 
     def delete_container(
-        self, container: str, teamspace: str, org: Optional[str] = None, user: Optional[str] = None
+        self,
+        container: str,
+        teamspace: str,
+        org: Optional[str] = None,
+        user: Optional[str] = None,
+        digest: Optional[str] = None,
     ) -> None:
         """Delete a docker container.
 
@@ -74,6 +79,8 @@ class LitContainer:
 
         raise_access_error_if_not_allowed(AccessibleResource.Containers, teamspace.id)
         project_id = teamspace.id
+        if digest is not None:
+            return self._api.delete_container_by_digest(project_id, container, digest)
         return self._api.delete_container(project_id, container)
 
     def upload_container(

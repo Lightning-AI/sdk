@@ -158,10 +158,24 @@ def test_delete_container(mock_teamspace):
         registry._api = MagicMock(spec=LitContainerApi)
         registry._api.delete_container.return_value = None
 
-        registry.delete_container("test-repo", "test-teamspace", "test-org", None)
+        registry.delete_container("test-repo", "test-teamspace", org="test-org", user=None, digest=None)
 
         mock_resolve_teamspace.assert_called_once_with(teamspace="test-teamspace", org="test-org", user=None)
         registry._api.delete_container.assert_called_once_with("test-project-id", "test-repo")
+
+
+def test_delete_container_by_digest(mock_teamspace):
+    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
+        mock_resolve_teamspace.return_value = mock_teamspace
+        registry = LitContainer()
+        registry._api = MagicMock(spec=LitContainerApi)
+        registry._api.delete_container_by_digest.return_value = None
+        registry.delete_container("test-repo", "test-teamspace", digest="sha256:abc123", org="test-org", user=None)
+        mock_resolve_teamspace.assert_called_once_with(teamspace="test-teamspace", org="test-org", user=None)
+        registry._api.delete_container_by_digest.assert_called_once_with(
+            "test-project-id", "test-repo", "sha256:abc123"
+        )
+        registry._api.delete_container.assert_not_called()
 
 
 @pytest.fixture()

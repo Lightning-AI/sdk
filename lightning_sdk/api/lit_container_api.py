@@ -125,6 +125,22 @@ class LitContainerApi:
         except Exception as e:
             raise ValueError(f"Could not delete container {container} from project {project_id}: {e!s}") from e
 
+    def delete_container_by_digest(self, project_id: str, container: str, digest: str) -> None:
+        """Deletes a container with a specific digest from LitCR.
+
+        :param project_id: The non-human readable project ID used internally to identify projects.
+        :param container: The name of the docker container a user wants to push up, ie, nginx, vllm, etc
+        :param digest: The hash digest of the container to delete
+        """
+        try:
+            self._client.lit_registry_service_delete_lit_registry_repository_image_artifact_version_by_digest(
+                project_id, container, digest
+            )
+        except Exception as e:
+            raise ValueError(
+                f"Could not delete digest {digest} of container {container} from project {project_id}: {e!s}"
+            ) from e
+
     def get_container_url(
         self, repository: str, tag: str, teamspace: Teamspace, cloud_account: Optional[str] = None
     ) -> str:
