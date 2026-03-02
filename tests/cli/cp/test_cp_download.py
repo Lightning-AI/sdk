@@ -57,3 +57,35 @@ def test_route_cp_lightning_storage_raises_if_both_local():
             source="/local/a.txt",
             destination="/local/b.txt",
         )
+
+
+def test_route_cp_uploads_download():
+    """Test that uploads download routes to Filesystem.copy and replaces uploads/ with Uploads/."""
+    mock_fs = MagicMock()
+    with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
+        route_cp_operation(
+            source="lit://my-org/my-teamspace/uploads/data/model.ckpt",
+            destination="/local/model.ckpt",
+            recursive=False,
+        )
+        mock_fs.copy.assert_called_once_with(
+            source="lit://my-org/my-teamspace/Uploads/data/model.ckpt",
+            destination="/local/model.ckpt",
+            recursive=False,
+        )
+
+
+def test_route_cp_uploads_download_recursive():
+    """Test that uploads download passes recursive=True to Filesystem.copy."""
+    mock_fs = MagicMock()
+    with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
+        route_cp_operation(
+            source="lit://my-org/my-teamspace/uploads/data/mydir",
+            destination="/local/mydir",
+            recursive=True,
+        )
+        mock_fs.copy.assert_called_once_with(
+            source="lit://my-org/my-teamspace/Uploads/data/mydir",
+            destination="/local/mydir",
+            recursive=True,
+        )

@@ -396,7 +396,7 @@ class TeamspaceApi:
         response = self.models_api.models_store_list_model_versions(project_id=teamspace_id, model_id=model_id)
         return response.versions
 
-    def get_uploads_tree(self, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:
+    def get_tree(self, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:
         token = _authenticate_and_get_token(self._client)
 
         if query_params is None:
@@ -406,7 +406,7 @@ class TeamspaceApi:
         else:
             query_params["token"] = token
         r = requests.get(
-            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/uploads/trees/{path}",
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
             params=query_params,
         )
         return r.json()
@@ -424,7 +424,7 @@ class TeamspaceApi:
             parent_path = ""
             target_name = path
 
-        tree = self.get_uploads_tree(teamspace_id, path=parent_path)
+        tree = self.get_tree(teamspace_id, path=parent_path)
         tree_items = tree.get("tree", [])
         for item in tree_items:
             item_name = item.get("path", "")
@@ -439,14 +439,14 @@ class TeamspaceApi:
         warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
         return {"exists": False, "type": None, "size": None}
 
-    def list_uploads_files(
+    def list_files(
         self,
         teamspace_id: str,
         path: str = "",
     ) -> List[Dict]:
-        """Recursively list all files in a /Uploads/ directory tree."""
+        """Recursively list all files in a directory tree."""
         path = path.strip("/")
-        return self.get_uploads_tree(teamspace_id, path, query_params={"recursive": "true"}).get("tree", [])
+        return self.get_tree(teamspace_id, path, query_params={"recursive": "true"}).get("tree", [])
 
     def upload_file(
         self,
@@ -470,7 +470,12 @@ class TeamspaceApi:
 
             query_params = {"token": token, "clusterId": cloud_account}
             client_host = self._client.api_client.configuration.host
+            # we need this because there is no unified upload endpoint yet
             url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path}"
+            if remote_path.startswith(("uploads/", "Uploads/")):
+                remote_path = remote_path[8:]
+                print("remote_path", remote_path)
+                url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/uploads/blobs/{remote_path}"
 
             _SinglePartFileUploader(
                 client=self._client,
@@ -510,7 +515,7 @@ class TeamspaceApi:
             query_params["clusterId"] = cloud_account
 
         r = requests.get(
-            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/uploads/blobs/{path}",
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{path}",
             params=query_params,
             stream=True,
         )
@@ -547,7 +552,7 @@ class TeamspaceApi:
         cloud_account: Optional[str] = None,
         pbar: Optional[tqdm] = True,
     ) -> None:
-        """Download a single file from Teamspace drive /Uploads/ with progress tracking."""
+        """Download a single file from Teamspace drive with progress tracking."""
         relative_path = file_info["path"].lstrip("/")
         local_file = download_dir / relative_path
         local_file.parent.mkdir(parents=True, exist_ok=True)
@@ -561,7 +566,7 @@ class TeamspaceApi:
             query_params["clusterId"] = cloud_account
 
         r = requests.get(
-            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/uploads/blobs/{file_path}",
+            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{file_path}",
             params=query_params,
             stream=True,
         )
@@ -591,7 +596,7 @@ class TeamspaceApi:
         download_dir = Path(target_path)
         download_dir.mkdir(parents=True, exist_ok=True)
 
-        files = self.list_uploads_files(teamspace_id, path)
+        files = self.list_files(teamspace_id, path)
 
         if not files:
             print(f"No files found in {path}")

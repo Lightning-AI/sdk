@@ -323,8 +323,8 @@ def test_get_model_errors(internal_teamspace_api_mocker):
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
 )
-def test_get_uploads_tree(mock_login, mock_requests_get):
-    """Test get_uploads_tree retrieves directory structure from teamspace drive."""
+def test_get_tree(mock_login, mock_requests_get):
+    """Test get_tree retrieves directory structure from teamspace drive."""
     mock_login.return_value = V1LoginResponse(token="test-token")
 
     mock_response = mock.MagicMock()
@@ -340,7 +340,7 @@ def test_get_uploads_tree(mock_login, mock_requests_get):
 
     teamspace_api = TeamspaceApi()
 
-    result = teamspace_api.get_uploads_tree("ts-abc", "my-folder/")
+    result = teamspace_api.get_tree("ts-abc", "my-folder/")
 
     assert result == {
         "tree": [
@@ -354,7 +354,7 @@ def test_get_uploads_tree(mock_login, mock_requests_get):
     mock_requests_get.assert_called_once()
     call_args = mock_requests_get.call_args
 
-    assert "/v1/projects/ts-abc/artifacts/uploads/trees/my-folder/" in call_args[0][0]
+    assert "/v1/projects/ts-abc/artifacts/trees/my-folder/" in call_args[0][0]
     assert call_args[1]["params"] == {"token": "test-token"}
     mock_login.assert_called_once()
 
@@ -503,14 +503,14 @@ def test_get_path_info(mock_login, mock_requests_get, path, tree_response, expec
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
 )
-def test_list_uploads_files(
+def test_list_files(
     mock_login,
     mock_requests_get,
     path,
     mock_response,
     expected_files,
 ):
-    """Test that list_files correctly calls get_uploads_tree with recursive=true."""
+    """Test that list_files correctly calls get_tree with recursive=true."""
     mock_login.return_value = V1LoginResponse(token="test-token")
 
     teamspace_api = TeamspaceApi()
@@ -518,7 +518,7 @@ def test_list_uploads_files(
     mock_response_obj.json.return_value = mock_response
     mock_requests_get.return_value = mock_response_obj
 
-    result = teamspace_api.list_uploads_files(
+    result = teamspace_api.list_files(
         teamspace_id="ts-abc",
         path=path,
     )
@@ -528,7 +528,7 @@ def test_list_uploads_files(
 
     # get_uploads_tree
     host = teamspace_api._client.api_client.configuration.host
-    expected_url = f"{host}/v1/projects/ts-abc/artifacts/uploads/trees/{path.strip('/')}"
+    expected_url = f"{host}/v1/projects/ts-abc/artifacts/trees/{path.strip('/')}"
     assert call_args[0][0] == expected_url
 
     # recursive
@@ -697,7 +697,7 @@ def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait,
 
     teamspace_api = TeamspaceApi()
 
-    teamspace_api.list_uploads_files = mock.Mock(
+    teamspace_api.list_files = mock.Mock(
         return_value=[
             {"path": "file1.txt", "size": 1000},
             {"path": "file2.txt", "size": 2000},
@@ -713,7 +713,7 @@ def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait,
     filepath = os.path.join(tmpdir, "download_folder")
     teamspace_api.download_folder("file1", filepath, "ts-abc", "cluster-abc")
 
-    teamspace_api.list_uploads_files.assert_called_once_with("ts-abc", "file1")
+    teamspace_api.list_files.assert_called_once_with("ts-abc", "file1")
 
     mock_executor.assert_called_once()
 
