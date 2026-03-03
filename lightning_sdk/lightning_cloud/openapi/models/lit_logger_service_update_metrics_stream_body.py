@@ -46,6 +46,7 @@ class LitLoggerServiceUpdateMetricsStreamBody(object):
         'name': 'str',
         'persisted': 'bool',
         'phase': 'V1PhaseType',
+        'tags': 'list[V1MetricsTags]',
         'trackers': 'dict(str, V1MetricsTracker)'
     }
 
@@ -55,16 +56,18 @@ class LitLoggerServiceUpdateMetricsStreamBody(object):
         'name': 'name',
         'persisted': 'persisted',
         'phase': 'phase',
+        'tags': 'tags',
         'trackers': 'trackers'
     }
 
-    def __init__(self, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, trackers: 'dict(str, V1MetricsTracker)' =None):  # noqa: E501
+    def __init__(self, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None):  # noqa: E501
         """LitLoggerServiceUpdateMetricsStreamBody - a model defined in Swagger"""  # noqa: E501
         self._dark_color = None
         self._light_color = None
         self._name = None
         self._persisted = None
         self._phase = None
+        self._tags = None
         self._trackers = None
         self.discriminator = None
         if dark_color is not None:
@@ -77,6 +80,8 @@ class LitLoggerServiceUpdateMetricsStreamBody(object):
             self.persisted = persisted
         if phase is not None:
             self.phase = phase
+        if tags is not None:
+            self.tags = tags
         if trackers is not None:
             self.trackers = trackers
 
@@ -184,6 +189,27 @@ class LitLoggerServiceUpdateMetricsStreamBody(object):
         """
 
         self._phase = phase
+
+    @property
+    def tags(self) -> 'list[V1MetricsTags]':
+        """Gets the tags of this LitLoggerServiceUpdateMetricsStreamBody.  # noqa: E501
+
+
+        :return: The tags of this LitLoggerServiceUpdateMetricsStreamBody.  # noqa: E501
+        :rtype: list[V1MetricsTags]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[V1MetricsTags]'):
+        """Sets the tags of this LitLoggerServiceUpdateMetricsStreamBody.
+
+
+        :param tags: The tags of this LitLoggerServiceUpdateMetricsStreamBody.  # noqa: E501
+        :type: list[V1MetricsTags]
+        """
+
+        self._tags = tags
 
     @property
     def trackers(self) -> 'dict(str, V1MetricsTracker)':

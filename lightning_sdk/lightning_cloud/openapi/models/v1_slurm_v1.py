@@ -43,6 +43,8 @@ class V1SlurmV1(object):
     swagger_types = {
         'login_node_ip': 'str',
         'ssh_port': 'int',
+        'ssh_private_key': 'str',
+        'ssh_private_key_secret_id': 'str',
         'ssh_user': 'str',
         'work_dir': 'str'
     }
@@ -50,14 +52,18 @@ class V1SlurmV1(object):
     attribute_map = {
         'login_node_ip': 'loginNodeIp',
         'ssh_port': 'sshPort',
+        'ssh_private_key': 'sshPrivateKey',
+        'ssh_private_key_secret_id': 'sshPrivateKeySecretId',
         'ssh_user': 'sshUser',
         'work_dir': 'workDir'
     }
 
-    def __init__(self, login_node_ip: 'str' =None, ssh_port: 'int' =None, ssh_user: 'str' =None, work_dir: 'str' =None):  # noqa: E501
+    def __init__(self, login_node_ip: 'str' =None, ssh_port: 'int' =None, ssh_private_key: 'str' =None, ssh_private_key_secret_id: 'str' =None, ssh_user: 'str' =None, work_dir: 'str' =None):  # noqa: E501
         """V1SlurmV1 - a model defined in Swagger"""  # noqa: E501
         self._login_node_ip = None
         self._ssh_port = None
+        self._ssh_private_key = None
+        self._ssh_private_key_secret_id = None
         self._ssh_user = None
         self._work_dir = None
         self.discriminator = None
@@ -65,6 +71,10 @@ class V1SlurmV1(object):
             self.login_node_ip = login_node_ip
         if ssh_port is not None:
             self.ssh_port = ssh_port
+        if ssh_private_key is not None:
+            self.ssh_private_key = ssh_private_key
+        if ssh_private_key_secret_id is not None:
+            self.ssh_private_key_secret_id = ssh_private_key_secret_id
         if ssh_user is not None:
             self.ssh_user = ssh_user
         if work_dir is not None:
@@ -113,6 +123,52 @@ class V1SlurmV1(object):
         """
 
         self._ssh_port = ssh_port
+
+    @property
+    def ssh_private_key(self) -> 'str':
+        """Gets the ssh_private_key of this V1SlurmV1.  # noqa: E501
+
+        SSH private key used by controlplane to validate/access the Slurm login node.  # noqa: E501
+
+        :return: The ssh_private_key of this V1SlurmV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._ssh_private_key
+
+    @ssh_private_key.setter
+    def ssh_private_key(self, ssh_private_key: 'str'):
+        """Sets the ssh_private_key of this V1SlurmV1.
+
+        SSH private key used by controlplane to validate/access the Slurm login node.  # noqa: E501
+
+        :param ssh_private_key: The ssh_private_key of this V1SlurmV1.  # noqa: E501
+        :type: str
+        """
+
+        self._ssh_private_key = ssh_private_key
+
+    @property
+    def ssh_private_key_secret_id(self) -> 'str':
+        """Gets the ssh_private_key_secret_id of this V1SlurmV1.  # noqa: E501
+
+        Secret ID where the SSH private key is stored.  # noqa: E501
+
+        :return: The ssh_private_key_secret_id of this V1SlurmV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._ssh_private_key_secret_id
+
+    @ssh_private_key_secret_id.setter
+    def ssh_private_key_secret_id(self, ssh_private_key_secret_id: 'str'):
+        """Sets the ssh_private_key_secret_id of this V1SlurmV1.
+
+        Secret ID where the SSH private key is stored.  # noqa: E501
+
+        :param ssh_private_key_secret_id: The ssh_private_key_secret_id of this V1SlurmV1.  # noqa: E501
+        :type: str
+        """
+
+        self._ssh_private_key_secret_id = ssh_private_key_secret_id
 
     @property
     def ssh_user(self) -> 'str':

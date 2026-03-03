@@ -55,6 +55,7 @@ class V1CreateDeploymentRequest(object):
         'pipeline_reuse_deployment_between_runs': 'bool',
         'project_id': 'str',
         'recipients': 'V1DeploymentAlertingRecipients',
+        'release_notes': 'str',
         'replicas': 'int',
         'reuse_servers': 'bool',
         'spec': 'V1JobSpec',
@@ -76,13 +77,14 @@ class V1CreateDeploymentRequest(object):
         'pipeline_reuse_deployment_between_runs': 'pipelineReuseDeploymentBetweenRuns',
         'project_id': 'projectId',
         'recipients': 'recipients',
+        'release_notes': 'releaseNotes',
         'replicas': 'replicas',
         'reuse_servers': 'reuseServers',
         'spec': 'spec',
         'strategy': 'strategy'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """V1CreateDeploymentRequest - a model defined in Swagger"""  # noqa: E501
         self._api_standard = None
         self._apis = None
@@ -98,6 +100,7 @@ class V1CreateDeploymentRequest(object):
         self._pipeline_reuse_deployment_between_runs = None
         self._project_id = None
         self._recipients = None
+        self._release_notes = None
         self._replicas = None
         self._reuse_servers = None
         self._spec = None
@@ -131,6 +134,8 @@ class V1CreateDeploymentRequest(object):
             self.project_id = project_id
         if recipients is not None:
             self.recipients = recipients
+        if release_notes is not None:
+            self.release_notes = release_notes
         if replicas is not None:
             self.replicas = replicas
         if reuse_servers is not None:
@@ -433,6 +438,27 @@ class V1CreateDeploymentRequest(object):
         """
 
         self._recipients = recipients
+
+    @property
+    def release_notes(self) -> 'str':
+        """Gets the release_notes of this V1CreateDeploymentRequest.  # noqa: E501
+
+
+        :return: The release_notes of this V1CreateDeploymentRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._release_notes
+
+    @release_notes.setter
+    def release_notes(self, release_notes: 'str'):
+        """Sets the release_notes of this V1CreateDeploymentRequest.
+
+
+        :param release_notes: The release_notes of this V1CreateDeploymentRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._release_notes = release_notes
 
     @property
     def replicas(self) -> 'int':

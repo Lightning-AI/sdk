@@ -45,6 +45,7 @@ class V1DeploymentRelease(object):
         'created_at': 'datetime',
         'first_job_state': 'str',
         'id': 'str',
+        'notes': 'str',
         'project_id': 'str',
         'replicas': 'int',
         'spec': 'V1JobSpec',
@@ -57,6 +58,7 @@ class V1DeploymentRelease(object):
         'created_at': 'createdAt',
         'first_job_state': 'firstJobState',
         'id': 'id',
+        'notes': 'notes',
         'project_id': 'projectId',
         'replicas': 'replicas',
         'spec': 'spec',
@@ -64,12 +66,13 @@ class V1DeploymentRelease(object):
         'version': 'version'
     }
 
-    def __init__(self, archived: 'bool' =None, created_at: 'datetime' =None, first_job_state: 'str' =None, id: 'str' =None, project_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, user_id: 'str' =None, version: 'int' =None):  # noqa: E501
+    def __init__(self, archived: 'bool' =None, created_at: 'datetime' =None, first_job_state: 'str' =None, id: 'str' =None, notes: 'str' =None, project_id: 'str' =None, replicas: 'int' =None, spec: 'V1JobSpec' =None, user_id: 'str' =None, version: 'int' =None):  # noqa: E501
         """V1DeploymentRelease - a model defined in Swagger"""  # noqa: E501
         self._archived = None
         self._created_at = None
         self._first_job_state = None
         self._id = None
+        self._notes = None
         self._project_id = None
         self._replicas = None
         self._spec = None
@@ -84,6 +87,8 @@ class V1DeploymentRelease(object):
             self.first_job_state = first_job_state
         if id is not None:
             self.id = id
+        if notes is not None:
+            self.notes = notes
         if project_id is not None:
             self.project_id = project_id
         if replicas is not None:
@@ -178,6 +183,27 @@ class V1DeploymentRelease(object):
         """
 
         self._id = id
+
+    @property
+    def notes(self) -> 'str':
+        """Gets the notes of this V1DeploymentRelease.  # noqa: E501
+
+
+        :return: The notes of this V1DeploymentRelease.  # noqa: E501
+        :rtype: str
+        """
+        return self._notes
+
+    @notes.setter
+    def notes(self, notes: 'str'):
+        """Sets the notes of this V1DeploymentRelease.
+
+
+        :param notes: The notes of this V1DeploymentRelease.  # noqa: E501
+        :type: str
+        """
+
+        self._notes = notes
 
     @property
     def project_id(self) -> 'str':

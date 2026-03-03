@@ -2126,6 +2126,7 @@ class AssistantsServiceApi(object):
         :param str user_id: Filter conversations by user ID
         :param str org_id: Filter conversations by org ID
         :param list[str] excluded_internal_assistants: List of internal assistant IDs to exclude when filtering internal conversations, used to show conversations from other assistants that are internal but not the current one
+        :param bool model_assistants_only: get only conversations from assistants that are used as models, not regular assistants
         :return: V1ListConversationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2152,12 +2153,13 @@ class AssistantsServiceApi(object):
         :param str user_id: Filter conversations by user ID
         :param str org_id: Filter conversations by org ID
         :param list[str] excluded_internal_assistants: List of internal assistant IDs to exclude when filtering internal conversations, used to show conversations from other assistants that are internal but not the current one
+        :param bool model_assistants_only: get only conversations from assistants that are used as models, not regular assistants
         :return: V1ListConversationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['assistant_id', 'page_token', 'filter_internal', 'user_id', 'org_id', 'excluded_internal_assistants']  # noqa: E501
+        all_params = ['assistant_id', 'page_token', 'filter_internal', 'user_id', 'org_id', 'excluded_internal_assistants', 'model_assistants_only']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2195,6 +2197,8 @@ class AssistantsServiceApi(object):
         if 'excluded_internal_assistants' in params:
             query_params.append(('excludedInternalAssistants', params['excluded_internal_assistants']))  # noqa: E501
             collection_formats['excludedInternalAssistants'] = 'multi'  # noqa: E501
+        if 'model_assistants_only' in params:
+            query_params.append(('modelAssistantsOnly', params['model_assistants_only']))  # noqa: E501
 
         header_params = {}
 
@@ -2329,6 +2333,7 @@ class AssistantsServiceApi(object):
         :param bool filter_internal: Filter internal conversations
         :param str org_id: Filter conversations by org ID
         :param list[str] excluded_internal_assistants: List of internal assistant IDs to exclude when filtering internal conversations, used to show conversations from other assistants that are internal but not the current one
+        :param bool model_assistants_only: get only conversations from assistants that are used as models, not regular assistants
         :return: V1ListConversationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2355,12 +2360,13 @@ class AssistantsServiceApi(object):
         :param bool filter_internal: Filter internal conversations
         :param str org_id: Filter conversations by org ID
         :param list[str] excluded_internal_assistants: List of internal assistant IDs to exclude when filtering internal conversations, used to show conversations from other assistants that are internal but not the current one
+        :param bool model_assistants_only: get only conversations from assistants that are used as models, not regular assistants
         :return: V1ListConversationsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['user_id', 'assistant_id', 'page_token', 'filter_internal', 'org_id', 'excluded_internal_assistants']  # noqa: E501
+        all_params = ['user_id', 'assistant_id', 'page_token', 'filter_internal', 'org_id', 'excluded_internal_assistants', 'model_assistants_only']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2398,6 +2404,8 @@ class AssistantsServiceApi(object):
         if 'excluded_internal_assistants' in params:
             query_params.append(('excludedInternalAssistants', params['excluded_internal_assistants']))  # noqa: E501
             collection_formats['excludedInternalAssistants'] = 'multi'  # noqa: E501
+        if 'model_assistants_only' in params:
+            query_params.append(('modelAssistantsOnly', params['model_assistants_only']))  # noqa: E501
 
         header_params = {}
 

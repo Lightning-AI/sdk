@@ -42,6 +42,8 @@ class V1Machine(object):
     """
     swagger_types = {
         'address': 'str',
+        'auth_token': 'str',
+        'capacity_reservation_id': 'str',
         'cluster_id': 'str',
         'created_at': 'datetime',
         'id': 'str',
@@ -68,6 +70,8 @@ class V1Machine(object):
 
     attribute_map = {
         'address': 'address',
+        'auth_token': 'authToken',
+        'capacity_reservation_id': 'capacityReservationId',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'id': 'id',
@@ -92,9 +96,11 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, address: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._address = None
+        self._auth_token = None
+        self._capacity_reservation_id = None
         self._cluster_id = None
         self._created_at = None
         self._id = None
@@ -120,6 +126,10 @@ class V1Machine(object):
         self.discriminator = None
         if address is not None:
             self.address = address
+        if auth_token is not None:
+            self.auth_token = auth_token
+        if capacity_reservation_id is not None:
+            self.capacity_reservation_id = capacity_reservation_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if created_at is not None:
@@ -185,6 +195,48 @@ class V1Machine(object):
         """
 
         self._address = address
+
+    @property
+    def auth_token(self) -> 'str':
+        """Gets the auth_token of this V1Machine.  # noqa: E501
+
+
+        :return: The auth_token of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._auth_token
+
+    @auth_token.setter
+    def auth_token(self, auth_token: 'str'):
+        """Sets the auth_token of this V1Machine.
+
+
+        :param auth_token: The auth_token of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._auth_token = auth_token
+
+    @property
+    def capacity_reservation_id(self) -> 'str':
+        """Gets the capacity_reservation_id of this V1Machine.  # noqa: E501
+
+
+        :return: The capacity_reservation_id of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._capacity_reservation_id
+
+    @capacity_reservation_id.setter
+    def capacity_reservation_id(self, capacity_reservation_id: 'str'):
+        """Sets the capacity_reservation_id of this V1Machine.
+
+
+        :param capacity_reservation_id: The capacity_reservation_id of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._capacity_reservation_id = capacity_reservation_id
 
     @property
     def cluster_id(self) -> 'str':

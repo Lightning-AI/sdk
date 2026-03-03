@@ -46,6 +46,7 @@ class V1ManagedModel(object):
         'completion_token_price': 'float',
         'completion_token_price_above_threshold': 'float',
         'context_length': 'str',
+        'created_at': 'datetime',
         'deployment_details': 'V1DeploymentDetails',
         'description': 'str',
         'display_name': 'str',
@@ -70,6 +71,7 @@ class V1ManagedModel(object):
         'completion_token_price': 'completionTokenPrice',
         'completion_token_price_above_threshold': 'completionTokenPriceAboveThreshold',
         'context_length': 'contextLength',
+        'created_at': 'createdAt',
         'deployment_details': 'deploymentDetails',
         'description': 'description',
         'display_name': 'displayName',
@@ -88,13 +90,14 @@ class V1ManagedModel(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, assistant_id: 'str' =None, completion_token_price: 'float' =None, completion_token_price_above_threshold: 'float' =None, context_length: 'str' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, prompt_token_price_above_threshold: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, token_threshold: 'str' =None, top_k: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, assistant_id: 'str' =None, completion_token_price: 'float' =None, completion_token_price_above_threshold: 'float' =None, context_length: 'str' =None, created_at: 'datetime' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, prompt_token_price_above_threshold: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, token_threshold: 'str' =None, top_k: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._abilities = None
         self._assistant_id = None
         self._completion_token_price = None
         self._completion_token_price_above_threshold = None
         self._context_length = None
+        self._created_at = None
         self._deployment_details = None
         self._description = None
         self._display_name = None
@@ -122,6 +125,8 @@ class V1ManagedModel(object):
             self.completion_token_price_above_threshold = completion_token_price_above_threshold
         if context_length is not None:
             self.context_length = context_length
+        if created_at is not None:
+            self.created_at = created_at
         if deployment_details is not None:
             self.deployment_details = deployment_details
         if description is not None:
@@ -259,6 +264,27 @@ class V1ManagedModel(object):
         """
 
         self._context_length = context_length
+
+    @property
+    def created_at(self) -> 'datetime':
+        """Gets the created_at of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The created_at of this V1ManagedModel.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._created_at
+
+    @created_at.setter
+    def created_at(self, created_at: 'datetime'):
+        """Sets the created_at of this V1ManagedModel.
+
+
+        :param created_at: The created_at of this V1ManagedModel.  # noqa: E501
+        :type: datetime
+        """
+
+        self._created_at = created_at
 
     @property
     def deployment_details(self) -> 'V1DeploymentDetails':

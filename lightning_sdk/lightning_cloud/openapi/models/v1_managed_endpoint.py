@@ -43,6 +43,7 @@ class V1ManagedEndpoint(object):
     swagger_types = {
         'api_key': 'str',
         'base_url': 'str',
+        'created_at': 'datetime',
         'description': 'str',
         'id': 'str',
         'models_metadata': 'list[V1ManagedModel]',
@@ -57,6 +58,7 @@ class V1ManagedEndpoint(object):
     attribute_map = {
         'api_key': 'apiKey',
         'base_url': 'baseUrl',
+        'created_at': 'createdAt',
         'description': 'description',
         'id': 'id',
         'models_metadata': 'modelsMetadata',
@@ -68,10 +70,11 @@ class V1ManagedEndpoint(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, api_key: 'str' =None, base_url: 'str' =None, description: 'str' =None, id: 'str' =None, models_metadata: 'list[V1ManagedModel]' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, provider_display_name: 'str' =None, publish_status: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, base_url: 'str' =None, created_at: 'datetime' =None, description: 'str' =None, id: 'str' =None, models_metadata: 'list[V1ManagedModel]' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, provider_display_name: 'str' =None, publish_status: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1ManagedEndpoint - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._base_url = None
+        self._created_at = None
         self._description = None
         self._id = None
         self._models_metadata = None
@@ -86,6 +89,8 @@ class V1ManagedEndpoint(object):
             self.api_key = api_key
         if base_url is not None:
             self.base_url = base_url
+        if created_at is not None:
+            self.created_at = created_at
         if description is not None:
             self.description = description
         if id is not None:
@@ -146,6 +151,27 @@ class V1ManagedEndpoint(object):
         """
 
         self._base_url = base_url
+
+    @property
+    def created_at(self) -> 'datetime':
+        """Gets the created_at of this V1ManagedEndpoint.  # noqa: E501
+
+
+        :return: The created_at of this V1ManagedEndpoint.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._created_at
+
+    @created_at.setter
+    def created_at(self, created_at: 'datetime'):
+        """Sets the created_at of this V1ManagedEndpoint.
+
+
+        :param created_at: The created_at of this V1ManagedEndpoint.  # noqa: E501
+        :type: datetime
+        """
+
+        self._created_at = created_at
 
     @property
     def description(self) -> 'str':

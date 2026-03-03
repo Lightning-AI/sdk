@@ -59,13 +59,16 @@ class V1DataConnection(object):
         'is_public': 'bool',
         'lock_out': 'bool',
         'lustre': 'V1LustreDataConnection',
+        'mountable_data_connection': 'V1MountableDataConnection',
         'name': 'str',
         'number_of_files': 'str',
+        'optimization_mode': 'V1DataConnectionOptimizationMode',
         'project_id': 'str',
         'r2': 'V1R2DataConnection',
         'run_cmds': 'list[str]',
         's3_folder': 'V1S3FolderDataConnection',
         'snowflake': 'V1SnowflakeDataConnection',
+        'sshfs': 'V1SshfsDataConnection',
         'state': 'V1DataConnectionState',
         'total_daily_read_bytes': 'str',
         'total_daily_write_bytes': 'str',
@@ -95,13 +98,16 @@ class V1DataConnection(object):
         'is_public': 'isPublic',
         'lock_out': 'lockOut',
         'lustre': 'lustre',
+        'mountable_data_connection': 'mountableDataConnection',
         'name': 'name',
         'number_of_files': 'numberOfFiles',
+        'optimization_mode': 'optimizationMode',
         'project_id': 'projectId',
         'r2': 'r2',
         'run_cmds': 'runCmds',
         's3_folder': 's3Folder',
         'snowflake': 'snowflake',
+        'sshfs': 'sshfs',
         'state': 'state',
         'total_daily_read_bytes': 'totalDailyReadBytes',
         'total_daily_write_bytes': 'totalDailyWriteBytes',
@@ -112,7 +118,7 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, is_public: 'bool' =None, lock_out: 'bool' =None, lustre: 'V1LustreDataConnection' =None, name: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, is_public: 'bool' =None, lock_out: 'bool' =None, lustre: 'V1LustreDataConnection' =None, mountable_data_connection: 'V1MountableDataConnection' =None, name: 'str' =None, number_of_files: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, sshfs: 'V1SshfsDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
@@ -132,13 +138,16 @@ class V1DataConnection(object):
         self._is_public = None
         self._lock_out = None
         self._lustre = None
+        self._mountable_data_connection = None
         self._name = None
         self._number_of_files = None
+        self._optimization_mode = None
         self._project_id = None
         self._r2 = None
         self._run_cmds = None
         self._s3_folder = None
         self._snowflake = None
+        self._sshfs = None
         self._state = None
         self._total_daily_read_bytes = None
         self._total_daily_write_bytes = None
@@ -184,10 +193,14 @@ class V1DataConnection(object):
             self.lock_out = lock_out
         if lustre is not None:
             self.lustre = lustre
+        if mountable_data_connection is not None:
+            self.mountable_data_connection = mountable_data_connection
         if name is not None:
             self.name = name
         if number_of_files is not None:
             self.number_of_files = number_of_files
+        if optimization_mode is not None:
+            self.optimization_mode = optimization_mode
         if project_id is not None:
             self.project_id = project_id
         if r2 is not None:
@@ -198,6 +211,8 @@ class V1DataConnection(object):
             self.s3_folder = s3_folder
         if snowflake is not None:
             self.snowflake = snowflake
+        if sshfs is not None:
+            self.sshfs = sshfs
         if state is not None:
             self.state = state
         if total_daily_read_bytes is not None:
@@ -596,6 +611,27 @@ class V1DataConnection(object):
         self._lustre = lustre
 
     @property
+    def mountable_data_connection(self) -> 'V1MountableDataConnection':
+        """Gets the mountable_data_connection of this V1DataConnection.  # noqa: E501
+
+
+        :return: The mountable_data_connection of this V1DataConnection.  # noqa: E501
+        :rtype: V1MountableDataConnection
+        """
+        return self._mountable_data_connection
+
+    @mountable_data_connection.setter
+    def mountable_data_connection(self, mountable_data_connection: 'V1MountableDataConnection'):
+        """Sets the mountable_data_connection of this V1DataConnection.
+
+
+        :param mountable_data_connection: The mountable_data_connection of this V1DataConnection.  # noqa: E501
+        :type: V1MountableDataConnection
+        """
+
+        self._mountable_data_connection = mountable_data_connection
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this V1DataConnection.  # noqa: E501
 
@@ -636,6 +672,27 @@ class V1DataConnection(object):
         """
 
         self._number_of_files = number_of_files
+
+    @property
+    def optimization_mode(self) -> 'V1DataConnectionOptimizationMode':
+        """Gets the optimization_mode of this V1DataConnection.  # noqa: E501
+
+
+        :return: The optimization_mode of this V1DataConnection.  # noqa: E501
+        :rtype: V1DataConnectionOptimizationMode
+        """
+        return self._optimization_mode
+
+    @optimization_mode.setter
+    def optimization_mode(self, optimization_mode: 'V1DataConnectionOptimizationMode'):
+        """Sets the optimization_mode of this V1DataConnection.
+
+
+        :param optimization_mode: The optimization_mode of this V1DataConnection.  # noqa: E501
+        :type: V1DataConnectionOptimizationMode
+        """
+
+        self._optimization_mode = optimization_mode
 
     @property
     def project_id(self) -> 'str':
@@ -741,6 +798,27 @@ class V1DataConnection(object):
         """
 
         self._snowflake = snowflake
+
+    @property
+    def sshfs(self) -> 'V1SshfsDataConnection':
+        """Gets the sshfs of this V1DataConnection.  # noqa: E501
+
+
+        :return: The sshfs of this V1DataConnection.  # noqa: E501
+        :rtype: V1SshfsDataConnection
+        """
+        return self._sshfs
+
+    @sshfs.setter
+    def sshfs(self, sshfs: 'V1SshfsDataConnection'):
+        """Sets the sshfs of this V1DataConnection.
+
+
+        :param sshfs: The sshfs of this V1DataConnection.  # noqa: E501
+        :type: V1SshfsDataConnection
+        """
+
+        self._sshfs = sshfs
 
     @property
     def state(self) -> 'V1DataConnectionState':

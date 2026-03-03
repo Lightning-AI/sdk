@@ -81,6 +81,7 @@ class V1RuleResource(object):
     STORAGETRANSFER = "storageTransfer"
     LITDATASET = "litDataset"
     UPLOAD = "upload"
+    MACHINE = "machine"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

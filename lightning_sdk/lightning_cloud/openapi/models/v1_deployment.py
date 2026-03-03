@@ -63,6 +63,7 @@ class V1Deployment(object):
         'project_id': 'str',
         'recipients': 'V1DeploymentAlertingRecipients',
         'release_id': 'str',
+        'release_notes': 'str',
         'replicas': 'int',
         'reuse_servers': 'bool',
         'spec': 'V1JobSpec',
@@ -98,6 +99,7 @@ class V1Deployment(object):
         'project_id': 'projectId',
         'recipients': 'recipients',
         'release_id': 'releaseId',
+        'release_notes': 'releaseNotes',
         'replicas': 'replicas',
         'reuse_servers': 'reuseServers',
         'spec': 'spec',
@@ -110,7 +112,7 @@ class V1Deployment(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, source: 'str' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, source: 'str' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
         self._source = None
         self._api_standard = None
@@ -134,6 +136,7 @@ class V1Deployment(object):
         self._project_id = None
         self._recipients = None
         self._release_id = None
+        self._release_notes = None
         self._replicas = None
         self._reuse_servers = None
         self._spec = None
@@ -189,6 +192,8 @@ class V1Deployment(object):
             self.recipients = recipients
         if release_id is not None:
             self.release_id = release_id
+        if release_notes is not None:
+            self.release_notes = release_notes
         if replicas is not None:
             self.replicas = replicas
         if reuse_servers is not None:
@@ -673,6 +678,27 @@ class V1Deployment(object):
         """
 
         self._release_id = release_id
+
+    @property
+    def release_notes(self) -> 'str':
+        """Gets the release_notes of this V1Deployment.  # noqa: E501
+
+
+        :return: The release_notes of this V1Deployment.  # noqa: E501
+        :rtype: str
+        """
+        return self._release_notes
+
+    @release_notes.setter
+    def release_notes(self, release_notes: 'str'):
+        """Sets the release_notes of this V1Deployment.
+
+
+        :param release_notes: The release_notes of this V1Deployment.  # noqa: E501
+        :type: str
+        """
+
+        self._release_notes = release_notes
 
     @property
     def replicas(self) -> 'int':

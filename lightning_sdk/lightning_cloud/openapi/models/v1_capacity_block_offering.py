@@ -45,10 +45,11 @@ class V1CapacityBlockOffering(object):
         'capacity_block_offering_id': 'str',
         'currency_code': 'str',
         'end_date': 'datetime',
+        'expires_at': 'datetime',
         'fee': 'float',
         'instance_count': 'int',
         'instance_type': 'str',
-        'machine_id': 'str',
+        'machine_ids': 'list[str]',
         'provider_fee': 'float',
         'region': 'str',
         'regions_without_quota': 'list[str]',
@@ -61,10 +62,11 @@ class V1CapacityBlockOffering(object):
         'capacity_block_offering_id': 'capacityBlockOfferingId',
         'currency_code': 'currencyCode',
         'end_date': 'endDate',
+        'expires_at': 'expiresAt',
         'fee': 'fee',
         'instance_count': 'instanceCount',
         'instance_type': 'instanceType',
-        'machine_id': 'machineId',
+        'machine_ids': 'machineIds',
         'provider_fee': 'providerFee',
         'region': 'region',
         'regions_without_quota': 'regionsWithoutQuota',
@@ -72,16 +74,17 @@ class V1CapacityBlockOffering(object):
         'upfront_fee': 'upfrontFee'
     }
 
-    def __init__(self, capacity_block_duration_hours: 'int' =None, capacity_block_offering_id: 'str' =None, currency_code: 'str' =None, end_date: 'datetime' =None, fee: 'float' =None, instance_count: 'int' =None, instance_type: 'str' =None, machine_id: 'str' =None, provider_fee: 'float' =None, region: 'str' =None, regions_without_quota: 'list[str]' =None, start_date: 'datetime' =None, upfront_fee: 'float' =None):  # noqa: E501
+    def __init__(self, capacity_block_duration_hours: 'int' =None, capacity_block_offering_id: 'str' =None, currency_code: 'str' =None, end_date: 'datetime' =None, expires_at: 'datetime' =None, fee: 'float' =None, instance_count: 'int' =None, instance_type: 'str' =None, machine_ids: 'list[str]' =None, provider_fee: 'float' =None, region: 'str' =None, regions_without_quota: 'list[str]' =None, start_date: 'datetime' =None, upfront_fee: 'float' =None):  # noqa: E501
         """V1CapacityBlockOffering - a model defined in Swagger"""  # noqa: E501
         self._capacity_block_duration_hours = None
         self._capacity_block_offering_id = None
         self._currency_code = None
         self._end_date = None
+        self._expires_at = None
         self._fee = None
         self._instance_count = None
         self._instance_type = None
-        self._machine_id = None
+        self._machine_ids = None
         self._provider_fee = None
         self._region = None
         self._regions_without_quota = None
@@ -96,14 +99,16 @@ class V1CapacityBlockOffering(object):
             self.currency_code = currency_code
         if end_date is not None:
             self.end_date = end_date
+        if expires_at is not None:
+            self.expires_at = expires_at
         if fee is not None:
             self.fee = fee
         if instance_count is not None:
             self.instance_count = instance_count
         if instance_type is not None:
             self.instance_type = instance_type
-        if machine_id is not None:
-            self.machine_id = machine_id
+        if machine_ids is not None:
+            self.machine_ids = machine_ids
         if provider_fee is not None:
             self.provider_fee = provider_fee
         if region is not None:
@@ -200,6 +205,27 @@ class V1CapacityBlockOffering(object):
         self._end_date = end_date
 
     @property
+    def expires_at(self) -> 'datetime':
+        """Gets the expires_at of this V1CapacityBlockOffering.  # noqa: E501
+
+
+        :return: The expires_at of this V1CapacityBlockOffering.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._expires_at
+
+    @expires_at.setter
+    def expires_at(self, expires_at: 'datetime'):
+        """Sets the expires_at of this V1CapacityBlockOffering.
+
+
+        :param expires_at: The expires_at of this V1CapacityBlockOffering.  # noqa: E501
+        :type: datetime
+        """
+
+        self._expires_at = expires_at
+
+    @property
     def fee(self) -> 'float':
         """Gets the fee of this V1CapacityBlockOffering.  # noqa: E501
 
@@ -263,25 +289,25 @@ class V1CapacityBlockOffering(object):
         self._instance_type = instance_type
 
     @property
-    def machine_id(self) -> 'str':
-        """Gets the machine_id of this V1CapacityBlockOffering.  # noqa: E501
+    def machine_ids(self) -> 'list[str]':
+        """Gets the machine_ids of this V1CapacityBlockOffering.  # noqa: E501
 
 
-        :return: The machine_id of this V1CapacityBlockOffering.  # noqa: E501
-        :rtype: str
+        :return: The machine_ids of this V1CapacityBlockOffering.  # noqa: E501
+        :rtype: list[str]
         """
-        return self._machine_id
+        return self._machine_ids
 
-    @machine_id.setter
-    def machine_id(self, machine_id: 'str'):
-        """Sets the machine_id of this V1CapacityBlockOffering.
+    @machine_ids.setter
+    def machine_ids(self, machine_ids: 'list[str]'):
+        """Sets the machine_ids of this V1CapacityBlockOffering.
 
 
-        :param machine_id: The machine_id of this V1CapacityBlockOffering.  # noqa: E501
-        :type: str
+        :param machine_ids: The machine_ids of this V1CapacityBlockOffering.  # noqa: E501
+        :type: list[str]
         """
 
-        self._machine_id = machine_id
+        self._machine_ids = machine_ids
 
     @property
     def provider_fee(self) -> 'float':

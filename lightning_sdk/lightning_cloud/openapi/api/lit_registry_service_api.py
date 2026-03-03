@@ -379,6 +379,8 @@ class LitRegistryServiceApi(object):
         :param bool latest_only:
         :param str filter_for_repo: Use this to filter for a single repository. Useful when selecting a subset of the same data from various context.
         :param str cluster_id:
+        :param str sort_by: Column name to sort repositories by
+        :param str sort_order: ascending or descending
         :return: V1LitRegistryProject
                  If the method is called asynchronously,
                  returns the request thread.
@@ -403,12 +405,14 @@ class LitRegistryServiceApi(object):
         :param bool latest_only:
         :param str filter_for_repo: Use this to filter for a single repository. Useful when selecting a subset of the same data from various context.
         :param str cluster_id:
+        :param str sort_by: Column name to sort repositories by
+        :param str sort_order: ascending or descending
         :return: V1LitRegistryProject
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'latest_only', 'filter_for_repo', 'cluster_id']  # noqa: E501
+        all_params = ['project_id', 'latest_only', 'filter_for_repo', 'cluster_id', 'sort_by', 'sort_order']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -441,6 +445,10 @@ class LitRegistryServiceApi(object):
             query_params.append(('filterForRepo', params['filter_for_repo']))  # noqa: E501
         if 'cluster_id' in params:
             query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
+        if 'sort_by' in params:
+            query_params.append(('sortBy', params['sort_by']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
 
         header_params = {}
 

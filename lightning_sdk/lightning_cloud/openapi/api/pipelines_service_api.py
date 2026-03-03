@@ -580,6 +580,8 @@ class PipelinesServiceApi(object):
         :param int limit:
         :param str state: For example, running, stopped, completed, failed
         :param bool standalone:
+        :param str sort_by:
+        :param str sort_order:
         :return: V1ListPipelinesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -607,12 +609,14 @@ class PipelinesServiceApi(object):
         :param int limit:
         :param str state: For example, running, stopped, completed, failed
         :param bool standalone:
+        :param str sort_by:
+        :param str sort_order:
         :return: V1ListPipelinesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'parent_pipeline_id', 'original_pipeline_id', 'page_token', 'limit', 'state', 'standalone']  # noqa: E501
+        all_params = ['project_id', 'parent_pipeline_id', 'original_pipeline_id', 'page_token', 'limit', 'state', 'standalone', 'sort_by', 'sort_order']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -651,6 +655,10 @@ class PipelinesServiceApi(object):
             query_params.append(('state', params['state']))  # noqa: E501
         if 'standalone' in params:
             query_params.append(('standalone', params['standalone']))  # noqa: E501
+        if 'sort_by' in params:
+            query_params.append(('sortBy', params['sort_by']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
 
         header_params = {}
 

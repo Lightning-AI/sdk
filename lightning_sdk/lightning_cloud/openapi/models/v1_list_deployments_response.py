@@ -41,19 +41,29 @@ class V1ListDeploymentsResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'deployments': 'list[V1Deployment]'
+        'deployments': 'list[V1Deployment]',
+        'next_page_token': 'str',
+        'previous_page_token': 'str'
     }
 
     attribute_map = {
-        'deployments': 'deployments'
+        'deployments': 'deployments',
+        'next_page_token': 'nextPageToken',
+        'previous_page_token': 'previousPageToken'
     }
 
-    def __init__(self, deployments: 'list[V1Deployment]' =None):  # noqa: E501
+    def __init__(self, deployments: 'list[V1Deployment]' =None, next_page_token: 'str' =None, previous_page_token: 'str' =None):  # noqa: E501
         """V1ListDeploymentsResponse - a model defined in Swagger"""  # noqa: E501
         self._deployments = None
+        self._next_page_token = None
+        self._previous_page_token = None
         self.discriminator = None
         if deployments is not None:
             self.deployments = deployments
+        if next_page_token is not None:
+            self.next_page_token = next_page_token
+        if previous_page_token is not None:
+            self.previous_page_token = previous_page_token
 
     @property
     def deployments(self) -> 'list[V1Deployment]':
@@ -75,6 +85,48 @@ class V1ListDeploymentsResponse(object):
         """
 
         self._deployments = deployments
+
+    @property
+    def next_page_token(self) -> 'str':
+        """Gets the next_page_token of this V1ListDeploymentsResponse.  # noqa: E501
+
+
+        :return: The next_page_token of this V1ListDeploymentsResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._next_page_token
+
+    @next_page_token.setter
+    def next_page_token(self, next_page_token: 'str'):
+        """Sets the next_page_token of this V1ListDeploymentsResponse.
+
+
+        :param next_page_token: The next_page_token of this V1ListDeploymentsResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._next_page_token = next_page_token
+
+    @property
+    def previous_page_token(self) -> 'str':
+        """Gets the previous_page_token of this V1ListDeploymentsResponse.  # noqa: E501
+
+
+        :return: The previous_page_token of this V1ListDeploymentsResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._previous_page_token
+
+    @previous_page_token.setter
+    def previous_page_token(self, previous_page_token: 'str'):
+        """Sets the previous_page_token of this V1ListDeploymentsResponse.
+
+
+        :param previous_page_token: The previous_page_token of this V1ListDeploymentsResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._previous_page_token = previous_page_token
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

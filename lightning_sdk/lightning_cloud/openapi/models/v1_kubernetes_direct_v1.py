@@ -53,6 +53,7 @@ class V1KubernetesDirectV1(object):
         'incident_notification_namespaces': 'list[str]',
         'incident_slack_notifiers': 'list[V1SlackNotifier]',
         'kubeconfig': 'str',
+        'kubeconfig_agent': 'str',
         'kubeconfig_elevated': 'str',
         'kubevirt_config': 'V1KubevirtConfig',
         'prometheus_url': 'str',
@@ -73,6 +74,7 @@ class V1KubernetesDirectV1(object):
         'incident_notification_namespaces': 'incidentNotificationNamespaces',
         'incident_slack_notifiers': 'incidentSlackNotifiers',
         'kubeconfig': 'kubeconfig',
+        'kubeconfig_agent': 'kubeconfigAgent',
         'kubeconfig_elevated': 'kubeconfigElevated',
         'kubevirt_config': 'kubevirtConfig',
         'prometheus_url': 'prometheusUrl',
@@ -80,7 +82,7 @@ class V1KubernetesDirectV1(object):
         'skip_user_label_injection': 'skipUserLabelInjection'
     }
 
-    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
+    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._automate_agent_installation = None
         self._aws = None
@@ -94,6 +96,7 @@ class V1KubernetesDirectV1(object):
         self._incident_notification_namespaces = None
         self._incident_slack_notifiers = None
         self._kubeconfig = None
+        self._kubeconfig_agent = None
         self._kubeconfig_elevated = None
         self._kubevirt_config = None
         self._prometheus_url = None
@@ -124,6 +127,8 @@ class V1KubernetesDirectV1(object):
             self.incident_slack_notifiers = incident_slack_notifiers
         if kubeconfig is not None:
             self.kubeconfig = kubeconfig
+        if kubeconfig_agent is not None:
+            self.kubeconfig_agent = kubeconfig_agent
         if kubeconfig_elevated is not None:
             self.kubeconfig_elevated = kubeconfig_elevated
         if kubevirt_config is not None:
@@ -386,6 +391,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._kubeconfig = kubeconfig
+
+    @property
+    def kubeconfig_agent(self) -> 'str':
+        """Gets the kubeconfig_agent of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The kubeconfig_agent of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._kubeconfig_agent
+
+    @kubeconfig_agent.setter
+    def kubeconfig_agent(self, kubeconfig_agent: 'str'):
+        """Sets the kubeconfig_agent of this V1KubernetesDirectV1.
+
+
+        :param kubeconfig_agent: The kubeconfig_agent of this V1KubernetesDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._kubeconfig_agent = kubeconfig_agent
 
     @property
     def kubeconfig_elevated(self) -> 'str':

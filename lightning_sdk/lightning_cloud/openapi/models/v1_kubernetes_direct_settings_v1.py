@@ -45,6 +45,7 @@ class V1KubernetesDirectSettingsV1(object):
         'disable_pods_collection': 'bool',
         'monthly_usage_report': 'bool',
         'nfs_storage_threshold': 'float',
+        'override_read_only': 'bool',
         'persist_pods_logs': 'bool',
         'slack_channel_id': 'str',
         'temperature_threshold': 'float',
@@ -56,18 +57,20 @@ class V1KubernetesDirectSettingsV1(object):
         'disable_pods_collection': 'disablePodsCollection',
         'monthly_usage_report': 'monthlyUsageReport',
         'nfs_storage_threshold': 'nfsStorageThreshold',
+        'override_read_only': 'overrideReadOnly',
         'persist_pods_logs': 'persistPodsLogs',
         'slack_channel_id': 'slackChannelId',
         'temperature_threshold': 'temperatureThreshold',
         'weekly_usage_report': 'weeklyUsageReport'
     }
 
-    def __init__(self, daily_usage_report: 'bool' =None, disable_pods_collection: 'bool' =None, monthly_usage_report: 'bool' =None, nfs_storage_threshold: 'float' =None, persist_pods_logs: 'bool' =None, slack_channel_id: 'str' =None, temperature_threshold: 'float' =None, weekly_usage_report: 'bool' =None):  # noqa: E501
+    def __init__(self, daily_usage_report: 'bool' =None, disable_pods_collection: 'bool' =None, monthly_usage_report: 'bool' =None, nfs_storage_threshold: 'float' =None, override_read_only: 'bool' =None, persist_pods_logs: 'bool' =None, slack_channel_id: 'str' =None, temperature_threshold: 'float' =None, weekly_usage_report: 'bool' =None):  # noqa: E501
         """V1KubernetesDirectSettingsV1 - a model defined in Swagger"""  # noqa: E501
         self._daily_usage_report = None
         self._disable_pods_collection = None
         self._monthly_usage_report = None
         self._nfs_storage_threshold = None
+        self._override_read_only = None
         self._persist_pods_logs = None
         self._slack_channel_id = None
         self._temperature_threshold = None
@@ -81,6 +84,8 @@ class V1KubernetesDirectSettingsV1(object):
             self.monthly_usage_report = monthly_usage_report
         if nfs_storage_threshold is not None:
             self.nfs_storage_threshold = nfs_storage_threshold
+        if override_read_only is not None:
+            self.override_read_only = override_read_only
         if persist_pods_logs is not None:
             self.persist_pods_logs = persist_pods_logs
         if slack_channel_id is not None:
@@ -173,6 +178,27 @@ class V1KubernetesDirectSettingsV1(object):
         """
 
         self._nfs_storage_threshold = nfs_storage_threshold
+
+    @property
+    def override_read_only(self) -> 'bool':
+        """Gets the override_read_only of this V1KubernetesDirectSettingsV1.  # noqa: E501
+
+
+        :return: The override_read_only of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._override_read_only
+
+    @override_read_only.setter
+    def override_read_only(self, override_read_only: 'bool'):
+        """Sets the override_read_only of this V1KubernetesDirectSettingsV1.
+
+
+        :param override_read_only: The override_read_only of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._override_read_only = override_read_only
 
     @property
     def persist_pods_logs(self) -> 'bool':

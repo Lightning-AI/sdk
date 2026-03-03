@@ -6654,6 +6654,8 @@ class CloudSpaceServiceApi(object):
         :param bool is_favorite: Filters
         :param bool is_locked: Filters
         :param list[str] ids: list by cloudspace ids
+        :param str sort_by: Column name to sort by
+        :param str sort_order: ascending or descending
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -6684,12 +6686,14 @@ class CloudSpaceServiceApi(object):
         :param bool is_favorite: Filters
         :param bool is_locked: Filters
         :param list[str] ids: list by cloudspace ids
+        :param str sort_by: Column name to sort by
+        :param str sort_order: ascending or descending
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'active_only', 'is_favorite', 'is_locked', 'ids']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'active_only', 'is_favorite', 'is_locked', 'ids', 'sort_by', 'sort_order']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -6735,6 +6739,10 @@ class CloudSpaceServiceApi(object):
         if 'ids' in params:
             query_params.append(('ids', params['ids']))  # noqa: E501
             collection_formats['ids'] = 'multi'  # noqa: E501
+        if 'sort_by' in params:
+            query_params.append(('sortBy', params['sort_by']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
 
         header_params = {}
 
@@ -6784,6 +6792,8 @@ class CloudSpaceServiceApi(object):
         :param bool is_favorite: Filters
         :param bool is_locked: Filters
         :param list[str] ids: list by cloudspace ids
+        :param str sort_by: Column name to sort by
+        :param str sort_order: ascending or descending
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -6814,12 +6824,14 @@ class CloudSpaceServiceApi(object):
         :param bool is_favorite: Filters
         :param bool is_locked: Filters
         :param list[str] ids: list by cloudspace ids
+        :param str sort_by: Column name to sort by
+        :param str sort_order: ascending or descending
         :return: V1ListCloudSpacesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'active_only', 'is_favorite', 'is_locked', 'ids']  # noqa: E501
+        all_params = ['project_id', 'cluster_id', 'page_token', 'limit', 'name', 'user_id', 'active_only', 'is_favorite', 'is_locked', 'ids', 'sort_by', 'sort_order']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -6861,6 +6873,10 @@ class CloudSpaceServiceApi(object):
         if 'ids' in params:
             query_params.append(('ids', params['ids']))  # noqa: E501
             collection_formats['ids'] = 'multi'  # noqa: E501
+        if 'sort_by' in params:
+            query_params.append(('sortBy', params['sort_by']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
 
         header_params = {}
 

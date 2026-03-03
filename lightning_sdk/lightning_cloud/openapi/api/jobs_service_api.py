@@ -4065,6 +4065,10 @@ class JobsServiceApi(object):
         :param str cloudspace_id:
         :param list[str] user_ids:
         :param bool standalone:
+        :param str sort_by:
+        :param str sort_order:
+        :param str page_token:
+        :param int limit:
         :return: V1ListDeploymentsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -4089,12 +4093,16 @@ class JobsServiceApi(object):
         :param str cloudspace_id:
         :param list[str] user_ids:
         :param bool standalone:
+        :param str sort_by:
+        :param str sort_order:
+        :param str page_token:
+        :param int limit:
         :return: V1ListDeploymentsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'user_ids', 'standalone']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'user_ids', 'standalone', 'sort_by', 'sort_order', 'page_token', 'limit']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -4128,6 +4136,14 @@ class JobsServiceApi(object):
             collection_formats['userIds'] = 'multi'  # noqa: E501
         if 'standalone' in params:
             query_params.append(('standalone', params['standalone']))  # noqa: E501
+        if 'sort_by' in params:
+            query_params.append(('sortBy', params['sort_by']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
 
         header_params = {}
 
@@ -4178,6 +4194,8 @@ class JobsServiceApi(object):
         :param str cloudspace_id:
         :param bool standalone: fields specific to deployments
         :param str parent_pipeline_id: fields specific to pipelines
+        :param str sort_by: Column name to sort by
+        :param str sort_order: ascending or descending
         :return: V1ListJobResourcesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -4209,12 +4227,14 @@ class JobsServiceApi(object):
         :param str cloudspace_id:
         :param bool standalone: fields specific to deployments
         :param str parent_pipeline_id: fields specific to pipelines
+        :param str sort_by: Column name to sort by
+        :param str sort_order: ascending or descending
         :return: V1ListJobResourcesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_ids', 'user_ids', 'org_id', 'state', 'job_types', 'end_time', 'page_token', 'limit', 'cloudspace_id', 'standalone', 'parent_pipeline_id']  # noqa: E501
+        all_params = ['project_ids', 'user_ids', 'org_id', 'state', 'job_types', 'end_time', 'page_token', 'limit', 'cloudspace_id', 'standalone', 'parent_pipeline_id', 'sort_by', 'sort_order']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -4260,6 +4280,10 @@ class JobsServiceApi(object):
             query_params.append(('standalone', params['standalone']))  # noqa: E501
         if 'parent_pipeline_id' in params:
             query_params.append(('parentPipelineId', params['parent_pipeline_id']))  # noqa: E501
+        if 'sort_by' in params:
+            query_params.append(('sortBy', params['sort_by']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
 
         header_params = {}
 

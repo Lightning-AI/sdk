@@ -762,6 +762,119 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def cluster_service_create_machine_alerts(self, body: 'ClusterServiceCreateMachineAlertsBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1CreateMachineAlertsResponse':  # noqa: E501
+        """cluster_service_create_machine_alerts  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_create_machine_alerts(body, cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ClusterServiceCreateMachineAlertsBody body: (required)
+        :param str cluster_id: (required)
+        :param str id: machine id (required)
+        :return: V1CreateMachineAlertsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_create_machine_alerts_with_http_info(body, cluster_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_create_machine_alerts_with_http_info(body, cluster_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_create_machine_alerts_with_http_info(self, body: 'ClusterServiceCreateMachineAlertsBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1CreateMachineAlertsResponse':  # noqa: E501
+        """cluster_service_create_machine_alerts  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_create_machine_alerts_with_http_info(body, cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ClusterServiceCreateMachineAlertsBody body: (required)
+        :param str cluster_id: (required)
+        :param str id: machine id (required)
+        :return: V1CreateMachineAlertsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'cluster_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_create_machine_alerts" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `cluster_service_create_machine_alerts`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `cluster_service_create_machine_alerts`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `cluster_service_create_machine_alerts`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/clusters/{clusterId}/machines/{id}/alerts', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1CreateMachineAlertsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def cluster_service_create_org_cluster_capacity_reservation(self, body: 'ClusterServiceCreateOrgClusterCapacityReservationBody', org_id: 'str', cluster_id: 'str', **kwargs) -> 'V1CreateOrgClusterCapacityReservationResponse':  # noqa: E501
         """cluster_service_create_org_cluster_capacity_reservation  # noqa: E501
 
@@ -2992,6 +3105,111 @@ class ClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1GetMachineResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cluster_service_get_machine_details(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1GetMachineDetailsResponse':  # noqa: E501
+        """GetMachineDetails cluster admin endpoint only  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_get_machine_details(cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :param str org_id:
+        :return: V1GetMachineDetailsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_get_machine_details_with_http_info(cluster_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_get_machine_details_with_http_info(cluster_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_get_machine_details_with_http_info(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1GetMachineDetailsResponse':  # noqa: E501
+        """GetMachineDetails cluster admin endpoint only  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_get_machine_details_with_http_info(cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :param str org_id:
+        :return: V1GetMachineDetailsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'id', 'org_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_get_machine_details" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `cluster_service_get_machine_details`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `cluster_service_get_machine_details`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/clusters/{clusterId}/machines/{id}/details', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetMachineDetailsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -5819,6 +6037,111 @@ class ClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1UpdateProjectClusterAcceleratorsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cluster_service_update_server(self, body: 'ClusterServiceUpdateServerBody', server_id: 'str', **kwargs) -> 'V1UpdateServerResponse':  # noqa: E501
+        """cluster_service_update_server  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_update_server(body, server_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ClusterServiceUpdateServerBody body: (required)
+        :param str server_id: (required)
+        :return: V1UpdateServerResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_update_server_with_http_info(body, server_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_update_server_with_http_info(body, server_id, **kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_update_server_with_http_info(self, body: 'ClusterServiceUpdateServerBody', server_id: 'str', **kwargs) -> 'V1UpdateServerResponse':  # noqa: E501
+        """cluster_service_update_server  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_update_server_with_http_info(body, server_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ClusterServiceUpdateServerBody body: (required)
+        :param str server_id: (required)
+        :return: V1UpdateServerResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'server_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_update_server" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `cluster_service_update_server`")  # noqa: E501
+        # verify the required parameter 'server_id' is set
+        if ('server_id' not in params or
+                params['server_id'] is None):
+            raise ValueError("Missing the required parameter `server_id` when calling `cluster_service_update_server`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'server_id' in params:
+            path_params['serverId'] = params['server_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/servers/{serverId}', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1UpdateServerResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

@@ -47,6 +47,7 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
         'gcp': 'V1GcpDataConnection',
         'gcs_folder': 'V1GCSFolderDataConnection',
         'name': 'str',
+        'optimization_mode': 'V1DataConnectionOptimizationMode',
         'r2': 'V1R2DataConnection',
         'run_cmds': 'list[str]',
         's3_folder': 'V1S3FolderDataConnection',
@@ -61,6 +62,7 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
         'gcp': 'gcp',
         'gcs_folder': 'gcsFolder',
         'name': 'name',
+        'optimization_mode': 'optimizationMode',
         'r2': 'r2',
         'run_cmds': 'runCmds',
         's3_folder': 's3Folder',
@@ -68,7 +70,7 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
         'writable': 'writable'
     }
 
-    def __init__(self, auto_increase_enabled: 'bool' =None, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, auto_increase_enabled: 'bool' =None, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """DataConnectionServiceUpdateDataConnectionBody - a model defined in Swagger"""  # noqa: E501
         self._auto_increase_enabled = None
         self._aws = None
@@ -76,6 +78,7 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
         self._gcp = None
         self._gcs_folder = None
         self._name = None
+        self._optimization_mode = None
         self._r2 = None
         self._run_cmds = None
         self._s3_folder = None
@@ -94,6 +97,8 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
             self.gcs_folder = gcs_folder
         if name is not None:
             self.name = name
+        if optimization_mode is not None:
+            self.optimization_mode = optimization_mode
         if r2 is not None:
             self.r2 = r2
         if run_cmds is not None:
@@ -230,6 +235,27 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
         """
 
         self._name = name
+
+    @property
+    def optimization_mode(self) -> 'V1DataConnectionOptimizationMode':
+        """Gets the optimization_mode of this DataConnectionServiceUpdateDataConnectionBody.  # noqa: E501
+
+
+        :return: The optimization_mode of this DataConnectionServiceUpdateDataConnectionBody.  # noqa: E501
+        :rtype: V1DataConnectionOptimizationMode
+        """
+        return self._optimization_mode
+
+    @optimization_mode.setter
+    def optimization_mode(self, optimization_mode: 'V1DataConnectionOptimizationMode'):
+        """Sets the optimization_mode of this DataConnectionServiceUpdateDataConnectionBody.
+
+
+        :param optimization_mode: The optimization_mode of this DataConnectionServiceUpdateDataConnectionBody.  # noqa: E501
+        :type: V1DataConnectionOptimizationMode
+        """
+
+        self._optimization_mode = optimization_mode
 
     @property
     def r2(self) -> 'V1R2DataConnection':

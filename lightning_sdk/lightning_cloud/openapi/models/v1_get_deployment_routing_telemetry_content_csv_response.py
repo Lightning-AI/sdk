@@ -41,40 +41,40 @@ class V1GetDeploymentRoutingTelemetryContentCSVResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'url': 'str'
+        'urls': 'list[str]'
     }
 
     attribute_map = {
-        'url': 'url'
+        'urls': 'urls'
     }
 
-    def __init__(self, url: 'str' =None):  # noqa: E501
+    def __init__(self, urls: 'list[str]' =None):  # noqa: E501
         """V1GetDeploymentRoutingTelemetryContentCSVResponse - a model defined in Swagger"""  # noqa: E501
-        self._url = None
+        self._urls = None
         self.discriminator = None
-        if url is not None:
-            self.url = url
+        if urls is not None:
+            self.urls = urls
 
     @property
-    def url(self) -> 'str':
-        """Gets the url of this V1GetDeploymentRoutingTelemetryContentCSVResponse.  # noqa: E501
+    def urls(self) -> 'list[str]':
+        """Gets the urls of this V1GetDeploymentRoutingTelemetryContentCSVResponse.  # noqa: E501
 
 
-        :return: The url of this V1GetDeploymentRoutingTelemetryContentCSVResponse.  # noqa: E501
-        :rtype: str
+        :return: The urls of this V1GetDeploymentRoutingTelemetryContentCSVResponse.  # noqa: E501
+        :rtype: list[str]
         """
-        return self._url
+        return self._urls
 
-    @url.setter
-    def url(self, url: 'str'):
-        """Sets the url of this V1GetDeploymentRoutingTelemetryContentCSVResponse.
+    @urls.setter
+    def urls(self, urls: 'list[str]'):
+        """Sets the urls of this V1GetDeploymentRoutingTelemetryContentCSVResponse.
 
 
-        :param url: The url of this V1GetDeploymentRoutingTelemetryContentCSVResponse.  # noqa: E501
-        :type: str
+        :param urls: The urls of this V1GetDeploymentRoutingTelemetryContentCSVResponse.  # noqa: E501
+        :type: list[str]
         """
 
-        self._url = url
+        self._urls = urls
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
