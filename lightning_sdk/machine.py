@@ -10,6 +10,7 @@ class CloudProvider(Enum):
     DGX = "DGX"
     VOLTAGE_PARK = "VOLTAGE_PARK"
     NEBIUS = "NEBIUS"
+    MACHINE = "MACHINE"
     LIGHTNING = "LIGHTNING"
 
     def __str__(self) -> str:

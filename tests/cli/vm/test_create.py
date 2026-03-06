@@ -18,7 +18,7 @@ Options:
                                   provided, a random name will be generated.
   --teamspace TEXT                Override default teamspace (format:
                                   owner/teamspace)
-  --cloud-provider [AWS|GCP|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING]
+  --cloud-provider [AWS|GCP|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|MACHINE|LIGHTNING]
                                   The cloud provider to start the VM on.
                                   Defaults to teamspace default.
   --cloud-account TEXT            The cloud account to create the VM on.

@@ -177,7 +177,8 @@ class CloudAccountApi:
                 return CloudProvider.VOLTAGE_PARK
             if cloud_account.spec.nebius_v1:
                 return CloudProvider.NEBIUS
-
+            if cloud_account.spec.machine_v1:
+                return CloudProvider.MACHINE
         return None
 
     def resolve_cloud_account(

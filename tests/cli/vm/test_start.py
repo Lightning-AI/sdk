@@ -25,7 +25,7 @@ Options:
                                   The machine type to start the VM on.
                                   Defaults to CPU-4
   --interruptible                 Start the VM on an interruptible instance.
-  --cloud-provider [AWS|GCP|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING]
+  --cloud-provider [AWS|GCP|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|MACHINE|LIGHTNING]
                                   The cloud provider to start the VM on.
                                   Defaults to teamspace default. Only used if
                                   --create is specified.
