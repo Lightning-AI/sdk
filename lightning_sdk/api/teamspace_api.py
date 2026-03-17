@@ -25,7 +25,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     AssistantsServiceCreateAssistantBody,
     DataConnectionServiceCreateDataConnectionBody,
     Externalv1LightningappInstance,
-    ModelsStoreApi,
     ModelsStoreCreateModelBody,
     ModelsStoreCreateModelVersionBody,
     SecretServiceCreateSecretBody,
@@ -61,7 +60,6 @@ class TeamspaceApi:
 
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=7)
-        self._models_api: Optional[ModelsStoreApi] = None
 
     def get_teamspace(self, name: str, owner_id: str) -> V1Project:
         """Get the current teamspace from the owner."""
@@ -191,13 +189,6 @@ class TeamspaceApi:
 
         return self._client.assistants_service_create_assistant(body=body, project_id=teamspace_id)
 
-    # lazy property which is only created when needed
-    @property
-    def models_api(self) -> ModelsStoreApi:
-        if not self._models_api:
-            self._models_api = ModelsStoreApi(self._client.api_client)
-        return self._models_api
-
     def get_model_version(self, name: str, version: Optional[str], teamspace_id: str) -> V1ModelVersionArchive:
         return _get_model_version(client=self._client, name=name, version=version, teamspace_id=teamspace_id)
 
@@ -211,16 +202,16 @@ class TeamspaceApi:
         cloud_account: str,
     ) -> V1ModelVersionArchive:
         # ask if such model already exists by listing models with specific name
-        models = self.models_api.models_store_list_models(project_id=teamspace_id, name=name).models
+        models = self._client.models_store_list_models(project_id=teamspace_id, name=name).models
         if len(models) == 0:
-            return self.models_api.models_store_create_model(
+            return self._client.models_store_create_model(
                 body=ModelsStoreCreateModelBody(
                     cluster_id=cloud_account, metadata=metadata, name=name, private=private
                 ),
                 project_id=teamspace_id,
             )
         assert len(models) == 1, "Multiple models with the same name found"
-        return self.models_api.models_store_create_model_version(
+        return self._client.models_store_create_model_version(
             body=ModelsStoreCreateModelVersionBody(cluster_id=cloud_account, version=version),
             project_id=teamspace_id,
             model_id=models[0].id,
@@ -233,11 +224,9 @@ class TeamspaceApi:
         if version:
             if version == "default":
                 version = model.default_version
-            self.models_api.models_store_delete_model_version(
-                project_id=teamspace_id, model_id=model.id, version=version
-            )
+            self._client.models_store_delete_model_version(project_id=teamspace_id, model_id=model.id, version=version)
         else:
-            self.models_api.models_store_delete_model(project_id=teamspace_id, model_id=model.id)
+            self._client.models_store_delete_model(project_id=teamspace_id, model_id=model.id)
 
     def upload_model_file(
         self,
@@ -285,7 +274,7 @@ class TeamspaceApi:
                 main_pbar.update(1)
 
     def _complete_model_upload(self, model_id: str, version: str, teamspace_id: str) -> None:
-        self.models_api.models_store_complete_model_upload(
+        self._client.models_store_complete_model_upload(
             body=_DummyBody(),
             project_id=teamspace_id,
             model_id=model_id,
@@ -372,11 +361,11 @@ class TeamspaceApi:
 
     def get_model(self, teamspace_id: str, model_id: Optional[str] = None, model_name: Optional[str] = None) -> V1Model:
         if model_id:
-            return self.models_api.models_store_get_model(project_id=teamspace_id, model_id=model_id)
+            return self._client.models_store_get_model(project_id=teamspace_id, model_id=model_id)
         if not model_name:
             raise ValueError("Either `model_id` or `model_name` must be provided.")
         # list models with specific name
-        models = self.models_api.models_store_list_models(project_id=teamspace_id, name=model_name).models
+        models = self._client.models_store_list_models(project_id=teamspace_id, name=model_name).models
         if len(models) == 0:
             raise ValueError(f"Model '{model_name}' does not exist.")
         if len(models) > 1:
@@ -385,7 +374,7 @@ class TeamspaceApi:
         return models[0]
 
     def list_models(self, teamspace_id: str) -> List[V1Model]:
-        response = self.models_api.models_store_list_models(project_id=teamspace_id)
+        response = self._client.models_store_list_models(project_id=teamspace_id)
         return response.models
 
     def list_model_versions(
@@ -393,7 +382,7 @@ class TeamspaceApi:
     ) -> List[V1ModelVersionArchive]:
         if model_name and not model_id:
             model_id = self.get_model(teamspace_id=teamspace_id, model_name=model_name).id
-        response = self.models_api.models_store_list_model_versions(project_id=teamspace_id, model_id=model_id)
+        response = self._client.models_store_list_model_versions(project_id=teamspace_id, model_id=model_id)
         return response.versions
 
     def get_tree(self, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:

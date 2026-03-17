@@ -148,7 +148,7 @@ def test_create_delete_model():
     # create a content reused in following cases
     model_body = {"name": "model-name", "metadata": {}, "private": True, "cluster_id": "cluster-abc"}
     # mock the models_store_list_models and models_store_create_model for empty state
-    teamspace_api._models_api = mock.MagicMock(
+    teamspace_api._client = mock.MagicMock(
         models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[])),
         models_store_create_model=mock.MagicMock(return_value=mock.MagicMock(model_id="model-id")),
     )
@@ -156,26 +156,26 @@ def test_create_delete_model():
         teamspace_id="ts-abc", name="model-name", version="vvv", metadata={}, private=True, cloud_account="cluster-abc"
     )
     # validate the calls
-    teamspace_api._models_api.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
-    teamspace_api._models_api.models_store_create_model.assert_called_with(
+    teamspace_api._client.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
+    teamspace_api._client.models_store_create_model.assert_called_with(
         body=ModelsStoreCreateModelBody(**model_body), project_id="ts-abc"
     )
 
     # mock the models_store_list_models and models_store_create_model for non-empty state
-    teamspace_api._models_api = mock.MagicMock(
+    teamspace_api._client = mock.MagicMock(
         models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[mock.MagicMock(id="model-id")])),
         models_store_delete_model=mock.MagicMock(),
     )
     # delete the model calls
     teamspace_api.delete_model(name="model-name", version="", teamspace_id="ts-abc")
-    teamspace_api._models_api.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
-    teamspace_api._models_api.models_store_delete_model.assert_called_with(project_id="ts-abc", model_id="model-id")
+    teamspace_api._client.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
+    teamspace_api._client.models_store_delete_model.assert_called_with(project_id="ts-abc", model_id="model-id")
 
 
 def test_create_delete_model_version():
     teamspace_api = TeamspaceApi()
     # mock the models_store_list_models and models_store_create_model_version for existing model
-    teamspace_api._models_api = mock.MagicMock(
+    teamspace_api._client = mock.MagicMock(
         models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[mock.MagicMock(id="model-id")])),
         models_store_create_model_version=mock.MagicMock(
             return_value=mock.MagicMock(model_id="model-id", version="v1")
@@ -189,24 +189,25 @@ def test_create_delete_model_version():
         private=True,
         cloud_account="cluster-abc",
     )
-    teamspace_api._models_api.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
-    teamspace_api._models_api.models_store_create_model_version.assert_called_with(
+    teamspace_api._client.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
+    teamspace_api._client.models_store_create_model_version.assert_called_with(
         project_id="ts-abc",
         body=ModelsStoreCreateModelVersionBody(cluster_id="cluster-abc", version="vVv"),
         model_id="model-id",
     )
 
-    teamspace_api._models_api = mock.MagicMock(
+    teamspace_api._client = mock.MagicMock(
         models_store_list_models=mock.MagicMock(
             return_value=mock.MagicMock(models=[mock.MagicMock(id="model-id", default_version="v1")])
         ),
+        models_store_delete_model_version=mock.MagicMock(),
     )
     teamspace_api.delete_model(name="model-name", version="default", teamspace_id="ts-abc")
-    teamspace_api._models_api.models_store_delete_model_version.assert_called_with(
+    teamspace_api._client.models_store_delete_model_version.assert_called_with(
         project_id="ts-abc", model_id="model-id", version=version.version
     )
     teamspace_api.delete_model(name="model-name", version=version.version, teamspace_id="ts-abc")
-    teamspace_api._models_api.models_store_delete_model_version.assert_called_with(
+    teamspace_api._client.models_store_delete_model_version.assert_called_with(
         project_id="ts-abc", model_id="model-id", version=version.version
     )
 
@@ -305,14 +306,14 @@ def test_get_model_errors(internal_teamspace_api_mocker):
         teamspace_api.get_model("xyz")
 
     # mock the response for empty state
-    teamspace_api._models_api = mock.MagicMock(
+    teamspace_api._client = mock.MagicMock(
         models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[])),
     )
     with pytest.raises(ValueError, match="Model 'model-name' does not exist."):
         teamspace_api.get_model("xyz", model_name="model-name")
 
     # mock the response for too many models
-    teamspace_api._models_api = mock.MagicMock(
+    teamspace_api._client = mock.MagicMock(
         models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[mock.Mock(), mock.Mock()])),
     )
     with pytest.raises(RuntimeError, match="Model name 'model-name' is not a unique with this teamspace."):
