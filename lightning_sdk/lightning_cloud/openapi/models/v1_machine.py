@@ -46,6 +46,7 @@ class V1Machine(object):
         'capacity_reservation_id': 'str',
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'disable_monitoring': 'bool',
         'id': 'str',
         'instance_type': 'str',
         'management_api_url': 'str',
@@ -74,6 +75,7 @@ class V1Machine(object):
         'capacity_reservation_id': 'capacityReservationId',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'disable_monitoring': 'disableMonitoring',
         'id': 'id',
         'instance_type': 'instanceType',
         'management_api_url': 'managementApiUrl',
@@ -96,13 +98,14 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._address = None
         self._auth_token = None
         self._capacity_reservation_id = None
         self._cluster_id = None
         self._created_at = None
+        self._disable_monitoring = None
         self._id = None
         self._instance_type = None
         self._management_api_url = None
@@ -134,6 +137,8 @@ class V1Machine(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if disable_monitoring is not None:
+            self.disable_monitoring = disable_monitoring
         if id is not None:
             self.id = id
         if instance_type is not None:
@@ -279,6 +284,27 @@ class V1Machine(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def disable_monitoring(self) -> 'bool':
+        """Gets the disable_monitoring of this V1Machine.  # noqa: E501
+
+
+        :return: The disable_monitoring of this V1Machine.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_monitoring
+
+    @disable_monitoring.setter
+    def disable_monitoring(self, disable_monitoring: 'bool'):
+        """Sets the disable_monitoring of this V1Machine.
+
+
+        :param disable_monitoring: The disable_monitoring of this V1Machine.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_monitoring = disable_monitoring
 
     @property
     def id(self) -> 'str':

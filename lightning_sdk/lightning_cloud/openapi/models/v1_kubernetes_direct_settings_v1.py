@@ -49,7 +49,8 @@ class V1KubernetesDirectSettingsV1(object):
         'persist_pods_logs': 'bool',
         'slack_channel_id': 'str',
         'temperature_threshold': 'float',
-        'weekly_usage_report': 'bool'
+        'weekly_usage_report': 'bool',
+        'xid_error_behavior': 'dict(str, V1XidErrorBehaviorMap)'
     }
 
     attribute_map = {
@@ -61,10 +62,11 @@ class V1KubernetesDirectSettingsV1(object):
         'persist_pods_logs': 'persistPodsLogs',
         'slack_channel_id': 'slackChannelId',
         'temperature_threshold': 'temperatureThreshold',
-        'weekly_usage_report': 'weeklyUsageReport'
+        'weekly_usage_report': 'weeklyUsageReport',
+        'xid_error_behavior': 'xidErrorBehavior'
     }
 
-    def __init__(self, daily_usage_report: 'bool' =None, disable_pods_collection: 'bool' =None, monthly_usage_report: 'bool' =None, nfs_storage_threshold: 'float' =None, override_read_only: 'bool' =None, persist_pods_logs: 'bool' =None, slack_channel_id: 'str' =None, temperature_threshold: 'float' =None, weekly_usage_report: 'bool' =None):  # noqa: E501
+    def __init__(self, daily_usage_report: 'bool' =None, disable_pods_collection: 'bool' =None, monthly_usage_report: 'bool' =None, nfs_storage_threshold: 'float' =None, override_read_only: 'bool' =None, persist_pods_logs: 'bool' =None, slack_channel_id: 'str' =None, temperature_threshold: 'float' =None, weekly_usage_report: 'bool' =None, xid_error_behavior: 'dict(str, V1XidErrorBehaviorMap)' =None):  # noqa: E501
         """V1KubernetesDirectSettingsV1 - a model defined in Swagger"""  # noqa: E501
         self._daily_usage_report = None
         self._disable_pods_collection = None
@@ -75,6 +77,7 @@ class V1KubernetesDirectSettingsV1(object):
         self._slack_channel_id = None
         self._temperature_threshold = None
         self._weekly_usage_report = None
+        self._xid_error_behavior = None
         self.discriminator = None
         if daily_usage_report is not None:
             self.daily_usage_report = daily_usage_report
@@ -94,6 +97,8 @@ class V1KubernetesDirectSettingsV1(object):
             self.temperature_threshold = temperature_threshold
         if weekly_usage_report is not None:
             self.weekly_usage_report = weekly_usage_report
+        if xid_error_behavior is not None:
+            self.xid_error_behavior = xid_error_behavior
 
     @property
     def daily_usage_report(self) -> 'bool':
@@ -283,6 +288,27 @@ class V1KubernetesDirectSettingsV1(object):
         """
 
         self._weekly_usage_report = weekly_usage_report
+
+    @property
+    def xid_error_behavior(self) -> 'dict(str, V1XidErrorBehaviorMap)':
+        """Gets the xid_error_behavior of this V1KubernetesDirectSettingsV1.  # noqa: E501
+
+
+        :return: The xid_error_behavior of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :rtype: dict(str, V1XidErrorBehaviorMap)
+        """
+        return self._xid_error_behavior
+
+    @xid_error_behavior.setter
+    def xid_error_behavior(self, xid_error_behavior: 'dict(str, V1XidErrorBehaviorMap)'):
+        """Sets the xid_error_behavior of this V1KubernetesDirectSettingsV1.
+
+
+        :param xid_error_behavior: The xid_error_behavior of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :type: dict(str, V1XidErrorBehaviorMap)
+        """
+
+        self._xid_error_behavior = xid_error_behavior
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

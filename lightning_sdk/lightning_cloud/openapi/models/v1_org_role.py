@@ -43,6 +43,7 @@ class V1OrgRole(object):
     swagger_types = {
         'created_at': 'datetime',
         'description': 'str',
+        'excluded_from_seat_count': 'bool',
         'id': 'str',
         'name': 'str',
         'org_id': 'str',
@@ -53,6 +54,7 @@ class V1OrgRole(object):
     attribute_map = {
         'created_at': 'createdAt',
         'description': 'description',
+        'excluded_from_seat_count': 'excludedFromSeatCount',
         'id': 'id',
         'name': 'name',
         'org_id': 'orgId',
@@ -60,10 +62,11 @@ class V1OrgRole(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, description: 'str' =None, id: 'str' =None, name: 'str' =None, org_id: 'str' =None, rules: 'list[V1Rule]' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, description: 'str' =None, excluded_from_seat_count: 'bool' =None, id: 'str' =None, name: 'str' =None, org_id: 'str' =None, rules: 'list[V1Rule]' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1OrgRole - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._description = None
+        self._excluded_from_seat_count = None
         self._id = None
         self._name = None
         self._org_id = None
@@ -74,6 +77,8 @@ class V1OrgRole(object):
             self.created_at = created_at
         if description is not None:
             self.description = description
+        if excluded_from_seat_count is not None:
+            self.excluded_from_seat_count = excluded_from_seat_count
         if id is not None:
             self.id = id
         if name is not None:
@@ -126,6 +131,27 @@ class V1OrgRole(object):
         """
 
         self._description = description
+
+    @property
+    def excluded_from_seat_count(self) -> 'bool':
+        """Gets the excluded_from_seat_count of this V1OrgRole.  # noqa: E501
+
+
+        :return: The excluded_from_seat_count of this V1OrgRole.  # noqa: E501
+        :rtype: bool
+        """
+        return self._excluded_from_seat_count
+
+    @excluded_from_seat_count.setter
+    def excluded_from_seat_count(self, excluded_from_seat_count: 'bool'):
+        """Sets the excluded_from_seat_count of this V1OrgRole.
+
+
+        :param excluded_from_seat_count: The excluded_from_seat_count of this V1OrgRole.  # noqa: E501
+        :type: bool
+        """
+
+        self._excluded_from_seat_count = excluded_from_seat_count
 
     @property
     def id(self) -> 'str':

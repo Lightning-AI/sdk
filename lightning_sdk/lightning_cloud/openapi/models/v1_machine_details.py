@@ -45,12 +45,17 @@ class V1MachineDetails(object):
         'app_uptime_ms': 'str',
         'app_version': 'str',
         'boot_params': 'str',
+        'disk_total_gb': 'int',
+        'disk_used_gb': 'int',
         'gpu_diagnostics': 'V1GPUDiagnosticReport',
         'gpus_allocated': 'int',
         'gpus_total': 'int',
         'host_uptime_ms': 'str',
         'instance_count': 'int',
         'kernel_version': 'str',
+        'machine_images': 'list[V1MachineImageStatus]',
+        'memory_total_mb': 'int',
+        'memory_used_mb': 'int',
         'os_info': 'str',
         'vm_instances': 'list[V1VMInstance]'
     }
@@ -60,28 +65,38 @@ class V1MachineDetails(object):
         'app_uptime_ms': 'appUptimeMs',
         'app_version': 'appVersion',
         'boot_params': 'bootParams',
+        'disk_total_gb': 'diskTotalGb',
+        'disk_used_gb': 'diskUsedGb',
         'gpu_diagnostics': 'gpuDiagnostics',
         'gpus_allocated': 'gpusAllocated',
         'gpus_total': 'gpusTotal',
         'host_uptime_ms': 'hostUptimeMs',
         'instance_count': 'instanceCount',
         'kernel_version': 'kernelVersion',
+        'machine_images': 'machineImages',
+        'memory_total_mb': 'memoryTotalMb',
+        'memory_used_mb': 'memoryUsedMb',
         'os_info': 'osInfo',
         'vm_instances': 'vmInstances'
     }
 
-    def __init__(self, allocated_servers: 'list[V1Server]' =None, app_uptime_ms: 'str' =None, app_version: 'str' =None, boot_params: 'str' =None, gpu_diagnostics: 'V1GPUDiagnosticReport' =None, gpus_allocated: 'int' =None, gpus_total: 'int' =None, host_uptime_ms: 'str' =None, instance_count: 'int' =None, kernel_version: 'str' =None, os_info: 'str' =None, vm_instances: 'list[V1VMInstance]' =None):  # noqa: E501
+    def __init__(self, allocated_servers: 'list[V1Server]' =None, app_uptime_ms: 'str' =None, app_version: 'str' =None, boot_params: 'str' =None, disk_total_gb: 'int' =None, disk_used_gb: 'int' =None, gpu_diagnostics: 'V1GPUDiagnosticReport' =None, gpus_allocated: 'int' =None, gpus_total: 'int' =None, host_uptime_ms: 'str' =None, instance_count: 'int' =None, kernel_version: 'str' =None, machine_images: 'list[V1MachineImageStatus]' =None, memory_total_mb: 'int' =None, memory_used_mb: 'int' =None, os_info: 'str' =None, vm_instances: 'list[V1VMInstance]' =None):  # noqa: E501
         """V1MachineDetails - a model defined in Swagger"""  # noqa: E501
         self._allocated_servers = None
         self._app_uptime_ms = None
         self._app_version = None
         self._boot_params = None
+        self._disk_total_gb = None
+        self._disk_used_gb = None
         self._gpu_diagnostics = None
         self._gpus_allocated = None
         self._gpus_total = None
         self._host_uptime_ms = None
         self._instance_count = None
         self._kernel_version = None
+        self._machine_images = None
+        self._memory_total_mb = None
+        self._memory_used_mb = None
         self._os_info = None
         self._vm_instances = None
         self.discriminator = None
@@ -93,6 +108,10 @@ class V1MachineDetails(object):
             self.app_version = app_version
         if boot_params is not None:
             self.boot_params = boot_params
+        if disk_total_gb is not None:
+            self.disk_total_gb = disk_total_gb
+        if disk_used_gb is not None:
+            self.disk_used_gb = disk_used_gb
         if gpu_diagnostics is not None:
             self.gpu_diagnostics = gpu_diagnostics
         if gpus_allocated is not None:
@@ -105,6 +124,12 @@ class V1MachineDetails(object):
             self.instance_count = instance_count
         if kernel_version is not None:
             self.kernel_version = kernel_version
+        if machine_images is not None:
+            self.machine_images = machine_images
+        if memory_total_mb is not None:
+            self.memory_total_mb = memory_total_mb
+        if memory_used_mb is not None:
+            self.memory_used_mb = memory_used_mb
         if os_info is not None:
             self.os_info = os_info
         if vm_instances is not None:
@@ -193,6 +218,48 @@ class V1MachineDetails(object):
         """
 
         self._boot_params = boot_params
+
+    @property
+    def disk_total_gb(self) -> 'int':
+        """Gets the disk_total_gb of this V1MachineDetails.  # noqa: E501
+
+
+        :return: The disk_total_gb of this V1MachineDetails.  # noqa: E501
+        :rtype: int
+        """
+        return self._disk_total_gb
+
+    @disk_total_gb.setter
+    def disk_total_gb(self, disk_total_gb: 'int'):
+        """Sets the disk_total_gb of this V1MachineDetails.
+
+
+        :param disk_total_gb: The disk_total_gb of this V1MachineDetails.  # noqa: E501
+        :type: int
+        """
+
+        self._disk_total_gb = disk_total_gb
+
+    @property
+    def disk_used_gb(self) -> 'int':
+        """Gets the disk_used_gb of this V1MachineDetails.  # noqa: E501
+
+
+        :return: The disk_used_gb of this V1MachineDetails.  # noqa: E501
+        :rtype: int
+        """
+        return self._disk_used_gb
+
+    @disk_used_gb.setter
+    def disk_used_gb(self, disk_used_gb: 'int'):
+        """Sets the disk_used_gb of this V1MachineDetails.
+
+
+        :param disk_used_gb: The disk_used_gb of this V1MachineDetails.  # noqa: E501
+        :type: int
+        """
+
+        self._disk_used_gb = disk_used_gb
 
     @property
     def gpu_diagnostics(self) -> 'V1GPUDiagnosticReport':
@@ -319,6 +386,69 @@ class V1MachineDetails(object):
         """
 
         self._kernel_version = kernel_version
+
+    @property
+    def machine_images(self) -> 'list[V1MachineImageStatus]':
+        """Gets the machine_images of this V1MachineDetails.  # noqa: E501
+
+
+        :return: The machine_images of this V1MachineDetails.  # noqa: E501
+        :rtype: list[V1MachineImageStatus]
+        """
+        return self._machine_images
+
+    @machine_images.setter
+    def machine_images(self, machine_images: 'list[V1MachineImageStatus]'):
+        """Sets the machine_images of this V1MachineDetails.
+
+
+        :param machine_images: The machine_images of this V1MachineDetails.  # noqa: E501
+        :type: list[V1MachineImageStatus]
+        """
+
+        self._machine_images = machine_images
+
+    @property
+    def memory_total_mb(self) -> 'int':
+        """Gets the memory_total_mb of this V1MachineDetails.  # noqa: E501
+
+
+        :return: The memory_total_mb of this V1MachineDetails.  # noqa: E501
+        :rtype: int
+        """
+        return self._memory_total_mb
+
+    @memory_total_mb.setter
+    def memory_total_mb(self, memory_total_mb: 'int'):
+        """Sets the memory_total_mb of this V1MachineDetails.
+
+
+        :param memory_total_mb: The memory_total_mb of this V1MachineDetails.  # noqa: E501
+        :type: int
+        """
+
+        self._memory_total_mb = memory_total_mb
+
+    @property
+    def memory_used_mb(self) -> 'int':
+        """Gets the memory_used_mb of this V1MachineDetails.  # noqa: E501
+
+
+        :return: The memory_used_mb of this V1MachineDetails.  # noqa: E501
+        :rtype: int
+        """
+        return self._memory_used_mb
+
+    @memory_used_mb.setter
+    def memory_used_mb(self, memory_used_mb: 'int'):
+        """Sets the memory_used_mb of this V1MachineDetails.
+
+
+        :param memory_used_mb: The memory_used_mb of this V1MachineDetails.  # noqa: E501
+        :type: int
+        """
+
+        self._memory_used_mb = memory_used_mb
 
     @property
     def os_info(self) -> 'str':

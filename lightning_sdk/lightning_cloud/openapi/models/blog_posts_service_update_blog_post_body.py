@@ -48,6 +48,7 @@ class BlogPostsServiceUpdateBlogPostBody(object):
         'description': 'str',
         'image_url': 'str',
         'lit_page_id': 'str',
+        'published_at': 'datetime',
         'title': 'str'
     }
 
@@ -59,10 +60,11 @@ class BlogPostsServiceUpdateBlogPostBody(object):
         'description': 'description',
         'image_url': 'imageUrl',
         'lit_page_id': 'litPageId',
+        'published_at': 'publishedAt',
         'title': 'title'
     }
 
-    def __init__(self, author_id: 'str' =None, category: 'str' =None, customer_logo_url: 'str' =None, customer_name: 'str' =None, description: 'str' =None, image_url: 'str' =None, lit_page_id: 'str' =None, title: 'str' =None):  # noqa: E501
+    def __init__(self, author_id: 'str' =None, category: 'str' =None, customer_logo_url: 'str' =None, customer_name: 'str' =None, description: 'str' =None, image_url: 'str' =None, lit_page_id: 'str' =None, published_at: 'datetime' =None, title: 'str' =None):  # noqa: E501
         """BlogPostsServiceUpdateBlogPostBody - a model defined in Swagger"""  # noqa: E501
         self._author_id = None
         self._category = None
@@ -71,6 +73,7 @@ class BlogPostsServiceUpdateBlogPostBody(object):
         self._description = None
         self._image_url = None
         self._lit_page_id = None
+        self._published_at = None
         self._title = None
         self.discriminator = None
         if author_id is not None:
@@ -87,6 +90,8 @@ class BlogPostsServiceUpdateBlogPostBody(object):
             self.image_url = image_url
         if lit_page_id is not None:
             self.lit_page_id = lit_page_id
+        if published_at is not None:
+            self.published_at = published_at
         if title is not None:
             self.title = title
 
@@ -236,6 +241,27 @@ class BlogPostsServiceUpdateBlogPostBody(object):
         """
 
         self._lit_page_id = lit_page_id
+
+    @property
+    def published_at(self) -> 'datetime':
+        """Gets the published_at of this BlogPostsServiceUpdateBlogPostBody.  # noqa: E501
+
+
+        :return: The published_at of this BlogPostsServiceUpdateBlogPostBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._published_at
+
+    @published_at.setter
+    def published_at(self, published_at: 'datetime'):
+        """Sets the published_at of this BlogPostsServiceUpdateBlogPostBody.
+
+
+        :param published_at: The published_at of this BlogPostsServiceUpdateBlogPostBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._published_at = published_at
 
     @property
     def title(self) -> 'str':

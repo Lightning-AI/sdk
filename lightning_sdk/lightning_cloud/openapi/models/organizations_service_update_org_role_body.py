@@ -42,24 +42,29 @@ class OrganizationsServiceUpdateOrgRoleBody(object):
     """
     swagger_types = {
         'description': 'str',
+        'excluded_from_seat_count': 'bool',
         'name': 'str',
         'rules': 'list[V1Rule]'
     }
 
     attribute_map = {
         'description': 'description',
+        'excluded_from_seat_count': 'excludedFromSeatCount',
         'name': 'name',
         'rules': 'rules'
     }
 
-    def __init__(self, description: 'str' =None, name: 'str' =None, rules: 'list[V1Rule]' =None):  # noqa: E501
+    def __init__(self, description: 'str' =None, excluded_from_seat_count: 'bool' =None, name: 'str' =None, rules: 'list[V1Rule]' =None):  # noqa: E501
         """OrganizationsServiceUpdateOrgRoleBody - a model defined in Swagger"""  # noqa: E501
         self._description = None
+        self._excluded_from_seat_count = None
         self._name = None
         self._rules = None
         self.discriminator = None
         if description is not None:
             self.description = description
+        if excluded_from_seat_count is not None:
+            self.excluded_from_seat_count = excluded_from_seat_count
         if name is not None:
             self.name = name
         if rules is not None:
@@ -85,6 +90,27 @@ class OrganizationsServiceUpdateOrgRoleBody(object):
         """
 
         self._description = description
+
+    @property
+    def excluded_from_seat_count(self) -> 'bool':
+        """Gets the excluded_from_seat_count of this OrganizationsServiceUpdateOrgRoleBody.  # noqa: E501
+
+
+        :return: The excluded_from_seat_count of this OrganizationsServiceUpdateOrgRoleBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._excluded_from_seat_count
+
+    @excluded_from_seat_count.setter
+    def excluded_from_seat_count(self, excluded_from_seat_count: 'bool'):
+        """Sets the excluded_from_seat_count of this OrganizationsServiceUpdateOrgRoleBody.
+
+
+        :param excluded_from_seat_count: The excluded_from_seat_count of this OrganizationsServiceUpdateOrgRoleBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._excluded_from_seat_count = excluded_from_seat_count
 
     @property
     def name(self) -> 'str':

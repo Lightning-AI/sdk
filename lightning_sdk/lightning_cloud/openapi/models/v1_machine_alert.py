@@ -42,31 +42,51 @@ class V1MachineAlert(object):
     """
     swagger_types = {
         'created_at': 'datetime',
+        'id': 'str',
         'level': 'str',
         'message': 'str',
+        'resource_id': 'str',
+        'resource_type': 'str',
+        'server_id': 'str',
         'version': 'str'
     }
 
     attribute_map = {
         'created_at': 'createdAt',
+        'id': 'id',
         'level': 'level',
         'message': 'message',
+        'resource_id': 'resourceId',
+        'resource_type': 'resourceType',
+        'server_id': 'serverId',
         'version': 'version'
     }
 
-    def __init__(self, created_at: 'datetime' =None, level: 'str' =None, message: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, id: 'str' =None, level: 'str' =None, message: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1MachineAlert - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
+        self._id = None
         self._level = None
         self._message = None
+        self._resource_id = None
+        self._resource_type = None
+        self._server_id = None
         self._version = None
         self.discriminator = None
         if created_at is not None:
             self.created_at = created_at
+        if id is not None:
+            self.id = id
         if level is not None:
             self.level = level
         if message is not None:
             self.message = message
+        if resource_id is not None:
+            self.resource_id = resource_id
+        if resource_type is not None:
+            self.resource_type = resource_type
+        if server_id is not None:
+            self.server_id = server_id
         if version is not None:
             self.version = version
 
@@ -90,6 +110,27 @@ class V1MachineAlert(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def id(self) -> 'str':
+        """Gets the id of this V1MachineAlert.  # noqa: E501
+
+
+        :return: The id of this V1MachineAlert.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: 'str'):
+        """Sets the id of this V1MachineAlert.
+
+
+        :param id: The id of this V1MachineAlert.  # noqa: E501
+        :type: str
+        """
+
+        self._id = id
 
     @property
     def level(self) -> 'str':
@@ -132,6 +173,69 @@ class V1MachineAlert(object):
         """
 
         self._message = message
+
+    @property
+    def resource_id(self) -> 'str':
+        """Gets the resource_id of this V1MachineAlert.  # noqa: E501
+
+
+        :return: The resource_id of this V1MachineAlert.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_id
+
+    @resource_id.setter
+    def resource_id(self, resource_id: 'str'):
+        """Sets the resource_id of this V1MachineAlert.
+
+
+        :param resource_id: The resource_id of this V1MachineAlert.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_id = resource_id
+
+    @property
+    def resource_type(self) -> 'str':
+        """Gets the resource_type of this V1MachineAlert.  # noqa: E501
+
+
+        :return: The resource_type of this V1MachineAlert.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_type
+
+    @resource_type.setter
+    def resource_type(self, resource_type: 'str'):
+        """Sets the resource_type of this V1MachineAlert.
+
+
+        :param resource_type: The resource_type of this V1MachineAlert.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_type = resource_type
+
+    @property
+    def server_id(self) -> 'str':
+        """Gets the server_id of this V1MachineAlert.  # noqa: E501
+
+
+        :return: The server_id of this V1MachineAlert.  # noqa: E501
+        :rtype: str
+        """
+        return self._server_id
+
+    @server_id.setter
+    def server_id(self, server_id: 'str'):
+        """Sets the server_id of this V1MachineAlert.
+
+
+        :param server_id: The server_id of this V1MachineAlert.  # noqa: E501
+        :type: str
+        """
+
+        self._server_id = server_id
 
     @property
     def version(self) -> 'str':

@@ -67,8 +67,6 @@ class V1MetricsStream(object):
         'updated_at': 'datetime',
         'updates_counter': 'int',
         'user_id': 'str',
-        'version': 'datetime',
-        'version_number': 'int',
         'visibility': 'V1ResourceVisibility',
         'work_id': 'str'
     }
@@ -100,13 +98,11 @@ class V1MetricsStream(object):
         'updated_at': 'updatedAt',
         'updates_counter': 'updatesCounter',
         'user_id': 'userId',
-        'version': 'version',
-        'version_number': 'versionNumber',
         'visibility': 'visibility',
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, experiment_project_name: 'str' =None, guest: 'bool' =None, id: 'str' =None, job_id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, updated_at: 'datetime' =None, updates_counter: 'int' =None, user_id: 'str' =None, version: 'datetime' =None, version_number: 'int' =None, visibility: 'V1ResourceVisibility' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, experiment_project_name: 'str' =None, guest: 'bool' =None, id: 'str' =None, job_id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, updated_at: 'datetime' =None, updates_counter: 'int' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None, work_id: 'str' =None):  # noqa: E501
         """V1MetricsStream - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
@@ -134,8 +130,6 @@ class V1MetricsStream(object):
         self._updated_at = None
         self._updates_counter = None
         self._user_id = None
-        self._version = None
-        self._version_number = None
         self._visibility = None
         self._work_id = None
         self.discriminator = None
@@ -191,10 +185,6 @@ class V1MetricsStream(object):
             self.updates_counter = updates_counter
         if user_id is not None:
             self.user_id = user_id
-        if version is not None:
-            self.version = version
-        if version_number is not None:
-            self.version_number = version_number
         if visibility is not None:
             self.visibility = visibility
         if work_id is not None:
@@ -745,48 +735,6 @@ class V1MetricsStream(object):
         """
 
         self._user_id = user_id
-
-    @property
-    def version(self) -> 'datetime':
-        """Gets the version of this V1MetricsStream.  # noqa: E501
-
-
-        :return: The version of this V1MetricsStream.  # noqa: E501
-        :rtype: datetime
-        """
-        return self._version
-
-    @version.setter
-    def version(self, version: 'datetime'):
-        """Sets the version of this V1MetricsStream.
-
-
-        :param version: The version of this V1MetricsStream.  # noqa: E501
-        :type: datetime
-        """
-
-        self._version = version
-
-    @property
-    def version_number(self) -> 'int':
-        """Gets the version_number of this V1MetricsStream.  # noqa: E501
-
-
-        :return: The version_number of this V1MetricsStream.  # noqa: E501
-        :rtype: int
-        """
-        return self._version_number
-
-    @version_number.setter
-    def version_number(self, version_number: 'int'):
-        """Sets the version_number of this V1MetricsStream.
-
-
-        :param version_number: The version_number of this V1MetricsStream.  # noqa: E501
-        :type: int
-        """
-
-        self._version_number = version_number
 
     @property
     def visibility(self) -> 'V1ResourceVisibility':

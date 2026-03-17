@@ -47,7 +47,8 @@ class V1MagicLinkLoginRequest(object):
         'guest_user_api_key': 'str',
         'invite_code': 'str',
         'redirect_url': 'str',
-        'referrer_params': 'str'
+        'referrer_params': 'str',
+        'source': 'str'
     }
 
     attribute_map = {
@@ -57,10 +58,11 @@ class V1MagicLinkLoginRequest(object):
         'guest_user_api_key': 'guestUserApiKey',
         'invite_code': 'inviteCode',
         'redirect_url': 'redirectUrl',
-        'referrer_params': 'referrerParams'
+        'referrer_params': 'referrerParams',
+        'source': 'source'
     }
 
-    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, guest_user_api_key: 'str' =None, invite_code: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None):  # noqa: E501
+    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, guest_user_api_key: 'str' =None, invite_code: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None, source: 'str' =None):  # noqa: E501
         """V1MagicLinkLoginRequest - a model defined in Swagger"""  # noqa: E501
         self._collab_session_id = None
         self._email = None
@@ -69,6 +71,7 @@ class V1MagicLinkLoginRequest(object):
         self._invite_code = None
         self._redirect_url = None
         self._referrer_params = None
+        self._source = None
         self.discriminator = None
         if collab_session_id is not None:
             self.collab_session_id = collab_session_id
@@ -84,6 +87,8 @@ class V1MagicLinkLoginRequest(object):
             self.redirect_url = redirect_url
         if referrer_params is not None:
             self.referrer_params = referrer_params
+        if source is not None:
+            self.source = source
 
     @property
     def collab_session_id(self) -> 'str':
@@ -231,6 +236,27 @@ class V1MagicLinkLoginRequest(object):
         """
 
         self._referrer_params = referrer_params
+
+    @property
+    def source(self) -> 'str':
+        """Gets the source of this V1MagicLinkLoginRequest.  # noqa: E501
+
+
+        :return: The source of this V1MagicLinkLoginRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._source
+
+    @source.setter
+    def source(self, source: 'str'):
+        """Sets the source of this V1MagicLinkLoginRequest.
+
+
+        :param source: The source of this V1MagicLinkLoginRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._source = source
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

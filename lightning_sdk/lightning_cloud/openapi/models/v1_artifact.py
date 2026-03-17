@@ -41,6 +41,7 @@ class V1Artifact(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cluster_id': 'str',
         'filename': 'str',
         'last_modified': 'datetime',
         'md5_checksum': 'str',
@@ -50,6 +51,7 @@ class V1Artifact(object):
     }
 
     attribute_map = {
+        'cluster_id': 'clusterId',
         'filename': 'filename',
         'last_modified': 'lastModified',
         'md5_checksum': 'md5Checksum',
@@ -58,8 +60,9 @@ class V1Artifact(object):
         'url': 'url'
     }
 
-    def __init__(self, filename: 'str' =None, last_modified: 'datetime' =None, md5_checksum: 'str' =None, provider: 'V1CloudProvider' =None, size_bytes: 'str' =None, url: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, filename: 'str' =None, last_modified: 'datetime' =None, md5_checksum: 'str' =None, provider: 'V1CloudProvider' =None, size_bytes: 'str' =None, url: 'str' =None):  # noqa: E501
         """V1Artifact - a model defined in Swagger"""  # noqa: E501
+        self._cluster_id = None
         self._filename = None
         self._last_modified = None
         self._md5_checksum = None
@@ -67,6 +70,8 @@ class V1Artifact(object):
         self._size_bytes = None
         self._url = None
         self.discriminator = None
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if filename is not None:
             self.filename = filename
         if last_modified is not None:
@@ -79,6 +84,27 @@ class V1Artifact(object):
             self.size_bytes = size_bytes
         if url is not None:
             self.url = url
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1Artifact.  # noqa: E501
+
+
+        :return: The cluster_id of this V1Artifact.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1Artifact.
+
+
+        :param cluster_id: The cluster_id of this V1Artifact.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def filename(self) -> 'str':

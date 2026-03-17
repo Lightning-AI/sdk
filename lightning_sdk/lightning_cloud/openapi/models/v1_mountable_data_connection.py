@@ -42,6 +42,7 @@ class V1MountableDataConnection(object):
     """
     swagger_types = {
         'mount_opts': 'str',
+        'nfs_version': 'str',
         'password': 'str',
         'port': 'int',
         'protocol': 'str',
@@ -55,6 +56,7 @@ class V1MountableDataConnection(object):
 
     attribute_map = {
         'mount_opts': 'mountOpts',
+        'nfs_version': 'nfsVersion',
         'password': 'password',
         'port': 'port',
         'protocol': 'protocol',
@@ -66,9 +68,10 @@ class V1MountableDataConnection(object):
         'username': 'username'
     }
 
-    def __init__(self, mount_opts: 'str' =None, password: 'str' =None, port: 'int' =None, protocol: 'str' =None, read_only: 'bool' =None, remote_path: 'str' =None, server_ip: 'str' =None, source: 'str' =None, type: 'V1StorageType' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, mount_opts: 'str' =None, nfs_version: 'str' =None, password: 'str' =None, port: 'int' =None, protocol: 'str' =None, read_only: 'bool' =None, remote_path: 'str' =None, server_ip: 'str' =None, source: 'str' =None, type: 'V1StorageType' =None, username: 'str' =None):  # noqa: E501
         """V1MountableDataConnection - a model defined in Swagger"""  # noqa: E501
         self._mount_opts = None
+        self._nfs_version = None
         self._password = None
         self._port = None
         self._protocol = None
@@ -81,6 +84,8 @@ class V1MountableDataConnection(object):
         self.discriminator = None
         if mount_opts is not None:
             self.mount_opts = mount_opts
+        if nfs_version is not None:
+            self.nfs_version = nfs_version
         if password is not None:
             self.password = password
         if port is not None:
@@ -120,6 +125,27 @@ class V1MountableDataConnection(object):
         """
 
         self._mount_opts = mount_opts
+
+    @property
+    def nfs_version(self) -> 'str':
+        """Gets the nfs_version of this V1MountableDataConnection.  # noqa: E501
+
+
+        :return: The nfs_version of this V1MountableDataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._nfs_version
+
+    @nfs_version.setter
+    def nfs_version(self, nfs_version: 'str'):
+        """Sets the nfs_version of this V1MountableDataConnection.
+
+
+        :param nfs_version: The nfs_version of this V1MountableDataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._nfs_version = nfs_version
 
     @property
     def password(self) -> 'str':

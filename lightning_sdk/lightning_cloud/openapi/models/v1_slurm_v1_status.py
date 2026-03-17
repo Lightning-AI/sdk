@@ -41,6 +41,7 @@ class V1SlurmV1Status(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'node_details': 'list[V1SlurmNodeDetail]',
         'nodes': 'list[V1SlurmNode]',
         'ssh_host': 'str',
         'ssh_port': 'int',
@@ -49,6 +50,7 @@ class V1SlurmV1Status(object):
     }
 
     attribute_map = {
+        'node_details': 'nodeDetails',
         'nodes': 'nodes',
         'ssh_host': 'sshHost',
         'ssh_port': 'sshPort',
@@ -56,14 +58,17 @@ class V1SlurmV1Status(object):
         'version': 'version'
     }
 
-    def __init__(self, nodes: 'list[V1SlurmNode]' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, node_details: 'list[V1SlurmNodeDetail]' =None, nodes: 'list[V1SlurmNode]' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1SlurmV1Status - a model defined in Swagger"""  # noqa: E501
+        self._node_details = None
         self._nodes = None
         self._ssh_host = None
         self._ssh_port = None
         self._ssh_username = None
         self._version = None
         self.discriminator = None
+        if node_details is not None:
+            self.node_details = node_details
         if nodes is not None:
             self.nodes = nodes
         if ssh_host is not None:
@@ -74,6 +79,29 @@ class V1SlurmV1Status(object):
             self.ssh_username = ssh_username
         if version is not None:
             self.version = version
+
+    @property
+    def node_details(self) -> 'list[V1SlurmNodeDetail]':
+        """Gets the node_details of this V1SlurmV1Status.  # noqa: E501
+
+        Per-node details (from sinfo -N); one row per node (or per node+partition if node in multiple partitions).  # noqa: E501
+
+        :return: The node_details of this V1SlurmV1Status.  # noqa: E501
+        :rtype: list[V1SlurmNodeDetail]
+        """
+        return self._node_details
+
+    @node_details.setter
+    def node_details(self, node_details: 'list[V1SlurmNodeDetail]'):
+        """Sets the node_details of this V1SlurmV1Status.
+
+        Per-node details (from sinfo -N); one row per node (or per node+partition if node in multiple partitions).  # noqa: E501
+
+        :param node_details: The node_details of this V1SlurmV1Status.  # noqa: E501
+        :type: list[V1SlurmNodeDetail]
+        """
+
+        self._node_details = node_details
 
     @property
     def nodes(self) -> 'list[V1SlurmNode]':

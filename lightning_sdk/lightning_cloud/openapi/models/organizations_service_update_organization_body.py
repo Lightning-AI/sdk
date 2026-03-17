@@ -47,6 +47,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         'allow_credits_auto_replenish': 'bool',
         'allow_external_project_duplication': 'bool',
         'allow_guest': 'bool',
+        'allow_lightning_hosted_models': 'bool',
         'allow_marketplace': 'bool',
         'allow_member_invitations': 'bool',
         'allow_member_teamspace_creation': 'bool',
@@ -58,6 +59,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         'default_machine_type': 'str',
         'default_project_id': 'str',
         'description': 'str',
+        'disable_public_templates': 'bool',
         'disallow_aws_saas': 'bool',
         'disallow_dgx_saas': 'bool',
         'disallow_gcp_saas': 'bool',
@@ -89,6 +91,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
         'allow_external_project_duplication': 'allowExternalProjectDuplication',
         'allow_guest': 'allowGuest',
+        'allow_lightning_hosted_models': 'allowLightningHostedModels',
         'allow_marketplace': 'allowMarketplace',
         'allow_member_invitations': 'allowMemberInvitations',
         'allow_member_teamspace_creation': 'allowMemberTeamspaceCreation',
@@ -100,6 +103,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         'default_machine_type': 'defaultMachineType',
         'default_project_id': 'defaultProjectId',
         'description': 'description',
+        'disable_public_templates': 'disablePublicTemplates',
         'disallow_aws_saas': 'disallowAwsSaas',
         'disallow_dgx_saas': 'disallowDgxSaas',
         'disallow_gcp_saas': 'disallowGcpSaas',
@@ -124,7 +128,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """OrganizationsServiceUpdateOrganizationBody - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
@@ -132,6 +136,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         self._allow_credits_auto_replenish = None
         self._allow_external_project_duplication = None
         self._allow_guest = None
+        self._allow_lightning_hosted_models = None
         self._allow_marketplace = None
         self._allow_member_invitations = None
         self._allow_member_teamspace_creation = None
@@ -143,6 +148,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         self._default_machine_type = None
         self._default_project_id = None
         self._description = None
+        self._disable_public_templates = None
         self._disallow_aws_saas = None
         self._disallow_dgx_saas = None
         self._disallow_gcp_saas = None
@@ -178,6 +184,8 @@ class OrganizationsServiceUpdateOrganizationBody(object):
             self.allow_external_project_duplication = allow_external_project_duplication
         if allow_guest is not None:
             self.allow_guest = allow_guest
+        if allow_lightning_hosted_models is not None:
+            self.allow_lightning_hosted_models = allow_lightning_hosted_models
         if allow_marketplace is not None:
             self.allow_marketplace = allow_marketplace
         if allow_member_invitations is not None:
@@ -200,6 +208,8 @@ class OrganizationsServiceUpdateOrganizationBody(object):
             self.default_project_id = default_project_id
         if description is not None:
             self.description = description
+        if disable_public_templates is not None:
+            self.disable_public_templates = disable_public_templates
         if disallow_aws_saas is not None:
             self.disallow_aws_saas = disallow_aws_saas
         if disallow_dgx_saas is not None:
@@ -370,6 +380,27 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         """
 
         self._allow_guest = allow_guest
+
+    @property
+    def allow_lightning_hosted_models(self) -> 'bool':
+        """Gets the allow_lightning_hosted_models of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
+
+
+        :return: The allow_lightning_hosted_models of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_lightning_hosted_models
+
+    @allow_lightning_hosted_models.setter
+    def allow_lightning_hosted_models(self, allow_lightning_hosted_models: 'bool'):
+        """Sets the allow_lightning_hosted_models of this OrganizationsServiceUpdateOrganizationBody.
+
+
+        :param allow_lightning_hosted_models: The allow_lightning_hosted_models of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_lightning_hosted_models = allow_lightning_hosted_models
 
     @property
     def allow_marketplace(self) -> 'bool':
@@ -601,6 +632,27 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         """
 
         self._description = description
+
+    @property
+    def disable_public_templates(self) -> 'bool':
+        """Gets the disable_public_templates of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
+
+
+        :return: The disable_public_templates of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_public_templates
+
+    @disable_public_templates.setter
+    def disable_public_templates(self, disable_public_templates: 'bool'):
+        """Sets the disable_public_templates of this OrganizationsServiceUpdateOrganizationBody.
+
+
+        :param disable_public_templates: The disable_public_templates of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_public_templates = disable_public_templates
 
     @property
     def disallow_aws_saas(self) -> 'bool':
