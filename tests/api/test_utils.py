@@ -103,7 +103,7 @@ def test_file_uploader(_, tmp_path, monkeypatch):
 def _make_mocked_model_uploader(monkeypatch, file_path, remote_path):
     # Threadpools don't like mocks as input, so we just use a regular map here
     monkeypatch.setattr(lightning_sdk.api.utils.ThreadPoolExecutor, "map", map)
-    uploader = _ModelFileUploader(
+    return _ModelFileUploader(
         client=Mock(),
         model_id="test-model-id",
         version="test-version",
@@ -112,8 +112,6 @@ def _make_mocked_model_uploader(monkeypatch, file_path, remote_path):
         file_path=file_path,
         remote_path=remote_path,
     )
-    uploader.api = Mock()
-    return uploader
 
 
 def test_model_file_uploader_path_exists(monkeypatch):
@@ -129,48 +127,48 @@ def test_model_file_uploader(_, tmp_path, monkeypatch):
     uploader = _make_mocked_model_uploader(monkeypatch, file_path=file_path, remote_path="path/to/file/on/remote")
 
     uploader.progress_bar = Mock()
-    uploader.api.models_store_create_multi_part_upload.return_value = Mock(upload_id="test-upload-id")
-    uploader.api.models_store_get_model_file_upload_urls.return_value = Mock(
+    uploader.client.models_store_create_multi_part_upload.return_value = Mock(upload_id="test-upload-id")
+    uploader.client.models_store_get_model_file_upload_urls.return_value = Mock(
         urls=[
             V1SignedUrl(url="test-url-1", part_number=1),
             V1SignedUrl(url="test-url-2", part_number=2),
         ]
     )
-    uploader.api.models_store_complete_multi_part_upload = Mock()
+    uploader.client.models_store_complete_multi_part_upload = Mock()
 
     uploader()
 
-    uploader.api.models_store_create_multi_part_upload.assert_called_once_with(
+    uploader.client.models_store_create_multi_part_upload.assert_called_once_with(
         ModelsStoreCreateMultiPartUploadBody(filepath="path/to/file/on/remote"),
         model_id="test-model-id",
         project_id="test-project-id",
         version="test-version",
     )
-    uploader.api.models_store_get_model_file_upload_urls.assert_called_once_with(
+    uploader.client.models_store_get_model_file_upload_urls.assert_called_once_with(
         ModelsStoreGetModelFileUploadUrlsBody(filepath="path/to/file/on/remote", parts=[1]),
         model_id="test-model-id",
         project_id="test-project-id",
         version="test-version",
         upload_id="test-upload-id",
     )
-    uploader.api.models_store_complete_multi_part_upload.assert_called_once()
+    uploader.client.models_store_complete_multi_part_upload.assert_called_once()
 
     # 0 because mocked data has length 0
     assert uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
 
 
-@mock.patch("lightning_sdk.api.utils.ModelsStoreApi")
 @mock.patch("lightning_sdk.api.utils._FileDownloader")
 @mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
-def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, api_mock, tmp_path, monkeypatch):
+def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, tmp_path, monkeypatch):
     tqdm_mock = MagicMock()
     monkeypatch.setattr(utils, "tqdm", tqdm_mock)
+    client = Mock()
 
     mock_file1 = Mock(filepath="path/to/file1", url="http://a/b", size_bytes="5")
     mock_file2 = Mock(filepath="path/to/file2", url="http://c/d", size_bytes="5")
 
-    api_mock.return_value.models_store_get_model_files.return_value = Mock(
+    client.models_store_get_model_files.return_value = Mock(
         model_id="test-model-id",
         project_id="test-project-id",
         version="latest",
@@ -180,7 +178,7 @@ def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, ap
     )
 
     _download_model_files(
-        client=Mock(),
+        client=client,
         teamspace_name="test-project",
         teamspace_owner_name="test-user",
         name="modelname",
@@ -189,7 +187,7 @@ def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, ap
         progress_bar=True,
     )
 
-    api_mock.return_value.models_store_get_model_files.assert_called_once_with(
+    client.models_store_get_model_files.assert_called_once_with(
         project_name="test-project", project_owner_name="test-user", name="modelname", version="latest"
     )
 
@@ -206,15 +204,15 @@ def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, ap
     assert wait_mock.call_count == 1
 
 
-@mock.patch("lightning_sdk.api.utils.StorageServiceApi")
 @mock.patch("lightning_sdk.api.utils._FileDownloader")
 @mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
-def test_download_teamspace_files(wait_mock, executor_mock, file_downloader_mock, api_mock, tmp_path, monkeypatch):
+def test_download_teamspace_files(wait_mock, executor_mock, file_downloader_mock, tmp_path, monkeypatch):
     tqdm_mock = MagicMock()
     monkeypatch.setattr(utils, "tqdm", tqdm_mock)
+    client = Mock()
 
-    api_mock.return_value.storage_service_list_project_artifacts.return_value = V1ListProjectArtifactsResponse(
+    client.storage_service_list_project_artifacts.return_value = V1ListProjectArtifactsResponse(
         artifacts=[
             V1ProjectArtifact(filename="file1", url="http://example.com/file1", size_bytes="10"),
             V1ProjectArtifact(filename="file2", url="http://example.com/file2", size_bytes="20"),
@@ -223,7 +221,7 @@ def test_download_teamspace_files(wait_mock, executor_mock, file_downloader_mock
     )
 
     _download_teamspace_files(
-        client=Mock(),
+        client=client,
         teamspace_id="test-project-id",
         cluster_id="test-cluster-id",
         prefix="test-prefix",
@@ -231,7 +229,7 @@ def test_download_teamspace_files(wait_mock, executor_mock, file_downloader_mock
         progress_bar=True,
     )
 
-    api_mock.return_value.storage_service_list_project_artifacts.assert_called_once_with(
+    client.storage_service_list_project_artifacts.assert_called_once_with(
         project_id="test-project-id",
         cluster_id="test-cluster-id",
         page_token="",

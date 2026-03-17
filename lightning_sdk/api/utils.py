@@ -20,11 +20,9 @@ from lightning_sdk.lightning_cloud.openapi import (
     CloudSpaceServiceApi,
     CloudSpaceServiceCreateCloudSpaceAppInstanceBody,
     Externalv1LightningappInstance,
-    ModelsStoreApi,
     ModelsStoreCompleteMultiPartUploadBody,
     ModelsStoreCreateMultiPartUploadBody,
     ModelsStoreGetModelFileUploadUrlsBody,
-    StorageServiceApi,
     StorageServiceCompleteUploadProjectArtifactBody,
     StorageServiceUploadProjectArtifactBody,
     StorageServiceUploadProjectArtifactPartsBody,
@@ -275,7 +273,6 @@ class _ModelFileUploader:
         self.local_path = file_path
         self.remote_path = remote_path
 
-        self.api = ModelsStoreApi(client.api_client)
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
         self.filesize = os.path.getsize(file_path)
         if progress_bar:
@@ -304,7 +301,7 @@ class _ModelFileUploader:
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload."""
         body = ModelsStoreCreateMultiPartUploadBody(filepath=self.remote_path)
-        resp = self.api.models_store_create_multi_part_upload(
+        resp = self.client.models_store_create_multi_part_upload(
             body,
             project_id=self.teamspace_id,
             model_id=self.model_id,
@@ -322,7 +319,7 @@ class _ModelFileUploader:
                 completed.extend(self._process_upload_batch(executor=p, batch=batch, upload_id=resp.upload_id))
 
         completed_body = ModelsStoreCompleteMultiPartUploadBody(filepath=self.remote_path, parts=completed)
-        self.api.models_store_complete_multi_part_upload(
+        self.client.models_store_complete_multi_part_upload(
             completed_body,
             project_id=self.teamspace_id,
             model_id=self.model_id,
@@ -339,7 +336,7 @@ class _ModelFileUploader:
     def _request_urls(self, parts: List[int], upload_id: str) -> List[V1SignedUrl]:
         """Requests urls for a batch of parts."""
         body = ModelsStoreGetModelFileUploadUrlsBody(filepath=self.remote_path, parts=parts)
-        resp = self.api.models_store_get_model_file_upload_urls(
+        resp = self.client.models_store_get_model_file_upload_urls(
             body,
             project_id=self.teamspace_id,
             model_id=self.model_id,
@@ -567,15 +564,14 @@ class _FileDownloader:
 
 
 def _get_model_version(client: LightningClient, teamspace_id: str, name: str, version: str) -> V1ModelVersionArchive:
-    api = ModelsStoreApi(client.api_client)
-    models = api.models_store_list_models(project_id=teamspace_id, name=name).models
+    models = client.models_store_list_models(project_id=teamspace_id, name=name).models
     if not models:
         raise ValueError(f"Model `{name}` does not exist")
     elif len(models) > 1:
         raise ValueError("Multiple models with the same name found")
     if version is None or version == "default":
         return models[0].default_version
-    versions = api.models_store_list_model_versions(project_id=teamspace_id, model_id=models[0].id).versions
+    versions = client.models_store_list_model_versions(project_id=teamspace_id, model_id=models[0].id).versions
     if not versions:
         raise ValueError(f"Model `{name}` does not have any versions")
     for ver in versions:
@@ -594,8 +590,7 @@ def _download_model_files(
     progress_bar: bool,
     num_workers: int = 20,
 ) -> List[str]:
-    api = ModelsStoreApi(client.api_client)
-    response = api.models_store_get_model_files(
+    response = client.models_store_get_model_files(
         project_name=teamspace_name, project_owner_name=teamspace_owner_name, name=name, version=version
     )
 
@@ -612,7 +607,7 @@ def _download_model_files(
         )
 
     def refresh_fn(filename: str) -> _RefreshResponse:
-        resp = api.models_store_get_model_file_url(
+        resp = client.models_store_get_model_file_url(
             project_id=response.project_id,
             model_id=response.model_id,
             version=response.version,
@@ -656,7 +651,6 @@ def _download_teamspace_files(
     progress_bar: bool,
     num_workers: int = os.cpu_count() * 4,
 ) -> None:
-    api = StorageServiceApi(client.api_client)
     response = None
 
     pbar = None
@@ -671,7 +665,7 @@ def _download_teamspace_files(
         )
 
     def refresh_fn(filename: str) -> _RefreshResponse:
-        resp = api.storage_service_list_project_artifacts(
+        resp = client.storage_service_list_project_artifacts(
             project_id=teamspace_id,
             cluster_id=cluster_id,
             page_token="",
@@ -685,7 +679,7 @@ def _download_teamspace_files(
         max_workers=num_workers
     ) as part_executor:
         while response is None or (response is not None and response.next_page_token != ""):
-            response = api.storage_service_list_project_artifacts(
+            response = client.storage_service_list_project_artifacts(
                 project_id=teamspace_id,
                 cluster_id=cluster_id,
                 page_token=response.next_page_token if response is not None else "",
