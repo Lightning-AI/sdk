@@ -44,6 +44,7 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         'allowed_machines': 'list[str]',
         'default_machine': 'str',
         'description': 'str',
+        'endpoints': 'list[V1CloudSpaceEnvironmentTemplateEndpoint]',
         'environment_type': 'V1CloudSpaceEnvironmentType',
         'icon': 'str',
         'initial_setup_script_text': 'str',
@@ -60,6 +61,7 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         'allowed_machines': 'allowedMachines',
         'default_machine': 'defaultMachine',
         'description': 'description',
+        'endpoints': 'endpoints',
         'environment_type': 'environmentType',
         'icon': 'icon',
         'initial_setup_script_text': 'initialSetupScriptText',
@@ -72,11 +74,12 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         'specialized_view': 'specializedView'
     }
 
-    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, description: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, icon: 'str' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, ports: 'list[int]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, description: 'str' =None, endpoints: 'list[V1CloudSpaceEnvironmentTemplateEndpoint]' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, icon: 'str' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, ports: 'list[int]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
         """V1CreateCloudSpaceEnvironmentTemplateRequest - a model defined in Swagger"""  # noqa: E501
         self._allowed_machines = None
         self._default_machine = None
         self._description = None
+        self._endpoints = None
         self._environment_type = None
         self._icon = None
         self._initial_setup_script_text = None
@@ -94,6 +97,8 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
             self.default_machine = default_machine
         if description is not None:
             self.description = description
+        if endpoints is not None:
+            self.endpoints = endpoints
         if environment_type is not None:
             self.environment_type = environment_type
         if icon is not None:
@@ -177,6 +182,27 @@ class V1CreateCloudSpaceEnvironmentTemplateRequest(object):
         """
 
         self._description = description
+
+    @property
+    def endpoints(self) -> 'list[V1CloudSpaceEnvironmentTemplateEndpoint]':
+        """Gets the endpoints of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+
+
+        :return: The endpoints of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :rtype: list[V1CloudSpaceEnvironmentTemplateEndpoint]
+        """
+        return self._endpoints
+
+    @endpoints.setter
+    def endpoints(self, endpoints: 'list[V1CloudSpaceEnvironmentTemplateEndpoint]'):
+        """Sets the endpoints of this V1CreateCloudSpaceEnvironmentTemplateRequest.
+
+
+        :param endpoints: The endpoints of this V1CreateCloudSpaceEnvironmentTemplateRequest.  # noqa: E501
+        :type: list[V1CloudSpaceEnvironmentTemplateEndpoint]
+        """
+
+        self._endpoints = endpoints
 
     @property
     def environment_type(self) -> 'V1CloudSpaceEnvironmentType':

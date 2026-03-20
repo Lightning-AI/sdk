@@ -43,6 +43,7 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
     swagger_types = {
         'allowed_machines': 'list[str]',
         'default_machine': 'str',
+        'endpoints': 'list[V1CloudSpaceEnvironmentTemplateEndpoint]',
         'environment_type': 'V1CloudSpaceEnvironmentType',
         'files_template_id': 'str',
         'initial_setup_script_text': 'str',
@@ -56,6 +57,7 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
     attribute_map = {
         'allowed_machines': 'allowedMachines',
         'default_machine': 'defaultMachine',
+        'endpoints': 'endpoints',
         'environment_type': 'environmentType',
         'files_template_id': 'filesTemplateId',
         'initial_setup_script_text': 'initialSetupScriptText',
@@ -66,10 +68,11 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         'specialized_view': 'specializedView'
     }
 
-    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, files_template_id: 'str' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, plugins: 'list[str]' =None, ports: 'list[int]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, endpoints: 'list[V1CloudSpaceEnvironmentTemplateEndpoint]' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, files_template_id: 'str' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, plugins: 'list[str]' =None, ports: 'list[int]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplateConfig - a model defined in Swagger"""  # noqa: E501
         self._allowed_machines = None
         self._default_machine = None
+        self._endpoints = None
         self._environment_type = None
         self._files_template_id = None
         self._initial_setup_script_text = None
@@ -83,6 +86,8 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
             self.allowed_machines = allowed_machines
         if default_machine is not None:
             self.default_machine = default_machine
+        if endpoints is not None:
+            self.endpoints = endpoints
         if environment_type is not None:
             self.environment_type = environment_type
         if files_template_id is not None:
@@ -141,6 +146,27 @@ class V1CloudSpaceEnvironmentTemplateConfig(object):
         """
 
         self._default_machine = default_machine
+
+    @property
+    def endpoints(self) -> 'list[V1CloudSpaceEnvironmentTemplateEndpoint]':
+        """Gets the endpoints of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+
+
+        :return: The endpoints of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :rtype: list[V1CloudSpaceEnvironmentTemplateEndpoint]
+        """
+        return self._endpoints
+
+    @endpoints.setter
+    def endpoints(self, endpoints: 'list[V1CloudSpaceEnvironmentTemplateEndpoint]'):
+        """Sets the endpoints of this V1CloudSpaceEnvironmentTemplateConfig.
+
+
+        :param endpoints: The endpoints of this V1CloudSpaceEnvironmentTemplateConfig.  # noqa: E501
+        :type: list[V1CloudSpaceEnvironmentTemplateEndpoint]
+        """
+
+        self._endpoints = endpoints
 
     @property
     def environment_type(self) -> 'V1CloudSpaceEnvironmentType':

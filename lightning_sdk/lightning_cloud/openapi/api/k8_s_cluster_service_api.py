@@ -362,6 +362,115 @@ class K8SClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def k8_s_cluster_service_get_k8_s_cluster_report_data(self, cluster_id: 'str', report_id: 'str', **kwargs) -> 'V1GetK8sClusterReportDataResponse':  # noqa: E501
+        """k8_s_cluster_service_get_k8_s_cluster_report_data  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_get_k8_s_cluster_report_data(cluster_id, report_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str report_id: (required)
+        :param datetime start: Date range
+        :param datetime end:
+        :return: V1GetK8sClusterReportDataResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_get_k8_s_cluster_report_data_with_http_info(cluster_id, report_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_get_k8_s_cluster_report_data_with_http_info(cluster_id, report_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_get_k8_s_cluster_report_data_with_http_info(self, cluster_id: 'str', report_id: 'str', **kwargs) -> 'V1GetK8sClusterReportDataResponse':  # noqa: E501
+        """k8_s_cluster_service_get_k8_s_cluster_report_data  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_get_k8_s_cluster_report_data_with_http_info(cluster_id, report_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str report_id: (required)
+        :param datetime start: Date range
+        :param datetime end:
+        :return: V1GetK8sClusterReportDataResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'report_id', 'start', 'end']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_get_k8_s_cluster_report_data" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_get_k8_s_cluster_report_data`")  # noqa: E501
+        # verify the required parameter 'report_id' is set
+        if ('report_id' not in params or
+                params['report_id'] is None):
+            raise ValueError("Missing the required parameter `report_id` when calling `k8_s_cluster_service_get_k8_s_cluster_report_data`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'report_id' in params:
+            path_params['reportId'] = params['report_id']  # noqa: E501
+
+        query_params = []
+        if 'start' in params:
+            query_params.append(('start', params['start']))  # noqa: E501
+        if 'end' in params:
+            query_params.append(('end', params['end']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/k8s-clusters/{clusterId}/reports/{reportId}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetK8sClusterReportDataResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def k8_s_cluster_service_get_kubernetes_pod(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1GetKubernetesPodResponse':  # noqa: E501
         """k8_s_cluster_service_get_kubernetes_pod  # noqa: E501
 
@@ -1729,6 +1838,99 @@ class K8SClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1ListGroupPodMetricsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_list_k8_s_cluster_reports(self, cluster_id: 'str', **kwargs) -> 'V1ListK8sClusterReportsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_k8_s_cluster_reports  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_k8_s_cluster_reports(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :return: V1ListK8sClusterReportsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_list_k8_s_cluster_reports_with_http_info(cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_list_k8_s_cluster_reports_with_http_info(cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_list_k8_s_cluster_reports_with_http_info(self, cluster_id: 'str', **kwargs) -> 'V1ListK8sClusterReportsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_k8_s_cluster_reports  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_k8_s_cluster_reports_with_http_info(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :return: V1ListK8sClusterReportsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_list_k8_s_cluster_reports" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_list_k8_s_cluster_reports`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/k8s-clusters/{clusterId}/reports', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListK8sClusterReportsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

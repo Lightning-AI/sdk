@@ -60,6 +60,8 @@ class ProjectsServiceUpdateProjectBody(object):
         'display_name': 'str',
         'layout_config': 'list[V1ProjectTab]',
         'name': 'str',
+        'owner_id': 'str',
+        'owner_type': 'V1OwnerType',
         'preferred_cluster': 'str',
         'preferred_deployment_provider': 'str',
         'preferred_studio_provider': 'str',
@@ -89,6 +91,8 @@ class ProjectsServiceUpdateProjectBody(object):
         'display_name': 'displayName',
         'layout_config': 'layoutConfig',
         'name': 'name',
+        'owner_id': 'ownerId',
+        'owner_type': 'ownerType',
         'preferred_cluster': 'preferredCluster',
         'preferred_deployment_provider': 'preferredDeploymentProvider',
         'preferred_studio_provider': 'preferredStudioProvider',
@@ -98,7 +102,7 @@ class ProjectsServiceUpdateProjectBody(object):
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, budgeting_enabled: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, layout_config: 'list[V1ProjectTab]' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, budgeting_enabled: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, layout_config: 'list[V1ProjectTab]' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
         """ProjectsServiceUpdateProjectBody - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_credits_auto_replenish = None
@@ -119,6 +123,8 @@ class ProjectsServiceUpdateProjectBody(object):
         self._display_name = None
         self._layout_config = None
         self._name = None
+        self._owner_id = None
+        self._owner_type = None
         self._preferred_cluster = None
         self._preferred_deployment_provider = None
         self._preferred_studio_provider = None
@@ -165,6 +171,10 @@ class ProjectsServiceUpdateProjectBody(object):
             self.layout_config = layout_config
         if name is not None:
             self.name = name
+        if owner_id is not None:
+            self.owner_id = owner_id
+        if owner_type is not None:
+            self.owner_type = owner_type
         if preferred_cluster is not None:
             self.preferred_cluster = preferred_cluster
         if preferred_deployment_provider is not None:
@@ -578,6 +588,48 @@ class ProjectsServiceUpdateProjectBody(object):
         """
 
         self._name = name
+
+    @property
+    def owner_id(self) -> 'str':
+        """Gets the owner_id of this ProjectsServiceUpdateProjectBody.  # noqa: E501
+
+
+        :return: The owner_id of this ProjectsServiceUpdateProjectBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._owner_id
+
+    @owner_id.setter
+    def owner_id(self, owner_id: 'str'):
+        """Sets the owner_id of this ProjectsServiceUpdateProjectBody.
+
+
+        :param owner_id: The owner_id of this ProjectsServiceUpdateProjectBody.  # noqa: E501
+        :type: str
+        """
+
+        self._owner_id = owner_id
+
+    @property
+    def owner_type(self) -> 'V1OwnerType':
+        """Gets the owner_type of this ProjectsServiceUpdateProjectBody.  # noqa: E501
+
+
+        :return: The owner_type of this ProjectsServiceUpdateProjectBody.  # noqa: E501
+        :rtype: V1OwnerType
+        """
+        return self._owner_type
+
+    @owner_type.setter
+    def owner_type(self, owner_type: 'V1OwnerType'):
+        """Sets the owner_type of this ProjectsServiceUpdateProjectBody.
+
+
+        :param owner_type: The owner_type of this ProjectsServiceUpdateProjectBody.  # noqa: E501
+        :type: V1OwnerType
+        """
+
+        self._owner_type = owner_type
 
     @property
     def preferred_cluster(self) -> 'str':

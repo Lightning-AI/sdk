@@ -772,6 +772,8 @@ class StorageServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
+        :param str sort_by:
+        :param str sort_order:
         :return: V1GetProjectStorageMetadataResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -793,12 +795,14 @@ class StorageServiceApi(object):
 
         :param async_req bool
         :param str project_id: (required)
+        :param str sort_by:
+        :param str sort_order:
         :return: V1GetProjectStorageMetadataResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id']  # noqa: E501
+        all_params = ['project_id', 'sort_by', 'sort_order']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -825,6 +829,10 @@ class StorageServiceApi(object):
             path_params['projectId'] = params['project_id']  # noqa: E501
 
         query_params = []
+        if 'sort_by' in params:
+            query_params.append(('sortBy', params['sort_by']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
 
         header_params = {}
 

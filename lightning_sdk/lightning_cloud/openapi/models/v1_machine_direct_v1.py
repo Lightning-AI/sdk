@@ -50,6 +50,7 @@ class V1MachineDirectV1(object):
         'primary_region': 'str',
         'private_networking': 'bool',
         'regions': 'list[str]',
+        'setup_firewall': 'bool',
         'setup_infiniband': 'bool',
         'storage_overcommit_factor': 'float',
         'tailscale_auth_key_secret_id': 'str',
@@ -66,13 +67,14 @@ class V1MachineDirectV1(object):
         'primary_region': 'primaryRegion',
         'private_networking': 'privateNetworking',
         'regions': 'regions',
+        'setup_firewall': 'setupFirewall',
         'setup_infiniband': 'setupInfiniband',
         'storage_overcommit_factor': 'storageOvercommitFactor',
         'tailscale_auth_key_secret_id': 'tailscaleAuthKeySecretId',
         'use_nvme_disks': 'useNvmeDisks'
     }
 
-    def __init__(self, access_mode: 'str' =None, cloud_hypervisor_user: 'str' =None, dns_servers: 'list[str]' =None, extra_setup_commands: 'list[str]' =None, machine_architecture: 'V1MachineArchitecture' =None, max_storage_gb: 'str' =None, primary_region: 'str' =None, private_networking: 'bool' =None, regions: 'list[str]' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
+    def __init__(self, access_mode: 'str' =None, cloud_hypervisor_user: 'str' =None, dns_servers: 'list[str]' =None, extra_setup_commands: 'list[str]' =None, machine_architecture: 'V1MachineArchitecture' =None, max_storage_gb: 'str' =None, primary_region: 'str' =None, private_networking: 'bool' =None, regions: 'list[str]' =None, setup_firewall: 'bool' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._access_mode = None
         self._cloud_hypervisor_user = None
@@ -83,6 +85,7 @@ class V1MachineDirectV1(object):
         self._primary_region = None
         self._private_networking = None
         self._regions = None
+        self._setup_firewall = None
         self._setup_infiniband = None
         self._storage_overcommit_factor = None
         self._tailscale_auth_key_secret_id = None
@@ -106,6 +109,8 @@ class V1MachineDirectV1(object):
             self.private_networking = private_networking
         if regions is not None:
             self.regions = regions
+        if setup_firewall is not None:
+            self.setup_firewall = setup_firewall
         if setup_infiniband is not None:
             self.setup_infiniband = setup_infiniband
         if storage_overcommit_factor is not None:
@@ -303,6 +308,27 @@ class V1MachineDirectV1(object):
         """
 
         self._regions = regions
+
+    @property
+    def setup_firewall(self) -> 'bool':
+        """Gets the setup_firewall of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The setup_firewall of this V1MachineDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._setup_firewall
+
+    @setup_firewall.setter
+    def setup_firewall(self, setup_firewall: 'bool'):
+        """Sets the setup_firewall of this V1MachineDirectV1.
+
+
+        :param setup_firewall: The setup_firewall of this V1MachineDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._setup_firewall = setup_firewall
 
     @property
     def setup_infiniband(self) -> 'bool':

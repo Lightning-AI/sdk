@@ -41,6 +41,7 @@ class V1MountableDataConnection(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'baremetal': 'bool',
         'mount_opts': 'str',
         'nfs_version': 'str',
         'password': 'str',
@@ -55,6 +56,7 @@ class V1MountableDataConnection(object):
     }
 
     attribute_map = {
+        'baremetal': 'baremetal',
         'mount_opts': 'mountOpts',
         'nfs_version': 'nfsVersion',
         'password': 'password',
@@ -68,8 +70,9 @@ class V1MountableDataConnection(object):
         'username': 'username'
     }
 
-    def __init__(self, mount_opts: 'str' =None, nfs_version: 'str' =None, password: 'str' =None, port: 'int' =None, protocol: 'str' =None, read_only: 'bool' =None, remote_path: 'str' =None, server_ip: 'str' =None, source: 'str' =None, type: 'V1StorageType' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, baremetal: 'bool' =None, mount_opts: 'str' =None, nfs_version: 'str' =None, password: 'str' =None, port: 'int' =None, protocol: 'str' =None, read_only: 'bool' =None, remote_path: 'str' =None, server_ip: 'str' =None, source: 'str' =None, type: 'V1StorageType' =None, username: 'str' =None):  # noqa: E501
         """V1MountableDataConnection - a model defined in Swagger"""  # noqa: E501
+        self._baremetal = None
         self._mount_opts = None
         self._nfs_version = None
         self._password = None
@@ -82,6 +85,8 @@ class V1MountableDataConnection(object):
         self._type = None
         self._username = None
         self.discriminator = None
+        if baremetal is not None:
+            self.baremetal = baremetal
         if mount_opts is not None:
             self.mount_opts = mount_opts
         if nfs_version is not None:
@@ -104,6 +109,27 @@ class V1MountableDataConnection(object):
             self.type = type
         if username is not None:
             self.username = username
+
+    @property
+    def baremetal(self) -> 'bool':
+        """Gets the baremetal of this V1MountableDataConnection.  # noqa: E501
+
+
+        :return: The baremetal of this V1MountableDataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._baremetal
+
+    @baremetal.setter
+    def baremetal(self, baremetal: 'bool'):
+        """Sets the baremetal of this V1MountableDataConnection.
+
+
+        :param baremetal: The baremetal of this V1MountableDataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._baremetal = baremetal
 
     @property
     def mount_opts(self) -> 'str':

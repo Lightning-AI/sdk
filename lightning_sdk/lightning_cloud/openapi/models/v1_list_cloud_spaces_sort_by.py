@@ -44,6 +44,7 @@ class V1ListCloudSpacesSortBy(object):
     USER_ID = "LIST_CLOUD_SPACES_SORT_BY_USER_ID"
     CLUSTER_ID = "LIST_CLOUD_SPACES_SORT_BY_CLUSTER_ID"
     TOTAL_SIZE = "LIST_CLOUD_SPACES_SORT_BY_TOTAL_SIZE"
+    INSTANCE_TYPE = "LIST_CLOUD_SPACES_SORT_BY_INSTANCE_TYPE"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

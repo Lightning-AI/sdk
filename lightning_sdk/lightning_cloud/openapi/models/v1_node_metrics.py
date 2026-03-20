@@ -64,7 +64,8 @@ class V1NodeMetrics(object):
         'per_gpu_temperature_c': 'dict(str, int)',
         'per_gpu_util': 'dict(str, float)',
         'timestamp': 'datetime',
-        'unschedulable': 'bool'
+        'unschedulable': 'bool',
+        'xid_errors': 'dict(str, int)'
     }
 
     attribute_map = {
@@ -91,10 +92,11 @@ class V1NodeMetrics(object):
         'per_gpu_temperature_c': 'perGpuTemperatureC',
         'per_gpu_util': 'perGpuUtil',
         'timestamp': 'timestamp',
-        'unschedulable': 'unschedulable'
+        'unschedulable': 'unschedulable',
+        'xid_errors': 'xidErrors'
     }
 
-    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, kubelet_failure: 'bool' =None, max_gpu_temp_recorded: 'float' =None, max_power_per_gpu: 'float' =None, mem_total: 'str' =None, mem_util: 'float' =None, node_name: 'str' =None, num_unschedulable_gpus: 'int' =None, nvlink_rx_gib: 'dict(str, float)' =None, nvlink_tx_gib: 'dict(str, float)' =None, pcie_rx_gib: 'dict(str, float)' =None, pcie_tx_gib: 'dict(str, float)' =None, per_gpu_errors: 'dict(str, int)' =None, per_gpu_mem_free: 'dict(str, int)' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_power_usage_watts: 'dict(str, int)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, cpu_capacity_cores: 'float' =None, cpu_util: 'float' =None, filesystem: 'dict(str, V1FilesystemMetrics)' =None, kubelet_failure: 'bool' =None, max_gpu_temp_recorded: 'float' =None, max_power_per_gpu: 'float' =None, mem_total: 'str' =None, mem_util: 'float' =None, node_name: 'str' =None, num_unschedulable_gpus: 'int' =None, nvlink_rx_gib: 'dict(str, float)' =None, nvlink_tx_gib: 'dict(str, float)' =None, pcie_rx_gib: 'dict(str, float)' =None, pcie_tx_gib: 'dict(str, float)' =None, per_gpu_errors: 'dict(str, int)' =None, per_gpu_mem_free: 'dict(str, int)' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_power_usage_watts: 'dict(str, int)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, timestamp: 'datetime' =None, unschedulable: 'bool' =None, xid_errors: 'dict(str, int)' =None):  # noqa: E501
         """V1NodeMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_capacity_cores = None
         self._cpu_util = None
@@ -120,6 +122,7 @@ class V1NodeMetrics(object):
         self._per_gpu_util = None
         self._timestamp = None
         self._unschedulable = None
+        self._xid_errors = None
         self.discriminator = None
         if cpu_capacity_cores is not None:
             self.cpu_capacity_cores = cpu_capacity_cores
@@ -169,6 +172,8 @@ class V1NodeMetrics(object):
             self.timestamp = timestamp
         if unschedulable is not None:
             self.unschedulable = unschedulable
+        if xid_errors is not None:
+            self.xid_errors = xid_errors
 
     @property
     def cpu_capacity_cores(self) -> 'float':
@@ -673,6 +678,27 @@ class V1NodeMetrics(object):
         """
 
         self._unschedulable = unschedulable
+
+    @property
+    def xid_errors(self) -> 'dict(str, int)':
+        """Gets the xid_errors of this V1NodeMetrics.  # noqa: E501
+
+
+        :return: The xid_errors of this V1NodeMetrics.  # noqa: E501
+        :rtype: dict(str, int)
+        """
+        return self._xid_errors
+
+    @xid_errors.setter
+    def xid_errors(self, xid_errors: 'dict(str, int)'):
+        """Sets the xid_errors of this V1NodeMetrics.
+
+
+        :param xid_errors: The xid_errors of this V1NodeMetrics.  # noqa: E501
+        :type: dict(str, int)
+        """
+
+        self._xid_errors = xid_errors
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

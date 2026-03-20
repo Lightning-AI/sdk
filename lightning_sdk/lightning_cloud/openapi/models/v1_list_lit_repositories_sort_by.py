@@ -42,7 +42,6 @@ class V1ListLitRepositoriesSortBy(object):
     CREATED_AT = "LIST_LIT_REPOSITORIES_SORT_BY_CREATED_AT"
     UPDATED_AT = "LIST_LIT_REPOSITORIES_SORT_BY_UPDATED_AT"
     PULL_COUNT = "LIST_LIT_REPOSITORIES_SORT_BY_PULL_COUNT"
-    CLUSTER_ID = "LIST_LIT_REPOSITORIES_SORT_BY_CLUSTER_ID"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

@@ -102,8 +102,9 @@ class V1UserFeatures(object):
         'f307': 'bool',
         'f309': 'bool',
         'f310': 'bool',
-        'f311': 'bool',
         'f312': 'bool',
+        'f313': 'bool',
+        'f314': 'bool',
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'job_artifacts_v2': 'bool',
@@ -204,8 +205,9 @@ class V1UserFeatures(object):
         'f307': 'f307',
         'f309': 'f309',
         'f310': 'f310',
-        'f311': 'f311',
         'f312': 'f312',
+        'f313': 'f313',
+        'f314': 'f314',
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'job_artifacts_v2': 'jobArtifactsV2',
@@ -244,7 +246,7 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, enterprise_compute_admin: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f266: 'bool' =None, f268: 'bool' =None, f270: 'bool' =None, f271: 'bool' =None, f272: 'bool' =None, f279: 'bool' =None, f280: 'bool' =None, f281: 'bool' =None, f283: 'bool' =None, f285: 'bool' =None, f287: 'bool' =None, f288: 'bool' =None, f289: 'bool' =None, f292: 'bool' =None, f293: 'bool' =None, f294: 'bool' =None, f296: 'bool' =None, f297: 'bool' =None, f298: 'bool' =None, f299: 'bool' =None, f300: 'bool' =None, f301: 'bool' =None, f302: 'bool' =None, f303: 'bool' =None, f304: 'bool' =None, f305: 'bool' =None, f306: 'bool' =None, f307: 'bool' =None, f309: 'bool' =None, f310: 'bool' =None, f311: 'bool' =None, f312: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, enterprise_compute_admin: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f266: 'bool' =None, f268: 'bool' =None, f270: 'bool' =None, f271: 'bool' =None, f272: 'bool' =None, f279: 'bool' =None, f280: 'bool' =None, f281: 'bool' =None, f283: 'bool' =None, f285: 'bool' =None, f287: 'bool' =None, f288: 'bool' =None, f289: 'bool' =None, f292: 'bool' =None, f293: 'bool' =None, f294: 'bool' =None, f296: 'bool' =None, f297: 'bool' =None, f298: 'bool' =None, f299: 'bool' =None, f300: 'bool' =None, f301: 'bool' =None, f302: 'bool' =None, f303: 'bool' =None, f304: 'bool' =None, f305: 'bool' =None, f306: 'bool' =None, f307: 'bool' =None, f309: 'bool' =None, f310: 'bool' =None, f312: 'bool' =None, f313: 'bool' =None, f314: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._ai_hub_monetization = None
@@ -307,8 +309,9 @@ class V1UserFeatures(object):
         self._f307 = None
         self._f309 = None
         self._f310 = None
-        self._f311 = None
         self._f312 = None
+        self._f313 = None
+        self._f314 = None
         self._fair_share = None
         self._featured_studios_admin = None
         self._job_artifacts_v2 = None
@@ -468,10 +471,12 @@ class V1UserFeatures(object):
             self.f309 = f309
         if f310 is not None:
             self.f310 = f310
-        if f311 is not None:
-            self.f311 = f311
         if f312 is not None:
             self.f312 = f312
+        if f313 is not None:
+            self.f313 = f313
+        if f314 is not None:
+            self.f314 = f314
         if fair_share is not None:
             self.fair_share = fair_share
         if featured_studios_admin is not None:
@@ -1827,27 +1832,6 @@ class V1UserFeatures(object):
         self._f310 = f310
 
     @property
-    def f311(self) -> 'bool':
-        """Gets the f311 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The f311 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._f311
-
-    @f311.setter
-    def f311(self, f311: 'bool'):
-        """Sets the f311 of this V1UserFeatures.
-
-
-        :param f311: The f311 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._f311 = f311
-
-    @property
     def f312(self) -> 'bool':
         """Gets the f312 of this V1UserFeatures.  # noqa: E501
 
@@ -1867,6 +1851,48 @@ class V1UserFeatures(object):
         """
 
         self._f312 = f312
+
+    @property
+    def f313(self) -> 'bool':
+        """Gets the f313 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f313 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f313
+
+    @f313.setter
+    def f313(self, f313: 'bool'):
+        """Sets the f313 of this V1UserFeatures.
+
+
+        :param f313: The f313 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f313 = f313
+
+    @property
+    def f314(self) -> 'bool':
+        """Gets the f314 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f314 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f314
+
+    @f314.setter
+    def f314(self, f314: 'bool'):
+        """Sets the f314 of this V1UserFeatures.
+
+
+        :param f314: The f314 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f314 = f314
 
     @property
     def fair_share(self) -> 'bool':

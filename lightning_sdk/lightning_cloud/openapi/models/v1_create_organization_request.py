@@ -47,11 +47,13 @@ class V1CreateOrganizationRequest(object):
         'auto_join_domains': 'list[str]',
         'auto_replenish_amount': 'float',
         'auto_replenish_threshold': 'float',
+        'creator_id': 'str',
         'description': 'str',
         'display_name': 'str',
         'domain': 'str',
         'email': 'str',
         'featured_gallery': 'bool',
+        'is_personal_org': 'bool',
         'location': 'str',
         'preferred_cluster': 'str',
         'start_studios_on_spot_instance': 'bool',
@@ -66,11 +68,13 @@ class V1CreateOrganizationRequest(object):
         'auto_join_domains': 'autoJoinDomains',
         'auto_replenish_amount': 'autoReplenishAmount',
         'auto_replenish_threshold': 'autoReplenishThreshold',
+        'creator_id': 'creatorId',
         'description': 'description',
         'display_name': 'displayName',
         'domain': 'domain',
         'email': 'email',
         'featured_gallery': 'featuredGallery',
+        'is_personal_org': 'isPersonalOrg',
         'location': 'location',
         'preferred_cluster': 'preferredCluster',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
@@ -78,7 +82,7 @@ class V1CreateOrganizationRequest(object):
         'type': 'type'
     }
 
-    def __init__(self, allow_credits_auto_replenish: 'bool' =None, allow_marketplace: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, allow_credits_auto_replenish: 'bool' =None, allow_marketplace: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, creator_id: 'str' =None, description: 'str' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, is_personal_org: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, start_studios_on_spot_instance: 'bool' =None, twitter_username: 'str' =None, type: 'str' =None):  # noqa: E501
         """V1CreateOrganizationRequest - a model defined in Swagger"""  # noqa: E501
         self._allow_credits_auto_replenish = None
         self._allow_marketplace = None
@@ -86,11 +90,13 @@ class V1CreateOrganizationRequest(object):
         self._auto_join_domains = None
         self._auto_replenish_amount = None
         self._auto_replenish_threshold = None
+        self._creator_id = None
         self._description = None
         self._display_name = None
         self._domain = None
         self._email = None
         self._featured_gallery = None
+        self._is_personal_org = None
         self._location = None
         self._preferred_cluster = None
         self._start_studios_on_spot_instance = None
@@ -109,6 +115,8 @@ class V1CreateOrganizationRequest(object):
             self.auto_replenish_amount = auto_replenish_amount
         if auto_replenish_threshold is not None:
             self.auto_replenish_threshold = auto_replenish_threshold
+        if creator_id is not None:
+            self.creator_id = creator_id
         if description is not None:
             self.description = description
         if display_name is not None:
@@ -119,6 +127,8 @@ class V1CreateOrganizationRequest(object):
             self.email = email
         if featured_gallery is not None:
             self.featured_gallery = featured_gallery
+        if is_personal_org is not None:
+            self.is_personal_org = is_personal_org
         if location is not None:
             self.location = location
         if preferred_cluster is not None:
@@ -257,6 +267,27 @@ class V1CreateOrganizationRequest(object):
         self._auto_replenish_threshold = auto_replenish_threshold
 
     @property
+    def creator_id(self) -> 'str':
+        """Gets the creator_id of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The creator_id of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._creator_id
+
+    @creator_id.setter
+    def creator_id(self, creator_id: 'str'):
+        """Sets the creator_id of this V1CreateOrganizationRequest.
+
+
+        :param creator_id: The creator_id of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._creator_id = creator_id
+
+    @property
     def description(self) -> 'str':
         """Gets the description of this V1CreateOrganizationRequest.  # noqa: E501
 
@@ -360,6 +391,27 @@ class V1CreateOrganizationRequest(object):
         """
 
         self._featured_gallery = featured_gallery
+
+    @property
+    def is_personal_org(self) -> 'bool':
+        """Gets the is_personal_org of this V1CreateOrganizationRequest.  # noqa: E501
+
+
+        :return: The is_personal_org of this V1CreateOrganizationRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_personal_org
+
+    @is_personal_org.setter
+    def is_personal_org(self, is_personal_org: 'bool'):
+        """Sets the is_personal_org of this V1CreateOrganizationRequest.
+
+
+        :param is_personal_org: The is_personal_org of this V1CreateOrganizationRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_personal_org = is_personal_org
 
     @property
     def location(self) -> 'str':

@@ -45,6 +45,7 @@ class CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBod
         'default_machine': 'str',
         'description': 'str',
         'disabled': 'bool',
+        'endpoints': 'list[V1CloudSpaceEnvironmentTemplateEndpoint]',
         'environment_type': 'V1CloudSpaceEnvironmentType',
         'icon': 'str',
         'initial_setup_script_text': 'str',
@@ -62,6 +63,7 @@ class CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBod
         'default_machine': 'defaultMachine',
         'description': 'description',
         'disabled': 'disabled',
+        'endpoints': 'endpoints',
         'environment_type': 'environmentType',
         'icon': 'icon',
         'initial_setup_script_text': 'initialSetupScriptText',
@@ -74,12 +76,13 @@ class CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBod
         'specialized_view': 'specializedView'
     }
 
-    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, description: 'str' =None, disabled: 'bool' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, icon: 'str' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, ports: 'list[int]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
+    def __init__(self, allowed_machines: 'list[str]' =None, default_machine: 'str' =None, description: 'str' =None, disabled: 'bool' =None, endpoints: 'list[V1CloudSpaceEnvironmentTemplateEndpoint]' =None, environment_type: 'V1CloudSpaceEnvironmentType' =None, icon: 'str' =None, initial_setup_script_text: 'str' =None, machine_image_version: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, ports: 'list[int]' =None, setup_script_text: 'str' =None, specialized_view: 'V1CloudSpaceSpecializedView' =None):  # noqa: E501
         """CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody - a model defined in Swagger"""  # noqa: E501
         self._allowed_machines = None
         self._default_machine = None
         self._description = None
         self._disabled = None
+        self._endpoints = None
         self._environment_type = None
         self._icon = None
         self._initial_setup_script_text = None
@@ -99,6 +102,8 @@ class CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBod
             self.description = description
         if disabled is not None:
             self.disabled = disabled
+        if endpoints is not None:
+            self.endpoints = endpoints
         if environment_type is not None:
             self.environment_type = environment_type
         if icon is not None:
@@ -203,6 +208,27 @@ class CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBod
         """
 
         self._disabled = disabled
+
+    @property
+    def endpoints(self) -> 'list[V1CloudSpaceEnvironmentTemplateEndpoint]':
+        """Gets the endpoints of this CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody.  # noqa: E501
+
+
+        :return: The endpoints of this CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody.  # noqa: E501
+        :rtype: list[V1CloudSpaceEnvironmentTemplateEndpoint]
+        """
+        return self._endpoints
+
+    @endpoints.setter
+    def endpoints(self, endpoints: 'list[V1CloudSpaceEnvironmentTemplateEndpoint]'):
+        """Sets the endpoints of this CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody.
+
+
+        :param endpoints: The endpoints of this CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody.  # noqa: E501
+        :type: list[V1CloudSpaceEnvironmentTemplateEndpoint]
+        """
+
+        self._endpoints = endpoints
 
     @property
     def environment_type(self) -> 'V1CloudSpaceEnvironmentType':
