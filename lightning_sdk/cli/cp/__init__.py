@@ -16,14 +16,15 @@ def parse_lit_url(url: str) -> tuple[str, list[str], Literal["studios", "uploads
         raise ValueError("URL must contain '://'")
 
     path = url.split("://")[-1].split("/")
+    resource = path[2].lower()
 
-    if path[2] == "studios":
+    if resource == "studios":
         resource_type = "studios"
-    elif path[2] == "uploads":
+    elif resource == "uploads":
         resource_type = "uploads"
-    elif path[2] == "s3_folders":
+    elif resource == "s3_folders":
         resource_type = "s3_folders"
-    elif path[2] == "lightning_storage":
+    elif resource == "lightning_storage":
         resource_type = "lightning_storage"
     else:
         raise ValueError(
@@ -49,7 +50,7 @@ def route_cp_operation(source: str, destination: str, **options: Any) -> None:
         resource_type = parse_lit_url(source)
         if resource_type == "studios":
             return studio_cp_download(source, destination, options.get("recursive", False))
-        if resource_type == "lightning_storage" or resource_type == "uploads" or resource_type == "Uploads":
+        if resource_type == "lightning_storage" or resource_type == "uploads" or resource_type == "s3_folders":
             fs = Filesystem()
             source = source.replace("uploads/", "Uploads/")
             return fs.copy(source=source, destination=destination, recursive=options.get("recursive", False))
