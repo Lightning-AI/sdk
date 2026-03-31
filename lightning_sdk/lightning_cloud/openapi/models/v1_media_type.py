@@ -40,6 +40,7 @@ class V1MediaType(object):
     UNSPECIFIED = "MEDIA_TYPE_UNSPECIFIED"
     IMAGE = "MEDIA_TYPE_IMAGE"
     TEXT = "MEDIA_TYPE_TEXT"
+    VIDEO = "MEDIA_TYPE_VIDEO"
     """
     Attributes:
       swagger_types (dict): The key is attribute name
